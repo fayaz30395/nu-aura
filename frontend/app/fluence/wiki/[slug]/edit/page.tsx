@@ -17,6 +17,7 @@ import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import EditLockWarning from '@/components/fluence/EditLockWarning';
 import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const FluenceEditor = dynamic(
   () => import('@/components/fluence/editor/FluenceEditor'),
@@ -75,7 +76,7 @@ export default function EditWikiPage() {
     handleSubmit,
     watch,
     reset,
-    formState: {errors},
+    formState: {errors, isDirty},
   } = useForm<EditWikiPageInput>({
     resolver: zodResolver(editWikiPageSchema),
     defaultValues: {
@@ -85,6 +86,8 @@ export default function EditWikiPage() {
       content: {type: 'doc', content: [{type: 'paragraph'}]},
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   // Populate form when page loads
   useEffect(() => {

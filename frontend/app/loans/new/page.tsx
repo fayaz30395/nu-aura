@@ -14,6 +14,7 @@ import {loanService} from '@/lib/services/hrms/loan.service';
 import {AlertCircle, ArrowLeft, Calendar, DollarSign, FileText, Loader2, Wallet,} from 'lucide-react';
 import {Stat} from '@/components/ui/Stat';
 import {useToast} from '@/components/notifications/ToastProvider';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -79,7 +80,7 @@ export default function NewLoanPage() {
     register,
     handleSubmit,
     watch,
-    formState: {errors, isSubmitting},
+    formState: {errors, isSubmitting, isDirty},
   } = useForm<LoanFormData>({
     resolver: zodResolver(loanFormSchema),
     defaultValues: {
@@ -92,6 +93,8 @@ export default function NewLoanPage() {
       notes: '',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const watchedAmount = watch('requestedAmount');
   const watchedTerm = watch('termMonths');

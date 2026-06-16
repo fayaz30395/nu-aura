@@ -16,6 +16,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {ArrowLeft} from 'lucide-react';
 import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
 const FluenceEditor = dynamic(
@@ -51,7 +52,7 @@ export default function CreateBlogPost() {
     register,
     handleSubmit,
     watch,
-    formState: {errors},
+    formState: {errors, isDirty},
   } = useForm<CreateBlogPostInput>({
     resolver: zodResolver(createBlogPostSchema),
     defaultValues: {
@@ -67,6 +68,8 @@ export default function CreateBlogPost() {
       },
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const visibility = watch('visibility');
   const categories = Array.isArray(categoriesData) ? categoriesData : [];

@@ -12,6 +12,7 @@ import {EventType, EventVisibility} from '@/lib/types/hrms/calendar';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useCreateCalendarEvent} from '@/lib/hooks/queries/useCalendar';
 import {AlertCircle, ArrowLeft, Bell, Calendar, Clock, FileText, Globe, Loader2, MapPin, Video,} from 'lucide-react';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -93,7 +94,7 @@ export default function NewEventPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: {errors, isSubmitting},
+    formState: {errors, isSubmitting, isDirty},
   } = useForm<CalendarEventFormData>({
     resolver: zodResolver(calendarEventSchema),
     defaultValues: {
@@ -106,6 +107,8 @@ export default function NewEventPage() {
       isRecurring: false,
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const watchedAllDay = watch('allDay');
   const watchedStartTime = watch('startTime');

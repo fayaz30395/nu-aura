@@ -11,6 +11,7 @@ import {EntryType} from '@/lib/types/hrms/time-tracking';
 import {useSubmitTimeEntry, useTimeEntry, useUpdateTimeEntry,} from '@/lib/hooks/queries/useTimeTracking';
 import {createLogger} from '@/lib/utils/logger';
 import {AlertCircle, ArrowLeft, Calendar, Clock, DollarSign, FileText, Loader2,} from 'lucide-react';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const log = createLogger('EditTimeEntryPage');
 
@@ -74,7 +75,7 @@ export default function EditTimeEntryPage() {
     watch,
     setValue,
     reset,
-    formState: {errors, isSubmitting},
+    formState: {errors, isSubmitting, isDirty},
   } = useForm<TimeEntryFormData>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
@@ -86,6 +87,8 @@ export default function EditTimeEntryPage() {
       description: '',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   // Populate form when entry loads
   useEffect(() => {

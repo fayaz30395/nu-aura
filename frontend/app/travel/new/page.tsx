@@ -13,6 +13,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useCreateTravelRequest, useSubmitTravelRequest} from '@/lib/hooks/queries/useTravel';
 import {isAxiosError} from '@/lib/utils/type-guards';
 import {Card, CardContent} from '@/components/ui/Card';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 import {
   AlertCircle,
   ArrowLeft,
@@ -100,7 +101,7 @@ export default function NewTravelRequestPage() {
     register,
     handleSubmit,
     watch,
-    formState: {errors, isSubmitting},
+    formState: {errors, isSubmitting, isDirty},
   } = useForm<TravelFormData>({
     resolver: zodResolver(travelRequestSchema),
     defaultValues: {
@@ -114,6 +115,8 @@ export default function NewTravelRequestPage() {
       estimatedCost: 0,
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const hasAccess = hasAnyPermission(
     Permissions.TRAVEL_CREATE,

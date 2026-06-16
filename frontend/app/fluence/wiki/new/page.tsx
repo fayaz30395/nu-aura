@@ -16,6 +16,7 @@ import {ArrowLeft, Building2, ChevronDown, Eye, FileText, Globe, Lock, Save, Sen
 import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import {motion as dsMotion} from '@/lib/theme/design-system';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
 const FluenceEditor = dynamic(
@@ -85,7 +86,7 @@ export default function CreateWikiPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: {errors},
+    formState: {errors, isDirty},
   } = useForm<CreateWikiPageInput>({
     resolver: zodResolver(createWikiPageSchema),
     defaultValues: {
@@ -99,6 +100,8 @@ export default function CreateWikiPage() {
       },
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   // Merge RHF's ref with the local titleRef so both receive the node
   const {ref: titleFieldRef, ...titleField} = register('title');

@@ -27,6 +27,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {OnboardingChecklistTemplate, OnboardingProcessRequest} from '@/lib/types/hire/onboarding';
 import {createLogger} from '@/lib/utils/logger';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const log = createLogger('NewOnboardingPage');
 
@@ -57,7 +58,7 @@ export default function NewOnboardingPage() {
   const {
     register,
     handleSubmit: handleFormSubmit,
-    formState: {errors},
+    formState: {errors, isDirty},
     watch,
     reset: _resetForm,
   } = useForm<OnboardingFormData>({
@@ -68,6 +69,8 @@ export default function NewOnboardingPage() {
       notes: '',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const formData = watch();
   const [submitError, setSubmitError] = useState<string | null>(null);

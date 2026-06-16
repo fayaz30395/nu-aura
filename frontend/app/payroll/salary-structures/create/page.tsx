@@ -10,6 +10,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {useCreateSalaryStructure} from '@/lib/hooks/queries/usePayroll';
 import {Box, Card, Group, Loader, Stack, Text, Title} from '@mantine/core';
 import {ArrowLeft, Banknote, Save} from 'lucide-react';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const createSalaryStructureSchema = z.object({
   employeeId: z.string().min(1, 'Employee ID is required'),
@@ -29,13 +30,15 @@ export default function CreateSalaryStructurePage() {
   const {
     register,
     handleSubmit,
-    formState: {errors},
+    formState: {errors, isDirty},
   } = useForm<CreateSalaryStructureFormData>({
     resolver: zodResolver(createSalaryStructureSchema),
     defaultValues: {
       status: 'PENDING',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const onSubmit = (data: CreateSalaryStructureFormData) => {
     createStructure(

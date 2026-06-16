@@ -18,6 +18,7 @@ import EditLockWarning from '@/components/fluence/EditLockWarning';
 import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const FluenceEditor = dynamic(
   () => import('@/components/fluence/editor/FluenceEditor'),
@@ -68,7 +69,7 @@ export default function EditBlogPost() {
     handleSubmit,
     watch,
     reset,
-    formState: {errors},
+    formState: {errors, isDirty},
   } = useForm<EditBlogPostInput>({
     resolver: zodResolver(editBlogPostSchema),
     defaultValues: {
@@ -82,6 +83,8 @@ export default function EditBlogPost() {
       content: {type: 'doc', content: [{type: 'paragraph'}]},
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   // Populate form when post loads
   useEffect(() => {

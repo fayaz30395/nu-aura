@@ -15,6 +15,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {onboardingService} from '@/lib/services/hire/onboarding.service';
 import {createLogger} from '@/lib/utils/logger';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const log = createLogger('NewTemplatePage');
 
@@ -27,13 +28,15 @@ type TemplateFormData = z.infer<typeof templateFormSchema>;
 
 export default function NewTemplatePage() {
   const router = useRouter();
-  const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<TemplateFormData>({
+  const {register, handleSubmit, formState: {errors, isSubmitting, isDirty}} = useForm<TemplateFormData>({
     resolver: zodResolver(templateFormSchema),
     defaultValues: {
       name: '',
       description: '',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const onSubmit = async (data: TemplateFormData) => {
     try {

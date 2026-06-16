@@ -15,6 +15,7 @@ import {ArrowLeft, FileText, Info, Save, Send, Smile, Tag,} from 'lucide-react';
 import {motion as dsMotion} from '@/lib/theme/design-system';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // Dynamically import the enhanced Fluence editor (no SSR — Tiptap requirement)
 const FluenceEditor = dynamic(
@@ -72,7 +73,7 @@ export default function CreateTemplatePage() {
     handleSubmit,
     watch,
     setValue,
-    formState: {errors},
+    formState: {errors, isDirty},
   } = useForm<CreateTemplateFormInput>({
     resolver: zodResolver(createTemplateFormSchema),
     defaultValues: {
@@ -86,6 +87,8 @@ export default function CreateTemplatePage() {
       icon: '',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const name = watch('name');
   const selectedIcon = watch('icon');

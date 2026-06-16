@@ -13,6 +13,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {useActiveLeaveTypes, useCreateLeaveRequest, useEmployeeBalancesForYear} from '@/lib/hooks/queries/useLeaves';
 import {HalfDayPeriod} from '@/lib/types/hrms/leave';
 import {useToast} from '@/components/notifications/ToastProvider';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const leaveFormSchema = z.object({
   leaveTypeId: z.string().min(1, 'Please select a leave type'),
@@ -36,7 +37,7 @@ export default function ApplyLeavePage() {
   const {data: balances = []} = useEmployeeBalancesForYear(user?.employeeId || '', year, Boolean(hasHydrated && user?.employeeId));
   const createLeaveRequest = useCreateLeaveRequest();
 
-  const {register, control, handleSubmit, watch, formState: {errors, isSubmitting}, reset} = useForm<LeaveFormData>({
+  const {register, control, handleSubmit, watch, formState: {errors, isSubmitting, isDirty}, reset} = useForm<LeaveFormData>({
     resolver: zodResolver(leaveFormSchema),
     defaultValues: {
       leaveTypeId: '',
@@ -48,6 +49,8 @@ export default function ApplyLeavePage() {
       documentPath: '',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const startDate = watch('startDate');
   const endDate = watch('endDate');

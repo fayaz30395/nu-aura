@@ -13,6 +13,7 @@ import {ArrowLeft} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {createLogger} from '@/lib/utils/logger';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const log = createLogger('ContractPage');
 
@@ -40,7 +41,7 @@ export default function CreateContractPage() {
     }
   }, [isReady, hasAccess, router]);
 
-  const {register, control, handleSubmit, formState: {errors, isSubmitting}} = useForm<ContractFormData>({
+  const {register, control, handleSubmit, formState: {errors, isSubmitting, isDirty}} = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
     defaultValues: {
       title: '',
@@ -51,6 +52,8 @@ export default function CreateContractPage() {
       currency: 'USD',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   if (!isReady || !hasAccess) return null;
 

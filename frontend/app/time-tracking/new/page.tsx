@@ -11,6 +11,7 @@ import {EntryType} from '@/lib/types/hrms/time-tracking';
 import {useCreateTimeEntry, useSubmitTimeEntry} from '@/lib/hooks/queries/useTimeTracking';
 import {logger} from '@/lib/utils/logger';
 import {AlertCircle, ArrowLeft, Calendar, Clock, DollarSign, FileText, Loader2,} from 'lucide-react';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -64,7 +65,7 @@ export default function NewTimeEntryPage() {
     handleSubmit,
     watch,
     setValue,
-    formState: {errors, isSubmitting},
+    formState: {errors, isSubmitting, isDirty},
   } = useForm<TimeEntryFormData>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
@@ -76,6 +77,8 @@ export default function NewTimeEntryPage() {
       description: '',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const watchedHoursWorked = watch('hoursWorked');
   const watchedIsBillable = watch('isBillable');
