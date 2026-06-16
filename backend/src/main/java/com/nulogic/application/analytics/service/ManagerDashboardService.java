@@ -496,6 +496,11 @@ public class ManagerDashboardService {
                 : projectRepository.findAllByTenantIdAndIdIn(tenantId, new ArrayList<>(projectIds)).stream()
                   .collect(Collectors.toMap(Project::getId, Function.identity()));
 
+        // Batch-fetch all direct report employees
+        Map<UUID, Employee> employeeMap = employeeRepository
+                .findAllByIdInAndTenantId(directReportIds, tenantId).stream()
+                .collect(Collectors.toMap(Employee::getId, e -> e));
+
         // Group memberships by employee
         Map<UUID, List<ProjectMember>> membershipsByEmployee = allMemberships.stream()
                 .collect(Collectors.groupingBy(ProjectMember::getEmployeeId));
@@ -508,7 +513,7 @@ public class ManagerDashboardService {
         List<TeamMemberProjectsDto> teamMemberDtos = new ArrayList<>();
 
         for (UUID empId : directReportIds) {
-            Employee emp = employeeRepository.findByIdAndTenantId(empId, tenantId).orElse(null);
+            Employee emp = employeeMap.get(empId);
             if (emp == null) continue;
 
             List<ProjectMember> empMemberships = membershipsByEmployee.getOrDefault(empId, Collections.emptyList());

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,6 +15,8 @@ import java.util.UUID;
 public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, UUID> {
 
     Optional<SurveyQuestion> findByIdAndTenantId(UUID id, UUID tenantId);
+
+    List<SurveyQuestion> findByTenantIdAndIdIn(UUID tenantId, Collection<UUID> ids);
 
     List<SurveyQuestion> findBySurveyIdOrderByQuestionOrderAsc(UUID surveyId);
 

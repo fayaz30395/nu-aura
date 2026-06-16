@@ -132,6 +132,14 @@ public class SurveyAnalyticsService {
                 .build();
 
         // Process answers
+        // Pre-fetch all questions in one query (IDOR-safe: tenantId scoping on bulk fetch)
+        Set<UUID> questionIds = request.getAnswers().stream()
+                .map(SubmitResponseRequest.AnswerRequest::getQuestionId)
+                .collect(Collectors.toSet());
+        Map<UUID, SurveyQuestion> questionMap = questionRepository
+                .findByTenantIdAndIdIn(tenantId, questionIds).stream()
+                .collect(Collectors.toMap(SurveyQuestion::getId, q -> q));
+
         List<SurveyAnswer> answers = new ArrayList<>();
         double totalEngagement = 0;
         double totalSentiment = 0;
@@ -140,9 +148,8 @@ public class SurveyAnalyticsService {
         Integer npsValue = null;
 
         for (SubmitResponseRequest.AnswerRequest answerReq : request.getAnswers()) {
-            // IDOR fix: scope to current tenant so a user cannot submit answers referencing
-            // question IDs from a different tenant's survey by guessing UUIDs.
-            SurveyQuestion question = questionRepository.findByIdAndTenantId(answerReq.getQuestionId(), tenantId)
+            // IDOR protection maintained: questionMap is populated from tenant-scoped bulk fetch
+            SurveyQuestion question = Optional.ofNullable(questionMap.get(answerReq.getQuestionId()))
                     .orElseThrow(() -> new IllegalArgumentException("Question not found: " + answerReq.getQuestionId()));
 
             SurveyAnswer answer = new SurveyAnswer();

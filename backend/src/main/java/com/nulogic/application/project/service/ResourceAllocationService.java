@@ -44,13 +44,22 @@ public class ResourceAllocationService {
         Map<UUID, List<ProjectEmployee>> byEmployee = active.stream()
                 .collect(Collectors.groupingBy(ProjectEmployee::getEmployeeId));
 
+        // Pre-fetch all employees and projects in bulk
+        Map<UUID, Employee> employeeMap = employeeRepository
+                .findAllByIdInAndTenantId(byEmployee.keySet(), tenantId).stream()
+                .collect(Collectors.toMap(Employee::getId, e -> e));
+        Set<UUID> projectIds = active.stream().map(ProjectEmployee::getProjectId).collect(Collectors.toSet());
+        Map<UUID, Project> projectMap = projectIds.isEmpty() ? Collections.emptyMap()
+                : projectRepository.findAllByTenantIdAndIdIn(tenantId, new ArrayList<>(projectIds)).stream()
+                        .collect(Collectors.toMap(Project::getId, p -> p));
+
         List<AllocationSummaryResponse> result = new ArrayList<>();
 
         for (Map.Entry<UUID, List<ProjectEmployee>> entry : byEmployee.entrySet()) {
             UUID employeeId = entry.getKey();
             List<ProjectEmployee> assignments = entry.getValue();
 
-            Employee emp = employeeRepository.findByIdAndTenantId(employeeId, tenantId).orElse(null);
+            Employee emp = employeeMap.get(employeeId);
             if (emp == null) continue;
 
             int total = assignments.stream()
@@ -58,7 +67,7 @@ public class ResourceAllocationService {
                     .sum();
 
             List<AllocationSummaryResponse.AllocationEntry> projects = assignments.stream().map(pe -> {
-                String projName = projectRepository.findByIdAndTenantId(pe.getProjectId(), tenantId)
+                String projName = Optional.ofNullable(projectMap.get(pe.getProjectId()))
                         .map(Project::getName)
                         .orElse("Unknown");
                 return AllocationSummaryResponse.AllocationEntry.builder()
