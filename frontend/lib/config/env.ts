@@ -57,18 +57,20 @@ const envSchema = z.object({
     .optional()
     .describe('Google OAuth client ID for social login'),
 
-  // Optional - Demo mode flag
+  // Optional - Demo mode flag (empty string treated as unset → defaults to 'false')
   NEXT_PUBLIC_DEMO_MODE: z
-    .enum(['true', 'false'])
+    .string()
     .optional()
-    .default('false')
+    .transform((v) => (v === '' || v === undefined ? 'false' : v))
+    .pipe(z.enum(['true', 'false']))
     .describe('Enable demo mode with sample credentials'),
 
-  // Optional - realtime notifications are enabled by default
+  // Optional - realtime notifications are enabled by default (empty string → 'true')
   NEXT_PUBLIC_ENABLE_WEBSOCKET: z
-    .enum(['true', 'false'])
+    .string()
     .optional()
-    .default('true')
+    .transform((v) => (v === '' || v === undefined ? 'true' : v))
+    .pipe(z.enum(['true', 'false']))
     .describe('Enable realtime WebSocket notifications'),
 
   // Runtime environment
