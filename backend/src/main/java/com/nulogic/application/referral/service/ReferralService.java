@@ -247,11 +247,9 @@ public class ReferralService {
         List<EmployeeReferral> dueForEligibility = referralRepository.findBonusEligibilityDue(tenantId, today);
 
         for (EmployeeReferral referral : dueForEligibility) {
-            // Verify the hired employee is still employed
             if (referral.getHiredEmployeeId() != null) {
-                // In a real implementation, check if employee is still active
                 referral.setBonusStatus(BonusStatus.ELIGIBLE);
-                referralRepository.save(referral);
+                // managed entity — JPA dirty-check flushes setBonusStatus at commit
                 log.info("Referral {} marked as bonus eligible", referral.getId());
             }
         }

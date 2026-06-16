@@ -335,12 +335,13 @@ public class OrganizationService {
         List<SuccessionPlan> activePlans = planRepository.findActivePlans(tenantId);
         Map<String, Integer> nineBoxDistribution = new HashMap<>();
 
-        for (SuccessionPlan plan : activePlans) {
-            List<SuccessionCandidate> candidates = candidateRepository.findByPlan(tenantId, plan.getId());
-            for (SuccessionCandidate candidate : candidates) {
-                String position = candidate.getNineBoxPosition();
-                nineBoxDistribution.merge(position, 1, Integer::sum);
-            }
+        if (!activePlans.isEmpty()) {
+            Set<UUID> activePlanIds = activePlans.stream()
+                    .map(SuccessionPlan::getId)
+                    .collect(Collectors.toSet());
+            candidateRepository.findByTenantIdAndSuccessionPlanIdIn(tenantId, activePlanIds)
+                    .forEach(candidate -> nineBoxDistribution.merge(
+                            candidate.getNineBoxPosition(), 1, Integer::sum));
         }
 
         return NineBoxDataResponse.builder()

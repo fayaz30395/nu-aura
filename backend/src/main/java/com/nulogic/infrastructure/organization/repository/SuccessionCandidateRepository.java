@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +24,8 @@ public interface SuccessionCandidateRepository extends JpaRepository<SuccessionC
 
     @Query("SELECT c FROM SuccessionCandidate c WHERE c.tenantId = :tenantId AND c.successionPlanId = :planId AND c.readiness = 'READY_NOW' ORDER BY c.priority")
     List<SuccessionCandidate> findReadyNowCandidates(@Param("tenantId") UUID tenantId, @Param("planId") UUID planId);
+
+    List<SuccessionCandidate> findByTenantIdAndSuccessionPlanIdIn(UUID tenantId, Collection<UUID> planIds);
 
     boolean existsByTenantIdAndSuccessionPlanIdAndCandidateId(UUID tenantId, UUID planId, UUID candidateId);
 

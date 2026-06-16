@@ -3,10 +3,14 @@ package com.nulogic.infrastructure.training.repository;
 import com.nulogic.domain.training.TrainingEnrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -32,4 +36,11 @@ public interface TrainingEnrollmentRepository extends JpaRepository<TrainingEnro
             UUID employeeId,
             TrainingEnrollment.EnrollmentStatus status
     );
+
+    @Query("SELECT e.programId FROM TrainingEnrollment e WHERE e.tenantId = :tenantId " +
+            "AND e.employeeId = :employeeId AND e.programId IN :programIds AND e.status = :status")
+    Set<UUID> findProgramIdsByEmployeeAndStatusIn(@Param("tenantId") UUID tenantId,
+                                                  @Param("employeeId") UUID employeeId,
+                                                  @Param("programIds") Collection<UUID> programIds,
+                                                  @Param("status") TrainingEnrollment.EnrollmentStatus status);
 }

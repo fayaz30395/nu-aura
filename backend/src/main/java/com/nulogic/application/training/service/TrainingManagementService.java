@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -193,14 +194,14 @@ public class TrainingManagementService {
 
     private void enforcePrerequisites(UUID tenantId, TrainingProgram program, UUID employeeId) {
         List<UUID> prerequisiteProgramIds = parsePrerequisiteProgramIds(program.getPrerequisites());
+        if (prerequisiteProgramIds.isEmpty()) return;
+
+        Set<UUID> completedIds = enrollmentRepository.findProgramIdsByEmployeeAndStatusIn(
+                tenantId, employeeId, prerequisiteProgramIds,
+                TrainingEnrollment.EnrollmentStatus.COMPLETED);
+
         for (UUID prerequisiteProgramId : prerequisiteProgramIds) {
-            boolean completed = enrollmentRepository.existsByTenantIdAndProgramIdAndEmployeeIdAndStatus(
-                    tenantId,
-                    prerequisiteProgramId,
-                    employeeId,
-                    TrainingEnrollment.EnrollmentStatus.COMPLETED
-            );
-            if (!completed) {
+            if (!completedIds.contains(prerequisiteProgramId)) {
                 throw new IllegalArgumentException("Training prerequisite not completed: " + prerequisiteProgramId);
             }
         }
