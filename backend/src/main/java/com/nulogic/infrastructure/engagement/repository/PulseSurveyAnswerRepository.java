@@ -16,6 +16,8 @@ public interface PulseSurveyAnswerRepository extends JpaRepository<PulseSurveyAn
 
     List<PulseSurveyAnswer> findAllByResponseId(UUID responseId);
 
+    List<PulseSurveyAnswer> findAllBySurveyId(UUID surveyId);
+
     List<PulseSurveyAnswer> findAllBySurveyIdAndQuestionId(UUID surveyId, UUID questionId);
 
     @Query("SELECT AVG(a.numericValue) FROM PulseSurveyAnswer a " +

@@ -506,9 +506,11 @@ public class PulseSurveyService {
         }
         analytics.put("deviceDistribution", devices);
 
-        // Question-level analytics
+        // Question-level analytics — pre-fetch all answers once to avoid 5-6 queries per question
         List<Map<String, Object>> questionAnalytics = new ArrayList<>();
         List<PulseSurveyQuestion> questions = questionRepository.findAllBySurveyIdAndIsActiveTrue(surveyId);
+        Map<UUID, List<PulseSurveyAnswer>> answersByQuestion = answerRepository.findAllBySurveyId(surveyId)
+                .stream().collect(Collectors.groupingBy(PulseSurveyAnswer::getQuestionId));
 
         for (PulseSurveyQuestion question : questions) {
             Map<String, Object> qa = new HashMap<>();
@@ -516,26 +518,46 @@ public class PulseSurveyService {
             qa.put("questionText", question.getQuestionText());
             qa.put("questionType", question.getQuestionType());
 
+            List<PulseSurveyAnswer> qAnswers = answersByQuestion.getOrDefault(question.getId(), List.of());
+            qa.put("skippedCount", qAnswers.stream().filter(a -> Boolean.TRUE.equals(a.getIsSkipped())).count());
+
             if (question.getQuestionType() == QuestionType.RATING ||
                     question.getQuestionType() == QuestionType.LIKERT ||
                     question.getQuestionType() == QuestionType.NPS) {
-                qa.put("averageScore", answerRepository.getAverageNumericValueByQuestion(surveyId, question.getId()));
-                qa.put("minScore", answerRepository.getMinNumericValueByQuestion(surveyId, question.getId()));
-                qa.put("maxScore", answerRepository.getMaxNumericValueByQuestion(surveyId, question.getId()));
-                qa.put("responseCount", answerRepository.countNumericResponsesByQuestion(surveyId, question.getId()));
-                qa.put("distribution", answerRepository.getNumericDistribution(surveyId, question.getId()));
-
-                if (question.getQuestionType() == QuestionType.NPS) {
-                    qa.put("npsScore", answerRepository.calculateNPSScore(surveyId, question.getId()));
+                List<Integer> nums = qAnswers.stream()
+                        .filter(a -> a.getNumericValue() != null).map(PulseSurveyAnswer::getNumericValue)
+                        .collect(Collectors.toList());
+                qa.put("averageScore", nums.isEmpty() ? null : nums.stream().mapToInt(i -> i).average().orElse(0));
+                qa.put("minScore", nums.isEmpty() ? null : nums.stream().mapToInt(i -> i).min().orElse(0));
+                qa.put("maxScore", nums.isEmpty() ? null : nums.stream().mapToInt(i -> i).max().orElse(0));
+                qa.put("responseCount", (long) nums.size());
+                qa.put("distribution", nums.stream()
+                        .collect(Collectors.groupingBy(n -> n, TreeMap::new, Collectors.counting()))
+                        .entrySet().stream().map(e -> new Object[]{e.getKey(), e.getValue()})
+                        .collect(Collectors.toList()));
+                if (question.getQuestionType() == QuestionType.NPS && !nums.isEmpty()) {
+                    long total = nums.size();
+                    long promoters = nums.stream().filter(n -> n >= 9).count();
+                    long detractors = nums.stream().filter(n -> n <= 6).count();
+                    qa.put("npsScore", (promoters - detractors) * 100.0 / total);
                 }
             } else if (question.getQuestionType() == QuestionType.YES_NO) {
-                qa.put("distribution", answerRepository.getBooleanDistribution(surveyId, question.getId()));
+                qa.put("distribution", qAnswers.stream()
+                        .filter(a -> a.getBooleanValue() != null)
+                        .collect(Collectors.groupingBy(PulseSurveyAnswer::getBooleanValue, Collectors.counting()))
+                        .entrySet().stream().map(e -> new Object[]{e.getKey(), e.getValue()})
+                        .collect(Collectors.toList()));
             } else if (question.getQuestionType() == QuestionType.SINGLE_CHOICE ||
                     question.getQuestionType() == QuestionType.MULTIPLE_CHOICE) {
-                qa.put("distribution", answerRepository.getTextValueDistribution(surveyId, question.getId()));
+                qa.put("distribution", qAnswers.stream()
+                        .filter(a -> a.getTextValue() != null)
+                        .collect(Collectors.groupingBy(PulseSurveyAnswer::getTextValue, Collectors.counting()))
+                        .entrySet().stream()
+                        .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                        .map(e -> new Object[]{e.getKey(), e.getValue()})
+                        .collect(Collectors.toList()));
             }
 
-            qa.put("skippedCount", answerRepository.countSkippedByQuestion(surveyId, question.getId()));
             questionAnalytics.add(qa);
         }
         analytics.put("questionAnalytics", questionAnalytics);
