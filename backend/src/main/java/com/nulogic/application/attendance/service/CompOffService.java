@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -198,22 +199,32 @@ public class CompOffService {
         List<CompOffRequest> pending = compOffRequestRepository
                 .findPendingInDateRange(tenantId, lookbackStart, cutoff);
 
+        // Pre-fetch leave type and year once for the batch — same for every request in this tenant/run
+        String compOffLeaveCode = config.getCompOff().getLeaveCode();
+        LeaveType compOffType = leaveTypeRepository
+                .findByLeaveCodeAndTenantId(compOffLeaveCode, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        compOffLeaveCode + " leave type not found for tenant " + tenantId));
+        int year = today.getYear();
+
         int count = 0;
+        List<CompOffRequest> toSave = new ArrayList<>();
         for (CompOffRequest req : pending) {
             try {
-                LeaveBalance balance = creditLeaveBalance(tenantId, req.getEmployeeId(), req.getCompOffDays());
+                LeaveBalance balance = creditLeaveBalance(tenantId, req.getEmployeeId(), req.getCompOffDays(), compOffType, year);
                 req.setStatus(CompOffRequest.CompOffStatus.CREDITED);
                 // S13 wave-13c: auto-approve timestamp must be in tenant zone — tenantId here is
                 // already the tenant being batched; reuse it instead of req.getTenantId() for clarity.
                 req.setReviewedAt(tenantTimeService.now(tenantId));
                 req.setLeaveBalanceId(balance.getId());
                 req.setReviewNote("Auto-approved by system after " + autoApproveAfterDays + " days");
-                compOffRequestRepository.save(req);
+                toSave.add(req);
                 count++;
             } catch (DataAccessException | BusinessException e) {
                 log.warn("Failed to auto-approve comp-off request {}: {}", req.getId(), e.getMessage());
             }
         }
+        if (!toSave.isEmpty()) compOffRequestRepository.saveAll(toSave);
         log.info("Auto-approved {} comp-off requests for tenant {}", count, tenantId);
         return count;
     }
@@ -227,9 +238,13 @@ public class CompOffService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         compOffLeaveCode + " leave type not found for tenant " + tenantId +
                                 ". Please create a leave type with code " + compOffLeaveCode + "."));
-
         // S12-B: tenant-local year for leave balance — resolved via TenantTimeService.
         int year = tenantTimeService.today(tenantId).getYear();
+        return creditLeaveBalance(tenantId, employeeId, days, compOffType, year);
+    }
+
+    private LeaveBalance creditLeaveBalance(UUID tenantId, UUID employeeId, BigDecimal days,
+                                            LeaveType compOffType, int year) {
         LeaveBalance balance = leaveBalanceRepository
                 .findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
                         employeeId, compOffType.getId(), year, tenantId)
@@ -241,7 +256,7 @@ public class CompOffService {
                         .openingBalance(BigDecimal.ZERO)
                         .build());
 
-        balance.accrueLeave(days, tenantTimeService.today(balance.getTenantId()));
+        balance.accrueLeave(days, tenantTimeService.today(tenantId));
         return leaveBalanceRepository.save(balance);
     }
 
