@@ -232,9 +232,16 @@ public class ResourceManagementService {
                 .sum();
         int totalAllocation = approvedAllocation + pendingAllocation;
 
+        // Pre-fetch all projects referenced by assignments and pending requests in one query
+        Set<UUID> projectIds = new HashSet<>();
+        assignments.forEach(a -> projectIds.add(a.getProjectId()));
+        pendingRequests.forEach(r -> projectIds.add(r.getProjectId()));
+        Map<UUID, Project> projectMap = projectRepository.findAllById(projectIds).stream()
+                .collect(Collectors.toMap(Project::getId, p -> p));
+
         List<AllocationBreakdown> breakdowns = new ArrayList<>();
         for (ProjectEmployee assignment : assignments) {
-            Project project = projectRepository.findById(assignment.getProjectId()).orElse(null);
+            Project project = projectMap.get(assignment.getProjectId());
             breakdowns.add(AllocationBreakdown.builder()
                     .projectId(assignment.getProjectId())
                     .projectName(project != null ? project.getName() : "Unknown")
@@ -252,7 +259,7 @@ public class ResourceManagementService {
         }
 
         for (AllocationApprovalRequest request : pendingRequests) {
-            Project project = projectRepository.findById(request.getProjectId()).orElse(null);
+            Project project = projectMap.get(request.getProjectId());
             breakdowns.add(AllocationBreakdown.builder()
                     .projectId(request.getProjectId())
                     .projectName(project != null ? project.getName() : "Unknown")
@@ -329,6 +336,12 @@ public class ResourceManagementService {
         List<Holiday> holidays = holidayRepository.findAllByTenantIdAndHolidayDateBetween(tenantId,
                 startDate, endDate);
 
+        List<UUID> assignmentProjectIds = projectAssignments.stream()
+                .map(ProjectEmployee::getProjectId).distinct().collect(Collectors.toList());
+        Map<UUID, Project> projectMap = assignmentProjectIds.isEmpty() ? Collections.emptyMap() :
+                projectRepository.findAllById(assignmentProjectIds).stream()
+                        .collect(Collectors.toMap(Project::getId, p -> p));
+
         List<ResourceAvailabilityDay> days = new ArrayList<>();
         long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
         int workingDays = 0, availableDays = 0, partialDays = 0, fullyAllocatedDays = 0,
@@ -383,7 +396,7 @@ public class ResourceManagementService {
 
             List<ResourceCalendarEvent> events = new ArrayList<>();
             for (ProjectEmployee p : dayProjects) {
-                Project proj = projectRepository.findById(p.getProjectId()).orElse(null);
+                Project proj = projectMap.get(p.getProjectId());
                 events.add(ResourceCalendarEvent.builder()
                         .id(p.getId().toString())
                         .type(CalendarEventType.PROJECT_ASSIGNMENT)
