@@ -240,6 +240,7 @@ export function ProjectStep({
                   className="flex-1 num"
                 />
                 <select
+                  aria-label="Budget currency"
                   value={projectData.currency}
                   onChange={(e) => onProjectDataChange({...projectData, currency: e.target.value})}
                   className="w-24 rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--bg-input)] px-2 text-[var(--text-1)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
