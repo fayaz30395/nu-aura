@@ -55,6 +55,7 @@ import {useCandidates} from '@/lib/hooks/queries/useRecruitment';
 import {createLogger} from '@/lib/utils/logger';
 import {safeUrl} from '@/lib/utils/safeUrl';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
+import {useToast} from '@/components/notifications/ToastProvider';
 
 const log = createLogger('LettersPage');
 
@@ -121,6 +122,7 @@ const formatDate = (date: string | undefined) => {
 
 export default function LettersPage() {
   const router = useRouter();
+  const toast = useToast();
   const {isAuthenticated, user, hasHydrated} = useAuth();
 
   // React Query hooks for data fetching
@@ -307,12 +309,14 @@ export default function LettersPage() {
       {data: submitData, generatedBy: user?.id || ''},
       {
         onSuccess: () => {
+          toast.success('Letter generated successfully');
           setShowGenerateModal(false);
           resetForm();
           refetchLetters();
         },
         onError: (err: unknown) => {
           log.error('Error generating letter:', err);
+          toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to generate letter');
         }
       }
     );
@@ -336,6 +340,7 @@ export default function LettersPage() {
       {data: submitData, generatedBy: user?.id || ''},
       {
         onSuccess: () => {
+          toast.success('Offer letter generated successfully');
           setShowOfferLetterModal(false);
           resetOfferForm();
           refetchLetters();
@@ -343,45 +348,56 @@ export default function LettersPage() {
         },
         onError: (err: unknown) => {
           log.error('Error generating offer letter:', err);
+          toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to generate offer letter');
         }
       }
     );
   };
 
   const handleSubmitForApproval = async (letter: GeneratedLetter) => {
-    // This calls approveLetterMutation with status update
     approveLetterMutation.mutate(
       {letterId: letter.id, approverId: user?.id || ''},
-      {onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err)}
+      {
+        onSuccess: () => { toast.success('Submitted for approval'); refetchLetters(); },
+        onError: (err) => { log.error('Error:', err); toast.error('Failed to submit for approval'); }
+      }
     );
   };
 
   const handleApproveLetter = async (letter: GeneratedLetter) => {
     approveLetterMutation.mutate(
       {letterId: letter.id, approverId: user?.id || ''},
-      {onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err)}
+      {
+        onSuccess: () => { toast.success('Letter approved'); refetchLetters(); },
+        onError: (err) => { log.error('Error:', err); toast.error('Failed to approve letter'); }
+      }
     );
   };
 
   const handleIssueLetter = async (letter: GeneratedLetter) => {
     issueLetterMutation.mutate(
       {letterId: letter.id, issuerId: user?.id || ''},
-      {onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err)}
+      {
+        onSuccess: () => { toast.success('Letter issued'); refetchLetters(); },
+        onError: (err) => { log.error('Error:', err); toast.error('Failed to issue letter'); }
+      }
     );
   };
 
   const handleIssueWithESign = async (letter: GeneratedLetter) => {
-    // For e-sign, use the same issue mutation (backend handles e-sign flag)
     issueLetterMutation.mutate(
       {letterId: letter.id, issuerId: user?.id || ''},
-      {onSuccess: () => refetchLetters(), onError: (err) => log.error('Error:', err)}
+      {
+        onSuccess: () => { toast.success('Letter issued for e-signature'); refetchLetters(); },
+        onError: (err) => { log.error('Error:', err); toast.error('Failed to issue letter for e-sign'); }
+      }
     );
   };
 
   const handleRevokeLetter = async (letter: GeneratedLetter) => {
     revokeLetterMutation.mutate(letter.id, {
-      onSuccess: () => refetchLetters(),
-      onError: (err) => log.error('Error:', err),
+      onSuccess: () => { toast.success('Letter revoked'); refetchLetters(); },
+      onError: (err) => { log.error('Error:', err); toast.error('Failed to revoke letter'); },
     });
   };
 
