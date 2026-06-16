@@ -470,6 +470,7 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
                   if (e.key === 'Enter' && e.ctrlKey) handleSaveEdit();
                   if (e.key === 'Escape') handleCancelEdit();
                 }}
+                aria-label="Edit post content"
                 className="input-aura w-full resize-none text-sm min-h-[60px]"
                 autoFocus
                 disabled={isSavingEdit}
@@ -752,6 +753,7 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
                   }
                 }}
                 placeholder="Write a comment..."
+                aria-label="Write a comment"
                 className="flex-1 px-4 py-2 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
                 disabled={isSubmittingComment}
               />
@@ -969,6 +971,7 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
                     }
                   }}
                   placeholder="Write a comment..."
+                  aria-label="Write a comment"
                   className="flex-1 px-2.5 py-1.5 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
                   disabled={isSubmittingComment}
                 />

@@ -47,7 +47,7 @@ export function Switch({checked, onChange, label, disabled = false, id, classNam
       <span
         aria-hidden
         className={cn(
-          'pointer-events-none absolute left-[2.5px] top-[2.5px] h-[18px] w-[18px] rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.3)]',
+          'pointer-events-none absolute left-[2.5px] top-[2.5px] h-[18px] w-[18px] rounded-full bg-[var(--text-inverse)] shadow-[0_1px_3px_rgba(0,0,0,0.3)]',
           'transition-transform duration-[var(--t-base)] ease-[var(--ease)] motion-reduce:transition-none',
           checked ? 'translate-x-[17px]' : 'translate-x-0'
         )}

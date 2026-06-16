@@ -328,6 +328,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
             value={pollQuestion}
             onChange={(e) => setPollQuestion(e.target.value)}
             placeholder="Ask a question..."
+            aria-label="Poll question"
             className="input-aura w-full resize-none h-16"
             maxLength={500}
           />
@@ -398,7 +399,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
                 <div
                   className="w-8 h-8 rounded-full bg-accent-100 dark:bg-accent-900 flex items-center justify-center text-sm font-semibold text-accent-700 dark:text-accent-300 overflow-hidden shrink-0">
                   {selectedRecipient.avatarUrl ? (
-                    <NextImage src={selectedRecipient.avatarUrl} alt="" width={32} height={32}
+                    <NextImage src={selectedRecipient.avatarUrl} alt={`${selectedRecipient.fullName}'s profile picture`} width={32} height={32}
                                className="w-full h-full object-cover" unoptimized/>
                   ) : (
                     selectedRecipient.fullName.charAt(0)
@@ -464,7 +465,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
                           <div
                             className="w-7 h-7 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center text-xs font-semibold text-[var(--text-secondary)] overflow-hidden shrink-0">
                             {emp.profilePhotoUrl ? (
-                              <NextImage src={emp.profilePhotoUrl} alt="" width={28} height={28}
+                              <NextImage src={emp.profilePhotoUrl} alt={`${emp.firstName} ${emp.lastName}'s profile picture`} width={28} height={28}
                                          className="w-full h-full object-cover" unoptimized/>
                             ) : (
                               emp.firstName?.charAt(0)
@@ -512,6 +513,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
             value={praiseMessage}
             onChange={(e) => setPraiseMessage(e.target.value)}
             placeholder="Add a message (optional)..."
+            aria-label="Add a praise message (optional)"
             className="input-aura w-full resize-none h-16"
             maxLength={2000}
           />

@@ -162,6 +162,7 @@ export const FeedCommentItem = React.memo(function FeedCommentItem({
                   }
                 }}
                 placeholder="Write a reply..."
+                aria-label="Write a reply"
                 className="flex-1 px-2 py-1 text-xs rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-1 focus:ring-accent-500"
                 disabled={isSubmittingReply}
                 autoFocus
