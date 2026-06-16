@@ -570,6 +570,7 @@ export default function DepartmentsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          aria-label="Department Type"
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                         >
@@ -591,6 +592,7 @@ export default function DepartmentsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          aria-label="Parent Department"
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                         >
@@ -620,6 +622,7 @@ export default function DepartmentsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          aria-label="Department Manager"
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                         >

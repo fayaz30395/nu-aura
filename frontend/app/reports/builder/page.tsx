@@ -299,6 +299,7 @@ export default function ReportBuilderPage() {
                   <div key={i} className="space-y-1">
                     <div className="flex gap-1">
                       <select
+                        aria-label="Filter column"
                         value={f.column}
                         onChange={e => updateFilter(i, 'column', e.target.value)}
                         className="flex-1 text-xs border border-[var(--border-strong)] rounded px-2 py-1"
@@ -308,6 +309,7 @@ export default function ReportBuilderPage() {
                         ))}
                       </select>
                       <select
+                        aria-label="Filter operator"
                         value={f.operator}
                         onChange={e => updateFilter(i, 'operator', e.target.value)}
                         className="text-xs border border-[var(--border-strong)] rounded px-2 py-1"

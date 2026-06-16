@@ -10,6 +10,7 @@ import {ArrowLeft, Check, Copy, ExternalLink, Hash, Key, MessageSquare, RefreshC
 import {AppLayout} from '@/components/layout';
 import {Input} from '@/components/ui/Input';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useUnsavedChanges} from '@/lib/hooks';
 import {apiClient} from '@/lib/api/client';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 
@@ -109,6 +110,7 @@ export default function SlackIntegrationPage() {
       rateLimitPerHour: null,
     },
   });
+  useUnsavedChanges(isDirty);
 
   // Populate form when config loads
   useEffect(() => {

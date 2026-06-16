@@ -588,6 +588,7 @@ function PIPDetailModal({
                   className="border-t border-[var(--border-main)] pt-4 space-y-4">
               <p className="text-sm font-medium text-[var(--text-secondary)]">Update Status</p>
               <select
+                aria-label="PIP status"
                 {...registerClose('status')}
                 className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
               >

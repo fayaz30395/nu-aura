@@ -306,6 +306,7 @@ export default function OnboardingDetailPage() {
                                 <div className="flex items-center gap-4">
                                   <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                                     <select
+                                      aria-label="Task status"
                                       value={task.status}
                                       onChange={(e) => handleTaskStatusUpdate(task.id, e.target.value)}
                                       className="bg-transparent border-0 text-xs font-black uppercase tracking-widest text-[var(--text-muted)] cursor-pointer hover:text-accent-500"

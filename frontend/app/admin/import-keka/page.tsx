@@ -574,6 +574,7 @@ export default function KekaImportPage() {
                         </Table.Td>
                         <Table.Td>
                           <select
+                            aria-label="Map to field"
                             value={mapping.targetField}
                             onChange={(e) =>
                               updateMapping(mapping.sourceColumn, e.target.value)

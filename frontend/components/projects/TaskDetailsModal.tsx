@@ -239,6 +239,7 @@ export function TaskDetailsModal({
                 </span>
               ) : (
                 <select
+                  aria-label="Task status"
                   value={normalizedTask.status}
                   onChange={(e) => handleStatusChange(e.target.value)}
                   disabled={isSaving}

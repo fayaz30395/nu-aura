@@ -19,6 +19,7 @@ import {AlertCircle, Clock} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {createLogger} from '@/lib/utils/logger';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useUnsavedChanges} from '@/lib/hooks';
 
 const log = createLogger('EmployeeEditPage');
 
@@ -104,10 +105,11 @@ export default function EditEmployeePage() {
     handleSubmit,
     control,
     reset,
-    formState: {errors, isSubmitting},
+    formState: {errors, isSubmitting, isDirty},
   } = useForm<UpdateEmployeeFormData>({
     resolver: zodResolver(updateEmployeeFormSchema),
   });
+  useUnsavedChanges(isDirty);
 
   // Pre-populate form when employee data loads from React Query
   useEffect(() => {

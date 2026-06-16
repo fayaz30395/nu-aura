@@ -87,6 +87,7 @@ export default function CustomFieldRenderer({
         return (
           <div className="flex gap-2">
             <select
+              aria-label="Currency code"
               value={value?.currencyCode || 'INR'}
               onChange={(e) => onChange(currentValue, {currencyCode: e.target.value})}
               disabled={disabled}
@@ -137,6 +138,7 @@ export default function CustomFieldRenderer({
       case 'DROPDOWN':
         return (
           <select
+            aria-label={definition.fieldName || 'Value'}
             value={currentValue}
             onChange={(e) => onChange(e.target.value)}
             disabled={disabled}

@@ -28,6 +28,7 @@ import {PageTransition, Reveal} from '@/components/motion';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useUnsavedChanges} from '@/lib/hooks';
 import {logger} from '@/lib/utils/logger';
 import {
   useCreateSamlConfig,
@@ -88,7 +89,7 @@ export default function SsoSettingsPage() {
     reset,
     setValue,
     watch,
-    formState: {errors, isDirty: _isDirty},
+    formState: {errors, isDirty},
   } = useForm<SamlConfigFormData>({
     resolver: zodResolver(samlConfigSchema),
     defaultValues: {
@@ -109,6 +110,7 @@ export default function SsoSettingsPage() {
       spEntityId: '',
     },
   });
+  useUnsavedChanges(isDirty);
 
   const isActive = watch('isActive');
 

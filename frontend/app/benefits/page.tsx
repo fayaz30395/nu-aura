@@ -919,6 +919,7 @@ export default function BenefitsPage() {
                         Coverage Level
                       </label>
                       <select
+                        aria-label="Coverage Level"
                         className="w-full input-aura rounded-lg p-2"
                         {...registerEnrollment('coverageLevel')}
                       >
@@ -993,6 +994,7 @@ export default function BenefitsPage() {
                   Benefit Plan
                 </label>
                 <select
+                  aria-label="Benefit plan"
                   className="w-full input-aura rounded-lg p-2"
                   {...registerClaim('enrollmentId')}
                 >
@@ -1012,6 +1014,7 @@ export default function BenefitsPage() {
                   Claim Type
                 </label>
                 <select
+                  aria-label="Claim type"
                   className="w-full input-aura rounded-lg p-2"
                   {...registerClaim('claimType')}
                 >

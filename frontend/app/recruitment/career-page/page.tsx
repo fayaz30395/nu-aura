@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import {useJobOpenings, useUpdateJobOpening} from '@/lib/hooks/queries/useRecruitment';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useUnsavedChanges} from '@/lib/hooks';
 import {safeStorage} from '@/lib/utils/safeStorage';
 import type {CreateJobOpeningRequest, JobOpening, JobStatus} from '@/lib/types/hire/recruitment';
 
@@ -275,6 +276,7 @@ function CareerContentEditor() {
     resolver: zodResolver(careerContentSchema),
     defaultValues: loadStoredContent(),
   });
+  useUnsavedChanges(isDirty);
 
   const textareaCls =
     'w-full px-4 py-2.5 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 text-sm resize-none';

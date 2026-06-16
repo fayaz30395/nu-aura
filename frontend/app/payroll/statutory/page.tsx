@@ -226,6 +226,7 @@ export default function StatutoryPage() {
                         State
                       </label>
                       <select
+                        aria-label="State"
                         className="input-aura"
                         {...form.register('state')}
                       >

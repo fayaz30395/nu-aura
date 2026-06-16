@@ -1206,6 +1206,7 @@ function InterviewsPage() {
                   <div>
                     <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Result</label>
                     <select
+                      aria-label="Interview result"
                       {...registerFeedback('result')}
                       className="input-aura"
                     >

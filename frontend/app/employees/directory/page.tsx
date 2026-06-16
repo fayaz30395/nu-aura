@@ -339,6 +339,7 @@ export default function TeamDirectory() {
                             Department
                           </label>
                           <select
+                            aria-label="Department"
                             className="input-aura"
                             value={filters.departmentIds[0] || ''}
                             onChange={(e) =>
@@ -363,6 +364,7 @@ export default function TeamDirectory() {
                             Job Role
                           </label>
                           <select
+                            aria-label="Job Role"
                             className="input-aura"
                             value={filters.jobRoles[0] || ''}
                             onChange={(e) =>
@@ -384,6 +386,7 @@ export default function TeamDirectory() {
                             Level
                           </label>
                           <select
+                            aria-label="Level"
                             className="input-aura"
                             value={filters.levels[0] || ''}
                             onChange={(e) =>
@@ -405,6 +408,7 @@ export default function TeamDirectory() {
                             Status
                           </label>
                           <select
+                            aria-label="Status"
                             className="input-aura"
                             value={filters.statuses[0] || ''}
                             onChange={(e) =>
@@ -443,6 +447,7 @@ export default function TeamDirectory() {
                 <div className="flex items-center gap-2">
                   <span>Sort by:</span>
                   <select
+                    aria-label="Sort by"
                     className="border-0 bg-transparent font-medium text-[var(--text-primary)] focus:ring-0 cursor-pointer"
                     value={filters.sortBy}
                     onChange={(e) => handleFilterChange('sortBy', e.target.value)}

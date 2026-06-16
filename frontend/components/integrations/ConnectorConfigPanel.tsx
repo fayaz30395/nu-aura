@@ -134,6 +134,7 @@ export function ConnectorConfigPanel({
               {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <select
+              aria-label={field.label}
               {...register(field.name as keyof FormData)}
               className={`${baseClasses} ${errorClasses}`}
             >

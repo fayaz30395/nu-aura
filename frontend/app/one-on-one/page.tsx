@@ -689,6 +689,7 @@ export default function OneOnOnePage() {
                             />
                             <div className="flex gap-4">
                               <select
+                                aria-label="Priority"
                                 {...agendaForm.register('priority')}
                                 className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
                               >
@@ -698,6 +699,7 @@ export default function OneOnOnePage() {
                                 <option value="URGENT">Urgent</option>
                               </select>
                               <select
+                                aria-label="Category"
                                 {...agendaForm.register('category')}
                                 className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
                               >
@@ -865,6 +867,7 @@ export default function OneOnOnePage() {
                                   className="text-xs text-danger-500 col-span-2">{actionForm.formState.errors.assigneeId.message}</p>
                               )}
                               <select
+                                aria-label="Assignee role"
                                 {...actionForm.register('assigneeRole')}
                                 className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
                               >
@@ -879,6 +882,7 @@ export default function OneOnOnePage() {
                                 className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
                               <select
+                                aria-label="Priority"
                                 {...actionForm.register('priority')}
                                 className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm"
                               >

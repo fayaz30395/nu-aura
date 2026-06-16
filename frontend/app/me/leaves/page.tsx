@@ -654,6 +654,7 @@ export default function MyLeavesPage() {
                     Leave Type *
                   </label>
                   <select
+                    aria-label="Leave type"
                     {...registerLeave('leaveTypeId')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
                   >

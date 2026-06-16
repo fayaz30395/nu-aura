@@ -258,6 +258,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                       name="visibility"
                       render={({field}) => (
                         <select
+                          aria-label="Post visibility"
                           {...field}
                           className="input-aura text-sm py-1.5"
                         >
@@ -368,6 +369,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                       name="visibility"
                       render={({field}) => (
                         <select
+                          aria-label="Poll visibility"
                           {...field}
                           className="input-aura text-sm py-1.5"
                         >
@@ -487,6 +489,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                       name="visibility"
                       render={({field}) => (
                         <select
+                          aria-label="Praise visibility"
                           {...field}
                           className="input-aura text-sm py-1.5"
                         >

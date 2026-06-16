@@ -333,6 +333,7 @@ export default function ImplicitRolesPage() {
             />
           </div>
           <select
+            aria-label="Filter rules by status"
             value={activeFilter}
             onChange={(e) => setActiveFilter(e.target.value as 'all' | 'active' | 'inactive')}
             className="input-aura"

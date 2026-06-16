@@ -38,6 +38,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <div className="group relative">
           <select
             ref={ref}
+            aria-label={label}
             className={cn(
               // Aura: 10px control radius + inset top shadow, token-driven accent focus.
               // Compositor-safe: only border-color + box-shadow transition.

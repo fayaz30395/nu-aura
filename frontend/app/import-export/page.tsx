@@ -922,6 +922,7 @@ function KekaMigrationSection() {
                   <ArrowRight className="h-4 w-4 text-[var(--text-muted)] flex-shrink-0"/>
                   <div className="flex-1">
                     <select
+                      aria-label="Map to field"
                       value={mapping.targetField}
                       onChange={(e) => updateMapping(index, 'targetField', e.target.value)}
                       className="w-full text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"

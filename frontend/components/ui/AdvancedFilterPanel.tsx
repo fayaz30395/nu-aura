@@ -291,6 +291,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
       case 'select':
         return (
           <select
+            aria-label="Condition value"
             value={condition.value ?? ''}
             onChange={(e) => handleValueChange(e.target.value)}
             className={cn(
