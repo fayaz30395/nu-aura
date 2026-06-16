@@ -117,8 +117,9 @@ public class ImplicitRoleEngine {
         int unchanged = desiredRoles.size() - toAdd.size();
 
         // 6. Insert new roles
+        List<ImplicitUserRole> newRoles = new ArrayList<>();
         for (ImplicitRoleAssignment assignment : toAdd) {
-            ImplicitUserRole newRole = ImplicitUserRole.builder()
+            newRoles.add(ImplicitUserRole.builder()
                     .userId(userId)
                     .roleId(assignment.roleId)
                     .scope(assignment.scope)
@@ -127,20 +128,19 @@ public class ImplicitRoleEngine {
                     .computedAt(tenantTimeService.now(tenantId))
                     .isActive(true)
                     .tenantId(tenantId)
-                    .build();
-            implicitUserRoleRepository.save(newRole);
+                    .build());
             log.debug("Added implicit role {} (scope={}) to user {} via rule {}",
                     assignment.roleId, assignment.scope, userId, assignment.ruleId);
         }
+        if (!newRoles.isEmpty()) implicitUserRoleRepository.saveAll(newRoles);
 
-        // 7. Deactivate removed roles
+        // 7. Deactivate removed roles (managed entities — dirty-check flushes at commit)
         for (ImplicitRoleAssignment assignment : toRemove) {
             for (ImplicitUserRole role : currentRoles) {
                 if (role.getRoleId().equals(assignment.roleId)
                         && role.getScope().equals(assignment.scope)
                         && role.getDerivedFromRuleId().equals(assignment.ruleId)) {
                     role.setIsActive(false);
-                    implicitUserRoleRepository.save(role);
                     log.debug("Deactivated implicit role {} (scope={}) from user {} (rule {})",
                             assignment.roleId, assignment.scope, userId, assignment.ruleId);
                     break;
