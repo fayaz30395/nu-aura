@@ -22,9 +22,10 @@ import {Skeleton} from '@/components/ui/Skeleton';
 import {useBlogPosts, useWikiPages, useWikiSpaces} from '@/lib/hooks/queries/useFluence';
 import {useInfiniteWallPosts} from '@/lib/hooks/queries/useWall';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
+import {MOTION_EASE} from '@/lib/animation';
 
 // Single ease curve for every transition on this page.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 interface ActivityItem {
   id: string;

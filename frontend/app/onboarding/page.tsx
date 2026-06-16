@@ -30,9 +30,10 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {formatDate} from '@/lib/utils/format/date';
 import type {OnboardingProcess} from '@/lib/types/hire/onboarding';
+import {MOTION_EASE} from '@/lib/animation';
 
 // Single ease curve for every transition on this page.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 export default function OnboardingPage() {
   const router = useRouter();

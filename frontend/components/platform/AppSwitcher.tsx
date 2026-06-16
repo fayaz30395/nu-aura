@@ -6,6 +6,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {BookOpen, Check, LayoutGrid, Loader2, Lock, TrendingUp, UserPlus, Users,} from 'lucide-react';
 import {APP_LIST, type NuApp} from '@/lib/config/apps';
 import {useActiveApp} from '@/lib/hooks/useActiveApp';
+import {MOTION_EASE} from '@/lib/animation';
 
 // ─── Icon Mapping ────────────────────────────────────────────────────────────
 
@@ -129,7 +130,7 @@ export default function AppSwitcher() {
             initial={{opacity: 0, y: -4}}
             animate={{opacity: 1, y: 0}}
             exit={{opacity: 0, y: -4}}
-            transition={{duration: 0.15, ease: [0.4, 0, 0.2, 1]}}
+            transition={{duration: 0.15, ease: MOTION_EASE.standard}}
             className="absolute top-full left-0 mt-2 w-[320px] bg-[var(--bg-card)] border border-[var(--border)] rounded-lg overflow-hidden shadow-[var(--sh-dropdown)] z-50"
             role="menu"
             aria-label="App switcher menu"
@@ -168,7 +169,7 @@ export default function AppSwitcher() {
                       transition={{
                         duration: 0.15,
                         delay: index * 0.03,
-                        ease: [0.4, 0, 0.2, 1],
+                        ease: MOTION_EASE.standard,
                       }}
                     >
                       <button

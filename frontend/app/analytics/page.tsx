@@ -35,6 +35,7 @@ import type {
 import {chartColors} from '@/lib/utils/theme-colors';
 import {formatCurrency} from '@/lib/utils';
 import {BarChart3 as BarChart3Icon, PieChart as PieChartIcon} from 'lucide-react';
+import {MOTION_EASE} from '@/lib/animation';
 
 const AnalyticsAttendanceTrendChart = dynamic(
   () => import('./AnalyticsCharts').then((mod) => ({default: mod.AnalyticsAttendanceTrendChart})),
@@ -62,7 +63,7 @@ const AnalyticsHeadcountChart = dynamic(
 );
 
 // Single ease curve for every transition on this page.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 const COLORS = chartColors.palette();
 

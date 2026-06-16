@@ -24,10 +24,11 @@ import {Skeleton} from '@/components/ui/Skeleton';
 import {ResourceManagementApiError} from '@/lib/services/hrms/resource-management.service';
 import {useMyPendingApprovals, useWorkloadDashboard} from '@/lib/hooks/queries/useResources';
 import {CreateAllocationModal} from '@/components/resource-management/CreateAllocationModal';
+import {MOTION_EASE} from '@/lib/animation';
 
 // Single ease curve for every transition on this page. Avoids the cubic-bezier
 // drift that compounds when each motion spec picks its own easing.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function ResourcesPage() {

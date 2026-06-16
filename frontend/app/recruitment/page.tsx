@@ -34,8 +34,9 @@ import {Candidate, CandidateStatus, Interview} from '@/lib/types/hire/recruitmen
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {formatDate as canonicalFormatDate, formatTime as canonicalFormatTime} from '@/lib/utils/format/date';
+import {MOTION_EASE} from '@/lib/animation';
 
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 const RECRUITMENT_ALLOWED_ROLES = ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'RECRUITMENT_ADMIN'];
 

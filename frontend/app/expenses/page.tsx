@@ -53,9 +53,10 @@ import {
   useSubmitExpenseClaim,
 } from '@/lib/hooks/queries';
 import {createLogger} from '@/lib/utils/logger';
+import {MOTION_EASE} from '@/lib/animation';
 
 // Single ease curve for every transition on this page.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 const expenseClaimSchema = z.object({
   claimDate: z.string().min(1, 'Claim date required'),

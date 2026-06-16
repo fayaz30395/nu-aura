@@ -40,10 +40,11 @@ import {
   useEmployeeBalancesForYear,
   useEmployeeLeaveRequests,
 } from '@/lib/hooks/queries/useLeaves';
+import {MOTION_EASE} from '@/lib/animation';
 
 // Single ease curve for every transition on this page. Avoids the cubic-bezier
 // drift that compounds when each motion spec picks its own easing.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 export default function LeavePage() {
   const router = useRouter();

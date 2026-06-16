@@ -2,7 +2,7 @@
 
 import {motion} from 'framer-motion';
 import {cn} from '@/lib/utils';
-import {useReducedMotionSafe} from '@/lib/animation';
+import {MOTION_EASE, useReducedMotionSafe} from '@/lib/animation';
 
 export interface PremiumSpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -38,7 +38,7 @@ const barWidthClass = {
   xl: 'w-2',
 } satisfies Record<NonNullable<PremiumSpinnerProps['size']>, string>;
 
-const EASE = [0.4, 0, 0.2, 1] as const;
+const EASE = MOTION_EASE.standard;
 
 const spinTransition = {
   duration: 1,

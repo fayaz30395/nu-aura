@@ -30,10 +30,11 @@ import {Sparkline} from '@/components/charts/aura';
 import {ReportRequest, ReportType} from '@/lib/services/core/report.service';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useReportDownload} from '@/lib/hooks/queries/useReportDownload';
+import {MOTION_EASE} from '@/lib/animation';
 
 // Single ease curve for every transition on this page. Avoids the cubic-bezier
 // drift that compounds when each motion spec picks its own easing.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 interface ReportConfig {
   id: string;

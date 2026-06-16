@@ -3,6 +3,7 @@
 import React from 'react';
 import {motion} from 'framer-motion';
 import {Clock} from 'lucide-react';
+import {MOTION_EASE} from '@/lib/animation';
 
 interface AppLandingHeroProps {
   icon: React.ReactNode;
@@ -19,7 +20,7 @@ interface AppLandingHeroProps {
 }
 
 // Shared ease curve — matches /resources page motion blueprint.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 /**
  * Reusable landing hero component for app entry pages.

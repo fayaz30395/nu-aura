@@ -39,9 +39,10 @@ import type {
   TeamMemberWithProjects,
 } from '@/lib/types/core/dashboard';
 import {formatDateShort} from '@/lib/utils/format/date';
+import {MOTION_EASE} from '@/lib/animation';
 
 // Single ease curve — matches the resources page blueprint.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 const ManagerAttendanceTrendChart = dynamic(
   () => import('./ManagerCharts').then((mod) => ({default: mod.ManagerAttendanceTrendChart})),

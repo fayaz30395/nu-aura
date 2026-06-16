@@ -59,9 +59,10 @@ import {
   GRACE_PERIOD_MINS,
   STANDARD_WORK_HOURS,
 } from './utils';
+import {MOTION_EASE} from '@/lib/animation';
 
 // Single ease curve, matching the resources blueprint.
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const EASE = MOTION_EASE.outExpo;
 
 // ── Aura heatmap status model ────────────────────────────────────────────────
 // Maps the real AttendanceStatus enum onto the prototype's compact P/R/L/A codes.
