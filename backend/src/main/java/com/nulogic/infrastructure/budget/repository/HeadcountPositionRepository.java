@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,4 +41,8 @@ public interface HeadcountPositionRepository extends JpaRepository<HeadcountPosi
 
     @Query("SELECT p.status, COUNT(p) FROM HeadcountPosition p WHERE p.budget.id = :budgetId GROUP BY p.status")
     List<Object[]> countByStatus(@Param("budgetId") UUID budgetId);
+
+    /** Bulk variant: counts positions by (budgetId, status) for all budgets in one query. */
+    @Query("SELECT p.budget.id, p.status, COUNT(p) FROM HeadcountPosition p WHERE p.budget.id IN :budgetIds GROUP BY p.budget.id, p.status")
+    List<Object[]> countByStatusForBudgets(@Param("budgetIds") Collection<UUID> budgetIds);
 }

@@ -566,14 +566,13 @@ public class BudgetPlanningService {
     }
 
     private Map<HeadcountPosition.PositionStatus, Long> aggregatePositionCounts(List<HeadcountBudget> budgets) {
+        Set<UUID> budgetIds = budgets.stream().map(HeadcountBudget::getId).collect(Collectors.toSet());
         Map<HeadcountPosition.PositionStatus, Long> positionCountsByStatus = new HashMap<>();
-        for (HeadcountBudget budget : budgets) {
-            List<Object[]> counts = positionRepository.countByStatus(budget.getId());
-            for (Object[] count : counts) {
-                HeadcountPosition.PositionStatus status = (HeadcountPosition.PositionStatus) count[0];
-                Long cnt = (Long) count[1];
-                positionCountsByStatus.merge(status, cnt, Long::sum);
-            }
+        if (budgetIds.isEmpty()) return positionCountsByStatus;
+        for (Object[] row : positionRepository.countByStatusForBudgets(budgetIds)) {
+            HeadcountPosition.PositionStatus status = (HeadcountPosition.PositionStatus) row[1];
+            Long cnt = (Long) row[2];
+            positionCountsByStatus.merge(status, cnt, Long::sum);
         }
         return positionCountsByStatus;
     }
