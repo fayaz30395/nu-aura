@@ -324,6 +324,7 @@ public class PulseSurveyService {
         // Save answers
         double totalScore = 0;
         int scoredQuestions = 0;
+        List<PulseSurveyAnswer> answersToSave = new ArrayList<>();
 
         for (SurveySubmissionRequest.AnswerRequest answerReq : request.getAnswers()) {
             PulseSurveyAnswer answer = PulseSurveyAnswer.builder()
@@ -346,7 +347,7 @@ public class PulseSurveyService {
 
             answer.setId(UUID.randomUUID());
             answer.setTenantId(tenantId);
-            answerRepository.save(answer);
+            answersToSave.add(answer);
 
             // Calculate score for numeric questions
             if (answerReq.getNumericValue() != null) {
@@ -354,6 +355,7 @@ public class PulseSurveyService {
                 scoredQuestions++;
             }
         }
+        if (!answersToSave.isEmpty()) answerRepository.saveAll(answersToSave);
 
         // Update response
         response.setStatus(com.nulogic.domain.engagement.PulseSurveyResponse.ResponseStatus.SUBMITTED);
@@ -415,6 +417,7 @@ public class PulseSurveyService {
 
         // Deep clone all active questions
         List<PulseSurveyQuestion> sourceQuestions = questionRepository.findAllBySurveyIdAndIsActiveTrue(surveyId);
+        List<PulseSurveyQuestion> clonedQuestions = new ArrayList<>();
         for (PulseSurveyQuestion sq : sourceQuestions) {
             PulseSurveyQuestion clonedQuestion = PulseSurveyQuestion.builder()
                     .surveyId(clone.getId())
@@ -433,8 +436,9 @@ public class PulseSurveyService {
                     .build();
             clonedQuestion.setId(UUID.randomUUID());
             clonedQuestion.setTenantId(tenantId);
-            questionRepository.save(clonedQuestion);
+            clonedQuestions.add(clonedQuestion);
         }
+        if (!clonedQuestions.isEmpty()) questionRepository.saveAll(clonedQuestions);
 
         clone.setTotalQuestions(sourceQuestions.size());
         clone = surveyRepository.save(clone);

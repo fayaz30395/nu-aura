@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -133,7 +134,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                 .orElse(null);
 
         LocalDate joinDate = process.getStartDate() != null ? process.getStartDate() : tenantTimeService.today(tenantId);
-        int created = 0;
+        List<OnboardingTask> toSave = new ArrayList<>();
         for (com.nulogic.domain.onboarding.OnboardingTaskTemplate tpl : templates) {
             if (tpl.getRoleFilter() != null
                     && (employeeRole == null || !tpl.getRoleFilter().equalsIgnoreCase(employeeRole))) {
@@ -163,9 +164,10 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                             tpl.getDueDaysAfterJoin() != null ? tpl.getDueDaysAfterJoin() : 7))
                     .build();
             task.setTenantId(tenantId);
-            taskRepository.save(task);
-            created++;
+            toSave.add(task);
         }
+        if (!toSave.isEmpty()) taskRepository.saveAll(toSave);
+        int created = toSave.size();
         log.info("Seeded {} role-aware onboarding tasks (employeeRole='{}') for process {}",
                 created, employeeRole, process.getId());
     }
@@ -178,6 +180,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         log.info("Generating {} tasks from template {} for process {}", templateTasks.size(), templateId,
                 process.getId());
 
+        List<OnboardingTask> toSave = new ArrayList<>();
         for (OnboardingTemplateTask tt : templateTasks) {
             OnboardingTask task = OnboardingTask.builder()
                     .processId(process.getId())
@@ -193,8 +196,9 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                             .plusDays(tt.getEstimatedDaysFromStart() != null ? tt.getEstimatedDaysFromStart() : 7))
                     .build();
             task.setTenantId(tenantId);
-            taskRepository.save(task);
+            toSave.add(task);
         }
+        if (!toSave.isEmpty()) taskRepository.saveAll(toSave);
     }
 
     // --- Template Management ---

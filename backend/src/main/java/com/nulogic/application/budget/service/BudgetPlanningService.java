@@ -441,10 +441,8 @@ public class BudgetPlanningService {
         // Deselect other scenarios for the same budget (null-safe)
         if (scenario.getBaseBudget() != null) {
             List<BudgetScenario> budgetScenarios = scenarioRepository.findByBudget(scenario.getBaseBudget().getId());
-            for (BudgetScenario s : budgetScenarios) {
-                s.setIsSelected(false);
-                scenarioRepository.save(s);
-            }
+            budgetScenarios.forEach(s -> s.setIsSelected(false));
+            if (!budgetScenarios.isEmpty()) scenarioRepository.saveAll(budgetScenarios);
         }
 
         // Select this scenario

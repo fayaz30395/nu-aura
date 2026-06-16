@@ -417,8 +417,12 @@ public class LeaveBalanceService {
 
         List<LeaveBalance> allBalances = leaveBalanceRepository.findAllByTenantIdAndYear(tenantId, fromYear);
 
+        // Pre-fetch all leave types once — avoids N per-balance DB lookups in the loop
+        Map<UUID, LeaveType> leaveTypeMap = leaveTypeRepository.findAllByTenantId(tenantId).stream()
+                .collect(Collectors.toMap(LeaveType::getId, lt -> lt));
+
         for (LeaveBalance oldBalance : allBalances) {
-            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(oldBalance.getLeaveTypeId(), tenantId).orElse(null);
+            LeaveType leaveType = leaveTypeMap.get(oldBalance.getLeaveTypeId());
             if (leaveType == null || !Boolean.TRUE.equals(leaveType.getIsCarryForwardAllowed())) {
                 continue;
             }
@@ -435,13 +439,13 @@ public class LeaveBalanceService {
                 carryAmount = leaveType.getMaxCarryForwardDays();
             }
 
-            // Create or update next year's balance with carry-forward as opening
+            // Create or update next year's balance — entity is managed after this call;
+            // mutations below are flushed by JPA dirty-checking at transaction commit.
             LeaveBalance newBalance = getOrCreateBalanceForUpdate(
-                    oldBalance.getEmployeeId(), oldBalance.getLeaveTypeId(), toYear);
+                    oldBalance.getEmployeeId(), oldBalance.getLeaveTypeId(), toYear, leaveTypeMap);
             BigDecimal newOpening = newBalance.getOpeningBalance().add(carryAmount);
             newBalance.setOpeningBalance(newOpening);
             newBalance.calculateAvailable();
-            leaveBalanceRepository.save(newBalance);
 
             log.info("Carried forward {} days of {} for employee {} from {} to {}",
                     carryAmount, leaveType.getLeaveName(), oldBalance.getEmployeeId(), fromYear, toYear);
@@ -461,6 +465,35 @@ public class LeaveBalanceService {
                 .orElseGet(() -> {
                     BigDecimal opening = BigDecimal.ZERO;
                     LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveTypeId, tenantId).orElse(null);
+                    if (leaveType != null && leaveType.getAnnualQuota() != null) {
+                        LeaveType.AccrualType accrualType = leaveType.getAccrualType();
+                        if (accrualType == null
+                                || accrualType == LeaveType.AccrualType.NONE
+                                || accrualType == LeaveType.AccrualType.YEARLY) {
+                            opening = leaveType.getAnnualQuota();
+                        }
+                    }
+
+                    LeaveBalance balance = LeaveBalance.builder()
+                            .employeeId(employeeId)
+                            .leaveTypeId(leaveTypeId)
+                            .year(year)
+                            .openingBalance(opening)
+                            .build();
+                    balance.setTenantId(tenantId);
+                    balance.calculateAvailable();
+                    return leaveBalanceRepository.save(balance);
+                });
+    }
+
+    private LeaveBalance getOrCreateBalanceForUpdate(UUID employeeId, UUID leaveTypeId, int year,
+                                                     Map<UUID, LeaveType> leaveTypeCache) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        return leaveBalanceRepository.findForUpdate(employeeId, leaveTypeId, year, tenantId)
+                .orElseGet(() -> {
+                    BigDecimal opening = BigDecimal.ZERO;
+                    LeaveType leaveType = leaveTypeCache.get(leaveTypeId);
                     if (leaveType != null && leaveType.getAnnualQuota() != null) {
                         LeaveType.AccrualType accrualType = leaveType.getAccrualType();
                         if (accrualType == null
