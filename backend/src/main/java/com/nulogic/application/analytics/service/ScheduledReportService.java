@@ -26,9 +26,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -116,17 +121,17 @@ public class ScheduledReportService {
     @Transactional(readOnly = true)
     public Page<ScheduledReportResponse> getAllScheduledReports(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return scheduledReportRepository.findAllByTenantId(tenantId, pageable)
-                .map(this::enrichResponse);
+        Page<ScheduledReport> page = scheduledReportRepository.findAllByTenantId(tenantId, pageable);
+        ReportNameCaches caches = buildReportNameCaches(page.getContent());
+        return page.map(r -> enrichResponseWithCaches(r, caches));
     }
 
     @Transactional(readOnly = true)
     public List<ScheduledReportResponse> getActiveScheduledReports() {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return scheduledReportRepository.findByTenantIdAndIsActive(tenantId, true)
-                .stream()
-                .map(this::enrichResponse)
-                .collect(Collectors.toList());
+        List<ScheduledReport> reports = scheduledReportRepository.findByTenantIdAndIsActive(tenantId, true);
+        ReportNameCaches caches = buildReportNameCaches(reports);
+        return reports.stream().map(r -> enrichResponseWithCaches(r, caches)).collect(Collectors.toList());
     }
 
     @Transactional
@@ -327,6 +332,68 @@ public class ScheduledReportService {
         }
     }
 
+    private record ReportNameCaches(Map<UUID, String> creatorNames, Map<UUID, String> departmentNames) {}
+
+    private ReportNameCaches buildReportNameCaches(List<ScheduledReport> reports) {
+        if (reports.isEmpty()) return new ReportNameCaches(Collections.emptyMap(), Collections.emptyMap());
+
+        // Collect creator IDs for bulk name fetch
+        Set<UUID> creatorIds = reports.stream()
+                .map(ScheduledReport::getCreatedBy)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<UUID, String> creatorNames = creatorIds.isEmpty() ? Collections.emptyMap() :
+                employeeRepository.findAllById(creatorIds).stream()
+                        .collect(Collectors.toMap(
+                                e -> e.getId(),
+                                e -> e.getFirstName() + " " + e.getLastName()));
+
+        // Pre-parse department IDs from JSON params to bulk fetch department names
+        Set<UUID> deptIds = new HashSet<>();
+        for (ScheduledReport r : reports) {
+            try {
+                Map<String, Object> params = objectMapper.readValue(r.getParameters(),
+                        objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+                Object deptId = params.get("departmentId");
+                if (deptId != null) deptIds.add(UUID.fromString(deptId.toString()));
+            } catch (Exception ignored) {}
+        }
+        Map<UUID, String> departmentNames = deptIds.isEmpty() ? Collections.emptyMap() :
+                departmentRepository.findAllById(deptIds).stream()
+                        .collect(Collectors.toMap(d -> d.getId(), d -> d.getName()));
+
+        return new ReportNameCaches(creatorNames, departmentNames);
+    }
+
+    private ScheduledReportResponse enrichResponseWithCaches(ScheduledReport report, ReportNameCaches caches) {
+        String createdByName = report.getCreatedBy() != null ? caches.creatorNames().get(report.getCreatedBy()) : null;
+        String departmentName = null;
+
+        ScheduledReportResponse response = ScheduledReportResponse.fromEntity(report, createdByName, departmentName);
+        response.setRecipients(deserializeList(report.getRecipients()));
+
+        // BP-L01 FIX: Re-throw parameter parsing failures instead of silently swallowing.
+        try {
+            Map<String, Object> params = objectMapper.readValue(report.getParameters(),
+                    objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));
+            response.setReportType((String) params.get("reportType"));
+            response.setStatus((String) params.get("status"));
+            response.setExportFormat((String) params.get("exportFormat"));
+
+            Object deptId = params.get("departmentId");
+            if (deptId != null) {
+                UUID departmentId = UUID.fromString(deptId.toString());
+                response.setDepartmentId(departmentId);
+                response.setDepartmentName(caches.departmentNames().get(departmentId));
+            }
+        } catch (Exception e) { // Intentional broad catch — per-report error boundary
+            log.error("Error parsing report parameters for report {}: {}", report.getId(), e.getMessage(), e);
+            throw new IllegalStateException("Failed to parse report parameters for report " + report.getId(), e);
+        }
+
+        return response;
+    }
+
     private ScheduledReportResponse enrichResponse(ScheduledReport report) {
         String createdByName = null;
         String departmentName = null;
@@ -340,8 +407,6 @@ public class ScheduledReportService {
         ScheduledReportResponse response = ScheduledReportResponse.fromEntity(report, createdByName, departmentName);
         response.setRecipients(deserializeList(report.getRecipients()));
 
-        // BP-L01 FIX: Re-throw parameter parsing failures instead of silently swallowing.
-        // Invalid parameters indicate corrupt data that callers must handle.
         try {
             Map<String, Object> params = objectMapper.readValue(report.getParameters(),
                     objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class));

@@ -34,8 +34,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -175,21 +181,24 @@ public class OvertimeManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         Page<OvertimeRecord> records = overtimeRecordRepository
                 .findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
-        return records.map(this::mapToResponse);
+        OvertimeNameCaches caches = buildOvertimeNameCaches(records.getContent());
+        return records.map(r -> mapToResponse(r, caches));
     }
 
     @Transactional(readOnly = true)
     public Page<OvertimeRecordResponse> getPendingOvertimeRecords(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Page<OvertimeRecord> records = overtimeRecordRepository.findPendingRecords(tenantId, pageable);
-        return records.map(this::mapToResponse);
+        OvertimeNameCaches caches = buildOvertimeNameCaches(records.getContent());
+        return records.map(r -> mapToResponse(r, caches));
     }
 
     @Transactional(readOnly = true)
     public Page<OvertimeRecordResponse> getAllOvertimeRecords(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Page<OvertimeRecord> records = overtimeRecordRepository.findAllByTenantId(tenantId, pageable);
-        return records.map(this::mapToResponse);
+        OvertimeNameCaches caches = buildOvertimeNameCaches(records.getContent());
+        return records.map(r -> mapToResponse(r, caches));
     }
 
     @Transactional
@@ -312,6 +321,41 @@ public class OvertimeManagementService {
 
     // ==================== RESPONSE MAPPER ====================
 
+    private record OvertimeNameCaches(Map<UUID, String> employeeNames, Map<UUID, String> employeeCodes, Map<UUID, String> shiftNames) {}
+
+    private OvertimeNameCaches buildOvertimeNameCaches(List<OvertimeRecord> records) {
+        if (records.isEmpty()) return new OvertimeNameCaches(Collections.emptyMap(), Collections.emptyMap(), Collections.emptyMap());
+        Set<UUID> empIds = new HashSet<>();
+        Set<UUID> shiftIds = new HashSet<>();
+        for (OvertimeRecord r : records) {
+            if (r.getEmployeeId() != null) empIds.add(r.getEmployeeId());
+            if (r.getApprovedBy() != null) empIds.add(r.getApprovedBy());
+            if (r.getRejectedBy() != null) empIds.add(r.getRejectedBy());
+            if (r.getShiftId() != null) shiftIds.add(r.getShiftId());
+        }
+        Map<UUID, String> employeeNames = new java.util.HashMap<>();
+        Map<UUID, String> employeeCodes = new java.util.HashMap<>();
+        if (!empIds.isEmpty()) {
+            employeeRepository.findAllById(empIds).forEach(e -> {
+                employeeNames.put(e.getId(), e.getFullName());
+                employeeCodes.put(e.getId(), e.getEmployeeCode());
+            });
+        }
+        Map<UUID, String> shiftNames = shiftIds.isEmpty() ? Collections.emptyMap() :
+                shiftRepository.findAllById(shiftIds).stream()
+                        .collect(Collectors.toMap(Shift::getId, Shift::getShiftName));
+        return new OvertimeNameCaches(employeeNames, employeeCodes, shiftNames);
+    }
+
+    private OvertimeRecordResponse mapToResponse(OvertimeRecord record, OvertimeNameCaches caches) {
+        return buildOvertimeResponse(record,
+                caches.employeeNames().get(record.getEmployeeId()),
+                caches.employeeCodes().get(record.getEmployeeId()),
+                record.getShiftId() != null ? caches.shiftNames().get(record.getShiftId()) : null,
+                record.getApprovedBy() != null ? caches.employeeNames().get(record.getApprovedBy()) : null,
+                record.getRejectedBy() != null ? caches.employeeNames().get(record.getRejectedBy()) : null);
+    }
+
     private OvertimeRecordResponse mapToResponse(OvertimeRecord record) {
         Employee employee = employeeRepository.findById(record.getEmployeeId()).orElse(null);
         Shift shift = record.getShiftId() != null ? shiftRepository.findById(record.getShiftId()).orElse(null) : null;
@@ -321,15 +365,25 @@ public class OvertimeManagementService {
         Employee rejector = record.getRejectedBy() != null
                 ? employeeRepository.findById(record.getRejectedBy()).orElse(null)
                 : null;
+        return buildOvertimeResponse(record,
+                employee != null ? employee.getFullName() : null,
+                employee != null ? employee.getEmployeeCode() : null,
+                shift != null ? shift.getShiftName() : null,
+                approver != null ? approver.getFullName() : null,
+                rejector != null ? rejector.getFullName() : null);
+    }
 
+    private OvertimeRecordResponse buildOvertimeResponse(OvertimeRecord record,
+            String employeeName, String employeeCode, String shiftName,
+            String approverName, String rejectorName) {
         return OvertimeRecordResponse.builder()
                 .id(record.getId())
                 .employeeId(record.getEmployeeId())
-                .employeeName(employee != null ? employee.getFullName() : null)
-                .employeeCode(employee != null ? employee.getEmployeeCode() : null)
+                .employeeName(employeeName)
+                .employeeCode(employeeCode)
                 .overtimeDate(record.getOvertimeDate())
                 .shiftId(record.getShiftId())
-                .shiftName(shift != null ? shift.getShiftName() : null)
+                .shiftName(shiftName)
                 .regularHours(record.getRegularHours())
                 .actualHours(record.getActualHours())
                 .overtimeHours(record.getOvertimeHours())
@@ -339,10 +393,10 @@ public class OvertimeManagementService {
                 .status(record.getStatus().name())
                 .isPreApproved(record.getIsPreApproved())
                 .approvedBy(record.getApprovedBy())
-                .approverName(approver != null ? approver.getFullName() : null)
+                .approverName(approverName)
                 .approvedAt(record.getApprovedAt())
                 .rejectedBy(record.getRejectedBy())
-                .rejectorName(rejector != null ? rejector.getFullName() : null)
+                .rejectorName(rejectorName)
                 .rejectedAt(record.getRejectedAt())
                 .rejectionReason(record.getRejectionReason())
                 .payrollRunId(record.getPayrollRunId())
