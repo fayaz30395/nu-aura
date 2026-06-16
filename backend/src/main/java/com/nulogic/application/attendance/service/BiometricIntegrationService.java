@@ -320,14 +320,13 @@ public class BiometricIntegrationService {
                 .findByProcessedStatusInAndTenantId(
                         List.of(BiometricPunchLog.ProcessedStatus.FAILED), tenantId);
 
-        int reprocessed = 0;
         for (BiometricPunchLog punch : failedLogs) {
             punch.setProcessedStatus(BiometricPunchLog.ProcessedStatus.PENDING);
             punch.setErrorMessage(null);
-            punchLogRepository.save(punch);
-            reprocessed++;
         }
+        if (!failedLogs.isEmpty()) punchLogRepository.saveAll(failedLogs);
 
+        int reprocessed = failedLogs.size();
         log.info("Reset {} failed punches to PENDING for reprocessing in tenant {}", reprocessed, tenantId);
         return reprocessed;
     }
