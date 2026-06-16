@@ -695,7 +695,6 @@ public class AttendanceRecordService {
                 .findAllOpenEntriesByAttendanceRecordId(attendanceRecordId);
         for (AttendanceTimeEntry entry : openEntries) {
             entry.checkOut(checkOutTime, source, location, ip);
-            timeEntryRepository.save(entry);
         }
         if (!openEntries.isEmpty()) {
             log.debug("Closed {} open time entries for record {}", openEntries.size(), attendanceRecordId);

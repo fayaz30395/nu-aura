@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Service for managing feature flags.
@@ -143,11 +144,12 @@ public class FeatureFlagService {
                 createDefaultFlag(tenantId, createdBy, FeatureFlag.ENABLE_PAYMENTS, "Payments", "Enable payment gateway integration (Razorpay, Stripe, etc.)", "HRMS", false)
         );
 
-        for (FeatureFlag flag : defaultFlags) {
-            if (!featureFlagRepository.existsByTenantIdAndFeatureKey(tenantId, flag.getFeatureKey())) {
-                featureFlagRepository.save(flag);
-            }
-        }
+        List<String> allKeys = defaultFlags.stream().map(FeatureFlag::getFeatureKey).collect(Collectors.toList());
+        Set<String> existingKeys = featureFlagRepository.findByTenantIdAndFeatureKeyIn(tenantId, allKeys).stream()
+                .map(FeatureFlag::getFeatureKey).collect(Collectors.toSet());
+        List<FeatureFlag> toCreate = defaultFlags.stream()
+                .filter(f -> !existingKeys.contains(f.getFeatureKey())).collect(Collectors.toList());
+        if (!toCreate.isEmpty()) featureFlagRepository.saveAll(toCreate);
 
         log.info("Initialized {} default feature flags for tenant {}", defaultFlags.size(), tenantId);
     }
