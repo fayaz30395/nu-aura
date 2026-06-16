@@ -14,6 +14,9 @@ import com.nulogic.domain.payroll.SalaryStructure;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.infrastructure.compensation.repository.SalaryRevisionRepository;
 import com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,6 +26,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -50,6 +54,8 @@ public class CandidateHiredEventListener {
     private final SalaryStructureRepository salaryStructureRepository;
     private final SalaryRevisionRepository salaryRevisionRepository;
     private final TenantTimeService tenantTimeService;
+    private final TenantRepository tenantRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * Handles the candidate hired event by:
@@ -212,9 +218,24 @@ public class CandidateHiredEventListener {
      * here. Returns "INR" on any error to avoid blocking the after-commit listener.</p>
      */
     private String resolveTenantCurrency(UUID tenantId) {
-        // TODO: read currency from Tenant.settings (JSON) once the schema is in place.
-        // Hardcoded INR is safer than the previous hardcoded "USD" for the IN-first tenant base.
-        return "INR";
+        try {
+            return tenantRepository.findById(tenantId)
+                    .map(t -> {
+                        String settings = t.getSettings();
+                        if (settings == null || settings.isBlank()) return null;
+                        try {
+                            Map<String, Object> map = objectMapper.readValue(settings, new TypeReference<>() {});
+                            Object val = map.get("currency");
+                            if (val instanceof String s && !s.isBlank()) return s;
+                        } catch (Exception ignored) {}
+                        return null;
+                    })
+                    .filter(c -> c != null)
+                    .orElse("INR");
+        } catch (Exception e) {
+            log.warn("Failed to resolve tenant currency for {}, defaulting to INR: {}", tenantId, e.getMessage());
+            return "INR";
+        }
     }
 
     /**
