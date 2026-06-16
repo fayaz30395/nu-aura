@@ -49,7 +49,10 @@ backend:
       cpu: "500m"
 
   # JVM tuning — passed via JAVA_OPTS env.
-  javaOpts: "-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
+  # Wave-10 P2-5: -Xmx was 1g against a 1Gi pod limit, leaving 0 bytes for off-heap
+  # (Netty buffers, Hibernate L2, metaspace). Dropped to 768m to give ~256m headroom;
+  # prevents OOMKills under GC pressure. Bump pod limit to 1.5Gi to restore 1g heap.
+  javaOpts: "-Xms512m -Xmx768m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
 
   # Disruption budget — guarantees at least N pods stay Ready during voluntary
   # disruptions (node drains, upgrades, autoscaler evictions). wave-3 #1 (P0).
