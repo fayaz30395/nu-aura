@@ -216,7 +216,7 @@ function FluenceDashboardPageContent() {
                     <motion.button
                       key={page.id}
                       onClick={() => router.push(`/fluence/wiki/${page.id}`)}
-                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                      className="block w-full text-left p-2.5 rounded-[var(--r-md)] hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                       whileHover={{x: 4}}
                     >
                       <p
@@ -263,7 +263,7 @@ function FluenceDashboardPageContent() {
                     <motion.button
                       key={post.id}
                       onClick={() => router.push(`/fluence/blogs/${post.id}`)}
-                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                      className="block w-full text-left p-2.5 rounded-[var(--r-md)] hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                       whileHover={{x: 4}}
                     >
                       <p
@@ -309,7 +309,7 @@ function FluenceDashboardPageContent() {
                     <motion.button
                       key={template.id}
                       onClick={() => router.push(`/fluence/templates/${template.id}`)}
-                      className="block w-full text-left p-2.5 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                      className="block w-full text-left p-2.5 rounded-[var(--r-md)] hover:bg-[var(--bg-secondary)] transition-colors group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
                       whileHover={{x: 4}}
                     >
                       <p
@@ -380,7 +380,7 @@ function StatCard({icon: IconComponent, label, value, color}: StatCardProps) {
             {value}
           </p>
         </div>
-        <div className={`p-4 rounded-lg ${colorMap[color]}`}>
+        <div className={`p-4 rounded-[var(--r-md)] ${colorMap[color]}`}>
           <IconComponent className={`w-6 h-6 ${textColorMap[color]}`} aria-hidden="true"/>
         </div>
       </CardContent>

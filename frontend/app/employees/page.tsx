@@ -39,6 +39,7 @@ import {formatMonthYear} from '@/lib/utils/format/date';
 import {EmployeeAvatar} from './_components/EmployeeAvatar';
 import {ProfileSheet} from './_components/ProfileSheet';
 import listStyles from './_components/employees-list.module.css';
+import {useToast} from '@/components/ui/Toast';
 
 /** Display "Month YYYY" from a YYYY-MM-DD string (mono-rendered in the Joined column). */
 function joinedShort(iso?: string): string {
@@ -190,6 +191,7 @@ export default function EmployeesPage() {
       : 'Failed to load employees'
     : null;
 
+  const {error: toastError} = useToast();
   const createEmployeeMutation = useCreateEmployee();
   const deleteEmployeeMutation = useDeleteEmployee();
 
@@ -307,8 +309,9 @@ export default function EmployeesPage() {
       reset();
       setCurrentTab('basic');
     } catch (err: unknown) {
-      // Error handling is done by the mutation
       log.error('Error creating employee:', err);
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toastError(msg || 'Failed to create employee. Please try again.');
     }
   };
 
@@ -365,6 +368,8 @@ export default function EmployeesPage() {
       setEmployeeToDelete(null);
     } catch (err: unknown) {
       log.error('Error deleting employee:', err);
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      toastError(msg || 'Failed to delete employee. Please try again.');
       setShowDeleteModal(false);
     }
   };
