@@ -341,28 +341,36 @@ public class ReviewCycleService {
                     .count());
         }
 
-        List<CalibrationResponse.CalibrationEmployee> employees = reviews.stream()
+        // Deduplicate reviews per employee (prefer first / SELF type).
+        List<PerformanceReview> distinctReviews = new ArrayList<>(reviews.stream()
                 .collect(Collectors.toMap(
                         PerformanceReview::getEmployeeId,
                         r -> r,
                         (existing, replacement) -> existing // keep first (prefer SELF type)
                 ))
-                .values()
-                .stream()
-                .map(r -> {
-                    String empName = employeeRepository.findById(r.getEmployeeId())
-                            .map(Employee::getFullName)
-                            .orElse("Unknown");
-                    return CalibrationResponse.CalibrationEmployee.builder()
-                            .employeeId(r.getEmployeeId())
-                            .reviewId(r.getId())
-                            .employeeName(empName)
-                            .selfRating(r.getSelfRating())
-                            .managerRating(r.getManagerRating())
-                            .finalRating(r.getFinalRating())
-                            .editable(editable)
-                            .build();
-                })
+                .values());
+
+        // P1: batch-resolve employee names in one query instead of a findById per review.
+        Set<UUID> employeeIds = distinctReviews.stream()
+                .map(PerformanceReview::getEmployeeId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Map<UUID, String> employeeNames = new HashMap<>();
+        if (!employeeIds.isEmpty()) {
+            employeeRepository.findAllById(employeeIds)
+                    .forEach(e -> employeeNames.put(e.getId(), e.getFullName()));
+        }
+
+        List<CalibrationResponse.CalibrationEmployee> employees = distinctReviews.stream()
+                .map(r -> CalibrationResponse.CalibrationEmployee.builder()
+                        .employeeId(r.getEmployeeId())
+                        .reviewId(r.getId())
+                        .employeeName(employeeNames.getOrDefault(r.getEmployeeId(), "Unknown"))
+                        .selfRating(r.getSelfRating())
+                        .managerRating(r.getManagerRating())
+                        .finalRating(r.getFinalRating())
+                        .editable(editable)
+                        .build())
                 .collect(Collectors.toList());
 
         return CalibrationResponse.builder()

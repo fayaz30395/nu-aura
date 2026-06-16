@@ -26,7 +26,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -178,7 +182,7 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Page<PerformanceReview> reviews = reviewRepository.findAllByTenantId(tenantId, pageable);
-        return reviews.map(this::mapToResponse);
+        return mapReviewPage(reviews);
     }
 
     @Transactional(readOnly = true)
@@ -186,16 +190,13 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         List<PerformanceReview> reviews = reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId);
-        return reviews.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return mapReviewList(reviews);
     }
 
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getEmployeeReviewsPaged(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
-                .map(this::mapToResponse);
+        return mapReviewPage(reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable));
     }
 
     @Transactional(readOnly = true)
@@ -203,16 +204,13 @@ public class PerformanceReviewService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         List<PerformanceReview> reviews = reviewRepository.findPendingReviews(tenantId, reviewerId);
-        return reviews.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return mapReviewList(reviews);
     }
 
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getPendingReviewsPaged(UUID reviewerId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return reviewRepository.findPendingReviews(tenantId, reviewerId, pageable)
-                .map(this::mapToResponse);
+        return mapReviewPage(reviewRepository.findPendingReviews(tenantId, reviewerId, pageable));
     }
 
     @Transactional
@@ -341,7 +339,54 @@ public class PerformanceReviewService {
         log.info("Deleted competency {} for tenant {}", competencyId, tenantId);
     }
 
+    /**
+     * P1: Batch-maps a page of reviews. Employee/reviewer names and review-cycle
+     * names are resolved once via two bulk findAllById queries instead of three
+     * findById calls per review row.
+     */
+    private Page<ReviewResponse> mapReviewPage(Page<PerformanceReview> reviews) {
+        ReviewNameCaches caches = buildReviewCaches(reviews.getContent());
+        return reviews.map(review -> mapToResponse(review, caches));
+    }
+
+    private List<ReviewResponse> mapReviewList(List<PerformanceReview> reviews) {
+        ReviewNameCaches caches = buildReviewCaches(reviews);
+        return reviews.stream()
+                .map(review -> mapToResponse(review, caches))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Collects employee (subject + reviewer) and review-cycle ids across the
+     * batch and resolves their display names in two bulk queries.
+     */
+    private ReviewNameCaches buildReviewCaches(List<PerformanceReview> reviews) {
+        Set<UUID> employeeIds = new HashSet<>();
+        Set<UUID> cycleIds = new HashSet<>();
+        for (PerformanceReview review : reviews) {
+            if (review.getEmployeeId() != null) employeeIds.add(review.getEmployeeId());
+            if (review.getReviewerId() != null) employeeIds.add(review.getReviewerId());
+            if (review.getReviewCycleId() != null) cycleIds.add(review.getReviewCycleId());
+        }
+
+        Map<UUID, String> employeeNames = new HashMap<>();
+        if (!employeeIds.isEmpty()) {
+            employeeRepository.findAllById(employeeIds)
+                    .forEach(e -> employeeNames.put(e.getId(), e.getFullName()));
+        }
+        Map<UUID, String> cycleNames = new HashMap<>();
+        if (!cycleIds.isEmpty()) {
+            reviewCycleRepository.findAllById(cycleIds)
+                    .forEach(c -> cycleNames.put(c.getId(), c.getCycleName()));
+        }
+        return new ReviewNameCaches(employeeNames, cycleNames);
+    }
+
     private ReviewResponse mapToResponse(PerformanceReview review) {
+        return mapToResponse(review, buildReviewCaches(List.of(review)));
+    }
+
+    private ReviewResponse mapToResponse(PerformanceReview review, ReviewNameCaches caches) {
         ReviewResponse response = ReviewResponse.builder()
                 .id(review.getId())
                 .employeeId(review.getEmployeeId())
@@ -364,25 +409,21 @@ public class PerformanceReviewService {
                 .updatedAt(review.getUpdatedAt())
                 .build();
 
-        // Enrich with employee name
         if (review.getEmployeeId() != null) {
-            employeeRepository.findById(review.getEmployeeId())
-                    .ifPresent(employee -> response.setEmployeeName(employee.getFullName()));
+            response.setEmployeeName(caches.employeeNames().get(review.getEmployeeId()));
         }
-
-        // Enrich with reviewer name
         if (review.getReviewerId() != null) {
-            employeeRepository.findById(review.getReviewerId())
-                    .ifPresent(reviewer -> response.setReviewerName(reviewer.getFullName()));
+            response.setReviewerName(caches.employeeNames().get(review.getReviewerId()));
         }
-
-        // Enrich with review cycle name
         if (review.getReviewCycleId() != null) {
-            reviewCycleRepository.findById(review.getReviewCycleId())
-                    .ifPresent(cycle -> response.setReviewCycleName(cycle.getCycleName()));
+            response.setReviewCycleName(caches.cycleNames().get(review.getReviewCycleId()));
         }
 
         return response;
+    }
+
+    /** Pre-resolved display-name caches shared across a batch of review mappings. */
+    private record ReviewNameCaches(Map<UUID, String> employeeNames, Map<UUID, String> cycleNames) {
     }
 
     private CompetencyResponse mapCompetencyToResponse(ReviewCompetency competency) {
