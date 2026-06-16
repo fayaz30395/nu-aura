@@ -144,7 +144,7 @@ export default function PayrollPage() {
         {/* Current-run banner */}
         {isLoading ? (
           <BannerSkeleton />
-        ) : latest ? (
+        ) : error ? null : latest ? (
           <Reveal>
             <CurrentRunBanner run={latest} />
           </Reveal>

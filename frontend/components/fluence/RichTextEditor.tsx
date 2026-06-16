@@ -571,20 +571,20 @@ export default function RichTextEditor({
           <Menu.Dropdown>
             <div className="p-2">
               <ColorPicker
-                value={editor.getAttributes('textStyle').color || '#000000'}
+                value={editor.getAttributes('textStyle').color || ''}
                 onChange={(color) => {
                   editor.chain().focus().setColor(color).run();
                 }}
                 size="xs"
                 swatches={[
-                  '#000000',
-                  '#ffffff',
+                  '#0e1225',
+                  '#eef1f9',
                   '#ff0000',
-                  '#00ff00',
-                  '#0000ff',
+                  '#00bb00',
+                  '#2952A3',
                   '#ffff00',
                   '#ff00ff',
-                  '#00ffff',
+                  '#00cccc',
                 ]}
               />
             </div>

@@ -532,6 +532,8 @@ export default function EmployeesPage() {
 
           {loading ? (
             <SkeletonTable rows={8} columns={7}/>
+          ) : error && visibleEmployees.length === 0 ? (
+            null
           ) : visibleEmployees.length === 0 ? (
             <EmptyState
               icon={<Users className="h-12 w-12"/>}
