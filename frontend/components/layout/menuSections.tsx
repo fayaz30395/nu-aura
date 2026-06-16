@@ -960,6 +960,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           requiredPermission: Permissions.PROJECT_VIEW
         },
         {
+          id: 'psa-projects',
+          label: 'PSA Projects',
+          icon: icon.receipt,
+          href: '/projects/psa',
+          requiredPermission: Permissions.PROJECT_VIEW,
+        },
+        {
           id: 'resources',
           label: 'Resources',
           icon: icon.users,
