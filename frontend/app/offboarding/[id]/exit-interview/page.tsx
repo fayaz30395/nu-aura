@@ -37,6 +37,7 @@ import {InterviewMode, InterviewStatus, LeavingReason,} from '@/lib/types/hrms/e
 import {apiClient} from '@/lib/api/client';
 import {useQuery} from '@tanstack/react-query';
 import {formatDate} from '@/lib/utils';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 const scheduleSchema = z.object({
   scheduledDate: z.string().min(1, 'Scheduled date is required'),
@@ -145,6 +146,8 @@ export default function ExitInterviewPage() {
       isConfidential: true,
     },
   });
+
+  useUnsavedChanges(scheduleForm.formState.isDirty || feedbackForm.formState.isDirty);
 
   const handleSchedule = async (data: ScheduleFormData) => {
     try {

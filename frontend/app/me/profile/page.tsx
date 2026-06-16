@@ -32,6 +32,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {useMyEmployee, useUpdateMyProfile} from '@/lib/hooks/queries';
 import {getInitials} from '@/lib/utils';
 import {createLogger} from '@/lib/utils/logger';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 import {employmentChangeRequestService} from '@/lib/services/hrms/employment-change-request.service';
 import {isAxiosError} from '@/lib/utils/type-guards';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
@@ -97,6 +98,8 @@ export default function MyProfilePage() {
       reason: '',
     },
   });
+
+  useUnsavedChanges(profileForm.formState.isDirty || bankChangeForm.formState.isDirty);
 
   // React Query hooks — use /employees/me (no ID needed)
   const {data: employee, isLoading, fetchStatus} = useMyEmployee(!!user);

@@ -40,6 +40,7 @@ import {
   Trash2,
   XCircle,
 } from 'lucide-react';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -233,6 +234,8 @@ export default function WorkflowDetailPage() {
       ],
     },
   });
+
+  useUnsavedChanges(form.formState.isDirty);
 
   const {fields, append, remove, move} = useFieldArray({
     control: form.control,
