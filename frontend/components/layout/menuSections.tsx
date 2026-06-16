@@ -225,6 +225,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         {id: 'leaves', label: 'My Leaves', icon: icon.palmtree, href: '/me/leaves'},
         {id: 'my-documents', label: 'My Documents', icon: icon.fileText, href: '/me/documents'},
         {id: 'my-skills', label: 'My Skills', icon: icon.zap, href: '/me/skills'},
+        {id: 'my-assets', label: 'My Assets', icon: icon.package, href: '/me/assets'},
       ],
     },
     // ─── 3. PEOPLE & ORGANIZATION ───────────────────────────────────
