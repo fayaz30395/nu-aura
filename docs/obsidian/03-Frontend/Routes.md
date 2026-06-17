@@ -177,6 +177,8 @@ graph TD
 
 ## Related Links
 
+- [[Route-Map-Full]] — exhaustive enumeration of all 283 routes
+- [[Feature-Traceability]] — per-feature route → controller → service → tables map
 - [[Pages]] — layout nesting, AuthGuard, server/client split
 - [[Components]] — component inventory and dependency map
 - [[APIs]] · [[Services]] — backend endpoints these routes consume

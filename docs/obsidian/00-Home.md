@@ -25,9 +25,9 @@ NU-AURA bundles **four sub-apps** on **one shared platform**:
 
 ## Platform at a glance (verified 2026-06-16)
 
-- **Backend:** Java 21, Spring Boot 3.5.14, DDD layering (`api → application → domain → infrastructure + common`) — **184** controllers, **257** services, **288** repositories, **25** scheduled jobs (24 ShedLock-guarded), **7** Kafka consumers. See [[System-Overview]], [[APIs]], [[Services]], [[Scheduled-Jobs]].
-- **Frontend:** Next.js 16 App Router, React 19, TypeScript strict, Mantine 9, Tailwind, TanStack Query v5 — **283** pages, **170** components, **93** generated query-hook surfaces. See [[Routes]], [[Pages]], [[Components]].
-- **Data:** PostgreSQL (Neon dev / PG 16 prod), **~331** tables, Flyway **V0–V294** (286 files), multi-tenant via Row-Level Security. See [[Schema]], [[ERD]], [[Migrations]].
+- **Backend:** Java 21, Spring Boot 3.5.14, DDD layering (`api → application → domain → infrastructure + common`) — **180** controllers (live `grep` reads 184; −4 = 1 disabled + 2 `@RestControllerAdvice` + 1 annotation source — full 1:1 list in [[Controller-Index]]), **257** services, **288** repositories, **1,711** HTTP endpoints ([[Endpoint-Index]]), **25** scheduled jobs (24 ShedLock-guarded), **7** Kafka consumers. See [[System-Overview]], [[APIs]], [[Services]], [[Scheduled-Jobs]].
+- **Frontend:** Next.js 16 App Router, React 19, TypeScript strict, Mantine 9, Tailwind, TanStack Query v5 — **283** pages (every one enumerated in [[Route-Map-Full]]), **170** components, **93** generated query-hook surfaces. See [[Routes]], [[Pages]], [[Components]].
+- **Data:** PostgreSQL (Neon dev / PG 16 prod), **330** distinct tables (every one enumerated in [[Table-Index]]; the prior "~331" counted one SQL-comment false positive), Flyway **V0–V294** (286 files), multi-tenant via Row-Level Security. See [[Schema]], [[ERD]], [[Migrations]].
 - **Platform substrate:** Redis 7 (cache tiers, rate limiting, locks, idempotency, WS relay), Kafka, Elasticsearch 8.11, Google Drive storage, Google OAuth. See [[Code-Patterns]].
 - **Access control:** **26 roles** (19 explicit + 7 implicit), enforced by a custom `@RequiresPermission` (190 sites) interceptor/aspect. See [[Roles]], [[Permissions]], [[RBAC-Matrix]].
 
@@ -60,15 +60,20 @@ Every note in the vault, grouped by numbered section.
 
 ### 03 — Frontend
 - [[Routes]] · [[Pages]] · [[Components]]
+- [[Route-Map-Full]] — **complete enumeration** of all 283 routes (exhaustive companion to [[Routes]])
 
 ### 04 — Backend
 - [[APIs]] · [[Services]] · [[Middleware]] · [[Scheduled-Jobs]]
+- [[Controller-Index]] — **complete enumeration** of all 180 controllers (1:1 companion to [[APIs]])
+- [[Endpoint-Index]] — **per-method hub**: all **1,711** endpoints, split into [[Endpoints-HRMS]] · [[Endpoints-Platform]] · [[Endpoints-Hire]] · [[Endpoints-Grow]] · [[Endpoints-Fluence]]
 
 ### 05 — RBAC
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] · [[Permission-Ownership]]
 
 ### 06 — Database
 - [[Schema]] · [[ERD]] · [[Migrations]]
+- [[Table-Index]] — **complete enumeration** of all 330 tables, clustered (exhaustive companion to [[Schema]])
+- [[Data-Dictionary]] — **per-column detail** for 90 core tables + complete **347-edge foreign-key map**
 
 ### 07 — DevOps
 - [[Deployment]] · [[CI-CD]] · [[Local-Setup]]
@@ -78,6 +83,7 @@ Every note in the vault, grouped by numbered section.
 
 ### 09 — Testing
 - [[QA-Strategy]] · [[Test-Coverage]]
+- [[Test-Catalog]] — **suite enumeration**: 308 backend (74 integration) + 90 Vitest + 117 Playwright; how to run; coverage posture
 
 ### 10 — Runbooks
 - [[Production-Support]] · [[Incident-Response]]
@@ -87,6 +93,7 @@ Every note in the vault, grouped by numbered section.
 
 ### 12 — Knowledge Graph
 - [[Module-Relationships]] · [[Data-Flows]] · [[System-Flows]]
+- [[Feature-Traceability]] — **end-to-end map**: per feature, route → page → controller → service → tables → permission
 
 ### Meta
 - [[Documentation-Coverage-Report]] — what the vault covers, metrics it was built from, discrepancies, and gaps

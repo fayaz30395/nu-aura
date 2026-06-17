@@ -26,7 +26,27 @@
       "Bash(rm -rf qa-reports docs/validation)",
       "Bash(rm -rf docs/qa/*)",
       "Bash(rm -f docs/architecture/NU_AURA_PLATFORM_ARCHITECTURE.docx)",
-      "Bash(rm -rf docs/screenshots/qa-sweep-2026-05-02)"
+      "Bash(rm -rf docs/screenshots/qa-sweep-2026-05-02)",
+      "Bash(chmod +x /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs)",
+      "Bash(node /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs pre-bash)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(node /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs pre-edit)",
+      "Bash(node /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs post-edit)",
+      "Bash(node /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs route)",
+      "Bash(node /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs session-restore)",
+      "Bash(node /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs post-task)",
+      "Bash(node /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs notify)",
+      "Bash(node /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/.claude/helpers/hook-handler.cjs badcmd)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"EXIT_TSC_GREP=$?\")",
+      "Bash(git check-ignore *)",
+      "Bash(git config *)",
+      "Bash(git commit -m 'chore\\(docs\\): track project-wide Obsidian vault in git; retire docs/ vault *)",
+      "Bash(git push *)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "ruflo"
+  ]
 }

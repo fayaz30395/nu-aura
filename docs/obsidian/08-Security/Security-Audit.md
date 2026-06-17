@@ -130,6 +130,7 @@ flowchart TB
 | **Spring Boot 3.4.x CVEs** | ✅ Closed | `pom.xml` → **3.5.14**; container CVEs remediated |
 | **Dockerfile JDK/Node drift** | ✅ Closed | Backend pinned Temurin 21; Dependabot bumps to 25/26 correctly fail PR-validation |
 | virus-scan fail-open / `__Host-` cookie / 17 missing `@Valid` | ✅ Closed (prod) | `application-prod.yml`; H-2 remediated (456/458) |
+| **Plaintext PII columns** (PF `uan_number`/`pf_number`, ESI numbers, candidate `email`/`phone`/`resume_url`, `contract_signatures.signer_email`) | ⚠️ Open — review | Surfaced by [[Data-Dictionary]] (2026-06-17): field-level `EncryptedStringConverter` covers 10 entities but these PII columns are stored plaintext — assess whether they warrant encryption-at-rest like the bank/tax fields on `employees` |
 
 ## Residual risks & deploy-gate checklist
 

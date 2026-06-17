@@ -124,7 +124,7 @@ Release/QA evidence lives in `qa-reports/`:
 
 ## Related Links
 
-[[00-Home]] · [[QA-Strategy]] · [[CI-CD]] · [[Deployment]] · [[System-Overview]] ·
+[[00-Home]] · [[Test-Catalog]] — suite enumeration + how-to-run · [[QA-Strategy]] · [[CI-CD]] · [[Deployment]] · [[System-Overview]] ·
 [[APIs]] · [[Services]] · [[Middleware]] · [[Components]] · [[Pages]] · [[Security-Audit]] ·
 [[RBAC-Matrix]] · [[Production-Support]] · [[Nu-HRMS]] · [[Nu-Hire]] · [[Nu-Grow]] ·
 [[Nu-Fluence]]

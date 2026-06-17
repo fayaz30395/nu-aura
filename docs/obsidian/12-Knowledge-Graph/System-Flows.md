@@ -135,7 +135,7 @@ and `RedisWebSocketRelay` ([[Services]] §3.2, §3.7);
 
 - [[System-Overview]] · [[C4-Context]] · [[C4-Container]] · [[C4-Component]]
 - [[Nu-HRMS]] · [[Nu-Hire]] · [[Nu-Grow]] · [[Nu-Fluence]] · [[Shared-Platform]]
-- [[Module-Relationships]] · [[Data-Flows]] · [[Services]] · [[APIs]] · [[Pages]] · [[Routes]]
+- [[Module-Relationships]] · [[Feature-Traceability]] · [[Data-Flows]] · [[Services]] · [[APIs]] · [[Pages]] · [[Routes]]
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]]
 - [[ADR-001]] · [[ADR-002]] · [[ADR-003]] · [[ADR-005]] · [[Architecture-Decisions]]
 - Source of truth: [[Services]] §2–3, [[Data-Flows]]

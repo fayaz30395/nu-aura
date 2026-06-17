@@ -43,6 +43,11 @@ enough to locate any endpoint's owning controller without reading all 184 files.
   > cited ~150 documented; the delta reflects controllers added since those docs and the
   > catalog below being a curated-but-near-complete cut. This page uses the live `grep`
   > count of 184.
+  >
+  > **Reconciliation (2026-06-17):** that raw `grep` over-counts — the true number of
+  > live `@RestController` classes is **180** (the 184 includes 1 `.disabled` file + 2
+  > `@RestControllerAdvice` + 1 annotation source). For the exhaustive, reconciled 1:1
+  > list of every controller see [[Controller-Index]].
 
 ## Dependencies
 
@@ -498,6 +503,7 @@ A dedicated mobile surface mirrors core flows under `/api/v1/mobile/*`:
 ## Related Links
 
 - [[00-Home]] · [[System-Overview]] · [[C4-Container]] · [[C4-Component]]
+- [[Controller-Index]] — exhaustive 1:1 list of all 180 controllers · [[Endpoint-Index]] — all 1,711 endpoints per-method · [[Feature-Traceability]] — end-to-end feature slices
 - [[Services]] — service layer + dependency map · [[Middleware]] — request filter chain,
   public allow-list, rate-limit tuning
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] — authorization model

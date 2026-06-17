@@ -165,7 +165,7 @@ Every edge below is grounded in the cited source.
 
 - [[System-Overview]] · [[C4-Context]] · [[C4-Container]] · [[C4-Component]]
 - [[Nu-HRMS]] · [[Nu-Hire]] · [[Nu-Grow]] · [[Nu-Fluence]] · [[Shared-Platform]]
-- [[Data-Flows]] · [[System-Flows]] · [[Services]] · [[APIs]] · [[Schema]]
+- [[Data-Flows]] · [[System-Flows]] · [[Feature-Traceability]] · [[Services]] · [[APIs]] · [[Schema]]
 - [[ADR-001]] · [[ADR-002]] · [[ADR-003]] · [[ADR-004]] · [[ADR-005]] · [[Architecture-Decisions]]
 - Source of truth: [[Services]] §2, [[Routes]] §2
 

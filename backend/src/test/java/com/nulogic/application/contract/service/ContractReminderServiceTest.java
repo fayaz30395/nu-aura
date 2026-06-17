@@ -223,7 +223,7 @@ class ContractReminderServiceTest {
                     .build();
             reminder.setId(reminderId);
 
-            when(reminderRepository.findById(reminderId)).thenReturn(Optional.of(reminder));
+            when(reminderRepository.findByIdAndTenantId(reminderId, TENANT_ID)).thenReturn(Optional.of(reminder));
             when(reminderRepository.save(any(ContractReminder.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
 
@@ -242,7 +242,7 @@ class ContractReminderServiceTest {
         void shouldDoNothingWhenReminderNotFound() {
             // Given
             UUID reminderId = UUID.randomUUID();
-            when(reminderRepository.findById(reminderId)).thenReturn(Optional.empty());
+            when(reminderRepository.findByIdAndTenantId(reminderId, TENANT_ID)).thenReturn(Optional.empty());
 
             // When
             reminderService.markReminderAsCompleted(reminderId);
@@ -267,7 +267,7 @@ class ContractReminderServiceTest {
                     .isCompleted(false)
                     .build();
 
-            when(reminderRepository.findRemindersForToday()).thenReturn(List.of(reminder));
+            when(reminderRepository.findRemindersForToday(TENANT_ID)).thenReturn(List.of(reminder));
 
             // When
             List<ContractReminder> result = reminderService.getRemindersForToday();
@@ -287,7 +287,7 @@ class ContractReminderServiceTest {
                     .isCompleted(false)
                     .build();
 
-            when(reminderRepository.findOverdueReminders()).thenReturn(List.of(reminder));
+            when(reminderRepository.findOverdueReminders(TENANT_ID)).thenReturn(List.of(reminder));
 
             // When
             List<ContractReminder> result = reminderService.getOverdueReminders();
@@ -310,7 +310,7 @@ class ContractReminderServiceTest {
                     .isCompleted(false)
                     .build();
 
-            when(reminderRepository.findRemindersInDateRange(start, end)).thenReturn(List.of(reminder));
+            when(reminderRepository.findRemindersInDateRange(TENANT_ID, start, end)).thenReturn(List.of(reminder));
 
             // When
             List<ContractReminder> result = reminderService.getRemindersInDateRange(start, end);

@@ -34,7 +34,7 @@ governed by the controls in [[Security-Audit]].
 | Schema | single `public` schema, shared by all tenants |
 | Migration tool | **Flyway**, versioned `V0__init.sql` → `V294` |
 | Migration files on disk | **286** `V*.sql` files (numeric gaps from skipped/rolled-back versions) |
-| Distinct tables | **~331 distinct table names** across **343** `CREATE TABLE` statements |
+| Distinct tables | **330 distinct table names** across **341** `CREATE TABLE` statements (the prior "~331/343" counted one SQL-comment false positive; full list in [[Table-Index]]) |
 | Baseline | `V0__init.sql` (~12,742-line baseline, "Generated from 244 JPA entities") |
 | ID strategy | `UUID` PKs via `gen_random_uuid()` (`pgcrypto`) |
 | Tenant discriminator | `tenant_id UUID` column on tenant-scoped tables |
@@ -163,7 +163,12 @@ Representative groups (counts are table-name approximations, not exhaustive):
   `idx_payroll_tenant`, `idx_payroll_status`.
 - **Field-level encryption** — sensitive columns use a JPA `@Convert` with
   `EncryptedStringConverter`. On `employees`: `bank_account_number`,
-  `bank_ifsc_code`, `tax_id`.
+  `bank_ifsc_code`, `tax_id`. **The full encryption inventory spans 10 entities**
+  (employees, users `mfa_secret`, benefit_claims, benefit_dependents,
+  preboarding_candidates, tax_declarations, payment_transactions, payment_configs,
+  webhooks, integration_connector_configs) — and several PII columns are **plaintext**
+  (PF `uan_number`/`pf_number`, ESI numbers, candidate `email`/`phone`/`resume_url`,
+  `contract_signatures.signer_email`). Full inventory + gaps in [[Data-Dictionary]].
 - **DB-level temporal integrity** — `V294__leave_overlap_exclusion_constraint.sql`
   uses `EXCLUDE USING GIST (tenant_id WITH =, employee_id WITH =, daterange WITH &&)`
   to prevent overlapping approved leave per employee (needs `btree_gist`).
@@ -238,6 +243,7 @@ this DB-level tenant boundary.
 ## Related Links
 
 - [[ERD]] — core entity-relationship diagram + relationship narrative
+- [[Table-Index]] — exhaustive list of all 330 tables, clustered by domain
 - [[Migrations]] — Flyway migration index (`V0`–`V294`)
 - [[Data-Flows]] — request lifecycle, auth flow, RLS tenant-context propagation
 - [[Services]] · [[APIs]] · [[Middleware]] — layers that read/write this schema
