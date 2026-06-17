@@ -6,9 +6,9 @@ tags: [database, migrations, flyway, postgresql, rls, devops, nu-aura]
 # Database Migrations — Flyway Reference
 
 > Evidence-based, current-state. Verified against
-> `backend/src/main/resources/db/migration/` (Flyway `V0`–`V294`),
+> `backend/src/main/resources/db/migration/` (Flyway `V0`–`V304`),
 > `application.yml` / `application-prod.yml`, and [[Migrations]]
-> on 2026-06-16. Companion to [[Schema]] (schema architecture these migrations
+> on 2026-06-18. Companion to [[Schema]] (schema architecture these migrations
 > build) and [[ERD]] (entities they define).
 
 ## Purpose
@@ -16,7 +16,7 @@ tags: [database, migrations, flyway, postgresql, rls, devops, nu-aura]
 Index every Flyway versioned migration in NU-AURA — the versioning scheme,
 naming conventions, per-environment configuration, and a curated map of the
 structurally significant migrations — so engineers can locate where a table,
-column, index, RLS policy, or seed was introduced without reading 286 files.
+column, index, RLS policy, or seed was introduced without reading 293 files.
 
 ## Context
 
@@ -34,8 +34,8 @@ the request-time tenant binding that the RLS migrations depend on is in
 | Location | `backend/src/main/resources/db/migration/` |
 | Default schema | `public` |
 | Migration type | Versioned only (no `R__` repeatable) |
-| File count on disk | **286** `V*.sql` files |
-| Version range | **`V0__init.sql`** → **`V294__leave_overlap_exclusion_constraint.sql`** |
+| File count on disk | **293** `V*.sql` files |
+| Version range | **`V0__init.sql`** → **`V304__add_rls_to_contract_signatures.sql`** |
 | Baseline | `V0__init.sql` — full schema, "Generated from 244 JPA entities" (~12,742 lines) |
 | Numeric gaps | `V0`→`V2`, `V26`→`V30`, `V272`→`V277`, `V277`→`V282` (skipped/reserved) |
 
@@ -183,7 +183,7 @@ spring:
 ## Notable Migrations by Theme
 
 A curated index of structurally or operationally significant migrations (the
-full set is 286 files; this highlights inflection points).
+full set is 293 files; this highlights inflection points).
 
 | Theme | Key migrations | What they do |
 |-------|----------------|--------------|
@@ -205,12 +205,15 @@ full set is 286 files; this highlights inflection points).
 | **Domain — leave/attendance** | `V26`, `V72`, `V73`, `V85`, `V89`, `V150`, `V277`, `V294` | Leave balance constraints, leave types/balances seed, restricted holidays, shift mgmt, leave correctness, accrual ledger, overlap exclusion |
 | **Infra / integration** | `V32`, `V65`, `V84`, `V86`, `V91`, `V143`, `V166`, `V184` | Failed Kafka events, integration framework, SAML IdPs, biometric devices, ShedLock table, Drive file mapping, webhook dual-secret, API key tables |
 | **Workflow** | `V54`, `V261`, `V284`, `V285` | Workflow definition seeds, runtime columns, optimistic locking, default-definition backfill |
+| **Transactional outbox (Railway)** | `V300`, `V303` | `V300` creates `outbox_events` table (Kafka-fallback for Railway deploy); `V303` adds RLS policy (null `tenant_id` allowed for system events) |
+| **e-signature RLS** | `V304` | `V304` enables RLS on `contract_signatures` (tenant isolation for e-signature records) |
+| **Security / RLS hardening** | `V295`, `V296`, `V297`, `V298`, `V299`, `V301`, `V302` | Demo-admin neutralization; knowledge attachment extracted-text column; `password_change_required` flag on users; statutory PII encryption backfill; `benefit_claim.upi_id` encryption; `contract_signatures.tenant_id` added for direct isolation |
 
 ## Adding a New Migration
 
 1. Create a new file in `backend/src/main/resources/db/migration/` named
    `V<next>__<snake_case_description>.sql`, where `<next>` is greater than the
-   current maximum (currently `294`).
+   current maximum (currently `304`).
 2. Write **idempotent-friendly, forward-only** SQL. Prefer `IF NOT EXISTS`
    guards where the baseline uses them (see `V0__init.sql`).
 3. If the migration creates indexes on large tables, use
@@ -257,4 +260,4 @@ full set is 286 files; this highlights inflection points).
   prove fail-closed isolation against a `NOBYPASSRLS` role.
 - To find where a table/column/policy was introduced, grep the migration
   directory by slug pattern (see naming conventions above) rather than scanning
-  all 286 files.
+  all 293 files.

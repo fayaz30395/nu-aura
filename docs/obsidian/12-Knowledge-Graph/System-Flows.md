@@ -25,9 +25,9 @@ services it crosses so a change author understands the full blast radius.
 Because NU-AURA is a modular monolith ([[ADR-001]]), these business flows cross
 context boundaries **in-process** — there are no service-to-service calls, but there
 are clear context hand-offs and event-driven side effects. Every step runs inside the
-authenticated, tenant-scoped request lifecycle ([[Data-Flows]] §1) or an async Kafka
-consumer ([[Data-Flows]] §3). Notifications and audit are emitted as domain events and
-fanned out asynchronously.
+authenticated, tenant-scoped request lifecycle ([[Data-Flows]] §1) or an async event
+consumer dispatched via the transactional outbox ([[Data-Flows]] §4). Notifications
+and audit are emitted as domain events and fanned out asynchronously.
 
 ## Diagram
 
@@ -50,7 +50,7 @@ Cross-module edge: this is the primary [[Nu-Hire]] → [[Nu-HRMS]] hand-off
 ([[Module-Relationships]]). Evidence: `recruitment`, `preboarding`, `onboarding`,
 `employee`, `organization`, `exit` contexts ([[Services]] §2);
 `EmployeeLifecycleEvent` / `EmployeeLifecycleConsumer` (§3.2); e-sign via `esignature`
-context; document storage via Google Drive ([[Data-Flows]] §5).
+context; document storage via Google Drive ([[Data-Flows]] §6).
 
 ### Flow B — Leave request → approval → attendance/payroll ([[Nu-HRMS]] internal)
 
@@ -144,7 +144,7 @@ and `RedisWebSocketRelay` ([[Services]] §3.2, §3.7);
 
 - **Context hand-off gaps.** The hire → employee hand-off (Flow A) spans Hire and HRMS
   contexts; a missed lifecycle event leaves search/notifications/audit out of sync
-  (mitigated by `IdempotencyService` + DLT, [[Data-Flows]] §3).
+  (mitigated by `IdempotencyService` + outbox MAX_RETRIES, [[Data-Flows]] §4).
 - **Approval escalation correctness.** Flow B relies on scheduled escalation jobs;
   ShedLock must hold or a job double-fires across pods ([[ADR-003]] note on
   ShedLock-on-Postgres).
@@ -158,9 +158,11 @@ and `RedisWebSocketRelay` ([[Services]] §3.2, §3.7);
 - All four flows execute under the authenticated, tenant-scoped lifecycle
   ([[Data-Flows]] §1); none can read another tenant's data even when crossing contexts
   ([[ADR-002]]).
-- Async steps (lifecycle, approval, notification, payroll) run on Kafka consumers with
-  tenant context restored per record; heavy/fan-out work returns `202` and completes
-  asynchronously ([[Data-Flows]] §3).
+- Async steps (lifecycle, approval, notification, payroll) are dispatched via the
+  transactional outbox (`EventPublisher` → `outbox_events` → `OutboxEventProcessor`
+  → consumer `process()`); tenant context is restored per dispatch by the
+  `OutboxEventProcessor`; heavy/fan-out work returns `202` and completes
+  asynchronously ([[Data-Flows]] §4).
 - Scheduled portions (leave accrual, escalation, email digests, orphan-file cleanup)
   run only on worker pods (`app.scheduling.enabled=true`) under ShedLock
   ([[Deployment]]); see [[Production-Support]] and [[Incident-Response]] for failure

@@ -6,7 +6,7 @@ tags: [database, schema, postgresql, rls, multi-tenancy, flyway, nu-aura]
 # Database Schema
 
 > Evidence-based, current-state. Verified against
-> `backend/src/main/resources/db/migration/` (Flyway `V0`–`V294`),
+> `backend/src/main/resources/db/migration/` (Flyway `V0`–`V304`),
 > [[Schema]], [[Migrations]], and
 > [[Data-Flows]]. Sampled real `CREATE TABLE` statements from
 > `V0__init.sql`. See [[ERD]] for the core entity-relationship diagram.
@@ -32,9 +32,9 @@ governed by the controls in [[Security-Audit]].
 |----------|------------------|
 | Engine | **PostgreSQL** — Neon (dev) / PostgreSQL 16 (prod) |
 | Schema | single `public` schema, shared by all tenants |
-| Migration tool | **Flyway**, versioned `V0__init.sql` → `V294` |
-| Migration files on disk | **286** `V*.sql` files (numeric gaps from skipped/rolled-back versions) |
-| Distinct tables | **330 distinct table names** across **341** `CREATE TABLE` statements (the prior "~331/343" counted one SQL-comment false positive; full list in [[Table-Index]]) |
+| Migration tool | **Flyway**, versioned `V0__init.sql` → `V304` |
+| Migration files on disk | **293** `V*.sql` files (numeric gaps from skipped/rolled-back versions) |
+| Distinct tables | **331 distinct table names** across **344** `CREATE TABLE` statements (full list in [[Table-Index]]) |
 | Baseline | `V0__init.sql` (~12,742-line baseline, "Generated from 244 JPA entities") |
 | ID strategy | `UUID` PKs via `gen_random_uuid()` (`pgcrypto`) |
 | Tenant discriminator | `tenant_id UUID` column on tenant-scoped tables |
@@ -43,14 +43,14 @@ governed by the controls in [[Security-Audit]].
 ## Dependencies
 
 - **Spring Data JPA / Hibernate 6.x** — entity mapping; `BaseEntity` and
-  `TenantAware` superclasses inject the common audit + tenancy columns. **304
-  `@Entity` classes** across 65 domain packages, **204 of them tenant-scoped**
-  (extend `TenantAware`); the rest (e.g. `tenants`, lookup/join tables) extend
-  `BaseEntity` directly.
-- **Flyway** — applies `V0`–`V294` in order at boot; see [[Migrations]].
+  `TenantAware` superclasses inject the common audit + tenancy columns. **321
+  `@Entity` classes** across 65 domain packages, **208 of them tenant-scoped**
+  (extend `TenantAware`); **18** extend `BaseEntity` directly (e.g. `tenants`,
+  lookup/join tables); the remainder are non-inheriting entities.
+- **Flyway** — applies `V0`–`V304` in order at boot; see [[Migrations]].
 - **`pgcrypto`** extension — `gen_random_uuid()` (from `V0`).
-- **`btree_gist`** extension — required by the leave-overlap `EXCLUDE` constraint
-  (`V294`).
+- **`btree_gist`** extension — enabled in `V294` for the leave-overlap `EXCLUDE`
+  constraint.
 - **`TenantRlsTransactionManager`** — sets the per-transaction tenant GUC (see
   [[Middleware]] and [[Data-Flows]]).
 - **`RlsStartupProbe`** — boot-time canary asserting fail-closed RLS.
@@ -189,6 +189,9 @@ RLS is the engine-enforced isolation boundary. Evolution (see [[Migrations]]):
 | `V255`, `V262` | Re-enforce RLS on late-added tenant tables |
 | `V263` | Allow global catalog rows (nullable `tenant_id`) under RLS |
 | `V269` | Allow tenant sequence allocators under RLS |
+| `V302` | Add `tenant_id` column to `contract_signatures` (previously relied on a sub-select JOIN through `contracts` for isolation — now directly tenant-scoped) |
+| `V303` | Enable RLS on `outbox_events` (added by V300 without policies; policy allows null `tenant_id` for system events and matching `tenant_id` for tenant events) |
+| `V304` | Enable RLS on `contract_signatures` (tenant isolation for e-signature records) |
 
 Policy expression patterns now in force:
 
@@ -216,7 +219,7 @@ this DB-level tenant boundary.
 ## Flyway migration strategy
 
 - **Versioning:** `V<n>__<slug>.sql`, applied in order from `V0__init.sql`
-  (~12,742-line baseline) through `V294`. Numeric gaps are expected
+  (~12,742-line baseline) through `V304`. Numeric gaps are expected
   (skipped/rolled-back versions). The migration index lives in [[Migrations]].
 - **Roles:** Flyway/DDL runs as **`nu_migration`** (`BYPASSRLS`); the runtime
   application connects as **`nu_app_rls`** (`NOBYPASSRLS`). These must remain
@@ -239,12 +242,16 @@ this DB-level tenant boundary.
 | Schema baseline | `backend/src/main/resources/db/migration/V0__init.sql` |
 | RLS hardening | `backend/src/main/resources/db/migration/{V24,V177,V254}__*.sql` |
 | Leave overlap constraint | `backend/src/main/resources/db/migration/V294__leave_overlap_exclusion_constraint.sql` |
+| Transactional outbox table | `backend/src/main/resources/db/migration/V300__create_outbox_events.sql` |
+| Outbox RLS policy | `backend/src/main/resources/db/migration/V303__add_rls_to_outbox_events.sql` |
+| contract_signatures RLS policy | `backend/src/main/resources/db/migration/V304__add_rls_to_contract_signatures.sql` |
+| contract_signatures tenant_id | `backend/src/main/resources/db/migration/V302__add_tenant_id_to_contract_signatures.sql` |
 
 ## Related Links
 
 - [[ERD]] — core entity-relationship diagram + relationship narrative
-- [[Table-Index]] — exhaustive list of all 330 tables, clustered by domain
-- [[Migrations]] — Flyway migration index (`V0`–`V294`)
+- [[Table-Index]] — exhaustive list of all 331 tables, clustered by domain
+- [[Migrations]] — Flyway migration index (`V0`–`V304`)
 - [[Data-Flows]] — request lifecycle, auth flow, RLS tenant-context propagation
 - [[Services]] · [[APIs]] · [[Middleware]] — layers that read/write this schema
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] — application-layer authz

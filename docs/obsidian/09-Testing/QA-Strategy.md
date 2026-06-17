@@ -40,7 +40,7 @@ Two realities shape the strategy and are stated up front:
 
 | Layer | Tooling | Evidence |
 |-------|---------|----------|
-| Backend unit/slice/integration | JUnit 5 (Jupiter), Spring Boot Test, AssertJ, Mockito | 314 files reference `org.junit.jupiter` |
+| Backend unit/slice/integration | JUnit 5 (Jupiter), Spring Boot Test, AssertJ, Mockito | 316 files reference `org.junit.jupiter` |
 | Backend integration DB | **Testcontainers** PostgreSQL 16, `AbstractPostgresIntegrationTest` | 74 tests extend the abstract base; `@DynamicPropertySource` wiring |
 | RLS regression guard | `RlsTenantGucScopeTest` (static source scan), `RlsStartupProbeTest` | `backend/src/test/java/com/nulogic/architecture/` |
 | Frontend unit/component | **Vitest 3** + `@vitejs/plugin-react`, jsdom, Testing Library | `frontend/vitest.config.ts`, `vitest.setup.ts` |
@@ -100,7 +100,7 @@ flowchart TD
   / MileageService) — see [[Security-Audit]]. `RlsStartupProbeTest` complements it at boot.
 - **Tenant + RBAC suites:** dedicated tenant-isolation and RBAC-boundary suites verify the
   9-role model ([[RBAC-Matrix]]); the green-flag audit confirmed **zero unguarded mutating
-  endpoints** across 180 controllers.
+  endpoints** across 183 `@RestController` files (1,750 `@RequiresPermission` annotations).
 
 ## Frontend Strategy
 

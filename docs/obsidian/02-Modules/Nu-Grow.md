@@ -7,7 +7,7 @@ tags: [module, nu-grow]
 
 > Talent-development & engagement sub-app of [[System-Overview|NU-AURA]]. The growth loop
 > for employees already on record in [[Nu-HRMS]]. Siblings: [[Nu-Hire]], [[Nu-Fluence]].
-> Cross-cutting services in [[Shared-Platform]]. Grounding doc: [[Nu-Grow]].
+> Cross-cutting services in [[Shared-Platform]].
 
 ## Purpose
 
@@ -285,4 +285,3 @@ Self-assessed — no formal owners in the repo. Spans the most bounded contexts 
 - [[System-Overview]] · [[C4-Container]] · [[Module-Relationships]] · [[Data-Flows]] · [[System-Flows]]
 - Siblings: [[Nu-HRMS]] (employee + skills source) · [[Nu-Hire]] · [[Nu-Fluence]]
 - Platform: [[Shared-Platform]] · [[Middleware]] · [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] · [[Schema]] · [[ERD]] · [[APIs]] · [[Services]] · [[Pages]] · [[Routes]] · [[Components]] · [[Security-Audit]]
-- Grounding: [[Nu-Grow]]

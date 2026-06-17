@@ -116,11 +116,12 @@ regresses. Read-replica routing is handled by `RoutingDataSourceConfig` /
 ### Exception handling (terminal)
 
 - `GlobalExceptionHandler` (`common/exception/GlobalExceptionHandler.java`,
-  `@RestControllerAdvice`) — **26 `@ExceptionHandler` methods** mapping domain + Spring
+  `@RestControllerAdvice`) — **30 `@ExceptionHandler` methods** mapping domain + Spring
   exceptions (`ResourceNotFoundException`, `BusinessException`, `UnauthorizedException`,
   `FeatureDisabledException`, `BadCredentials`, `Locked`, `AccessDenied`, validation,
-  `MaxUploadSizeExceeded`, catch-all `Exception`) to the `ErrorResponse` envelope —
-  never leaking stack traces.
+  `MaxUploadSizeExceeded`, `VirusInfectedFileException`, `ObjectOptimisticLockingFailureException`,
+  `HttpMessageNotReadableException`, catch-all `Exception`, and others) to the `ErrorResponse`
+  envelope — never leaking stack traces.
 - `ApiResponseBodyAdvice` (`common/api/response/`) — wraps successful responses.
 
 ## Diagram

@@ -55,8 +55,8 @@ AlertManager, GitHub Actions CI/CD
 
 ## Scheduled Jobs
 
-25 `@Scheduled` jobs: attendance, contracts, email, notifications, recruitment, workflows, reports,
-webhooks, rate limiting, leave accrual, tenant operations.
+26 `@Scheduled` jobs: attendance, contracts, email, notifications, recruitment, workflows, reports,
+webhooks, rate limiting, leave accrual, tenant operations, transactional outbox poller.
 
 ---
 

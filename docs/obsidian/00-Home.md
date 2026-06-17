@@ -1,12 +1,12 @@
 ---
 title: NU-AURA — Knowledge Vault Home
 tags: [home, moc, index]
-updated: 2026-06-16
+updated: 2026-06-18
 ---
 
 # NU-AURA Knowledge Vault
 
-> Map of Content (MOC) for the NU-AURA platform — a multi-tenant, bundle-app HR/People platform with four sub-applications on a shared Spring Boot + Next.js core. Every note below is evidence-based (verified against code on 2026-06-16); links use Obsidian wikilinks and resolve by note name across folders. This vault is now the **single canonical knowledge base** — the former flat docs (`architecture/`, `reference/`, `apps/`, `patterns/`, `setup/`) have been merged in and retired.
+> Map of Content (MOC) for the NU-AURA platform — a multi-tenant, bundle-app HR/People platform with four sub-applications on a shared Spring Boot + Next.js core. Every note below is evidence-based (verified against code on 2026-06-18); links use Obsidian wikilinks and resolve by note name across folders. This vault is now the **single canonical knowledge base** — the former flat docs (`architecture/`, `reference/`, `apps/`, `patterns/`, `setup/`) have been merged in and retired.
 
 ## What this is
 
@@ -23,13 +23,13 @@ NU-AURA bundles **four sub-apps** on **one shared platform**:
 | NU-Fluence | Wiki, blogs, templates, search, AI chat, social wall | [[Nu-Fluence]] |
 | Shared platform | Auth, RBAC, notifications, integrations, feature flags, multi-tenancy, storage | [[Shared-Platform]] |
 
-## Platform at a glance (verified 2026-06-16)
+## Platform at a glance (verified 2026-06-18)
 
-- **Backend:** Java 21, Spring Boot 3.5.14, DDD layering (`api → application → domain → infrastructure + common`) — **180** controllers (live `grep` reads 184; −4 = 1 disabled + 2 `@RestControllerAdvice` + 1 annotation source — full 1:1 list in [[Controller-Index]]), **257** services, **288** repositories, **1,711** HTTP endpoints ([[Endpoint-Index]]), **25** scheduled jobs (24 ShedLock-guarded), **7** Kafka consumers. See [[System-Overview]], [[APIs]], [[Services]], [[Scheduled-Jobs]].
-- **Frontend:** Next.js 16 App Router, React 19, TypeScript strict, Mantine 9, Tailwind, TanStack Query v5 — **283** pages (every one enumerated in [[Route-Map-Full]]), **170** components, **93** generated query-hook surfaces. See [[Routes]], [[Pages]], [[Components]].
-- **Data:** PostgreSQL (Neon dev / PG 16 prod), **330** distinct tables (every one enumerated in [[Table-Index]]; the prior "~331" counted one SQL-comment false positive), Flyway **V0–V294** (286 files), multi-tenant via Row-Level Security. See [[Schema]], [[ERD]], [[Migrations]].
-- **Platform substrate:** Redis 7 (cache tiers, rate limiting, locks, idempotency, WS relay), Kafka, Elasticsearch 8.11, Google Drive storage, Google OAuth. See [[Code-Patterns]].
-- **Access control:** **26 roles** (19 explicit + 7 implicit), enforced by a custom `@RequiresPermission` (190 sites) interceptor/aspect. See [[Roles]], [[Permissions]], [[RBAC-Matrix]].
+- **Backend:** Java 21, Spring Boot 3.5.14, DDD layering (`api → application → domain → infrastructure + common`) — **180** controllers live (raw `grep` 184; −4 = 1 disabled + 2 `@RestControllerAdvice` + 1 annotation source — full 1:1 list in [[Controller-Index]]), **258** services, **289** repositories, **1,711** HTTP endpoints ([[Endpoint-Index]]), **26** scheduled jobs (24 ShedLock-guarded + 1 per-pod Redis probe + 1 outbox poller), **7** Kafka consumers + transactional-outbox fallback. See [[System-Overview]], [[APIs]], [[Services]], [[Scheduled-Jobs]].
+- **Frontend:** Next.js 16 App Router, React 19, TypeScript strict, Mantine 9, Tailwind, TanStack Query v5 — **286** pages (every one enumerated in [[Route-Map-Full]]), **171** components, **93** generated query-hook surfaces. See [[Routes]], [[Pages]], [[Components]].
+- **Data:** PostgreSQL (Neon dev / PG 16 prod), **331** distinct tables (344 `CREATE TABLE` statements; every table enumerated in [[Table-Index]]), Flyway **V0–V304** (293 files), multi-tenant via Row-Level Security. See [[Schema]], [[ERD]], [[Migrations]].
+- **Platform substrate:** Redis 7 (25 named caches, rate limiting, locks, idempotency, WS relay), Kafka (Confluent, 6 topics + DLT) with transactional-outbox fallback on Railway, Elasticsearch 8.11, Google Drive storage, Google OAuth. See [[Code-Patterns]].
+- **Access control:** **26 roles** (19 explicit + 7 implicit), enforced by a custom `@RequiresPermission` (~1,750 usages) interceptor/aspect. See [[Roles]], [[Permissions]], [[RBAC-Matrix]].
 
 ## Navigate by role
 
@@ -60,11 +60,11 @@ Every note in the vault, grouped by numbered section.
 
 ### 03 — Frontend
 - [[Routes]] · [[Pages]] · [[Components]]
-- [[Route-Map-Full]] — **complete enumeration** of all 283 routes (exhaustive companion to [[Routes]])
+- [[Route-Map-Full]] — **complete enumeration** of all 286 routes (exhaustive companion to [[Routes]])
 
 ### 04 — Backend
 - [[APIs]] · [[Services]] · [[Middleware]] · [[Scheduled-Jobs]]
-- [[Controller-Index]] — **complete enumeration** of all 180 controllers (1:1 companion to [[APIs]])
+- [[Controller-Index]] — **complete enumeration** of all 180 live controllers (1:1 companion to [[APIs]])
 - [[Endpoint-Index]] — **per-method hub**: all **1,711** endpoints, split into [[Endpoints-HRMS]] · [[Endpoints-Platform]] · [[Endpoints-Hire]] · [[Endpoints-Grow]] · [[Endpoints-Fluence]]
 
 ### 05 — RBAC
@@ -72,7 +72,7 @@ Every note in the vault, grouped by numbered section.
 
 ### 06 — Database
 - [[Schema]] · [[ERD]] · [[Migrations]]
-- [[Table-Index]] — **complete enumeration** of all 330 tables, clustered (exhaustive companion to [[Schema]])
+- [[Table-Index]] — **complete enumeration** of all 331 distinct tables, clustered (exhaustive companion to [[Schema]])
 - [[Data-Dictionary]] — **per-column detail** for 90 core tables + complete **347-edge foreign-key map**
 
 ### 07 — DevOps
@@ -83,8 +83,8 @@ Every note in the vault, grouped by numbered section.
 
 ### 09 — Testing
 - [[QA-Strategy]] · [[Test-Coverage]]
-- [[Test-Catalog]] — **suite enumeration**: 308 backend (74 integration) + 90 Vitest + 117 Playwright; how to run; coverage posture
-- [[Readiness-Session-2026-06-18]] — production-readiness verdict (NO-GO 58/100), all fixes (attendance tz, a11y gate, mass-assignment), `d29ec59a` security audit, and the demo-creds go-live BLOCKER + manual remediation
+- [[Test-Catalog]] — **suite enumeration**: 310 backend test files (74 integration) + 90 Vitest + 117 Playwright; 4,076 BE tests green in CI; how to run; coverage posture
+- [[Readiness-Session-2026-06-18]] — production-readiness verdict (92/100 CONDITIONAL-GO as of QA iteration 6, commit ae6b91dc); single remaining CRITICAL = DEMO_CREDENTIALS_ENABLED=true on Railway (config-only flip)
 
 ### 10 — Runbooks
 - [[Production-Support]] · [[Incident-Response]]
@@ -117,6 +117,6 @@ Every note in the vault, grouped by numbered section.
 ## Conventions
 
 - **Evidence-based.** Claims cite real file paths; where a fact is sampled, inferred, or templated, the note says so explicitly.
-- **Counts** are point-in-time (2026-06-16) and will drift — re-measure before quoting in a release.
+- **Counts** are point-in-time (2026-06-18) and will drift — re-measure before quoting in a release.
 - **Wikilinks** resolve by basename; the same `[[Note]]` works from any folder.
 - **GitHub readers** without Obsidian should enter via [docs/README.md](../README.md), which links into this vault with relative paths.

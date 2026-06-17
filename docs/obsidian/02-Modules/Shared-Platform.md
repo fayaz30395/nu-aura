@@ -133,9 +133,9 @@ regression here (auth, RLS, rate limiting) affects all four sub-apps simultaneou
 
 - Dev ports: frontend `:3000`, backend `:8080`. Single origin — Next proxies `/api/v1/*` and
   `/ws/*` to `BACKEND_ORIGIN` (`frontend/next.config.js`).
-- 25 `@Scheduled` jobs (attendance, contracts, email, notifications, recruitment, leave
-  accrual, rate-limit cleanup) — 24 ShedLock-guarded for multi-pod safety + 1 intentional
-  per-pod Redis probe. See [[Scheduled-Jobs]].
+- 26 `@Scheduled` methods (attendance, contracts, email, notifications, recruitment, leave
+  accrual, outbox poller, orphan-file cleanup, rate-limit cleanup) — distributed across 16
+  components; most are `@SchedulerLock`-guarded for multi-pod safety. See [[Scheduled-Jobs]].
 - Frontend API hooks are Orval-generated from the backend SpringDoc OpenAPI spec — keep the
   committed spec snapshot in sync.
 - Tenant registration via `POST /api/v1/tenants/register`; feature flags toggled at

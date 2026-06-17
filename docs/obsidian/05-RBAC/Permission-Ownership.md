@@ -25,7 +25,7 @@ therefore reconstructed from three converging code sources, not invented.
 |---|--------|------------------|----------|
 | 1 | `frontend/lib/config/apps.ts` → `PLATFORM_APPS[*].permissionPrefixes` | The **declared** app access-gate: the prefix(es) a user needs ≥1 of to enter each sub-app shell | Authoritative, but a *gate list*, **not** the full family catalogue |
 | 2 | `common/security/RoleHierarchy.java` grant functions | Inline `// Nu-Grow:` / `// Nu-Fluence:` / `// Nu-Hire:` comments tag permission groups by sub-app | Author-tagged, partial (only `TENANT_ADMIN`'s superset block is exhaustively tagged) |
-| 3 | `@RequiresPermission` usages per `api/<package>` controller (190 sites) | Which `api` domain package enforces which `MODULE:*` family | Direct enforcement evidence; 1:1 for most families |
+| 3 | `@RequiresPermission` usages per `api/<package>` controller (~1,709 sites across ~188 files) | Which `api` domain package enforces which `MODULE:*` family | Direct enforcement evidence; 1:1 for most families |
 
 Where 1–3 agree, ownership is **verified**. Where only domain naming + the enforcing package decide
 it (no `apps.ts` prefix, no `RoleHierarchy` comment), it is marked *(inferred)*.
@@ -242,4 +242,4 @@ graph LR
 - To answer "can role X use feature Y in app Z": check this note for ownership, then [[RBAC-Matrix]]
   for the role×capability cell, then the tenant's `role_permissions` if it may have diverged.
 - Counts are point-in-time (2026-06-16): 19 explicit + 7 implicit roles, ~95 permission families,
-  190 `@RequiresPermission` sites. Re-measure before quoting in a release.
+  ~1,709 `@RequiresPermission` sites across ~188 files. Re-measure before quoting in a release.

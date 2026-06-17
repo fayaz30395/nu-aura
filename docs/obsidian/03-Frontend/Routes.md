@@ -20,7 +20,7 @@ and guard logic, and [[Components]] for the UI inventory.
 
 | Metric | Count | Command |
 |--------|-------|---------|
-| `page.tsx` (routes) | **283** | `find frontend/app -name page.tsx \| wc -l` |
+| `page.tsx` (routes) | **286** | `find frontend/app -name page.tsx \| wc -l` |
 | `layout.tsx` (segment layouts) | **240** | `find frontend/app -name layout.tsx \| wc -l` |
 | `error.tsx` boundaries | **273** | `find frontend/app -name error.tsx \| wc -l` |
 | `loading.tsx` (suspense) | **282** | `find frontend/app -name loading.tsx \| wc -l` |
@@ -52,7 +52,7 @@ and guard logic, and [[Components]] for the UI inventory.
 ## Route inventory by sub-app
 
 Counts below are the **top-level route directory** page totals (measured); they
-sum to the 283 total. Examples are representative samples, not exhaustive.
+sum to the 286 total. Examples are representative samples, not exhaustive.
 
 ### Public routes (no auth — `PUBLIC_ROUTES` in `routes.ts`)
 
@@ -75,7 +75,7 @@ other three apps.
 | Area | Route dir (page count) | Examples |
 |------|------------------------|----------|
 | Personal portal | `me` (8) | `/me/dashboard`, `/me/profile`, `/me/leaves`, `/me/payslips`, `/me/assets`, `/me/skills` |
-| Admin console | `admin` (25) | `/admin/roles`, `/admin/permissions`, `/admin/users`, `/admin/settings`, `/admin/holidays`, `/admin/custom-fields`, `/admin/budget` |
+| Admin console | `admin` (26) | `/admin/roles`, `/admin/permissions`, `/admin/users`, `/admin/settings`, `/admin/holidays`, `/admin/custom-fields`, `/admin/budget` |
 | People | `employees` (7), `departments`, `team-directory` | `/employees`, `/employees/new`, `/employees/[id]`, `/employees/[id]/edit`, `/employees/[id]/compensation` |
 | Time & attendance | `attendance` (6), `shifts` (5), `time-tracking` (4), `timesheets`, `overtime`, `holidays`, `restricted-holidays`, `biometric-devices` | `/attendance/approvals`, `/shifts`, `/time-tracking/[id]/edit` |
 | Leave | `leave` (8) | `/leave/approvals`, `/leave/requests`, `/leave/balances` |
@@ -148,7 +148,7 @@ performance/cycles, recruitment/agencies, recruitment/candidates ·
 
 ```mermaid
 graph TD
-  Root["app/ (flat App Router, 283 pages)"]
+  Root["app/ (flat App Router, 286 pages)"]
   Root --> Public["Public (PUBLIC_ROUTES)"]
   Root --> Protected["Protected (AuthGuard + PROTECTED_ROUTES)"]
   Root --> Launcher["app/app/* launcher landings"]
@@ -162,7 +162,7 @@ graph TD
   Protected --> GROW["NU-Grow (/performance,/learning,…)"]
   Protected --> FLU["NU-Fluence (/fluence/*)"]
 
-  HRMS --> H1["/me/* (8) · /admin/* (25)"]
+  HRMS --> H1["/me/* (8) · /admin/* (26)"]
   HRMS --> H2["/employees/* (7) · /payroll/* (10) · /leave/* (8)"]
   HRMS --> H3["/attendance · /projects · /reports/* (9) · /settings/* (8)"]
   HIRE --> I1["/recruitment/* (14) · /onboarding/* (6) · /offboarding/* (6)"]
@@ -177,7 +177,7 @@ graph TD
 
 ## Related Links
 
-- [[Route-Map-Full]] — exhaustive enumeration of all 283 routes
+- [[Route-Map-Full]] — exhaustive enumeration of all 286 routes
 - [[Feature-Traceability]] — per-feature route → controller → service → tables map
 - [[Pages]] — layout nesting, AuthGuard, server/client split
 - [[Components]] — component inventory and dependency map
@@ -189,7 +189,7 @@ graph TD
 
 ## Risks
 
-- **Flat routing scale**: 283 routes with no `(group)` segments — route→app
+- **Flat routing scale**: 286 routes with no `(group)` segments — route→app
   resolution depends entirely on `apps.ts` prefix tables. A new top-level dir
   that is not added to any `routePrefixes` silently falls into HRMS (catch-all),
   which may bypass intended sub-app sidebar/RBAC gating.

@@ -97,7 +97,7 @@ apply Keka-style row filtering in addition to the boolean capability check.
 ## Enforcement path (end-to-end)
 
 Enforcement is **defense-in-depth** across three points. Note: the codebase uses a custom
-`@RequiresPermission` annotation (**190** usages), **not** Spring's `@PreAuthorize` (only **2**).
+`@RequiresPermission` annotation (**~1,709** usages across ~188 files), **not** Spring's `@PreAuthorize` (only **4**).
 
 1. **HTTP pre-handler — `PermissionHandlerInterceptor` (primary).** Runs in
    `preHandle` **before** `@Valid` argument resolution, so unauthorized callers get **403**, not

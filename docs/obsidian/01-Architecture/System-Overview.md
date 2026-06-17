@@ -45,9 +45,9 @@ This note is the level-0 map. Drill down via [[C4-Context]] → [[C4-Container]]
 | Realtime (FE) | STOMP + SockJS (`@stomp/stompjs`) | `frontend/` realtime client |
 | Rich content | Tiptap, ExcelJS, DOMPurify | `frontend/package.json` |
 | Backend | Java 21, Spring Boot 3.5.14 (BOM) | `backend/pom.xml`, `.claude/CLAUDE.md` |
-| Persistence | PostgreSQL 16 (Neon dev / PG16 prod), Hibernate 6 (`@SQLRestriction` soft-delete), Flyway | `db/migration/` V0→V294+ |
-| Cache / coord | Redis 7 (Bucket4j 8.x, ShedLock 7.7.0) | `common/config/CacheConfig.java` |
-| Messaging | Kafka (Confluent) — 6 domain topics + DLT | `infrastructure/kafka/KafkaTopics.java` |
+| Persistence | PostgreSQL 16 (Neon dev / PG16 prod), Hibernate 6 (`@SQLRestriction` soft-delete), Flyway | `db/migration/` V0→V304 (293 files) |
+| Cache / coord | Redis 7 (Bucket4j 8.x, ShedLock 7.7.0) — 25 named caches | `common/config/CacheConfig.java` |
+| Messaging | Kafka (Confluent) — 6 domain topics + DLT; **transactional outbox** (`outbox_events` table + `OutboxEventProcessor`) is the primary durability layer on Railway (Kafka disabled on that platform) | `infrastructure/kafka/KafkaTopics.java`, `outbox/EventPublisher.java` |
 | Search | Elasticsearch 8.11 (opt-in) | `common/config/ElasticsearchConfig.java` |
 | File storage | Google Drive (service account, v3 API) | `common/config/GoogleDriveConfig.java` |
 | AuthN | Google OAuth, JWT (httpOnly cookie), SAML 2.0, API keys (JJWT 0.13.0) | `common/config/SecurityConfig.java` |
@@ -74,7 +74,7 @@ flowchart TB
 
     subgraph platform["NU-AURA Platform"]
         FE["Frontend — Next.js 16 / React 19<br/>App Router · Mantine · React Query · Zustand<br/>reverse-proxy /api/v1 + /ws"]
-        BE["Backend — Spring Boot 3.5.14 / Java 21<br/>DDD modular monolith · 184 controllers<br/>REST /api/v1 + WebSocket /ws"]
+        BE["Backend — Spring Boot 3.5.14 / Java 21<br/>DDD modular monolith · 183 controllers<br/>REST /api/v1 + WebSocket /ws"]
     end
 
     subgraph stateful["Stateful Services"]
@@ -161,9 +161,10 @@ Key config classes verified in `backend/.../common/config/`: `SecurityConfig`,
 
 ### PostgreSQL — system of record
 
-PostgreSQL 16 (Neon in dev, self-hosted PG 16 in prod). ~331 distinct tables; every
-tenant-aware table carries `tenant_id UUID NOT NULL`. Schema is managed by **Flyway**
-(`backend/src/main/resources/db/migration/`, V0 → V294+). Row-Level Security policies
+PostgreSQL 16 (Neon in dev, self-hosted PG 16 in prod). ~343 distinct tables (344 `CREATE TABLE`
+statements across migrations, ~343 physical after accounting for drop-and-recreate patterns);
+every tenant-aware table carries `tenant_id UUID NOT NULL`. Schema is managed by **Flyway**
+(`backend/src/main/resources/db/migration/`, V0 → V304, 293 files). Row-Level Security policies
 provide defence-in-depth tenant isolation (see [[Security-Audit]]).
 
 ### Redis — caching & coordination
@@ -173,7 +174,7 @@ Redis 7 backs many cross-cutting concerns (`common/config/CacheConfig.java`,
 
 | Concern              | Mechanism |
 |----------------------|-----------|
-| Caching              | 20+ named caches, tenant-scoped keys, tiered TTLs (5min–24h) |
+| Caching              | 25 named caches, tenant-scoped keys, tiered TTLs (30s–24h) |
 | Distributed rate limiting | `DistributedRateLimiter` (Redis Lua + Bucket4j fallback) |
 | Token blacklist      | `TokenBlacklistService` (logout/password-change revocation) |
 | Distributed locks    | edit locks, account lockout, idempotency (SETNX) |
@@ -182,9 +183,13 @@ Redis 7 backs many cross-cutting concerns (`common/config/CacheConfig.java`,
 ### Kafka — domain events
 
 Confluent Kafka for asynchronous domain events (approval, notification, audit,
-employee-lifecycle, Fluence content, payroll). Producers via `EventPublisher`;
-consumers under `infrastructure/kafka/`; dead-letter handling and `IdempotencyService`
-for exactly-once processing; tenant context propagated onto records.
+employee-lifecycle, Fluence content, payroll) — 6 topics + per-topic `.dlt`. In production
+(GKE), `EventPublisher` writes to the `outbox_events` table atomically with the business
+operation; `OutboxEventProcessor` polls (every 5 s) and dispatches to consumer handlers.
+On environments where Kafka **is** provisioned, the same consumer `process()` methods are
+invoked. This **transactional outbox pattern** makes event durability independent of a Kafka
+broker. Dead-letter handling and `IdempotencyService` for exactly-once processing; tenant
+context propagated onto records.
 
 ### Elasticsearch — full-text search (opt-in)
 
@@ -284,9 +289,10 @@ See [[Data-Flows]] (tenancy / RLS flow) and the RLS migrations for full detail.
 
 - **Ports:** frontend `:3000`, backend `:8080` (fixed for local dev).
 - **Scheduled work** is gated by `app.scheduling.enabled` (default on; set
-  `APP_SCHEDULING_ENABLED=false` on web pods) — **25 `@Scheduled` methods across 15
-  components, 24 `@SchedulerLock`-guarded** for multi-pod safety (1 intentional per-pod
-  Redis probe). See [[Scheduled-Jobs]] and [[Production-Support]].
+  `APP_SCHEDULING_ENABLED=false` on web pods) — **28 `@Scheduled` methods across 18
+  components, 25 `@SchedulerLock`-guarded** for multi-pod safety. The outbox processor
+  has its own independent `@EnableScheduling` so it runs regardless of
+  `app.scheduling.enabled`. See [[Scheduled-Jobs]] and [[Production-Support]].
 - **Graceful degradation:** Redis cache, Elasticsearch, and Google Drive each have a
   fallback path (DB / pg_trgm / mock provider) so a dependency outage does not 500.
 - **Deployment shapes:** local Docker Compose (Redis/Kafka/Elasticsearch/Prometheus/

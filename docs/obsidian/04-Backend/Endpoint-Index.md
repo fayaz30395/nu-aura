@@ -30,8 +30,9 @@ as a `### Section` with a `| Verb | Path | Permission | Purpose |` table.
 | NU-Fluence | [[Endpoints-Fluence]] | 16 | 96 |
 | **Total** | — | **180** | **1,711** |
 
-The **180** controllers reconcile exactly with [[Controller-Index]] (the live `grep` of 184
-over-counts by 4 — see that note). The **1,711** endpoints are the sum of the five
+The **180** controllers reconcile exactly with [[Controller-Index]] (the raw `grep` without
+`--include` returns 184, over-counting by 4: 1 `.disabled` file + 3 non-controller matches;
+see that note for full reconciliation). The **1,711** endpoints are the sum of the five
 per-method catalogs, each independently row-count-verified by its author.
 
 ## How to read

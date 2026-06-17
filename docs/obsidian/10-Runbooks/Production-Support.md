@@ -93,10 +93,14 @@ K8s startup probe tolerates a **300 s** cold JVM; graceful shutdown is 60 s.
 
 ## Scheduled jobs to watch
 
-- **25 `@Scheduled` jobs** (24 **ShedLock-guarded** + 1 intentional per-pod Redis probe);
-  global kill switch **`APP_SCHEDULING_ENABLED`**. Domains: attendance/biometric, contracts,
-  email, notifications, recruitment, workflows, reports, webhooks, rate limiting, leave
-  accrual, tenant operations. Full catalog: [[Scheduled-Jobs]].
+- **26 `@Scheduled` methods** (24 **ShedLock-guarded** + 1 intentional per-pod Redis probe
+  (`TokenBlacklistService.redisHealthProbe`) + 1 transactional outbox poller
+  (`OutboxEventProcessor.pollAndProcess`, no ShedLock, active when `app.outbox.enabled=true`));
+  global kill switch **`APP_SCHEDULING_ENABLED`**. Note: the outbox poller is NOT gated by
+  `app.scheduling.enabled` — it runs independently so Railway can use it without Kafka.
+  Domains: attendance/biometric, contracts, email, notifications, recruitment, workflows,
+  reports, webhooks, rate limiting, leave accrual, tenant operations. Full catalog:
+  [[Scheduled-Jobs]].
 - **Multi-env hazard:** when beta + local share one database, enable scheduling in **exactly
   one** environment, or you get duplicate emails/accruals/webhooks.
 - **First diagnostic for "job didn't run":** payroll, accrual, and biometric jobs log lock
@@ -144,6 +148,7 @@ Database rollbacks are **forward-fix only** — Flyway migrations are never reve
 ## Related Links
 
 - [[Incident-Response]] — severity, triage, rollback, tenant-leak response.
+- [[Ruflo-Autopilot-Hazard]] — process risk: autopilot commits to main; blocks frozen-SHA gating.
 - [[Deployment]] — environments, env vars, scaling topology.
 - [[Security-Audit]] — auth, RLS, deploy gate.
 - [[CI-CD]] — what produced the running build.

@@ -72,7 +72,7 @@ That is **19 explicit roles**. The "~9 roles" figure from project memory describ
 
 These are **not** assigned directly. They are written to `implicit_user_roles` (`V63`) when a
 relationship exists and are merged into the user's permission set at load time by
-`SecurityService.getCachedPermissionsForUser()` (`SecurityService.java:198`).
+`SecurityService.getCachedPermissionsForUser()` (`SecurityService.java:171`).
 
 | Implicit role | Auto-granted when… | Source |
 |---------------|--------------------|--------|

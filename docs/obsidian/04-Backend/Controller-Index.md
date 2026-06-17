@@ -22,7 +22,7 @@ detail and [[Services]] for the service layer behind these controllers.
 
 ## Counts
 
-> **Verified from source, 2026-06-17.** Reconciliation with the raw `grep` is explicit
+> **Verified from source, 2026-06-18.** Reconciliation with the raw `grep` is explicit
 > below because the naive command over-counts.
 
 | Metric | Count | Evidence |

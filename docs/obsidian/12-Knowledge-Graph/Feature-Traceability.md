@@ -160,10 +160,10 @@ flowchart LR
 | Edit locks | `/fluence/wiki/[slug]/edit` | `FluenceEditLockController` | `knowledge` | (Redis lock, 5m TTL) | authenticated |
 | Blogs | `/fluence/blogs`, `/fluence/blogs/[slug]`, `/fluence/blogs/[slug]/edit` | `BlogPostController`, `BlogCategoryController` | `knowledge` | `blog_posts`, blog categories | `KNOWLEDGE_*` |
 | Templates | `/fluence/templates`, `/fluence/templates/[id]` | `TemplateController` | `knowledge` | `document_templates` | `KNOWLEDGE_*` |
-| Search & AI chat | `/fluence/search` | `KnowledgeSearchController`, `FluenceSearchController`, `FluenceChatController` | `knowledge`/`fluence` | indexed in Elasticsearch | authenticated |
-| Comments / activity / attachments | `/fluence/*` | `FluenceCommentController`, `FluenceActivityController`, `FluenceAttachmentController`, `ContentEngagementController`, `ContentViewController` | `fluence` | comment/activity/view tables | authenticated |
+| Search & AI chat | `/fluence/search` | `KnowledgeSearchController`, `FluenceSearchController`, `FluenceChatController` | `knowledge` | indexed in Elasticsearch | authenticated |
+| Comments / activity / attachments | `/fluence/*` | `FluenceCommentController`, `FluenceActivityController`, `FluenceAttachmentController`, `ContentEngagementController`, `ContentViewController` | `knowledge` | comment/activity/view tables | authenticated |
 | Social wall | `/fluence/wall` | `WallController` | `wall` | `wall_posts`, reactions/comments/replies | `WALL_*` (WALL rate bucket) |
-| LinkedIn posts | (admin) | `LinkedinPostController` | `fluence` | linkedin-post tables | `KNOWLEDGE_*` |
+| LinkedIn posts | (admin) | `LinkedinPostController` | `knowledge` | linkedin-post tables | `KNOWLEDGE_*` |
 
 ---
 

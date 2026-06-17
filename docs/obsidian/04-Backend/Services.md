@@ -6,11 +6,11 @@ tags: [backend, services, scheduled-jobs, redis, kafka, elasticsearch, ddd, cata
 # Backend Service Catalog & Dependency Map
 
 > Map of the backend's business + infrastructure layer: the DDD layering and
-> bounded-context module catalog, the **257 `@Service` beans** that sit between [[APIs]]
+> bounded-context module catalog, the **258 `@Service` beans** that sit between [[APIs]]
 > (controllers) and persistence/messaging, the cross-cutting infrastructure services
-> (Redis caching, Kafka, Elasticsearch, locks, rate-limit, notifications), and the **25
-> `@Scheduled` jobs**. See [[Middleware]] for the request/security chain and [[Data-Flows]]
-> for end-to-end lifecycle.
+> (Redis caching, Kafka/outbox, Elasticsearch, locks, rate-limit, notifications), and the
+> **26 `@Scheduled` jobs**. See [[Middleware]] for the request/security chain and
+> [[Data-Flows]] for end-to-end lifecycle.
 
 ## Purpose
 
@@ -24,21 +24,22 @@ wired — so a reader can find or place a service correctly.
 - **Stack:** Spring Boot 3.x on Java 21, package root `com.nulogic`, single deployable
   modular monolith serving all four sub-apps, organized around Domain-Driven Design (DDD)
   layering. Constructor injection throughout. See [[C4-Component]].
-- **Verified scale (counts from source, 2026-06-16):**
+- **Verified scale (counts from source, 2026-06-18):**
   | Metric | Count | Evidence |
   |--------|-------|----------|
-  | `@RestController` classes | 179–184 | `grep -rl @RestController src/main/java/com/nulogic/api` (see [[APIs]]) |
-  | `@Service` (all layers) | 257 | `grep -rl @Service src/main/java` |
-  | `@Entity` classes | 304 | `grep -rl @Entity src/main/java/com/nulogic/domain` |
-  | `@Scheduled` methods | 25 (across 15 components) | `grep @Scheduled` (24 `@SchedulerLock`-guarded) |
-  | Repositories | 288 | repository interface grep |
-  | Bounded-context packages | ~67–68 per layer | `src/main/java/com/nulogic/{api,application,domain,infrastructure}/*` |
+  | `@RestController` classes (live) | 180 | strict `grep -rlE '^\s*@RestController\s*(\(|$)' --include='*.java'`; see [[Controller-Index]] for reconciliation |
+  | `@Service` (all layers) | 258 | `grep -rl @Service src/main/java --include='*.java'` |
+  | `@Entity` classes | 321 | `grep -rl @Entity src/main/java/com/nulogic --include='*.java'` |
+  | `@Scheduled` methods | 26 (across 16 components) | 24 `@SchedulerLock`-guarded + 1 per-pod (`TokenBlacklistService`) + 1 outbox poller (`OutboxEventProcessor`, `@ConditionalOnProperty("app.outbox.enabled")`) |
+  | Repositories | 289 | `grep -rln 'extends.*Repository' --include='*.java'` |
+  | Bounded-context packages | 68 per layer | `ls src/main/java/com/nulogic/api` |
 
 ## Dependencies
 
 - **Upstream:** [[APIs]] controllers call application services.
-- **Downstream:** application services depend on `infrastructure` repositories (288),
-  Kafka producers, Redis caches, Elasticsearch, and the cross-cutting services below.
+- **Downstream:** application services depend on `infrastructure` repositories (289),
+  Kafka producers (+ transactional outbox fallback), Redis caches, Elasticsearch, and the
+  cross-cutting services below.
 - **Tenancy:** all service work runs under the tenant bound by [[Middleware]]
   (`TenantContext`) and enforced by PostgreSQL RLS — see [[Data-Flows]], [[Schema]].
 
@@ -100,13 +101,13 @@ flowchart TD
 | Infrastructure | `com.nulogic.infrastructure.<ctx>` | Spring Data repositories, Kafka, Elasticsearch, WebSocket, Google Drive, SAML/API-key adapters | domain |
 | Common | `com.nulogic.common.*` | Config, security filters, base entities, exception handling, metrics, health, export | — |
 
-### `@Service` distribution by layer (257 total)
+### `@Service` distribution by layer (258 total)
 
 | Layer | `@Service` count | Role |
 |-------|------------------|------|
 | `application/*` | 225 | Use-case orchestration, `@Transactional`, cache put/evict, event publishing |
-| `infrastructure/*` | 19 | Outbound adapters (Kafka idempotency, websocket, search, storage) |
-| `common/*` | 11 | Cross-cutting (feature flags, security, cache config services) |
+| `infrastructure/*` | 20 | Outbound adapters (Kafka idempotency, outbox processor, websocket, search, storage) |
+| `common/*` | 12 | Cross-cutting (feature flags, security, cache config services) |
 | `domain/*` | 1 | `domain/.../WebSocketNotificationService` (lone domain-layer service) |
 
 The overwhelming majority of logic is in `application/<domain>` — one vertical slice per
@@ -156,8 +157,8 @@ layers (`api`/`application`/`domain`/`infrastructure`).
 
 ```mermaid
 graph TD
-    CTRL["api/* @RestController (184)"] --> APP["application/* @Service (225)"]
-    APP --> REPO["infrastructure repositories (288)"]
+    CTRL["api/* @RestController (180)"] --> APP["application/* @Service (225)"]
+    APP --> REPO["infrastructure repositories (289)"]
     APP --> CACHE["Redis CacheConfig / CacheWarmUpService"]
     APP --> EP["EventPublisher → Kafka"]
     APP --> NOTIF["NotificationService"]
@@ -166,7 +167,7 @@ graph TD
     KCON --> IDS["IdempotencyService (Redis SETNX 24h)"]
     KCON --> SEARCH["FluenceIndexingService → Elasticsearch"]
     KCON --> NOTIF
-    SCHED["@Scheduled jobs (25; 24 ShedLock-guarded)"] --> APP
+    SCHED["@Scheduled jobs (26; 24 ShedLock-guarded + 2 unguarded)"] --> APP
     APP --> WS["RedisWebSocketRelay (multi-pod fan-out)"]
     SEC["common/security services<br/>TokenBlacklist · AccountLockout · ApiKey · RateLimiter"] -.guards.-> CTRL
     APP --> AUDIT["AuditEvent → Kafka → AuditEventConsumer"]
@@ -238,12 +239,21 @@ gracefully rather than failing startup.
   bypasses cache (GET/PUT/EVICT/CLEAR) so a Redis outage falls through to the DB instead
   of throwing 500s.
 
-## 5. Event-Driven Services — Kafka (`infrastructure/kafka/`)
+## 5. Event-Driven Services — Kafka + Transactional Outbox (`infrastructure/kafka/`)
 
 Topics are centralized in `infrastructure/kafka/KafkaTopics.java` under the
 `nu-aura.{domain}` convention, each with an auto-suffixed `.dlt` dead-letter topic.
 Producers publish via `producer/EventPublisher.java`; all events extend
-`events/BaseKafkaEvent.java`. **7 consumers** process domain events (idempotency-guarded):
+`events/BaseKafkaEvent.java`. **7 consumers** process domain events (idempotency-guarded).
+
+> **Transactional Outbox (Railway fallback):** when `app.outbox.enabled=true`
+> (default), application services persist `OutboxEvent` rows in the same transaction as
+> domain objects (V300 migration creates the `outbox_events` table; V303 adds RLS).
+> `OutboxEventProcessor` polls every 5 s and dispatches them to the appropriate Kafka
+> topic (or, on Railway where Kafka is disabled, directly to the consumer handler via
+> in-process dispatch). This guarantees at-least-once delivery without distributed 2PC.
+> See `infrastructure/kafka/outbox/` — `OutboxEvent`, `OutboxEventRepository`,
+> `OutboxEventProcessor`.
 
 | Topic | Event (`kafka/events/`) | Consumer (`kafka/consumer/`) | Group / Purpose |
 |-------|-------------------------|------------------------------|-----------------|
@@ -306,15 +316,18 @@ the `nu-aura.fluence-content` topic.
 - **Docs:** `OpenApiConfig` (SpringDoc); `ProductionReadinessValidator` asserts prod
   prerequisites at boot.
 
-## 8. Scheduled Jobs (25 across 15 components)
+## 8. Scheduled Jobs (26 across 16 components)
 
-**25 `@Scheduled` methods** live across 15 components; **24 are `@SchedulerLock`-guarded**
-(K8s multi-pod safe via `ShedLockConfig`'s JDBC provider on the `shedlock` table, V91) and
+**26 `@Scheduled` methods** live across 16 components; **24 are `@SchedulerLock`-guarded**
+(K8s multi-pod safe via `ShedLockConfig`'s JDBC provider on the `shedlock` table, V91),
 **1 is intentionally per-pod** (`TokenBlacklistService.redisHealthProbe` — each pod probes
-its own Redis connectivity to flip its in-memory fallback). All are gated by
-`app.scheduling.enabled` (`SchedulingConfig`) so worker pods run jobs while API pods do not.
-The `grep -rl @Scheduled` *file* count is 17, but 2 of those files only mention `@Scheduled`
-in doc comments (`TenantTimeProvider`, `ShedLockConfig`) — the true method count is **25**.
+its own Redis connectivity to flip its in-memory fallback), and **1 is the transactional
+outbox poller** (`OutboxEventProcessor.pollAndProcess` — no ShedLock; activated by
+`@ConditionalOnProperty("app.outbox.enabled", matchIfMissing=true)`). All business/platform
+jobs are gated by `app.scheduling.enabled` (`SchedulingConfig`) so worker pods run jobs
+while API pods do not. The `grep -rl @Scheduled` *file* count is 18, but 2 of those files
+only mention `@Scheduled` in doc comments (`TenantTimeProvider`, `ShedLockConfig`) — the
+true method count is **26**.
 
 → **Full enumeration** (every job's schedule, `@SchedulerLock` name, and lock window) lives
 in [[Scheduled-Jobs]]. Domain summary:
@@ -336,11 +349,12 @@ in [[Scheduled-Jobs]]. Domain summary:
 | `RateLimitingFilter` | `fixedRate 30s` + cleanup | Redis health probe; bucket cleanup (×2, ShedLock) |
 | `TenantFilter` | `fixedRate` | Tenant-cache refresh (ShedLock) |
 | `TokenBlacklistService` | `fixedDelay 30s` | **Per-pod** Redis-connectivity probe (no ShedLock) |
+| `OutboxEventProcessor` | `fixedDelay ${app.outbox.poll-interval-ms:5000}` | **Outbox poller** — dispatch `OutboxEvent` rows to Kafka topics (no ShedLock; `@ConditionalOnProperty("app.outbox.enabled")`) |
 
 > Housekeeping vs business: the `common/security` sites (`RateLimitingFilter`,
 > `TenantFilter`, `TokenBlacklistService`) maintain local/Redis state rather than doing
-> domain work. `TenantTimeProvider` and `ShedLockConfig` only reference `@Scheduled` in
-> comments — they host no scheduled method.
+> domain work. `OutboxEventProcessor` is in `infrastructure/kafka/outbox/`. `TenantTimeProvider`
+> and `ShedLockConfig` only reference `@Scheduled` in comments — they host no scheduled method.
 
 ## Key File Reference
 

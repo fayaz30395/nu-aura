@@ -7,7 +7,7 @@ tags: [frontend, components, state-management, zustand, react-query, mantine]
 
 ## Purpose
 
-Inventory of the **170** React components under `frontend/components/`, organized
+Inventory of the **171** React components under `frontend/components/`, organized
 by feature area, plus the shared UI primitive library, the state-management split
 ([[#State management]] — Zustand for client/identity/UI, TanStack Query for
 server state), the realtime `WebSocketContext`, and the custom-hook catalog.
@@ -20,30 +20,30 @@ counts, run for this doc):
 
 | Metric | Count |
 |--------|-------|
-| Total components (`*.tsx` under `components/`) | **170** |
-| `use*` hook files (whole frontend) | **127** |
+| Total components (`*.tsx` under `components/`) | **171** (incl. 9 test files; 162 pure components) |
+| `use*` hook files (whole frontend) | **121** (excl. generated; 114 non-test) |
 | Domain query hooks (`lib/hooks/queries/*`) | **93** |
 | Service wrappers (`lib/services/*`) | **226** |
-| Zustand stores (`lib/stores/*`) | **3** (+ tests) |
+| Zustand stores (`lib/stores/*`) | **3** (+ 2 test files) |
 | React contexts (`lib/contexts/*`) | **1** (`WebSocketContext`) |
 
 ### Components by feature area (measured per-dir)
 
 | Area | Count | Examples |
 |------|-------|----------|
-| `ui/` (shared primitives) | **43** | `Button`, `Card`, `Modal`, `Select`, `Input`, `Tabs`, `ResponsiveTable`, `StatCard`, `EmptyState`, `Toast`, `ConfirmDialog`, `FileUpload`, `AdvancedFilterPanel`, `ErrorBoundary`, `AccessibleFormField` |
-| `fluence/` ([[Nu-Fluence]]) | **30** | `RichTextEditor`, `WikiPageTree`, `ContentViewer`, `InlineComments`, `MentionInput`, `FluenceChatWidget`, `ChatSourceCard`, `FileUploader`, `MacroRenderer`, `TableOfContents`, `SpacePermissionsDrawer` |
-| `layout/` (app shell) | **16** | `AppLayout`, `Header`, `GlobalSearch`, `NotificationDropdown`, `UserMenu`, `menuSections`, `Breadcrumbs`, `DarkModeProvider`, `MantineThemeProvider`, `AdminPageContent`, `AppLandingHero`, + `shell/` (`ProductRail`, `NavPanel`, `TopBar`, `CommandPalette`, `shellConfig`) |
+| `ui/` (shared primitives) | **44** (38 components + 6 test files) | `Button`, `Card`, `Modal`, `Select`, `Input`, `Tabs`, `ResponsiveTable`, `StatCard`, `EmptyState`, `Toast`, `ConfirmDialog`, `FileUpload`, `AdvancedFilterPanel`, `ErrorBoundary`, `AccessibleFormField`, `Sidebar`, `Skeleton`, `SlidePanel`, `Spinner`, `Switch` |
+| `fluence/` ([[Nu-Fluence]]) | **30** (23 direct + 4 `macros/` + 3 `editor/`) | `RichTextEditor`, `WikiPageTree`, `ContentViewer`, `InlineComments`, `MentionInput`, `FluenceChatWidget`, `ChatSourceCard`, `FileUploader`, `MacroRenderer`, `TableOfContents`, `SpacePermissionsDrawer` |
+| `layout/` (app shell) | **16** (11 direct + 5 `shell/`) | `AppLayout`, `Header`, `GlobalSearch`, `NotificationDropdown`, `UserMenu`, `menuSections`, `Breadcrumbs`, `DarkModeProvider`, `MantineThemeProvider`, `AdminPageContent`, `AppLandingHero`, + `shell/` (`ProductRail`, `NavPanel`, `TopBar`, `CommandPalette`, `shellConfig`) |
 | `dashboard/` | **13** | dashboard widgets / cards |
-| `charts/` (Recharts) | **11** | chart wrappers |
+| `charts/` (Recharts) | **11** (6 direct + 5 `aura/`) | chart wrappers, `aura/` primitives (`AreaChart`, `BarsH`, `Donut`, `Ring`, `Sparkline`) |
 | `resource-management/` (PSA) | **10** | allocation / resourcing UI |
-| `auth/` | **7** | `AuthGuard`, `PermissionGate`, `FeatureGate`, `MfaSetup`, `MfaVerification` |
+| `auth/` | **7** (5 components + 2 test files) | `AuthGuard`, `PermissionGate`, `FeatureGate`, `MfaSetup`, `MfaVerification` |
 | `integrations/` | **5** | connector config UI |
-| `wall/` ([[Nu-Fluence]] social) | **4** | feed, reactions |
+| `wall/` ([[Nu-Fluence]] social) | **4** | `PostComposer`, `ReactionBar`, `CommentThread`, `WallCards` |
 | `motion/` (Framer Motion) | **4** | animation primitives |
 | `recruitment/` ([[Nu-Hire]]) | **3** | |
 | `projects/` · `performance/` · `notifications/` · `errors/` | 3 each | |
-| `platform/` · `payroll/` · `expenses/` · `custom-fields/` · `admin/` | 2 each | |
+| `platform/` · `payroll/` · `expenses/` · `custom-fields/` · `admin/` | 2 each | `platform/` incl. 1 test file |
 | `training/` · `employee/` | 1 each | |
 
 > No root-level `components/*.tsx` files — everything is grouped by feature area
@@ -88,7 +88,7 @@ graph LR
     FeatureGate --> useFeatureFlag
   end
 
-  subgraph UI["ui/ (43 primitives)"]
+  subgraph UI["ui/ (38 components + 6 tests)"]
     Button & Card & Modal & Select & ResponsiveTable & StatCard
   end
 
@@ -201,7 +201,7 @@ Assembled in `frontend/app/providers.tsx` (full chain documented in [[Pages]]):
 → NotificationsToastProvider → DarkModeProvider → MantineThemeProvider →
 Notifications → WebSocketProvider → TokenRefreshManager → AuthGuard → children`.
 
-## Custom hooks (127 `use*` files)
+## Custom hooks (121 `use*` files, excl. generated)
 
 - **Auth/RBAC**: `useAuth`, `useAuthStatus`, `usePermissions`, `useActiveApp`,
   `useFeatureFlag`, `useSamlConfig`.
@@ -211,7 +211,11 @@ Notifications → WebSocketProvider → TokenRefreshManager → AuthGuard → ch
   `useApprovals`, `useDashboards`, `useAttendance`, `useExpenses`,
   `useContracts`, `useAgency`, `useCompensation`, `useEsignature`, …
 - **Utility**: `useDebounce`, `useAnimation`, `useAriaAnnounce` (a11y live
-  region), `useOrgChart`, `usePreloadData`, `useBiometric`, `useFluenceChat`.
+  region), `useOrgChart`, `usePreloadData`, `useBiometric`, `useFluenceChat`,
+  `useCompetency`, `useNotifications`.
+
+**Non-query hook count** (excl. generated, excl. test files): **114** hook files in
+`lib/hooks/` (non-queries) and `lib/hooks/queries/` (93 files).
 
 ## Related Links
 
@@ -240,7 +244,7 @@ Notifications → WebSocketProvider → TokenRefreshManager → AuthGuard → ch
 
 ## Operational Notes
 
-- Recount: `find frontend/components -name '*.tsx' | wc -l` (170);
+- Recount: `find frontend/components -name '*.tsx' | wc -l` (171 total, 162 non-test);
   per-area: pipe through `sed`/`awk` on the first path segment.
 - Component tests live beside sources (`Button.test.tsx`, `Stat.test.tsx`,
   `StatusBadge.test.tsx`, `Callout.test.tsx`, store/hook `.test.ts`).

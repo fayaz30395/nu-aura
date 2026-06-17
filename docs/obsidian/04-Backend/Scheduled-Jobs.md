@@ -1,19 +1,24 @@
 ---
 title: Scheduled Jobs & Background Coordination
 tags: [backend, scheduling, shedlock, jobs, platform, multi-tenant]
-verified: 2026-06-16
+verified: 2026-06-18
 ---
 
 # Scheduled Jobs & Background Coordination
 
 Evidence-based catalog of every `@Scheduled` site in the backend, the distributed-locking
 that makes them multi-pod safe, and the related coordination primitives (WebSocket relay,
-read-replica routing). Verified live against `backend/src/main/java/com/nulogic/` on 2026-06-16.
+read-replica routing, transactional outbox). Verified live against
+`backend/src/main/java/com/nulogic/` on 2026-06-18.
 
-> **Headline (corrected this pass):** there are **25 `@Scheduled` methods across 15
-> components**, of which **24 are `@SchedulerLock`-guarded** and **1 is intentionally
-> per-pod**. The prior "17 scheduled jobs" figure was a `grep -rl @Scheduled` *file* count
-> that also matched two doc-comment-only files (`TenantTimeProvider`, `ShedLockConfig`).
+> **Headline (corrected 2026-06-18):** there are **26 `@Scheduled` methods across 16
+> components**, of which **24 are `@SchedulerLock`-guarded**, **1 is intentionally per-pod**
+> (`TokenBlacklistService`), and **1 is the new transactional outbox poller**
+> (`OutboxEventProcessor.pollAndProcess`, no ShedLock, activated by
+> `@ConditionalOnProperty("app.outbox.enabled", matchIfMissing=true)`). The prior "25 methods
+> across 15 components" figure predated the outbox work (commit after 2026-06-16). A
+> `grep -rl @Scheduled` *file* count is 18, but 2 files only reference `@Scheduled` in doc
+> comments (`TenantTimeProvider`, `ShedLockConfig`).
 
 ## How scheduling is wired
 
@@ -37,7 +42,7 @@ flowchart LR
     P1 -->|runs body once| WORK["job body executes"]
 ```
 
-## Job catalog (24 distributed + 1 per-pod)
+## Job catalog (24 distributed + 1 per-pod + 1 outbox poller)
 
 Identifier = the `@SchedulerLock(name=…)` value (unique, authoritative). Schedules read
 verbatim from the `@Scheduled` annotations.
@@ -107,6 +112,12 @@ verbatim from the `@Scheduled` annotations.
 | `accrueMonthlyLeave` | `LeaveAccrualScheduler` | `${app.leave.accrual.cron:0 0 2 1 * *}` UTC | PT5M / PT4H | Monthly leave accrual (long window — full-tenant fan-out) |
 | `executeScheduledReports` | `ScheduledReportExecutionJob` | `0 * * * * *` (every minute) | PT2M / PT2H | Run due scheduled analytics reports |
 
+### Transactional outbox (`infrastructure/kafka/outbox/`)
+
+| Lock name | Component | Schedule | Lock window | Notes |
+|-----------|-----------|----------|-------------|-------|
+| _(none)_ | `OutboxEventProcessor.pollAndProcess` | `fixedDelay=${app.outbox.poll-interval-ms:5000}` (5s default) | — | **Not ShedLock-guarded.** The outbox table's UPDATE + DELETE is idempotent per-row; each pod processes its own batch. Active only when `@ConditionalOnProperty("app.outbox.enabled", matchIfMissing=true)`. Replaces direct Kafka publishing on Railway (where Kafka is unavailable) and runs on all pods that have the property set. |
+
 ## Operational rules
 
 - **Worker-pod isolation.** Set `APP_SCHEDULING_ENABLED=false` on web pods; `true` on a
@@ -120,6 +131,9 @@ verbatim from the `@Scheduled` annotations.
 
 ## Related coordination primitives (same gap, now pointer-documented)
 
+- **Transactional outbox poller** — `OutboxEventProcessor.pollAndProcess` (see above in
+  catalog). Not ShedLock-guarded; each pod polls its own DB slice. Activated by
+  `app.outbox.enabled=true` (default). Outbox table: `outbox_events` (V300 + V303 RLS).
 - **WebSocket multi-pod fan-out** — `infrastructure/websocket/RedisWebSocketRelay`
   (+ `RedisWebSocketSubscriber`, `RedisWebSocketMessage`). Spring's `SimpleMessageBroker`
   is in-memory, so a user on Pod A misses messages sent from Pod B. Every send is published

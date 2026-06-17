@@ -7,7 +7,7 @@ tags: [database, schema, columns, foreign-keys, data-dictionary, index]
 
 > The deepest data layer in the vault: per-column detail for core business tables
 > plus a **complete** foreign-key relationship map. Companion to
-> [[Table-Index]] (all 330 distinct table names) and [[Schema]] (conventions, RLS,
+> [[Table-Index]] (all 331 distinct table names) and [[Schema]] (conventions, RLS,
 > multi-tenancy). Where [[Schema]] documents *how* the schema is shaped and
 > [[Table-Index]] *names* every table, this note documents *what is inside* the
 > anchor tables and *how* every table connects to the rest.
@@ -1153,10 +1153,11 @@ reference it. Remaining columns are status/date workflow fields — see entity.)
 **Spine deviation:** only `id`, `tenant_id` (FK→`tenants`), `created_by`,
 `created_at`, `updated_at` — no `updated_by`/`version`/`is_deleted`/`deleted_at`.
 
-#### contract_signatures *(added V16 — partial spine)*
+#### contract_signatures *(added V16; `tenant_id` added V302)*
 | Column | Type | Null | Key/Notes |
 |--------|------|------|-----------|
 | contract_id | UUID | NOT NULL | FK→`contracts` ON DELETE CASCADE |
+| tenant_id | UUID | NOT NULL | FK→`tenants` — added by `V302` (backfilled from parent contract); direct tenant isolation |
 | signer_id | UUID | nullable | |
 | signer_name | VARCHAR(255) | NOT NULL | |
 | signer_email | VARCHAR(255) | NOT NULL | PII, plaintext |
@@ -1166,7 +1167,7 @@ reference it. Remaining columns are status/date workflow fields — see entity.)
 | signature_image_url | VARCHAR(500) | nullable | |
 | ip_address | VARCHAR(45) | nullable | |
 
-**Spine deviation:** only `id`, `created_at`, `updated_at` — **no `tenant_id`**.
+**Spine note:** V16 original had only `id`, `created_at`, `updated_at` — no `tenant_id`. `V302` added `tenant_id UUID NOT NULL` with FK→`tenants` and enabled direct RLS isolation (previously relied on a sub-select JOIN through `contracts`).
 
 ### Knowledge, wiki & blog → [[Nu-Fluence]]
 
@@ -2040,10 +2041,10 @@ erDiagram
 
 ## Related Links
 
-- [[Table-Index]] — every one of the 330 distinct table names, clustered
+- [[Table-Index]] — every one of the 331 distinct table names, clustered
 - [[Schema]] — engine, multi-tenancy, RLS, spine conventions, indexes
 - [[ERD]] — core entity-relationship diagram + relationship narrative
-- [[Migrations]] — Flyway migration index (`V0`–`V294`)
+- [[Migrations]] — Flyway migration index (`V0`–`V304`)
 - [[Data-Flows]] — request lifecycle, RLS tenant-context propagation
 - [[Feature-Traceability]] — feature → table/endpoint mapping
 - [[00-Home]] — vault index

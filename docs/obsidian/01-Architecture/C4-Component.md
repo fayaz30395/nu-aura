@@ -23,14 +23,14 @@ into five top-level packages. Each bounded context (e.g. `employee`, `payroll`,
 
 | Layer | Package | Responsibility | Depends on |
 |-------|---------|----------------|------------|
-| API | `com.nulogic.api.<ctx>` | `@RestController` (179), request/response DTOs, MapStruct mappers, OpenAPI, validation | application |
-| Application | `com.nulogic.application.<ctx>` | `@Service` (225) use cases, `@Transactional`, cache put/evict, event publishing, schedulers | domain, infrastructure |
-| Domain | `com.nulogic.domain.<ctx>` | `@Entity` (304) JPA model extending `TenantAware` / `BaseEntity` | common/entity |
+| API | `com.nulogic.api.<ctx>` | `@RestController` (183), request/response DTOs, MapStruct mappers, OpenAPI, validation | application |
+| Application | `com.nulogic.application.<ctx>` | `@Service` (258) use cases, `@Transactional`, cache put/evict, event publishing, schedulers | domain, infrastructure |
+| Domain | `com.nulogic.domain.<ctx>` | `@Entity` (321) JPA model extending `TenantAware` / `BaseEntity` | common/entity |
 | Infrastructure | `com.nulogic.infrastructure.<ctx>` | Spring Data repositories, Kafka, Elasticsearch, WebSocket, Drive, SAML/API-key adapters | domain |
 | Common | `com.nulogic.common.*` | Config, security filters, base entities, exceptions, health, metrics | — |
 
-Counts verified 2026-06-16: `grep -rl @RestController .../api` → 184; `@Service` (application) → 225;
-`@Entity` (domain) → 304; `@Scheduled` methods → 25 (15 components, 24 `@SchedulerLock`-guarded).
+Counts verified 2026-06-18: `@RestController` → 183; `@Service` → 258;
+`@Entity` → 321; `@Scheduled` methods → 28 (18 components, 25 `@SchedulerLock`-guarded).
 Dependency direction enforced by ArchUnit tests under `backend/src/test/java/com/nulogic/architecture/`.
 
 ## Dependencies
@@ -44,15 +44,15 @@ every module. See [[Shared-Platform]] for the cross-cutting catalog and [[Servic
 ```mermaid
 flowchart TD
     subgraph api["com.nulogic.api — Inbound Adapters"]
-        CTRL["@RestController + DTOs<br/>(184 controllers)"]
+        CTRL["@RestController + DTOs<br/>(183 controllers)"]
     end
     subgraph application["com.nulogic.application — Use Cases"]
-        SVC["@Service orchestration<br/>tx boundaries · cache (in)validation<br/>(225 services)"]
-        EVT["event/ — domain event producers"]
-        SCHED["schedulers — @Scheduled (17, ShedLock)"]
+        SVC["@Service orchestration<br/>tx boundaries · cache (in)validation<br/>(258 services)"]
+        EVT["event/ — domain event producers (outbox)"]
+        SCHED["schedulers — @Scheduled (28, ShedLock)"]
     end
     subgraph domain["com.nulogic.domain — Model"]
-        ENT["@Entity (304)<br/>extends TenantAware / BaseEntity"]
+        ENT["@Entity (321)<br/>extends TenantAware / BaseEntity"]
     end
     subgraph infrastructure["com.nulogic.infrastructure — Outbound Adapters"]
         REPO["repository/ (Spring Data JPA<br/>SoftDeleteJpaRepository)"]
@@ -120,8 +120,8 @@ Evidence: `backend/src/main/java/com/nulogic/api/employee/EmployeeController.jav
 | RLS canary | `common/security/RlsStartupProbe.java` | Boot-time RLS regression guard |
 | JWT auth | `common/security/JwtAuthenticationFilter.java`, `JwtTokenProvider.java` | httpOnly-cookie JWT (roles only) |
 | CSRF | `common/security/CsrfDoubleSubmitFilter.java` | Double-submit cookie |
-| Cache | `common/config/CacheConfig.java`, `CacheWarmUpService.java` | 25 tenant-scoped caches |
-| Kafka | `infrastructure/kafka/{KafkaTopics,EventPublisher,IdempotencyService}.java` | Events + idempotency + DLT |
+| Cache | `common/config/CacheConfig.java`, `CacheWarmUpService.java` | 25 tenant-scoped named caches |
+| Events | `infrastructure/kafka/{KafkaTopics,EventPublisher,IdempotencyService}.java`, `kafka/outbox/OutboxEventProcessor.java` | Transactional outbox (primary) + Kafka (when provisioned) + idempotency + DLT |
 | Errors | `common/exception/GlobalExceptionHandler.java` | `@RestControllerAdvice` envelope |
 
 ## Related Links

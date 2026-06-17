@@ -9,23 +9,23 @@ tags: [testing, qa, coverage, catalog, index]
 > lives, how many files it holds, and the exact command to run it. This is the *map* — read
 > [[QA-Strategy]] for the *how/why* of the testing approach and [[Test-Coverage]] for the
 > measured coverage snapshot. Every count below was produced by a real `find`/`grep` against
-> the working tree on **2026-06-17**; commands are shown so any figure can be re-derived.
+> the working tree on **2026-06-18**; commands are shown so any figure can be re-derived.
 
 ## Counts
 
 | Stack | Suite | Count | Command |
 |-------|-------|------:|---------|
-| Backend | Total `*Test*.java` files | **308** | `find backend/src/test -name '*Test*.java' \| wc -l` |
+| Backend | Total `*Test*.java` files | **310** | `find backend/src/test -name '*Test*.java' \| wc -l` |
 | Backend | Integration (extend `AbstractPostgresIntegrationTest`) | **74** | `grep -rl AbstractPostgresIntegrationTest backend/src/test \| wc -l` |
-| Backend | Unit / slice (remainder) | **234** | `308 − 74` |
+| Backend | Unit / slice (remainder) | **236** | `310 − 74` |
 | Frontend | Vitest unit/component (`*.test.ts(x)`, excl. `e2e/`, `node_modules`) | **90** | `find frontend \( -name '*.test.ts' -o -name '*.test.tsx' \) \| grep -v node_modules \| grep -v '/e2e/' \| wc -l` |
 | Frontend | Playwright e2e specs (`frontend/e2e/*.spec.ts`) | **117** | `find frontend/e2e -name '*.spec.ts' \| wc -l` |
 
 > The **74 integration** tests are the Postgres-backed tier — they spin up a real PG16
 > Testcontainer through the shared `AbstractPostgresIntegrationTest` base and therefore
-> **require Docker/colima**. The other **234** are unit/slice tests (Spring Boot Test +
-> Mockito, JUnit 5) that run without a container. The `308`/`234`/`74` split is a file count;
-> the executed *method/case* count is much higher (CI reports ~4,055 backend assertions — see
+> **require Docker/colima**. The other **236** are unit/slice tests (Spring Boot Test +
+> Mockito, JUnit 5) that run without a container. The `310`/`236`/`74` split is a file count;
+> the executed *method/case* count is much higher (CI reports ~4,076 backend assertions — see
 > [[Test-Coverage]]).
 
 ## Backend tests by package
@@ -37,8 +37,8 @@ Top-level package under `backend/src/test/java/com/nulogic/` (command:
 |---------|--------------------:|----------------|
 | `application` | **103** | Service-layer / use-case logic (the largest tier) |
 | `api` | **88** | Controller slice tests mirroring `api/**` ([[Controller-Index]]) |
-| `integration` | **60** | Cross-layer flows against a real PG16 container |
-| `common` | **30** | Shared utilities, converters, helpers |
+| `integration` | **61** | Cross-layer flows against a real PG16 container |
+| `common` | **31** | Shared utilities, converters, helpers |
 | `e2e` | 7 | Backend end-to-end journeys |
 | `security` | 6 | Auth, RBAC boundaries, RLS guards |
 | `infrastructure` | 5 | Persistence/adapter wiring |
@@ -115,16 +115,16 @@ npm run test:e2e:production  # production-target specs (separate config)
 
 ## Latest local run
 
-Recorded **2026-06-17**. The full backend suite was *not* runnable locally (Docker down).
+Recorded **2026-06-18** (QA Iteration 6 / final gate). The full backend suite was *not* runnable locally (Docker down); 263 unit-only tests were run without containers.
 
 | Suite | Result | Notes |
 |-------|--------|-------|
-| Frontend Vitest | **90 files / 2,419 tests — ALL PASS** | 16.2s wall time |
-| Frontend ESLint | **warnings only** | 83 problems originally; the 1 error has since been fixed → 82 design-system 8px-grid **warnings** remain |
-| Backend `mvn test-compile` (JDK 23, `-Djacoco.skip=true`) | **SUCCESS** | Test sources compile clean |
-| Backend full suite | **NOT run locally** | Docker/colima **was down**, so the 74 Testcontainers integration tests can't run here |
+| Frontend Vitest | **90 files / 2,419 tests — ALL PASS** | `tsc` exit 0; `eslint --max-warnings=0` exit 0 |
+| Frontend ESLint | **exit 0** | a11y gate enabled (`jsx-a11y/label-has-associated-control`); 491 fixes across 102 `app/` files + 33 fixes in `components/` — no remaining errors |
+| Backend `mvn test` (local, no Docker) | **263/263 PASS** | Unit/slice tests only; JaCoCo skipped locally |
+| Backend full suite | **NOT run locally** | Docker/colima **was down**; 74 Testcontainers integration tests excluded |
 
-> **CI is the source of truth** for the backend full run. A prior CI run was **4,055 tests
+> **CI is the source of truth** for the backend full run. The most recent green CI run recorded **4,076 tests
 > green** via Testcontainers PG16 ([[CI-CD]], [[Test-Coverage]]).
 
 ## Coverage posture
@@ -138,7 +138,7 @@ Recorded **2026-06-17**. The full backend suite was *not* runnable locally (Dock
 **Honesty note:** coverage **percentages were not re-measured in this catalog**. JaCoCo line
 coverage (~0.19) is *as reported by the pom comment*, not a fresh run; the Vitest 60% figure is
 the *configured gate*, not an achieved number. Re-measuring backend coverage requires a full
-Testcontainers run (Docker). The headline tension stands: a **broad** suite (308 backend + 207
+Testcontainers run (Docker). The headline tension stands: a **broad** suite (310 backend + 207
 frontend files) but **shallow** measured line coverage.
 
 ## Related Links

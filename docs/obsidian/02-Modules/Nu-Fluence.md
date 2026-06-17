@@ -40,6 +40,7 @@ Wikis, blogs, templates, and the wall — structured, searchable, never a blank 
 | Surface | Route | What it does |
 |---------|-------|--------------|
 | Hub / home | `/fluence` | Bento navigation, at-a-glance stats (active spaces, pages/blogs this week, contributions), recent cross-content activity feed |
+| Dashboard | `/fluence/dashboard` | Central knowledge-management hub: recent wiki pages, blog posts, templates — uses `useWikiPages`, `useBlogPosts`, `useFluenceTemplates` |
 | Wiki | `/fluence/wiki`, `/fluence/wiki/new`, `/fluence/wiki/[slug]`, `/fluence/wiki/[slug]/edit` | Spaces → pages tree, source-of-truth docs |
 | Blogs | `/fluence/blogs`, `/fluence/blogs/new`, `/fluence/blogs/[slug]`, `/fluence/blogs/[slug]/edit` | Long-form posts, categories, drafts/published |
 | Templates | `/fluence/templates`, `/fluence/templates/new`, `/fluence/templates/[id]` | Pre-built page structures |
@@ -54,12 +55,12 @@ Verified file tree (each leaf route also ships `error.tsx` / `loading.tsx`, and 
 `layout.tsx` that sets the browser tab `Metadata`):
 
 ```text
-app/fluence/
+app/fluence/                         # 18 page.tsx files (verified 2026-06-18)
 ├── page.tsx                         # hub (bento nav + stats + activity)
 ├── layout.tsx                       # metadata: title "NU-Fluence"
 ├── analytics/   page.tsx + FluenceAnalyticsCharts.tsx (lazy charts)
 ├── blogs/       page.tsx · new/page.tsx · [slug]/page.tsx · [slug]/edit/page.tsx
-├── dashboard/   page.tsx
+├── dashboard/   page.tsx            # knowledge-management hub (recent content grid)
 ├── drive/       page.tsx
 ├── my-content/  page.tsx
 ├── search/      page.tsx
@@ -146,7 +147,7 @@ Wall lives in its own context: `backend/.../domain/wall/model`, served by `WallC
 ## Database & RLS
 
 Fluence tables (`wiki_*`, `blog_*`, `document_templates`) were the subject of a notable RLS
-history: `V15__knowledge_base_fluence_integration.sql` integrated the knowledge base, and
+history: `V15__knowledge_fluence_schema.sql` integrated the knowledge base, and
 `V24__fix_rls_policies.sql` patched 15 Fluence/Knowledge tables that had
 `ENABLE ROW LEVEL SECURITY` but **zero policies** — these were given permissive (allow-all)
 policies with isolation enforced at the application layer (`TenantContext` ThreadLocal + JPA

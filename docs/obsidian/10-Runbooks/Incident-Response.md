@@ -81,7 +81,8 @@ flowchart TD
   (`helm rollback <release> <revision>` / `kubectl rollout undo`).
 - Roll back to the last **frozen, CI-green SHA** (tags like `rc-2026-06-08-frozen` exist).
 - **Database:** never revert a Flyway migration in place — forward-fix with a new migration.
-  Verify Flyway stays **≥ V270** so demo-cred neutralization is not undone.
+  Verify Flyway stays **≥ V299** so demo-credential neutralization (V270 + V299 re-apply
+  for Railway) is not undone.
 - Post-rollback: confirm `/actuator/health/readiness` `UP`, error rate and p95 back inside
   alert thresholds for the soak window, then ramp traffic.
 
@@ -122,6 +123,7 @@ flowchart TD
 ## Related Links
 
 - [[Production-Support]] — health checks, alerts, scaling, scheduled jobs.
+- [[Ruflo-Autopilot-Hazard]] — process risk: autonomous autopilot commits to main; blocks frozen-SHA release gating.
 - [[Security-Audit]] — RLS model, deploy gate, known-finding closures.
 - [[Deployment]] — Helm rollback surface, env/secret injection.
 - [[CI-CD]] — frozen-SHA gate, gitleaks, security scans.

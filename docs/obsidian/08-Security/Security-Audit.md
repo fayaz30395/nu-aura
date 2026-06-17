@@ -55,7 +55,7 @@ flowchart TB
 - **Mechanisms:** password (policy **12+ chars**, complexity, **history 5**, **90-day** max
   age), Google OAuth 2.0, per-tenant SAML2 SSO
   (`DynamicSamlRelyingPartyRegistrationRepository`), TOTP MFA (secret AES-encrypted at rest).
-- **Tokens:** JJWT 0.12.6 HS256, env `JWT_SECRET` (quarterly rotation). JWT in an
+- **Tokens:** JJWT 0.13.0 HS256, env `JWT_SECRET` (quarterly rotation). JWT in an
   **httpOnly + Secure + SameSite cookie**, carries **roles only** — permissions load from DB
   via the Redis permission cache, so permission changes apply without re-login.
 - **Lifecycle:** 24 h access token · 30-day rotated refresh. `TokenBlacklistService` (Redis +
@@ -65,8 +65,13 @@ flowchart TB
 
 ## Authorization / RBAC enforcement
 
-- **9 canonical roles** (SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, MANAGER, EMPLOYEE, RECRUITER,
-  FINANCE, SYSTEM_ADMIN, + HR sub-roles) plus per-tenant custom roles — see [[Roles]].
+- **26 canonical roles** (19 explicit + 7 implicit): core explicit roles include SUPER_ADMIN,
+  TENANT_ADMIN, HR_ADMIN, HR_MANAGER, HR_EXECUTIVE, DEPARTMENT_MANAGER, TEAM_LEAD, EMPLOYEE,
+  CONTRACTOR; specialized: PAYROLL_ADMIN, RECRUITMENT_ADMIN, PROJECT_ADMIN, ASSET_MANAGER,
+  EXPENSE_MANAGER, HELPDESK_ADMIN, TRAVEL_ADMIN, COMPLIANCE_OFFICER, LMS_ADMIN, INTERN;
+  implicit (auto-derived from relationships): REPORTING_MANAGER, SKIP_LEVEL_MANAGER,
+  DEPARTMENT_HEAD, MENTOR, INTERVIEWER, PERFORMANCE_REVIEWER, ONBOARDING_BUDDY. Plus per-tenant
+  custom roles — see [[Roles]].
 - **500+ `MODULE:ACTION` permissions** enforced at controllers via `@RequiresPermission`;
   denials log actor/resource/action at WARN — see [[Permissions]] and [[RBAC-Matrix]].
 - **Data scope:** ALL / LOCATION / DEPARTMENT / TEAM / SELF / CUSTOM evaluated by
@@ -110,11 +115,11 @@ flowchart TB
 | Bulk import | `CellValueSanitizer` neutralizes spreadsheet formula injection |
 | SSRF / redirects | outbound integrations use allowlisted endpoints |
 | Export exfiltration | alert on exports > 1k rows |
-| Crypto | BCrypt-12 · HS256 JWT · AES-256-GCM PII fields (KMS-wrapped per-tenant DEK) · HMAC-SHA256 webhooks · SHA-256 export stamps · TLS 1.2+ |
+| Crypto | BCrypt-12 · HS256 JWT · AES-256-GCM PII fields (single platform-wide `ENCRYPTION_KEY` env var) · HMAC-SHA256 webhooks · SHA-256 export stamps · TLS 1.2+ |
 
 ## Secrets handling
 
-- Runtime secrets come from environment only (K8s Secrets / Railway/Render env / Vercel
+- Runtime secrets come from environment only (K8s Secrets / Railway env / Vercel
   `sync:false`); none in the repo. **Names** are documented in `.env.example` — see
   [[Deployment]] env inventory.
 - **gitleaks** runs per commit and in CI as the enforcement backstop ([[CI-CD]]).
@@ -131,6 +136,7 @@ flowchart TB
 | **Dockerfile JDK/Node drift** | ✅ Closed | Backend pinned Temurin 21; Dependabot bumps to 25/26 correctly fail PR-validation |
 | virus-scan fail-open / `__Host-` cookie / 17 missing `@Valid` | ✅ Closed (prod) | `application-prod.yml`; H-2 remediated (456/458) |
 | **Plaintext PII columns** (PF `uan_number`/`pf_number`, ESI numbers, candidate `email`/`phone`/`resume_url`, `contract_signatures.signer_email`) | ⚠️ Open — review | Surfaced by [[Data-Dictionary]] (2026-06-17): field-level `EncryptedStringConverter` covers 10 entities but these PII columns are stored plaintext — assess whether they warrant encryption-at-rest like the bank/tax fields on `employees` |
+| **outbox_events RLS missing** (V300 created table without RLS) | ✅ Fixed (committed) | V303 `add_rls_to_outbox_events.sql` adds `ENABLE ROW LEVEL SECURITY + FORCE ROW LEVEL SECURITY` + tenant-scoped policy; V304 adds equivalent RLS to `contract_signatures`; both committed and tracked |
 
 ## Residual risks & deploy-gate checklist
 
@@ -175,7 +181,8 @@ legal-hold PII carve-out are the open items; all code-level findings are closed 
 - Compliance posture: GDPR DSR (Art. 15/17/20) compliant with 30-day SLA tooling; Indian
   DPDP compliant; **SOC 2 Type II in progress**; ISO 27001 on roadmap.
 - Vulnerability cadence: Critical patched ≤24 h, High ≤7 d, Medium ≤30 d, Low quarterly;
-  pinned CVE patches recorded in `pom.xml` (Tomcat 10.1.55, Netty 4.1.133, PG driver
-  42.7.11, BouncyCastle 1.84, commons-io 2.18.0, lz4 1.8.1).
+  pinned CVE patches recorded in `pom.xml` (Tomcat 10.1.55, Netty 4.1.133.Final, PG driver
+  42.7.11, BouncyCastle 1.84, commons-io 2.18.0, lz4 1.8.1); Apache POI 5.4.1,
+  OpenPDF 3.0.4, JJWT 0.13.0 (via `backend/pom.xml`).
 - Audit: every write on regulated entities → `nu-aura.audit` (10 partitions) → 7-year store;
   auth-audit 1 year; app logs 90 days.

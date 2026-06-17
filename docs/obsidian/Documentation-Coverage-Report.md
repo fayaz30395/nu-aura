@@ -1,12 +1,12 @@
 ---
 title: Documentation Coverage Report
 tags: [meta, coverage, report]
-generated: 2026-06-16
+generated: 2026-06-18
 ---
 
 # Documentation Coverage Report — NU-AURA Obsidian Vault
 
-Generated 2026-06-16 by full-codebase discovery (parallel section authors, each verifying against source). This report records what the vault covers, the metrics it was built from, and every gap or discrepancy found so the next pass is targeted.
+Generated 2026-06-16 by full-codebase discovery (parallel section authors, each verifying against source); last updated 2026-06-18 (pass 5 — section reconciliation, all 12 numbered sections re-verified). This report records what the vault covers, the metrics it was built from, and every gap or discrepancy found so the next pass is targeted.
 
 **Merge note (2026-06-16):** the former flat docs (`docs/architecture/`, `docs/reference/`, `docs/apps/`, `docs/patterns/`, `docs/setup/`) have been folded into this vault — architecture/API/database/patterns/setup content now lives inside the numbered sections below, and the flat copies are retired. Notably, the migrations reference is now [[Migrations]], the code-patterns reference is now [[Code-Patterns]], and local-setup is now [[Local-Setup]]. The vault is the single canonical knowledge base; GitHub readers enter via [docs/README.md](../README.md).
 
@@ -31,6 +31,18 @@ Generated 2026-06-16 by full-codebase discovery (parallel section authors, each 
 > errors**. New findings: discrepancies #12 (JaCoCo gate **0.10**, not 0.80), #13
 > (encryption spans **10 entities + plaintext PII gaps**, not 3 → tracked in
 > [[Security-Audit]]), #14 (DB FK edges are a floor — logical FKs exist).
+>
+> **Pass 5 (2026-06-18, section reconciliation):** all 12 numbered sections re-audited
+> against HEAD; counts updated to reflect new migrations (V300–V304), outbox poller
+> (26th `@Scheduled` method), and Flyway re-enablement. Key updated figures: **286**
+> frontend pages (was 283), **171** components (162 non-test; was 170), **180** live controllers (stable),
+> **258** services (was 257), **289** repositories (was 288), **26** scheduled jobs (was 25),
+> **293** migration files highest V304 (was 286 files / V294), **331** distinct tables /
+> 344 CREATE TABLE statements (was 330/341). Readiness verdict updated to **92/100
+> CONDITIONAL-GO** (QA iteration 6, 2026-06-18). Note count increased to **57** (added
+> [[Readiness-Session-2026-06-18]] + [[Ruflo-Autopilot-Hazard]]). [[00-Home]] and
+> [[docs/README.md]] reconciled to match — all missing sections now reachable from both
+> map files.
 
 ## 1. Coverage summary
 
@@ -39,43 +51,44 @@ Generated 2026-06-16 by full-codebase discovery (parallel section authors, each 
 | Architecture (C4 + decisions) | [[System-Overview]] [[Architecture-Decisions]] [[C4-Context]] [[C4-Container]] [[C4-Component]] | ✅ Complete | High — verified DDD layers + employee vertical slice (former `architecture/` folded in) |
 | Code patterns | [[Code-Patterns]] | ✅ Complete | High — Redis/RLS/Kafka/locks excerpts grounded in file paths (former `patterns/` folded in) |
 | Modules (4 sub-apps + platform) | [[Nu-HRMS]] [[Nu-Hire]] [[Nu-Grow]] [[Nu-Fluence]] [[Shared-Platform]] | ✅ Complete | High — controllers + routes grepped (former `apps/` folded in) |
-| Frontend | [[Routes]] [[Pages]] [[Components]] [[Route-Map-Full]] | ✅ Complete | High — [[Route-Map-Full]] enumerates all **283** routes (exhaustive) |
-| Backend | [[APIs]] [[Services]] [[Middleware]] [[Controller-Index]] [[Endpoint-Index]] | ✅ Complete | High — [[Controller-Index]] (180 controllers 1:1) + [[Endpoint-Index]] (**1,711** endpoints per-method); filter order read from `SecurityConfig` |
+| Frontend | [[Routes]] [[Pages]] [[Components]] [[Route-Map-Full]] | ✅ Complete | High — [[Route-Map-Full]] enumerates all **286** routes (exhaustive) |
+| Backend | [[APIs]] [[Services]] [[Middleware]] [[Controller-Index]] [[Endpoint-Index]] [[Scheduled-Jobs]] | ✅ Complete | High — [[Controller-Index]] (180 live controllers 1:1) + [[Endpoint-Index]] (**1,711** endpoints per-method); filter order read from `SecurityConfig` |
 | RBAC | [[Roles]] [[Permissions]] [[RBAC-Matrix]] [[Permission-Ownership]] | ✅ Complete | High — `RoleHierarchy.java` enumerated; per-permission/role→sub-app ownership mapped from `apps.ts` + `RoleHierarchy` app tags |
-| Database | [[Schema]] [[ERD]] [[Migrations]] [[Table-Index]] [[Data-Dictionary]] | ✅ Complete | High — [[Table-Index]] (all **330** tables) + [[Data-Dictionary]] (per-column on 90 core tables + **347-edge FK map**) |
+| Database | [[Schema]] [[ERD]] [[Migrations]] [[Table-Index]] [[Data-Dictionary]] | ✅ Complete | High — [[Table-Index]] (all **331** distinct tables) + [[Data-Dictionary]] (per-column on 90 core tables + **347-edge FK map**); highest migration V304 |
 | DevOps | [[Deployment]] [[CI-CD]] [[Local-Setup]] | ✅ Complete | High — workflows + compose enumerated; local-dev run steps (former `setup/` folded in) |
 | Security | [[Security-Audit]] | ✅ Complete | High — controls + known findings |
-| Testing | [[QA-Strategy]] [[Test-Coverage]] [[Test-Catalog]] | ✅ Complete | High — [[Test-Catalog]] enumerates all suites (308 BE / 74 integration / 90 Vitest / 117 Playwright) + how-to-run; FE Vitest re-run green 2026-06-17 |
-| Runbooks | [[Production-Support]] [[Incident-Response]] | ⚠️ Templated | Medium — no `docs/runbooks/` on disk; procedural detail is templated |
+| Testing | [[QA-Strategy]] [[Test-Coverage]] [[Test-Catalog]] [[Readiness-Session-2026-06-18]] | ✅ Complete | High — [[Test-Catalog]] enumerates all suites (310 BE files / 74 integration / 90 Vitest / 117 Playwright; 4,076 BE green in CI); [[Readiness-Session-2026-06-18]] records 92/100 CONDITIONAL-GO verdict (2026-06-18) |
+| Runbooks | [[Production-Support]] [[Incident-Response]] [[Ruflo-Autopilot-Hazard]] | ⚠️ Templated | Medium — no `docs/runbooks/` on disk; procedural detail is templated; [[Ruflo-Autopilot-Hazard]] is evidence-grounded (root cause diagnosed) |
 | Decisions | [[ADR-001]]…[[ADR-005]] | ✅ Complete | High — reverse-engineered from code |
 | Knowledge graph | [[Module-Relationships]] [[Data-Flows]] [[System-Flows]] [[Feature-Traceability]] | ✅ Complete | High — flows traced to classes; [[Feature-Traceability]] adds the full vertical-slice matrix |
 
-**53 notes** across 13 sections (plus [[00-Home]] and this report). **0 unresolved wikilinks**, **0 unbalanced Mermaid fences** (validated). Mermaid diagrams across architecture, C4, ERD, sequence, and flow types. Recent additions: [[Migrations]], [[Code-Patterns]], [[Local-Setup]] (merge round), [[Scheduled-Jobs]] (pass-2 re-verification), and [[Permission-Ownership]] (per-permission/role→sub-app ownership map).
+**57 notes** across 13 sections (plus [[00-Home]] and this report). **0 unresolved wikilinks**, **0 unbalanced Mermaid fences** (validated). Mermaid diagrams across architecture, C4, ERD, sequence, and flow types. Recent additions: [[Migrations]], [[Code-Patterns]], [[Local-Setup]] (merge round), [[Scheduled-Jobs]] (pass-2 re-verification), [[Permission-Ownership]] (per-permission/role→sub-app ownership map), [[Readiness-Session-2026-06-18]] and [[Ruflo-Autopilot-Hazard]] (pass-5 additions).
 
-## 2. Verified metrics (point-in-time, 2026-06-16)
+## 2. Verified metrics (point-in-time, 2026-06-18)
 
 | Metric | Value | Source |
 |--------|-------|--------|
-| Backend `@RestController` | 184 | `grep -rl @RestController` |
-| `api/*` domain packages | 68 | `ls api/` |
-| `@Service` | 257 (app 225 / infra 19 / common 11 / domain 1) | grep |
-| Repositories | 288 | grep |
-| `@Scheduled` jobs | 25 methods / 15 components (24 `@SchedulerLock`-guarded; 1 per-pod) | grep `@Scheduled` + `@SchedulerLock` (`-rl`=17 incl. 2 doc-comment files) |
-| Kafka `@KafkaListener` | 7 (+ DLT) | grep |
-| `@ExceptionHandler` (GlobalExceptionHandler) | 26 | source |
-| Frontend `page.tsx` | 283 | `find` |
+| Backend `@RestController` live | 180 (raw grep 184; −4 = 1 disabled + 2 `@RestControllerAdvice` + 1 annotation source) | `grep -rl @RestController` + [[Controller-Index]] reconciliation |
+| `api/*` domain packages (bounded contexts) | 68 | `ls api/` |
+| `@Service` | 258 | grep |
+| Repositories | 289 | grep |
+| `@Scheduled` jobs | 26 methods / 16 components (24 `@SchedulerLock`-guarded; 1 per-pod Redis probe; 1 outbox poller no ShedLock) | grep `@Scheduled` |
+| Kafka `@KafkaListener` | 7 (+ DLT); outbox fallback active on Railway (`app.kafka.enabled=false`) | grep |
+| `@ExceptionHandler` (GlobalExceptionHandler) | 30 | source |
+| Frontend `page.tsx` | 286 | `find frontend/app -name page.tsx` |
 | `layout.tsx` / `error.tsx` / `loading.tsx` | 240 / 273 / 282 | `find` |
 | Dynamic route segments | 28 | `find` |
-| Components (`*.tsx` in components/) | 170 | `find` |
-| `use*` hook files / query hooks | 127 / 93 | `find` |
-| Client components (`'use client'`) | ~1043 of 1323 `.tsx` (~79%) | grep |
+| Components (`*.tsx` in components/) | 171 (162 non-test) | `find` |
+| `use*` hook files / query hooks | 121 / 93 | `find` |
+| Client components (`'use client'`) | ~1044 of 1327 `.tsx` (~79%) | grep |
 | RBAC roles | 26 (19 explicit + 7 implicit) | `RoleHierarchy.java` |
-| `@RequiresPermission` usages | 190 | grep |
-| Flyway migrations | V0–V294 (286 files) | `find db -name 'V*.sql'` |
-| Distinct tables | ~331 (343 `CREATE TABLE` incl. variants) | grep |
-| RLS-touching migrations | 15 | grep |
-| Backend test files | 308 (`*Test*.java`); 74 extend `AbstractPostgresIntegrationTest` | `find` |
-| Frontend test files | 90 Vitest + 117 Playwright specs | `find` |
+| `@RequiresPermission` usages | ~1,750 (across ~188 non-test files) | grep |
+| Flyway migrations | V0–V304 (293 files; highest = V304) | `find db -name 'V*.sql'` |
+| Distinct table names | 331 (344 `CREATE TABLE` statements) | grep + [[Table-Index]] |
+| RLS-touching migrations | 15+ | grep |
+| Backend test files | 310 (`*Test*.java`); 74 extend `AbstractPostgresIntegrationTest` | `find` |
+| Backend tests in CI (most recent) | 4,076 green | CI run |
+| Frontend test files | 90 Vitest + 117 Playwright specs; 2,419 Vitest green | `find` |
 
 ## 3. Discrepancies found (worth reconciling)
 
@@ -91,18 +104,22 @@ These are real inconsistencies the discovery surfaced between docs/memory and co
 8. **Frontend Docker base drift.** `frontend/Dockerfile` uses `node:26-alpine`; older docs said `node:20`. Dockerfile authoritative. See [[Deployment]].
 9. **`RecruitmentManagementController.java.disabled`** exists but is excluded from the build. See [[Nu-Hire]] / [[APIs]].
 10. **Controller count: 180 true, not 184 (pass-3).** Raw `grep -rl '@RestController'` returns 184 but over-counts by 4 (1 `.disabled` + 2 `@RestControllerAdvice` + 1 annotation source). True live count **180**. See [[Controller-Index]].
-11. **Table count: 330 distinct, not ~331 (pass-3).** The "~331" included one false positive (`above`, from a SQL comment in `V15`). Real count **330** across 341 `CREATE TABLE`. See [[Table-Index]] / [[Schema]].
+11. **Table count: 331 distinct (pass-5 correction).** Pass-3 counted 330 and attributed "~331" to a SQL-comment false positive in V15. Pass-5 section audit found V300 added `outbox_events`, making the real count **331** distinct table names (344 `CREATE TABLE` statements). See [[Table-Index]] / [[Schema]].
 12. **JaCoCo enforced gate is 0.10, not 0.80 (pass-4).** `pom.xml` sets the `mvn verify` gate to a **0.10 ratchet floor**; **0.80 is the backlog target** (T3-15); ~0.19 is last reported. Earlier notes implied an 0.80 gate. See [[Test-Catalog]].
 13. **Field-encryption spans 10 entities + plaintext PII gaps, not 3 (pass-4).** [[Schema]] noted 3 encrypted columns; actual `@Convert(EncryptedStringConverter)` covers **10 entities**, and PII columns (PF/ESI numbers, candidate `email`/`phone`/`resume_url`, `contract_signatures.signer_email`) are **plaintext**. Corrected in [[Schema]]; detailed in [[Data-Dictionary]]; open item in [[Security-Audit]].
 14. **DB FKs are a floor (pass-4).** [[Data-Dictionary]] found **347** DB-enforced FK edges; several anchor relationships carry the parent id without a `REFERENCES` constraint (logical FKs), so true coupling exceeds 347.
+15. **Scheduled jobs: 26, not 25 (pass-5).** V300 `outbox_events` migration + `OutboxEventProcessor.pollAndProcess` added the 26th `@Scheduled` method (fixedDelay=5s, no ShedLock, gated by `app.outbox.enabled=true` matchIfMissing=true). See [[Scheduled-Jobs]].
+16. **Frontend pages: 286, not 283 (pass-5).** Three new routes added since pass-3: `/admin/users` (redirect), `/privacy`, `/terms`. See [[Route-Map-Full]].
+17. **Frontend components: 171 total (162 non-test), not 170 (pass-5).** Pass-3 counted 170; pass-5 re-count finds 171 total (162 non-test) under `frontend/components/`; an earlier 179 figure came from a broader `*/components/*` scope. See [[Components]].
+18. **Flyway high-water mark: V304 / 293 files (pass-5+).** Pass-4 recorded V294 / 286 files; V295–V303 committed between sessions; V304 (RLS on contract_signatures) also committed. See [[Migrations]].
 
 ## 4. Gaps & undocumented areas (candidates for next pass)
 
 - **Leaf-level enumeration — CLOSED (pass 3–4).** Every route ([[Route-Map-Full]]), controller ([[Controller-Index]]), endpoint ([[Endpoint-Index]] + 5 per-sub-app catalogs, **1,711**), and table ([[Table-Index]]) is enumerated; [[Data-Dictionary]] adds per-column detail on 90 core tables + a complete **347-edge FK map**; [[Feature-Traceability]] joins them into per-feature slices. Remaining sampled depth: per-column detail for long-tail tables and per-endpoint DTO schemas.
-- **Count-sweep follow-up.** [[APIs]] / [[System-Overview]] still cite the raw-`grep` 184 controllers (true 180); section-2 metrics below remain at the 2026-06-16 figures. Reconciled figures live in the index notes + discrepancies #10–#14.
+- **Count-sweep follow-up — RESOLVED (pass 5).** [[00-Home]] and [[docs/README.md]] updated to 2026-06-18 authoritative figures. Section-2 metrics table updated in this report. [[APIs]] / [[System-Overview]] internal claims may still cite the raw-`grep` 184 controllers (reconciliation note in [[Controller-Index]]).
 - **Test coverage below standard.** Backend JaCoCo line ~0.19; the **enforced `mvn verify` gate is a 0.10 ratchet floor** (0.80 is the backlog target, not the gate — discrepancy #12). Frontend Vitest threshold 60%. See [[Test-Catalog]] / [[Test-Coverage]].
 - **Runbooks are templated.** `docs/runbooks/` doesn't exist on disk; [[Production-Support]] / [[Incident-Response]] procedural detail is aspirational pending real runbooks.
-- **Scheduled-jobs deep-dive — closed.** [[Scheduled-Jobs]] enumerates all 25 jobs (schedules, ShedLock names + windows) and pointer-documents the WebSocket relay (`RedisWebSocketRelay`) and read-replica routing (`RoutingDataSourceConfig`).
+- **Scheduled-jobs deep-dive — closed.** [[Scheduled-Jobs]] enumerates all 26 jobs (schedules, ShedLock names + windows) and pointer-documents the WebSocket relay (`RedisWebSocketRelay`) and read-replica routing (`RoutingDataSourceConfig`); includes outbox poller (26th job, added 2026-06-18).
 - **Per-permission sub-app ownership — closed.** [[Permission-Ownership]] maps every `Permission` family and role onto the four sub-apps + platform, grounded in `frontend/lib/config/apps.ts` (`permissionPrefixes`), `RoleHierarchy.java` app-tag comments, and `@RequiresPermission` controller packages.
 - **Generated API client layer** (`frontend/lib/generated/api/*`) is gitignored — documented from `orval.config.ts` + snapshot, not read directly. See [[Routes]] / [[APIs]].
 - **RBAC matrix reflects default grants** from `RoleHierarchy`, not live tenant `role_permissions` (admins can diverge per tenant). See [[RBAC-Matrix]].
@@ -110,16 +127,16 @@ These are real inconsistencies the discovery surfaced between docs/memory and co
 
 ## 5. Validation performed
 
-- ✅ All 53 notes present in the prescribed 13-section structure (plus Home + this report); link integrity re-checked 2026-06-17 after pass-3 ([[Route-Map-Full]], [[Controller-Index]], [[Table-Index]], [[Feature-Traceability]]) and pass-4 ([[Endpoint-Index]] + 5 endpoint catalogs, [[Data-Dictionary]], [[Test-Catalog]]).
+- ✅ All 57 notes present in the prescribed 13-section structure (plus Home + this report); link integrity re-checked 2026-06-18 after pass-5 (all 12 sections re-audited; [[Readiness-Session-2026-06-18]] and [[Ruflo-Autopilot-Hazard]] added; [[00-Home]] and [docs/README.md](../README.md) updated to reflect all missing sections).
 - ✅ Tests executed 2026-06-17: **FE Vitest 2,419/2,419 pass** (90 files); **BE test sources compile** (`mvn test-compile`, JDK 23, `-Djacoco.skip=true`); FE ESLint **0 errors** (82 design-system spacing warnings remain). **Not run locally:** BE full suite incl. 74 Testcontainers integration tests (Docker/colima down — CI authoritative, prior run 4,055 green) and Playwright (low local signal).
-- ✅ Wikilink integrity: every `[[target]]` resolves to an existing note basename (0 broken), including [[Permission-Ownership]] and the three merged-in notes [[Migrations]], [[Code-Patterns]], [[Local-Setup]].
+- ✅ Wikilink integrity: every `[[NoteBasename]]` resolves to an existing note (0 broken), including [[Permission-Ownership]], [[Readiness-Session-2026-06-18]], [[Ruflo-Autopilot-Hazard]], and the three merged-in notes [[Migrations]], [[Code-Patterns]], [[Local-Setup]].
 - ✅ Mermaid fence balance: all code fences even (0 malformed blocks).
 - ✅ Counts re-measured live from source (not copied from prior docs).
 - ✅ Flat-doc references removed: Home and this report no longer point at the retired `architecture/`, `reference/`, `patterns/`, `setup/` folders.
-- ⚠️ Not run: BE integration suite + coverage (needs Docker), browser route-walk of all 283 pages, Playwright (low local signal). Per-endpoint enumeration of all 180 controllers is now **done** ([[Endpoint-Index]]).
+- ⚠️ Not run: BE integration suite + coverage (needs Docker), browser route-walk of all 286 pages, Playwright (low local signal). Per-endpoint enumeration of all 180 controllers is now **done** ([[Endpoint-Index]]).
 
 ## 6. Estimated coverage
 
-All 12 prescribed sections + Home are authored and cross-linked; the former flat reference/architecture/patterns/setup content is now merged in, so the vault is self-contained. All major modules and platform concerns are represented and verified against code. **Structural & module coverage ≈ 100%, and (as of pass 4) leaf-level coverage is exhaustive at method and column granularity**: every route, controller, endpoint (**1,711**), table (330), and test suite is enumerated, with per-column detail on 90 core tables + a complete **347-edge FK map**, all joined by [[Feature-Traceability]]. Remaining sampled depth is minimal (long-tail table columns, per-endpoint DTO schemas). Counts are point-in-time (2026-06-17) and will drift — re-measure before quoting in a release.
+All 12 prescribed sections + Home are authored and cross-linked; the former flat reference/architecture/patterns/setup content is now merged in, so the vault is self-contained. All major modules and platform concerns are represented and verified against code. **Structural & module coverage ≈ 100%, and (as of pass 5) leaf-level coverage is exhaustive at method and column granularity**: every route (**286**), controller (**180** live), endpoint (**1,711**), table (**331** distinct), and test suite is enumerated, with per-column detail on 90 core tables + a complete **347-edge FK map**, all joined by [[Feature-Traceability]]. Remaining sampled depth is minimal (long-tail table columns, per-endpoint DTO schemas). Counts are point-in-time (2026-06-18) and will drift — re-measure before quoting in a release.
 
 Related: [[00-Home]]

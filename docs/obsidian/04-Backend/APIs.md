@@ -8,16 +8,17 @@ tags: [backend, api, rest, controllers, ddd, catalog]
 > Catalog of the NU-AURA REST surface. The top half is a **per-bounded-context domain
 > map** (which `api/<domain>` package owns which base paths, the auth posture per area);
 > the bottom half is the **full controller-by-controller endpoint reference** grouped by
-> module. With **184 `@RestController` classes** spanning **68 `api/*` packages**, this
+> module. With **180 live `@RestController` classes** spanning **68 `api/*` packages**, this
 > page is the single source of truth for the HTTP surface. See [[Services]] for the
 > service layer behind these controllers and [[Middleware]] for the filter chain every
-> request traverses.
+> request traverses. See [[Controller-Index]] for the full reconciled count (raw `grep`
+> returns 184 but includes 1 `.disabled` file + 3 non-controller matches).
 
 ## Purpose
 
 Give a navigable map of the backend HTTP surface: which `api/<domain>` package owns which
 base paths, every controller and its base path, and the auth/RBAC posture per area —
-enough to locate any endpoint's owning controller without reading all 184 files.
+enough to locate any endpoint's owning controller without reading all 180 source files.
 
 ## Context
 
@@ -32,22 +33,13 @@ enough to locate any endpoint's owning controller without reading all 184 files.
   `/api/webhooks`, `RootProbeController` → `/` (GET/HEAD liveness).
   `common/api/ApiVersionInterceptor` + `ApiVersion` govern version negotiation; responses
   use the `ApiResponses` envelope.
-- **Counts (verified from source, 2026-06-16):**
+- **Counts (verified from source, 2026-06-18):**
   | Metric | Count | Evidence |
   |--------|-------|----------|
-  | `@RestController` classes | 184 | `grep -rl @RestController backend/src/main/java` |
+  | Live `@RestController` classes | **180** | strict `grep -rlE '^\s*@RestController\s*(\(|$)' --include='*.java'`; raw `grep` (no `--include`) returns 184 (1 `.disabled` + 3 non-controllers excluded) — see [[Controller-Index]] |
   | `api/*` domain packages | 68 | `ls backend/src/main/java/com/nulogic/api` |
-  | `@Service` (all layers) | 257 | `grep -rl @Service` |
-  | Repositories | 288 | repository interface grep |
-  > Older [[Services]] cited 179 controllers and [[APIs]]
-  > cited ~150 documented; the delta reflects controllers added since those docs and the
-  > catalog below being a curated-but-near-complete cut. This page uses the live `grep`
-  > count of 184.
-  >
-  > **Reconciliation (2026-06-17):** that raw `grep` over-counts — the true number of
-  > live `@RestController` classes is **180** (the 184 includes 1 `.disabled` file + 2
-  > `@RestControllerAdvice` + 1 annotation source). For the exhaustive, reconciled 1:1
-  > list of every controller see [[Controller-Index]].
+  | `@Service` (all layers) | 258 | `grep -rl @Service --include='*.java'` |
+  | Repositories | 289 | `grep -rln 'extends.*Repository' --include='*.java'` |
 
 ## Dependencies
 
@@ -513,8 +505,8 @@ A dedicated mobile surface mirrors core flows under `/api/v1/mobile/*`:
 
 ## Risks
 
-- **Catalog staleness:** 184 controllers change frequently. Re-run
-  `grep -rl @RestController backend/src/main/java | wc -l` to re-verify.
+- **Catalog staleness:** 180 live controllers change frequently. Re-run
+  `grep -rlE '^\s*@RestController\s*(\(|$)' backend/src/main/java/com/nulogic --include='*.java' | wc -l` to re-verify (expect 180; see [[Controller-Index]] for reconciliation).
 - **Disabled controller:** `api/recruitment/RecruitmentManagementController.java.disabled`
   is excluded from the build — its endpoints are not live.
 - **Public surface:** the `permitAll()` allow-list (careers, offers, e-sign, preboarding,

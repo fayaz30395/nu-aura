@@ -17,8 +17,9 @@ become a [[Deployment]] artifact.
 
 ## Context
 
-- Six workflows live in `.github/workflows/`. CI runs on push/PR; security and deploy
-  workflows trigger on `main` push (plus weekly / manual).
+- Six workflows live in `.github/workflows/`. `ci.yml` and `pr-validation.yml` trigger on
+  push/PR to `main` and `develop`; `security-scan.yml` and `deploy.yml` target `main` only
+  (plus weekly cron and `workflow_dispatch`).
 - The **frontend build depends on Orval codegen** from a committed OpenAPI snapshot
   (`frontend/openapi-snapshot.json`), so the typed API client stays reproducible without a
   running backend — see [[APIs]].
@@ -93,7 +94,7 @@ flowchart LR
 
 | Gate | Where | Behavior |
 |------|-------|----------|
-| Backend suite green | `ci.yml` / `pr-validation.yml` | Testcontainers PG16, Flyway V0→latest clean-apply, Redis svc |
+| Backend suite green | `ci.yml` / `pr-validation.yml` | Testcontainers PG16, Flyway V0→V304 clean-apply (293 migration files), Redis svc |
 | Frontend quality | `ci.yml` / `pr-validation.yml` | ESLint `--max-warnings=0`, `tsc`, unit tests, `next build` |
 | Architecture guards | inside test suite | `ArchUnit`, `RlsTenantGucScopeTest` (blocks session-scoped GUC writes) |
 | Trivy (filesystem) | `ci.yml` security job | CRITICAL findings |

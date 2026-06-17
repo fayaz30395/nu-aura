@@ -8,8 +8,8 @@ tags: [database, schema, tables, postgresql, catalog, index]
 > Exhaustive companion to [[Schema]] (the curated, narrative view) and
 > [[Migrations]]. Where [[Schema]] lists *representative* table groups, this
 > note enumerates **every** distinct table created across the Flyway migration
-> chain, grouped by domain cluster and assigned to a sub-app. Each distinct
-> table appears **exactly once**.
+> chain (`V0`–`V304`), grouped by domain cluster and assigned to a sub-app.
+> Each distinct table appears **exactly once**.
 
 ## Purpose
 
@@ -25,8 +25,8 @@ in **Other / cross-cutting** and noted there rather than force-fit.
 
 | Metric | Value |
 |--------|-------|
-| **Distinct table names** | **330** |
-| Total `CREATE TABLE` statements | 341 (across the migration chain) |
+| **Distinct table names** | **331** |
+| Total `CREATE TABLE` statements | 344 (across the migration chain) |
 | Domain clusters | **18** (17 domain clusters + 1 "Other / cross-cutting") |
 
 **How counted.** From the repository root:
@@ -38,19 +38,16 @@ grep -rhoiE 'CREATE TABLE (IF NOT EXISTS )?[a-z0-9_."]+' \
   | tr -d '"' | grep -vx 'above' | sort -u | wc -l
 ```
 
-This yields **330** distinct names from **341** `CREATE TABLE` statements
-(the 11-statement gap is repeated `CREATE TABLE IF NOT EXISTS` re-creations of
-the same tables across migrations). Note: [[Schema]] reports "~331 distinct
-names"; that figure includes a single false positive — the literal token
-`above`, captured from the SQL comment `-- ... CREATE TABLE IF NOT EXISTS above
-is skipped ...` in `V15__knowledge_fluence_schema.sql`. Excluding that
-non-table artifact gives the **330** real tables enumerated below. The widened
-character class `[a-z0-9_."]` (vs. the original `[a-z_."]`) also recovers the
-`feedback_360_*` tables that the digit-free pattern truncated to `feedback_`.
+This yields **331** distinct names from **344** `CREATE TABLE` statements
+(the 13-statement gap is repeated `CREATE TABLE IF NOT EXISTS` re-creations of
+the same tables across migrations). The `above` artifact exclusion removes one
+false positive from the SQL comment in `V15__knowledge_fluence_schema.sql`.
+`outbox_events` was added by `V300__create_outbox_events.sql` (transactional
+outbox table for the Railway/Kafka-fallback deploy) and is enumerated below.
 
 ## Tables by domain cluster
 
-Every one of the 330 distinct tables appears in exactly one cluster below,
+Every one of the 331 distinct tables appears in exactly one cluster below,
 alphabetical within each cluster.
 
 ### Tenant & access control → [[Shared-Platform]]
@@ -436,6 +433,7 @@ plumbing) — so they are listed here rather than guessed into a domain.
 - `asset_maintenance_requests` — generic asset management
 - `asset_recoveries` — generic asset management
 - `assets` — generic asset management
+- `outbox_events` — transactional outbox for Kafka fallback on Railway (added `V300`; RLS added `V303`; nullable `tenant_id` to support system/infra events)
 - `shedlock` — ShedLock distributed scheduler-lock table (framework infra)
 - `step_executions` — generic workflow/process step-execution plumbing
 - `ticket_categories` — generic helpdesk/ticketing

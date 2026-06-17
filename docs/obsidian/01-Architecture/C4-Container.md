@@ -23,8 +23,8 @@ proxies REST and WebSocket to the backend.
 | Container | Tech | Talks to | Protocol |
 |-----------|------|----------|----------|
 | Frontend | Next.js 16 / React 19, Mantine, React Query, Zustand | Backend (proxy) | HTTP rewrite `/api/v1/*`, `/ws/*` |
-| Backend | Spring Boot 3.5.14 / Java 21, 184 controllers | PG, Redis, Kafka, ES, Drive | JDBC, RESP, Kafka protocol, HTTP |
-| PostgreSQL 16 | RLS, ~331 distinct tables, Flyway V0→V294+ | Backend only | JDBC (`SET LOCAL` tenant GUC) |
+| Backend | Spring Boot 3.5.14 / Java 21, 183 controllers | PG, Redis, Kafka, ES, Drive | JDBC, RESP, Kafka protocol, HTTP |
+| PostgreSQL 16 | RLS, ~343 distinct tables, Flyway V0→V304 (293 files) | Backend only | JDBC (`SET LOCAL` tenant GUC) |
 | Redis 7 | 25 named caches, Bucket4j, ShedLock | Backend only | RESP + Lua |
 | Kafka (Confluent) | 6 topics + `.dlt` | Backend (produce + consume) | Kafka protocol |
 | Elasticsearch 8.11 | `fluence-documents` index (opt-in) | Backend only | HTTP REST |
@@ -39,11 +39,11 @@ flowchart TD
     subgraph platform["NU-AURA Platform boundary"]
         FE["Frontend Container<br/>Next.js 16 / React 19<br/>App Router · standalone output<br/>middleware: CSP nonce, OWASP headers, auth gating<br/>reverse-proxy /api/v1 + /ws"]
 
-        BE["Backend Container<br/>Spring Boot 3.5.14 / Java 21<br/>DDD modular monolith<br/>REST /api/v1 · WebSocket /ws (STOMP)<br/>filter chain · RLS tx manager · schedulers"]
+        BE["Backend Container<br/>Spring Boot 3.5.14 / Java 21<br/>DDD modular monolith · 183 controllers<br/>REST /api/v1 · WebSocket /ws (STOMP)<br/>filter chain · RLS tx manager · schedulers · outbox"]
 
-        PG[("PostgreSQL 16<br/>shared schema · RLS per tenant_id<br/>Flyway-managed · ~331 distinct tables")]
+        PG[("PostgreSQL 16<br/>shared schema · RLS per tenant_id<br/>Flyway-managed · ~343 distinct tables · V304")]
         RD[("Redis 7<br/>tiered caches · token blacklist<br/>rate-limit buckets · edit locks · WS pub/sub")]
-        KF["Kafka<br/>6 domain topics + per-topic DLT<br/>idempotent producers"]
+        KF["Kafka (Confluent)<br/>6 domain topics + per-topic DLT<br/>transactional outbox fallback on Railway"]
         ES[("Elasticsearch 8.11<br/>fluence-documents index · opt-in")]
     end
 
@@ -83,9 +83,12 @@ cache invalidation, and event publishing. Multi-pod-safe scheduled jobs via Shed
 
 ### Backing services
 PostgreSQL is the system of record ([[Schema]], [[ERD]]); Redis is cache + coordination;
-Kafka is the async backbone; Elasticsearch is opt-in Fluence search; Drive is file
-storage. Each has a fallback so an outage degrades rather than fails — see
-[[System-Overview]].
+Kafka is the async event backbone (6 topics + DLT) — but `EventPublisher` now writes to
+the `outbox_events` PostgreSQL table atomically, and `OutboxEventProcessor` polls and
+dispatches to consumer `process()` methods every 5 s (transactional outbox pattern). On
+Railway, `app.kafka.enabled=false` disables the Kafka broker; the outbox handles all
+event delivery. Elasticsearch is opt-in Fluence search; Drive is file storage. Each backing
+service has a fallback path so an outage degrades rather than fails — see [[System-Overview]].
 
 ## Related Links
 

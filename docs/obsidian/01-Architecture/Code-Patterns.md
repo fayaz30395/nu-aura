@@ -20,8 +20,11 @@ flowchart TD
     REQ --> TC[TenantContext<br/>ThreadLocal tenant id]
     TC --> TX[TenantRlsTransactionManager<br/>SET LOCAL app.current_tenant_id]
     TX --> PG[(PostgreSQL<br/>RLS policies)]
-    SVC[Service layer] -->|@Cacheable| CACHE[CacheConfig<br/>20+ named caches]
-    KAFKA[Kafka consumers] -->|tryProcess| IDEM[IdempotencyService<br/>SETNX dedup]
+    SVC[Service layer] -->|@Cacheable| CACHE[CacheConfig<br/>25 named caches]
+    SVC -->|write event| EP[EventPublisher<br/>outbox_events table]
+    EP -.->|polled by| OUTBOX[OutboxEventProcessor]
+    OUTBOX -->|dispatch| CONS[Kafka consumer handlers]
+    OUTBOX -->|tryProcess| IDEM[IdempotencyService<br/>SETNX dedup]
     AUTH[Auth / logout] --> BL[TokenBlacklistService]
     EDIT[Fluence editing] --> LOCK[FluenceEditLockService]
     RL -.-> REDIS[(Redis)]
@@ -58,9 +61,10 @@ TTL tiers (`CacheConfig.cacheManager`):
 
 | Tier | TTL | Example caches |
 |------|-----|----------------|
-| Long-lived | 24h | `LEAVE_TYPES`, `DESIGNATIONS`, `SHIFT_POLICIES`, `HOLIDAYS`, `PERMISSIONS`, `ROLES`, `UPCOMING_BIRTHDAYS` |
-| Medium | 4h | `DEPARTMENTS`, `OFFICE_LOCATIONS`, `BENEFIT_PLANS`, `TENANT_SETTINGS`, `FEATURE_FLAGS` |
-| Short | 15m / 10m | `EMPLOYEES`, `EMPLOYEE_BASIC`, `ROLE_PERMISSIONS` (15m); `EMPLOYEE_WITH_DETAILS` (10m) |
+| Long-lived | 24h | `LEAVE_TYPES`, `DESIGNATIONS`, `SHIFT_POLICIES`, `HOLIDAYS`, `PERMISSIONS`, `ROLES`, `UPCOMING_BIRTHDAYS`, `UPCOMING_ANNIVERSARIES` |
+| Medium | 4h | `DEPARTMENTS`, `OFFICE_LOCATIONS`, `BENEFIT_PLANS`, `TENANT_SETTINGS`, `FEATURE_FLAGS`, `TENANT_ATTENDANCE_CONFIG` |
+| Short | 30m / 15m / 10m | `ACTIVE_WEBHOOKS` (30m); `EMPLOYEES`, `EMPLOYEE_BASIC`, `ROLE_PERMISSIONS` (15m); `EMPLOYEE_WITH_DETAILS` (10m) |
+| Medium-short | 1h | `WEBHOOKS` |
 | Volatile | 5m | `LEAVE_BALANCES`, `ANALYTICS_SUMMARY`, `DASHBOARD_METRICS` |
 | Near-real-time | 30s | `TENANT_STATUS` (JWT-filter tenant check), `UNREAD_COUNT_BY_USER` (bell-icon poll) |
 
@@ -202,15 +206,22 @@ if (!visibleTables.isEmpty()) {
 
 ---
 
-## 3. Kafka Idempotency / Dedup (`IdempotencyService`)
+## 3. Event Idempotency / Dedup (`IdempotencyService`)
 
 **File:** `backend/src/main/java/com/nulogic/infrastructure/kafka/IdempotencyService.java`
 
+> **Architecture note (2026-06-18):** domain events now flow through the **transactional
+> outbox** rather than direct Kafka publish. `EventPublisher` writes to the `outbox_events`
+> table atomically with the business operation; `OutboxEventProcessor` polls every 5 s and
+> invokes the consumer `process()` methods directly. On Railway, `app.kafka.enabled=false`
+> — no broker is needed. `IdempotencyService` guards the consumer `process()` invocation
+> regardless of whether that call came via Kafka or the outbox dispatcher.
+
 ### Problem
-Kafka delivers at-least-once. With multiple consumer instances, the same event can be
-processed twice — or two consumers can race on the same event. A naive
-`isProcessed()` + `markProcessed()` pair has a check-then-act race where both consumers see
-"not processed" and both proceed.
+The event transport delivers at-least-once. With multiple consumer instances (or outbox
+poll retries on failure), the same event can be processed twice — or two consumers can race
+on the same event. A naive `isProcessed()` + `markProcessed()` pair has a check-then-act
+race where both consumers see "not processed" and both proceed.
 
 ### Solution
 A single **atomic Redis `SETNX` (SET IF NOT EXISTS) with TTL** collapses check-and-claim into
@@ -260,9 +271,11 @@ try {
 ```
 
 ### Where used
-Kafka consumers under `backend/src/main/java/com/nulogic/infrastructure/kafka/` (approval,
-notification, audit, employee-lifecycle, payroll-processing event consumers). The 24h TTL
-window means events older than a day are re-processable.
+Consumer handlers under `backend/src/main/java/com/nulogic/infrastructure/kafka/consumer/`
+(approval, notification, audit, employee-lifecycle, payroll-processing, Fluence search). These
+are invoked either by the Kafka listener (when a broker is available) or by
+`OutboxEventProcessor.dispatch()` (transactional outbox path). The 24h TTL window means events
+older than a day are re-processable.
 
 ---
 

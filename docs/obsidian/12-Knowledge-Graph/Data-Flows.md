@@ -37,7 +37,7 @@ runtime.
 flowchart LR
     Browser["Browser<br/>(Next.js SPA)"]
     Next["Next.js<br/>(App Router + proxy)"]
-    Spring["Spring Boot 3.x<br/>(filter chain → controller → service)"]
+    Spring["Spring Boot 3.5.14<br/>(filter chain → controller → service)"]
     PG[("PostgreSQL 16<br/>RLS policies")]
     Redis[("Redis 7<br/>cache / idempotency")]
     Kafka[["Kafka<br/>domain events"]]
@@ -228,22 +228,32 @@ Evidence: `TenantRlsTransactionManager.java` 55–65, 76, 79–91, 105–109;
 `TenantAwareDataSourceConfig.java` 84–93, 145–154, 162–194;
 `V254__enforce_runtime_rls_fail_closed.sql`; `RlsStartupProbe`.
 
-### 4. Event-driven async flow (Kafka, idempotent payroll)
+### 4. Event-driven async flow (transactional outbox → consumers, idempotent payroll)
 
-Heavy or fan-out work is offloaded to Kafka — the canonical example is async payroll
-processing: the HTTP request returns `202 Accepted` immediately and the per-employee
-computation runs in a consumer. `EventPublisher` is the single typed producer; each
-method builds a `BaseKafkaEvent` subtype with a fresh `eventId` (UUID) for
-idempotency, the `tenantId` for downstream context propagation, and a tenant-zoned
-`timestamp` from `TenantTimeService.now(tenantId)`.
+Heavy or fan-out work is dispatched asynchronously — the canonical example is async
+payroll processing: the HTTP request returns `202 Accepted` immediately and the
+per-employee computation runs in a consumer. `EventPublisher` is the single typed
+event gateway; each method builds a `BaseKafkaEvent` subtype with a fresh `eventId`
+(UUID) for idempotency, the `tenantId` for downstream context propagation, and a
+tenant-zoned `timestamp` from `TenantTimeService.now(tenantId)`.
+
+**Transactional outbox pattern (current architecture).** `EventPublisher.sendEvent()`
+does **not** send to a Kafka broker directly. It writes the event as a row in
+`outbox_events` (PostgreSQL) within the same business transaction — guaranteeing
+durability without a Kafka dependency at runtime. `OutboxEventProcessor` (an
+`@Scheduled` poller with its own `@EnableScheduling`, conditional on
+`app.outbox.enabled=true`, default true) reads pending rows and calls the relevant
+consumer's `process()` method directly as a Java invocation. This architecture means
+the system works on Railway (no Kafka) and on GKE/K8s with Kafka (where the
+`@KafkaListener` path on each consumer also handles real broker delivery).
 
 ```mermaid
 sequenceDiagram
     autonumber
     participant C as PayrollController
     participant EP as EventPublisher
-    participant K as Kafka (payroll-processing)
-    participant RI as TenantContextRecordInterceptor
+    participant OB as outbox_events (PostgreSQL)
+    participant OBP as OutboxEventProcessor (@Scheduled)
     participant PC as PayrollProcessingConsumer
     participant Redis as Redis (idempotency)
     participant PRS as PayrollRunService
@@ -251,38 +261,41 @@ sequenceDiagram
 
     C->>C: transition run → PROCESSING
     C->>EP: publishPayrollProcessingEvent(runId, tenantId)
-    EP->>K: send(PAYROLL_PROCESSING_REQUESTED, key=eventId)
+    EP->>OB: INSERT outbox_events (topic, payload, status=PENDING) — same tx
     C-->>C: return 202 Accepted
-    K->>RI: deliver record
-    RI->>RI: TenantContext.setCurrentTenant(event.tenantId)
-    RI->>PC: handlePayrollProcessingEvent(event)
-    PC->>Redis: SETNX kafka:idempotent:{eventId} (24h)
+    OBP->>OB: poll PENDING rows (@Scheduled)
+    OBP->>OBP: TenantContext.setCurrentTenant(outboxEvent.tenantId)
+    OBP->>PC: pc.process(PayrollProcessingEvent)
+    PC->>Redis: idempotencyService.tryProcess(eventId) — SETNX
     alt already processed
-        PC->>K: acknowledge (skip)
+        PC-->>OBP: return (skip)
     else first delivery
         PC->>PRS: completeProcessing(runId)
         PRS-->>PC: run → PROCESSED
-        PC->>WS: success notification
-        PC->>K: acknowledge
+        PC->>WS: success WebSocket notification
     end
-    Note over PC: on error → release claim, run → DRAFT, no ack, rethrow → retry/DLT
+    OBP->>OB: mark row PROCESSED (or FAILED after MAX_RETRIES=5)
+    Note over OBP: on error → release idempotency claim, run → DRAFT, retry up to MAX_RETRIES
 ```
 
-`TenantContextRecordInterceptor` runs before every listener, reading `tenantId` off
-the `BaseKafkaEvent` payload and setting `TenantContext`, then clearing on
-success/failure (lines 32–56) — centralizing propagation so a forgotten manual
-set-call cannot cause silent cross-tenant access. `PayrollProcessingConsumer`
-demonstrates the consumer contract: atomic idempotency claim via Redis SETNX
-(`idempotencyService.tryProcess(eventId)`, lines 76–81); on success → run
-`PROCESSED`, ack, WebSocket success notification (lines 83–86, 162–185); on failure →
-release the claim so retries can re-enter, roll back to `DRAFT`, do **not** ack, and
-rethrow so Kafka retry / DLT applies (lines 88–105). The private `sendEvent`
-(`EventPublisher.java` 328–350) propagates Kafka failures to the caller's
-`CompletableFuture` via `handle(...)` rather than swallowing them (R2-004 fix).
+`OutboxEventProcessor` sets `TenantContext` before each dispatch and clears it in a
+`finally` block — replacing the `TenantContextRecordInterceptor` role for the outbox
+path. `TenantContextRecordInterceptor` still applies when a real Kafka broker is active
+and the `@KafkaListener` method `handlePayrollProcessingEvent` runs.
+`PayrollProcessingConsumer.process()` (line 51) is the shared entry point called by
+both paths; it holds the idempotency claim via `idempotencyService.tryProcess(eventId)`
+(line 61); on failure it releases the claim and rolls back to `DRAFT` so retries can
+re-enter (lines 73–74). The private `sendEvent` helper in `EventPublisher` (lines
+218–244) writes to `outbox_events` and surfaces exceptions to the caller's
+`CompletableFuture` rather than swallowing them.
 
-Evidence: `EventPublisher.java` 258–278, 328–350; `TenantContextRecordInterceptor.java`
-32–56; `PayrollProcessingConsumer.java` 76–105, 162–185; `IdempotencyService.java`
-(SETNX + release).
+Evidence: `EventPublisher.java` (244 lines, `sendEvent` private helper at lines 218–244,
+outbox insert at 228–236); `OutboxEventProcessor.java` (poll at line 88,
+`processOneEvent` at 95, `TenantContext.setCurrentTenant` at 98, consumer dispatch
+at 135–146, `TenantContext.clear` at 119); `PayrollProcessingConsumer.java`
+(`process()` at line 51, idempotency at 61, release at 73, rollback at 74);
+`TenantContextRecordInterceptor.java` (real-Kafka path, lines 32–56);
+`IdempotencyService.java` (SETNX + release).
 
 ### 5. Cache read/write (cache-aside, tenant-scoped)
 
@@ -350,8 +363,8 @@ reaps unreferenced files.
 | DB-level isolation | RLS `set_config('app.current_tenant_id', ?, true)` | `TenantRlsTransactionManager.java` 76, 79–91 |
 | Fail-closed RLS | `NOBYPASSRLS` runtime role + startup canary | `V254__enforce_runtime_rls_fail_closed.sql`; `RlsStartupProbe` |
 | Event dedup | Redis SETNX, 24h TTL | `PayrollProcessingConsumer.java` 76–81 |
-| Event tenant propagation | RecordInterceptor sets context per record | `TenantContextRecordInterceptor.java` 32–46 |
-| Kafka failures surfaced | `handle(...)` propagates to CompletableFuture | `EventPublisher.java` 328–350 |
+| Event tenant propagation | OutboxEventProcessor sets context per dispatch (outbox path); TenantContextRecordInterceptor sets context per Kafka record (broker path) | `OutboxEventProcessor.java` 96–119; `TenantContextRecordInterceptor.java` 32–46 |
+| Event publish failures surfaced | outbox INSERT exception propagates to CompletableFuture via `CompletableFuture.failedFuture()` | `EventPublisher.java` private `sendEvent` 218–244 |
 
 ## Key Files
 
@@ -364,9 +377,10 @@ reaps unreferenced files.
 - `backend/.../common/config/CookieConfig.java` — cookie hardening
 - `backend/.../common/config/TenantRlsTransactionManager.java` — `SET LOCAL` tenant per tx
 - `backend/.../common/config/TenantAwareDataSourceConfig.java` — non-JPA connection tenant set
-- `backend/.../infrastructure/kafka/producer/EventPublisher.java` — typed event producer
-- `backend/.../infrastructure/kafka/TenantContextRecordInterceptor.java` — consumer tenant propagation
-- `backend/.../infrastructure/kafka/consumer/PayrollProcessingConsumer.java` — idempotent async consumer
+- `backend/.../infrastructure/kafka/producer/EventPublisher.java` — typed event gateway; always writes to outbox_events table
+- `backend/.../infrastructure/kafka/outbox/OutboxEventProcessor.java` — polls outbox_events, sets TenantContext, dispatches to consumer process() methods
+- `backend/.../infrastructure/kafka/TenantContextRecordInterceptor.java` — consumer tenant propagation on real Kafka broker path
+- `backend/.../infrastructure/kafka/consumer/PayrollProcessingConsumer.java` — idempotent async consumer (called by OutboxEventProcessor or @KafkaListener)
 
 ## Related Links
 
@@ -383,9 +397,11 @@ reaps unreferenced files.
 - **Cache-aside staleness** — a write that forgets `@CacheEvict` serves stale data
   until TTL; tenant-scoped keys prevent cross-tenant bleed but not intra-tenant
   staleness.
-- **At-least-once delivery** — Kafka can redeliver; correctness depends on
-  `IdempotencyService` SETNX and the `release()` on the failure path, else retries are
-  silently swallowed for 24h.
+- **At-least-once delivery** — `OutboxEventProcessor` retries up to `MAX_RETRIES=5`
+  on failure; correctness depends on `IdempotencyService` SETNX and the `release()` on
+  the failure path, else retries are silently swallowed for 24 h. When a real Kafka
+  broker is active, Kafka can also redeliver; both paths share the same idempotency
+  guard in `process()`.
 - **RLS superuser bypass** — the pool user must be `NOBYPASSRLS`; a superuser
   connection silently reads all tenants. The `RlsStartupProbe` canary guards against
   policy regression at boot.

@@ -5,9 +5,9 @@ tags: [database, erd, schema, multi-tenancy, rls, mermaid, nu-aura]
 
 # Core Entity-Relationship Diagram (ERD)
 
-> **Representative core ERD.** NU-AURA has **~331 distinct tables** across **343**
-> `CREATE TABLE` statements (Flyway `V0`–`V294`). The diagram below shows only the
-> ~10 hub entities and their key relationships — it is **not** all 342+ tables.
+> **Representative core ERD.** NU-AURA has **331 distinct tables** across **344**
+> `CREATE TABLE` statements (Flyway `V0`–`V304`). The diagram below shows only the
+> ~10 hub entities and their key relationships — it is **not** all 331 tables.
 > Columns shown were sampled from real `CREATE TABLE` statements in
 > `backend/src/main/resources/db/migration/V0__init.sql`; no column names were
 > invented. See [[Schema]] for the full table-group breakdown and the RLS model.
@@ -17,7 +17,7 @@ tags: [database, erd, schema, multi-tenancy, rls, mermaid, nu-aura]
 Give a legible mental model of the NU-AURA core schema — how `tenant`,
 `employee`, `user`, `role`, `permission`, `department`, `attendance`, `leave`,
 and `expense` relate — so designers and implementers can reason about joins,
-ownership, and tenancy without reading 286 migration files. Companion to
+ownership, and tenancy without reading 293 migration files. Companion to
 [[Schema]] (technology, RLS, conventions) and [[Data-Flows]] (runtime tenancy).
 
 ## Context
@@ -241,7 +241,7 @@ duplicate submissions. See [[Schema]] for the payroll domain table cluster.
 ## Related Links
 
 - [[Schema]] — full schema, RLS model, domain table groups, indexes
-- [[Migrations]] — Flyway migration index (`V0`–`V294`)
+- [[Migrations]] — Flyway migration index (`V0`–`V304`)
 - [[Data-Flows]] — request lifecycle, auth flow, tenant-context → RLS binding
 - [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] — authorization model
 - [[Services]] · [[APIs]] · [[Middleware]] — layers consuming this schema
@@ -252,7 +252,7 @@ duplicate submissions. See [[Schema]] for the payroll domain table cluster.
 
 ## Risks
 
-- **Representative, not exhaustive.** This ERD covers ~10 of ~331 tables. Many
+- **Representative, not exhaustive.** This ERD covers ~10 of 331 tables. Many
   relationships (payroll, benefits, recruitment, wiki, engagement) are omitted —
   consult [[Schema]] domain clusters and the relevant migration before designing
   cross-domain joins.

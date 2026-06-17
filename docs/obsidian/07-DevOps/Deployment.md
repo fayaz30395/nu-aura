@@ -23,10 +23,12 @@ these images, see [[CI-CD]].
   `hrms-frontend-vert.vercel.app`, auto-deploy on `main`) or a container in GKE.
 - **Backend:** Spring Boot 3.5.14 / Java 21 fat-jar in a Temurin 21 JRE image.
 - **Data plane:** PostgreSQL 16 (Neon dev / RLS-enforced prod), Redis 7, Kafka
-  (Confluent 7.6.0), Elasticsearch 8.11. See [[Schema]] and [[Services]].
-- **Hosting per memory:** **Railway** (backend) + **Vercel** (frontend) is the live full
-  stack; a **Render** blueprint (`render.yaml`) is also committed as an alternate one-step
-  backend host. The **GKE/Helm** manifests in `infra/` are the production-grade path.
+  (Confluent 7.6.0 local compose / apache/kafka:3.7.1 on Railway), Elasticsearch 8.11.
+  See [[Schema]] and [[Services]].
+- **Hosting (live):** **Railway** (backend) + **Vercel** (frontend) is the live full
+  stack. A **Render** blueprint (`render.yaml`) is committed as an alternative one-step
+  backend path but is not the active host (Render was superseded by Railway 2026-06-11).
+  The **GKE/Helm** manifests in `infra/` are the production-grade path.
 - Ports are fixed by convention: **frontend 3000, backend 8080** (Grafana takes :3001).
 
 > Evidence reconciliation: `docs-v2/architecture/infrastructure.md` §5 describes the
@@ -71,7 +73,7 @@ flowchart TD
 
     subgraph BETA["Beta hosting"]
         VRC["Vercel — Next.js<br/>hrms-frontend-vert.vercel.app"]
-        RAIL["Railway / Render — backend container<br/>health: /actuator/health/readiness"]
+        RAIL["Railway — backend container<br/>health: /actuator/health/readiness"]
         RPG["Managed Postgres 16"]
         RKV["Managed Redis / Key-Value"]
         VRC -->|NEXT_PUBLIC_API_URL| RAIL
@@ -101,7 +103,7 @@ flowchart TD
 | Environment | Frontend | Backend | Data plane |
 |-------------|----------|---------|------------|
 | Local dev | `next dev` :3000 | Spring Boot :8080 | Compose: Redis 7 (:6380), Kafka/ZK 7.6.0, ES 8.11, Prometheus 2.53, Grafana 11.2 (:3001), AlertManager 0.27; **Postgres on Neon cloud** (no local PG by default) |
-| Beta | Vercel (auto-deploy on `main`) | Railway/Render container, readiness `/actuator/health/readiness` | Managed Postgres 16 + Redis/Key-Value; free-tier: **no Elasticsearch** (search falls back to Postgres), 512 MB heap, `APP_SCHEDULING_ENABLED=false` |
+| Beta | Vercel (auto-deploy on `main`) | Railway container (`SPRING_PROFILES_ACTIVE=render`), readiness `/actuator/health/readiness` | Managed Postgres 16 + Redis (provisioned) + Kafka (apache/kafka:3.7.1 KRaft, ephemeral); **no Elasticsearch** (search falls back to Postgres); background schedulers `APP_SCHEDULING_ENABLED=false` by default; **transactional outbox** (`OutboxEventProcessor`) handles async event dispatch in lieu of direct Kafka broker calls |
 | Production path | GKE (Helm) | GKE (Helm) | PG 16 (`nu_app_rls` NOBYPASSRLS), Redis, ES with `xpack.security` |
 
 ## Container images
@@ -175,7 +177,9 @@ ConfigMap/Secret. Listed by category; **no secret values are reproduced**.
 | **Backend public host gated on creds (B3)** | `DEPLOY_READINESS_REPORT.md` — full stack proven locally; public backend URL needs cloud creds. |
 | **`deploy.yml` uses long-lived `GCP_SA_KEY` (D-2)** | Despite `id-token: write`; needs a GCP WIF pool. Not blind-editable (runs only at deploy). |
 | **Frontend image base drift in docs** | `frontend/Dockerfile` is `node:26-alpine`; `docs-v2` text says `node:20`. Dockerfile is authoritative. |
-| **Free-tier beta loses Elasticsearch + schedulers** | Search falls back to Postgres; `APP_SCHEDULING_ENABLED=false` so accruals/emails/webhooks do not fire on beta. |
+| **Beta loses Elasticsearch + background schedulers** | ES excluded (`spring.autoconfigure.exclude`) on render profile; search falls back to Postgres. `APP_SCHEDULING_ENABLED=false` by default so accruals/emails/webhooks do not fire unless explicitly enabled. |
+| **Railway Kafka is ephemeral (no volume)** | apache/kafka:3.7.1 KRaft on Railway has no persistent volume — topics and offsets reset on service restart. Fine for staging; transactional outbox provides durability for events. Not suitable as-is for production event replay. |
+| **`DEMO_CREDENTIALS_ENABLED=true` on live Railway (staging)** | Known staging flag — must be set to `false` before any production go-live (`docs/HANDOVER-DEPLOY.md` deploy-gate checklist). |
 
 ## Operational Notes
 
@@ -185,4 +189,10 @@ ConfigMap/Secret. Listed by category; **no secret values are reproduced**.
   one to avoid duplicate side effects — see [[Production-Support]] §scheduled jobs.
 - Production deploy is **frozen-SHA discipline**: ship from a tagged, frozen commit with CI
   green; the prod gate requires `SPRING_PROFILES_ACTIVE=prod`,
-  `DEMO_CREDENTIALS_ENABLED=false`, and Flyway ≥ V270 (`docs/HANDOVER-DEPLOY.md`).
+  `DEMO_CREDENTIALS_ENABLED=false`, and full Flyway chain applied (latest: V304,
+  including V300 outbox table + V303 RLS on outbox + V304 RLS on contract_signatures — `docs/HANDOVER-DEPLOY.md`).
+- **Transactional outbox** (`OutboxEventProcessor`, V300 migration): the render profile
+  disables direct Kafka auto-publishing (`app.kafka.enabled=false`) and routes all async
+  events through the `outbox_events` table instead. The processor polls every 5 s with up
+  to 5 retries per event before marking `FAILED`. This is the active event-dispatch path
+  on Railway.

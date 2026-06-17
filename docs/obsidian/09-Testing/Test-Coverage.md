@@ -11,7 +11,7 @@ A **measured snapshot** of NU-AURA's test inventory and coverage state: file cou
 live from this checkout, pass/verdict status from the release reports, coverage by layer,
 and the gaps / quarantined tests. Read [[QA-Strategy]] for the *how* and *why*; this note is
 the *what we actually have today*. Every count below the "Measured" heading was produced by
-running `find`/`grep` against the working tree on **2026-06-16**; everything under
+running `find`/`grep` against the working tree on **2026-06-18**; everything under
 "Historical" is sourced from `MEMORY.md` and the release reports and is labelled as such.
 
 ## Context
@@ -22,22 +22,26 @@ suite (hundreds of files across both stacks) but **shallow** measured line cover
 ([[CI-CD]], coding standards) is a backlog target, not a met bar. See [[Security-Audit]]
 and [[RBAC-Matrix]] for why tenant/RBAC depth is prioritised over raw line %.
 
-## Measured — Test Inventory (live, 2026-06-16)
+> **Readiness verdict (as of 2026-06-18 QA Iteration 6):** **92/100 CONDITIONAL-GO**. The
+> single remaining CRITICAL blocker is an operational config flip on Railway
+> (`DEMO_CREDENTIALS_ENABLED=false`) — no code change. See [[Readiness-Session-2026-06-18]].
+
+## Measured — Test Inventory (live, 2026-06-18)
 
 ### Backend (`backend/src/test`)
 
 | Metric | Count | Command |
 |--------|------:|---------|
-| Total `*Test*.java` files | **308** | `find backend/src/test -name "*Test*.java" \| wc -l` |
-| Total `.java` test files | 309 | `find backend/src/test -name "*.java" \| wc -l` |
+| Total `*Test*.java` files | **310** | `find backend/src/test -name "*Test*.java" \| wc -l` |
+| Total `.java` test files | 311 | `find backend/src/test -name "*.java" \| wc -l` |
 | `*IT.java` / `*IntegrationTest.java` | 26 | suffix find |
 | `*Test.java` (unit/slice) | 305 | suffix find |
 | Extend `AbstractPostgresIntegrationTest` (PG16) | **74** | `grep -rl` |
-| Files referencing JUnit 5 (`org.junit.jupiter`) | 314 | `grep -rl` |
+| Files referencing JUnit 5 (`org.junit.jupiter`) | 316 | `grep -rl` |
 | Files referencing Testcontainers/`@Container` | 3 (direct); PG16 via abstract base = 74 | `grep -rl` |
 | RLS guard tests | 2 — `RlsTenantGucScopeTest`, `RlsStartupProbeTest` | `find -iname "*Rls*"` |
 
-> Note: `*Test*.java` (308) overlaps the IT count; the 26 ITs are the PG-backed integration
+> Note: `*Test*.java` (310) overlaps the IT count; the 26 ITs are the PG-backed integration
 > tier, ~74 classes touch a real Postgres container through the abstract base, and the
 > remainder are unit/slice tests using Spring Boot Test + Mockito.
 
@@ -75,14 +79,15 @@ Distinguished explicitly from measured counts above; these are **reported**, not
 
 | Claim | Value | Source |
 |-------|-------|--------|
-| Backend tests green | **4,055** (also cited 4,005 / 4,029 / 4,047 across runs) | `MEMORY.md`, GREEN_FLAG_REPORT |
-| Frontend tests green | **2,419** | `MEMORY.md` (green-flag verified 2026-06-11) |
-| Green baseline | `rc-2026-06-09-baseline` = 4,029 tests green via Testcontainers PG16 | DEPLOY_READINESS_REPORT |
-| CI status | both workflows green on `main` HEAD `ac03c6ba` | DEPLOY_READINESS_REPORT |
-| Test-file count (audit) | "308 test files incl. tenant-isolation + RBAC-boundary suites" | GREEN_FLAG_REPORT qa agent |
+| Backend tests green (CI full run) | **4,076** (earlier runs: 4,055 / 4,029 / 4,047) | QA iter5 docs commit `06f7a094` |
+| Backend tests green (local, unit-only, no Docker) | **263** | QA iter6 final gate report |
+| Frontend tests green | **2,419** | `MEMORY.md` (green-flag verified 2026-06-11; stable through iter6) |
+| Green baseline tag | `rc-2026-06-09-baseline` = 4,029 tests green via Testcontainers PG16 | DEPLOY_READINESS_REPORT |
+| CI status | both workflows green; latest HEAD is post-`ae6b91dc` (QA iter6) | QA iter6 release report |
+| Test-file count (live) | **310** `*Test*.java` files | verified 2026-06-18 |
 
 > The ~4,000+ figure is the **executed test-method count** (assertions/cases), not the file
-> count — consistent with 308 backend test files each holding many `@Test` methods. The 308
+> count — consistent with 310 backend test files each holding many `@Test` methods. The 310
 > file count is corroborated live above.
 
 ## Coverage by Layer / Module
@@ -90,7 +95,7 @@ Distinguished explicitly from measured counts above; these are **reported**, not
 | Layer | Strength | Evidence |
 |-------|----------|----------|
 | Tenant isolation / RLS | **Strongest** — no leaks found | `RlsTenantGucScopeTest`, data-agent audit, [[Security-Audit]] |
-| RBAC boundaries | Strong — 180 controllers, 0 unguarded mutators | GREEN_FLAG_REPORT rbac agent, [[RBAC-Matrix]] |
+| RBAC boundaries | Strong — 183 `@RestController` files, 0 unguarded mutators, 1,750 `@RequiresPermission` annotations | GREEN_FLAG_REPORT rbac agent; iter6 verified, [[RBAC-Matrix]] |
 | API controllers | Broad slice coverage mirroring `api/**` packages | `backend/src/test/java/com/nulogic/api/**` |
 | Payroll / leave (HRMS) | Hardened post-audit (state machine, balance math) | green-flag fixes BA-1/DATA-1/BA-2, [[Nu-HRMS]] |
 | Frontend UI primitives | Component tests for `ui/*` + store/util | `components/ui/*.test.tsx`, `lib/**` |

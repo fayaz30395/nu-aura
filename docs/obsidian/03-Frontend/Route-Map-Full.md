@@ -27,14 +27,14 @@ then falls back to **HRMS** as catch-all), and marked public/protected via
 
 | Metric | Count |
 |--------|-------|
-| Total `page.tsx` (`find frontend/app -name page.tsx \| wc -l`) | **283** |
+| Total `page.tsx` (`find frontend/app -name page.tsx \| wc -l`) | **286** |
 | Public (`isPublicRoute`) | 10 |
-| [[Nu-HRMS]] (HRMS — catch-all) | 187 |
+| [[Nu-HRMS]] (HRMS — catch-all) | 190 |
 | [[Nu-Hire]] (HIRE) | 27 |
 | [[Nu-Grow]] (GROW) | 38 |
 | [[Nu-Fluence]] (FLUENCE) | 17 |
 | Launcher (`app/app/*`) | 4 |
-| **Table rows below** | **283** |
+| **Table rows below** | **286** |
 
 > **Assignment rule.** Public routes are listed once under **Public** (not also
 > under their sub-app). For protected routes, sub-app is taken from
@@ -92,6 +92,7 @@ then falls back to **HRMS** as catch-all), and marked public/protected via
 | `/admin/settings` | `frontend/app/admin/settings/page.tsx` | Protected |
 | `/admin/shifts` | `frontend/app/admin/shifts/page.tsx` | Protected |
 | `/admin/system` | `frontend/app/admin/system/page.tsx` | Protected |
+| `/admin/users` | `frontend/app/admin/users/page.tsx` | Protected |
 | `/allocations` | `frontend/app/allocations/page.tsx` | Protected |
 | `/allocations/summary` | `frontend/app/allocations/summary/page.tsx` | Protected |
 | `/analytics/org-health` | `frontend/app/analytics/org-health/page.tsx` | Protected |
@@ -196,6 +197,7 @@ then falls back to **HRMS** as catch-all), and marked public/protected via
 | `/payroll/structures` | `frontend/app/payroll/structures/page.tsx` | Protected |
 | `/predictive-analytics` | `frontend/app/predictive-analytics/page.tsx` | Protected |
 | `/pricing` | `frontend/app/pricing/page.tsx` | Protected |
+| `/privacy` | `frontend/app/privacy/page.tsx` | Protected |
 | `/probation` | `frontend/app/probation/page.tsx` | Protected |
 | `/projects/[id]` | `frontend/app/projects/[id]/page.tsx` | Protected |
 | `/projects/calendar` | `frontend/app/projects/calendar/page.tsx` | Protected |
@@ -242,6 +244,7 @@ then falls back to **HRMS** as catch-all), and marked public/protected via
 | `/tax/declarations` | `frontend/app/tax/declarations/page.tsx` | Protected |
 | `/tax` | `frontend/app/tax/page.tsx` | Protected |
 | `/team-directory` | `frontend/app/team-directory/page.tsx` | Protected |
+| `/terms` | `frontend/app/terms/page.tsx` | Protected |
 | `/time-tracking/[id]/edit` | `frontend/app/time-tracking/[id]/edit/page.tsx` | Protected |
 | `/time-tracking/[id]` | `frontend/app/time-tracking/[id]/page.tsx` | Protected |
 | `/time-tracking/new` | `frontend/app/time-tracking/new/page.tsx` | Protected |

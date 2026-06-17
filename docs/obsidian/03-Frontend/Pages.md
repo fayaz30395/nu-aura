@@ -7,7 +7,7 @@ tags: [frontend, pages, layouts, rbac, auth-guard, nextjs, react-query]
 
 ## Purpose
 
-How the **283** [[Routes|route pages]] are composed: the root layout + provider
+How the **286** [[Routes|route pages]] are composed: the root layout + provider
 stack, segment-scoped layouts, the [[RBAC-Matrix|RBAC]] route guard
 (`AuthGuard`) and inline `PermissionGate`, the server-vs-client component split,
 and the standard data-fetching pattern (Orval-generated [[APIs|API]] hooks over
@@ -19,12 +19,12 @@ TanStack Query). Pair with [[Routes]] (route map) and [[Components]] (UI invento
 
 | Metric | Count |
 |--------|-------|
-| `page.tsx` | **283** |
+| `page.tsx` | **286** |
 | `layout.tsx` (root + segment) | **240** |
 | `error.tsx` boundaries | **273** |
 | `loading.tsx` suspense | **282** |
 | `not-found.tsx` | **1** (root) · `global-error.tsx` 1 (root) |
-| Files with `'use client'` (app + components) | **1043** of **1323** total `.tsx` (~79%) |
+| Files with `'use client'` (app + components) | **1044** of **1327** total `.tsx` (~79%) |
 
 > **Almost everything is a client component.** ~79% of `.tsx` files carry
 > `'use client'`. The only confirmed **server components** are the root
@@ -90,7 +90,7 @@ graph TD
   AG -->|authorized| SHELL["AppLayout\nProductRail · NavPanel · TopBar"]
   SHELL --> SEG["Segment layout.tsx (240)\nadmin/ · me/ · fluence/ · …"]
   SEG --> ERR["error.tsx (273) + loading.tsx (282)"]
-  SEG --> PAGE["page.tsx (283)\n'use client' (~79%)"]
+  SEG --> PAGE["page.tsx (286)\n'use client' (~79%)"]
   PAGE --> GATE["PermissionGate / FeatureGate\ninline element gating"]
   PAGE --> HOOKS["lib/hooks/queries/* → TanStack Query"]
 ```
@@ -219,5 +219,6 @@ See [[Data-Flows]] for the full request lifecycle and [[Services]] / [[APIs]].
   `nu-aura-user` (Zustand `partialize` would otherwise overwrite injected user
   data) — relevant when debugging session-restore.
 - CSP nonce only injected in production; dev CSP uses `'unsafe-inline'`.
+- Recount pages: `find frontend/app -name page.tsx | wc -l`.
 - Recount client components:
   `grep -rl "'use client'" frontend/app frontend/components | wc -l`.

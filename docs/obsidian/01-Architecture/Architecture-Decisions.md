@@ -31,7 +31,7 @@ context; Orval codegen depends on SpringDoc OpenAPI; caching tiers depend on Red
 | D1 | Backend shape | **DDD modular monolith** (api → application → domain → infrastructure + common) | One deployable keeps transactions, RLS context, and the approval engine simple; module boundaries enforced by ArchUnit allow later extraction along Kafka seams | `backend/src/main/java/com/nulogic/{api,application,domain,infrastructure,common}`; ArchUnit `backend/src/test/.../architecture/` |
 | D2 | Multi-tenancy | **Shared DB / shared schema + PostgreSQL RLS** (fail-closed) | Cheapest per-tenant cost at SMB scale; defence-in-depth (app ThreadLocal + DB RLS) so a single missed `WHERE` cannot leak data | `common/config/TenantRlsTransactionManager.java`; migrations V177 (strict), V254 (NOBYPASSRLS); `common/security/RlsStartupProbe.java` → [[ADR-001]] |
 | D3 | Caching | **Redis tiered caches** (25 named, TTL 30s–24h, tenant-scoped keys) | Hot reference data (roles, holidays, departments) served from Redis; graceful fallback to DB on outage | `common/config/CacheConfig.java`, `CacheWarmUpService.java` |
-| D4 | Async eventing | **Kafka domain events** (6 topics + per-topic `.dlt`) | Decouple write paths from fan-out (notifications, audit, search indexing, payroll); idempotent producers, manual-commit consumers with backoff | `infrastructure/kafka/KafkaTopics.java`, `EventPublisher.java`, `IdempotencyService.java` |
+| D4 | Async eventing | **Transactional outbox → Kafka** (6 topics + per-topic `.dlt`) | `EventPublisher` writes domain events to `outbox_events` table atomically with the business tx; `OutboxEventProcessor` polls + dispatches to consumer handlers. Kafka broker is used where provisioned (dev/GKE); outbox makes event delivery durable without a broker (Railway). Decouple write paths from fan-out (notifications, audit, search indexing, payroll); `IdempotencyService` for exactly-once semantics | `infrastructure/kafka/{KafkaTopics,EventPublisher,IdempotencyService}.java`, `kafka/outbox/{OutboxEventProcessor,OutboxEvent}.java` |
 | D5 | API contract | **OpenAPI → Orval codegen** | Single source of truth; generated React Query hooks keep client/server types in sync, no hand-written API clients | SpringDoc `OpenApiConfig`; `orval ^7.21.0` → `frontend/lib/generated/api/` |
 | D6 | Auth transport | **JWT in httpOnly cookie** (roles only) + CSRF double-submit | No tokens in localStorage (XSS-resistant); permissions loaded from DB/Redis, not the token, so revocation is immediate | `common/security/JwtAuthenticationFilter.java`, `CsrfDoubleSubmitFilter.java`; Google OAuth + SAML 2.0 + API keys → [[ADR-002]] |
 | D7 | Repo strategy | **Monorepo** (`frontend/` + `backend/` + `infra/` + `docs/`) | One PR can change contract + producer + consumer atomically; shared CI; Orval reads the backend spec in-repo | repo root layout |
@@ -44,7 +44,7 @@ context; Orval codegen depends on SpringDoc OpenAPI; caching tiers depend on Red
 ```mermaid
 flowchart TD
     D1["D1 · DDD Monolith"] --> D2["D2 · Shared-schema + RLS"]
-    D1 --> D4["D4 · Kafka eventing"]
+    D1 --> D4["D4 · Transactional outbox + Kafka"]
     D2 --> D3["D3 · Redis tiered cache"]
     D6["D6 · JWT httpOnly + CSRF"] --> D2
     D5["D5 · OpenAPI → Orval"] --> D8["D8 · Next.js proxy/SPA"]

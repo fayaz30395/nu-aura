@@ -17,8 +17,14 @@ single remaining go-live BLOCKER with its exact manual remediation.
 
 ## Verdict
 
-**NO-GO · readiness 58/100** (raw weighted ≈84.5, capped to 58 by one BLOCKER per the program's
-scoring rules). The codebase is strong; the blocker is deploy-config, not code.
+> **Final verdict (QA Iteration 6, commit `ae6b91dc`, 2026-06-18): 92/100 CONDITIONAL-GO.**
+> All HIGH/MEDIUM/LOW code issues were closed in iterations 5–6 after this swarm ran. The
+> single remaining CRITICAL (demo creds on Railway) is an operational config flip only.
+> See `qa-reports/qa-100x/QA_RELEASE_READINESS_REPORT.md`.
+
+**Swarm initial verdict: NO-GO · readiness 58/100** (raw weighted ≈84.5, capped to 58 by one
+BLOCKER per the program's scoring rules). The codebase is strong; the blocker is deploy-config,
+not code.
 
 Baseline at audit time: HEAD `8fe7d79c`. A 31-agent, code-grounded swarm (every finding
 adversarially re-verified) produced the verdict. Full report:
@@ -26,12 +32,15 @@ adversarially re-verified) produced the verdict. Full report:
 
 ### Dimension scores
 
+> *Counts below are point-in-time from the swarm baseline (`8fe7d79c`). Current HEAD
+> counts: 183 `@RestController` files, 286 `page.tsx` routes.*
+
 | Dimension | Score | Note |
 |-----------|------:|------|
 | Build health | 92 | both tiers green; CI needs `NEXT_PUBLIC_API_URL` injected (prebuild gate) |
-| RBAC / Authorization | 90 | 1750 `@RequiresPermission` across 173/180 controllers + fail-closed RLS |
+| RBAC / Authorization | 90 | 1,750 `@RequiresPermission` across 173/180 controllers + fail-closed RLS |
 | Security (OWASP) | 88 | hardened; only material risk is the config-gated demo path (the BLOCKER) |
-| Architecture | 88 | clean hexagonal backend (184 controllers) + App Router FE (285 routes) |
+| Architecture | 88 | clean hexagonal backend (184 controllers at swarm time; 183 at HEAD) + App Router FE (285 routes at swarm time; 286 at HEAD) |
 | UX | 85 | machine-enforced design system; god-component size the main liability |
 | Core flows | 79 | auth/nav strong; attendance tz had 1 HIGH + MEDIUMs (now fixed) |
 | Known findings | 72 | demo-creds BLOCKER + tz + RSC 503 (503 confirmed already fixed) |
@@ -80,8 +89,9 @@ Independent adversarial review of the autopilot's "fix(security)" commit:
 - **Demo-seed V295 — BROKEN on Railway.** See the BLOCKER below.
 
 Follow-ups committed in `e3882f55`: `V298` (PII backfill sentinel), `V299` (re-apply demo neutralization),
-`scripts/hotfix-neutralize-demo-admin.sql`. **`V298`/`V299` are unreviewed migrations** — review before any
-Flyway-enabled environment (CI/Testcontainers) applies them.
+`scripts/hotfix-neutralize-demo-admin.sql`. `V298`/`V299` were subsequently reviewed and verified in
+QA Iteration 6 (`ae6b91dc`): V298 closes SEC-002b/c/d (PF/ESI/Candidate PII); V299 + V295 + V301 together
+provide the code-side demo-cred neutralization (the remaining step is the Railway env flip, not a code gap).
 
 ## 🔴 Go-live BLOCKER — demo credentials live
 
@@ -98,7 +108,9 @@ still active. Flipping the env var alone does NOT neutralize the existing row.
 2. Set `DEMO_CREDENTIALS_ENABLED=false` (backend) and `NEXT_PUBLIC_DEMO_MODE=false` (frontend); redeploy/rebuild.
 3. Verify: demo panel absent on `/auth/login`; `Welcome@123` no longer authenticates.
 
-Until done, readiness stays capped at 60. See also [[Security-Audit]] deploy-gate checklist and
+Until done, readiness is capped below 100. Per the QA iter6 final gate, the overall score
+is **92/100** with this as the only remaining CRITICAL (SEC-001). After the Railway flip the
+system is READY for production go-live. See also [[Security-Audit]] deploy-gate checklist and
 [[Production-Support]].
 
 ## Process hazard

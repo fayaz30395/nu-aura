@@ -20,8 +20,9 @@ It explains every edge so a reader knows what depends on what before changing a 
 
 ## Context
 
-NU-AURA is a **modular monolith** ([[ADR-001]]): one Spring Boot deployable, ~67
-bounded contexts per DDD layer, four logical sub-apps served by the same JVM and the
+NU-AURA is a **modular monolith** ([[ADR-001]]): one Spring Boot deployable, 68
+bounded contexts per DDD layer (68 subdirectories under `application/`, verified
+2026-06-18), four logical sub-apps served by the same JVM and the
 same Next.js App Router frontend. Sub-apps are **logical groupings of contexts**, not
 separate services — `frontend/lib/config/apps.ts` maps pathname/permission prefixes to
 `AppCode = 'HRMS' | 'HIRE' | 'GROW' | 'FLUENCE'`, and the backend groups contexts per
@@ -46,7 +47,7 @@ graph TD
         AUTH["Auth + RBAC<br/>JWT cookie · roles/permissions"]
         TENANT["Tenant context + RLS<br/>TenantContext · RLS policies"]
         NOTIF["Notification fan-out<br/>email · slack · sms · websocket"]
-        KAFKA["Kafka domain events<br/>EventPublisher · consumers · DLT"]
+        KAFKA["Async events<br/>EventPublisher → outbox_events → consumers<br/>(Kafka broker optional)"]
         STORE["File storage<br/>Google Drive (StorageProvider)"]
         SEARCH["Elasticsearch<br/>(opt-in full-text)"]
         SCHED["Scheduled jobs<br/>@Scheduled + ShedLock"]
@@ -118,9 +119,14 @@ Every edge below is grounded in the cited source.
 - **All sub-apps → Redis cache.** Reads use `@Cacheable` with tenant-scoped keys;
   auth itself caches `PERMISSIONS`/`ROLE_PERMISSIONS` ([[ADR-003]]).
   Evidence: [[Code-Patterns]] §1; `CacheConfig.java`.
-- **All sub-apps → Kafka.** Write paths publish domain events through the single
-  `EventPublisher`; consumers run with restored tenant context.
-  Evidence: [[Services]] §3.2; `infrastructure/kafka/`.
+- **All sub-apps → EventPublisher (transactional outbox + optional Kafka).** Write
+  paths publish domain events through the single `EventPublisher`, which always writes
+  to the `outbox_events` table (same business transaction). `OutboxEventProcessor`
+  polls and dispatches to consumer `process()` methods directly; when a real Kafka
+  broker is active the `@KafkaListener` wrapper on each consumer also handles delivery.
+  Consumers run with restored tenant context (set by `OutboxEventProcessor` on the
+  outbox path, by `TenantContextRecordInterceptor` on the broker path).
+  Evidence: [[Services]] §3.2; `infrastructure/kafka/`; [[Data-Flows]] §4.
 - **All sub-apps → Notification fan-out.** Approval, lifecycle, and content events
   drive `MultiChannelNotificationService` (email / Slack / SMS / WebSocket).
   Evidence: `application/notification/service/` (`MultiChannelNotificationService`,
@@ -139,7 +145,7 @@ Every edge below is grounded in the cited source.
   employee/org); backend `performance`/`employee` contexts.
 - **HRMS-internal (leave/attendance → payroll).** Leave and attendance contexts feed
   payroll/compensation within HRMS; the async payroll run is event-driven.
-  Evidence: [[Data-Flows]] §5 (payroll-processing topic).
+  Evidence: [[Data-Flows]] §4 (async payroll outbox flow).
 
 ### Sub-app → specialized services
 
