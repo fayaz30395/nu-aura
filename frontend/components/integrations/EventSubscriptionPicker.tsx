@@ -59,9 +59,9 @@ export function EventSubscriptionPicker({
 
   return (
     <div className="space-y-4">
-      <label className="block text-sm font-medium text-[var(--text-1)]">
+      <span className="block text-sm font-medium text-[var(--text-1)]">
         Subscribe to Events
-      </label>
+      </span>
       <MultiSelect
         label="Select events to receive"
         placeholder="Choose events..."

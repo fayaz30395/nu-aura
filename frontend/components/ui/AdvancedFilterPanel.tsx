@@ -163,6 +163,9 @@ const FilterRow: React.FC<FilterRowProps> = ({
     });
   };
 
+  const valueLabelId = `filter-value-label-${condition.id}`;
+  const valueInputId = `filter-value-${condition.id}`;
+
   // Render value input based on field type and operator
   const renderValueInput = () => {
     if (
@@ -185,6 +188,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
       case 'text':
         return (
           <input
+            id={valueInputId}
             type="text"
             value={condition.value ?? ''}
             onChange={(e) => handleValueChange(e.target.value)}
@@ -197,7 +201,9 @@ const FilterRow: React.FC<FilterRowProps> = ({
         return condition.operator === 'between' ? (
           <div className="flex items-center gap-2">
             <input
+              id={valueInputId}
               type="number"
+              aria-labelledby={valueLabelId}
               value={
                 typeof condition.value === 'string' && condition.value.includes('-')
                   ? condition.value.split('-')[0]
@@ -216,6 +222,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
             <span className="text-xs shrink-0">to</span>
             <input
               type="number"
+              aria-labelledby={valueLabelId}
               value={
                 typeof condition.value === 'string' && condition.value.includes('-')
                   ? condition.value.split('-')[1]
@@ -234,6 +241,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
           </div>
         ) : (
           <input
+            id={valueInputId}
             type="number"
             value={condition.value ?? ''}
             onChange={(e) => handleValueChange(e.target.value ? Number(e.target.value) : null)}
@@ -246,7 +254,9 @@ const FilterRow: React.FC<FilterRowProps> = ({
         return condition.operator === 'between' ? (
           <div className="flex items-center gap-2">
             <input
+              id={valueInputId}
               type="date"
+              aria-labelledby={valueLabelId}
               value={
                 typeof condition.value === 'string' && condition.value.includes('|')
                   ? condition.value.split('|')[0]
@@ -264,6 +274,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
             <span className="text-xs shrink-0">to</span>
             <input
               type="date"
+              aria-labelledby={valueLabelId}
               value={
                 typeof condition.value === 'string' && condition.value.includes('|')
                   ? condition.value.split('|')[1]
@@ -281,6 +292,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
           </div>
         ) : (
           <input
+            id={valueInputId}
             type="date"
             value={condition.value ?? ''}
             onChange={(e) => handleValueChange(e.target.value)}
@@ -291,6 +303,7 @@ const FilterRow: React.FC<FilterRowProps> = ({
       case 'select':
         return (
           <select
+            id={valueInputId}
             aria-label="Condition value"
             value={condition.value ?? ''}
             onChange={(e) => handleValueChange(e.target.value)}
@@ -317,10 +330,13 @@ const FilterRow: React.FC<FilterRowProps> = ({
     <div className="flex items-end gap-2">
       {/* Field Select */}
       <div className="flex-1 min-w-[140px]">
-        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+        <label
+          htmlFor={`filter-field-${condition.id}`}
+          className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
           Field
         </label>
         <select
+          id={`filter-field-${condition.id}`}
           aria-label="Field"
           value={condition.field}
           onChange={(e) => handleFieldChange(e.target.value)}
@@ -345,10 +361,13 @@ const FilterRow: React.FC<FilterRowProps> = ({
       {/* Operator Select */}
       {condition.field && (
         <div className="flex-1 min-w-[140px] motion-fade">
-          <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+          <label
+            htmlFor={`filter-operator-${condition.id}`}
+            className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
             Operator
           </label>
           <select
+            id={`filter-operator-${condition.id}`}
             aria-label="Operator"
             value={condition.operator}
             onChange={(e) => handleOperatorChange(e.target.value)}
@@ -373,7 +392,10 @@ const FilterRow: React.FC<FilterRowProps> = ({
       {/* Value Input */}
       {condition.field && condition.operator && (
         <div className="flex-1 min-w-[140px] motion-fade">
-          <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+          <label
+            id={valueLabelId}
+            htmlFor={valueInputId}
+            className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
             Value
           </label>
           {renderValueInput()}

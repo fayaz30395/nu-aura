@@ -475,10 +475,13 @@ function AllocationCard({
             {/* Edit Form */}
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
+                <label
+                  htmlFor={`allocation-start-date-${allocation.projectId}`}
+                  className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
                   Start Date
                 </label>
                 <Input
+                  id={`allocation-start-date-${allocation.projectId}`}
                   type="date"
                   value={editStartDate}
                   onChange={(e) => setEditStartDate(e.target.value)}
@@ -486,10 +489,13 @@ function AllocationCard({
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
+                <label
+                  htmlFor={`allocation-end-date-${allocation.projectId}`}
+                  className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
                   End Date
                 </label>
                 <Input
+                  id={`allocation-end-date-${allocation.projectId}`}
                   type="date"
                   value={editEndDate}
                   onChange={(e) => setEditEndDate(e.target.value)}
@@ -497,10 +503,13 @@ function AllocationCard({
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
+                <label
+                  htmlFor={`allocation-percentage-${allocation.projectId}`}
+                  className="mb-1 block text-xs font-medium text-surface-600 dark:text-surface-400">
                   Allocation % (max: {maxAllowedPercentage}%)
                 </label>
                 <Input
+                  id={`allocation-percentage-${allocation.projectId}`}
                   type="number"
                   min={0}
                   max={maxAllowedPercentage}

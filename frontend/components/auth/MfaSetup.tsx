@@ -195,10 +195,11 @@ export const MfaSetup: React.FC<MfaSetupProps> = ({isOpen, onSuccess, onCancel})
 
             {/* Code Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-[var(--text-secondary)]">
+              <label htmlFor="mfa-verification-code" className="text-sm font-medium text-[var(--text-secondary)]">
                 Verification Code
               </label>
               <input
+                id="mfa-verification-code"
                 type="text"
                 inputMode="numeric"
                 maxLength={6}

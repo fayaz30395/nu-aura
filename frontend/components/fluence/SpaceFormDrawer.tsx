@@ -217,15 +217,15 @@ export function SpaceFormDrawer({
 
         {/* Icon Picker */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
+          <span id="space-icon-label" className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <Smile className="h-4 w-4"/>
             Icon
-          </label>
+          </span>
           <Controller
             name="icon"
             control={control}
             render={({field}) => (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-labelledby="space-icon-label">
                 {PRESET_ICONS.map((emoji) => (
                   <motion.button
                     key={emoji}
@@ -249,15 +249,15 @@ export function SpaceFormDrawer({
 
         {/* Color Picker */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
+          <span id="space-color-label" className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <Palette className="h-4 w-4"/>
             Color
-          </label>
+          </span>
           <Controller
             name="color"
             control={control}
             render={({field}) => (
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-labelledby="space-color-label">
                 {PRESET_COLORS.map((c) => (
                   <motion.button
                     key={c.value}
@@ -287,15 +287,15 @@ export function SpaceFormDrawer({
 
         {/* Visibility */}
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
+          <span id="space-visibility-label" className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
             <Eye className="h-4 w-4"/>
             Visibility <span className="text-danger-500">*</span>
-          </label>
+          </span>
           <Controller
             name="visibility"
             control={control}
             render={({field}) => (
-              <div className="space-y-2">
+              <div className="space-y-2" role="group" aria-labelledby="space-visibility-label">
                 {VISIBILITY_OPTIONS.map((opt) => (
                   <motion.button
                     key={opt.value}

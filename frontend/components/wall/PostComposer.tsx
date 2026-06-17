@@ -297,10 +297,13 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
             >
               <form onSubmit={pollForm.handleSubmit(handlePollSubmit)} className="space-y-4 pt-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label
+                    htmlFor="poll-question"
+                    className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Poll Question
                   </label>
                   <textarea
+                    id="poll-question"
                     placeholder="Ask a question..."
                     {...pollForm.register('content')}
                     rows={2}
@@ -316,9 +319,9 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
 
                 {/* Poll Options */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Options
-                  </label>
+                  </span>
                   <div className="space-y-2">
                     {fields.map((field, index) => (
                       <div key={field.id} className="flex items-center gap-2">
@@ -409,9 +412,9 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
               <form onSubmit={praiseForm.handleSubmit(handlePraiseSubmit)} className="space-y-4 pt-4">
                 {/* Employee Search */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Praise for
-                  </label>
+                  </span>
                   <EmployeeSearchAutocomplete
                     value={selectedEmployee}
                     onChange={(employee) => {
@@ -429,9 +432,9 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
 
                 {/* Celebration Type Badges */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Category
-                  </label>
+                  </span>
                   <Controller
                     control={praiseForm.control}
                     name="celebrationType"
@@ -464,10 +467,13 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
 
                 {/* Message */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label
+                    htmlFor="praise-message"
+                    className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Your Message
                   </label>
                   <textarea
+                    id="praise-message"
                     placeholder="Share your praise and appreciation..."
                     {...praiseForm.register('content')}
                     rows={4}

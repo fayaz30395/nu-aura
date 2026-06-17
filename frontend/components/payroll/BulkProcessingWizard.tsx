@@ -405,10 +405,11 @@ export const BulkProcessingWizard: React.FC = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+                  <label htmlFor="bulk-run-name" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                     Run Name *
                   </label>
                   <input
+                    id="bulk-run-name"
                     type="text"
                     value={runName}
                     onChange={(e) => setRunName(e.target.value)}
@@ -419,10 +420,11 @@ export const BulkProcessingWizard: React.FC = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+                    <label htmlFor="bulk-period-start" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                       Period Start Date *
                     </label>
                     <input
+                      id="bulk-period-start"
                       type="date"
                       value={payrollPeriodStart}
                       onChange={(e) => setPayrollPeriodStart(e.target.value)}
@@ -431,10 +433,11 @@ export const BulkProcessingWizard: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+                    <label htmlFor="bulk-period-end" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                       Period End Date *
                     </label>
                     <input
+                      id="bulk-period-end"
                       type="date"
                       value={payrollPeriodEnd}
                       onChange={(e) => setPayrollPeriodEnd(e.target.value)}
@@ -444,10 +447,11 @@ export const BulkProcessingWizard: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+                  <label htmlFor="bulk-payment-date" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                     Payment Date *
                   </label>
                   <input
+                    id="bulk-payment-date"
                     type="date"
                     value={paymentDate}
                     onChange={(e) => setPaymentDate(e.target.value)}

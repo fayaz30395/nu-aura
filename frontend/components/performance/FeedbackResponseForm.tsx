@@ -323,13 +323,14 @@ export default function FeedbackResponseForm({
         {activeSection === 'feedback' && (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+              <label htmlFor="feedback-strengths" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                 Key Strengths <span className="text-[var(--err-fg)]">*</span>
               </label>
               <p className="text-caption mb-2">
                 What does this person do particularly well? Provide specific examples.
               </p>
               <textarea
+                id="feedback-strengths"
                 value={formData.strengths}
                 onChange={(e) => updateText('strengths', e.target.value)}
                 rows={4}
@@ -342,13 +343,14 @@ export default function FeedbackResponseForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+              <label htmlFor="feedback-areas-for-improvement" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                 Areas for Improvement <span className="text-[var(--err-fg)]">*</span>
               </label>
               <p className="text-caption mb-2">
                 What areas could this person develop or improve?
               </p>
               <textarea
+                id="feedback-areas-for-improvement"
                 value={formData.areasForImprovement}
                 onChange={(e) => updateText('areasForImprovement', e.target.value)}
                 rows={4}
@@ -361,13 +363,14 @@ export default function FeedbackResponseForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+              <label htmlFor="feedback-development-suggestions" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                 Development Suggestions
               </label>
               <p className="text-caption mb-2">
                 What specific actions or training would help this person grow?
               </p>
               <textarea
+                id="feedback-development-suggestions"
                 value={formData.developmentSuggestions}
                 onChange={(e) => updateText('developmentSuggestions', e.target.value)}
                 rows={3}
@@ -377,13 +380,14 @@ export default function FeedbackResponseForm({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+              <label htmlFor="feedback-additional-comments" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                 Additional Comments
               </label>
               <p className="text-caption mb-2">
                 Any other observations or feedback you&apos;d like to share?
               </p>
               <textarea
+                id="feedback-additional-comments"
                 value={formData.additionalComments}
                 onChange={(e) => updateText('additionalComments', e.target.value)}
                 rows={3}

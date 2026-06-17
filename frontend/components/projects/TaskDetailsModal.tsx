@@ -225,7 +225,7 @@ export function TaskDetailsModal({
           <div className="flex flex-wrap gap-4">
             {/* Status */}
             <div className="flex-1 min-w-[150px]">
-              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
+              <label htmlFor="task-status-select" className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
                 Status
               </label>
               {readonly || !onUpdateStatus ? (
@@ -239,6 +239,7 @@ export function TaskDetailsModal({
                 </span>
               ) : (
                 <select
+                  id="task-status-select"
                   aria-label="Task status"
                   value={normalizedTask.status}
                   onChange={(e) => handleStatusChange(e.target.value)}
@@ -257,9 +258,9 @@ export function TaskDetailsModal({
             {/* Priority */}
             {normalizedTask.priority && (
               <div className="flex-1 min-w-[150px]">
-                <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
+                <span className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
                   Priority
-                </label>
+                </span>
                 <span
                   className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium ${priorityStyle}`}
                 >
@@ -293,10 +294,10 @@ export function TaskDetailsModal({
           {/* Description */}
           {normalizedTask.description && (
             <div>
-              <label className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
+              <span className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-2">
                 <FileText className="w-4 h-4 inline mr-1"/>
                 Description
-              </label>
+              </span>
               <p className="text-surface-700 dark:text-surface-300 bg-surface-50 dark:bg-surface-900 rounded-lg p-4">
                 {normalizedTask.description}
               </p>
@@ -338,10 +339,10 @@ export function TaskDetailsModal({
           {normalizedTask.progress !== undefined && (
             <div>
               <div className="row-between mb-2">
-                <label className="text-sm font-medium text-surface-600 dark:text-surface-400 flex items-center gap-2">
+                <span className="text-sm font-medium text-surface-600 dark:text-surface-400 flex items-center gap-2">
                   <TrendingUp className="w-4 h-4"/>
                   Progress
-                </label>
+                </span>
                 {!readonly && onUpdateProgress && (
                   <button
                     onClick={isEditingProgress ? handleSaveProgress : handleStartEditProgress}
@@ -445,11 +446,11 @@ export function TaskDetailsModal({
           {/* Assignees */}
           {normalizedTask.assignees && normalizedTask.assignees.length > 0 && (
             <div>
-              <label
+              <span
                 className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
                 <Users className="w-4 h-4"/>
                 Assigned To ({normalizedTask.assignees.length})
-              </label>
+              </span>
               <div className="space-y-2">
                 {normalizedTask.assignees.map((assignee) => (
                   <div
@@ -490,11 +491,11 @@ export function TaskDetailsModal({
           {/* Dependencies */}
           {normalizedTask.dependencies && normalizedTask.dependencies.length > 0 && (
             <div>
-              <label
+              <span
                 className="block text-sm font-medium text-surface-600 dark:text-surface-400 mb-4 flex items-center gap-2">
                 <Link2 className="w-4 h-4"/>
                 Dependencies ({normalizedTask.dependencies.length})
-              </label>
+              </span>
               <div className="space-y-2">
                 {normalizedTask.dependencies.map((dep) => (
                   <div

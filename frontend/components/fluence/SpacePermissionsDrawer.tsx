@@ -336,8 +336,9 @@ export function SpacePermissionsDrawer({
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Visibility selector */}
               <div>
-                <label className={dsInput.label}>Visibility</label>
                 <Select
+                  label="Visibility"
+                  classNames={{label: dsInput.label}}
                   value={currentVisibility}
                   onChange={(val) => val && setValue('visibility', val as WikiVisibility)}
                   data={VISIBILITY_OPTIONS.map((opt) => ({

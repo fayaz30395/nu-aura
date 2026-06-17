@@ -274,10 +274,11 @@ export function ConnectorConfigPanel({
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+          <label htmlFor="ccp-display-name" className="block text-sm font-medium text-[var(--text-1)] mb-2">
             Display Name
           </label>
           <input
+            id="ccp-display-name"
             type="text"
             {...register('displayName')}
             className="w-full px-4 py-2 rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] text-[var(--text-1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"

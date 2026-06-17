@@ -85,11 +85,11 @@ export function ProjectStep({
         /* Existing Project Selection */
         <div className="space-y-4">
           <div>
-            <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-2">
+            <label htmlFor="ps-select-project" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-2">
               Select Project
             </label>
             <select
-              aria-label="Select Project"
+              id="ps-select-project"
               value={selectedProjectId}
               onChange={(e) => onSelectedProjectIdChange(e.target.value)}
               className="w-full rounded-[var(--r-md)] border border-[var(--border)] bg-[var(--bg-input)] px-4 py-2.5 text-[var(--text-1)] focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
@@ -123,10 +123,11 @@ export function ProjectStep({
           {/* Row 1: Name & Code */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+              <label htmlFor="ps-project-name" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 Project Name *
               </label>
               <Input
+                id="ps-project-name"
                 type="text"
                 placeholder="e.g., Website Redesign"
                 value={projectData.name}
@@ -135,10 +136,11 @@ export function ProjectStep({
               />
             </div>
             <div>
-              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+              <label htmlFor="ps-project-code" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 Project ID/Code *
               </label>
               <Input
+                id="ps-project-code"
                 type="text"
                 placeholder="e.g., PRJ-001"
                 value={projectData.projectCode}
@@ -152,11 +154,12 @@ export function ProjectStep({
           {/* Row 2: Start & End Date */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+              <label htmlFor="ps-start-date" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 <Calendar className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 Start Date *
               </label>
               <Input
+                id="ps-start-date"
                 type="date"
                 value={projectData.startDate}
                 onChange={(e) => onProjectDataChange({...projectData, startDate: e.target.value})}
@@ -165,11 +168,12 @@ export function ProjectStep({
               />
             </div>
             <div>
-              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+              <label htmlFor="ps-end-date" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 <Calendar className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 End Date
               </label>
               <Input
+                id="ps-end-date"
                 type="date"
                 value={projectData.expectedEndDate}
                 onChange={(e) => onProjectDataChange({...projectData, expectedEndDate: e.target.value})}
@@ -182,11 +186,12 @@ export function ProjectStep({
           {/* Row 3: Resources Needed & Manager */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+              <label htmlFor="ps-resources-needed" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 <Users className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 Resources Needed *
               </label>
               <Input
+                id="ps-resources-needed"
                 type="number"
                 min="1"
                 max="50"
@@ -201,11 +206,12 @@ export function ProjectStep({
               </p>
             </div>
             <div>
-              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+              <label htmlFor="ps-project-manager" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 <User className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 Project Manager
               </label>
               <select
+                id="ps-project-manager"
                 aria-label="Project Manager"
                 value={projectData.projectManagerId}
                 onChange={(e) => onProjectDataChange({...projectData, projectManagerId: e.target.value})}
@@ -224,12 +230,13 @@ export function ProjectStep({
           {/* Row 4: Budget */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+              <label htmlFor="ps-budget" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 <DollarSign className="inline-block h-4 w-4 mr-2" aria-hidden="true"/>
                 Budget
               </label>
               <div className="flex gap-2">
                 <Input
+                  id="ps-budget"
                   type="number"
                   placeholder="0.00"
                   value={projectData.budget || ''}
@@ -262,10 +269,11 @@ export function ProjectStep({
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+                <label htmlFor="ps-client-name" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                   Client Name
                 </label>
                 <Input
+                  id="ps-client-name"
                   type="text"
                   placeholder="e.g., Acme Corp"
                   value={projectData.clientName}
@@ -273,10 +281,11 @@ export function ProjectStep({
                 />
               </div>
               <div>
-                <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+                <label htmlFor="ps-client-contact" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                   Client Contact
                 </label>
                 <Input
+                  id="ps-client-contact"
                   type="text"
                   placeholder="e.g., john@acme.com"
                   value={projectData.clientContact}
@@ -285,10 +294,11 @@ export function ProjectStep({
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
+              <label htmlFor="ps-client-notes" className="block text-aura-micro uppercase text-[var(--text-1)] font-semibold mb-1">
                 Client Notes
               </label>
               <textarea
+                id="ps-client-notes"
                 placeholder="Any additional notes about the client or project requirements..."
                 value={projectData.clientNotes}
                 onChange={(e) => onProjectDataChange({...projectData, clientNotes: e.target.value})}

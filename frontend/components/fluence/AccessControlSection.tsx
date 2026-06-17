@@ -93,11 +93,13 @@ export default function AccessControlSection({
         {/* Share with departments */}
         {showDepartmentSharing && (
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-2">
-              <Building2 className="w-4 h-4"/>
-              Share with Departments
-            </label>
             <MultiSelect
+              label={
+                <span className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <Building2 className="w-4 h-4"/>
+                  Share with Departments
+                </span>
+              }
               data={departmentOptions}
               value={sharedWithDepartmentIds}
               onChange={onDepartmentIdsChange}
@@ -116,11 +118,13 @@ export default function AccessControlSection({
         {/* Share with specific employees */}
         {showEmployeeSharing && (
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-2">
-              <Users className="w-4 h-4"/>
-              Share with Specific People
-            </label>
             <MultiSelect
+              label={
+                <span className="flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <Users className="w-4 h-4"/>
+                  Share with Specific People
+                </span>
+              }
               data={employeeOptions}
               value={sharedWithEmployeeIds}
               onChange={onEmployeeIdsChange}

@@ -174,11 +174,12 @@ export function EmployeeStep({
 
       {/* Add Employee Search */}
       <div className="relative">
-        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+        <label htmlFor="es-employee-search" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
           <User className="inline-block h-4 w-4 mr-1"/>
           Add Employees
         </label>
         <Input
+          id="es-employee-search"
           type="text"
           placeholder="Search employees by name or ID..."
           value={employeeSearch}

@@ -275,10 +275,11 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
           {/* Editable fields */}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+              <label htmlFor="rs-merchant-name" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                 Merchant Name
               </label>
               <input
+                id="rs-merchant-name"
                 type="text"
                 value={editMerchant}
                 onChange={(e) => setEditMerchant(e.target.value)}
@@ -289,10 +290,11 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+                <label htmlFor="rs-amount" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                   Amount
                 </label>
                 <input
+                  id="rs-amount"
                   type="number"
                   step="0.01"
                   min="0"
@@ -303,10 +305,11 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+                <label htmlFor="rs-currency" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                   Currency
                 </label>
                 <select
+                  id="rs-currency"
                   aria-label="Currency"
                   value={editCurrency}
                   onChange={(e) => setEditCurrency(e.target.value)}
@@ -321,10 +324,11 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+              <label htmlFor="rs-receipt-date" className="block text-sm font-medium text-[var(--text-1)] mb-2">
                 Receipt Date
               </label>
               <input
+                id="rs-receipt-date"
                 type="date"
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}

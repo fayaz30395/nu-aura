@@ -189,10 +189,11 @@ export function AllocationApprovalModal({
         {/* Reason input */}
         {showReasonInput ? (
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label htmlFor="aam-overallocation-reason" className="block text-sm font-medium text-surface-700 dark:text-surface-300">
               Reason for over-allocation (optional)
             </label>
             <textarea
+              id="aam-overallocation-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder="Explain why this over-allocation is necessary..."
