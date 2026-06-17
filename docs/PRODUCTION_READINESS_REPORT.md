@@ -293,3 +293,50 @@ Minimum gate to flip to READY (all low-effort):
 Engineering quality of the codebase is high (clean build/typecheck, sound 3-layer RBAC, defensive
 security migrations already present). The blockers are configuration/data and two small FE bugs — the
 project is **close to production-ready** once the above are addressed.
+
+---
+
+## Remediation Update — 2026-06-17 (autonomous readiness pass)
+
+A follow-up pass fixed all engineering-side opens and ran a fresh read-only specialist audit
+(security / RBAC / data-integrity). All items below are **fixed in code, pending deploy** — they are on
+`main` (compile-verified) but the live demo instance still runs the prior build until redeployed.
+
+**Closed from the original defect list (pushed):**
+- **NU-005** — Fluence "My Content" 400. Root cause: no `/my` endpoint on Blog/Wiki controllers, so
+  `GET /knowledge/blogs/my` & `/wiki/pages/my` fell through to `/{id}` and 400'd on UUID parse. Added
+  `GET /my` (controller + service + `findByTenantIdAndCreatedBy…` repo query) on both.
+- **NU-006** — Audit stats 400. `/audit-logs/statistics` required `startDate`/`endDate`; made optional
+  with a default trailing-30-day window.
+- **NU-008** — Dead nav links. `WelcomeBanner` `/profile`→`/me/profile`; 4 dashboard error-boundary
+  recovery buttons `/dashboards`→`/dashboard`.
+
+**New findings from the fresh specialist audit (deduped vs NU-001…009):**
+
+| ID | Sev | Area | Finding | Status |
+|----|-----|------|---------|--------|
+| AUD-P1-1 | P1 | Tax/IDOR | `TaxDeclarationService.getTaxDeclarationsByEmployee`/`addTaxProof` let any employee read/append a coworker's tax PII | ✅ fixed (self-or-STATUTORY:VIEW guard) |
+| AUD-P1-2 | P1 | Resource mgmt | Allocation approve/reject gated by `PROJECT_CREATE` (segregation-of-duties break) | ✅ fixed (`ALLOCATION_APPROVE`) |
+| AUD-P1-3 | P1 | Integration | Slack HMAC verified with `String.equals` (timing side-channel) | ✅ fixed (`MessageDigest.isEqual`) |
+| AUD-P1-4 | P1 | Employee dir | `sortBy` reached `ORDER BY` unvalidated (JPA sort injection) | ✅ fixed (allowlist) |
+| AUD-P2-1 | P2 | Compensation | `CompensationCycleRequest` budget/percentage fields unconstrained (negatives accepted) | ✅ fixed (bounds) |
+| AUD-P2-2 | P2 | Security cfg | `/v3/api-docs` JSON still served in prod (swagger-ui already off) | ✅ fixed (api-docs disabled) |
+| AUD-P2-3 | P2 | Data | `deletePayrollRun` soft-deletes the run but not child payslips (orphaned rows) | ⛔ documented (payroll-semantics change — needs runtime validation) |
+| AUD-P2-4 | P2 | Data | `CompOffService.autoApproveEligibleRequests` swallows per-row failures → possible double-credit on rerun | ⛔ documented |
+| AUD-P2-5 | P2 | Security cfg | Virus scan `NoOpScanner` is the default (`matchIfMissing=true`) + `render` profile lacks the stanza → uploads unscanned | ⛔ **operator** (provision ClamAV + `VIRUSSCAN_ENABLED=true`) |
+| AUD-P2-6 | P2 | Crypto | Biometric API key hashed with unsalted SHA-256 | ⛔ documented (hash migration needed) |
+| AUD-P2-7 | P2 | Engagement | `PulseSurveyService` create/delete question lacks tenant-ownership load | ⛔ documented |
+| AUD-P3 | P3 | Misc | Log injection via raw `getOriginalFilename()`; SpEL denylist hardening; Compliance acknowledge gated by VIEW; `EMPLOYEE_VIEW_ALL` as write gate (known backlog) | ⛔ documented |
+
+**Audit verified-clean (no action):** SQL/JPQL injection, hardcoded secrets, SSRF, JWT handling,
+CORS wildcard, file-upload path traversal, mass-assignment, CSV injection, optimistic locking (universal
+`@Version`), migration destructiveness (all guarded), transaction atomicity on sensitive multi-write flows.
+
+**Still NOT executed (environment-gated):**
+- **Browser UI QA** — the Claude Chrome extension was not connected this pass; no new live browser
+  validation was performed. The original ~128-route live smoke test stands.
+- **Backend test suite** — infra-heavy (Docker/Testcontainers), not runnable locally.
+
+**Verdict unchanged: NO-GO** for production go-live — still gated on the two operator-owned CRITICALs
+(NU-001 demo role over-grant on the live DB, NU-002 demo mode + public creds). The engineering surface is
+materially improved this pass (4 P1 security holes + 2 broken features closed).
