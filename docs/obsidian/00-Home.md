@@ -10,6 +10,9 @@ updated: 2026-06-16
 
 ## What this is
 
+> [!tip] Data-driven index
+> Open [[Knowledge-Base.base]] (Bases core plugin) for a filterable table of every note grouped by section, with tag and status columns — the dynamic companion to the hand-curated map below.
+
 NU-AURA bundles **four sub-apps** on **one shared platform**:
 
 | Sub-app | Domain | Note |
@@ -34,7 +37,7 @@ NU-AURA bundles **four sub-apps** on **one shared platform**:
 - **Architect** → [[System-Overview]] → [[C4-Context]] → [[C4-Container]] → [[C4-Component]] → [[Architecture-Decisions]] → [[ADR-001]]…[[ADR-005]].
 - **Frontend** → [[Routes]] · [[Pages]] · [[Components]].
 - **Backend** → [[APIs]] · [[Services]] · [[Middleware]] · [[Scheduled-Jobs]] · [[Code-Patterns]].
-- **Security / audit** → [[Security-Audit]] · [[RBAC-Matrix]] · [[Roles]] · [[Permissions]] · [[Data-Flows]].
+- **Security / audit** → [[Security-Audit]] · [[RBAC-Matrix]] · [[Roles]] · [[Permissions]] · [[Permission-Ownership]] · [[Data-Flows]].
 - **DBA** → [[Schema]] · [[ERD]] · [[Migrations]].
 - **DevOps / SRE** → [[Deployment]] · [[CI-CD]] · [[Local-Setup]] · [[Production-Support]] · [[Incident-Response]].
 - **QA** → [[QA-Strategy]] · [[Test-Coverage]].
@@ -62,7 +65,7 @@ Every note in the vault, grouped by numbered section.
 - [[APIs]] · [[Services]] · [[Middleware]] · [[Scheduled-Jobs]]
 
 ### 05 — RBAC
-- [[Roles]] · [[Permissions]] · [[RBAC-Matrix]]
+- [[Roles]] · [[Permissions]] · [[RBAC-Matrix]] · [[Permission-Ownership]]
 
 ### 06 — Database
 - [[Schema]] · [[ERD]] · [[Migrations]]

@@ -14,21 +14,26 @@ blockers are tracked in `MEMORY.md`, not here.
 
 ## 📌 Pending — knowledge-base polish (proposed, not yet started)
 
-- [ ] **Obsidian Bases dashboard**: every note has `area/* · type/* · layer/*` frontmatter,
-      so build a `.base` index (filterable table of all notes by area/type) as a data-driven
-      entry point. (`bases` core plugin is already enabled.)
 - [ ] **Tidy residual section markers**: a few merged notes still have cosmetic `§2` / `§3.2`
       markers trailing wikilinks (e.g. `[[Services]] §2`) left over from citing the old flat
       docs by section. Harmless, but could be cleaned for polish.
 
-## ❓ Open decisions (need user input)
-
-- [ ] **Broken RuFlo sync**: `docs/swarm/` (DDD domains + RuFlo registry YAMLs) was deleted in
-      the reset, so `./scripts/ruflo-sync.sh` (`docs/swarm/` → `.claude-flow/`) has no source.
-      Decide: **restore** just `docs/swarm/*.yaml` from git history, **or** retire the sync.
-      Currently flagged as a note in root `CLAUDE.md`.
-
 ## ✅ Done this workstream
+
+- [x] **Obsidian Bases dashboard** (2026-06-17): built `docs/obsidian/Knowledge-Base.base` — a
+      filterable index of all 42 vault notes with three table views (All Notes grouped by
+      section, Decisions & ADRs, Catalogs & References). Section derives from the folder via a
+      `replace()` formula; type comes from `tags:`. Note: the vault's real frontmatter schema is
+      flat `tags: [...]` + `title:` (+ `status:` on the 5 ADRs), **not** the `area/type/layer`
+      namespaced tags this item originally assumed. Linked as a data-driven entry point from
+      [[00-Home]].
+- [x] **RuFlo sync — decision: KEEP/restore, not retire** (2026-06-17): on inspection the
+      `docs/swarm/` source (README, `domains.yaml`, `registry.yaml`, 6 workflow pipelines) is
+      **already present and tracked at HEAD** — deleted in the `ed6f023d` reset but re-added in
+      `b2801919`, so the original "no source" premise was stale. `./scripts/ruflo-sync.sh
+      --check` reports no drift vs the live gitignored `.claude-flow/` runtime, which
+      `ruflo-start.sh` / `start-work.sh` / `AGENTS.md` all depend on — so retiring the sync was
+      rejected. No file restore was needed; root `CLAUDE.md` note corrected to reflect this.
 
 - [x] Keep root project-wide Obsidian vault; remove `docs/.obsidian/`; track vault in git
       (workspace UI state ignored). Pushed.

@@ -1,0 +1,62 @@
+# Knowledge-Base.base
+# Data-driven index of the NU-AURA Obsidian vault (docs/obsidian/, sections 00–12).
+# Open in Obsidian (Bases core plugin) for a filterable table of every note by
+# section and tag. Sections derive from the folder; types come from `tags:`.
+
+filters:
+  and:
+    - file.inFolder("docs/obsidian")
+    - file.ext == "md"
+
+formulas:
+  section: 'file.folder.replace("docs/obsidian/", "")'
+
+properties:
+  note.title:
+    displayName: Title
+  note.tags:
+    displayName: Tags
+  note.status:
+    displayName: Status
+  formula.section:
+    displayName: Section
+  file.name:
+    displayName: File
+
+views:
+  - type: table
+    name: All Notes
+    order:
+      - formula.section
+      - note.title
+      - note.tags
+      - note.status
+    groupBy:
+      property: formula.section
+      direction: ASC
+
+  - type: table
+    name: Decisions & ADRs
+    filters:
+      or:
+        - file.inFolder("docs/obsidian/11-Decisions")
+        - file.hasTag("adr")
+        - file.hasTag("decisions")
+    order:
+      - note.title
+      - note.status
+      - file.name
+
+  - type: table
+    name: Catalogs & References
+    filters:
+      or:
+        - file.hasTag("catalog")
+        - file.hasTag("reference")
+    order:
+      - formula.section
+      - note.title
+      - note.tags
+    groupBy:
+      property: formula.section
+      direction: ASC

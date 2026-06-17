@@ -45,9 +45,12 @@ check `docs/obsidian/01-Architecture/Code-Patterns.md` for an existing pattern. 
 a security-sensitive path, read `docs/obsidian/08-Security/` and the RLS flow in
 `docs/obsidian/12-Knowledge-Graph/`.
 
-> **Note:** the legacy `docs/swarm/` YAMLs (DDD domains + RuFlo registry) were removed in the
-> docs reset, so `./scripts/ruflo-sync.sh` (`docs/swarm/` → `.claude-flow/`) currently has no
-> source. Restore them from git history if you use the RuFlo swarm runtime, or retire the sync.
+> **Note:** the `docs/swarm/` YAMLs (DDD domains + RuFlo registry + 6 workflow pipelines) are
+> the tracked source for `./scripts/ruflo-sync.sh` (`docs/swarm/` → gitignored `.claude-flow/`
+> runtime). Removed in the `ed6f023d` docs reset, they were re-added in `b2801919` and are
+> present at HEAD; `--check` reports no drift vs the live runtime. Keep them — the runtime is
+> active (`ruflo-start.sh`, `start-work.sh`, `AGENTS.md` all depend on it). Re-run the sync after
+> any pull that touches `docs/swarm/`.
 
 ## Agent Comms (SendMessage-First Coordination)
 
