@@ -17,18 +17,22 @@ HEAD moves under active work; uncommitted edits get swept into mislabeled autopi
 `.git/index.lock` appears; new DB migrations (V29x/V300) and even autonomous `fix(security)` changes
 land unreviewed.
 
-## Root cause (diagnosed 2026-06-17/18)
+## Root cause (diagnosed + resolved 2026-06-17/18)
 
-The autopilot is a **separate `claude --dangerously-skip-permissions` session** (NOT this interactive
-session, NOT a daemon, NOT a launchd/cron job — none were found). That session hosts
-`npm exec ruflo@latest mcp start` as a child **and** runs the commit loop.
+The autopilot is one or more **separate `claude --dangerously-skip-permissions` sessions** (NOT this
+interactive session, NOT a daemon, NOT a launchd/cron job — none were found). Each hosts
+`npm exec ruflo@latest mcp start` as a child **and** runs a commit loop, each in its own Terminal/zsh tab.
 
 - Killing the `ruflo mcp` children is **futile** — the parent claude session respawns them.
 - `ruflo autopilot disable` reported "disabled" but **did not stop the commits**.
-- Killing the parent claude session (SIGTERM) works — but a **fresh** `claude --dangerously-skip-permissions`
-  session is relaunched from a **zsh shell** parent shortly after. Observed parent pids changed across
-  respawns (77400 → 3425 → …) and process count climbed (2 → 12). So a **run-loop in a terminal/tmux**
-  (or repeated manual relaunch) is the true source — it lives outside what an in-session agent can reach.
+- **It was NOT a respawn loop (corrected finding).** Process-tree analysis showed **three concurrent,
+  long-running autopilot sessions** (`3425` ~3h, `40581` ~8.5h, `2647` ~10h), all with `nu-aura` cwd, all
+  committing. Killing one left the others committing — which *looked* like an instant respawn but was just
+  the surviving siblings. Once **all** non-interactive sessions were SIGTERM'd together, HEAD froze and no
+  new sessions appeared (~30s+ verification). No hidden relaunch loop existed.
+- ⚠️ Confounders in the process list that are NOT the autopilot and must be spared: your own interactive
+  session's `claude daemon run` (its args literally say `spawned-by ... pid:<your-session>`), and
+  **Codex.app** (`/Applications/Codex.app`) which also hosts a ruflo MCP. Both have benign ruflo children.
 
 > ⚠️ `--dangerously-skip-permissions` is NOT a discriminator: the normal interactive session also runs
 > under it. **Walk the ppid chain** and confirm a candidate pid is NOT an ancestor of your own shell
