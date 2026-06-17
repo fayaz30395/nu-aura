@@ -1,7 +1,6 @@
 package com.nulogic.api.organization.controller;
 
-import com.nulogic.api.organization.dto.NineBoxDataResponse;
-import com.nulogic.api.organization.dto.SuccessionAnalyticsResponse;
+import com.nulogic.api.organization.dto.*;
 import com.nulogic.application.organization.service.OrganizationService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
@@ -36,8 +35,8 @@ public class OrganizationController {
 
     @PostMapping("/units")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
-    public ResponseEntity<OrganizationUnit> createUnit(@Valid @RequestBody OrganizationUnit unit) {
-        return ResponseEntity.ok(organizationService.createUnit(unit));
+    public ResponseEntity<OrganizationUnit> createUnit(@Valid @RequestBody CreateOrganizationUnitRequest request) {
+        return ResponseEntity.ok(organizationService.createUnit(request.toEntity()));
     }
 
     @GetMapping("/units/{id}")
@@ -68,8 +67,8 @@ public class OrganizationController {
 
     @PostMapping("/positions")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
-    public ResponseEntity<Position> createPosition(@Valid @RequestBody Position position) {
-        return ResponseEntity.ok(organizationService.createPosition(position));
+    public ResponseEntity<Position> createPosition(@Valid @RequestBody CreatePositionRequest request) {
+        return ResponseEntity.ok(organizationService.createPosition(request.toEntity()));
     }
 
     @GetMapping("/positions/{id}")
@@ -100,8 +99,8 @@ public class OrganizationController {
 
     @PostMapping("/succession-plans")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
-    public ResponseEntity<SuccessionPlan> createSuccessionPlan(@Valid @RequestBody SuccessionPlan plan) {
-        return ResponseEntity.ok(organizationService.createSuccessionPlan(plan));
+    public ResponseEntity<SuccessionPlan> createSuccessionPlan(@Valid @RequestBody CreateSuccessionPlanRequest request) {
+        return ResponseEntity.ok(organizationService.createSuccessionPlan(request.toEntity()));
     }
 
     @GetMapping("/succession-plans/{id}")
@@ -134,8 +133,8 @@ public class OrganizationController {
     @RequiresPermission(Permission.SYSTEM_ADMIN)
     public ResponseEntity<SuccessionCandidate> addCandidate(
             @PathVariable UUID planId,
-            @Valid @RequestBody SuccessionCandidate candidate) {
-        return ResponseEntity.ok(organizationService.addCandidate(planId, candidate));
+            @Valid @RequestBody CreateSuccessionCandidateRequest request) {
+        return ResponseEntity.ok(organizationService.addCandidate(planId, request.toEntity()));
     }
 
     @GetMapping("/succession-plans/{planId}/candidates")
@@ -163,8 +162,8 @@ public class OrganizationController {
 
     @PostMapping("/talent-pools")
     @RequiresPermission(Permission.SYSTEM_ADMIN)
-    public ResponseEntity<TalentPool> createTalentPool(@Valid @RequestBody TalentPool pool) {
-        return ResponseEntity.ok(organizationService.createTalentPool(pool));
+    public ResponseEntity<TalentPool> createTalentPool(@Valid @RequestBody CreateTalentPoolRequest request) {
+        return ResponseEntity.ok(organizationService.createTalentPool(request.toEntity()));
     }
 
     @GetMapping("/talent-pools/{id}")

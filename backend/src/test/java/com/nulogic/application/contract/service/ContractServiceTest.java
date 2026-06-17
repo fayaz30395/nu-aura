@@ -619,6 +619,20 @@ class ContractServiceTest {
             assertThat(result.get(1).get("versionNumber")).isEqualTo(2);
             assertThat(result.get(2).get("versionNumber")).isEqualTo(1);
         }
+
+        @Test
+        @DisplayName("Should throw ResourceNotFoundException when contract belongs to a different tenant (cross-tenant IDOR)")
+        void shouldRejectCrossTenantAccess() {
+            // Given — tenant ownership check returns empty (contract exists but for another tenant)
+            when(contractRepository.findByIdAndTenantId(CONTRACT_ID, TENANT_ID))
+                    .thenReturn(Optional.empty());
+
+            // When / Then — must throw before touching the version repository
+            assertThatThrownBy(() -> contractService.getVersionHistory(CONTRACT_ID))
+                    .isInstanceOf(ResourceNotFoundException.class);
+
+            verifyNoInteractions(versionRepository);
+        }
     }
 
     // Helper Methods

@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
  * they are provider-initiated and carry no JWT. Provider signature verification
  * is performed inside the respective adapters (RazorpayAdapter, StripeAdapter).</p>
  *
- * <p>Pre-production checklist (tracked per FUTURE notes in adapters):
+ * <p>Pre-production checklist:
  * <ul>
- *   <li>FUTURE: NUAURA-PAYMENT-001 — Wire real Stripe signature verification in StripeAdapter</li>
- *   <li>FUTURE: NUAURA-PAYMENT-002 — Wire real Razorpay signature verification in RazorpayAdapter</li>
+ *   <li>DONE (NUAURA-PAYMENT-001) — Stripe HMAC-SHA256 verification in StripeAdapter (d29ec59a)</li>
+ *   <li>DONE (NUAURA-PAYMENT-002) — Razorpay HMAC-SHA256 verification in RazorpayAdapter (d29ec59a)</li>
  *   <li>FUTURE: NUAURA-PAYMENT-003 — Add idempotency check using externalEventId</li>
  *   <li>FUTURE: NUAURA-PAYMENT-004 — Add rate limiting on webhook flood</li>
  * </ul>
