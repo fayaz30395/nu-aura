@@ -171,9 +171,12 @@ class PerformanceReviewServiceTest {
                 saved.setCreatedAt(LocalDateTime.now());
                 return saved;
             });
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-            when(employeeRepository.findById(reviewerId)).thenReturn(Optional.of(reviewer));
-            when(reviewCycleRepository.findById(reviewCycleId)).thenReturn(Optional.of(reviewCycle));
+            // IDOR validation lookups (findByIdAndTenantId) + batch name resolution (findAllById)
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(reviewerId, tenantId)).thenReturn(Optional.of(reviewer));
+            when(reviewCycleRepository.findByIdAndTenantId(reviewCycleId, tenantId)).thenReturn(Optional.of(reviewCycle));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.createReview(request);
 
@@ -198,8 +201,9 @@ class PerformanceReviewServiceTest {
                 saved.setId(UUID.randomUUID());
                 return saved;
             });
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-            when(employeeRepository.findById(reviewerId)).thenReturn(Optional.of(reviewer));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findByIdAndTenantId(reviewerId, tenantId)).thenReturn(Optional.of(reviewer));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
 
             ReviewResponse result = performanceReviewService.createReview(request);
 
@@ -220,9 +224,9 @@ class PerformanceReviewServiceTest {
 
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-            when(employeeRepository.findById(reviewerId)).thenReturn(Optional.of(reviewer));
-            when(reviewCycleRepository.findById(reviewCycleId)).thenReturn(Optional.of(reviewCycle));
+            // request carries no FK ids -> no validation lookups; only batch name resolution runs
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.updateReview(reviewId, request);
 
@@ -253,9 +257,8 @@ class PerformanceReviewServiceTest {
         @DisplayName("Should get review by ID")
         void shouldGetReviewById() {
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-            when(employeeRepository.findById(reviewerId)).thenReturn(Optional.of(reviewer));
-            when(reviewCycleRepository.findById(reviewCycleId)).thenReturn(Optional.of(reviewCycle));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.getReviewById(reviewId);
 
@@ -285,7 +288,8 @@ class PerformanceReviewServiceTest {
             Page<PerformanceReview> page = new PageImpl<>(List.of(review));
 
             when(reviewRepository.findAllByTenantId(tenantId, pageable)).thenReturn(page);
-            when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             Page<ReviewResponse> result = performanceReviewService.getAllReviews(pageable);
 
@@ -298,7 +302,8 @@ class PerformanceReviewServiceTest {
         void shouldGetEmployeeReviews() {
             when(reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId))
                     .thenReturn(List.of(review));
-            when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             List<ReviewResponse> result = performanceReviewService.getEmployeeReviews(employeeId);
 
@@ -311,7 +316,8 @@ class PerformanceReviewServiceTest {
         void shouldGetPendingReviewsForReviewer() {
             when(reviewRepository.findPendingReviews(tenantId, reviewerId))
                     .thenReturn(List.of(review));
-            when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             List<ReviewResponse> result = performanceReviewService.getPendingReviews(reviewerId);
 
@@ -328,7 +334,8 @@ class PerformanceReviewServiceTest {
         void shouldSubmitReviewSuccessfully() {
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.submitReview(reviewId);
 
@@ -361,7 +368,10 @@ class PerformanceReviewServiceTest {
 
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
+            // completeReview resolves reviewer name for the domain event via findById, then batch-maps via findAllById
+            when(employeeRepository.findById(reviewerId)).thenReturn(Optional.of(reviewer));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.completeReview(reviewId);
 

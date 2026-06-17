@@ -44,6 +44,42 @@ public class PayrollProcessingConsumer {
     private final PayrollRunService payrollRunService;
     private final WebSocketNotificationService webSocketNotificationService;
 
+    /**
+     * Called from both the Kafka listener and OutboxEventProcessor.
+     * TenantContext must be set by the caller before invoking this method.
+     */
+    public void process(PayrollProcessingEvent event) {
+        String eventId = event.getEventId();
+        UUID runId = event.getRunId();
+        UUID triggeredBy = event.getTriggeredBy();
+
+        log.info("Processing payroll event: eventId={}, runId={}, period={}/{}",
+                eventId, runId, event.getPayPeriodYear(), event.getPayPeriodMonth());
+
+        boolean claimed = false;
+        try {
+            if (!idempotencyService.tryProcess(eventId)) {
+                log.debug("Payroll processing event {} already processed, skipping", eventId);
+                return;
+            }
+            claimed = true;
+
+            processPayrollRun(runId, triggeredBy, event);
+            log.info("Successfully completed async payroll processing for run {}", runId);
+
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
+            log.error("Unrecoverable error processing payroll run {}: {}", runId, e.getMessage(), e);
+            if (claimed) {
+                idempotencyService.release(eventId);
+            }
+            rollbackToDraft(runId, triggeredBy, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Kafka listener — thin wrapper; delegates to process() then acknowledges.
+     */
     @KafkaListener(
             topics = KafkaTopics.PAYROLL_PROCESSING,
             groupId = KafkaTopics.GROUP_PAYROLL_PROCESSING_CONSUMER,
@@ -56,43 +92,17 @@ public class PayrollProcessingConsumer {
             @Header(KafkaHeaders.PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset) {
 
-        String eventId = event.getEventId();
-        UUID runId = event.getRunId();
+        log.info("Received payroll processing event: eventId={}, runId={}, topic={}, partition={}, offset={}",
+                event.getEventId(), event.getRunId(), topic, partition, offset);
+
         UUID tenantId = event.getTenantId();
-        UUID triggeredBy = event.getTriggeredBy();
-
-        log.info("Received payroll processing event: eventId={}, runId={}, period={}/{}, tenantId={}, topic={}, partition={}, offset={}",
-                eventId, runId, event.getPayPeriodYear(), event.getPayPeriodMonth(),
-                tenantId, topic, partition, offset);
-
-        boolean claimed = false;
+        if (tenantId != null) {
+            TenantContext.setCurrentTenant(tenantId);
+        }
         try {
-            // Atomic idempotency check-and-claim via Redis SETNX
-            if (!idempotencyService.tryProcess(eventId)) {
-                log.debug("Payroll processing event {} already processed, skipping", eventId);
-                acknowledgment.acknowledge();
-                return;
-            }
-            claimed = true;
-
-            processPayrollRun(runId, triggeredBy, event);
-
+            process(event);
             acknowledgment.acknowledge();
-            log.info("Successfully completed async payroll processing for run {}", runId);
-
-        } catch (Exception e) { // Intentional broad catch — per-message error boundary
-            log.error("Unrecoverable error processing payroll run {}: {}", runId, e.getMessage(), e);
-
-            // Release the idempotency claim so the Kafka retry (or operator resubmit)
-            // can re-enter processing. Without this the 24h TTL would silently swallow
-            // every redelivery, masking the real failure and blocking legitimate retries.
-            if (claimed) {
-                idempotencyService.release(eventId);
-            }
-
-            // Roll the run back to DRAFT so it can be resubmitted
-            rollbackToDraft(runId, triggeredBy, e);
-
+        } catch (Exception e) {
             // Do not acknowledge — let Kafka retry / DLT per container error-handler config
             throw e;
         } finally {

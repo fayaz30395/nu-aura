@@ -43,6 +43,48 @@ public class FluenceSearchConsumer {
     private final DocumentTemplateRepository documentTemplateRepository;
     private final IdempotencyService idempotencyService;
 
+    /**
+     * Called from both the Kafka listener and OutboxEventProcessor.
+     * TenantContext must be set by the caller before invoking this method.
+     */
+    public void process(FluenceContentEvent event) {
+        String contentType = event.getContentType();
+        UUID contentId = event.getContentId();
+        String action = event.getAction();
+        String eventId = event.getEventId();
+
+        boolean claimed = false;
+        try {
+            if (eventId != null && !idempotencyService.tryProcess(eventId)) {
+                log.debug("Fluence content event {} already processed, skipping", eventId);
+                return;
+            }
+            claimed = eventId != null;
+
+            log.info("Processing fluence content event: type={}, id={}, action={}, tenantId={}",
+                    contentType, contentId, action, event.getTenantId());
+
+            if (FluenceContentEvent.ACTION_DELETED.equals(action)) {
+                fluenceIndexingService.removeDocument(contentType, contentId);
+            } else {
+                indexContent(contentType, contentId);
+            }
+
+            log.debug("Successfully processed fluence content event: {}", eventId);
+
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
+            log.error("Error processing fluence content event: type={}, id={}, action={}: {}",
+                    contentType, contentId, action, e.getMessage(), e);
+            if (claimed) {
+                idempotencyService.release(eventId);
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Kafka listener — thin wrapper; delegates to process() then acknowledges.
+     */
     @KafkaListener(
             topics = KafkaTopics.FLUENCE_CONTENT,
             groupId = KafkaTopics.GROUP_FLUENCE_SEARCH,
@@ -52,46 +94,14 @@ public class FluenceSearchConsumer {
             @Payload FluenceContentEvent event,
             Acknowledgment acknowledgment) {
 
-        String contentType = event.getContentType();
-        UUID contentId = event.getContentId();
-        String action = event.getAction();
         UUID tenantId = event.getTenantId();
-        String eventId = event.getEventId();
-
-        boolean claimed = false;
+        if (tenantId != null) {
+            TenantContext.setCurrentTenant(tenantId);
+        }
         try {
-            // Atomic idempotency check-and-claim via Redis SETNX.
-            // Without this, an at-least-once redelivery between ES write and Kafka ACK
-            // could race a DELETE against a subsequent CREATE on the same document,
-            // leaving the index inconsistent with PostgreSQL.
-            if (eventId != null && !idempotencyService.tryProcess(eventId)) {
-                log.debug("Fluence content event {} already processed, skipping", eventId);
-                acknowledgment.acknowledge();
-                return;
-            }
-            claimed = eventId != null;
-
-            log.info("Processing fluence content event: type={}, id={}, action={}, tenantId={}",
-                    contentType, contentId, action, tenantId);
-
-            if (FluenceContentEvent.ACTION_DELETED.equals(action)) {
-                fluenceIndexingService.removeDocument(contentType, contentId);
-            } else {
-                // CREATED, UPDATED, PUBLISHED — load entity from DB and index
-                indexContent(contentType, contentId);
-            }
-
+            process(event);
             acknowledgment.acknowledge();
-            log.debug("Successfully processed fluence content event: {}", eventId);
-
-        } catch (Exception e) { // Intentional broad catch — per-message error boundary
-            log.error("Error processing fluence content event: type={}, id={}, action={}: {}",
-                    contentType, contentId, action, e.getMessage(), e);
-            // Release the idempotency claim so Kafka redelivery can retry.
-            // Otherwise the 24h TTL would silently swallow every retry.
-            if (claimed) {
-                idempotencyService.release(eventId);
-            }
+        } catch (Exception e) {
             // Don't acknowledge; let Kafka retry or move to DLT
             throw e;
         } finally {

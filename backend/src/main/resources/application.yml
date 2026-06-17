@@ -106,6 +106,8 @@ spring:
     baseline-on-migrate: true
     baseline-version: 18
     out-of-order: true
+    ignore-missing-migrations: true
+    ignore-ignored-migrations: true
     validate-on-migrate: true
     repair-on-migrate: false  # Reverted after V113/V115 checksums repaired
     clean-disabled: true

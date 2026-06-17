@@ -19,7 +19,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,9 +60,9 @@ class ContractLifecycleSchedulerTest {
     @InjectMocks
     private ContractLifecycleScheduler scheduler;
     @Captor
-    private ArgumentCaptor<ContractReminder> reminderCaptor;
+    private ArgumentCaptor<List<ContractReminder>> reminderListCaptor;
     @Captor
-    private ArgumentCaptor<Contract> contractCaptor;
+    private ArgumentCaptor<List<Contract>> contractListCaptor;
 
     @BeforeEach
     void setUpTenantTimeServiceDefaults() {
@@ -142,8 +141,9 @@ class ContractLifecycleSchedulerTest {
             int result = scheduler.autoExpireContracts(TENANT_A);
 
             assertThat(result).isEqualTo(1);
-            verify(contractRepository).save(contractCaptor.capture());
-            assertThat(contractCaptor.getValue().getStatus()).isEqualTo(ContractStatus.EXPIRED);
+            verify(contractRepository).saveAll(contractListCaptor.capture());
+            assertThat(contractListCaptor.getValue()).hasSize(1);
+            assertThat(contractListCaptor.getValue().get(0).getStatus()).isEqualTo(ContractStatus.EXPIRED);
             verify(metricsService).recordContractStatusChange(TENANT_A, "ACTIVE", "EXPIRED");
             verify(metricsService).recordContractLifecycle(TENANT_A, "auto_expire", "EMPLOYMENT");
         }
@@ -160,7 +160,7 @@ class ContractLifecycleSchedulerTest {
             int result = scheduler.autoExpireContracts(TENANT_A);
 
             assertThat(result).isEqualTo(0);
-            verify(contractRepository, never()).save(any());
+            verify(contractRepository, never()).saveAll(any());
         }
 
         @Test
@@ -172,7 +172,7 @@ class ContractLifecycleSchedulerTest {
             int result = scheduler.autoExpireContracts(TENANT_A);
 
             assertThat(result).isEqualTo(0);
-            verify(contractRepository, never()).save(any());
+            verify(contractRepository, never()).saveAll(any());
         }
 
         @Test
@@ -221,8 +221,9 @@ class ContractLifecycleSchedulerTest {
             int result = scheduler.autoRenewContracts(TENANT_A);
 
             assertThat(result).isEqualTo(1);
-            verify(contractRepository).save(contractCaptor.capture());
-            Contract saved = contractCaptor.getValue();
+            verify(contractRepository).saveAll(contractListCaptor.capture());
+            assertThat(contractListCaptor.getValue()).hasSize(1);
+            Contract saved = contractListCaptor.getValue().get(0);
             assertThat(saved.getStatus()).isEqualTo(ContractStatus.RENEWED);
             assertThat(saved.getEndDate()).isEqualTo(LocalDate.now().minusDays(1).plusDays(365));
         }
@@ -266,9 +267,9 @@ class ContractLifecycleSchedulerTest {
 
             // Should create reminders for 15 and 7 days before (30 is in the past relative to now+20)
             assertThat(result).isGreaterThan(0);
-            verify(reminderRepository, atLeastOnce()).save(reminderCaptor.capture());
+            verify(reminderRepository).saveAll(reminderListCaptor.capture());
 
-            List<ContractReminder> saved = reminderCaptor.getAllValues();
+            List<ContractReminder> saved = reminderListCaptor.getValue();
             assertThat(saved).allSatisfy(r -> {
                 assertThat(r.getTenantId()).isEqualTo(TENANT_A);
                 assertThat(r.getContractId()).isEqualTo(CONTRACT_ID_1);
@@ -291,7 +292,7 @@ class ContractLifecycleSchedulerTest {
             int result = scheduler.createExpiryReminders(TENANT_A);
 
             assertThat(result).isEqualTo(0);
-            verify(reminderRepository, never()).save(any());
+            verify(reminderRepository, never()).saveAll(any());
         }
 
         @Test
@@ -332,8 +333,8 @@ class ContractLifecycleSchedulerTest {
 
             int result = scheduler.createExpiryReminders(TENANT_A);
 
-            verify(reminderRepository, atLeastOnce()).save(reminderCaptor.capture());
-            List<ContractReminder> saved = reminderCaptor.getAllValues();
+            verify(reminderRepository).saveAll(reminderListCaptor.capture());
+            List<ContractReminder> saved = reminderListCaptor.getValue();
 
             boolean hasRenewalReminder = saved.stream()
                     .anyMatch(r -> r.getReminderType() == ReminderType.RENEWAL);
@@ -355,9 +356,11 @@ class ContractLifecycleSchedulerTest {
             scheduler.createExpiryReminders(TENANT_A);
 
             // Verify all saved reminders are for today or future
-            verify(reminderRepository, atMost(1)).save(reminderCaptor.capture());
-            for (ContractReminder r : reminderCaptor.getAllValues()) {
-                assertThat(r.getReminderDate()).isAfterOrEqualTo(LocalDate.now());
+            verify(reminderRepository, atMost(1)).saveAll(reminderListCaptor.capture());
+            for (List<ContractReminder> batch : reminderListCaptor.getAllValues()) {
+                for (ContractReminder r : batch) {
+                    assertThat(r.getReminderDate()).isAfterOrEqualTo(LocalDate.now());
+                }
             }
         }
     }
@@ -382,8 +385,8 @@ class ContractLifecycleSchedulerTest {
 
             when(reminderRepository.findUnnotifiedDueReminders(TENANT_A))
                     .thenReturn(List.of(reminder));
-            when(contractRepository.findByIdAndTenantId(CONTRACT_ID_1, TENANT_A))
-                    .thenReturn(Optional.of(contract));
+            when(contractRepository.findAllByIdInAndTenantId(anyCollection(), eq(TENANT_A)))
+                    .thenReturn(List.of(contract));
 
             int result = scheduler.dispatchDueReminders(TENANT_A);
 
@@ -398,7 +401,7 @@ class ContractLifecycleSchedulerTest {
                     eq("/contracts/" + CONTRACT_ID_1),
                     eq(Notification.Priority.HIGH)
             );
-            verify(reminderRepository).save(any(ContractReminder.class));
+            verify(reminderRepository).saveAll(anyList());
         }
 
         @Test
@@ -409,13 +412,15 @@ class ContractLifecycleSchedulerTest {
 
             when(reminderRepository.findUnnotifiedDueReminders(TENANT_A))
                     .thenReturn(List.of(reminder));
-            when(contractRepository.findByIdAndTenantId(CONTRACT_ID_1, TENANT_A))
-                    .thenReturn(Optional.empty());
+            // Batch contract lookup returns empty — contract not found for the reminder
+            when(contractRepository.findAllByIdInAndTenantId(anyCollection(), eq(TENANT_A)))
+                    .thenReturn(List.of());
 
             scheduler.dispatchDueReminders(TENANT_A);
 
-            verify(reminderRepository).save(reminderCaptor.capture());
-            assertThat(reminderCaptor.getValue().getIsCompleted()).isTrue();
+            verify(reminderRepository).saveAll(reminderListCaptor.capture());
+            assertThat(reminderListCaptor.getValue()).hasSize(1);
+            assertThat(reminderListCaptor.getValue().get(0).getIsCompleted()).isTrue();
             verify(notificationService, never()).createNotification(any(), any(), any(), any(), any(), any(), any(), any());
         }
 
@@ -432,15 +437,15 @@ class ContractLifecycleSchedulerTest {
 
             when(reminderRepository.findUnnotifiedDueReminders(TENANT_A))
                     .thenReturn(List.of(reminder));
-            when(contractRepository.findByIdAndTenantId(CONTRACT_ID_1, TENANT_A))
-                    .thenReturn(Optional.of(contract));
+            when(contractRepository.findAllByIdInAndTenantId(anyCollection(), eq(TENANT_A)))
+                    .thenReturn(List.of(contract));
 
             int result = scheduler.dispatchDueReminders(TENANT_A);
 
             assertThat(result).isEqualTo(0);
             verify(notificationService, never()).createNotification(any(), any(), any(), any(), any(), any(), any(), any());
             // Should still mark as notified to avoid infinite retries
-            verify(reminderRepository).save(any(ContractReminder.class));
+            verify(reminderRepository).saveAll(anyList());
         }
     }
 
@@ -473,11 +478,11 @@ class ContractLifecycleSchedulerTest {
             assertThat(resultA).isEqualTo(1);
             assertThat(resultB).isEqualTo(1);
 
-            // Verify save was called with correct tenant-scoped contracts
-            verify(contractRepository, times(2)).save(contractCaptor.capture());
-            List<Contract> savedContracts = contractCaptor.getAllValues();
-            assertThat(savedContracts.get(0).getTenantId()).isEqualTo(TENANT_A);
-            assertThat(savedContracts.get(1).getTenantId()).isEqualTo(TENANT_B);
+            // Verify saveAll was called with correct tenant-scoped contracts
+            verify(contractRepository, times(2)).saveAll(contractListCaptor.capture());
+            List<List<Contract>> savedBatches = contractListCaptor.getAllValues();
+            assertThat(savedBatches.get(0).get(0).getTenantId()).isEqualTo(TENANT_A);
+            assertThat(savedBatches.get(1).get(0).getTenantId()).isEqualTo(TENANT_B);
         }
 
         @Test
@@ -493,8 +498,8 @@ class ContractLifecycleSchedulerTest {
 
             scheduler.createExpiryReminders(TENANT_A);
 
-            verify(reminderRepository, atLeastOnce()).save(reminderCaptor.capture());
-            assertThat(reminderCaptor.getAllValues()).allSatisfy(r ->
+            verify(reminderRepository).saveAll(reminderListCaptor.capture());
+            assertThat(reminderListCaptor.getValue()).allSatisfy(r ->
                     assertThat(r.getTenantId()).isEqualTo(TENANT_A)
             );
         }

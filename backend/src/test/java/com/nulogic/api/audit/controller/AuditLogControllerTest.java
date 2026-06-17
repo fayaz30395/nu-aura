@@ -402,10 +402,17 @@ class AuditLogControllerTest {
         }
 
         @Test
-        @DisplayName("Should return 400 when date parameters are missing")
-        void getAuditStatistics_returns400_whenDatesMissing() throws Exception {
+        @DisplayName("Should default to a trailing 30-day window when date parameters are missing")
+        void getAuditStatistics_defaultsRange_whenDatesMissing() throws Exception {
+            // NU-006: date params are optional; controller resolves a default 30-day window.
+            AuditStatisticsResponse stats = new AuditStatisticsResponse();
+            when(auditLogService.getAuditStatistics(any(LocalDateTime.class), any(LocalDateTime.class)))
+                    .thenReturn(stats);
+
             mockMvc.perform(get(BASE_URL + "/statistics").contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
+                    .andExpect(status().isOk());
+
+            verify(auditLogService).getAuditStatistics(any(LocalDateTime.class), any(LocalDateTime.class));
         }
     }
 

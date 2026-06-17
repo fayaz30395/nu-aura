@@ -410,7 +410,7 @@ class RecruitmentManagementServiceTest {
                 saved.setCreatedAt(LocalDateTime.now());
                 return saved;
             });
-            when(jobOpeningRepository.findById(jobOpeningId)).thenReturn(Optional.of(jobOpening));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)).thenReturn(Optional.of(jobOpening));
 
             CandidateResponse result = recruitmentManagementService.createCandidate(request);
 

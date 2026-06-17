@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -96,6 +97,10 @@ class AttendanceRecordServiceTest {
         // don't leak the JVM's default zone into assertions.
         lenient().when(tenantTimeService.now(any())).thenReturn(FIXED_NOW);
         lenient().when(tenantTimeService.today(any())).thenReturn(FIXED_TODAY);
+        // attendance-tz (a0558f23): checkOut/validateCheckoutTime now resolve the tenant zone
+        // via TenantTimeService.zoneFor(). Production never returns null (falls back to a default
+        // zone), so stub a deterministic zone here — otherwise atZone(null) NPEs ("zone").
+        lenient().when(tenantTimeService.zoneFor(any())).thenReturn(ZoneId.of("UTC"));
 
         // Setup config defaults
         when(config.getMaxLookbackDays()).thenReturn(2);

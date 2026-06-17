@@ -49,7 +49,46 @@ public class ApprovalEventConsumer {
     private final IntegrationEventRouter integrationEventRouter;
 
     /**
-     * Handle approval events.
+     * Called from both the Kafka listener and OutboxEventProcessor.
+     * TenantContext must be set by the caller before invoking this method.
+     */
+    public void process(ApprovalEvent event) {
+        String eventId = event.getEventId();
+        String approvalType = event.getApprovalType();
+        String status = event.getStatus();
+
+        boolean claimed = false;
+        try {
+            if (!idempotencyService.tryProcess(eventId)) {
+                log.debug("Event {} already processed, skipping", eventId);
+                return;
+            }
+            claimed = true;
+
+            log.info("Processing {} event: approvalId={}, status={}, tenantId={}",
+                    approvalType, event.getApprovalId(), status, event.getTenantId());
+
+            if ("APPROVED".equals(status)) {
+                handleApproved(event);
+            } else if ("REJECTED".equals(status)) {
+                handleRejected(event);
+            } else {
+                log.warn("Unknown approval status: {}", status);
+            }
+
+            log.info("Successfully processed approval event: {}", eventId);
+
+        } catch (Exception e) { // Intentional broad catch — per-message error boundary
+            log.error("Error processing approval event {}: {}", eventId, e.getMessage(), e);
+            if (claimed) {
+                idempotencyService.release(eventId);
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Kafka listener — thin wrapper; delegates to process() then acknowledges.
      */
     @KafkaListener(
             topics = KafkaTopics.APPROVALS,
@@ -60,47 +99,13 @@ public class ApprovalEventConsumer {
             @Payload ApprovalEvent event,
             Acknowledgment acknowledgment) {
 
-        String eventId = event.getEventId();
         UUID tenantId = event.getTenantId();
-        String approvalType = event.getApprovalType();
-        String status = event.getStatus();
-
-        boolean claimed = false;
+        if (tenantId != null) {
+            TenantContext.setCurrentTenant(tenantId);
+        }
         try {
-            // Atomic idempotency check-and-claim via Redis SETNX
-            if (!idempotencyService.tryProcess(eventId)) {
-                log.debug("Event {} already processed, skipping", eventId);
-                acknowledgment.acknowledge();
-                return;
-            }
-            claimed = true;
-
-            log.info("Processing {} event: approvalId={}, status={}, tenantId={}",
-                    approvalType, event.getApprovalId(), status, tenantId);
-
-            // Handle based on approval type and status
-            if ("APPROVED".equals(status)) {
-                handleApproved(event);
-            } else if ("REJECTED".equals(status)) {
-                handleRejected(event);
-            } else {
-                log.warn("Unknown approval status: {}", status);
-            }
-
-            // Commit offset
+            process(event);
             acknowledgment.acknowledge();
-
-            log.info("Successfully processed approval event: {}", eventId);
-
-        } catch (Exception e) { // Intentional broad catch — per-message error boundary
-            log.error("Error processing approval event {}: {}", eventId, e.getMessage(), e);
-            // Release the idempotency claim so the Kafka redelivery is actually
-            // reprocessed instead of being skipped-and-acked (which would lose the event).
-            if (claimed) {
-                idempotencyService.release(eventId);
-            }
-            // Don't acknowledge; let Kafka retry or move to DLT based on config
-            throw e;
         } finally {
             TenantContext.clear();
         }

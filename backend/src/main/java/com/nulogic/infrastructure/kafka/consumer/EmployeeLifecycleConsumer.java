@@ -50,36 +50,25 @@ public class EmployeeLifecycleConsumer {
     private final IntegrationEventRouter integrationEventRouter;
 
     /**
-     * Handle employee lifecycle events.
+     * Called from both the Kafka listener and OutboxEventProcessor.
+     * TenantContext must be set by the caller before invoking this method.
      */
-    @KafkaListener(
-            topics = KafkaTopics.EMPLOYEE_LIFECYCLE,
-            groupId = KafkaTopics.GROUP_EMPLOYEE_LIFECYCLE_CONSUMER,
-            containerFactory = "employeeLifecycleEventListenerContainerFactory"
-    )
-    public void handleEmployeeLifecycleEvent(
-            @Payload EmployeeLifecycleEvent event,
-            Acknowledgment acknowledgment) {
-
+    public void process(EmployeeLifecycleEvent event) {
         String eventId = event.getEventId();
         UUID employeeId = event.getEmployeeId();
         String eventTypeEnum = event.getEventTypeEnum();
-        UUID tenantId = event.getTenantId();
 
         boolean claimed = false;
         try {
-            // Atomic idempotency check-and-claim via Redis SETNX
             if (!idempotencyService.tryProcess(eventId)) {
                 log.debug("Employee lifecycle event {} already processed, skipping", eventId);
-                acknowledgment.acknowledge();
                 return;
             }
             claimed = true;
 
             log.info("Processing employee lifecycle event: type={}, employee={}, tenant={}, bulkOp={}",
-                    eventTypeEnum, employeeId, tenantId, event.isBulkOperation());
+                    eventTypeEnum, employeeId, event.getTenantId(), event.isBulkOperation());
 
-            // Route to event-specific handler
             switch (eventTypeEnum.toUpperCase()) {
                 case "HIRED" -> handleEmployeeHired(event);
                 case "ONBOARDED" -> handleEmployeeOnboarded(event);
@@ -92,20 +81,36 @@ public class EmployeeLifecycleConsumer {
                 }
             }
 
-            // Commit offset
-            acknowledgment.acknowledge();
-
             log.info("Successfully processed employee lifecycle event: {}", eventId);
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Error processing employee lifecycle event {}: {}", eventId, e.getMessage(), e);
-            // Release the idempotency claim so the Kafka redelivery is actually
-            // reprocessed instead of being skipped-and-acked (which would lose the event).
             if (claimed) {
                 idempotencyService.release(eventId);
             }
-            // Don't acknowledge; let Kafka retry
             throw e;
+        }
+    }
+
+    /**
+     * Kafka listener — thin wrapper; delegates to process() then acknowledges.
+     */
+    @KafkaListener(
+            topics = KafkaTopics.EMPLOYEE_LIFECYCLE,
+            groupId = KafkaTopics.GROUP_EMPLOYEE_LIFECYCLE_CONSUMER,
+            containerFactory = "employeeLifecycleEventListenerContainerFactory"
+    )
+    public void handleEmployeeLifecycleEvent(
+            @Payload EmployeeLifecycleEvent event,
+            Acknowledgment acknowledgment) {
+
+        UUID tenantId = event.getTenantId();
+        if (tenantId != null) {
+            TenantContext.setCurrentTenant(tenantId);
+        }
+        try {
+            process(event);
+            acknowledgment.acknowledge();
         } finally {
             TenantContext.clear();
         }

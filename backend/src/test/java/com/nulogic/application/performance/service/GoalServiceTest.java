@@ -29,6 +29,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyIterable;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -120,7 +121,7 @@ class GoalServiceTest {
                 saved.setCreatedAt(LocalDateTime.now());
                 return saved;
             });
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             GoalResponse result = goalService.createGoal(request);
 
@@ -170,7 +171,7 @@ class GoalServiceTest {
 
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
             when(goalRepository.save(any(Goal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             GoalResponse result = goalService.updateGoal(goalId, request);
 
@@ -201,7 +202,7 @@ class GoalServiceTest {
 
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
             when(goalRepository.save(any(Goal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             GoalResponse result = goalService.updateGoal(goalId, request);
 
@@ -218,7 +219,7 @@ class GoalServiceTest {
         @DisplayName("Should get goal by ID")
         void shouldGetGoalById() {
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             GoalResponse result = goalService.getGoalById(goalId);
 
@@ -246,7 +247,7 @@ class GoalServiceTest {
             Page<Goal> page = new PageImpl<>(List.of(goal));
 
             when(goalRepository.findAllByTenantId(tenantId, pageable)).thenReturn(page);
-            when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             Page<GoalResponse> result = goalService.getAllGoals(pageable);
 
@@ -259,7 +260,7 @@ class GoalServiceTest {
         void shouldGetEmployeeGoals() {
             when(goalRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId))
                     .thenReturn(List.of(goal));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             List<GoalResponse> result = goalService.getEmployeeGoals(employeeId);
 
@@ -271,7 +272,7 @@ class GoalServiceTest {
         @DisplayName("Should get team goals")
         void shouldGetTeamGoals() {
             when(goalRepository.findTeamGoals(tenantId, managerId)).thenReturn(List.of(goal));
-            when(employeeRepository.findById(any())).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             List<GoalResponse> result = goalService.getTeamGoals(managerId);
 
@@ -288,7 +289,7 @@ class GoalServiceTest {
         void shouldUpdateProgressSuccessfully() {
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
             when(goalRepository.save(any(Goal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             GoalResponse result = goalService.updateProgress(goalId, 75);
 
@@ -302,7 +303,7 @@ class GoalServiceTest {
         void shouldMarkGoalAsCompletedWhenProgressIs100() {
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
             when(goalRepository.save(any(Goal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             GoalResponse result = goalService.updateProgress(goalId, 100);
 
@@ -316,7 +317,7 @@ class GoalServiceTest {
         void shouldMarkGoalAsCompletedWhenProgressExceeds100() {
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
             when(goalRepository.save(any(Goal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
 
             GoalResponse result = goalService.updateProgress(goalId, 120);
 
@@ -353,8 +354,7 @@ class GoalServiceTest {
 
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
             when(goalRepository.save(any(Goal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-            when(employeeRepository.findById(approverId)).thenReturn(Optional.of(approver));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee, approver));
 
             GoalResponse result = goalService.approveGoal(goalId, approverId);
 
@@ -417,8 +417,8 @@ class GoalServiceTest {
             parentGoal.setId(parentGoalId);
 
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-            when(goalRepository.findById(parentGoalId)).thenReturn(Optional.of(parentGoal));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
+            when(goalRepository.findAllById(anyIterable())).thenReturn(List.of(parentGoal));
 
             GoalResponse result = goalService.getGoalById(goalId);
 
@@ -437,8 +437,7 @@ class GoalServiceTest {
             creator.setLastName("User");
 
             when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
-            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-            when(employeeRepository.findById(createdById)).thenReturn(Optional.of(creator));
+            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee, creator));
 
             GoalResponse result = goalService.getGoalById(goalId);
 

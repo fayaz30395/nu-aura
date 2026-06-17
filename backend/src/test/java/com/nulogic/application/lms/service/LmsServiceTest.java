@@ -468,10 +468,10 @@ class LmsServiceTest {
                 .thenReturn(Optional.of(testEnrollment));
         when(moduleRepository.findByCourseOrdered(tenantId, courseId))
                 .thenReturn(List.of(testModule));
-        when(contentRepository.findByModuleOrdered(tenantId, moduleId))
+        when(contentRepository.findAllByModuleIdInAndTenantId(Set.of(moduleId), tenantId))
                 .thenReturn(List.of(testContent));
-        when(progressRepository.findByEnrollmentIdAndContentIdAndTenantId(enrollmentId, contentId, tenantId))
-                .thenReturn(Optional.of(completedProgress));
+        when(progressRepository.findByEnrollment(tenantId, enrollmentId))
+                .thenReturn(List.of(completedProgress));
         when(enrollmentRepository.save(any(CourseEnrollment.class))).thenReturn(testEnrollment);
 
         CourseEnrollment result = lmsService.updateEnrollmentProgress(tenantId, enrollmentId);
@@ -496,10 +496,10 @@ class LmsServiceTest {
                 .thenReturn(Optional.of(testEnrollment));
         when(moduleRepository.findByCourseOrdered(tenantId, courseId))
                 .thenReturn(List.of(testModule));
-        when(contentRepository.findByModuleOrdered(tenantId, moduleId))
+        when(contentRepository.findAllByModuleIdInAndTenantId(Set.of(moduleId), tenantId))
                 .thenReturn(List.of(testContent));
-        when(progressRepository.findByEnrollmentIdAndContentIdAndTenantId(enrollmentId, contentId, tenantId))
-                .thenReturn(Optional.of(completedProgress));
+        when(progressRepository.findByEnrollment(tenantId, enrollmentId))
+                .thenReturn(List.of(completedProgress));
         when(enrollmentRepository.save(any(CourseEnrollment.class))).thenAnswer(invocation -> {
             CourseEnrollment saved = invocation.getArgument(0);
             // Simulate 100% progress completing the enrollment
@@ -566,8 +566,10 @@ class LmsServiceTest {
                 .thenReturn(Optional.of(testEnrollment));
         when(moduleRepository.findByCourseOrdered(tenantId, courseId))
                 .thenReturn(List.of(testModule));
-        when(contentRepository.findByModuleOrdered(tenantId, moduleId))
+        when(contentRepository.findAllByModuleIdInAndTenantId(Set.of(moduleId), tenantId))
                 .thenReturn(List.of(testContent));
+        when(progressRepository.findByEnrollment(tenantId, enrollmentId))
+                .thenReturn(Collections.emptyList());
         when(enrollmentRepository.save(any(CourseEnrollment.class))).thenReturn(testEnrollment);
 
         ContentProgress result = lmsService.updateContentProgress(tenantId, enrollmentId, contentId, ProgressStatus.IN_PROGRESS, 60);
@@ -597,8 +599,10 @@ class LmsServiceTest {
                 .thenReturn(Optional.of(testEnrollment));
         when(moduleRepository.findByCourseOrdered(tenantId, courseId))
                 .thenReturn(List.of(testModule));
-        when(contentRepository.findByModuleOrdered(tenantId, moduleId))
+        when(contentRepository.findAllByModuleIdInAndTenantId(Set.of(moduleId), tenantId))
                 .thenReturn(List.of(testContent));
+        when(progressRepository.findByEnrollment(tenantId, enrollmentId))
+                .thenReturn(List.of(existingProgress));
         when(enrollmentRepository.save(any(CourseEnrollment.class))).thenReturn(testEnrollment);
 
         ContentProgress result = lmsService.updateContentProgress(tenantId, enrollmentId, contentId, ProgressStatus.COMPLETED, 120);

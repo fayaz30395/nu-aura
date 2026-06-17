@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -104,7 +103,7 @@ class SlackCommandServiceTest {
 
         when(leaveBalanceRepository.findByEmployeeIdAndYear(eq(EMPLOYEE_ID), anyInt(), eq(TENANT_ID)))
                 .thenReturn(List.of(balance));
-        when(leaveTypeRepository.findById(casualLeave.getId())).thenReturn(Optional.of(casualLeave));
+        when(leaveTypeRepository.findAllByTenantId(TENANT_ID)).thenReturn(List.of(casualLeave));
 
         String result = slackCommandService.handleBalanceCommand(SLACK_USER_ID, TEAM_ID);
 

@@ -54,6 +54,10 @@ public class FeatureFlagController {
         return ResponseEntity.ok(featureFlagService.getEnabledFeatures());
     }
 
+    // RBAC-02 reviewed & accepted-by-design: /check/{featureKey} is intentionally NOT
+    // permission-gated (only filter-chain authentication) so any authenticated user can
+    // resolve a single feature flag for UI gating — asserted by the existing test
+    // `checkFeature_shouldNotRequirePermission`. The full list endpoint requires SYSTEM_ADMIN.
     @GetMapping("/check/{featureKey}")
     @Operation(summary = "Check if a specific feature is enabled")
     @WrapResponse

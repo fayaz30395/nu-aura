@@ -161,9 +161,9 @@ class AllocationApprovalServiceTest {
             try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
                 sc.when(SecurityContext::getCurrentTenantId).thenReturn(tenantId);
                 when(approvalRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(request));
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-                when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
-                when(employeeRepository.findById(requesterId)).thenReturn(Optional.empty());
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(projectRepository.findByIdAndTenantId(projectId, tenantId)).thenReturn(Optional.of(project));
+                when(employeeRepository.findByIdAndTenantId(requesterId, tenantId)).thenReturn(Optional.empty());
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         any(), any(), eq(true))).thenReturn(Collections.emptyList());
 
@@ -382,9 +382,9 @@ class AllocationApprovalServiceTest {
                         eq(tenantId), eq(AllocationApprovalRequest.ApprovalStatus.PENDING),
                         any(Pageable.class)))
                         .thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(request)));
-                when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
-                when(projectRepository.findById(projectId)).thenReturn(Optional.of(project));
-                when(employeeRepository.findById(requesterId)).thenReturn(Optional.empty());
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(projectRepository.findByIdAndTenantId(projectId, tenantId)).thenReturn(Optional.of(project));
+                when(employeeRepository.findByIdAndTenantId(requesterId, tenantId)).thenReturn(Optional.empty());
                 when(projectEmployeeRepository.findAllByEmployeeIdAndTenantIdAndIsActive(
                         any(), any(), eq(true))).thenReturn(Collections.emptyList());
 

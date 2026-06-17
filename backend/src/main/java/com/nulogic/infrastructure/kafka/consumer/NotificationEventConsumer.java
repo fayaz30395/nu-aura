@@ -49,30 +49,17 @@ public class NotificationEventConsumer {
     private final UserRepository userRepository;
 
     /**
-     * Handle notification events.
+     * Called from both the Kafka listener and OutboxEventProcessor.
+     * TenantContext must be set by the caller before invoking this method.
      */
-    @KafkaListener(
-            topics = KafkaTopics.NOTIFICATIONS,
-            groupId = KafkaTopics.GROUP_NOTIFICATIONS_CONSUMER,
-            containerFactory = "notificationEventListenerContainerFactory"
-    )
-    public void handleNotificationEvent(
-            @Payload NotificationEvent event,
-            Acknowledgment acknowledgment) {
-
+    public void process(NotificationEvent event) {
         String eventId = event.getEventId();
         String channel = event.getChannel();
-        UUID tenantId = event.getTenantId();
 
-        if (tenantId != null) {
-            TenantContext.setCurrentTenant(tenantId);
-        }
         boolean claimed = false;
         try {
-            // Atomic idempotency check-and-claim via Redis SETNX
             if (!idempotencyService.tryProcess(eventId)) {
                 log.debug("Notification event {} already processed, skipping", eventId);
-                acknowledgment.acknowledge();
                 return;
             }
             claimed = true;
@@ -80,7 +67,6 @@ public class NotificationEventConsumer {
             log.info("Processing notification event: channel={}, recipient={}, subject={}",
                     channel, event.getRecipientId(), event.getSubject());
 
-            // Route to channel-specific handler
             switch (channel.toUpperCase()) {
                 case "EMAIL" -> sendEmail(event);
                 case "PUSH" -> sendPushNotification(event);
@@ -92,17 +78,37 @@ public class NotificationEventConsumer {
                 }
             }
 
-            acknowledgment.acknowledge();
-
             log.info("Successfully processed notification event: {}", eventId);
 
         } catch (Exception e) { // Intentional broad catch — per-message error boundary
             log.error("Failed to process notification event: {}", eventId, e);
-            // Release the idempotency claim so the Kafka redelivery is actually
-            // reprocessed instead of being skipped-and-acked (which would lose the event).
             if (claimed) {
                 idempotencyService.release(eventId);
             }
+            throw e;
+        }
+    }
+
+    /**
+     * Kafka listener — thin wrapper; delegates to process() then acknowledges.
+     */
+    @KafkaListener(
+            topics = KafkaTopics.NOTIFICATIONS,
+            groupId = KafkaTopics.GROUP_NOTIFICATIONS_CONSUMER,
+            containerFactory = "notificationEventListenerContainerFactory"
+    )
+    public void handleNotificationEvent(
+            @Payload NotificationEvent event,
+            Acknowledgment acknowledgment) {
+
+        UUID tenantId = event.getTenantId();
+        if (tenantId != null) {
+            TenantContext.setCurrentTenant(tenantId);
+        }
+        try {
+            process(event);
+            acknowledgment.acknowledge();
+        } catch (Exception e) {
             // Re-throw to let DefaultErrorHandler handle retry + DLT routing
             throw e;
         } finally {

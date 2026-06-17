@@ -251,8 +251,9 @@ class ShiftScheduleServiceTest {
         when(shiftAssignmentRepository.findAssignmentsForEmployeeBetweenDates(
                 tenantId, employeeId, start, end))
                 .thenReturn(List.of(assignment));
-        when(shiftRepository.findById(shiftId)).thenReturn(Optional.of(shift));
-        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+        // getEmployeeSchedule batch-loads shifts/employees via findAllById (N+1 elimination)
+        when(shiftRepository.findAllById(any())).thenReturn(List.of(shift));
+        when(employeeRepository.findAllById(any())).thenReturn(List.of(employee));
 
         var result = shiftScheduleService.getEmployeeSchedule(employeeId, start, end);
 

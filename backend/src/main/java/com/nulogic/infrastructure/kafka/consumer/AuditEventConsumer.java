@@ -56,6 +56,26 @@ public class AuditEventConsumer {
     private final AuditLogRepository auditLogRepository;
 
     /**
+     * Called from OutboxEventProcessor — direct single-insert, bypassing the Kafka batch.
+     * TenantContext must be set by the caller. Never throws — audit must not block business ops.
+     */
+    public void process(AuditEvent event) {
+        String eventId = event.getEventId();
+        if (!idempotencyService.tryProcess(eventId)) {
+            log.debug("Audit event {} already processed, skipping", eventId);
+            return;
+        }
+        try {
+            AuditLog auditLog = mapToAuditLog(event);
+            auditLogRepository.save(auditLog);
+        } catch (Exception e) {
+            idempotencyService.release(eventId);
+            log.error("Failed to persist audit event {}: {}", eventId, e.getMessage(), e);
+            // Intentionally not re-throwing — audit must not block business operations
+        }
+    }
+
+    /**
      * Handle a single audit event.
      * Events are accumulated and persisted in batches for performance.
      *
@@ -139,6 +159,27 @@ public class AuditEventConsumer {
     }
 
     /**
+     * Map a single AuditEvent to an AuditLog domain object.
+     */
+    private AuditLog mapToAuditLog(AuditEvent event) {
+        AuditLog auditLog = AuditLog.builder()
+                .tenantId(event.getTenantId())
+                .entityType(event.getEntityType())
+                .entityId(event.getEntityId())
+                .action(AuditLog.AuditAction.valueOf(event.getAction()))
+                .actorId(event.getUserId())
+                .description(event.getDescription())
+                .changes(event.getOldValue() != null || event.getNewValue() != null
+                        ? "old=" + event.getOldValue() + ", new=" + event.getNewValue()
+                        : null)
+                .ipAddress(event.getIpAddress())
+                .userAgent(event.getUserAgent())
+                .build();
+        auditLog.setId(UUID.fromString(event.getEventId()));
+        return auditLog;
+    }
+
+    /**
      * Persist a batch of audit events to the database.
      * This uses bulk insert for efficiency.
      *
@@ -151,35 +192,17 @@ public class AuditEventConsumer {
         try {
             log.info("Persisting batch of {} audit events", batch.size());
 
-            // Convert AuditEvent messages to AuditLog domain objects and persist
             List<AuditLog> auditLogs = new ArrayList<>();
             for (PendingAuditEvent pending : batch) {
-                AuditEvent event = pending.event();
-                AuditLog auditLog = AuditLog.builder()
-                        .tenantId(event.getTenantId())
-                        .entityType(event.getEntityType())
-                        .entityId(event.getEntityId())
-                        .action(AuditLog.AuditAction.valueOf(event.getAction()))
-                        .actorId(event.getUserId())
-                        .description(event.getDescription())
-                        .changes(event.getOldValue() != null || event.getNewValue() != null
-                                ? "old=" + event.getOldValue() + ", new=" + event.getNewValue()
-                                : null)
-                        .ipAddress(event.getIpAddress())
-                        .userAgent(event.getUserAgent())
-                        .build();
-                auditLog.setId(UUID.fromString(event.getEventId()));
-                auditLogs.add(auditLog);
+                auditLogs.add(mapToAuditLog(pending.event()));
             }
 
-            // Batch save all audit logs
             auditLogRepository.saveAll(auditLogs);
 
             log.debug("Successfully persisted {} audit events", batch.size());
             return true;
 
         } catch (DataAccessException e) {
-            // Log error but don't throw; the caller retains the batch and offsets for retry
             log.error("Failed to persist audit batch (size={}): {}", batch.size(), e.getMessage(), e);
             return false;
         }

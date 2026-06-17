@@ -134,6 +134,10 @@ class InterviewManagementServiceTest {
         void shouldScheduleInterviewSuccessfully() {
             when(interviewRepository.save(any(Interview.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
+                    .thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
+                    .thenReturn(Optional.of(jobOpening));
             when(candidateRepository.findById(candidateId))
                     .thenReturn(Optional.of(candidate));
             when(jobOpeningRepository.findById(jobOpeningId))
@@ -160,6 +164,10 @@ class InterviewManagementServiceTest {
             interviewRequest.setStatus(null);
             when(interviewRepository.save(any(Interview.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
+                    .thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
+                    .thenReturn(Optional.of(jobOpening));
             when(candidateRepository.findById(candidateId))
                     .thenReturn(Optional.of(candidate));
             when(jobOpeningRepository.findById(jobOpeningId))
@@ -181,6 +189,10 @@ class InterviewManagementServiceTest {
             GoogleMeetService.GoogleMeetResult meetResult =
                     new GoogleMeetService.GoogleMeetResult("https://meet.google.com/abc-defg-hij", "event123", true, null);
 
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
+                    .thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
+                    .thenReturn(Optional.of(jobOpening));
             when(candidateRepository.findById(candidateId))
                     .thenReturn(Optional.of(candidate));
             when(jobOpeningRepository.findById(jobOpeningId))
@@ -209,6 +221,10 @@ class InterviewManagementServiceTest {
             GoogleMeetService.GoogleMeetResult failedResult =
                     new GoogleMeetService.GoogleMeetResult(null, null, false, "API error");
 
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
+                    .thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
+                    .thenReturn(Optional.of(jobOpening));
             when(candidateRepository.findById(candidateId))
                     .thenReturn(Optional.of(candidate));
             when(jobOpeningRepository.findById(jobOpeningId))
@@ -233,6 +249,10 @@ class InterviewManagementServiceTest {
             interviewRequest.setCreateGoogleMeet(true);
             interviewRequest.setGoogleAccessToken("mock-token");
 
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
+                    .thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
+                    .thenReturn(Optional.of(jobOpening));
             when(candidateRepository.findById(candidateId))
                     .thenReturn(Optional.of(candidate));
             when(jobOpeningRepository.findById(jobOpeningId))
@@ -255,6 +275,10 @@ class InterviewManagementServiceTest {
         void shouldMapCandidateAndJobNamesInResponse() {
             when(interviewRepository.save(any(Interview.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId))
+                    .thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
+                    .thenReturn(Optional.of(jobOpening));
             when(candidateRepository.findById(candidateId))
                     .thenReturn(Optional.of(candidate));
             when(jobOpeningRepository.findById(jobOpeningId))

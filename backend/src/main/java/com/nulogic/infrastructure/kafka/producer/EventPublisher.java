@@ -1,15 +1,13 @@
 package com.nulogic.infrastructure.kafka.producer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.kafka.KafkaTopics;
 import com.nulogic.infrastructure.kafka.events.*;
+import com.nulogic.infrastructure.kafka.outbox.OutboxEvent;
+import com.nulogic.infrastructure.kafka.outbox.OutboxEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.KafkaException;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,38 +15,21 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Service for publishing domain events to Kafka topics.
+ * Service for publishing domain events via the transactional outbox pattern.
  *
- * <p>Provides a clean, type-safe API for various event types. Handles:
- * - Event ID generation for idempotency
- * - Timestamp initialization
- * - Topic routing
- * - Error handling and logging
- * - Async send confirmation
- * </p>
+ * <p>Events are written to the outbox_events table atomically with the business
+ * operation. OutboxEventProcessor polls and dispatches them to consumer handlers.
+ * This ensures durability on Railway where Kafka is not provisioned.</p>
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventPublisher {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final OutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
     private final TenantTimeService tenantTimeService;
 
-    /**
-     * Publish an approval event (APPROVED or REJECTED).
-     *
-     * @param approvalId   ID of the approval instance
-     * @param taskId       ID of the approval task
-     * @param approvalType Type of approval (LEAVE, EXPENSE, ASSET, WIKI_PAGE, etc.)
-     * @param status       APPROVED or REJECTED
-     * @param tenantId     Multi-tenant context
-     * @param approverId   User who made the decision
-     * @param requesterId  User who requested the approval
-     * @param comments     Optional comments from approver
-     * @param isTerminal   Whether the workflow is complete
-     * @param metadata     Domain-specific metadata
-     */
     public CompletableFuture<Void> publishApprovalEvent(
             UUID approvalId,
             UUID taskId,
@@ -81,21 +62,6 @@ public class EventPublisher {
         return sendEvent(KafkaTopics.APPROVALS, event.getEventId(), event);
     }
 
-    /**
-     * Publish a notification event.
-     *
-     * @param recipientId       User to notify
-     * @param channel           EMAIL, PUSH, IN_APP, or SMS
-     * @param subject           Email subject or notification title
-     * @param body              Email body or notification content
-     * @param templateName      Optional email template name
-     * @param templateData      Data to render in template
-     * @param tenantId          Multi-tenant context
-     * @param relatedEntityId   ID of related business object
-     * @param relatedEntityType Type of related entity
-     * @param actionUrl         Optional URL to include
-     * @param priority          HIGH, NORMAL, or LOW
-     */
     public CompletableFuture<Void> publishNotificationEvent(
             UUID recipientId,
             String channel,
@@ -132,24 +98,6 @@ public class EventPublisher {
         return sendEvent(KafkaTopics.NOTIFICATIONS, event.getEventId(), event);
     }
 
-    /**
-     * Publish an audit event.
-     *
-     * @param userId      User who performed action
-     * @param action      Action type (CREATE, UPDATE, DELETE, APPROVE, REJECT, etc.)
-     * @param entityType  Resource name (Employee, LeaveRequest, ExpenseClaim, etc.)
-     * @param entityId    ID of affected entity
-     * @param tenantId    Multi-tenant context
-     * @param oldValue    JSON representation of previous state (optional)
-     * @param newValue    JSON representation of new state (optional)
-     * @param ipAddress   IP address of client
-     * @param userAgent   HTTP user agent
-     * @param method      HTTP method
-     * @param uri         Endpoint URI
-     * @param statusCode  HTTP response code
-     * @param durationMs  Operation duration
-     * @param description Optional description/reason
-     */
     public CompletableFuture<Void> publishAuditEvent(
             UUID userId,
             String action,
@@ -190,22 +138,6 @@ public class EventPublisher {
         return sendEvent(KafkaTopics.AUDIT, event.getEventId(), event);
     }
 
-    /**
-     * Publish an employee lifecycle event.
-     *
-     * @param employeeId     Employee affected
-     * @param eventTypeEnum  Event type (HIRED, ONBOARDED, PROMOTED, TRANSFERRED, OFFBOARDED)
-     * @param initiatedBy    User who initiated the event
-     * @param tenantId       Multi-tenant context
-     * @param email          Employee email
-     * @param name           Employee name
-     * @param departmentId   Department assignment
-     * @param managerId      Reporting manager
-     * @param jobTitle       Job designation
-     * @param employmentType Employment type
-     * @param metadata       Event-specific details
-     * @param bulkOperation  Whether part of bulk operation
-     */
     public CompletableFuture<Void> publishEmployeeLifecycleEvent(
             UUID employeeId,
             String eventTypeEnum,
@@ -242,19 +174,6 @@ public class EventPublisher {
         return sendEvent(KafkaTopics.EMPLOYEE_LIFECYCLE, event.getEventId(), event);
     }
 
-    /**
-     * Publish a payroll processing event to trigger async payroll computation.
-     *
-     * <p>The controller calls this immediately after transitioning the run to
-     * {@code PROCESSING} status and returns HTTP 202. The consumer picks up the
-     * event and executes the heavy per-employee work in batches.</p>
-     *
-     * @param runId          ID of the PayrollRun to process
-     * @param tenantId       Multi-tenant context
-     * @param triggeredBy    User ID who initiated processing
-     * @param payPeriodMonth Pay period month (1–12)
-     * @param payPeriodYear  Pay period year
-     */
     public CompletableFuture<Void> publishPayrollProcessingEvent(
             UUID runId,
             UUID tenantId,
@@ -277,14 +196,6 @@ public class EventPublisher {
         return sendEvent(KafkaTopics.PAYROLL_PROCESSING, event.getEventId(), event);
     }
 
-    /**
-     * Publish a fluence content event (CREATED, UPDATED, PUBLISHED, or DELETED).
-     *
-     * @param contentType Content type: "wiki", "blog", or "template"
-     * @param contentId   UUID of the content entity
-     * @param action      Action performed (CREATED, UPDATED, PUBLISHED, DELETED)
-     * @param tenantId    Multi-tenant context
-     */
     public CompletableFuture<Void> publishFluenceContent(
             String contentType,
             UUID contentId,
@@ -308,43 +219,25 @@ public class EventPublisher {
     // ============ PRIVATE HELPERS ============
 
     /**
-     * Send an event to Kafka with proper error handling and failure propagation.
-     *
-     * <p>R2-004 FIX: The previous implementation wrapped the Kafka send in
-     * {@code CompletableFuture.runAsync()}, which always completed the outer future
-     * successfully even when Kafka returned an error in its own {@code whenComplete}
-     * callback. Callers that checked the returned future would never detect Kafka
-     * failures, making it appear as fire-and-forget.</p>
-     *
-     * <p>The fix converts the Kafka {@code CompletableFuture<SendResult>} directly
-     * into a {@code CompletableFuture<Void>} using {@code thenAccept} / {@code handle},
-     * so failures are propagated to the caller instead of being silently swallowed.</p>
-     *
-     * @param topic Kafka topic
-     * @param key   Message key for partitioning
-     * @param event Event payload
-     * @return CompletableFuture that completes exceptionally if the send fails
+     * Persist the event to the outbox table. The OutboxEventProcessor polls
+     * and dispatches it to the appropriate consumer handler.
      */
-    private CompletableFuture<Void> sendEvent(String topic, String key, Object event) {
+    private CompletableFuture<Void> sendEvent(String topic, String key, BaseKafkaEvent event) {
         try {
-            Message<Object> message = MessageBuilder.withPayload(event)
-                    .setHeader(KafkaHeaders.TOPIC, topic)
-                    .setHeader(KafkaHeaders.KEY, key)
-                    .build();
-
-            return kafkaTemplate.send(message)
-                    .handle((sendResult, ex) -> {
-                        if (ex != null) {
-                            log.error("Failed to publish event to topic {} (key={}): {}",
-                                    topic, key, ex.getMessage(), ex);
-                            throw new RuntimeException(
-                                    "Kafka publish failed for topic " + topic, ex);
-                        }
-                        log.debug("Event published to topic {} with key {}", topic, key);
-                        return (Void) null;
-                    });
-        } catch (KafkaException e) {
-            log.error("Error building Kafka message for topic {}: {}", topic, e.getMessage(), e);
+            String payload = objectMapper.writeValueAsString(event);
+            OutboxEvent outboxEvent = new OutboxEvent();
+            outboxEvent.setEventId(key);
+            outboxEvent.setTopic(topic);
+            outboxEvent.setPartitionKey(key);
+            outboxEvent.setEventClass(event.getClass().getName());
+            outboxEvent.setPayload(payload);
+            outboxEvent.setStatus("PENDING");
+            outboxEvent.setTenantId(event.getTenantId());
+            outboxEventRepository.save(outboxEvent);
+            log.debug("Event queued to outbox: topic={}, eventId={}", topic, key);
+            return CompletableFuture.completedFuture(null);
+        } catch (Exception e) {
+            log.error("Failed to queue event to outbox: topic={}, key={}: {}", topic, key, e.getMessage(), e);
             return CompletableFuture.failedFuture(e);
         }
     }

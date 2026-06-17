@@ -128,8 +128,8 @@ class ManagerDashboardTeamProjectsTest {
                 emp2.setId(emp2Id);
                 emp2.setTenantId(tenantId);
 
-                when(employeeRepository.findByIdAndTenantId(emp1Id, tenantId)).thenReturn(Optional.of(emp1));
-                when(employeeRepository.findByIdAndTenantId(emp2Id, tenantId)).thenReturn(Optional.of(emp2));
+                when(employeeRepository.findAllByIdInAndTenantId(List.of(emp1Id, emp2Id), tenantId))
+                        .thenReturn(List.of(emp1, emp2));
 
                 // Project memberships
                 ProjectMember pm1 = new ProjectMember();
@@ -225,7 +225,8 @@ class ManagerDashboardTeamProjectsTest {
                 emp1.setId(emp1Id);
                 emp1.setTenantId(tenantId);
 
-                when(employeeRepository.findByIdAndTenantId(emp1Id, tenantId)).thenReturn(Optional.of(emp1));
+                when(employeeRepository.findAllByIdInAndTenantId(List.of(emp1Id), tenantId))
+                        .thenReturn(List.of(emp1));
 
                 // Two allocations totalling 120%
                 ProjectMember pm1 = new ProjectMember();
