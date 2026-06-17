@@ -82,6 +82,65 @@ Fixed in code + verified (compile + unit tests). **Not yet runtime-verified/depl
 
 **Still OPEN after iter 2:** RBAC-02 (feature-flag `@RequiresPermission` — MEDIUM, not yet added), RBAC-03 (open tenant self-reg), UX-04/05/06 (other HIGH a11y — not addressed), ARCH-04/REL-04 (RLS-live + public-host E2E — need Docker/deploy), RT-01 (deploy lags HEAD). SEC-001/002 + BE-01 need **runtime re-verification on a deployed build**.
 
+## Iteration 3 — CI + deploy re-verification (2026-06-17)
+Pushed iter-2 fixes to both repos (`b5f6ddc2`); watched CI; re-probed live deploy.
+
+- **Frontend CI: GREEN ✓** for `b5f6ddc2` — my FE a11y + lint changes validated in CI (lint `--max-warnings=0` passes; build succeeds).
+- **Backend CI: RED — but PRE-EXISTING, not my regression.** CI Pipeline backend job is `failure` on **all 8 recent commits** including my docs-only commit `9bf5e49d` (zero backend code). Failures are 24× `ApplicationContext` load errors + named tests in untouched areas (`DocuSignConnectorTest`, `IntegrationEventRouterTest`). Backend `Build` step passes; `Run Backend Tests` fails. → **NEW finding REL-05 (CRITICAL): backend CI chronically red** (memory says it was green 2026-06-09 @ ac03c6ba; regressed since). Blocks integration-test evidence and any clean release.
+- **GCP Deploy workflow: FAILS (pre-existing infra)** — GCP auth step has no WIF/credentials (`GCP_PROJECT_ID` empty); previous commit failed identically. (= known D-2.) Separate from Railway/Vercel auto-deploy.
+- **Live BE (Railway): healthy after push** — `/actuator/health` 200, sensitive endpoints 401, demo-cred login still **401**. My changes didn't break the running backend.
+- **Live FE (Vercel): `/admin/users` still resolves to the 404 page** (RT-01 persists) and the **authenticated session expired** → authenticated browser re-verification of the deployed slide-panels / RBAC is **BLOCKED** (re-login requires the user; orchestrator won't enter credentials).
+
+**Net iter-3:** FE fixes CI-verified; backend fixes remain **runtime-unverified** because backend CI is pre-existing-red (the integration suite never gets to green) and local Docker is down. REL-05 is now the top blocker — nothing downstream can be runtime-proven until backend CI is restored.
+
+## Iteration 4 — REL-05 root cause found + fixed (2026-06-17)
+**Diagnosis:** pulled the raw backend CI log. Root cause = `org.flywaydb.core.api.FlywayException: Found more than one migration with version 100`. Two `V100__` files (`create_mileage_tables` May 26 + `add_knowledge_attachment_extracted_text` Jun 16) and two `V101__` files (`create_payroll_adjustments` + `add_user_password_change_required` Jun 16). Flyway aborts → `HrmsApplication` context fails to load → every `@SpringBootTest` integration test cascade-fails ("ApplicationContext failure threshold exceeded"). Pre-existing since the 2026-06-16 PE session; explains backend CI red on all recent commits.
+
+**Fix (`f50dab70`, pushed both repos):** `git mv` the two never-applied Jun-16 newcomers to the end of the chain — `V296__add_knowledge_attachment_extracted_text`, `V297__add_user_password_change_required` — keeping the already-applied May migrations at V100/V101. Both newcomers are idempotent `ADD COLUMN IF NOT EXISTS`. No duplicate versions remain on disk. The two unit tests named in the log (`IntegrationEventRouterTest`, `DocuSignConnectorTest`) **pass locally** — they were cascade noise, not real failures.
+
+**CI result (`27705953455`):** migration collision **GONE** (no "more than one migration" error — context now loads, Frontend CI ✓). BUT backend CI **still red** — clearing the cascade **unmasked a broadly pre-existing-red backend test suite** (failures across `GoalServiceTest`, `AccountLockoutServiceTest`, `AdminServiceTest`, `AttendanceRecordServiceTest`, `InterviewManagementServiceTest`, `EncryptedStringConverterTest`, … — UnnecessaryStubbing + stale assertions + tz NullPointers). These were hidden behind the Flyway collision for as long as it existed.
+
+**Regression check — my iter-2 changes are CLEAN (definitive):** local runs of every changed-area test + the platform-wide touchpoints — `ContractServiceTest`, `PaymentServiceTest`, `WebhookSignatureVerifierTest`, `ContractReminderServiceTest`, `BaseEntitySoftDeleteTest` (BE-02), `CandidateTest` (SEC-002), `ApiResponseBodyAdviceTest` — all **green** (exit 0, 0 failures). The failing CI classes are in domains I never touched and/or pass locally → the residual CI redness is **pre-existing test debt + environment**, NOT my changes.
+
+**REL-05 revised:** the *migration collision* (cascade root) is **FIXED**. Underneath it is **REL-06 (CRITICAL, pre-existing): the backend test suite is broadly red** — stale/mock-hygiene failures across many domains, masked until now. This is a sizable test-suite **rehabilitation** effort, orthogonal to the security blockers, and **cannot be diagnosed locally** (Docker down for the Testcontainers integration tests). Reaching green CICD needs either local Docker or iterative CI debugging.
+
+## Readiness sub-scores — Iter 4 (2026-06-17)
+| Dimension | Iter3 | Iter4 | Note |
+|-----------|-------|-------|------|
+| Architecture | 82 | 82 | — |
+| Route | 80 | 80 | RT-01 still open |
+| API | 86 | 86 | fixes clean; runtime-unverified (CI red) |
+| RBAC | 86 | 86 | — |
+| Security | 84 | 84 | — |
+| UX | 84 | 84 | UX-04/05/06 open |
+| Regression | 70 | **55** | migration collision fixed (good) but suite revealed broadly red (REL-06) → honest drop |
+| **Production Readiness** | **80** | **74** | NOT READY — security blockers fixed, but backend CI red (pre-existing test debt) blocks all runtime verification |
+
+## Verdict — Iteration 4
+**NOT READY FOR PRODUCTION.** The security/UX/release blockers (SEC-001/002, BE-01/02, RBAC-01, UX-01/02/03, REL-01) are **fixed and regression-free**, and the Flyway collision blocking CI is **fixed** (Frontend CI green). But fixing the collision exposed **REL-06: a broadly pre-existing-red backend test suite** — backend CI cannot go green, so the integration tests never run and the backend fixes stay runtime-unverified. Exit criteria unmet (no green backend gate; 0 of 3 clean iterations; UX-04/05/06 + RBAC-02/03 open). **REL-06 is now the gating blocker** and is a scoped test-rehabilitation effort that needs Docker/CI iteration — not solvable in this loop without that.
+
+## Iteration 5 — parallel Workflow fix + GREEN suite (2026-06-17)
+Started colima → **Docker up locally** (integration tests now runnable). Full suite revealed the true state: **4,075 tests, 55 failures / 13 classes** (not "broadly red" — that was the cascade + grep over-count). Ran a 15-agent parallel Workflow (`prod-ready-fixes`): one fixer per failing class + RBAC + UX.
+
+- **REL-06 RESOLVED — backend suite GREEN: `4,076 tests, 0 failures, 0 errors`** (full local run, Docker). All 13 classes were **STALE-TEST** (concurrent `eeb52b1c` tenantId-IDOR fix + N+1-elimination perf refactors changed repo call-paths; tests stubbed old signatures). Fixed **test-only** — no production logic weakened, no real bug masked. `ContractLifecycleSchedulerTest` confirmed = concurrent tenantId change, **not** my BE-01.
+- **RBAC-02 → ACCEPTED-BY-DESIGN.** The workflow's `@RequiresPermission(SYSTEM_ADMIN)` add broke the existing test `checkFeature_shouldNotRequirePermission`, which explicitly documents `/feature-flags/check/{key}` as intentionally permission-free (any authed user resolves a single flag for UI gating; the *list* endpoint requires SYSTEM_ADMIN). Reverted; rationale documented in the controller.
+- **RBAC-03 → HARDENED (non-breaking):** `/api/v1/tenants/register` moved from the 100/min API bucket to the 5/min AUTH bucket (`RateLimitingFilter`) — caps the mass-tenant-creation vector.
+- **UX-04/05/06 → FIXED** (~20 FE files); FE independently re-verified **lint 0/0, Vitest 2,419**.
+
+### Readiness — Iter 4 → Iter 5
+| Dimension | Iter4 | Iter5 | Note |
+|-----------|-------|-------|------|
+| Architecture | 82 | 84 | full suite green raises confidence |
+| Route | 80 | 80 | RT-01 deploy-lag still open |
+| API | 86 | 90 | full suite incl. integration green locally |
+| RBAC | 86 | 90 | RBAC-02 resolved (by design), RBAC-03 hardened |
+| Security | 84 | 86 | blockers fixed; email/signer_email blind-index deferred |
+| UX | 84 | 88 | all HIGH a11y (UX-01..06) fixed; MEDIUM + full SR audit remain |
+| Regression | 55 | 88 | **backend 4,076 green + FE green + lint green (local)**; CI confirmation pending |
+| **Production Readiness** | **74** | **87** | NOT READY — pending CI end-to-end green + UX≥90 + RT-01 + RLS-live + 3 clean iterations |
+
+## Verdict — Iteration 1
+
 ## Verdict — Iteration 1
 **NOT READY FOR PRODUCTION.** Readiness 68/100. Exit criteria unmet: 3 CRITICAL/blocker-class + 8 HIGH open; UX 74 (< 90); 0 of 3 required consecutive clean iterations. Live deployment is **operationally healthy and well-hardened at the edge** (auth, headers, CSP, CORS, locked admin surface, demo cred rejected) but the **codebase at HEAD carries blocker-class defects** (demo-seed migration ordering, plaintext PII, contract IDOR, mass-assignment, stubbed payment verification) and the **CI gate is RED**.
 
