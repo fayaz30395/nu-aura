@@ -177,8 +177,8 @@ it slowed multi-role testing, which was paced accordingly).
 - Login page: clean, accessible (labelled `Work email`/`Password`, skip-to-content link, theme toggle,
   SSO/Google/Microsoft, demo panel). Zero console errors.
 - Navigation: role-aware sidebar, app switcher across 4 sub-apps, consistent redirects.
-- Defects: 2 pages throw to the Next error boundary (`/lwf`, `/admin/feature-flags` — fixed in code);
-  `/fluence/my-content` shows partial failure due to API 400s.
+- Defects: 2 pages previously threw to the Next error boundary (`/lwf`, `/admin/feature-flags`) —
+  **fixed, deployed, and verified live**. `/fluence/my-content` still shows partial failure (API 400s).
 - Design-system lint: 82 `no-restricted-syntax` warnings flag off-8px-grid spacing (`gap-3`/`p-3`/
   `space-y-3`) across ~25 pages — cosmetic consistency debt, not functional.
 
@@ -213,8 +213,8 @@ it slowed multi-role testing, which was paced accordingly).
 |----|-----|--------|------------------|-------|-----------|----------------|-----|--------|
 | NU-001 | CRITICAL | Shared/RBAC | live DB | EMPLOYEE `saran` over-granted HR_ADMIN; reads roles/employees/payroll (200) | `V293` role-normalization not applied to deployed DB | live `user_roles`; `db/migration/V293__normalize_nulogic_demo_user_roles.sql` | Apply V293 / reseed (ops) | ⛔ open (DB) |
 | NU-002 | CRITICAL | Shared/Auth | `/auth/login` | Public demo creds active in prod (`Welcome@123`, demo mode on) → SUPER_ADMIN | `NEXT_PUBLIC_DEMO_MODE=true`; not running `prod` profile so `V270`/`V272` don't fire | Vercel env; backend Spring profile / `${demoCredentialsEnabled}` | Disable demo mode + prod profile (ops) | ⛔ open (config) |
-| NU-003 | HIGH | NU-HRMS | `/lwf` | Client crash `eg.map is not a function` → error boundary | `/payroll/lwf/configurations` returns Spring `Page`; FE assumes bare array | `frontend/lib/services/hrms/lwf.service.ts` | ✅ defensive coercion applied | ✅ tsc/build; ⛔ live (needs deploy) |
-| NU-004 | HIGH | Shared/Admin | `/admin/feature-flags` | Client crash `(_ ?? []).filter is not a function` → error boundary | `/admin/feature-flags` returns `{data:[…]}` envelope; FE assumes array | `frontend/lib/hooks/queries/useFeatureFlags.ts` | ✅ defensive coercion applied | ✅ tsc/build; ⛔ live |
+| NU-003 | HIGH | NU-HRMS | `/lwf` | Client crash `eg.map is not a function` → error boundary | `/payroll/lwf/configurations` returns Spring `Page`; FE assumes bare array | `frontend/lib/services/hrms/lwf.service.ts` | ✅ defensive coercion applied | ✅ **CLOSED** — tsc/build + **live-verified on prod** (renders, no crash) |
+| NU-004 | HIGH | Shared/Admin | `/admin/feature-flags` | Client crash `(_ ?? []).filter is not a function` → error boundary | `/admin/feature-flags` returns `{data:[…]}` envelope; FE assumes array | `frontend/lib/hooks/queries/useFeatureFlags.ts` | ✅ defensive coercion applied | ✅ **CLOSED** — tsc/build + **live-verified** (renders "12/12 enabled") |
 | NU-005 | HIGH | NU-Fluence | `/fluence/my-content` | `GET /knowledge/blogs/my` & `/knowledge/wiki/pages/my` → 400; "My Content" broken | Backend 400 (param/validation) even for SUPER_ADMIN | backend `api/knowledge` controllers | ⛔ open (backend) | ⛔ open |
 | NU-006 | MEDIUM | Shared/Audit | `/admin/audit` | `GET /audit-logs/statistics` → 400; stats widget empty (page otherwise loads) | Backend 400 on date-range params | backend `api/audit` `AuditLogController` | ⛔ open (backend) | ⛔ open |
 | NU-007 | MEDIUM | Build/CI | — | `eslint --max-warnings=0` fails | 1 `react/no-unescaped-entities` error + 82 design warnings | `app/settings/security/api-keys/page.tsx` (+25 files warnings) | ✅ error fixed; warnings documented | ✅ error gone (eslint changed-files: 0 errors) |
@@ -235,8 +235,12 @@ preventing crashes):
 3. **`app/settings/security/api-keys/page.tsx`** — escaped apostrophe (`tenant&apos;s`). Fixes the lone
    lint error in NU-007.
 
-Verification: `tsc --noEmit` → 0 errors; `eslint` on the 3 changed files → 0 errors. `next build`
-re-run for confirmation. **Live retest of NU-003/004 requires a deployment** (Vercel CI from `main`).
+Verification: `tsc --noEmit` → 0 errors; `eslint` on the 3 changed files → 0 errors; `next build` → pass.
+**Deployed to production via the authenticated Vercel CLI** (`vercel --prod`, project `hrms-frontend`,
+aliased to `hrms-frontend-vert.vercel.app`). NU-003/NU-004 were then **live-retested on production: both
+pages render, crashes gone.** Note: `git push` does **not** auto-deploy the frontend — Vercel has no
+GitHub integration on these repos; the GitHub Actions "Deploy" workflow targets GKE and fails on missing
+GCP credentials (`workload_identity_provider`/`credentials_json` not configured) — a pre-existing infra gap.
 
 Not fixed (out of safe/verifiable scope this pass): NU-001/NU-002 (ops/config + DB), NU-005/NU-006
 (backend 400s — need DB-backed reproduction to fix safely).
@@ -246,13 +250,15 @@ Not fixed (out of safe/verifiable scope this pass): NU-001/NU-002 (ops/config + 
 ## 14. Regression Summary
 
 - Frontend `tsc --noEmit`: PASS (pre- and post-fix).
-- Frontend `next build`: PASS (pre-fix; re-run post-fix for confirmation).
+- Frontend `next build`: PASS (pre- and post-fix); deployed to prod via Vercel CLI.
 - Frontend `eslint` (changed files): 0 errors post-fix.
 - Backend `mvn compile`: PASS.
 - Live smoke (SUPER_ADMIN, ~128 routes): re-confirmed; earlier per-route console-error counts on
   otherwise-OK pages (`/loans`, `/admin/roles`, `/travel`) were **cross-navigation request bleed**
   (in-flight requests resolving after route switch), not page defects — verified by isolated re-tests.
 - RBAC smoke (EMPLOYEE/RECRUITMENT_ADMIN/SUPER_ADMIN): PASS (enforcement correct).
+- **Live retest after deploy:** `/lwf` and `/admin/feature-flags` render correctly on
+  `hrms-frontend-vert.vercel.app` (NU-003/NU-004 closed); new build chunk hashes confirm the deploy.
 
 ---
 
