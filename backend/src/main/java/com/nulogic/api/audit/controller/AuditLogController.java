@@ -116,10 +116,15 @@ public class AuditLogController {
     @GetMapping("/statistics")
     @RequiresPermission(Permission.AUDIT_VIEW)
     public ResponseEntity<AuditStatisticsResponse> getAuditStatistics(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        log.info("Getting audit statistics from {} to {}", startDate, endDate);
-        return ResponseEntity.ok(auditLogService.getAuditStatistics(startDate, endDate));
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        // NU-006 FIX: the stats widget previously 400'd whenever the date range was
+        // omitted (params were mandatory). Default to a trailing 30-day window so the
+        // dashboard renders without forcing the client to supply a range.
+        LocalDateTime resolvedEnd = endDate != null ? endDate : LocalDateTime.now();
+        LocalDateTime resolvedStart = startDate != null ? startDate : resolvedEnd.minusDays(30);
+        log.info("Getting audit statistics from {} to {}", resolvedStart, resolvedEnd);
+        return ResponseEntity.ok(auditLogService.getAuditStatistics(resolvedStart, resolvedEnd));
     }
 
     @GetMapping("/summary")

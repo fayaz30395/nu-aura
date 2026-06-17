@@ -115,6 +115,17 @@ public class WikiPageController {
         return ResponseEntity.ok(toDtoBatch(pages));
     }
 
+    // NU-005: the Fluence "My Content" feed. Literal /my is matched ahead of
+    // /{pageId} by Spring's path-pattern precedence, so it no longer 400s on UUID parse.
+    @GetMapping("/my")
+    @Operation(summary = "Get wiki pages authored by the current user")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    public ResponseEntity<Page<WikiPageDto>> getMyPages(Pageable pageable) {
+        Page<WikiPage> pages = wikiPageService.getMyPages(pageable);
+        return ResponseEntity.ok(toDtoBatch(pages));
+    }
+
     @GetMapping("/{pageId}")
     @Operation(summary = "Get wiki page by ID")
     @ApiResponses.Success

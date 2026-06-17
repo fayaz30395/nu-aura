@@ -26,6 +26,9 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSp
 
     Page<BlogPost> findByTenantId(UUID tenantId, Pageable pageable);
 
+    /** NU-005: posts authored by a given user within the tenant (the "My Content" feed). */
+    Page<BlogPost> findByTenantIdAndCreatedByOrderByCreatedAtDesc(UUID tenantId, UUID createdBy, Pageable pageable);
+
     @Query("SELECT bp FROM BlogPost bp WHERE bp.tenantId = :tenantId AND bp.isFeatured = true " +
             "AND bp.featuredUntil > CURRENT_TIMESTAMP ORDER BY bp.publishedAt DESC")
     List<BlogPost> findFeaturedPostsByTenant(@Param("tenantId") UUID tenantId);

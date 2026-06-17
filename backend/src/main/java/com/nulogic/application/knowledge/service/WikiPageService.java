@@ -165,6 +165,18 @@ public class WikiPageService {
         return wikiPageRepository.findByTenantId(tenantId, pageable);
     }
 
+    /**
+     * NU-005: wiki pages authored by the current user (all statuses) — backs the
+     * Fluence "My Content" feed. Previously absent, so GET /knowledge/wiki/pages/my
+     * fell through to GET /{pageId} and 400'd on UUID parse.
+     */
+    @Transactional(readOnly = true)
+    public Page<WikiPage> getMyPages(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID userId = SecurityContext.getCurrentUserId();
+        return wikiPageRepository.findByTenantIdAndCreatedByOrderByCreatedAtDesc(tenantId, userId, pageable);
+    }
+
     @Transactional(readOnly = true)
     public Page<WikiPage> getPagesBySpace(UUID spaceId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();

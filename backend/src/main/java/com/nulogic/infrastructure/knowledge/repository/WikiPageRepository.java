@@ -38,6 +38,9 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
 
     Page<WikiPage> findByTenantId(UUID tenantId, Pageable pageable);
 
+    /** NU-005: pages authored by a given user within the tenant (the "My Content" feed). */
+    Page<WikiPage> findByTenantIdAndCreatedByOrderByCreatedAtDesc(UUID tenantId, UUID createdBy, Pageable pageable);
+
     @Query("SELECT wp FROM WikiPage wp WHERE wp.tenantId = :tenantId AND wp.isPinned = true " +
             "ORDER BY wp.pinnedAt DESC")
     List<WikiPage> findPinnedPagesByTenant(@Param("tenantId") UUID tenantId);

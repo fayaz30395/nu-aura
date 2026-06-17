@@ -108,6 +108,17 @@ public class BlogPostController {
         return ResponseEntity.ok(posts.map(this::toDto));
     }
 
+    // NU-005: the Fluence "My Content" feed. Literal /my is matched ahead of
+    // /{postId} by Spring's path-pattern precedence, so it no longer 400s on UUID parse.
+    @GetMapping("/my")
+    @Operation(summary = "Get blog posts authored by the current user")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_BLOG_READ)
+    public ResponseEntity<Page<BlogPostDto>> getMyPosts(Pageable pageable) {
+        Page<BlogPost> posts = blogPostService.getMyPosts(pageable);
+        return ResponseEntity.ok(posts.map(this::toDto));
+    }
+
     @GetMapping("/active")
     @Operation(summary = "Get active (published, non-archived) blog posts")
     @ApiResponses.GetList

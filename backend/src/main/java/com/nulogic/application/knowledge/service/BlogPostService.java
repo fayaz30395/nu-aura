@@ -145,6 +145,18 @@ public class BlogPostService {
     }
 
     /**
+     * NU-005: posts authored by the current user (all statuses) — backs the Fluence
+     * "My Content" feed. Previously no such endpoint existed, so the frontend's
+     * GET /knowledge/blogs/my fell through to GET /{postId} and 400'd on UUID parse.
+     */
+    @Transactional(readOnly = true)
+    public Page<BlogPost> getMyPosts(Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID userId = SecurityContext.getCurrentUserId();
+        return blogPostRepository.findByTenantIdAndCreatedByOrderByCreatedAtDesc(tenantId, userId, pageable);
+    }
+
+    /**
      * Returns active (PUBLISHED, non-ARCHIVED) posts.
      * Uses an explicit status filter so that posts subsequently moved to ARCHIVED
      * are never surfaced on the /active endpoint, even if the repository query
