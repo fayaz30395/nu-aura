@@ -200,6 +200,10 @@ server:
 # Disable API docs / Swagger UI in production
 springdoc:
   show-actuator: false
+  # NU-AUDIT P2: swagger-ui was already off, but the raw /v3/api-docs JSON was still
+  # served — a compromised SUPER_ADMIN could enumerate the full API schema. Disable it too.
+  api-docs:
+    enabled: false
   swagger-ui:
     enabled: false
 

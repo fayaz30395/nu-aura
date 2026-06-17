@@ -30,6 +30,13 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class EmployeeDirectoryService {
 
+    // NU-AUDIT P1: allowlist of sortable Employee properties. Any caller-supplied sort
+    // field outside this set is rejected (falls back to firstName) so a raw value can
+    // never reach Sort.by(...) / the ORDER BY clause — closes the JPA sort-injection vector.
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+            "firstName", "lastName", "personalEmail", "employeeCode",
+            "designation", "status", "createdAt");
+
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final DataScopeService dataScopeService;
@@ -175,7 +182,12 @@ public class EmployeeDirectoryService {
             resolvedSortBy = "personalEmail";
         }
 
-        return Sort.by(direction, resolvedSortBy != null ? resolvedSortBy : "firstName");
+        // NU-AUDIT P1: reject any non-allowlisted field before it reaches the ORDER BY clause.
+        if (resolvedSortBy == null || !ALLOWED_SORT_FIELDS.contains(resolvedSortBy)) {
+            resolvedSortBy = "firstName";
+        }
+
+        return Sort.by(direction, resolvedSortBy);
     }
 
     private EmployeeDirectoryResponse mapToDirectoryResponse(

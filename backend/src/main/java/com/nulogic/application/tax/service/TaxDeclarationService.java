@@ -158,6 +158,9 @@ public class TaxDeclarationService {
     @Transactional(readOnly = true)
     public List<TaxDeclarationResponse> getTaxDeclarationsByEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        // NU-AUDIT P1: same-tenant IDOR — a plain employee (holds TDS_DECLARE) could pass a
+        // coworker's employeeId and read their tax PII. Restrict to self or STATUTORY:VIEW.
+        assertCanViewEmployeeTax(employeeId);
         return taxDeclarationRepository.findByTenantIdAndEmployeeIdOrderByFinancialYearDesc(tenantId, employeeId).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
@@ -204,6 +207,24 @@ public class TaxDeclarationService {
         }
     }
 
+    /**
+     * NU-AUDIT P1: employee-id variant of {@link #assertOwnsOrStatutoryView} for the
+     * list-by-employee path, where no single declaration is loaded. A caller may read an
+     * employee's tax data only when it is their own (callerId == employeeId) or they hold
+     * the privileged STATUTORY:VIEW permission.
+     */
+    private void assertCanViewEmployeeTax(UUID employeeId) {
+        if (SecurityContext.hasPermission(Permission.STATUTORY_VIEW)) {
+            return;
+        }
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        if (callerId == null || !callerId.equals(employeeId)) {
+            log.warn("SECURITY: IDOR attempt — employee {} tried to access tax data for employee {}",
+                    callerId, employeeId);
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
     // ==================== Tax Proof Operations ====================
 
     @Transactional
@@ -211,8 +232,10 @@ public class TaxDeclarationService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Adding tax proof for declaration {}", request.getTaxDeclarationId());
 
-        taxDeclarationRepository.findByIdAndTenantId(request.getTaxDeclarationId(), tenantId)
+        TaxDeclaration declaration = taxDeclarationRepository.findByIdAndTenantId(request.getTaxDeclarationId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Tax declaration not found"));
+        // NU-AUDIT P1: prevent attaching a proof to a coworker's declaration (same-tenant IDOR).
+        assertOwnsOrStatutoryView(declaration);
 
         TaxProof proof = new TaxProof();
         proof.setId(UUID.randomUUID());

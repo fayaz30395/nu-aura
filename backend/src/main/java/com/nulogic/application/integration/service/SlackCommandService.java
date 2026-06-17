@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Year;
@@ -127,7 +128,11 @@ public class SlackCommandService {
             byte[] hash = mac.doFinal(baseString.getBytes(StandardCharsets.UTF_8));
 
             String computedSignature = "v0=" + bytesToHex(hash);
-            return computedSignature.equals(slackSignature);
+            // NU-AUDIT P1: constant-time comparison to prevent HMAC timing side-channel
+            // (mirrors DocuSign/webhook signature verification elsewhere in the codebase).
+            return slackSignature != null && MessageDigest.isEqual(
+                    computedSignature.getBytes(StandardCharsets.UTF_8),
+                    slackSignature.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error("Error verifying Slack signature", e);
             return false;

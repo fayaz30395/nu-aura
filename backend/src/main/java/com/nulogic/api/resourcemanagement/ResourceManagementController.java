@@ -163,7 +163,7 @@ public class ResourceManagementController {
     }
 
     @PostMapping("/allocation-requests/{requestId}/approve")
-    @RequiresPermission(Permission.PROJECT_CREATE)
+    @RequiresPermission(Permission.ALLOCATION_APPROVE)
     @Operation(summary = "Approve an allocation request")
     public ResponseEntity<Void> approveAllocationRequest(
             @PathVariable UUID requestId,
@@ -173,7 +173,7 @@ public class ResourceManagementController {
     }
 
     @PostMapping("/allocation-requests/{requestId}/reject")
-    @RequiresPermission(Permission.PROJECT_CREATE)
+    @RequiresPermission(Permission.ALLOCATION_APPROVE)
     @Operation(summary = "Reject an allocation request")
     public ResponseEntity<Void> rejectAllocationRequest(
             @PathVariable UUID requestId,
