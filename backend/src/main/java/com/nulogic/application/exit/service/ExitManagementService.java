@@ -164,21 +164,25 @@ public class ExitManagementService {
         // If the caller is HR-level or above, return all exit processes for the tenant.
         // Otherwise, scope to the current employee's own exit process only.
         if (SecurityContext.isHRManager()) {
-            return exitProcessRepository.findAll(
+            Page<ExitProcess> page = exitProcessRepository.findAll(
                     (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
                     pageable
-            ).map(this::mapToExitProcessResponse);
+            );
+            Map<UUID, String> nameCache = buildExitProcessNameCache(page.getContent());
+            return page.map(p -> mapToExitProcessResponse(p, nameCache));
         }
 
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         if (employeeId != null) {
-            return exitProcessRepository.findAll(
+            Page<ExitProcess> page = exitProcessRepository.findAll(
                     (root, query, cb) -> cb.and(
                             cb.equal(root.get("tenantId"), tenantId),
                             cb.equal(root.get("employeeId"), employeeId)
                     ),
                     pageable
-            ).map(this::mapToExitProcessResponse);
+            );
+            Map<UUID, String> nameCache = buildExitProcessNameCache(page.getContent());
+            return page.map(p -> mapToExitProcessResponse(p, nameCache));
         }
 
         // Fallback: no employee ID on context — return empty page
@@ -355,10 +359,61 @@ public class ExitManagementService {
         }
     }
 
+    /**
+     * Bulk-resolves employee full names for a set of ids in a single query,
+     * mirroring {@link #safeGetEmployeeName(UUID)} but for batch read paths to
+     * eliminate the per-item N+1 {@code findFullNameById} lookups in list/page mappers.
+     *
+     * <p>Uses the lightweight {@code findFullNamesByIds} projection (id + concatenated
+     * name) rather than {@code findAllById}, so it never hydrates the full Employee
+     * entity and therefore never triggers {@code EncryptedStringConverter} on
+     * {@code taxId}. That keeps the same transaction-safe behavior the single-id path
+     * was written for (see {@link #safeGetEmployeeName(UUID)}).</p>
+     *
+     * <p>Null ids are skipped; on any failure the cache resolves to an empty map so
+     * callers fall back to {@code null} names — identical to the single-id behavior.</p>
+     */
+    private Map<UUID, String> buildEmployeeNameCache(Set<UUID> employeeIds) {
+        Map<UUID, String> names = new HashMap<>();
+        Set<UUID> ids = new HashSet<>();
+        for (UUID id : employeeIds) {
+            if (id != null) {
+                ids.add(id);
+            }
+        }
+        if (ids.isEmpty()) {
+            return names;
+        }
+        try {
+            employeeRepository.findFullNamesByIds(ids).forEach(row -> {
+                UUID id = (UUID) row[0];
+                String name = (String) row[1];
+                names.put(id, name);
+            });
+        } catch (Exception e) {
+            log.warn("Could not bulk-resolve employee names for {} ids: {}", ids.size(), e.getMessage());
+        }
+        return names;
+    }
+
+    private Map<UUID, String> buildExitProcessNameCache(List<ExitProcess> processes) {
+        Set<UUID> ids = new HashSet<>();
+        for (ExitProcess p : processes) {
+            ids.add(p.getEmployeeId());
+            ids.add(p.getManagerId());
+            ids.add(p.getHrSpocId());
+        }
+        return buildEmployeeNameCache(ids);
+    }
+
     private ExitProcessResponse mapToExitProcessResponse(ExitProcess exitProcess) {
-        String employeeName = safeGetEmployeeName(exitProcess.getEmployeeId());
-        String managerName = safeGetEmployeeName(exitProcess.getManagerId());
-        String hrSpocName = safeGetEmployeeName(exitProcess.getHrSpocId());
+        return mapToExitProcessResponse(exitProcess, buildExitProcessNameCache(List.of(exitProcess)));
+    }
+
+    private ExitProcessResponse mapToExitProcessResponse(ExitProcess exitProcess, Map<UUID, String> nameCache) {
+        String employeeName = nameCache.get(exitProcess.getEmployeeId());
+        String managerName = nameCache.get(exitProcess.getManagerId());
+        String hrSpocName = nameCache.get(exitProcess.getHrSpocId());
 
         return ExitProcessResponse.builder()
                 .id(exitProcess.getId())

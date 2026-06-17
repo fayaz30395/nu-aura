@@ -27,7 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -428,24 +432,30 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Page<OnboardingProcessResponse> getAllProcesses(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return onboardingRepository.findAll(
+        Page<OnboardingProcess> page = onboardingRepository.findAll(
                 (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
-                pageable).map(this::mapToResponse);
+                pageable);
+        Map<UUID, String> nameCache = buildEmployeeNameCache(page.getContent());
+        return page.map(process -> mapToResponse(process, nameCache));
     }
 
     @Transactional(readOnly = true)
     public List<OnboardingProcessResponse> getProcessesByStatus(OnboardingProcess.ProcessStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return onboardingRepository.findByTenantIdAndStatus(tenantId, status).stream()
-                .map(this::mapToResponse)
+        List<OnboardingProcess> processes = onboardingRepository.findByTenantIdAndStatus(tenantId, status);
+        Map<UUID, String> nameCache = buildEmployeeNameCache(processes);
+        return processes.stream()
+                .map(process -> mapToResponse(process, nameCache))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<OnboardingProcessResponse> getProcessesByBuddy(UUID buddyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return onboardingRepository.findByTenantIdAndAssignedBuddyId(tenantId, buddyId).stream()
-                .map(this::mapToResponse)
+        List<OnboardingProcess> processes = onboardingRepository.findByTenantIdAndAssignedBuddyId(tenantId, buddyId);
+        Map<UUID, String> nameCache = buildEmployeeNameCache(processes);
+        return processes.stream()
+                .map(process -> mapToResponse(process, nameCache))
                 .collect(Collectors.toList());
     }
 
@@ -457,17 +467,22 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         onboardingRepository.delete(process);
     }
 
+    /**
+     * Single-item path. Delegates to the cache-backed overload using a name
+     * cache built from this one process, preserving the original tenant-scoped
+     * lookup behaviour (cache excludes any employee not belonging to the tenant).
+     */
     private OnboardingProcessResponse mapToResponse(OnboardingProcess process) {
-        UUID tenantId = process.getTenantId();
-        String employeeName = employeeRepository.findByIdAndTenantId(process.getEmployeeId(), tenantId)
-                .map(Employee::getFullName)
-                .orElse(null);
+        Map<UUID, String> nameCache = buildEmployeeNameCache(List.of(process));
+        return mapToResponse(process, nameCache);
+    }
+
+    private OnboardingProcessResponse mapToResponse(OnboardingProcess process, Map<UUID, String> nameCache) {
+        String employeeName = nameCache.get(process.getEmployeeId());
 
         String buddyName = null;
         if (process.getAssignedBuddyId() != null) {
-            buddyName = employeeRepository.findByIdAndTenantId(process.getAssignedBuddyId(), tenantId)
-                    .map(Employee::getFullName)
-                    .orElse(null);
+            buddyName = nameCache.get(process.getAssignedBuddyId());
         }
 
         return OnboardingProcessResponse.builder()
@@ -487,6 +502,37 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                 .createdAt(process.getCreatedAt())
                 .updatedAt(process.getUpdatedAt())
                 .build();
+    }
+
+    /**
+     * Bulk-loads employee full names for a collection of onboarding processes,
+     * collecting both employee and buddy FK ids and fetching them in a single
+     * round-trip. Eliminates the per-item {@code findById} N+1 in the
+     * list/page read paths. Names are tenant-scoped at the row level by RLS,
+     * matching the prior per-row {@code findByIdAndTenantId} behaviour.
+     */
+    private Map<UUID, String> buildEmployeeNameCache(List<OnboardingProcess> processes) {
+        Set<UUID> employeeIds = new HashSet<>();
+        for (OnboardingProcess process : processes) {
+            if (process.getEmployeeId() != null) {
+                employeeIds.add(process.getEmployeeId());
+            }
+            if (process.getAssignedBuddyId() != null) {
+                employeeIds.add(process.getAssignedBuddyId());
+            }
+        }
+
+        Map<UUID, String> nameCache = new HashMap<>();
+        if (employeeIds.isEmpty()) {
+            return nameCache;
+        }
+
+        employeeRepository.findAllById(employeeIds).forEach(employee -> {
+            if (employee != null && employee.getId() != null) {
+                nameCache.put(employee.getId(), employee.getFullName());
+            }
+        });
+        return nameCache;
     }
 
     private OnboardingChecklistTemplateResponse mapToTemplateResponse(OnboardingChecklistTemplate template) {

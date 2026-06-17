@@ -14,10 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class GoalService {
@@ -114,7 +115,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Page<Goal> goals = goalRepository.findAllByTenantId(tenantId, pageable);
-        return goals.map(this::mapToResponse);
+        return mapPage(goals);
     }
 
     @Transactional(readOnly = true)
@@ -122,9 +123,7 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         List<Goal> goals = goalRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId);
-        return goals.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return mapList(goals);
     }
 
     @Transactional
@@ -173,23 +172,19 @@ public class GoalService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         List<Goal> goals = goalRepository.findTeamGoals(tenantId, managerId);
-        return goals.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return mapList(goals);
     }
 
     @Transactional(readOnly = true)
     public Page<GoalResponse> getEmployeeGoalsPaged(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return goalRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
-                .map(this::mapToResponse);
+        return mapPage(goalRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<GoalResponse> getTeamGoalsPaged(UUID managerId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return goalRepository.findTeamGoals(tenantId, managerId, pageable)
-                .map(this::mapToResponse);
+        return mapPage(goalRepository.findTeamGoals(tenantId, managerId, pageable));
     }
 
     @Transactional(readOnly = true)
@@ -206,7 +201,85 @@ public class GoalService {
         return analytics;
     }
 
+    // --- Batch mapping (N+1 elimination) -------------------------------------
+
+    private List<GoalResponse> mapList(List<Goal> goals) {
+        Map<UUID, String> employeeNames = buildEmployeeNameCache(goals);
+        Map<UUID, String> parentGoalTitles = buildParentGoalTitleCache(goals);
+        List<GoalResponse> responses = new java.util.ArrayList<>(goals.size());
+        for (Goal goal : goals) {
+            responses.add(mapToResponse(goal, employeeNames, parentGoalTitles));
+        }
+        return responses;
+    }
+
+    private Page<GoalResponse> mapPage(Page<Goal> goals) {
+        List<Goal> content = goals.getContent();
+        Map<UUID, String> employeeNames = buildEmployeeNameCache(content);
+        Map<UUID, String> parentGoalTitles = buildParentGoalTitleCache(content);
+        return goals.map(goal -> mapToResponse(goal, employeeNames, parentGoalTitles));
+    }
+
+    /**
+     * Bulk-loads employee full names for all employee/createdBy/approvedBy ids
+     * referenced by the given goals. Values may be null, so a manual put loop is
+     * used instead of Collectors.toMap.
+     */
+    private Map<UUID, String> buildEmployeeNameCache(List<Goal> goals) {
+        Set<UUID> employeeIds = new HashSet<>();
+        for (Goal goal : goals) {
+            if (goal.getEmployeeId() != null) {
+                employeeIds.add(goal.getEmployeeId());
+            }
+            if (goal.getCreatedBy() != null) {
+                employeeIds.add(goal.getCreatedBy());
+            }
+            if (goal.getApprovedBy() != null) {
+                employeeIds.add(goal.getApprovedBy());
+            }
+        }
+
+        Map<UUID, String> names = new HashMap<>();
+        if (!employeeIds.isEmpty()) {
+            employeeRepository.findAllById(employeeIds)
+                    .forEach(employee -> names.put(employee.getId(), employee.getFullName()));
+        }
+        return names;
+    }
+
+    /**
+     * Bulk-loads parent goal titles for all parentGoalId references. Values may
+     * be null, so a manual put loop is used instead of Collectors.toMap.
+     */
+    private Map<UUID, String> buildParentGoalTitleCache(List<Goal> goals) {
+        Set<UUID> parentGoalIds = new HashSet<>();
+        for (Goal goal : goals) {
+            if (goal.getParentGoalId() != null) {
+                parentGoalIds.add(goal.getParentGoalId());
+            }
+        }
+
+        Map<UUID, String> titles = new HashMap<>();
+        if (!parentGoalIds.isEmpty()) {
+            goalRepository.findAllById(parentGoalIds)
+                    .forEach(parentGoal -> titles.put(parentGoal.getId(), parentGoal.getTitle()));
+        }
+        return titles;
+    }
+
+    /**
+     * Single-item path. Delegates to the cache-backed overload via single-entry
+     * caches so the builder/enrichment logic lives in one place (DRY).
+     */
     private GoalResponse mapToResponse(Goal goal) {
+        return mapToResponse(goal,
+                buildEmployeeNameCache(List.of(goal)),
+                buildParentGoalTitleCache(List.of(goal)));
+    }
+
+    private GoalResponse mapToResponse(Goal goal,
+                                       Map<UUID, String> employeeNames,
+                                       Map<UUID, String> parentGoalTitles) {
         GoalResponse response = GoalResponse.builder()
                 .id(goal.getId())
                 .employeeId(goal.getEmployeeId())
@@ -230,27 +303,23 @@ public class GoalService {
                 .build();
 
         // Enrich with employee name
-        if (goal.getEmployeeId() != null) {
-            employeeRepository.findById(goal.getEmployeeId())
-                    .ifPresent(employee -> response.setEmployeeName(employee.getFullName()));
+        if (goal.getEmployeeId() != null && employeeNames.containsKey(goal.getEmployeeId())) {
+            response.setEmployeeName(employeeNames.get(goal.getEmployeeId()));
         }
 
         // Enrich with parent goal title
-        if (goal.getParentGoalId() != null) {
-            goalRepository.findById(goal.getParentGoalId())
-                    .ifPresent(parentGoal -> response.setParentGoalTitle(parentGoal.getTitle()));
+        if (goal.getParentGoalId() != null && parentGoalTitles.containsKey(goal.getParentGoalId())) {
+            response.setParentGoalTitle(parentGoalTitles.get(goal.getParentGoalId()));
         }
 
         // Enrich with created by name
-        if (goal.getCreatedBy() != null) {
-            employeeRepository.findById(goal.getCreatedBy())
-                    .ifPresent(employee -> response.setCreatedByName(employee.getFullName()));
+        if (goal.getCreatedBy() != null && employeeNames.containsKey(goal.getCreatedBy())) {
+            response.setCreatedByName(employeeNames.get(goal.getCreatedBy()));
         }
 
         // Enrich with approved by name
-        if (goal.getApprovedBy() != null) {
-            employeeRepository.findById(goal.getApprovedBy())
-                    .ifPresent(employee -> response.setApprovedByName(employee.getFullName()));
+        if (goal.getApprovedBy() != null && employeeNames.containsKey(goal.getApprovedBy())) {
+            response.setApprovedByName(employeeNames.get(goal.getApprovedBy()));
         }
 
         return response;

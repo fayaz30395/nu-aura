@@ -9,7 +9,11 @@ import com.nulogic.infrastructure.performance.repository.FeedbackRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -63,9 +67,7 @@ public class FeedbackService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         List<Feedback> feedbackList = feedbackRepository.findReceivedFeedback(tenantId, employeeId);
-        return feedbackList.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return mapFeedbackList(feedbackList);
     }
 
     @Transactional(readOnly = true)
@@ -73,9 +75,7 @@ public class FeedbackService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         List<Feedback> feedbackList = feedbackRepository.findGivenFeedback(tenantId, employeeId);
-        return feedbackList.stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return mapFeedbackList(feedbackList);
     }
 
     @Transactional(readOnly = true)
@@ -128,9 +128,42 @@ public class FeedbackService {
         feedbackRepository.delete(feedback);
     }
 
-    private FeedbackResponse mapToResponse(Feedback feedback) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+    /**
+     * P1: Batch-maps a list of feedback rows. Recipient/giver employee display
+     * names are resolved once via a single bulk findAllById query instead of two
+     * findByIdAndTenantId calls per feedback row.
+     */
+    private List<FeedbackResponse> mapFeedbackList(List<Feedback> feedbackList) {
+        Map<UUID, String> employeeNames = buildEmployeeNameCache(feedbackList);
+        return feedbackList.stream()
+                .map(feedback -> mapToResponse(feedback, employeeNames))
+                .collect(Collectors.toList());
+    }
 
+    /**
+     * Collects recipient + giver employee ids across the batch and resolves their
+     * display names in a single bulk query (tenant isolation enforced by RLS).
+     */
+    private Map<UUID, String> buildEmployeeNameCache(List<Feedback> feedbackList) {
+        Set<UUID> employeeIds = new HashSet<>();
+        for (Feedback feedback : feedbackList) {
+            if (feedback.getRecipientId() != null) employeeIds.add(feedback.getRecipientId());
+            if (feedback.getGiverId() != null) employeeIds.add(feedback.getGiverId());
+        }
+
+        Map<UUID, String> employeeNames = new HashMap<>();
+        if (!employeeIds.isEmpty()) {
+            employeeRepository.findAllById(employeeIds)
+                    .forEach(e -> employeeNames.put(e.getId(), e.getFullName()));
+        }
+        return employeeNames;
+    }
+
+    private FeedbackResponse mapToResponse(Feedback feedback) {
+        return mapToResponse(feedback, buildEmployeeNameCache(List.of(feedback)));
+    }
+
+    private FeedbackResponse mapToResponse(Feedback feedback, Map<UUID, String> employeeNames) {
         FeedbackResponse response = FeedbackResponse.builder()
                 .id(feedback.getId())
                 .recipientId(feedback.getRecipientId())
@@ -146,13 +179,11 @@ public class FeedbackService {
                 .build();
 
         if (feedback.getRecipientId() != null) {
-            employeeRepository.findByIdAndTenantId(feedback.getRecipientId(), tenantId)
-                    .ifPresent(employee -> response.setRecipientName(employee.getFullName()));
+            response.setRecipientName(employeeNames.get(feedback.getRecipientId()));
         }
 
         if (feedback.getGiverId() != null && !feedback.getIsAnonymous()) {
-            employeeRepository.findByIdAndTenantId(feedback.getGiverId(), tenantId)
-                    .ifPresent(employee -> response.setGiverName(employee.getFullName()));
+            response.setGiverName(employeeNames.get(feedback.getGiverId()));
         } else if (feedback.getIsAnonymous()) {
             response.setGiverName("Anonymous");
         }
