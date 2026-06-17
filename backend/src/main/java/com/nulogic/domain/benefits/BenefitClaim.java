@@ -105,6 +105,8 @@ public class BenefitClaim extends TenantAware {
     private String bankAccountNumber;
     @Convert(converter = EncryptedStringConverter.class)
     private String ifscCode;
+    // SEC-002a: UPI IDs are payment identifiers and PII — encrypt at rest
+    @Convert(converter = EncryptedStringConverter.class)
     private String upiId;
     private LocalDate paymentDate;
     private String paymentReference;

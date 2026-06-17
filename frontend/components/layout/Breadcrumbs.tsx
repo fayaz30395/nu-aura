@@ -15,12 +15,16 @@ interface BreadcrumbsProps {
   items: BreadcrumbItem[];
   className?: string;
   separator?: React.ReactNode;
+  /** NAV-004: override the Home link so admin layouts can pass "/admin" and
+   * avoid the "/" → /auth/login bounce.  Defaults to "/me/dashboard". */
+  homeHref?: string;
 }
 
 const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
                                                    items,
                                                    className,
                                                    separator,
+                                                   homeHref = '/me/dashboard',
                                                  }) => {
   const chevron = separator ?? (
     <ChevronRight
@@ -40,7 +44,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
       {items.length > 0 && (
         <>
           <Link
-            href="/"
+            href={homeHref}
             className="inline-flex items-center gap-1 rounded px-1 py-0.5 text-[var(--text-muted)] transition-colors hover:text-[var(--text-heading)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
           >
             <Home className="h-3.5 w-3.5" aria-hidden="true"/>

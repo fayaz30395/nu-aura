@@ -1,6 +1,6 @@
 'use client';
 
-import {FormEvent, useState} from 'react';
+import {FormEvent, useEffect, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {ArrowRight, Award, Briefcase, Calendar, ChevronLeft, DollarSign, Plus, TrendingDown, TrendingUp,} from 'lucide-react';
@@ -13,6 +13,8 @@ import {useCreateRevision, useEmployeeRevisionHistory} from '@/lib/hooks/queries
 import type {SalaryRevision} from '@/lib/types/hrms/compensation';
 import {RevisionStatus, RevisionType} from '@/lib/types/hrms/compensation';
 import {format} from 'date-fns';
+// RBAC-NEW-01: guard compensation page so salary data is not visible before API auth check
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 // ─── Animation variants ─────────────────────────────────────────────
 const pageEnter = {
@@ -262,6 +264,21 @@ export default function EmployeeCompensationPage() {
   const router = useRouter();
   const employeeId = params.id as string;
   const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
+
+  // RBAC-NEW-01: require COMPENSATION_VIEW (or MANAGE/VIEW_ALL) — redirect to
+  // employee profile if the user lacks the permission rather than briefly
+  // rendering the salary skeleton before the API returns 403.
+  const {hasPermission, isReady} = usePermissions();
+  const canViewCompensation =
+    hasPermission(Permissions.COMPENSATION_VIEW) ||
+    hasPermission(Permissions.COMPENSATION_MANAGE) ||
+    hasPermission(Permissions.COMPENSATION_VIEW_ALL);
+
+  useEffect(() => {
+    if (isReady && !canViewCompensation) {
+      router.replace(`/employees/${employeeId}`);
+    }
+  }, [isReady, canViewCompensation, router, employeeId]);
   const [newSalary, setNewSalary] = useState('');
   const [newDesignation, setNewDesignation] = useState('');
   const [effectiveDate, setEffectiveDate] = useState('');

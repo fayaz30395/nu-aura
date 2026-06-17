@@ -562,6 +562,11 @@ export function proxy(request: NextRequest) {
  * Configure which paths the middleware runs on.
  * We run on all paths except specific exclusions.
  */
+// NAV-001 fix: Next.js 16 requires the exported function to be named `middleware`.
+// `proxy` holds the implementation; re-export it under the required name so the
+// Edge runtime picks it up and populates middleware-manifest.json correctly.
+export { proxy as middleware };
+
 export const config = {
   matcher: [
     /*

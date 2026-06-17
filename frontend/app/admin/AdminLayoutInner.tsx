@@ -14,6 +14,7 @@ import {
   Clock,
   RefreshCw,
   FileText,
+  Flag,
   GitBranch,
   LayoutDashboard,
   ShieldAlert,
@@ -22,6 +23,7 @@ import {
   Umbrella,
   Upload,
   Users,
+  UserCog,
 } from 'lucide-react';
 import {useUnreadNotificationCount} from '@/lib/hooks/queries/useNotifications';
 import {useUiStore} from '@/lib/stores/useUiStore';
@@ -78,7 +80,7 @@ export default function AdminLayoutInner({
   // renders and memo(Sidebar) receives a new reference only when the
   // System Dashboard item actually needs to be added or removed.
   const sidebarItems = useMemo((): SidebarItem[] => [
-    // SuperAdmin-only section
+    // SuperAdmin-only section (NAV-003: feature-flags and implicit-roles added)
     ...(isSuperAdmin
       ? [
         {
@@ -86,6 +88,20 @@ export default function AdminLayoutInner({
           label: 'System Dashboard',
           icon: <Server className="h-5 w-5"/>,
           href: '/admin/system',
+          requiredPermission: Permissions.SYSTEM_ADMIN,
+        },
+        {
+          id: 'feature-flags',
+          label: 'Feature Flags',
+          icon: <Flag className="h-5 w-5"/>,
+          href: '/admin/feature-flags',
+          requiredPermission: Permissions.SYSTEM_ADMIN,
+        },
+        {
+          id: 'implicit-roles',
+          label: 'Implicit Roles',
+          icon: <UserCog className="h-5 w-5"/>,
+          href: '/admin/implicit-roles',
           requiredPermission: Permissions.SYSTEM_ADMIN,
         },
       ]
