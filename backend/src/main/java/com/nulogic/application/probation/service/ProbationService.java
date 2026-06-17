@@ -7,6 +7,7 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import org.springframework.security.access.AccessDeniedException;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.probation.ProbationEvaluation;
 import com.nulogic.domain.probation.ProbationPeriod;
 import com.nulogic.domain.probation.ProbationPeriod.ProbationStatus;
@@ -101,15 +102,13 @@ public class ProbationService {
     @Transactional(readOnly = true)
     public Page<ProbationPeriodResponse> getAllProbations(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return probationPeriodRepository.findByTenantIdOrderByCreatedAtDesc(tenantId, pageable)
-                .map(this::enrichResponse);
+        return enrichPage(probationPeriodRepository.findByTenantIdOrderByCreatedAtDesc(tenantId, pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<ProbationPeriodResponse> getProbationsByStatus(ProbationStatus status, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return probationPeriodRepository.findByTenantIdAndStatusOrderByEndDateAsc(tenantId, status, pageable)
-                .map(this::enrichResponse);
+        return enrichPage(probationPeriodRepository.findByTenantIdAndStatusOrderByEndDateAsc(tenantId, status, pageable));
     }
 
     @Transactional(readOnly = true)
@@ -120,16 +119,16 @@ public class ProbationService {
             LocalDate endDate,
             Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return probationPeriodRepository.searchProbations(tenantId, status, managerId, startDate, endDate, pageable)
-                .map(this::enrichResponse);
+        return enrichPage(
+                probationPeriodRepository.searchProbations(tenantId, status, managerId, startDate, endDate, pageable));
     }
 
     @Transactional(readOnly = true)
     public Page<ProbationPeriodResponse> getMyTeamProbations(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID managerId = SecurityContext.getCurrentUserId();
-        return probationPeriodRepository.findByTenantIdAndManagerIdOrderByCreatedAtDesc(tenantId, managerId, pageable)
-                .map(this::enrichResponse);
+        return enrichPage(
+                probationPeriodRepository.findByTenantIdAndManagerIdOrderByCreatedAtDesc(tenantId, managerId, pageable));
     }
 
     // ==================== Probation Actions ====================
@@ -322,10 +321,11 @@ public class ProbationService {
     @Transactional(readOnly = true)
     public List<ProbationEvaluationResponse> getEvaluationsForProbation(UUID probationId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return probationEvaluationRepository
-                .findByProbationPeriodIdAndTenantIdOrderByEvaluationDateDesc(probationId, tenantId)
-                .stream()
-                .map(this::enrichEvaluationResponse)
+        List<ProbationEvaluation> evaluations = probationEvaluationRepository
+                .findByProbationPeriodIdAndTenantIdOrderByEvaluationDateDesc(probationId, tenantId);
+        Map<UUID, String> evaluatorNames = buildEvaluatorNameCache(evaluations);
+        return evaluations.stream()
+                .map(e -> enrichEvaluationResponse(e, evaluatorNames))
                 .collect(Collectors.toList());
     }
 
@@ -363,29 +363,23 @@ public class ProbationService {
     @Transactional(readOnly = true)
     public List<ProbationPeriodResponse> getOverdueProbations() {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return probationPeriodRepository.findOverdueProbations(tenantId, tenantTimeService.today(tenantId))
-                .stream()
-                .map(this::enrichResponse)
-                .collect(Collectors.toList());
+        return enrichList(
+                probationPeriodRepository.findOverdueProbations(tenantId, tenantTimeService.today(tenantId)));
     }
 
     @Transactional(readOnly = true)
     public List<ProbationPeriodResponse> getProbationsEndingSoon(int daysAhead) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         LocalDate today = tenantTimeService.today(tenantId);
-        return probationPeriodRepository.findProbationsEndingSoon(tenantId, today, today.plusDays(daysAhead))
-                .stream()
-                .map(this::enrichResponse)
-                .collect(Collectors.toList());
+        return enrichList(
+                probationPeriodRepository.findProbationsEndingSoon(tenantId, today, today.plusDays(daysAhead)));
     }
 
     @Transactional(readOnly = true)
     public List<ProbationPeriodResponse> getProbationsWithEvaluationsDue() {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return probationPeriodRepository.findProbationsWithEvaluationsDue(tenantId, tenantTimeService.today(tenantId))
-                .stream()
-                .map(this::enrichResponse)
-                .collect(Collectors.toList());
+        return enrichList(
+                probationPeriodRepository.findProbationsWithEvaluationsDue(tenantId, tenantTimeService.today(tenantId)));
     }
 
     @Transactional(readOnly = true)
@@ -433,7 +427,91 @@ public class ProbationService {
 
     // ==================== Helper Methods ====================
 
+    // --- Batch enrichment (N+1 elimination) ----------------------------------
+
+    /**
+     * Page path: bulk-load employee/manager/HR references once, then map each
+     * row against the shared caches instead of firing per-row findById lookups.
+     */
+    private Page<ProbationPeriodResponse> enrichPage(Page<ProbationPeriod> probations) {
+        List<ProbationPeriod> content = probations.getContent();
+        Map<UUID, Employee> employees = buildEmployeeCache(content);
+        Map<UUID, String> personNames = buildPersonNameCache(content);
+        return probations.map(p -> enrichResponse(p, employees, personNames));
+    }
+
+    /**
+     * List path: bulk-load employee/manager/HR references once, then map each
+     * row against the shared caches instead of firing per-row findById lookups.
+     */
+    private List<ProbationPeriodResponse> enrichList(List<ProbationPeriod> probations) {
+        Map<UUID, Employee> employees = buildEmployeeCache(probations);
+        Map<UUID, String> personNames = buildPersonNameCache(probations);
+        List<ProbationPeriodResponse> responses = new ArrayList<>(probations.size());
+        for (ProbationPeriod probation : probations) {
+            responses.add(enrichResponse(probation, employees, personNames));
+        }
+        return responses;
+    }
+
+    /**
+     * Bulk-loads the full {@link Employee} entity for every probation's
+     * employeeId (needed for name, email and designation). Values may be null,
+     * so a manual put loop is used instead of Collectors.toMap.
+     */
+    private Map<UUID, Employee> buildEmployeeCache(List<ProbationPeriod> probations) {
+        Set<UUID> employeeIds = new HashSet<>();
+        for (ProbationPeriod probation : probations) {
+            if (probation.getEmployeeId() != null) {
+                employeeIds.add(probation.getEmployeeId());
+            }
+        }
+
+        Map<UUID, Employee> employees = new HashMap<>();
+        if (!employeeIds.isEmpty()) {
+            employeeRepository.findAllById(employeeIds)
+                    .forEach(employee -> employees.put(employee.getId(), employee));
+        }
+        return employees;
+    }
+
+    /**
+     * Bulk-loads display names for every manager/HR reference. The original
+     * enrichment formatted these as {@code firstName + " " + lastName}, so that
+     * exact format is preserved here. Values may be null, so a manual put loop
+     * is used instead of Collectors.toMap.
+     */
+    private Map<UUID, String> buildPersonNameCache(List<ProbationPeriod> probations) {
+        Set<UUID> personIds = new HashSet<>();
+        for (ProbationPeriod probation : probations) {
+            if (probation.getManagerId() != null) {
+                personIds.add(probation.getManagerId());
+            }
+            if (probation.getHrId() != null) {
+                personIds.add(probation.getHrId());
+            }
+        }
+
+        Map<UUID, String> names = new HashMap<>();
+        if (!personIds.isEmpty()) {
+            employeeRepository.findAllById(personIds)
+                    .forEach(p -> names.put(p.getId(), p.getFirstName() + " " + p.getLastName()));
+        }
+        return names;
+    }
+
+    /**
+     * Single-item path. Delegates to the cache-backed overload via single-entry
+     * caches so the enrichment logic lives in one place (DRY).
+     */
     private ProbationPeriodResponse enrichResponse(ProbationPeriod entity) {
+        List<ProbationPeriod> single = List.of(entity);
+        return enrichResponse(entity, buildEmployeeCache(single), buildPersonNameCache(single));
+    }
+
+    private ProbationPeriodResponse enrichResponse(ProbationPeriod entity,
+                                                   Map<UUID, Employee> employees,
+                                                   Map<UUID, String> personNames) {
         ProbationPeriodResponse response = ProbationPeriodResponse.fromEntity(entity);
         UUID tenantId = TenantContext.getCurrentTenant();
 
@@ -446,23 +524,27 @@ public class ProbationService {
         response.setEvaluationDue(computeIsEvaluationDue(entity, today));
 
         // Enrich with employee info
-        employeeRepository.findByIdAndTenantId(entity.getEmployeeId(), tenantId)
-                .ifPresent(emp -> {
-                    response.setEmployeeName(emp.getFirstName() + " " + emp.getLastName());
-                    response.setEmployeeEmail(emp.getPersonalEmail());
-                    response.setDesignation(emp.getDesignation());
-                });
+        Employee employee = entity.getEmployeeId() != null ? employees.get(entity.getEmployeeId()) : null;
+        if (employee != null) {
+            response.setEmployeeName(employee.getFirstName() + " " + employee.getLastName());
+            response.setEmployeeEmail(employee.getPersonalEmail());
+            response.setDesignation(employee.getDesignation());
+        }
 
         // Enrich with manager info
         if (entity.getManagerId() != null) {
-            employeeRepository.findByIdAndTenantId(entity.getManagerId(), tenantId)
-                    .ifPresent(mgr -> response.setManagerName(mgr.getFirstName() + " " + mgr.getLastName()));
+            String managerName = personNames.get(entity.getManagerId());
+            if (managerName != null) {
+                response.setManagerName(managerName);
+            }
         }
 
         // Enrich with HR info
         if (entity.getHrId() != null) {
-            employeeRepository.findByIdAndTenantId(entity.getHrId(), tenantId)
-                    .ifPresent(hr -> response.setHrName(hr.getFirstName() + " " + hr.getLastName()));
+            String hrName = personNames.get(entity.getHrId());
+            if (hrName != null) {
+                response.setHrName(hrName);
+            }
         }
 
         // Evaluation stats
@@ -507,13 +589,47 @@ public class ProbationService {
         return java.time.temporal.ChronoUnit.DAYS.between(today, entity.getEndDate());
     }
 
+    /**
+     * Bulk-loads evaluator display names for every evaluation's evaluatorId.
+     * The original enrichment formatted these as {@code firstName + " " +
+     * lastName}, so that exact format is preserved here. Values may be null, so
+     * a manual put loop is used instead of Collectors.toMap.
+     */
+    private Map<UUID, String> buildEvaluatorNameCache(List<ProbationEvaluation> evaluations) {
+        Set<UUID> evaluatorIds = new HashSet<>();
+        for (ProbationEvaluation evaluation : evaluations) {
+            if (evaluation.getEvaluatorId() != null) {
+                evaluatorIds.add(evaluation.getEvaluatorId());
+            }
+        }
+
+        Map<UUID, String> names = new HashMap<>();
+        if (!evaluatorIds.isEmpty()) {
+            employeeRepository.findAllById(evaluatorIds)
+                    .forEach(emp -> names.put(emp.getId(), emp.getFirstName() + " " + emp.getLastName()));
+        }
+        return names;
+    }
+
+    /**
+     * Single-item path. Delegates to the cache-backed overload via a
+     * single-entry cache so the enrichment logic lives in one place (DRY).
+     */
     private ProbationEvaluationResponse enrichEvaluationResponse(ProbationEvaluation entity) {
+        return enrichEvaluationResponse(entity, buildEvaluatorNameCache(List.of(entity)));
+    }
+
+    private ProbationEvaluationResponse enrichEvaluationResponse(ProbationEvaluation entity,
+                                                                Map<UUID, String> evaluatorNames) {
         ProbationEvaluationResponse response = ProbationEvaluationResponse.fromEntity(entity);
-        UUID tenantId = TenantContext.getCurrentTenant();
 
         // Enrich with evaluator info
-        employeeRepository.findByIdAndTenantId(entity.getEvaluatorId(), tenantId)
-                .ifPresent(emp -> response.setEvaluatorName(emp.getFirstName() + " " + emp.getLastName()));
+        if (entity.getEvaluatorId() != null) {
+            String evaluatorName = evaluatorNames.get(entity.getEvaluatorId());
+            if (evaluatorName != null) {
+                response.setEvaluatorName(evaluatorName);
+            }
+        }
 
         return response;
     }

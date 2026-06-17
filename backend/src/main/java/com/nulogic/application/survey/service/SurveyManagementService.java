@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -142,17 +145,21 @@ public class SurveyManagementService {
     @Transactional(readOnly = true)
     public Page<SurveyDto> getAllSurveys(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return surveyRepository.findAll(
+        Page<Survey> page = surveyRepository.findAll(
                 (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
                 pageable
-        ).map(this::mapToResponse);
+        );
+        Map<UUID, String> createdByNames = loadCreatedByNames(page.getContent());
+        return page.map(survey -> mapToResponse(survey, createdByNames));
     }
 
     @Transactional(readOnly = true)
     public List<SurveyDto> getSurveysByStatus(Survey.SurveyStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return surveyRepository.findByTenantIdAndStatus(tenantId, status).stream()
-                .map(this::mapToResponse)
+        List<Survey> surveys = surveyRepository.findByTenantIdAndStatus(tenantId, status);
+        Map<UUID, String> createdByNames = loadCreatedByNames(surveys);
+        return surveys.stream()
+                .map(survey -> mapToResponse(survey, createdByNames))
                 .collect(Collectors.toList());
     }
 
@@ -162,11 +169,14 @@ public class SurveyManagementService {
         // S11-M: tenant-local "now" for active-window check — resolved via TenantTimeService and
         // hoisted out of the stream filter so we do a single zone resolution per call.
         LocalDateTime now = tenantTimeService.now(tenantId);
-        return surveyRepository.findByTenantIdAndStatus(tenantId, Survey.SurveyStatus.ACTIVE).stream()
+        List<Survey> activeSurveys = surveyRepository.findByTenantIdAndStatus(tenantId, Survey.SurveyStatus.ACTIVE).stream()
                 .filter(survey ->
                         (survey.getStartDate() == null || survey.getStartDate().isBefore(now)) &&
                                 (survey.getEndDate() == null || survey.getEndDate().isAfter(now)))
-                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+        Map<UUID, String> createdByNames = loadCreatedByNames(activeSurveys);
+        return activeSurveys.stream()
+                .map(survey -> mapToResponse(survey, createdByNames))
                 .collect(Collectors.toList());
     }
 
@@ -178,13 +188,38 @@ public class SurveyManagementService {
         surveyRepository.delete(survey);
     }
 
-    private SurveyDto mapToResponse(Survey survey) {
-        String createdByName = null;
-        if (survey.getCreatedBy() != null) {
-            createdByName = userRepository.findById(survey.getCreatedBy())
-                    .map(User::getFullName)
-                    .orElse(null);
+    /**
+     * Bulk-loads createdBy display names for a batch of surveys, eliminating the per-row
+     * findById N+1. Collects non-null createdBy ids, issues a single findAllById, and builds
+     * a null-safe id → fullName map.
+     */
+    private Map<UUID, String> loadCreatedByNames(List<Survey> surveys) {
+        Set<UUID> createdByIds = surveys.stream()
+                .map(Survey::getCreatedBy)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Map<UUID, String> names = new HashMap<>();
+        if (createdByIds.isEmpty()) {
+            return names;
         }
+        userRepository.findAllById(createdByIds).forEach(user -> {
+            if (user.getId() != null && user.getFullName() != null) {
+                names.put(user.getId(), user.getFullName());
+            }
+        });
+        return names;
+    }
+
+    private SurveyDto mapToResponse(Survey survey) {
+        // Single-entry delegation keeps the one-arg path DRY against the batch overload.
+        return mapToResponse(survey, loadCreatedByNames(List.of(survey)));
+    }
+
+    private SurveyDto mapToResponse(Survey survey, Map<UUID, String> createdByNames) {
+        String createdByName = survey.getCreatedBy() != null
+                ? createdByNames.get(survey.getCreatedBy())
+                : null;
 
         return SurveyDto.builder()
                 .id(survey.getId())

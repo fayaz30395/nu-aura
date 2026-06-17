@@ -186,31 +186,30 @@ public class CompensationService {
     @Transactional(readOnly = true)
     public Page<SalaryRevisionResponse> getAllRevisions(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return revisionRepository.findByTenantIdOrderByCreatedAtDesc(tenantId, pageable)
-                .map(this::enrichRevisionResponse);
+        return enrichRevisionPage(
+                revisionRepository.findByTenantIdOrderByCreatedAtDesc(tenantId, pageable), tenantId);
     }
 
     @Transactional(readOnly = true)
     public Page<SalaryRevisionResponse> getRevisionsByCycle(UUID cycleId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return revisionRepository.findByReviewCycleIdAndTenantIdOrderByCreatedAtDesc(cycleId, tenantId, pageable)
-                .map(this::enrichRevisionResponse);
+        return enrichRevisionPage(
+                revisionRepository.findByReviewCycleIdAndTenantIdOrderByCreatedAtDesc(cycleId, tenantId, pageable),
+                tenantId);
     }
 
     @Transactional(readOnly = true)
     public List<SalaryRevisionResponse> getEmployeeRevisionHistory(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return revisionRepository.findByEmployeeIdAndTenantIdOrderByEffectiveDateDesc(employeeId, tenantId)
-                .stream()
-                .map(this::enrichRevisionResponse)
-                .collect(Collectors.toList());
+        return enrichRevisionList(
+                revisionRepository.findByEmployeeIdAndTenantIdOrderByEffectiveDateDesc(employeeId, tenantId),
+                tenantId);
     }
 
     @Transactional(readOnly = true)
     public Page<SalaryRevisionResponse> getPendingApprovals(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return revisionRepository.findPendingApprovals(tenantId, pageable)
-                .map(this::enrichRevisionResponse);
+        return enrichRevisionPage(revisionRepository.findPendingApprovals(tenantId, pageable), tenantId);
     }
 
     // ==================== Revision Workflow ====================
@@ -497,18 +496,32 @@ public class CompensationService {
         return response;
     }
 
-    private SalaryRevisionResponse enrichRevisionResponse(SalaryRevision revision) {
-        SalaryRevisionResponse response = SalaryRevisionResponse.fromEntity(revision);
-        UUID tenantId = TenantContext.getCurrentTenant();
+    /**
+     * Pre-fetched lookup caches shared across a batch of revisions to avoid per-row
+     * employee and cycle queries (N+1). Employee names/codes are keyed by employee id;
+     * cycle names are keyed by cycle id (already filtered to the current tenant).
+     */
+    private record RevisionEnrichmentCaches(
+            Map<UUID, String> employeeNames,
+            Map<UUID, String> employeeCodes,
+            Map<UUID, String> cycleNames) {
+    }
 
-        // Collect all employee IDs needed for enrichment (batch lookup to avoid N+1)
+    /**
+     * Batch-builds enrichment caches for a collection of revisions with a fixed number
+     * of queries (one employee bulk-fetch, one cycle bulk-fetch) regardless of size.
+     */
+    private RevisionEnrichmentCaches buildRevisionCaches(List<SalaryRevision> revisions, UUID tenantId) {
         Set<UUID> employeeIds = new HashSet<>();
-        if (revision.getEmployeeId() != null) employeeIds.add(revision.getEmployeeId());
-        if (revision.getProposedBy() != null) employeeIds.add(revision.getProposedBy());
-        if (revision.getReviewedBy() != null) employeeIds.add(revision.getReviewedBy());
-        if (revision.getApprovedBy() != null) employeeIds.add(revision.getApprovedBy());
+        Set<UUID> cycleIds = new HashSet<>();
+        for (SalaryRevision revision : revisions) {
+            if (revision.getEmployeeId() != null) employeeIds.add(revision.getEmployeeId());
+            if (revision.getProposedBy() != null) employeeIds.add(revision.getProposedBy());
+            if (revision.getReviewedBy() != null) employeeIds.add(revision.getReviewedBy());
+            if (revision.getApprovedBy() != null) employeeIds.add(revision.getApprovedBy());
+            if (revision.getReviewCycleId() != null) cycleIds.add(revision.getReviewCycleId());
+        }
 
-        // Single batch query for all employee names
         Map<UUID, String> nameMap = new HashMap<>();
         Map<UUID, String> codeMap = new HashMap<>();
         if (!employeeIds.isEmpty()) {
@@ -518,27 +531,61 @@ public class CompensationService {
             });
         }
 
+        // Bulk-fetch cycles, filtering to the current tenant to preserve the exact
+        // semantics of the original per-row findByIdAndTenantId lookup.
+        Map<UUID, String> cycleNameMap = new HashMap<>();
+        if (!cycleIds.isEmpty()) {
+            cycleRepository.findAllById(cycleIds).forEach(cycle -> {
+                if (tenantId != null && tenantId.equals(cycle.getTenantId())) {
+                    cycleNameMap.put(cycle.getId(), cycle.getName());
+                }
+            });
+        }
+
+        return new RevisionEnrichmentCaches(nameMap, codeMap, cycleNameMap);
+    }
+
+    private Page<SalaryRevisionResponse> enrichRevisionPage(Page<SalaryRevision> page, UUID tenantId) {
+        RevisionEnrichmentCaches caches = buildRevisionCaches(page.getContent(), tenantId);
+        return page.map(revision -> mapToResponse(revision, caches));
+    }
+
+    private List<SalaryRevisionResponse> enrichRevisionList(List<SalaryRevision> revisions, UUID tenantId) {
+        RevisionEnrichmentCaches caches = buildRevisionCaches(revisions, tenantId);
+        return revisions.stream()
+                .map(revision -> mapToResponse(revision, caches))
+                .collect(Collectors.toList());
+    }
+
+    private SalaryRevisionResponse enrichRevisionResponse(SalaryRevision revision) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return mapToResponse(revision, buildRevisionCaches(List.of(revision), tenantId));
+    }
+
+    private SalaryRevisionResponse mapToResponse(SalaryRevision revision, RevisionEnrichmentCaches caches) {
+        SalaryRevisionResponse response = SalaryRevisionResponse.fromEntity(revision);
+
         // Enrich with employee info
-        if (revision.getEmployeeId() != null && nameMap.containsKey(revision.getEmployeeId())) {
-            response.setEmployeeName(nameMap.get(revision.getEmployeeId()));
-            response.setEmployeeCode(codeMap.get(revision.getEmployeeId()));
+        if (revision.getEmployeeId() != null && caches.employeeNames().containsKey(revision.getEmployeeId())) {
+            response.setEmployeeName(caches.employeeNames().get(revision.getEmployeeId()));
+            response.setEmployeeCode(caches.employeeCodes().get(revision.getEmployeeId()));
         }
 
         // Enrich with cycle name
-        if (revision.getReviewCycleId() != null) {
-            cycleRepository.findByIdAndTenantId(revision.getReviewCycleId(), tenantId)
-                    .ifPresent(cycle -> response.setReviewCycleName(cycle.getName()));
+        if (revision.getReviewCycleId() != null
+                && caches.cycleNames().containsKey(revision.getReviewCycleId())) {
+            response.setReviewCycleName(caches.cycleNames().get(revision.getReviewCycleId()));
         }
 
         // Enrich with proposer, reviewer, approver names
-        if (revision.getProposedBy() != null && nameMap.containsKey(revision.getProposedBy())) {
-            response.setProposedByName(nameMap.get(revision.getProposedBy()));
+        if (revision.getProposedBy() != null && caches.employeeNames().containsKey(revision.getProposedBy())) {
+            response.setProposedByName(caches.employeeNames().get(revision.getProposedBy()));
         }
-        if (revision.getReviewedBy() != null && nameMap.containsKey(revision.getReviewedBy())) {
-            response.setReviewedByName(nameMap.get(revision.getReviewedBy()));
+        if (revision.getReviewedBy() != null && caches.employeeNames().containsKey(revision.getReviewedBy())) {
+            response.setReviewedByName(caches.employeeNames().get(revision.getReviewedBy()));
         }
-        if (revision.getApprovedBy() != null && nameMap.containsKey(revision.getApprovedBy())) {
-            response.setApprovedByName(nameMap.get(revision.getApprovedBy()));
+        if (revision.getApprovedBy() != null && caches.employeeNames().containsKey(revision.getApprovedBy())) {
+            response.setApprovedByName(caches.employeeNames().get(revision.getApprovedBy()));
         }
 
         return response;
