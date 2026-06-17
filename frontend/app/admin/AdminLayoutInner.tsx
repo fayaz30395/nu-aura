@@ -37,7 +37,7 @@ export default function AdminLayoutInner({
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const {permissions, roles, hasPermission, isReady} = usePermissions();
+  const {roles, hasPermission, isReady} = usePermissions();
   const {user} = useAuth();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
@@ -220,6 +220,9 @@ export default function AdminLayoutInner({
         },
       ],
     },
+    // Only `isSuperAdmin` gates the item set (the SuperAdmin-only System
+    // Dashboard entry). `Permissions`/`Roles` are module constants and the
+    // icon elements are static JSX, so none are reactive deps.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [isSuperAdmin]);
 

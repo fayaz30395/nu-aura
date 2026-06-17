@@ -466,7 +466,11 @@ export default function WikiPageDetailPage() {
     0
   );
 
-  // Record view on page load
+  // Record a single view per loaded page. `recordView` (a TanStack mutation) is
+  // intentionally omitted — its identity is not stable across renders, and
+  // including it would fire the view-record repeatedly. We key only on the
+  // resolved page identity (`pageId` + `page?.id`) so the view fires exactly
+  // once per distinct page.
   useEffect(() => {
     if (pageId && page) {
       recordView.mutate({contentId: pageId, contentType: 'WIKI'});

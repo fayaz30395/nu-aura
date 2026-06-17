@@ -392,6 +392,11 @@ function LoginPage() {
       }
       setUser(null);
     }
+    // Runs once, immediately after Zustand rehydration. We deliberately key only
+    // on `hasHydrated`: `isAuthenticated`/`user`/`didFreshLogin` are read as the
+    // post-hydration snapshot to decide whether to clear stale auth, and re-running
+    // when they change (e.g. right after a fresh login sets them) would wrongly
+    // wipe the session we just established. `setUser` is a stable Zustand action.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated]);
 

@@ -139,7 +139,10 @@ export default function AttendancePage() {
   const weeklyRecords = useMemo<AttendanceRecord[]>(() => weeklyData ?? [], [weeklyData]);
   const monthlyRecords = useMemo<AttendanceRecord[]>(() => monthlyData ?? [], [monthlyData]);
 
-  // Derived stats
+  // Derived stats. `now` is a mount-time `useMemo(() => new Date(), [])` and is
+  // intentionally omitted from the deps: it is stable for the component lifetime,
+  // and listing it would not change recomputation (it never changes) — recompute
+  // is driven purely by `monthlyRecords`.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const monthStats = useMemo(() => computeMonthStats(monthlyRecords, now), [monthlyRecords]);
 
