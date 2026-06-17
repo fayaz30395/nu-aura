@@ -14,7 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -109,8 +113,10 @@ public class PIPService {
     @Transactional(readOnly = true)
     public List<PIPResponse> getForEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return pipRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
-                .map(p -> mapToResponse(p, false))
+        List<PerformanceImprovementPlan> pips = pipRepository.findByTenantIdAndEmployeeId(tenantId, employeeId);
+        Map<UUID, String> nameCache = buildNameCache(pips);
+        return pips.stream()
+                .map(p -> mapToResponse(p, false, nameCache))
                 .collect(Collectors.toList());
     }
 
@@ -118,14 +124,17 @@ public class PIPService {
     public Page<PIPResponse> getForEmployee(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
-        return pipsPage.map(p -> mapToResponse(p, false));
+        Map<UUID, String> nameCache = buildNameCache(pipsPage.getContent());
+        return pipsPage.map(p -> mapToResponse(p, false, nameCache));
     }
 
     @Transactional(readOnly = true)
     public List<PIPResponse> getForManager(UUID managerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return pipRepository.findByTenantIdAndManagerId(tenantId, managerId).stream()
-                .map(p -> mapToResponse(p, false))
+        List<PerformanceImprovementPlan> pips = pipRepository.findByTenantIdAndManagerId(tenantId, managerId);
+        Map<UUID, String> nameCache = buildNameCache(pips);
+        return pips.stream()
+                .map(p -> mapToResponse(p, false, nameCache))
                 .collect(Collectors.toList());
     }
 
@@ -133,14 +142,17 @@ public class PIPService {
     public Page<PIPResponse> getForManager(UUID managerId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantIdAndManagerId(tenantId, managerId, pageable);
-        return pipsPage.map(p -> mapToResponse(p, false));
+        Map<UUID, String> nameCache = buildNameCache(pipsPage.getContent());
+        return pipsPage.map(p -> mapToResponse(p, false, nameCache));
     }
 
     @Transactional(readOnly = true)
     public List<PIPResponse> getAll() {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return pipRepository.findByTenantId(tenantId).stream()
-                .map(p -> mapToResponse(p, false))
+        List<PerformanceImprovementPlan> pips = pipRepository.findByTenantId(tenantId);
+        Map<UUID, String> nameCache = buildNameCache(pips);
+        return pips.stream()
+                .map(p -> mapToResponse(p, false, nameCache))
                 .collect(Collectors.toList());
     }
 
@@ -148,14 +160,47 @@ public class PIPService {
     public Page<PIPResponse> getAll(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
         Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantId(tenantId, pageable);
-        return pipsPage.map(p -> mapToResponse(p, false));
+        Map<UUID, String> nameCache = buildNameCache(pipsPage.getContent());
+        return pipsPage.map(p -> mapToResponse(p, false, nameCache));
+    }
+
+    private Map<UUID, String> buildNameCache(List<PerformanceImprovementPlan> pips) {
+        Set<UUID> ids = new HashSet<>();
+        for (PerformanceImprovementPlan pip : pips) {
+            if (pip.getEmployeeId() != null) {
+                ids.add(pip.getEmployeeId());
+            }
+            if (pip.getManagerId() != null) {
+                ids.add(pip.getManagerId());
+            }
+        }
+        Map<UUID, String> nameCache = new HashMap<>();
+        if (!ids.isEmpty()) {
+            employeeRepository.findAllById(ids)
+                    .forEach(e -> nameCache.put(e.getId(), e.getFullName()));
+        }
+        return nameCache;
     }
 
     private PIPResponse mapToResponse(PerformanceImprovementPlan pip, boolean includeCheckIns) {
-        String empName = employeeRepository.findById(pip.getEmployeeId())
-                .map(e -> e.getFullName()).orElse("Unknown");
-        String mgrName = employeeRepository.findById(pip.getManagerId())
-                .map(e -> e.getFullName()).orElse("Unknown");
+        Set<UUID> ids = new HashSet<>();
+        if (pip.getEmployeeId() != null) {
+            ids.add(pip.getEmployeeId());
+        }
+        if (pip.getManagerId() != null) {
+            ids.add(pip.getManagerId());
+        }
+        Map<UUID, String> nameCache = new HashMap<>();
+        if (!ids.isEmpty()) {
+            employeeRepository.findAllById(ids)
+                    .forEach(e -> nameCache.put(e.getId(), e.getFullName()));
+        }
+        return mapToResponse(pip, includeCheckIns, nameCache);
+    }
+
+    private PIPResponse mapToResponse(PerformanceImprovementPlan pip, boolean includeCheckIns, Map<UUID, String> nameCache) {
+        String empName = pip.getEmployeeId() != null ? nameCache.getOrDefault(pip.getEmployeeId(), "Unknown") : "Unknown";
+        String mgrName = pip.getManagerId() != null ? nameCache.getOrDefault(pip.getManagerId(), "Unknown") : "Unknown";
 
         long checkInCount = checkInRepository.countByPipId(pip.getId());
 
