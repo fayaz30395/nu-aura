@@ -141,7 +141,7 @@ export function QuickAccessWidget({
 
               {pendingProfileUpdates > 0 && (
                 <a
-                  href="/profile"
+                  href="/me/profile"
                   className="flex items-center justify-between rounded-aura-md bg-[var(--surface-aura-2)] px-4 py-4 transition-all duration-200 hover:bg-[var(--surface-hover)] hover:shadow-sh-md hover:-translate-y-0.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                   aria-label={`${pendingProfileUpdates} profile updates`}
                 >

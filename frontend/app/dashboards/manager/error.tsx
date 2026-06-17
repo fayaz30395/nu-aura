@@ -61,7 +61,7 @@ export default function ManagerError({error, reset}: ErrorProps) {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => (window.location.href = '/dashboards')}
+                onClick={() => (window.location.href = '/dashboard')}
                 className="w-full"
               >
                 <Grid className="mr-2 h-4 w-4"/>
