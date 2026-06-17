@@ -8,6 +8,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AlertCircle, CheckCircle, Clock, Loader2, PlusCircle, XCircle} from 'lucide-react';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {notifications} from '@mantine/notifications';
 import {Modal} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
@@ -233,10 +234,12 @@ export default function CompOffPage() {
             {isLoading ? (
               <div className="p-4"><SkeletonTable rows={5} columns={5}/></div>
             ) : requests.length === 0 ? (
-              <div className="p-8 text-center text-[var(--text-muted)]">
-                <Clock className="w-10 h-10 mx-auto mb-2 text-[var(--text-muted)]"/>
-                <p>No comp-off requests found.</p>
-              </div>
+              <EmptyState
+                icon={<Clock className="w-full h-full" />}
+                title="No Comp-Off Requests"
+                description="There are no comp-off requests to display."
+                size="compact"
+              />
             ) : (
               <table className="w-full text-sm table-aura">
                 <thead>

@@ -14,7 +14,7 @@ test.describe('Navigation and Routing', () => {
     loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/me/dashboard');
   });
 
   test.describe('Main Navigation Menu', () => {
@@ -535,7 +535,7 @@ test.describe('Navigation - Role-Based Access', () => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/me/dashboard');
 
     // Admin should see employees, leave, attendance, projects, etc.
     const hasEmployees = await page.locator('a[href*="/employees"], button:has-text("Employees")').isVisible().catch(() => false);
@@ -546,7 +546,7 @@ test.describe('Navigation - Role-Based Access', () => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.employee.email, testUsers.employee.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/me/dashboard');
 
     // Employee should see their own leave, attendance but maybe not all employees
     const hasLeave = await page.locator('a[href*="/leave"], button:has-text("Leave")').isVisible().catch(() => false);
@@ -559,7 +559,7 @@ test.describe('Navigation - Role-Based Access', () => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.manager.email, testUsers.manager.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/me/dashboard');
 
     // Manager should see team management options
     const hasNav = await page.locator('nav').isVisible();
@@ -574,7 +574,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/me/dashboard');
   });
 
   test('HRMS routes show HR-specific sidebar items', async ({page}) => {

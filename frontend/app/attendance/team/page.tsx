@@ -20,6 +20,7 @@ import {
   Users,
   XCircle,
 } from 'lucide-react';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {AppLayout} from '@/components/layout';
 import {Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
@@ -520,15 +521,14 @@ export default function TeamAttendancePage() {
                 {loading ? (
                   <SkeletonTable rows={8} columns={7}/>
                 ) : filteredAndSortedRecords.length === 0 ? (
-                  <div className="text-center py-12">
-                    <Users
-                      className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
-                    <p className="text-[var(--text-muted)]">
-                      {records.length === 0
-                        ? 'No attendance records found for this date'
-                        : 'No records match your filters'}
-                    </p>
-                  </div>
+                  <EmptyState
+                    icon={<Users className="w-full h-full" />}
+                    title={records.length === 0 ? 'No Attendance Records' : 'No Records Match Filters'}
+                    description={records.length === 0
+                      ? 'No attendance records found for this date.'
+                      : 'Try adjusting your filters to see more results.'}
+                    size="compact"
+                  />
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -658,14 +658,14 @@ export default function TeamAttendancePage() {
                 ))}
               </div>
             ) : filteredAndSortedRecords.length === 0 ? (
-              <div className="text-center py-12">
-                <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
-                <p className="text-[var(--text-muted)]">
-                  {records.length === 0
-                    ? 'No attendance records found for this date'
-                    : 'No records match your filters'}
-                </p>
-              </div>
+              <EmptyState
+                icon={<Users className="w-full h-full" />}
+                title={records.length === 0 ? 'No Attendance Records' : 'No Records Match Filters'}
+                description={records.length === 0
+                  ? 'No attendance records found for this date.'
+                  : 'Try adjusting your filters to see more results.'}
+                size="compact"
+              />
             ) : (
               <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" stagger={0.03}>
                 {filteredAndSortedRecords.map((record) => (

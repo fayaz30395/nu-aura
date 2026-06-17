@@ -32,17 +32,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Cache Maven packages
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -67,19 +67,24 @@ jobs:
           # Datasource URL/user/password are injected at runtime by
           # AbstractPostgresIntegrationTest via @DynamicPropertySource.
           TESTCONTAINERS_RYUK_DISABLED: 'false'
+          # Encryption key required by EncryptedStringConverter / SecurityConfig.
+          # Value matches the test-profile default in application-test.yml so this
+          # is belt-and-suspenders for any code path that reads the env var directly.
+          APP_SECURITY_ENCRYPTION_KEY: test-encryption-key-32-bytes-xx!
+          ENCRYPTION_KEY: test-encryption-key-32-bytes-xx!
 
       - name: Generate coverage report
         working-directory: ./backend
         run: mvn jacoco:report -pl .
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: backend/target/site/jacoco/
 
       - name: Upload test results
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: backend-test-results
@@ -92,10 +97,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -149,21 +154,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
-
-      # This job duplicates the dedicated security-scan.yml workflow (Trivy image
-      # + CodeQL + gitleaks), so keep it non-blocking — a transient Maven Central
-      # 429 during fs dependency resolution must not fail the build pipeline.
-      - name: Trivy CVE table (debug, non-blocking)
-        continue-on-error: true
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          ignore-unfixed: true
-          exit-code: '0'
+        uses: actions/checkout@v4
 
       # This job duplicates the dedicated security-scan.yml workflow (Trivy image
       # + CodeQL + gitleaks), so keep it non-blocking — a transient Maven Central
@@ -209,13 +200,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Backend Docker image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./backend/Dockerfile
@@ -225,7 +216,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Build Frontend Docker image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@v6
         with:
           context: ./frontend
           file: ./frontend/Dockerfile

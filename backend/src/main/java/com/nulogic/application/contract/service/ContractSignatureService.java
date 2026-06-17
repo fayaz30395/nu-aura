@@ -3,6 +3,7 @@ package com.nulogic.application.contract.service;
 import com.nulogic.api.contract.dto.ContractSignatureDto;
 import com.nulogic.api.contract.dto.SendForSigningRequest;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.contract.ContractSignature;
 import com.nulogic.domain.contract.SignatureStatus;
 import com.nulogic.domain.contract.SignerRole;
@@ -34,7 +35,9 @@ public class ContractSignatureService {
      */
     @Transactional
     public ContractSignatureDto sendForSigning(UUID contractId, SendForSigningRequest request) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
         ContractSignature signature = ContractSignature.builder()
+                .tenantId(tenantId)
                 .contractId(contractId)
                 .signerName(request.getSignerName())
                 .signerEmail(request.getSignerEmail())
@@ -51,7 +54,8 @@ public class ContractSignatureService {
      * Record signature
      */
     public ContractSignatureDto recordSignature(UUID contractId, String signerEmail, String signatureImageUrl, String ipAddress) {
-        ContractSignature signature = signatureRepository.findByContractIdAndSignerEmail(contractId, signerEmail)
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        ContractSignature signature = signatureRepository.findByContractIdAndSignerEmailAndTenantId(contractId, signerEmail, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Signature not found"));
 
         signature.markAsSigned();
@@ -66,7 +70,8 @@ public class ContractSignatureService {
      * Decline signature
      */
     public ContractSignatureDto declineSignature(UUID contractId, String signerEmail) {
-        ContractSignature signature = signatureRepository.findByContractIdAndSignerEmail(contractId, signerEmail)
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        ContractSignature signature = signatureRepository.findByContractIdAndSignerEmailAndTenantId(contractId, signerEmail, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Signature not found"));
 
         signature.markAsDeclined();
@@ -80,7 +85,8 @@ public class ContractSignatureService {
      */
     @Transactional(readOnly = true)
     public List<ContractSignatureDto> getContractSignatures(UUID contractId) {
-        return signatureRepository.findByContractId(contractId)
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        return signatureRepository.findByContractIdAndTenantId(contractId, tenantId)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -91,8 +97,10 @@ public class ContractSignatureService {
      */
     @Transactional(readOnly = true)
     public List<ContractSignatureDto> getPendingSignatures(UUID contractId) {
-        return signatureRepository.findPendingSignatures(contractId)
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        return signatureRepository.findByContractIdAndTenantId(contractId, tenantId)
                 .stream()
+                .filter(s -> s.getStatus() == SignatureStatus.PENDING)
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }

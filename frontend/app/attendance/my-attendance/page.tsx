@@ -18,6 +18,7 @@ import {
   Users,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Reveal} from '@/components/motion';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
@@ -675,13 +676,13 @@ export default function MyAttendancePage() {
                         ))
                       ) : sortedRecords.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="text-center py-16">
-                            <div className="flex flex-col items-center gap-2">
-                              <Calendar className="h-8 w-8 text-[var(--text-muted)]"/>
-                              <p className="text-sm font-medium text-[var(--text-muted)]">No attendance records
-                                found</p>
-                              <p className="text-caption">Records will appear here once you start clocking in</p>
-                            </div>
+                          <td colSpan={5}>
+                            <EmptyState
+                              icon={<Calendar className="w-full h-full" />}
+                              title="No Attendance Records"
+                              description="Records will appear here once you start clocking in."
+                              size="compact"
+                            />
                           </td>
                         </tr>
                       ) : (

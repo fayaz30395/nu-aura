@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {AppLayout} from '@/components/layout';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -675,10 +676,12 @@ function CalendarContent() {
               <Card>
                 <CardContent className="divide-y divide-[var(--border-soft)]">
                   {events.length === 0 ? (
-                    <div className="py-12 text-center text-[var(--text-3)]">
-                      <CalendarIcon className="h-8 w-8 mx-auto mb-2 opacity-40"/>
-                      <p className="text-sm">No events found for this period</p>
-                    </div>
+                    <EmptyState
+                      icon={<CalendarIcon className="w-full h-full" />}
+                      title="No Events Found"
+                      description="There are no events for this period."
+                      size="compact"
+                    />
                   ) : (
                     events.map((event) => (
                       <div
@@ -767,7 +770,11 @@ function CalendarContent() {
                   Upcoming Events
                 </h3>
                 {events.length === 0 ? (
-                  <p className="text-sm text-[var(--text-3)] py-4">No upcoming events</p>
+                  <EmptyState
+                    icon={<CalendarIcon className="w-full h-full" />}
+                    title="No Upcoming Events"
+                    size="compact"
+                  />
                 ) : (
                   <div className="space-y-2">
                     {events.slice(0, 5).map((event) => (

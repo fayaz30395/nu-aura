@@ -87,6 +87,7 @@ const AUTHENTICATED_ROUTES = [
   '/reports',
   '/analytics',
   '/admin',
+  '/admin/users',      // NAV-005: explicit entry for user management (covered by /admin prefix but explicit for clarity)
   '/organization-chart',
   '/dashboards',
   '/benefits',

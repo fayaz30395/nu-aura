@@ -19,7 +19,14 @@ public interface ContractSignatureRepository extends JpaRepository<ContractSigna
 
     List<ContractSignature> findByContractId(UUID contractId);
 
+    // Tenant-isolated variants — prefer these in service layer
+    List<ContractSignature> findByContractIdAndTenantId(UUID contractId, UUID tenantId);
+
+    Optional<ContractSignature> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Optional<ContractSignature> findByContractIdAndSignerEmail(UUID contractId, String signerEmail);
+
+    Optional<ContractSignature> findByContractIdAndSignerEmailAndTenantId(UUID contractId, String signerEmail, UUID tenantId);
 
     List<ContractSignature> findByContractIdAndStatus(UUID contractId, SignatureStatus status);
 

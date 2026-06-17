@@ -53,6 +53,23 @@ export const PUBLIC_ROUTES: string[] = [
  */
 export const PROTECTED_ROUTES: RouteConfig[] = [
   // Admin routes - specific pages first (more specific before general)
+  // RBAC-GAP-1: Register sensitive admin routes with explicit permission requirements
+  {
+    path: '/admin/audit',
+    anyPermission: [Permissions.AUDIT_VIEW, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/budget',
+    anyPermission: [Permissions.BUDGET_VIEW, Permissions.BUDGET_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/feature-flags',
+    anyPermission: [Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/api-keys',
+    anyPermission: [Permissions.SYSTEM_ADMIN],
+  },
   {
     path: '/admin/roles',
     anyPermission: [Permissions.ROLE_MANAGE, Permissions.SYSTEM_ADMIN],

@@ -11,6 +11,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {
   ArrowLeft,
   Briefcase,
+  Building2,
   Clock,
   RefreshCw,
   FileText,
@@ -20,6 +21,7 @@ import {
   ShieldAlert,
   Server,
   Shield,
+  Smartphone,
   Umbrella,
   Upload,
   Users,
@@ -104,6 +106,13 @@ export default function AdminLayoutInner({
           href: '/admin/implicit-roles',
           requiredPermission: Permissions.SYSTEM_ADMIN,
         },
+        {
+          id: 'mobile-api',
+          label: 'Mobile API',
+          icon: <Smartphone className="h-5 w-5"/>,
+          href: '/admin/mobile-api',
+          requiredPermission: Permissions.SYSTEM_ADMIN,
+        },
       ]
       : []),
     {
@@ -125,6 +134,13 @@ export default function AdminLayoutInner({
       label: 'Organization',
       icon: <GitBranch className="h-5 w-5"/>,
       href: '/admin/org-hierarchy',
+      requiredPermission: Permissions.ORG_STRUCTURE_VIEW,
+    },
+    {
+      id: 'departments',
+      label: 'Departments',
+      icon: <Building2 className="h-5 w-5"/>,
+      href: '/admin/departments',
       requiredPermission: Permissions.ORG_STRUCTURE_VIEW,
     },
     {

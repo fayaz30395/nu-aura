@@ -37,6 +37,7 @@ import {
   useSubmitExpenseClaim,
 } from '@/lib/hooks/queries';
 import {ConfirmDialog, Input, Modal, ModalBody, ModalFooter, ModalHeader, Select, Textarea} from '@/components/ui';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {CreateExpenseItemRequest, ExpenseStatus} from '@/lib/types/hrms/expense';
 import {ConfirmedOcrData, ReceiptScanner} from '@/components/expenses';
 
@@ -282,9 +283,12 @@ export default function ExpenseDetailPage() {
           {itemsLoading ? (
             <div className="p-6 text-center text-surface-500">Loading items...</div>
           ) : items.length === 0 ? (
-            <div className="p-6 text-center text-surface-500">
-              No items added yet. {isDraft && isOwner ? 'Click "Add Item" to add expense line items.' : ''}
-            </div>
+            <EmptyState
+              icon={<Receipt className="w-full h-full" />}
+              title="No Items Added"
+              description={isDraft && isOwner ? 'Click "Add Item" to add expense line items.' : 'No expense line items have been added.'}
+              size="compact"
+            />
           ) : (
             <div className="divide-y divide-surface-200 dark:divide-surface-700">
               {items.map((item) => (

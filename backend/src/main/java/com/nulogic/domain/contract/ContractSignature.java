@@ -31,6 +31,9 @@ import java.util.UUID;
 public class ContractSignature extends BaseEntity {
 
     @Column(nullable = false)
+    private UUID tenantId;
+
+    @Column(nullable = false)
     private UUID contractId;
 
     @Column
@@ -73,7 +76,6 @@ public class ContractSignature extends BaseEntity {
 
     public void markAsSigned() {
         this.status = SignatureStatus.SIGNED;
-        // JVM-local: ContractSignature has no tenantId field; server reception stamp.
         this.signedAt = LocalDateTime.now(); // JVM-local: entity-layer; push to service per docs/architecture/tenant-time-wave-13-summary.md if cross-region zone correctness is needed
     }
 

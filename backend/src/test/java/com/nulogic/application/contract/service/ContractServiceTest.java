@@ -14,6 +14,7 @@ import com.nulogic.infrastructure.contract.repository.ContractReminderRepository
 import com.nulogic.infrastructure.contract.repository.ContractRepository;
 import com.nulogic.infrastructure.contract.repository.ContractSignatureRepository;
 import com.nulogic.infrastructure.contract.repository.ContractVersionRepository;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -62,6 +63,9 @@ class ContractServiceTest {
 
     @Mock
     private EmployeeService employeeService;
+
+    @Mock
+    private EmployeeRepository employeeRepository;
 
     @Mock
     private com.nulogic.common.metrics.MetricsService metricsService;
@@ -384,7 +388,7 @@ class ContractServiceTest {
 
             when(contractRepository.findByIdAndTenantId(CONTRACT_ID, TENANT_ID))
                     .thenReturn(Optional.of(contract));
-            when(signatureRepository.findByContractId(CONTRACT_ID)).thenReturn(signatures);
+            when(signatureRepository.findByContractIdAndTenantId(CONTRACT_ID, TENANT_ID)).thenReturn(signatures);
 
             // When
             ContractDto result = contractService.getContractById(CONTRACT_ID);
@@ -561,7 +565,7 @@ class ContractServiceTest {
                     any(LocalDate.class),
                     any(LocalDate.class)
             )).thenReturn(List.of(expiringContract));
-            when(signatureRepository.findPendingSignatures(CONTRACT_ID)).thenReturn(List.of());
+            when(signatureRepository.countPendingByContractIds(any())).thenReturn(List.of());
 
             // When
             List<ContractListDto> result = contractService.getExpiringContracts(30);
@@ -674,6 +678,75 @@ class ContractServiceTest {
             // When/Then
             assertThatThrownBy(() -> contractService.deleteContract(CONTRACT_ID))
                     .isInstanceOf(ResourceNotFoundException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("BE-03: ContractSignature tenant_id isolation")
+    class ContractSignatureTenantIsolation {
+
+        @Test
+        @DisplayName("toDtoWithSignatures uses tenant-scoped findByContractIdAndTenantId")
+        void getContractById_loadsSignaturesViaTenantscopedQuery() {
+            // Arrange
+            Contract contract = Contract.builder()
+                    .id(CONTRACT_ID)
+                    .tenantId(TENANT_ID)
+                    .title("Employment Contract")
+                    .type(ContractType.EMPLOYMENT)
+                    .status(ContractStatus.PENDING_SIGNATURES)
+                    .build();
+
+            ContractSignature sig = ContractSignature.builder()
+                    .id(UUID.randomUUID())
+                    .tenantId(TENANT_ID)
+                    .contractId(CONTRACT_ID)
+                    .signerName("Alice")
+                    .signerEmail("alice@example.com")
+                    .status(SignatureStatus.PENDING)
+                    .build();
+
+            when(contractRepository.findByIdAndTenantId(CONTRACT_ID, TENANT_ID))
+                    .thenReturn(Optional.of(contract));
+            when(signatureRepository.findByContractIdAndTenantId(CONTRACT_ID, TENANT_ID))
+                    .thenReturn(List.of(sig));
+
+            // Act
+            ContractDto result = contractService.getContractById(CONTRACT_ID);
+
+            // Assert — tenant-scoped query must have been used
+            verify(signatureRepository).findByContractIdAndTenantId(CONTRACT_ID, TENANT_ID);
+            verify(signatureRepository, never()).findByContractId(any());
+            assertThat(result.getSignatureCount()).isEqualTo(1);
+            assertThat(result.getPendingSignatureCount()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("cross-tenant signature must not be returned by tenant-scoped query")
+        void getContractById_doesNotReturnCrossTenantSignatures() {
+            // Arrange — a contract owned by TENANT_ID but signatures mock returns empty
+            // (simulating that a different tenant's signatures were not returned)
+            UUID otherTenantId = UUID.randomUUID();
+            Contract contract = Contract.builder()
+                    .id(CONTRACT_ID)
+                    .tenantId(TENANT_ID)
+                    .title("Test Contract")
+                    .type(ContractType.EMPLOYMENT)
+                    .status(ContractStatus.ACTIVE)
+                    .build();
+
+            when(contractRepository.findByIdAndTenantId(CONTRACT_ID, TENANT_ID))
+                    .thenReturn(Optional.of(contract));
+            // Tenant-scoped query returns empty — no signatures for this tenant
+            when(signatureRepository.findByContractIdAndTenantId(CONTRACT_ID, TENANT_ID))
+                    .thenReturn(List.of());
+
+            // Act
+            ContractDto result = contractService.getContractById(CONTRACT_ID);
+
+            // Assert — zero signatures even if other-tenant signatures exist in DB
+            assertThat(result.getSignatureCount()).isEqualTo(0);
+            assertThat(result.getPendingSignatureCount()).isEqualTo(0);
         }
     }
 }

@@ -502,7 +502,7 @@ public class ContractService {
 
     private ContractDto toDtoWithSignatures(Contract contract) {
         ContractDto dto = toDto(contract);
-        List<ContractSignature> signatures = signatureRepository.findByContractId(contract.getId());
+        List<ContractSignature> signatures = signatureRepository.findByContractIdAndTenantId(contract.getId(), contract.getTenantId());
         dto.setSignatureCount(signatures.size());
         dto.setPendingSignatureCount((int) signatures.stream()
                 .filter(s -> s.getStatus() == SignatureStatus.PENDING)
