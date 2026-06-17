@@ -1,6 +1,6 @@
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {featureFlagService} from '@/lib/services/core/feature-flag.service';
-import type {FeatureFlagRequest} from '@/lib/types/core/feature-flag';
+import type {FeatureFlag, FeatureFlagRequest} from '@/lib/types/core/feature-flag';
 
 export const featureFlagKeys = {
   all: ['featureFlags'] as const,
@@ -14,7 +14,10 @@ export const featureFlagKeys = {
 export function useFeatureFlags() {
   return useQuery({
     queryKey: featureFlagKeys.list(),
-    queryFn: () => featureFlagService.getAll().then(r => r.data),
+    queryFn: () => featureFlagService.getAll().then(r => {
+      const body = r.data as FeatureFlag[] | {data?: FeatureFlag[]; content?: FeatureFlag[]};
+      return Array.isArray(body) ? body : (body.data ?? body.content ?? []);
+    }),
     staleTime: 15 * 60 * 1000, // 15 minutes — flags change rarely
   });
 }

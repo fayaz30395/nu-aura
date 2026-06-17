@@ -14,7 +14,8 @@ export const lwfService = {
 
   getConfigurations: async (): Promise<LWFConfiguration[]> => {
     const response = await apiClient.get<LWFConfiguration[]>(`${BASE_URL}/configurations`);
-    return response.data;
+    const body = response.data as LWFConfiguration[] | {content?: LWFConfiguration[]; data?: LWFConfiguration[]};
+    return Array.isArray(body) ? body : (body.content ?? body.data ?? []);
   },
 
   createOrUpdateConfiguration: async (
@@ -37,7 +38,8 @@ export const lwfService = {
     const response = await apiClient.get<LWFDeduction[]>(`${BASE_URL}/deductions`, {
       params: {month, year},
     });
-    return response.data;
+    const body = response.data as LWFDeduction[] | {content?: LWFDeduction[]; data?: LWFDeduction[]};
+    return Array.isArray(body) ? body : (body.content ?? body.data ?? []);
   },
 
   getEmployeeDeductions: async (

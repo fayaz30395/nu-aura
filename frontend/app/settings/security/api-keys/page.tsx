@@ -467,7 +467,7 @@ export default function ApiKeysPage() {
         <div className="page-header">
           <div>
             <h1 className="page-title">API Keys</h1>
-            <p className="page-subtitle">Manage programmatic access to this tenant's data.</p>
+            <p className="page-subtitle">Manage programmatic access to this tenant&apos;s data.</p>
           </div>
           <Button
             size="sm"
