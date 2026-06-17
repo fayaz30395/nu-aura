@@ -34,7 +34,6 @@ import {
 import {AttendanceRecord, AttendanceStatus} from '@/lib/types/hrms/attendance';
 import {
   getLocalDateString,
-  getLocalDateTimeString,
   getMonthEndString,
   getMonthStartString
 } from '@/lib/utils/dateUtils';
@@ -115,13 +114,12 @@ export default function MyAttendancePage() {
     try {
       setError(null);
 
-      // Use utility functions for consistent timezone handling
+      // Omit the time so the backend stamps the tenant-local instant (single source of truth);
+      // attendanceDate stays client-local only to key the optimistic cache entry.
       const localDate = getLocalDateString();
-      const localTime = getLocalDateTimeString();
 
       await checkIn.mutateAsync({
         employeeId: user!.employeeId!,
-        checkInTime: localTime,
         attendanceDate: localDate,
       });
     } catch (err: unknown) {
@@ -136,13 +134,11 @@ export default function MyAttendancePage() {
     try {
       setError(null);
 
-      // Use utility functions for consistent timezone handling
+      // Omit the time so the backend stamps the tenant-local instant (single source of truth).
       const localDate = getLocalDateString();
-      const localTime = getLocalDateTimeString();
 
       await checkOut.mutateAsync({
         employeeId: user!.employeeId!,
-        checkOutTime: localTime,
         attendanceDate: localDate,
       });
     } catch (err: unknown) {

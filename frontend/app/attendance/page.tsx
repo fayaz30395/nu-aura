@@ -40,7 +40,6 @@ import {AttendanceRecord} from '@/lib/types/hrms/attendance';
 import {
   getDateOffsetString,
   getLocalDateString,
-  getLocalDateTimeString,
   getMonthStartString,
 } from '@/lib/utils/dateUtils';
 import {
@@ -212,10 +211,11 @@ export default function AttendancePage() {
         return;
       }
       const location = await getLocation();
+      // Omit checkInTime so the backend stamps the tenant-local time (single source of truth).
+      // Sending a browser-local timestamp here skewed the record for tenants outside the browser tz.
       await checkInMutation.mutateAsync({
         employeeId: user.employeeId,
         attendanceDate: todayStr,
-        checkInTime: getLocalDateTimeString(),
         source: 'WEB',
         location,
       });
@@ -233,10 +233,10 @@ export default function AttendancePage() {
         return;
       }
       const location = await getLocation();
+      // Omit checkOutTime so the backend stamps the tenant-local time (single source of truth).
       await checkOutMutation.mutateAsync({
         employeeId: user.employeeId,
         attendanceDate: todayStr,
-        checkOutTime: getLocalDateTimeString(),
         source: 'WEB',
         location,
       });

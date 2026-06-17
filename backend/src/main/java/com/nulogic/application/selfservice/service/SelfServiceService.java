@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.*;
@@ -377,7 +378,7 @@ public class SelfServiceService {
                 .lateDaysThisMonth(attendanceSummary.lateDays)
                 .attendancePercentage(attendanceSummary.attendancePercentage)
                 .todayAttendanceStatus(attendanceSummary.todayStatus)
-                .todayCheckInTime(attendanceSummary.todayCheckInTime)
+                .todayCheckInTime(toTenantOffset(attendanceSummary.todayCheckInTime, tenantId))
                 .todayCheckOutTime(attendanceSummary.todayCheckOutTime);
 
         // Add employee info if available
@@ -422,6 +423,20 @@ public class SelfServiceService {
         }
 
         return balances;
+    }
+
+    /**
+     * Attach the tenant's UTC offset to a stored tenant-local {@link LocalDateTime} so the client
+     * receives an absolute instant (ISO-8601 with offset). This lets the dashboard compute the live
+     * "working" elapsed timer correctly even when the browser runs in a different timezone.
+     *
+     * @return the offset-aware time, or {@code null} when the input is {@code null}
+     */
+    private OffsetDateTime toTenantOffset(LocalDateTime localDateTime, UUID tenantId) {
+        if (localDateTime == null) {
+            return null;
+        }
+        return localDateTime.atZone(tenantTimeService.zoneFor(tenantId)).toOffsetDateTime();
     }
 
     /**

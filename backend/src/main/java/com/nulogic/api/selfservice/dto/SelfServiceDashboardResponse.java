@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,11 @@ public class SelfServiceDashboardResponse {
     private Integer lateDaysThisMonth;
     private Double attendancePercentage;
     private String todayAttendanceStatus;
-    private LocalDateTime todayCheckInTime;
+    // Offset-aware so the client can compute the live "working" elapsed timer correctly regardless
+    // of the browser timezone (tenant-local instant carries the tenant's UTC offset). See
+    // SelfServiceService where this is converted from the stored tenant-local LocalDateTime.
+    private OffsetDateTime todayCheckInTime;
+    // Display-only wall-clock time; rendered as the tenant-local clock, no offset needed.
     private LocalDateTime todayCheckOutTime;
 
     // Pending Actions

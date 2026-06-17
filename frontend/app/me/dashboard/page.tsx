@@ -98,10 +98,10 @@ export default function MyDashboardPage() {
         attendanceDate: format(new Date(), 'yyyy-MM-dd'),
       });
       setIsCheckedIn(true);
-      // Anchor the live "Working:" timer to the client clock — the user just clicked
-      // Clock In *now*. The server echoes an offset-less tenant-local timestamp
-      // (LocalDateTime), so parsing it on a client in a different timezone would skew
-      // the elapsed counter. Client-now is the truthful start for the just-started timer.
+      // Anchor the live "Working:" timer to client-now for the just-clicked case — the user
+      // checked in *now*, so this avoids a refetch round-trip. On reload the restore path uses
+      // dashboard.todayCheckInTime, which the server now serializes as an offset-aware instant
+      // (OffsetDateTime), so parseISO yields the correct absolute start regardless of browser tz.
       setCheckInTime(new Date());
       refreshDashboard();
     } catch (error: unknown) {

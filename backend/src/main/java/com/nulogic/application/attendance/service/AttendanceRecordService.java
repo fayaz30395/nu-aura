@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -198,10 +199,14 @@ public class AttendanceRecordService {
         // Validate checkout time is reasonable (not too far from check-in)
         validateCheckoutTime(record, actualCheckOutTime);
 
-        record.checkOut(actualCheckOutTime, source, location, ip);
+        // DST-correct duration: measure elapsed time between the physical instants of the
+        // tenant-local check-in/out times (NUAURA-ATTENDANCE-DST). Both the record fallback path
+        // and the time-entry path below are computed in the tenant zone.
+        ZoneId tenantZone = tenantTimeService.zoneFor(tenantId);
+        record.checkOut(actualCheckOutTime, source, location, ip, tenantZone);
 
-        // Close the latest open time entry
-        closeOpenTimeEntry(record.getId(), actualCheckOutTime, source, location, ip);
+        // Close the latest open time entry (zone-aware so multi-entry durations are DST-correct too)
+        closeOpenTimeEntry(record.getId(), actualCheckOutTime, source, location, ip, tenantZone);
 
         // Update total work duration from time entries
         updateRecordDurations(record);
@@ -268,10 +273,11 @@ public class AttendanceRecordService {
         }
 
         if (relevantCheckInTime != null) {
-            // TODO(DST): Duration.between on LocalDateTime ignores DST shifts (spring-forward/fall-back
-            // produces ±1h error). Migrate checkInTime/checkOutTime columns to TIMESTAMPTZ and switch
-            // these fields to OffsetDateTime/Instant in the next sprint. Tracked: NUAURA-ATTENDANCE-DST.
-            long hoursWorked = java.time.Duration.between(relevantCheckInTime, checkOutTime).toHours();
+            // NUAURA-ATTENDANCE-DST: measure elapsed time between physical instants in the tenant
+            // zone so the overnight-shift heuristic stays correct across DST spring-forward/fall-back.
+            ZoneId zone = tenantTimeService.zoneFor(record.getTenantId());
+            long hoursWorked = java.time.Duration.between(
+                    relevantCheckInTime.atZone(zone).toInstant(), checkOutTime.atZone(zone).toInstant()).toHours();
             if (hoursWorked > config.getMaxOvernightShiftHours()) {
                 log.warn("Unusually long shift detected for record {}: {} hours", record.getId(), hoursWorked);
             }
@@ -688,13 +694,13 @@ public class AttendanceRecordService {
     }
 
     private void closeOpenTimeEntry(UUID attendanceRecordId, LocalDateTime checkOutTime,
-                                    String source, String location, String ip) {
+                                    String source, String location, String ip, ZoneId zone) {
         // Close ALL open time entries (handles cases where multiple entries were
         // created)
         List<AttendanceTimeEntry> openEntries = timeEntryRepository
                 .findAllOpenEntriesByAttendanceRecordId(attendanceRecordId);
         for (AttendanceTimeEntry entry : openEntries) {
-            entry.checkOut(checkOutTime, source, location, ip);
+            entry.checkOut(checkOutTime, source, location, ip, zone);
         }
         if (!openEntries.isEmpty()) {
             log.debug("Closed {} open time entries for record {}", openEntries.size(), attendanceRecordId);

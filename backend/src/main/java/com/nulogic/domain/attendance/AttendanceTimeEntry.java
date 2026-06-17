@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 /**
@@ -69,16 +70,39 @@ public class AttendanceTimeEntry extends TenantAware {
     private Integer sequenceNumber = 1;
 
     public void checkOut(LocalDateTime time, String source, String location, String ip) {
+        checkOut(time, source, location, ip, null);
+    }
+
+    /**
+     * Zone-aware checkout. When {@code zone} is non-null the entry duration is measured between
+     * the physical instants of check-in/out (DST-correct); when null it falls back to the legacy
+     * wall-clock difference for backward compatibility.
+     *
+     * @param zone tenant {@link ZoneId}, or {@code null} for legacy wall-clock behavior
+     */
+    public void checkOut(LocalDateTime time, String source, String location, String ip, ZoneId zone) {
         this.checkOutTime = time;
         this.checkOutSource = source;
         this.checkOutLocation = location;
         this.checkOutIp = ip;
-        calculateDuration();
+        calculateDuration(zone);
     }
 
     public void calculateDuration() {
+        calculateDuration(null);
+    }
+
+    /**
+     * Compute entry duration in minutes. With a non-null tenant {@code zone} the elapsed time is
+     * measured between physical instants (correct across DST transitions); a null zone uses the
+     * legacy wall-clock difference.
+     */
+    public void calculateDuration(ZoneId zone) {
         if (checkInTime != null && checkOutTime != null) {
-            long minutes = java.time.Duration.between(checkInTime, checkOutTime).toMinutes();
+            long minutes = zone != null
+                    ? java.time.Duration.between(
+                            checkInTime.atZone(zone).toInstant(), checkOutTime.atZone(zone).toInstant()).toMinutes()
+                    : java.time.Duration.between(checkInTime, checkOutTime).toMinutes();
             this.durationMinutes = (int) minutes;
         }
     }

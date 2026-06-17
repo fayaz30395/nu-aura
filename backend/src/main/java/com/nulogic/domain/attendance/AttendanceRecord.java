@@ -8,6 +8,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @SQLRestriction("is_deleted = false")
@@ -138,19 +139,39 @@ public class AttendanceRecord extends TenantAware {
     }
 
     public void checkOut(LocalDateTime time, String source, String location, String ip) {
+        checkOut(time, source, location, ip, null);
+    }
+
+    /**
+     * Zone-aware checkout. When {@code zone} is non-null, work duration is computed from the
+     * physical instants of the tenant-local check-in/out times (DST-correct); when null it
+     * falls back to the legacy wall-clock difference for backward compatibility.
+     *
+     * @param zone the tenant's {@link ZoneId}, or {@code null} for legacy wall-clock behavior
+     */
+    public void checkOut(LocalDateTime time, String source, String location, String ip, ZoneId zone) {
         this.checkOutTime = time;
         this.checkOutSource = source;
         this.checkOutLocation = location;
         this.checkOutIp = ip;
-        calculateWorkDuration();
+        calculateWorkDuration(zone);
     }
 
     /**
-     * Calculate work duration using default thresholds (backward compatible).
+     * Calculate work duration using default thresholds (backward compatible, wall-clock).
      * Called from {@link #checkOut} for simple single check-in/check-out flows.
      */
     public void calculateWorkDuration() {
-        calculateWorkDuration(FULL_DAY_MINUTES, HALF_DAY_MINUTES, DEFAULT_OVERTIME_THRESHOLD_MINUTES);
+        calculateWorkDuration((ZoneId) null, FULL_DAY_MINUTES, HALF_DAY_MINUTES, DEFAULT_OVERTIME_THRESHOLD_MINUTES);
+    }
+
+    /**
+     * Calculate work duration using default thresholds, measuring elapsed time between the
+     * physical instants in the given tenant {@code zone} (DST-correct). Null zone falls back
+     * to wall-clock.
+     */
+    public void calculateWorkDuration(ZoneId zone) {
+        calculateWorkDuration(zone, FULL_DAY_MINUTES, HALF_DAY_MINUTES, DEFAULT_OVERTIME_THRESHOLD_MINUTES);
     }
 
     /**
@@ -161,8 +182,30 @@ public class AttendanceRecord extends TenantAware {
      * @param overtimeThresholdMinutes minutes after which overtime starts (default 540)
      */
     public void calculateWorkDuration(int fullDayMinutes, int halfDayMinutes, int overtimeThresholdMinutes) {
+        calculateWorkDuration(null, fullDayMinutes, halfDayMinutes, overtimeThresholdMinutes);
+    }
+
+    /**
+     * Calculate work duration and update status using tenant-specific thresholds.
+     *
+     * <p>When {@code zone} is non-null the elapsed time is measured between the physical
+     * instants of check-in/out (the stored {@link LocalDateTime}s interpreted in the tenant
+     * zone), which stays correct across DST spring-forward/fall-back transitions. When
+     * {@code zone} is null the legacy wall-clock {@code Duration.between(LocalDateTime,
+     * LocalDateTime)} is used (off by ±1h across a DST boundary) — retained for callers that
+     * have not yet been migrated.
+     *
+     * @param zone                     tenant {@link ZoneId}, or {@code null} for legacy wall-clock
+     * @param fullDayMinutes           minutes required for a full day (default 480)
+     * @param halfDayMinutes           minutes threshold for half day (default 240)
+     * @param overtimeThresholdMinutes minutes after which overtime starts (default 540)
+     */
+    public void calculateWorkDuration(ZoneId zone, int fullDayMinutes, int halfDayMinutes, int overtimeThresholdMinutes) {
         if (checkInTime != null && checkOutTime != null) {
-            long minutes = java.time.Duration.between(checkInTime, checkOutTime).toMinutes();
+            long minutes = zone != null
+                    ? java.time.Duration.between(
+                            checkInTime.atZone(zone).toInstant(), checkOutTime.atZone(zone).toInstant()).toMinutes()
+                    : java.time.Duration.between(checkInTime, checkOutTime).toMinutes();
             this.workDurationMinutes = (int) (minutes - (breakDurationMinutes != null ? breakDurationMinutes : 0));
 
             // Update status based on work duration (overtime is NOT set here;
