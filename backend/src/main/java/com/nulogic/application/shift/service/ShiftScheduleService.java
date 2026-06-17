@@ -132,8 +132,12 @@ public class ShiftScheduleService {
         List<ShiftAssignment> saved = shiftAssignmentRepository.saveAll(generatedAssignments);
         log.info("Generated {} shift assignments", saved.size());
 
+        // Batch-load employee names once instead of per-row findById in the mapper
+        Map<UUID, String> employeeNameCache = buildEmployeeNameCache(saved);
+        Map<UUID, String> employeeCodeCache = buildEmployeeCodeCache(saved);
+
         return saved.stream()
-                .map(a -> mapToScheduleEntry(a, shiftCache, employeeIds))
+                .map(a -> mapToScheduleEntry(a, shiftCache, employeeNameCache, employeeCodeCache))
                 .collect(Collectors.toList());
     }
 
@@ -146,9 +150,7 @@ public class ShiftScheduleService {
         List<ShiftAssignment> assignments = shiftAssignmentRepository
                 .findAssignmentsForEmployeeBetweenDates(tenantId, employeeId, startDate, endDate);
 
-        return assignments.stream()
-                .map(this::mapToScheduleEntryWithLookup)
-                .collect(Collectors.toList());
+        return mapAssignmentsWithBatchLookup(assignments);
     }
 
     /**
@@ -165,16 +167,14 @@ public class ShiftScheduleService {
         // Include the manager themselves
         teamIds.add(managerId);
 
-        List<ScheduleEntryResponse> result = new ArrayList<>();
+        // Gather every employee's assignments first, then map once with batched lookups
+        List<ShiftAssignment> allAssignments = new ArrayList<>();
         for (UUID empId : teamIds) {
-            List<ShiftAssignment> assignments = shiftAssignmentRepository
-                    .findAssignmentsForEmployeeBetweenDates(tenantId, empId, startDate, endDate);
-            assignments.stream()
-                    .map(this::mapToScheduleEntryWithLookup)
-                    .forEach(result::add);
+            allAssignments.addAll(shiftAssignmentRepository
+                    .findAssignmentsForEmployeeBetweenDates(tenantId, empId, startDate, endDate));
         }
 
-        return result;
+        return mapAssignmentsWithBatchLookup(allAssignments);
     }
 
     /**
@@ -265,40 +265,72 @@ public class ShiftScheduleService {
         }
     }
 
-    private ScheduleEntryResponse mapToScheduleEntryWithLookup(ShiftAssignment assignment) {
-        Employee employee = employeeRepository.findById(assignment.getEmployeeId()).orElse(null);
-        Shift shift = shiftRepository.findById(assignment.getShiftId()).orElse(null);
+    /**
+     * Maps a list of assignments to responses using batched lookups for employee and shift
+     * data, eliminating the per-row findById N+1 that the previous per-entry mapper incurred.
+     */
+    private List<ScheduleEntryResponse> mapAssignmentsWithBatchLookup(List<ShiftAssignment> assignments) {
+        Map<UUID, String> employeeNameCache = buildEmployeeNameCache(assignments);
+        Map<UUID, String> employeeCodeCache = buildEmployeeCodeCache(assignments);
+        Map<UUID, Shift> shiftCache = buildShiftCache(assignments);
 
-        return ScheduleEntryResponse.builder()
-                .assignmentId(assignment.getId())
-                .employeeId(assignment.getEmployeeId())
-                .employeeName(employee != null ? employee.getFullName() : null)
-                .employeeCode(employee != null ? employee.getEmployeeCode() : null)
-                .shiftId(assignment.getShiftId())
-                .shiftName(shift != null ? shift.getShiftName() : null)
-                .shiftCode(shift != null ? shift.getShiftCode() : null)
-                .colorCode(shift != null ? shift.getColorCode() : null)
-                .startTime(shift != null ? shift.getStartTime() : null)
-                .endTime(shift != null ? shift.getEndTime() : null)
-                .date(assignment.getAssignmentDate())
-                .isNightShift(shift != null ? shift.getIsNightShift() : false)
-                .isDayOff(false)
-                .assignmentType(assignment.getAssignmentType().name())
-                .status(assignment.getStatus().name())
-                .build();
+        return assignments.stream()
+                .map(a -> mapToScheduleEntry(a, shiftCache, employeeNameCache, employeeCodeCache))
+                .collect(Collectors.toList());
+    }
+
+    private Map<UUID, String> buildEmployeeNameCache(List<ShiftAssignment> assignments) {
+        Set<UUID> employeeIds = new HashSet<>();
+        for (ShiftAssignment a : assignments) {
+            if (a.getEmployeeId() != null) {
+                employeeIds.add(a.getEmployeeId());
+            }
+        }
+        Map<UUID, String> cache = new HashMap<>();
+        employeeRepository.findAllById(employeeIds)
+                .forEach(e -> cache.put(e.getId(), e.getFullName()));
+        return cache;
+    }
+
+    private Map<UUID, String> buildEmployeeCodeCache(List<ShiftAssignment> assignments) {
+        Set<UUID> employeeIds = new HashSet<>();
+        for (ShiftAssignment a : assignments) {
+            if (a.getEmployeeId() != null) {
+                employeeIds.add(a.getEmployeeId());
+            }
+        }
+        Map<UUID, String> cache = new HashMap<>();
+        employeeRepository.findAllById(employeeIds)
+                .forEach(e -> cache.put(e.getId(), e.getEmployeeCode()));
+        return cache;
+    }
+
+    private Map<UUID, Shift> buildShiftCache(List<ShiftAssignment> assignments) {
+        Set<UUID> shiftIds = new HashSet<>();
+        for (ShiftAssignment a : assignments) {
+            if (a.getShiftId() != null) {
+                shiftIds.add(a.getShiftId());
+            }
+        }
+        Map<UUID, Shift> cache = new HashMap<>();
+        shiftRepository.findAllById(shiftIds)
+                .forEach(s -> cache.put(s.getId(), s));
+        return cache;
     }
 
     private ScheduleEntryResponse mapToScheduleEntry(ShiftAssignment assignment,
                                                      Map<UUID, Shift> shiftCache,
-                                                     List<UUID> employeeIds) {
+                                                     Map<UUID, String> employeeNameCache,
+                                                     Map<UUID, String> employeeCodeCache) {
         Shift shift = shiftCache.get(assignment.getShiftId());
-        Employee employee = employeeRepository.findById(assignment.getEmployeeId()).orElse(null);
+        String employeeName = employeeNameCache.get(assignment.getEmployeeId());
+        String employeeCode = employeeCodeCache.get(assignment.getEmployeeId());
 
         return ScheduleEntryResponse.builder()
                 .assignmentId(assignment.getId())
                 .employeeId(assignment.getEmployeeId())
-                .employeeName(employee != null ? employee.getFullName() : null)
-                .employeeCode(employee != null ? employee.getEmployeeCode() : null)
+                .employeeName(employeeName)
+                .employeeCode(employeeCode)
                 .shiftId(assignment.getShiftId())
                 .shiftName(shift != null ? shift.getShiftName() : null)
                 .shiftCode(shift != null ? shift.getShiftCode() : null)

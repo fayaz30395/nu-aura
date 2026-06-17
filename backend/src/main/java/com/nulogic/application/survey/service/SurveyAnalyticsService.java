@@ -465,24 +465,29 @@ public class SurveyAnalyticsService {
         // Save all insights
         insightRepository.saveAll(insights);
 
+        Map<UUID, String> userNames = buildInsightUserNameMap(insights);
         return insights.stream()
-                .map(this::mapToInsightDto)
+                .map(insight -> mapToInsightDto(insight, userNames))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<SurveyInsightDto> getInsights(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return insightRepository.findBySurvey(tenantId, surveyId).stream()
-                .map(this::mapToInsightDto)
+        List<SurveyInsight> insights = insightRepository.findBySurvey(tenantId, surveyId);
+        Map<UUID, String> userNames = buildInsightUserNameMap(insights);
+        return insights.stream()
+                .map(insight -> mapToInsightDto(insight, userNames))
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<SurveyInsightDto> getHighPriorityInsights() {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return insightRepository.findHighPriorityUnacknowledged(tenantId).stream()
-                .map(this::mapToInsightDto)
+        List<SurveyInsight> insights = insightRepository.findHighPriorityUnacknowledged(tenantId);
+        Map<UUID, String> userNames = buildInsightUserNameMap(insights);
+        return insights.stream()
+                .map(insight -> mapToInsightDto(insight, userNames))
                 .collect(Collectors.toList());
     }
 
@@ -578,10 +583,11 @@ public class SurveyAnalyticsService {
         summary.setCategoryScores(categoryScores);
 
         // Top insights
-        List<SurveyInsight> topInsights = insightRepository.findBySurvey(tenantId, surveyId);
+        List<SurveyInsight> topInsights = insightRepository.findBySurvey(tenantId, surveyId)
+                .stream().limit(5).collect(Collectors.toList());
+        Map<UUID, String> insightUserNames = buildInsightUserNameMap(topInsights);
         summary.setTopInsights(topInsights.stream()
-                .limit(5)
-                .map(this::mapToInsightDto)
+                .map(insight -> mapToInsightDto(insight, insightUserNames))
                 .collect(Collectors.toList()));
 
         return summary;
@@ -882,17 +888,37 @@ public class SurveyAnalyticsService {
                 .build();
     }
 
+    /**
+     * Bulk-loads display names for every user referenced by a batch of insights
+     * (assignedTo + acknowledgedBy), eliminating the per-insight findById N+1.
+     * Builds a null-safe Map<UUID, String> via a single findAllById fetch.
+     */
+    private Map<UUID, String> buildInsightUserNameMap(List<SurveyInsight> insights) {
+        Set<UUID> userIds = new HashSet<>();
+        for (SurveyInsight insight : insights) {
+            if (insight.getAssignedTo() != null) userIds.add(insight.getAssignedTo());
+            if (insight.getAcknowledgedBy() != null) userIds.add(insight.getAcknowledgedBy());
+        }
+        if (userIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<UUID, String> names = new HashMap<>();
+        userRepository.findAllById(userIds)
+                .forEach(user -> names.put(user.getId(), user.getFullName()));
+        return names;
+    }
+
     private SurveyInsightDto mapToInsightDto(SurveyInsight insight) {
-        String assignedToName = null;
-        if (insight.getAssignedTo() != null) {
-            assignedToName = userRepository.findById(insight.getAssignedTo())
-                    .map(User::getFullName).orElse(null);
-        }
-        String acknowledgedByName = null;
-        if (insight.getAcknowledgedBy() != null) {
-            acknowledgedByName = userRepository.findById(insight.getAcknowledgedBy())
-                    .map(User::getFullName).orElse(null);
-        }
+        return mapToInsightDto(insight, buildInsightUserNameMap(List.of(insight)));
+    }
+
+    private SurveyInsightDto mapToInsightDto(SurveyInsight insight, Map<UUID, String> userNames) {
+        String assignedToName = insight.getAssignedTo() != null
+                ? userNames.getOrDefault(insight.getAssignedTo(), null)
+                : null;
+        String acknowledgedByName = insight.getAcknowledgedBy() != null
+                ? userNames.getOrDefault(insight.getAcknowledgedBy(), null)
+                : null;
 
         List<String> themes = null;
         if (insight.getKeyThemes() != null) {

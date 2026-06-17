@@ -29,8 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service("projectTimesheetService")
@@ -247,22 +249,27 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         if (!canViewAllTimesheets()) {
             UUID employeeId = requireCurrentEmployeeId();
-            return timeEntryRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
-                    .map(this::mapToTimeEntryResponse);
+            return mapTimeEntryPage(timeEntryRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable));
         }
-        return timeEntryRepository.findAll(
+        return mapTimeEntryPage(timeEntryRepository.findAll(
                 (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
                 pageable
-        ).map(this::mapToTimeEntryResponse);
+        ));
+    }
+
+    private Page<TimeEntryResponse> mapTimeEntryPage(Page<TimeEntry> page) {
+        Map<UUID, String> employeeNames = loadEmployeeNames(page.getContent().stream()
+                .flatMap(e -> Stream.of(e.getEmployeeId(), e.getApprovedBy()))
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet()));
+        return page.map(entry -> mapToTimeEntryResponse(entry, employeeNames));
     }
 
     @Transactional(readOnly = true)
     public List<TimeEntryResponse> getTimeEntriesByEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         assertCanAccessEmployee(employeeId);
-        return timeEntryRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
-                .map(this::mapToTimeEntryResponse)
-                .collect(Collectors.toList());
+        return mapToTimeEntryResponses(timeEntryRepository.findByTenantIdAndEmployeeId(tenantId, employeeId));
     }
 
     @Transactional(readOnly = true)
@@ -270,23 +277,18 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         if (!canViewAllTimesheets()) {
             UUID employeeId = requireCurrentEmployeeId();
-            return timeEntryRepository.findByTenantIdAndProjectIdAndEmployeeId(tenantId, projectId, employeeId).stream()
-                    .map(this::mapToTimeEntryResponse)
-                    .collect(Collectors.toList());
+            return mapToTimeEntryResponses(
+                    timeEntryRepository.findByTenantIdAndProjectIdAndEmployeeId(tenantId, projectId, employeeId));
         }
-        return timeEntryRepository.findByTenantIdAndProjectId(tenantId, projectId).stream()
-                .map(this::mapToTimeEntryResponse)
-                .collect(Collectors.toList());
+        return mapToTimeEntryResponses(timeEntryRepository.findByTenantIdAndProjectId(tenantId, projectId));
     }
 
     @Transactional(readOnly = true)
     public List<TimeEntryResponse> getTimeEntriesByDateRange(UUID employeeId, LocalDate startDate, LocalDate endDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
         assertCanAccessEmployee(employeeId);
-        return timeEntryRepository.findByTenantIdAndEmployeeIdAndWorkDateBetween(
-                        tenantId, employeeId, startDate, endDate).stream()
-                .map(this::mapToTimeEntryResponse)
-                .collect(Collectors.toList());
+        return mapToTimeEntryResponses(timeEntryRepository.findByTenantIdAndEmployeeIdAndWorkDateBetween(
+                tenantId, employeeId, startDate, endDate));
     }
 
     @Transactional(readOnly = true)
@@ -294,13 +296,10 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         if (!canViewAllTimesheets()) {
             UUID employeeId = requireCurrentEmployeeId();
-            return timeEntryRepository.findByTenantIdAndEmployeeIdAndStatus(tenantId, employeeId, status).stream()
-                    .map(this::mapToTimeEntryResponse)
-                    .collect(Collectors.toList());
+            return mapToTimeEntryResponses(
+                    timeEntryRepository.findByTenantIdAndEmployeeIdAndStatus(tenantId, employeeId, status));
         }
-        return timeEntryRepository.findByTenantIdAndStatus(tenantId, status).stream()
-                .map(this::mapToTimeEntryResponse)
-                .collect(Collectors.toList());
+        return mapToTimeEntryResponses(timeEntryRepository.findByTenantIdAndStatus(tenantId, status));
     }
 
     @Transactional
@@ -397,25 +396,20 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<ProjectMemberResponse> getProjectMembers(UUID projectId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return projectMemberRepository.findByTenantIdAndProjectId(tenantId, projectId).stream()
-                .map(this::mapToProjectMemberResponse)
-                .collect(Collectors.toList());
+        return mapToProjectMemberResponses(projectMemberRepository.findByTenantIdAndProjectId(tenantId, projectId));
     }
 
     @Transactional(readOnly = true)
     public List<ProjectMemberResponse> getEmployeeProjects(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return projectMemberRepository.findByTenantIdAndEmployeeId(tenantId, employeeId).stream()
-                .map(this::mapToProjectMemberResponse)
-                .collect(Collectors.toList());
+        return mapToProjectMemberResponses(projectMemberRepository.findByTenantIdAndEmployeeId(tenantId, employeeId));
     }
 
     @Transactional(readOnly = true)
     public List<ProjectMemberResponse> getActiveProjectMembers(UUID projectId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return projectMemberRepository.findByTenantIdAndProjectIdAndIsActive(tenantId, projectId, true).stream()
-                .map(this::mapToProjectMemberResponse)
-                .collect(Collectors.toList());
+        return mapToProjectMemberResponses(
+                projectMemberRepository.findByTenantIdAndProjectIdAndIsActive(tenantId, projectId, true));
     }
 
     @Transactional
@@ -504,19 +498,50 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
     // ==================== Helper Methods ====================
 
+    /**
+     * Bulk-loads employee full names for the given ids in a single query, returning a
+     * null-safe id-to-name map. Empty input short-circuits to an empty map.
+     */
+    private Map<UUID, String> loadEmployeeNames(java.util.Set<UUID> employeeIds) {
+        if (employeeIds.isEmpty()) {
+            return Map.of();
+        }
+        Map<UUID, String> names = new java.util.HashMap<>();
+        employeeRepository.findAllById(employeeIds).forEach(employee -> {
+            if (employee.getId() != null && employee.getFullName() != null) {
+                names.put(employee.getId(), employee.getFullName());
+            }
+        });
+        return names;
+    }
+
+    /**
+     * Batch-maps time entries to responses, bulk-loading all referenced employee
+     * names (entry employee + approver) in a single query to avoid per-row N+1 lookups.
+     */
+    private List<TimeEntryResponse> mapToTimeEntryResponses(List<TimeEntry> entries) {
+        Map<UUID, String> employeeNames = loadEmployeeNames(entries.stream()
+                .flatMap(e -> Stream.of(e.getEmployeeId(), e.getApprovedBy()))
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet()));
+        return entries.stream()
+                .map(entry -> mapToTimeEntryResponse(entry, employeeNames))
+                .collect(Collectors.toList());
+    }
+
     private TimeEntryResponse mapToTimeEntryResponse(TimeEntry entry) {
+        Map<UUID, String> employeeNames = loadEmployeeNames(Stream.of(entry.getEmployeeId(), entry.getApprovedBy())
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet()));
+        return mapToTimeEntryResponse(entry, employeeNames);
+    }
+
+    private TimeEntryResponse mapToTimeEntryResponse(TimeEntry entry, Map<UUID, String> employeeNames) {
         String projectName = null; // Would fetch from ProjectRepository
 
-        String employeeName = employeeRepository.findByIdAndTenantId(entry.getEmployeeId(), entry.getTenantId())
-                .map(Employee::getFullName)
-                .orElse(null);
+        String employeeName = entry.getEmployeeId() != null ? employeeNames.get(entry.getEmployeeId()) : null;
 
-        String approvedByName = null;
-        if (entry.getApprovedBy() != null) {
-            approvedByName = employeeRepository.findByIdAndTenantId(entry.getApprovedBy(), entry.getTenantId())
-                    .map(Employee::getFullName)
-                    .orElse(null);
-        }
+        String approvedByName = entry.getApprovedBy() != null ? employeeNames.get(entry.getApprovedBy()) : null;
 
         return TimeEntryResponse.builder()
                 .id(entry.getId())
@@ -583,12 +608,31 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         return canManageTimesheets();
     }
 
+    /**
+     * Batch-maps project members to responses, bulk-loading all referenced employee
+     * names in a single query to avoid per-row N+1 lookups.
+     */
+    private List<ProjectMemberResponse> mapToProjectMemberResponses(List<ProjectMember> members) {
+        Map<UUID, String> employeeNames = loadEmployeeNames(members.stream()
+                .map(ProjectMember::getEmployeeId)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toSet()));
+        return members.stream()
+                .map(member -> mapToProjectMemberResponse(member, employeeNames))
+                .collect(Collectors.toList());
+    }
+
     private ProjectMemberResponse mapToProjectMemberResponse(ProjectMember member) {
+        Map<UUID, String> employeeNames = member.getEmployeeId() != null
+                ? loadEmployeeNames(java.util.Set.of(member.getEmployeeId()))
+                : Map.of();
+        return mapToProjectMemberResponse(member, employeeNames);
+    }
+
+    private ProjectMemberResponse mapToProjectMemberResponse(ProjectMember member, Map<UUID, String> employeeNames) {
         String projectName = null; // Would fetch from ProjectRepository
 
-        String employeeName = employeeRepository.findByIdAndTenantId(member.getEmployeeId(), member.getTenantId())
-                .map(Employee::getFullName)
-                .orElse(null);
+        String employeeName = member.getEmployeeId() != null ? employeeNames.get(member.getEmployeeId()) : null;
 
         return ProjectMemberResponse.builder()
                 .id(member.getId())

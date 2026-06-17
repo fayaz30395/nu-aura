@@ -26,6 +26,16 @@ public interface ContractSignatureRepository extends JpaRepository<ContractSigna
     @Query("SELECT cs FROM ContractSignature cs WHERE cs.contractId = :contractId AND cs.status = 'PENDING'")
     List<ContractSignature> findPendingSignatures(@Param("contractId") UUID contractId);
 
+    /**
+     * Batch pending-signature counts for multiple contracts in one query,
+     * eliminating the per-contract findPendingSignatures N+1 in list/page mappers.
+     * Returns: [contractId, count].
+     */
+    @Query("SELECT cs.contractId, COUNT(cs) FROM ContractSignature cs " +
+            "WHERE cs.contractId IN :contractIds AND cs.status = 'PENDING' " +
+            "GROUP BY cs.contractId")
+    List<Object[]> countPendingByContractIds(@Param("contractIds") List<UUID> contractIds);
+
     @Query("SELECT COUNT(cs) FROM ContractSignature cs WHERE cs.contractId = :contractId AND cs.status = 'SIGNED'")
     int countSignedSignatures(@Param("contractId") UUID contractId);
 

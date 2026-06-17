@@ -12,6 +12,7 @@ import com.nulogic.infrastructure.contract.repository.ContractReminderRepository
 import com.nulogic.infrastructure.contract.repository.ContractRepository;
 import com.nulogic.infrastructure.contract.repository.ContractSignatureRepository;
 import com.nulogic.infrastructure.contract.repository.ContractVersionRepository;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,8 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -41,6 +45,7 @@ public class ContractService {
     private final ContractSignatureRepository signatureRepository;
     private final ContractReminderRepository reminderRepository;
     private final EmployeeService employeeService;
+    private final EmployeeRepository employeeRepository;
     private final MetricsService metricsService;
     private final TenantTimeService tenantTimeService;
 
@@ -182,14 +187,12 @@ public class ContractService {
         // If the caller is HR-level or above, return all contracts for the tenant.
         // Otherwise, scope to the current employee's own contracts only.
         if (SecurityContext.isHRManager()) {
-            return contractRepository.findByTenantId(tenantId, pageable)
-                    .map(this::toListDto);
+            return mapContractPage(contractRepository.findByTenantId(tenantId, pageable));
         }
 
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
         if (employeeId != null) {
-            return contractRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
-                    .map(this::toListDto);
+            return mapContractPage(contractRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable));
         }
 
         // Fallback: no employee ID on context — return empty page
@@ -202,8 +205,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> getContractsByStatus(ContractStatus status, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.findByTenantIdAndStatus(tenantId, status, pageable)
-                .map(this::toListDto);
+        return mapContractPage(contractRepository.findByTenantIdAndStatus(tenantId, status, pageable));
     }
 
     /**
@@ -212,8 +214,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> getContractsByType(ContractType type, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.findByTenantIdAndType(tenantId, type, pageable)
-                .map(this::toListDto);
+        return mapContractPage(contractRepository.findByTenantIdAndType(tenantId, type, pageable));
     }
 
     /**
@@ -222,8 +223,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> getEmployeeContracts(UUID employeeId, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable)
-                .map(this::toListDto);
+        return mapContractPage(contractRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable));
     }
 
     /**
@@ -232,8 +232,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> searchContracts(String search, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.searchContracts(tenantId, search, pageable)
-                .map(this::toListDto);
+        return mapContractPage(contractRepository.searchContracts(tenantId, search, pageable));
     }
 
     /**
@@ -348,10 +347,8 @@ public class ContractService {
         LocalDate today = tenantTimeService.today(tenantId);
         LocalDate expiryDate = today.plusDays(days);
 
-        return contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate)
-                .stream()
-                .map(this::toListDto)
-                .collect(Collectors.toList());
+        return mapContractList(
+                contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate));
     }
 
     /**
@@ -364,8 +361,8 @@ public class ContractService {
         LocalDate today = tenantTimeService.today(tenantId);
         LocalDate expiryDate = today.plusDays(days);
 
-        return contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate, pageable)
-                .map(this::toListDto);
+        return mapContractPage(
+                contractRepository.findExpiringContracts(tenantId, ContractStatus.ACTIVE, today, expiryDate, pageable));
     }
 
     /**
@@ -374,10 +371,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public List<ContractListDto> getExpiredContracts() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.findExpiredContracts(tenantId)
-                .stream()
-                .map(this::toListDto)
-                .collect(Collectors.toList());
+        return mapContractList(contractRepository.findExpiredContracts(tenantId));
     }
 
     /**
@@ -386,8 +380,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> getExpiredContracts(Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.findExpiredContracts(tenantId, pageable)
-                .map(this::toListDto);
+        return mapContractPage(contractRepository.findExpiredContracts(tenantId, pageable));
     }
 
     /**
@@ -396,10 +389,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public List<ContractListDto> getActiveContracts() {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.findActiveContracts(tenantId)
-                .stream()
-                .map(this::toListDto)
-                .collect(Collectors.toList());
+        return mapContractList(contractRepository.findActiveContracts(tenantId));
     }
 
     /**
@@ -408,8 +398,7 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> getActiveContracts(Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
-        return contractRepository.findActiveContracts(tenantId, pageable)
-                .map(this::toListDto);
+        return mapContractPage(contractRepository.findActiveContracts(tenantId, pageable));
     }
 
     // ===================== Version Management =====================
@@ -517,18 +506,68 @@ public class ContractService {
         return dto;
     }
 
-    private ContractListDto toListDto(Contract contract) {
-        String employeeName = null;
-        if (contract.getEmployeeId() != null) {
-            try {
-                Employee emp = employeeService.getByIdAndTenant(contract.getEmployeeId(), SecurityContext.getCurrentTenantId());
-                employeeName = emp.getFirstName() + " " + emp.getLastName();
-            } catch (ResourceNotFoundException e) {
-                log.debug("Could not load employee for contract: {}", contract.getEmployeeId());
+    /**
+     * P2: Batch-maps a page of contracts. Employee names and pending-signature
+     * counts are resolved once per page via a single findAllById and a single
+     * grouped countPendingByContractIds, replacing the two per-row lookups
+     * (employeeService.getByIdAndTenant + signatureRepository.findPendingSignatures)
+     * that toListDto fired for each contract.
+     */
+    private Page<ContractListDto> mapContractPage(Page<Contract> contracts) {
+        List<Contract> content = contracts.getContent();
+        Map<UUID, String> employeeNames = buildEmployeeNameCache(content);
+        Map<UUID, Integer> pendingCounts = buildPendingSignatureCache(content);
+        return contracts.map(c -> toListDto(c, employeeNames, pendingCounts));
+    }
+
+    private List<ContractListDto> mapContractList(List<Contract> contracts) {
+        Map<UUID, String> employeeNames = buildEmployeeNameCache(contracts);
+        Map<UUID, Integer> pendingCounts = buildPendingSignatureCache(contracts);
+        return contracts.stream()
+                .map(c -> toListDto(c, employeeNames, pendingCounts))
+                .collect(Collectors.toList());
+    }
+
+    private Map<UUID, String> buildEmployeeNameCache(List<Contract> contracts) {
+        Set<UUID> employeeIds = new HashSet<>();
+        for (Contract contract : contracts) {
+            if (contract.getEmployeeId() != null) {
+                employeeIds.add(contract.getEmployeeId());
             }
         }
+        Map<UUID, String> names = new HashMap<>();
+        if (!employeeIds.isEmpty()) {
+            employeeRepository.findAllById(employeeIds)
+                    .forEach(emp -> names.put(emp.getId(), emp.getFirstName() + " " + emp.getLastName()));
+        }
+        return names;
+    }
 
-        int pendingSignatures = signatureRepository.findPendingSignatures(contract.getId()).size();
+    private Map<UUID, Integer> buildPendingSignatureCache(List<Contract> contracts) {
+        List<UUID> contractIds = contracts.stream()
+                .map(Contract::getId)
+                .collect(Collectors.toList());
+        Map<UUID, Integer> counts = new HashMap<>();
+        if (!contractIds.isEmpty()) {
+            signatureRepository.countPendingByContractIds(contractIds)
+                    .forEach(row -> counts.put((UUID) row[0], ((Long) row[1]).intValue()));
+        }
+        return counts;
+    }
+
+    private ContractListDto toListDto(Contract contract) {
+        return toListDto(contract,
+                buildEmployeeNameCache(List.of(contract)),
+                buildPendingSignatureCache(List.of(contract)));
+    }
+
+    private ContractListDto toListDto(Contract contract,
+                                      Map<UUID, String> employeeNames,
+                                      Map<UUID, Integer> pendingCounts) {
+        String employeeName = contract.getEmployeeId() != null
+                ? employeeNames.get(contract.getEmployeeId()) : null;
+
+        int pendingSignatures = pendingCounts.getOrDefault(contract.getId(), 0);
 
         return ContractListDto.builder()
                 .id(contract.getId())
