@@ -9,21 +9,14 @@ spring:
     lazy-initialization: true
     # Exclude Redis and Elasticsearch auto-configuration on Render — reduces startup
     # time from 90+ seconds to under 30. Direct Redis bean usage is preserved.
+    # Exclude KafkaAutoConfiguration: Kafka is not provisioned on Railway; the
+    # transactional outbox pattern handles event dispatch instead. Excluding prevents
+    # KafkaListenerEndpointRegistry from trying to start consumers at ContextRefreshedEvent,
+    # which fails DNS resolution for kafka.railway.internal when the service is offline.
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
-
-  kafka:
-    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    admin:
-      # Do not fail-fast if Kafka is unavailable — allows app to start without Kafka
-      fail-fast: false
-    producer:
-      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    consumer:
-      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    listener:
-      auto-startup: false
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
 
   datasource:
     hikari:
@@ -173,10 +166,9 @@ app:
     poll-interval-ms: 5000
 
   kafka:
-    admin:
-      # Kafka is not provisioned for the Railway deployment. Keep producer/listener
-      # beans available but skip startup topic creation. Events go via outbox.
-      auto-create: false
+    # Kafka not provisioned on Railway — disable KafkaConfig and DeadLetterHandler beans.
+    # Consumer @Service beans still exist; OutboxEventProcessor calls process() directly.
+    enabled: false
 
   jwt:
     secret: ${JWT_SECRET}
