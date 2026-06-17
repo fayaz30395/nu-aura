@@ -7,12 +7,19 @@ spring:
 
   main:
     lazy-initialization: true
-    # Exclude Redis and Elasticsearch auto-configuration on Render — reduces startup
-    # time from 90+ seconds to under 30. Direct Redis bean usage is preserved.
-    # Exclude KafkaAutoConfiguration: Kafka is not provisioned on Railway; the
-    # transactional outbox pattern handles event dispatch instead. Excluding prevents
-    # KafkaListenerEndpointRegistry from trying to start consumers at ContextRefreshedEvent,
-    # which fails DNS resolution for kafka.railway.internal when the service is offline.
+
+  autoconfigure:
+    # Use spring.autoconfigure.exclude (not spring.main.exclude) — the canonical way
+    # to exclude autoconfiguration classes. spring.main.exclude is unreliable for
+    # autoconfiguration classes in profile-specific YAMLs.
+    #
+    # Redis + Elasticsearch: not provisioned on Railway; exclusion reduces startup
+    # time from 90+ seconds to under 30. Direct bean usage is preserved.
+    #
+    # Kafka: not provisioned on Railway; transactional outbox handles event dispatch.
+    # Excluding KafkaAutoConfiguration ensures KafkaListenerAnnotationBeanPostProcessor
+    # is never registered, so @KafkaListener annotations on consumer beans are ignored.
+    # KafkaConfig itself is also @ConditionalOnProperty(app.kafka.enabled=true) for safety.
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
       - org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration
