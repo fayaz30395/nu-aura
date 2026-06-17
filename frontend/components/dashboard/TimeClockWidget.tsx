@@ -71,7 +71,10 @@ export function TimeClockWidget({
       return;
     }
     const updateElapsed = () => {
-      const diff = Math.floor((Date.now() - checkInTime.getTime()) / 1000);
+      // Clamp to 0: the check-in timestamp may originate from the server (tenant-local,
+      // offset-less) while Date.now() is the client clock. Any skew must never render a
+      // negative "Working: -1h -1m" duration.
+      const diff = Math.max(0, Math.floor((Date.now() - checkInTime.getTime()) / 1000));
       const hours = Math.floor(diff / 3600);
       const minutes = Math.floor((diff % 3600) / 60);
       setElapsedTime(`${hours}h ${minutes}m`);

@@ -42,6 +42,8 @@ export const PUBLIC_ROUTES: string[] = [
   '/preboarding/portal/[token]',
   '/sign/[token]',
   '/exit-interview/[token]',
+  '/terms',
+  '/privacy',
   '/',
 ];
 

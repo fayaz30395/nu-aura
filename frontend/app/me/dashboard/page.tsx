@@ -93,16 +93,16 @@ export default function MyDashboardPage() {
     if (!user?.employeeId) return;
     try {
       setCheckingIn(true);
-      const response = await attendanceService.checkIn({
+      await attendanceService.checkIn({
         employeeId: user.employeeId,
         attendanceDate: format(new Date(), 'yyyy-MM-dd'),
       });
       setIsCheckedIn(true);
-      if (response.checkInTime) {
-        setCheckInTime(parseISO(response.checkInTime));
-      } else {
-        setCheckInTime(new Date());
-      }
+      // Anchor the live "Working:" timer to the client clock — the user just clicked
+      // Clock In *now*. The server echoes an offset-less tenant-local timestamp
+      // (LocalDateTime), so parsing it on a client in a different timezone would skew
+      // the elapsed counter. Client-now is the truthful start for the just-started timer.
+      setCheckInTime(new Date());
       refreshDashboard();
     } catch (error: unknown) {
       log.error('Check-in failed:', error);

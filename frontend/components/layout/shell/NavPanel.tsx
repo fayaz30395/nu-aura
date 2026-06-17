@@ -106,7 +106,11 @@ function NavRow({
     return (
       <Link
         href={href}
-        prefetch
+        // prefetch={false}: these are dynamic, auth-gated routes. Forcing full
+        // prefetch on every visible sidebar item fired a burst of concurrent RSC
+        // renders that Vercel shed as 503s. Light hover-prefetch is enough; full
+        // navigation already loads fast.
+        prefetch={false}
         onClick={() => onItemClick?.(item)}
         aria-current={active ? 'page' : undefined}
         className={rowClass}

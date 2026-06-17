@@ -26,12 +26,6 @@ interface LeaveBalanceWidgetProps {
   isLoading?: boolean;
 }
 
-const DEMO_BALANCES: LeaveBalance[] = [
-  {leaveTypeId: '1', leaveName: 'ANNUAL LEAVE', available: 24, total: 30, used: 6},
-  {leaveTypeId: '2', leaveName: 'CASUAL LEAVE', available: 8, total: 12, used: 4},
-  {leaveTypeId: '3', leaveName: 'SICK LEAVE', available: 10, total: 10, used: 0},
-];
-
 function CircularProgress({used, total}: { used: number; total: number }) {
   const percentage = total > 0 ? (used / total) * 100 : 0;
   const radius = 54;
@@ -92,8 +86,11 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
     ? '0 2px 8px rgba(37, 99, 235, 0.22)' // fallback for Safari <=16.1
     : '0 2px 8px color-mix(in srgb, var(--accent-primary) 22%, transparent)';
 
-  const balances = leaveBalances && leaveBalances.length > 0 ? leaveBalances : DEMO_BALANCES;
-  const current = balances[selectedIndex];
+  // Never fabricate balances: if the API returns none, show a truthful empty state
+  // (matches the /leave page) instead of placeholder numbers.
+  const balances = leaveBalances ?? [];
+  const hasBalances = balances.length > 0;
+  const current = hasBalances ? balances[Math.min(selectedIndex, balances.length - 1)] : null;
 
   return (
     <Reveal>
@@ -112,20 +109,33 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
           </Link>
         </div>
 
-        {/* Circular Progress */}
-        <div className="flex justify-center mb-4">
-          <CircularProgress used={current.used} total={current.total}/>
-        </div>
+        {!hasBalances || !current ? (
+          /* Empty state — no fabricated numbers */
+          <div className="flex flex-col items-center justify-center py-8 mb-4 text-center">
+            <Calendar className="h-8 w-8 text-[var(--text-3)] opacity-50 mb-3"/>
+            <p className="text-sm text-[var(--text-2)]">No balances for this year yet.</p>
+            <p className="mt-1 text-caption text-[var(--text-3)]">
+              Leave balances appear once allocated.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Circular Progress */}
+            <div className="flex justify-center mb-4">
+              <CircularProgress used={current.used} total={current.total}/>
+            </div>
 
-        {/* Leave Type Label */}
-        <div className="text-center mb-4">
-          <p className="text-aura-micro text-[var(--text-3)]">
-            {current.leaveName}
-          </p>
-          <p className="mt-0.5 text-caption text-[var(--text-2)]">
-            <span className="num">{current.used}</span> used · <span className="num">{current.total}</span> total
-          </p>
-        </div>
+            {/* Leave Type Label */}
+            <div className="text-center mb-4">
+              <p className="text-aura-micro text-[var(--text-3)]">
+                {current.leaveName}
+              </p>
+              <p className="mt-0.5 text-caption text-[var(--text-2)]">
+                <span className="num">{current.used}</span> used · <span className="num">{current.total}</span> total
+              </p>
+            </div>
+          </>
+        )}
 
         {/* Dots navigation */}
         {balances.length > 1 && (
