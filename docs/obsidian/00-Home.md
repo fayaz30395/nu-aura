@@ -84,9 +84,11 @@ Every note in the vault, grouped by numbered section.
 ### 09 — Testing
 - [[QA-Strategy]] · [[Test-Coverage]]
 - [[Test-Catalog]] — **suite enumeration**: 308 backend (74 integration) + 90 Vitest + 117 Playwright; how to run; coverage posture
+- [[Readiness-Session-2026-06-18]] — production-readiness verdict (NO-GO 58/100), all fixes (attendance tz, a11y gate, mass-assignment), `d29ec59a` security audit, and the demo-creds go-live BLOCKER + manual remediation
 
 ### 10 — Runbooks
 - [[Production-Support]] · [[Incident-Response]]
+- [[Ruflo-Autopilot-Hazard]] — runbook for the runaway autopilot that commits to `main` and respawns; detection, root cause, and how to stop it
 
 ### 11 — Decisions (ADRs)
 - [[ADR-001]] · [[ADR-002]] · [[ADR-003]] · [[ADR-004]] · [[ADR-005]]
