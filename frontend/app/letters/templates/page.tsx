@@ -809,36 +809,40 @@ export default function LetterTemplatesPage() {
                   <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
+                      id="includeCompanyLogo"
                       {...form.register('includeCompanyLogo')}
                       className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
                     />
-                    <label className="text-sm text-[var(--text-primary)]">Include Company Logo</label>
+                    <label htmlFor="includeCompanyLogo" className="text-sm text-[var(--text-primary)]">Include Company Logo</label>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="signatoryName" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Signatory Name
                     </label>
                     <input
+                      id="signatoryName"
                       {...form.register('signatoryName')}
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., Rajesh Kumar"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="signatoryDesignation" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Signatory Designation
                     </label>
                     <input
+                      id="signatoryDesignation"
                       {...form.register('signatoryDesignation')}
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., Head of HR"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="signatureTitle" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Signature Title
                     </label>
                     <input
+                      id="signatureTitle"
                       {...form.register('signatureTitle')}
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 text-sm"
                       placeholder="e.g., For and on behalf of"
@@ -847,10 +851,11 @@ export default function LetterTemplatesPage() {
                   <div className="flex items-center gap-4">
                     <input
                       type="checkbox"
+                      id="requiresApproval"
                       {...form.register('requiresApproval')}
                       className="h-4 w-4 rounded border-surface-300 text-accent-600 focus:ring-accent-500"
                     />
-                    <label className="text-sm text-[var(--text-primary)]">Requires Approval Before Issuing</label>
+                    <label htmlFor="requiresApproval" className="text-sm text-[var(--text-primary)]">Requires Approval Before Issuing</label>
                   </div>
                 </div>
               </div>
@@ -863,10 +868,11 @@ export default function LetterTemplatesPage() {
                 </summary>
                 <div className="px-4 pb-4 space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="headerHtml" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Header HTML
                     </label>
                     <textarea
+                      id="headerHtml"
                       {...form.register('headerHtml')}
                       rows={3}
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -874,10 +880,11 @@ export default function LetterTemplatesPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="footerHtml" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Footer HTML
                     </label>
                     <textarea
+                      id="footerHtml"
                       {...form.register('footerHtml')}
                       rows={3}
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -885,10 +892,11 @@ export default function LetterTemplatesPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="cssStyles" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Custom CSS Styles
                     </label>
                     <textarea
+                      id="cssStyles"
                       {...form.register('cssStyles')}
                       rows={3}
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"

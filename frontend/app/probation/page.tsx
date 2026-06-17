@@ -599,10 +599,11 @@ export default function ProbationPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Evaluation Type */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="probation-evaluation-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Evaluation Type *
                       </label>
                       <select
+                        id="probation-evaluation-type"
                         aria-label="Evaluation type"
                         {...register('evaluationType')}
                         className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -622,10 +623,11 @@ export default function ProbationPage() {
 
                     {/* Recommendation */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="probation-recommendation" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Recommendation *
                       </label>
                       <select
+                        id="probation-recommendation"
                         aria-label="Recommendation"
                         {...register('recommendation')}
                         className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -683,10 +685,11 @@ export default function ProbationPage() {
                   {/* Text Fields */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="probation-strengths" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Strengths
                       </label>
                       <textarea
+                        id="probation-strengths"
                         {...register('strengths')}
                         rows={3}
                         className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
@@ -694,10 +697,11 @@ export default function ProbationPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="probation-areas-for-improvement" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         Areas for Improvement
                       </label>
                       <textarea
+                        id="probation-areas-for-improvement"
                         {...register('areasForImprovement')}
                         rows={3}
                         className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"
@@ -707,10 +711,11 @@ export default function ProbationPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="probation-manager-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Manager Comments
                     </label>
                     <textarea
+                      id="probation-manager-comments"
                       {...register('managerComments')}
                       rows={3}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"

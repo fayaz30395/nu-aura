@@ -447,10 +447,11 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* Device Name */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="device-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Device Name *
             </label>
             <input
+              id="device-name"
               {...register('deviceName')}
               className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
               placeholder="e.g., Main Entrance Scanner"
@@ -462,10 +463,11 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
 
           {/* Device Type */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="device-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Device Type *
             </label>
             <select
+              id="device-type"
               aria-label="Device type"
               {...register('deviceType')}
               className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -483,10 +485,11 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
 
           {/* Serial Number */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="device-serial-number" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Serial Number *
             </label>
             <input
+              id="device-serial-number"
               {...register('serialNumber')}
               className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
               placeholder="e.g., ZK-2024-001"
@@ -499,20 +502,22 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
           {/* Two Column: Manufacturer + Model */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="device-manufacturer" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Manufacturer
               </label>
               <input
+                id="device-manufacturer"
                 {...register('manufacturer')}
                 className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="e.g., ZKTeco"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="device-model" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Model
               </label>
               <input
+                id="device-model"
                 {...register('model')}
                 className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="e.g., SpeedFace V5L"
@@ -523,20 +528,22 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
           {/* Two Column: IP Address + Location */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="device-ip-address" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 IP Address
               </label>
               <input
+                id="device-ip-address"
                 {...register('ipAddress')}
                 className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="e.g., 192.168.1.100"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+              <label htmlFor="device-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                 Location
               </label>
               <input
+                id="device-location"
                 {...register('locationName')}
                 className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                 placeholder="e.g., Building A, Floor 1"
@@ -546,10 +553,11 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="device-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Notes
             </label>
             <textarea
+              id="device-notes"
               {...register('notes')}
               rows={2}
               className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -969,10 +977,11 @@ function GenerateApiKeyModal({
       <ModalBody>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="apikey-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Key Name *
             </label>
             <input
+              id="apikey-name"
               {...register('keyName')}
               className="w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
               placeholder="e.g., Main Entrance Device Key"

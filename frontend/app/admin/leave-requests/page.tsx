@@ -275,10 +275,11 @@ export default function AdminLeaveRequestsPage() {
               Are you sure you want to approve this leave request for {selectedRequest.totalDays} days?
             </p>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="approval-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Comments
               </label>
               <textarea
+                id="approval-comments"
                 value={approvalComments}
                 onChange={(e) => setApprovalComments(e.target.value)}
                 rows={3}
@@ -319,10 +320,11 @@ export default function AdminLeaveRequestsPage() {
               Please provide a reason for rejecting this leave request.
             </p>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="rejection-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Rejection Reason <span aria-hidden="true" className="text-danger-500">*</span>
               </label>
               <textarea
+                id="rejection-reason"
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}

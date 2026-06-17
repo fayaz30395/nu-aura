@@ -759,6 +759,7 @@ export default function KekaImportPage() {
                   className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
+                    aria-label="Skip Invalid Rows"
                     checked={skipInvalidRows}
                     onChange={(e) => setSkipInvalidRows(e.target.checked)}
                     className="w-4 h-4"
@@ -777,6 +778,7 @@ export default function KekaImportPage() {
                   className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
+                    aria-label="Update Existing Employees"
                     checked={updateExistingEmployees}
                     onChange={(e) => setUpdateExistingEmployees(e.target.checked)}
                     className="w-4 h-4"
@@ -795,6 +797,7 @@ export default function KekaImportPage() {
                   className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
+                    aria-label="Send Welcome Emails"
                     checked={sendWelcomeEmail}
                     onChange={(e) => setSendWelcomeEmail(e.target.checked)}
                     className="w-4 h-4"
@@ -813,6 +816,7 @@ export default function KekaImportPage() {
                   className="flex items-center p-4 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer">
                   <input
                     type="checkbox"
+                    aria-label="Auto-approve Employees"
                     checked={autoApproveEmployees}
                     onChange={(e) => setAutoApproveEmployees(e.target.checked)}
                     className="w-4 h-4"

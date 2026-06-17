@@ -881,8 +881,9 @@ export default function ApplicantPipelinePage() {
                 <div
                   className="card-aura flex flex-wrap items-end gap-4 p-4 animate-in fade-in slide-in-from-top-1">
                   <div className="min-w-[160px]">
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Source</label>
+                    <label htmlFor="pipeline-source-filter" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Source</label>
                     <select
+                      id="pipeline-source-filter"
                       aria-label="Filter by source"
                       value={sourceFilter}
                       onChange={e => setSourceFilter(e.target.value as ApplicationSource | '')}
@@ -896,8 +897,10 @@ export default function ApplicantPipelinePage() {
                   </div>
 
                   <div className="min-w-[140px]">
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Min. Rating</label>
+                    <span id="pipeline-min-rating-label" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Min. Rating</span>
                     <div
+                      role="group"
+                      aria-labelledby="pipeline-min-rating-label"
                       className="flex items-center gap-2 px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-input)]">
                       <StarRating value={minRating} onChange={v => setMinRating(v === minRating ? 0 : v)} size={15}/>
                       {minRating > 0 && (
@@ -1130,10 +1133,11 @@ export default function ApplicantPipelinePage() {
               />
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                <label htmlFor="applicant-job-opening" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                   Job Opening *
                 </label>
                 <Select
+                  id="applicant-job-opening"
                   value={newApplicant.jobOpeningId}
                   onChange={e => setNewApplicant(prev => ({...prev, jobOpeningId: e.target.value}))}
                 >
@@ -1147,10 +1151,11 @@ export default function ApplicantPipelinePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                <label htmlFor="applicant-source" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                   Source
                 </label>
                 <Select
+                  id="applicant-source"
                   value={newApplicant.source}
                   onChange={e => setNewApplicant(prev => ({...prev, source: e.target.value as ApplicationSource}))}
                 >
@@ -1175,10 +1180,11 @@ export default function ApplicantPipelinePage() {
               />
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                <label htmlFor="applicant-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                   Notes
                 </label>
                 <Textarea
+                  id="applicant-notes"
                   placeholder="Optional notes about this applicant..."
                   value={newApplicant.notes ?? ''}
                   onChange={e => setNewApplicant(prev => ({...prev, notes: e.target.value}))}

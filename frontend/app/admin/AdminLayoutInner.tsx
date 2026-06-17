@@ -223,10 +223,17 @@ export default function AdminLayoutInner({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [isSuperAdmin]);
 
-  const filterSidebarItems = (items: SidebarItem[]): SidebarItem[] => {
+  // Filter the sidebar by the current user's permissions. All reactive inputs
+  // are referentially stable: `sidebarItems` and `isSuperAdmin` are memoized,
+  // and `hasPermission` is a `useCallback` keyed on the permission set in
+  // usePermissions — so its identity changes exactly when permissions change.
+  // That lets exhaustive-deps stay satisfied without the prior
+  // `JSON.stringify(permissions)` dep hack (which serialized the whole permission
+  // array on every render just to diff it).
+  const filteredSidebarItems = useMemo(() => {
     if (!isReady) {
       // During hydration, show the raw menu to avoid flicker
-      return items;
+      return sidebarItems;
     }
 
     const filterItem = (item: SidebarItem): SidebarItem | null => {
@@ -254,16 +261,10 @@ export default function AdminLayoutInner({
       return item;
     };
 
-    return items
+    return sidebarItems
       .map((item) => filterItem(item))
       .filter((item): item is SidebarItem => item !== null);
-  };
-
-  const filteredSidebarItems = useMemo(
-    () => filterSidebarItems(sidebarItems),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(permissions), JSON.stringify(roles), isReady, sidebarItems]
-  );
+  }, [sidebarItems, isReady, isSuperAdmin, hasPermission]);
 
   // Get active item ID from current pathname
   const getActiveId = () => {

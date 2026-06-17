@@ -279,9 +279,9 @@ export default function ScheduledReportsPage() {
         <div
           className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-4 mb-6">
           <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-[var(--text-secondary)]">
+            <span className="text-sm font-medium text-[var(--text-secondary)]">
               Status:
-            </label>
+            </span>
             <div className="flex gap-2">
               {(['ALL', 'ACTIVE', 'INACTIVE'] as const).map((status) => (
                 <button
@@ -445,10 +445,11 @@ export default function ScheduledReportsPage() {
                   <div className="space-y-4">
                     {/* Schedule Name */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="schedule-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Schedule Name *
                       </label>
                       <input
+                        id="schedule-name"
                         type="text"
                         placeholder="e.g., Weekly Attendance Report"
                         {...register('scheduleName')}
@@ -460,10 +461,11 @@ export default function ScheduledReportsPage() {
 
                     {/* Report Type */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="schedule-report-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Report Type *
                       </label>
                       <select
+                        id="schedule-report-type"
                         aria-label="Report Type"
                         {...register('reportType')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
@@ -478,10 +480,11 @@ export default function ScheduledReportsPage() {
                     {/* Frequency */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="schedule-frequency" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Frequency *
                         </label>
                         <select
+                          id="schedule-frequency"
                           aria-label="Frequency"
                           {...register('frequency')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
@@ -496,10 +499,11 @@ export default function ScheduledReportsPage() {
                       {/* Day Selection based on frequency */}
                       {frequency === 'WEEKLY' && (
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="schedule-day-of-week" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Day of Week *
                           </label>
                           <select
+                            id="schedule-day-of-week"
                             aria-label="Day of Week"
                             {...register('dayOfWeek', {valueAsNumber: true})}
                             className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
@@ -515,10 +519,11 @@ export default function ScheduledReportsPage() {
 
                       {frequency === 'MONTHLY' && (
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="schedule-day-of-month" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Day of Month *
                           </label>
                           <select
+                            id="schedule-day-of-month"
                             aria-label="Day of Month"
                             {...register('dayOfMonth', {valueAsNumber: true})}
                             className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
@@ -536,10 +541,11 @@ export default function ScheduledReportsPage() {
                     {/* Time */}
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="schedule-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Time *
                         </label>
                         <input
+                          id="schedule-time"
                           type="time"
                           {...register('timeOfDay')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
@@ -549,10 +555,11 @@ export default function ScheduledReportsPage() {
 
                       {/* Export Format */}
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="schedule-export-format" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Export Format *
                         </label>
                         <select
+                          id="schedule-export-format"
                           aria-label="Export Format"
                           {...register('exportFormat')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
@@ -568,10 +575,11 @@ export default function ScheduledReportsPage() {
 
                     {/* Department Filter (optional) */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="schedule-department" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Filter by Department (optional)
                       </label>
                       <select
+                        id="schedule-department"
                         aria-label="Filter by Department (optional)"
                         {...register('departmentId')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"
@@ -585,14 +593,15 @@ export default function ScheduledReportsPage() {
 
                     {/* Recipients */}
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Recipients *
-                      </label>
+                      </span>
                       <div className="space-y-2">
                         {recipientFields.map((field, index) => (
                           <div key={field.id} className="flex gap-2">
                             <input
                               type="email"
+                              aria-label={`Recipient email ${index + 1}`}
                               placeholder="email@example.com"
                               {...register(`recipients.${index}.email`)}
                               className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 bg-[var(--bg-input)]"

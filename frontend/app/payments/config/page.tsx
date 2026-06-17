@@ -290,10 +290,11 @@ export default function PaymentConfigPage() {
 
             {/* Credentials */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="payment-credentials-json" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Credentials (JSON)
               </label>
               <textarea
+                id="payment-credentials-json"
                 {...register('credentialsJson')}
                 rows={6}
                 className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] font-mono text-sm"
@@ -309,10 +310,11 @@ export default function PaymentConfigPage() {
 
             {/* Webhook Secret */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="payment-webhook-secret" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Webhook Secret
               </label>
               <input
+                id="payment-webhook-secret"
                 type="password"
                 {...register('webhookSecret')}
                 className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"
@@ -325,10 +327,11 @@ export default function PaymentConfigPage() {
 
             {/* Webhook URL */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="payment-webhook-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Webhook URL
               </label>
               <input
+                id="payment-webhook-url"
                 type="url"
                 {...register('webhookUrl')}
                 className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)]"

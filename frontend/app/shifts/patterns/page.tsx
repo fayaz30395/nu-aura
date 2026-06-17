@@ -308,10 +308,11 @@ export default function ShiftPatternsPage() {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <ModalBody className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      <label htmlFor="pattern-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                         Pattern Name *
                       </label>
                       <input
+                        id="pattern-name"
                         {...form.register('name')}
                         className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                         placeholder="e.g., 4-on-2-off Rotation"
@@ -319,10 +320,11 @@ export default function ShiftPatternsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      <label htmlFor="pattern-description" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                         Description
                       </label>
                       <textarea
+                        id="pattern-description"
                         {...form.register('description')}
                         rows={2}
                         className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
@@ -331,10 +333,11 @@ export default function ShiftPatternsPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label htmlFor="pattern-rotation-type" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Rotation Type
                         </label>
                         <select
+                          id="pattern-rotation-type"
                           aria-label="Rotation Type"
                           {...form.register('rotationType')}
                           className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
@@ -347,10 +350,11 @@ export default function ShiftPatternsPage() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label htmlFor="pattern-cycle-days" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Cycle Days
                         </label>
                         <input
+                          id="pattern-cycle-days"
                           type="number"
                           {...form.register('cycleDays', {
                             onChange: (e) => handleCycleDaysChange(parseInt(e.target.value, 10) || 1),
@@ -364,9 +368,9 @@ export default function ShiftPatternsPage() {
 
                     {/* Pattern Builder */}
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
+                      <span className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-2">
                         Pattern Cycle (assign a shift to each day)
-                      </label>
+                      </span>
                       <div className="grid grid-cols-7 gap-2">
                         {patternSlots.map((slot, idx) => (
                           <div key={idx} className="space-y-1">

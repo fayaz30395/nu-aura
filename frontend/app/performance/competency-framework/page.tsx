@@ -294,10 +294,11 @@ function AddCompetencyModal({
 
           {/* Competency Name */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="competency-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Competency Name <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <Input
+              id="competency-name"
               {...register('competencyName')}
               type="text"
               aria-required="true"
@@ -310,10 +311,11 @@ function AddCompetencyModal({
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="competency-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Category <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <select
+              id="competency-category"
               aria-label="Category"
               {...register('category')}
               aria-required="true"
@@ -332,10 +334,11 @@ function AddCompetencyModal({
 
           {/* Rating */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="competency-rating" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Rating (1–5) <span aria-hidden="true" className="text-danger-500">*</span>
             </label>
             <Input
+              id="competency-rating"
               {...register('rating')}
               type="number"
               min={1}
@@ -350,10 +353,11 @@ function AddCompetencyModal({
 
           {/* Comments */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="competency-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Comments (Optional)
             </label>
             <textarea
+              id="competency-comments"
               {...register('comments')}
               rows={3}
               placeholder="Add observations or development notes…"
@@ -486,13 +490,14 @@ export default function CompetencyFrameworkPage() {
             <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-6">
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="review-cycle-select" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Review Cycle
                   </label>
                   {cyclesQuery.isLoading ? (
                     <div className="h-10 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                   ) : (
                     <select
+                      id="review-cycle-select"
                       aria-label="Cycle"
                       value={selectedCycleId}
                       onChange={(e) => setSelectedCycleId(e.target.value)}
@@ -510,10 +515,11 @@ export default function CompetencyFrameworkPage() {
 
                 {selectedCycleId && (
                   <div className="flex-1">
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="competency-search-employee" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Search Employee
                     </label>
                     <Input
+                      id="competency-search-employee"
                       type="text"
                       placeholder="Filter by name or department..."
                       value={searchQuery}

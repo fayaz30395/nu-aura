@@ -367,7 +367,7 @@ export default function CalibrationPage() {
             <div className="card-aura p-4">
               <div className="flex flex-col md:flex-row md:items-center gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="calibration-cycle" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Review Cycle
                   </label>
                   {cyclesLoading ? (
@@ -375,6 +375,7 @@ export default function CalibrationPage() {
                       className="h-10 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                   ) : (
                     <select
+                      id="calibration-cycle"
                       aria-label="Cycle"
                       value={selectedCycleId}
                       onChange={e => setSelectedCycleId(e.target.value)}

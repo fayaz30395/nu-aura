@@ -261,13 +261,14 @@ export default function TeamDirectoryPage() {
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="col-span-1 md:col-span-1">
-            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-2">
+            <label htmlFor="department-filter" className="block text-xs font-semibold text-[var(--text-secondary)] mb-2">
               Department
             </label>
             {departmentsLoading ? (
               <Skeleton className="h-10 rounded-lg"/>
             ) : (
               <select
+                id="department-filter"
                 aria-label="Filter by department"
                 value={selectedDepartment}
                 onChange={(e) => {

@@ -552,10 +552,11 @@ export default function ApprovalInboxPage() {
             <strong className="text-[var(--text-1)]">{selectedItem?.requesterName ?? 'Unknown'}</strong>?
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-[var(--text-2)]">
+            <label htmlFor="approve-comment" className="block text-sm font-medium text-[var(--text-2)]">
               Comment (optional)
             </label>
             <textarea
+              id="approve-comment"
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Add an optional comment…"
@@ -599,10 +600,11 @@ export default function ApprovalInboxPage() {
             <strong className="text-[var(--text-1)]">{selectedItem?.requesterName ?? 'Unknown'}</strong>.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-[var(--text-2)]">
+            <label htmlFor="reject-reason" className="block text-sm font-medium text-[var(--text-2)]">
               Reason <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
             </label>
             <textarea
+              id="reject-reason"
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain why this request is being declined…"
@@ -648,10 +650,11 @@ export default function ApprovalInboxPage() {
             corrections. The requester will be able to revise and resubmit.
           </p>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-[var(--text-2)]">
+            <label htmlFor="return-reason" className="block text-sm font-medium text-[var(--text-2)]">
               Reason <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
             </label>
             <textarea
+              id="return-reason"
               value={comments}
               onChange={(e) => setComments(e.target.value)}
               placeholder="Explain what needs to be corrected…"
@@ -722,10 +725,11 @@ export default function ApprovalInboxPage() {
 
             {/* Start date */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-[var(--text-2)]">
+              <label htmlFor="delegation-start-date" className="mb-1 block text-sm font-medium text-[var(--text-2)]">
                 Start date <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
               </label>
               <input
+                id="delegation-start-date"
                 type="date"
                 {...delegationForm.register('startDate')}
                 aria-required="true"
@@ -740,10 +744,11 @@ export default function ApprovalInboxPage() {
 
             {/* End date */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-[var(--text-2)]">
+              <label htmlFor="delegation-end-date" className="mb-1 block text-sm font-medium text-[var(--text-2)]">
                 End date <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
               </label>
               <input
+                id="delegation-end-date"
                 type="date"
                 {...delegationForm.register('endDate')}
                 aria-required="true"
@@ -758,10 +763,11 @@ export default function ApprovalInboxPage() {
 
             {/* Reason */}
             <div>
-              <label className="mb-1 block text-sm font-medium text-[var(--text-2)]">
+              <label htmlFor="delegation-reason" className="mb-1 block text-sm font-medium text-[var(--text-2)]">
                 Reason (optional)
               </label>
               <textarea
+                id="delegation-reason"
                 {...delegationForm.register('reason')}
                 placeholder="Explain why you're delegating approvals…"
                 className="w-full resize-none rounded-[var(--r-control)] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm text-[var(--text-1)] shadow-[var(--inset-input)] outline-none focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]"

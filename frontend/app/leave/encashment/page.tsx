@@ -114,10 +114,10 @@ export default function LeaveEncashmentPage() {
           ) : (
             <form onSubmit={handleSubmit((data) => encashMutation.mutate(data))} className="skeuo-card p-6 space-y-6">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="encash-leave-balance" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Leave Balance
                 </label>
-                <Select {...register('leaveBalanceId')}>
+                <Select id="encash-leave-balance" {...register('leaveBalanceId')}>
                   <option value="">Select leave type</option>
                   {balances
                     .filter((b) => b.available > 0)
@@ -133,10 +133,11 @@ export default function LeaveEncashmentPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="encash-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Days to Encash
                 </label>
                 <Input
+                  id="encash-days"
                   type="number"
                   step="0.5"
                   min="0.5"

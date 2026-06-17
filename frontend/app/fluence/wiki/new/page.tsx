@@ -297,9 +297,9 @@ export default function CreateWikiPage() {
             <div className="flex-1 space-y-6">
               {/* Title preview */}
               <div>
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
+                <span className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
                   Page Title
-                </label>
+                </span>
                 <p className="text-sm text-[var(--text-primary)] font-medium">
                   {title || <span className="text-[var(--text-muted)] italic">Untitled</span>}
                 </p>
@@ -307,7 +307,7 @@ export default function CreateWikiPage() {
 
               {/* Space */}
               <div>
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
+                <label htmlFor="wiki-space" className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
                   Space
                 </label>
                 <Controller
@@ -316,6 +316,7 @@ export default function CreateWikiPage() {
                   render={({field}) => (
                     <Select
                       {...field}
+                      id="wiki-space"
                       placeholder="Select a space"
                       disabled={spacesLoading || isSubmitting}
                       error={errors.spaceId?.message}
@@ -330,9 +331,9 @@ export default function CreateWikiPage() {
 
               {/* Visibility — visual radio cards */}
               <div>
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
+                <span className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
                   Visibility
-                </label>
+                </span>
                 <Controller
                   control={control}
                   name="visibility"
@@ -395,10 +396,11 @@ export default function CreateWikiPage() {
 
               {/* Parent page */}
               <div>
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
+                <label htmlFor="wiki-parent-page" className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
                   Parent Page (Optional)
                 </label>
                 <input
+                  id="wiki-parent-page"
                   {...register('parentId')}
                   placeholder="Search for a parent page..."
                   disabled={isSubmitting}

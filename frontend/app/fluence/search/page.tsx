@@ -400,7 +400,7 @@ export default function SearchPage() {
                 <div className={`${dsCard.base} p-4 space-y-4`}>
                   {/* Visibility filter */}
                   <div>
-                    <label className={dsInput.label}>Visibility</label>
+                    <span className={`${dsInput.label} block`}>Visibility</span>
                     <div className="flex flex-wrap gap-2">
                       {VISIBILITY_OPTIONS.map(({value, label, icon: Icon}) => (
                         <button

@@ -410,10 +410,11 @@ function OfferPortalPage() {
 
               <form onSubmit={handleAcceptSubmit(handleAcceptOffer)}>
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="offer-confirmed-joining-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Confirmed Joining Date
                   </label>
                   <input
+                    id="offer-confirmed-joining-date"
                     type="date"
                     {...registerAccept('confirmedJoiningDate')}
                     className="w-full px-4 py-4 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
@@ -477,10 +478,11 @@ function OfferPortalPage() {
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="offer-decline-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Reason for Declining (Optional)
                 </label>
                 <textarea
+                  id="offer-decline-reason"
                   rows={4}
                   value={declineReason}
                   onChange={(e) => setDeclineReason(e.target.value)}

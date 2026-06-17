@@ -192,12 +192,13 @@ export default function NewLoanPage() {
 
           {/* Loan Amount */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="loan-requested-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Loan Amount *
             </label>
             <div className="relative">
               <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
+                id="loan-requested-amount"
                 type="number"
                 {...register('requestedAmount', {valueAsNumber: true})}
                 placeholder="Enter loan amount"
@@ -213,10 +214,11 @@ export default function NewLoanPage() {
 
           {/* Interest Rate */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="loan-interest-rate" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Interest Rate (% per annum)
             </label>
             <input
+              id="loan-interest-rate"
               type="number"
               step="0.1"
               {...register('interestRate', {valueAsNumber: true})}
@@ -232,12 +234,13 @@ export default function NewLoanPage() {
 
           {/* Term Months */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="loan-term-months" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Loan Term (months) *
             </label>
             <div className="relative">
               <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
+                id="loan-term-months"
                 type="number"
                 {...register('termMonths', {valueAsNumber: true})}
                 placeholder="12"
@@ -274,12 +277,13 @@ export default function NewLoanPage() {
 
           {/* Purpose */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="loan-purpose" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Purpose *
             </label>
             <div className="relative">
               <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]"/>
               <textarea
+                id="loan-purpose"
                 {...register('purpose')}
                 placeholder="Describe the purpose of this loan..."
                 rows={4}
@@ -295,10 +299,11 @@ export default function NewLoanPage() {
 
           {/* Additional Notes */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="loan-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Additional Notes
             </label>
             <textarea
+              id="loan-notes"
               {...register('notes')}
               placeholder="Any additional information..."
               rows={3}

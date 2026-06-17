@@ -914,11 +914,12 @@ export default function BenefitsPage() {
                 <form onSubmit={handleSubmitEnrollment(onEnrollSubmit)}>
                   <div className="border-t border-[var(--border-main)] pt-4 space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="enrollment-coverage-level" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         <User className="h-4 w-4 inline-block mr-1"/>
                         Coverage Level
                       </label>
                       <select
+                        id="enrollment-coverage-level"
                         aria-label="Coverage Level"
                         className="w-full input-aura rounded-lg p-2"
                         {...registerEnrollment('coverageLevel')}
@@ -933,11 +934,12 @@ export default function BenefitsPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="enrollment-effective-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         <Calendar className="h-4 w-4 inline-block mr-1"/>
                         Effective Date
                       </label>
                       <input
+                        id="enrollment-effective-date"
                         type="date"
                         className="w-full input-aura rounded-lg p-2"
                         {...registerEnrollment('effectiveDate')}
@@ -990,10 +992,11 @@ export default function BenefitsPage() {
           <ModalBody>
             <form onSubmit={handleSubmitClaim(onClaimSubmit)} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="claim-enrollment-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Benefit Plan
                 </label>
                 <select
+                  id="claim-enrollment-id"
                   aria-label="Benefit plan"
                   className="w-full input-aura rounded-lg p-2"
                   {...registerClaim('enrollmentId')}
@@ -1010,10 +1013,11 @@ export default function BenefitsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="claim-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Claim Type
                 </label>
                 <select
+                  id="claim-type"
                   aria-label="Claim type"
                   className="w-full input-aura rounded-lg p-2"
                   {...registerClaim('claimType')}
@@ -1030,10 +1034,11 @@ export default function BenefitsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="claim-service-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Service Date
                   </label>
                   <input
+                    id="claim-service-date"
                     type="date"
                     className="w-full input-aura rounded-lg p-2"
                     {...registerClaim('serviceDate')}
@@ -1042,10 +1047,11 @@ export default function BenefitsPage() {
                     <span className="text-danger-500 text-sm">{claimErrors.serviceDate.message}</span>}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="claim-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Claim Amount (INR)
                   </label>
                   <input
+                    id="claim-amount"
                     type="number"
                     step="0.01"
                     min="0"
@@ -1059,10 +1065,11 @@ export default function BenefitsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="claim-service-provider" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Service Provider
                 </label>
                 <input
+                  id="claim-service-provider"
                   type="text"
                   className="w-full input-aura rounded-lg p-2"
                   placeholder="Doctor/Hospital name"
@@ -1073,10 +1080,11 @@ export default function BenefitsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="claim-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Description
                 </label>
                 <textarea
+                  id="claim-description"
                   className="w-full input-aura rounded-lg p-2"
                   rows={3}
                   placeholder="Describe the service/treatment..."
@@ -1085,10 +1093,11 @@ export default function BenefitsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="claim-receipt-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Receipt URL (Optional)
                 </label>
                 <input
+                  id="claim-receipt-url"
                   type="url"
                   className="w-full input-aura rounded-lg p-2"
                   placeholder="https://..."

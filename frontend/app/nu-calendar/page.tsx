@@ -921,10 +921,11 @@ function CalendarContent() {
           </ModalHeader>
           <ModalBody className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="event-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Title *
                 </label>
                 <Input
+                  id="event-title"
                   value={newEvent.summary}
                   onChange={(e) => setNewEvent({...newEvent, summary: e.target.value})}
                   placeholder="Event title"
@@ -933,10 +934,11 @@ function CalendarContent() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="event-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Date *
                   </label>
                   <DateInput
+                    id="event-start-date"
                     value={newEvent.startDate || null}
                     onChange={(d) => setNewEvent({...newEvent, startDate: d ?? ''})}
                     valueFormat="YYYY-MM-DD"
@@ -946,10 +948,11 @@ function CalendarContent() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="event-start-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Time
                   </label>
                   <Input
+                    id="event-start-time"
                     type="time"
                     value={newEvent.startTime}
                     onChange={(e) => setNewEvent({...newEvent, startTime: e.target.value})}
@@ -959,10 +962,11 @@ function CalendarContent() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="event-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Date
                   </label>
                   <DateInput
+                    id="event-end-date"
                     value={newEvent.endDate || null}
                     onChange={(d) => setNewEvent({...newEvent, endDate: d ?? ''})}
                     valueFormat="YYYY-MM-DD"
@@ -972,10 +976,11 @@ function CalendarContent() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="event-end-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Time
                   </label>
                   <Input
+                    id="event-end-time"
                     type="time"
                     value={newEvent.endTime}
                     onChange={(e) => setNewEvent({...newEvent, endTime: e.target.value})}
@@ -984,10 +989,11 @@ function CalendarContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="event-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Location
                 </label>
                 <Input
+                  id="event-location"
                   value={newEvent.location}
                   onChange={(e) => setNewEvent({...newEvent, location: e.target.value})}
                   placeholder="Add location"
@@ -995,10 +1001,11 @@ function CalendarContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="event-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Description
                 </label>
                 <textarea
+                  id="event-description"
                   value={newEvent.description}
                   onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
                   placeholder="Add description"
@@ -1008,10 +1015,11 @@ function CalendarContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="event-attendees" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Attendees (comma-separated emails)
                 </label>
                 <Input
+                  id="event-attendees"
                   value={newEvent.attendees}
                   onChange={(e) => setNewEvent({...newEvent, attendees: e.target.value})}
                   placeholder="email1@example.com, email2@example.com"

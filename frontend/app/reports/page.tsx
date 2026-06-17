@@ -556,9 +556,9 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
       </ModalHeader>
       <ModalBody className="space-y-6">
         <div>
-          <label className="mb-4 block text-sm font-medium text-[var(--text-2)]">
+          <span className="mb-4 block text-sm font-medium text-[var(--text-2)]">
             Export Format
-          </label>
+          </span>
           <div className="grid grid-cols-3 gap-4">
             {formats.map((f) => {
               const FIcon = f.icon;
@@ -596,13 +596,14 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
 
         {report.requiresDateRange && (
           <div>
-            <label className="mb-4 block text-sm font-medium text-[var(--text-2)]">
+            <span className="mb-4 block text-sm font-medium text-[var(--text-2)]">
               Date Range <span aria-hidden="true" className="text-[var(--err-fg)]">*</span>
-            </label>
+            </span>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1 block text-[11px] text-[var(--text-3)]">From</label>
+                <label htmlFor="report-date-from" className="mb-1 block text-[11px] text-[var(--text-3)]">From</label>
                 <DateInput
+                  id="report-date-from"
                   value={startDate || null}
                   onChange={(d) => setStartDate(d ?? '')}
                   valueFormat="YYYY-MM-DD"
@@ -613,8 +614,9 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                 />
               </div>
               <div>
-                <label className="mb-1 block text-[11px] text-[var(--text-3)]">To</label>
+                <label htmlFor="report-date-to" className="mb-1 block text-[11px] text-[var(--text-3)]">To</label>
                 <DateInput
+                  id="report-date-to"
                   value={endDate || null}
                   onChange={(d) => setEndDate(d ?? '')}
                   valueFormat="YYYY-MM-DD"

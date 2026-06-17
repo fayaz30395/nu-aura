@@ -129,44 +129,44 @@ function ExpensePanel({
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Travel Request ID *</label>
-            <Input value={form.travelRequestId} onChange={e => set('travelRequestId', e.target.value)} className="h-8 text-sm" placeholder="Request ID from your approved travel"/>
+            <label htmlFor="travel-expense-request-id" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Travel Request ID *</label>
+            <Input id="travel-expense-request-id" value={form.travelRequestId} onChange={e => set('travelRequestId', e.target.value)} className="h-8 text-sm" placeholder="Request ID from your approved travel"/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Expense Type</label>
-              <select value={form.expenseType} onChange={e => set('expenseType', e.target.value)} className="input-aura w-full h-8 text-sm">
+              <label htmlFor="travel-expense-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Expense Type</label>
+              <select id="travel-expense-type" value={form.expenseType} onChange={e => set('expenseType', e.target.value)} className="input-aura w-full h-8 text-sm">
                 {Object.values(CreateTravelExpenseRequestExpenseType).map(t => (
                   <option key={t} value={t}>{EXPENSE_TYPE_LABELS[t] ?? t}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Date *</label>
-              <Input type="date" value={form.expenseDate} onChange={e => set('expenseDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="travel-expense-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Date *</label>
+              <Input id="travel-expense-date" type="date" value={form.expenseDate} onChange={e => set('expenseDate', e.target.value)} className="h-8 text-sm"/>
             </div>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <div className="col-span-2">
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Amount *</label>
-              <Input type="number" value={form.amount} onChange={e => set('amount', e.target.value)} className="h-8 text-sm" placeholder="0.00"/>
+              <label htmlFor="travel-expense-amount" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Amount *</label>
+              <Input id="travel-expense-amount" type="number" value={form.amount} onChange={e => set('amount', e.target.value)} className="h-8 text-sm" placeholder="0.00"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Currency</label>
-              <Input value={form.currency} onChange={e => set('currency', e.target.value)} className="h-8 text-sm" placeholder="INR"/>
+              <label htmlFor="travel-expense-currency" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Currency</label>
+              <Input id="travel-expense-currency" value={form.currency} onChange={e => set('currency', e.target.value)} className="h-8 text-sm" placeholder="INR"/>
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <Input value={form.description} onChange={e => set('description', e.target.value)} className="h-8 text-sm" placeholder="Brief description"/>
+            <label htmlFor="travel-expense-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+            <Input id="travel-expense-description" value={form.description} onChange={e => set('description', e.target.value)} className="h-8 text-sm" placeholder="Brief description"/>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Receipt Number</label>
-            <Input value={form.receiptNumber} onChange={e => set('receiptNumber', e.target.value)} className="h-8 text-sm" placeholder="INV-12345"/>
+            <label htmlFor="travel-expense-receipt-number" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Receipt Number</label>
+            <Input id="travel-expense-receipt-number" value={form.receiptNumber} onChange={e => set('receiptNumber', e.target.value)} className="h-8 text-sm" placeholder="INV-12345"/>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Remarks</label>
-            <textarea value={form.remarks} onChange={e => set('remarks', e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional remarks..."/>
+            <label htmlFor="travel-expense-remarks" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Remarks</label>
+            <textarea id="travel-expense-remarks" value={form.remarks} onChange={e => set('remarks', e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional remarks..."/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}
           <div className="flex gap-2 pt-2">

@@ -285,9 +285,10 @@ export default function JobBoardsPage() {
             <CardContent className="space-y-4">
               <form onSubmit={handleSubmit(onSubmitPost)} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Select Job Opening
+                  <label htmlFor="job-board-job-id" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Select Job Opening
                     *</label>
                   <select
+                    id="job-board-job-id"
                     aria-label="Select Job Opening"
                     {...register('jobId')}
                     className="input-aura"
@@ -304,7 +305,7 @@ export default function JobBoardsPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">Select Boards *</label>
+                  <span className="block text-sm font-medium text-[var(--text-primary)] mb-2">Select Boards *</span>
                   <Controller
                     name="boards"
                     control={control}

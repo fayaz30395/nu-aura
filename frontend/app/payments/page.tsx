@@ -300,10 +300,11 @@ function PaymentsPageContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="payment-filter-date-from" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Date From
                 </label>
                 <DateInput
+                  id="payment-filter-date-from"
                   value={filters.dateFrom || null}
                   onChange={(d) => setFilters({...filters, dateFrom: d ?? ''})}
                   valueFormat="YYYY-MM-DD"
@@ -314,10 +315,11 @@ function PaymentsPageContent() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="payment-filter-date-to" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Date To
                 </label>
                 <DateInput
+                  id="payment-filter-date-to"
                   value={filters.dateTo || null}
                   onChange={(d) => setFilters({...filters, dateTo: d ?? ''})}
                   valueFormat="YYYY-MM-DD"
@@ -329,10 +331,11 @@ function PaymentsPageContent() {
 
               <div className="flex gap-2">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="payment-filter-amount-min" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Min Amount
                   </label>
                   <input
+                    id="payment-filter-amount-min"
                     type="number"
                     placeholder="0"
                     value={filters.amountMin}
@@ -341,10 +344,11 @@ function PaymentsPageContent() {
                   />
                 </div>
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="payment-filter-amount-max" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Max Amount
                   </label>
                   <input
+                    id="payment-filter-amount-max"
                     type="number"
                     placeholder="0"
                     value={filters.amountMax}

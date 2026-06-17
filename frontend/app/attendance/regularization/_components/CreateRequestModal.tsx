@@ -176,7 +176,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         className="space-y-4"
                       >
                         <div>
-                          <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
+                          <label htmlFor="attendanceDate" className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                             Which date do you want to regularize? <span aria-hidden="true" className="text-danger-500">*</span>
                           </label>
                           <Controller
@@ -184,6 +184,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                             control={control}
                             render={({field}) => (
                               <DateInput
+                                id="attendanceDate"
                                 value={field.value || null}
                                 onChange={(d) => field.onChange(d ?? '')}
                                 maxDate={new Date()}
@@ -298,10 +299,11 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                         </div>
 
                         <div>
-                          <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
+                          <label htmlFor="regularization-reason" className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                             Why do you need this regularization? <span aria-hidden="true" className="text-danger-500">*</span>
                           </label>
                           <textarea
+                            id="regularization-reason"
                             {...register('reason')}
                             aria-required="true"
                             rows={4}
@@ -334,10 +336,10 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
 
                         {/* Quick Templates */}
                         <div>
-                          <label
+                          <span
                             className="block text-xs font-semibold text-[var(--text-muted)] mb-4 uppercase tracking-wide">
                             Quick Templates
-                          </label>
+                          </span>
                           <div className="flex flex-wrap gap-2">
                             {QUICK_REASON_TEMPLATES.map((template) => (
                               <motion.button

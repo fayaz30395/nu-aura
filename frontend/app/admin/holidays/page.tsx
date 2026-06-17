@@ -430,10 +430,11 @@ export default function HolidayCalendarManagementPage() {
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Holiday Information</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="holiday-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Holiday Name *
                         </label>
                         <input
+                          id="holiday-name"
                           type="text"
                           {...form.register('holidayName')}
                           className="input-aura"
@@ -446,10 +447,11 @@ export default function HolidayCalendarManagementPage() {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                          <label htmlFor="holiday-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Date *
                           </label>
                           <input
+                            id="holiday-date"
                             type="date"
                             {...form.register('holidayDate')}
                             className="input-aura"
@@ -459,10 +461,11 @@ export default function HolidayCalendarManagementPage() {
                           )}
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                          <label htmlFor="holiday-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                             Holiday Type *
                           </label>
                           <select
+                            id="holiday-type"
                             aria-label="Holiday Type"
                             {...form.register('holidayType')}
                             className="input-aura"
@@ -477,10 +480,11 @@ export default function HolidayCalendarManagementPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="holiday-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Description
                         </label>
                         <textarea
+                          id="holiday-description"
                           {...form.register('description')}
                           rows={2}
                           className="input-aura"
@@ -521,10 +525,11 @@ export default function HolidayCalendarManagementPage() {
                     <h3 className="text-lg font-medium text-[var(--text-primary)] mb-4">Applicability (Optional)</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="holiday-applicable-locations" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Applicable Locations
                         </label>
                         <input
+                          id="holiday-applicable-locations"
                           type="text"
                           {...form.register('applicableLocations')}
                           className="input-aura"
@@ -534,10 +539,11 @@ export default function HolidayCalendarManagementPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="holiday-applicable-departments" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                           Applicable Departments
                         </label>
                         <input
+                          id="holiday-applicable-departments"
                           type="text"
                           {...form.register('applicableDepartments')}
                           className="input-aura"

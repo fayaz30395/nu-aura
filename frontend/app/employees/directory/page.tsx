@@ -336,10 +336,11 @@ export default function TeamDirectory() {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {/* Department Filter */}
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="filter-department" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Department
                           </label>
                           <select
+                            id="filter-department"
                             aria-label="Department"
                             className="input-aura"
                             value={filters.departmentIds[0] || ''}
@@ -361,10 +362,11 @@ export default function TeamDirectory() {
 
                         {/* Job Role Filter */}
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="filter-job-role" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Job Role
                           </label>
                           <select
+                            id="filter-job-role"
                             aria-label="Job Role"
                             className="input-aura"
                             value={filters.jobRoles[0] || ''}
@@ -383,10 +385,11 @@ export default function TeamDirectory() {
 
                         {/* Level Filter */}
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="filter-level" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Level
                           </label>
                           <select
+                            id="filter-level"
                             aria-label="Level"
                             className="input-aura"
                             value={filters.levels[0] || ''}
@@ -405,10 +408,11 @@ export default function TeamDirectory() {
 
                         {/* Status Filter */}
                         <div>
-                          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          <label htmlFor="filter-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                             Status
                           </label>
                           <select
+                            id="filter-status"
                             aria-label="Status"
                             className="input-aura"
                             value={filters.statuses[0] || ''}

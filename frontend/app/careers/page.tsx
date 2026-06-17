@@ -336,10 +336,11 @@ const ApplicationModal: React.FC<{
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label htmlFor="application-full-name" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Full Name *
             </label>
             <Input
+              id="application-full-name"
               type="text"
               placeholder="John Doe"
               className="w-full"
@@ -349,10 +350,11 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label htmlFor="application-email" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Email Address *
             </label>
             <Input
+              id="application-email"
               type="email"
               placeholder="john@example.com"
               className="w-full"
@@ -362,10 +364,11 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label htmlFor="application-phone" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Phone Number *
             </label>
             <Input
+              id="application-phone"
               type="tel"
               placeholder="+1 (555) 123-4567"
               className="w-full"
@@ -375,7 +378,7 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label htmlFor="resume-input" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Resume *
             </label>
             <div className="relative">
@@ -407,10 +410,11 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label htmlFor="application-cover-letter" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               Cover Letter
             </label>
             <textarea
+              id="application-cover-letter"
               placeholder="Tell us why you're interested in this position..."
               rows={4}
               className="input-aura"
@@ -420,10 +424,11 @@ const ApplicationModal: React.FC<{
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+            <label htmlFor="application-linkedin-url" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
               LinkedIn Profile URL
             </label>
             <Input
+              id="application-linkedin-url"
               type="url"
               placeholder="https://linkedin.com/in/johndoe"
               className="w-full"

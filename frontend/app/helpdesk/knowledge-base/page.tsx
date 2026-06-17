@@ -620,10 +620,11 @@ export default function KnowledgeBasePage() {
               <ModalBody>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    <label htmlFor="kb-article-title" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Title *
                     </label>
                     <Input
+                      id="kb-article-title"
                       type="text"
                       placeholder="Article title"
                       className="w-full"
@@ -648,10 +649,11 @@ export default function KnowledgeBasePage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                    <label htmlFor="kb-article-content" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                       Content *
                     </label>
                     <Textarea
+                      id="kb-article-content"
                       placeholder="Write the article content here"
                       rows={8}
                       error={Boolean(articleErrors.content)}
@@ -725,10 +727,11 @@ export default function KnowledgeBasePage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  <label htmlFor="ticket-subject" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Subject *
                   </label>
                   <Input
+                    id="ticket-subject"
                     type="text"
                     placeholder="Brief description of your issue"
                     className="w-full"
@@ -740,10 +743,11 @@ export default function KnowledgeBasePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  <label htmlFor="ticket-description" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Description *
                   </label>
                   <Textarea
+                    id="ticket-description"
                     placeholder="Provide more details about your issue"
                     rows={6}
                     error={Boolean(ticketErrors.description)}
@@ -755,10 +759,10 @@ export default function KnowledgeBasePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  <label htmlFor="ticket-priority" className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Priority
                   </label>
-                  <Select {...registerTicket('priority')}>
+                  <Select id="ticket-priority" {...registerTicket('priority')}>
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
                     <option value="HIGH">High</option>

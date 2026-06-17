@@ -155,10 +155,11 @@ export default function CreateBlogPost() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Title
             </label>
             <TextInput
+              id="blog-title"
               placeholder="Enter post title"
               error={errors.title?.message}
               {...register('title')}
@@ -168,10 +169,11 @@ export default function CreateBlogPost() {
 
           {/* Excerpt */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-excerpt" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Excerpt
             </label>
             <Textarea
+              id="blog-excerpt"
               placeholder="Enter a brief excerpt for your blog post"
               error={errors.excerpt?.message}
               {...register('excerpt')}
@@ -182,7 +184,7 @@ export default function CreateBlogPost() {
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Category
             </label>
             <Controller
@@ -191,6 +193,7 @@ export default function CreateBlogPost() {
               render={({field}) => (
                 <Select
                   {...field}
+                  id="blog-category"
                   placeholder="Select a category (optional)"
                   disabled={categoriesLoading || isSubmitting}
                   clearable
@@ -205,7 +208,7 @@ export default function CreateBlogPost() {
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-tags" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Tags
             </label>
             <Controller
@@ -214,6 +217,7 @@ export default function CreateBlogPost() {
               render={({field}) => (
                 <MultiSelect
                   {...field}
+                  id="blog-tags"
                   placeholder="Add tags (optional)"
                   disabled={isSubmitting}
                   searchable
@@ -225,10 +229,11 @@ export default function CreateBlogPost() {
 
           {/* Cover Image URL */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-cover-image-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Cover Image URL
             </label>
             <TextInput
+              id="blog-cover-image-url"
               placeholder="https://example.com/image.jpg"
               error={errors.coverImageUrl?.message}
               {...register('coverImageUrl')}
@@ -241,7 +246,7 @@ export default function CreateBlogPost() {
 
           {/* Visibility */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-visibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Visibility
             </label>
             <Controller
@@ -250,6 +255,7 @@ export default function CreateBlogPost() {
               render={({field}) => (
                 <Select
                   {...field}
+                  id="blog-visibility"
                   placeholder="Select visibility"
                   disabled={isSubmitting}
                   data={[
@@ -276,9 +282,9 @@ export default function CreateBlogPost() {
 
           {/* Content Editor */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Content
-            </label>
+            </span>
             <Controller
               control={control}
               name="content"

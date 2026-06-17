@@ -218,10 +218,11 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
           {/* Employee & Manager */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+              <label htmlFor="pip-employee-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Employee
               </label>
               <input
+                id="pip-employee-id"
                 type="text"
                 placeholder="Employee name or ID"
                 {...register('employeeId')}
@@ -232,10 +233,11 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+              <label htmlFor="pip-manager-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                 Manager
               </label>
               <input
+                id="pip-manager-id"
                 type="text"
                 placeholder="Manager name or ID"
                 {...register('managerId')}
@@ -249,10 +251,11 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
 
           {/* Reason */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+            <label htmlFor="pip-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Reason
             </label>
             <select
+              id="pip-reason"
               aria-label="Reason"
               {...register('reason')}
               className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
@@ -271,9 +274,9 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
 
           {/* Dates */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Duration
-            </label>
+            </span>
             <div className="flex gap-2 mb-4">
               {DURATION_PRESETS.map(preset => (
                 <button
@@ -288,8 +291,9 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-caption mb-1">Start Date</label>
+                <label htmlFor="pip-start-date" className="block text-caption mb-1">Start Date</label>
                 <input
+                  id="pip-start-date"
                   type="date"
                   {...register('startDate')}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
@@ -299,8 +303,9 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
                 )}
               </div>
               <div>
-                <label className="block text-caption mb-1">End Date</label>
+                <label htmlFor="pip-end-date" className="block text-caption mb-1">End Date</label>
                 <input
+                  id="pip-end-date"
                   type="date"
                   {...register('endDate')}
                   className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
@@ -314,10 +319,11 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
 
           {/* Goals */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+            <label htmlFor="pip-goals" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Goals & Objectives
             </label>
             <textarea
+              id="pip-goals"
               placeholder="Describe the specific goals and success criteria..."
               rows={4}
               {...register('goals')}
@@ -330,10 +336,11 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
 
           {/* Check-in Frequency */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+            <label htmlFor="pip-checkin-frequency" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
               Check-in Frequency
             </label>
             <select
+              id="pip-checkin-frequency"
               aria-label="Check-in Frequency"
               {...register('checkInFrequency')}
               className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"

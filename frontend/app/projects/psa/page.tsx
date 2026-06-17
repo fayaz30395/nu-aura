@@ -145,17 +145,18 @@ function ProjectPanel({
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project Name *</label>
-            <Input value={form.projectName} onChange={e => set('projectName', e.target.value)} className="h-8 text-sm" placeholder="e.g. Client Portal Redesign"/>
+            <label htmlFor="psa-project-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project Name *</label>
+            <Input id="psa-project-name" value={form.projectName} onChange={e => set('projectName', e.target.value)} className="h-8 text-sm" placeholder="e.g. Client Portal Redesign"/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project Code</label>
-              <Input value={form.projectCode} onChange={e => set('projectCode', e.target.value)} className="h-8 text-sm" placeholder="PRJ-001"/>
+              <label htmlFor="psa-project-code" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project Code</label>
+              <Input id="psa-project-code" value={form.projectCode} onChange={e => set('projectCode', e.target.value)} className="h-8 text-sm" placeholder="PRJ-001"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
+              <label htmlFor="psa-project-status" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
               <select
+                id="psa-project-status"
                 value={form.status}
                 onChange={e => set('status', e.target.value)}
                 className="input-aura w-full h-8 text-sm"
@@ -167,13 +168,14 @@ function ProjectPanel({
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional description..."/>
+            <label htmlFor="psa-project-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+            <textarea id="psa-project-description" value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional description..."/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Billing Type</label>
+              <label htmlFor="psa-project-billing-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Billing Type</label>
               <select
+                id="psa-project-billing-type"
                 value={form.billingType}
                 onChange={e => set('billingType', e.target.value)}
                 className="input-aura w-full h-8 text-sm"
@@ -184,22 +186,22 @@ function ProjectPanel({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Billing Rate/hr</label>
-              <Input type="number" value={form.billingRate} onChange={e => set('billingRate', e.target.value)} className="h-8 text-sm" placeholder="0.00"/>
+              <label htmlFor="psa-project-billing-rate" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Billing Rate/hr</label>
+              <Input id="psa-project-billing-rate" type="number" value={form.billingRate} onChange={e => set('billingRate', e.target.value)} className="h-8 text-sm" placeholder="0.00"/>
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Budget</label>
-            <Input type="number" value={form.budget} onChange={e => set('budget', e.target.value)} className="h-8 text-sm" placeholder="Total project budget"/>
+            <label htmlFor="psa-project-budget" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Budget</label>
+            <Input id="psa-project-budget" type="number" value={form.budget} onChange={e => set('budget', e.target.value)} className="h-8 text-sm" placeholder="Total project budget"/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Start Date</label>
-              <Input type="date" value={form.startDate} onChange={e => set('startDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="psa-project-start-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Start Date</label>
+              <Input id="psa-project-start-date" type="date" value={form.startDate} onChange={e => set('startDate', e.target.value)} className="h-8 text-sm"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">End Date</label>
-              <Input type="date" value={form.endDate} onChange={e => set('endDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="psa-project-end-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">End Date</label>
+              <Input id="psa-project-end-date" type="date" value={form.endDate} onChange={e => set('endDate', e.target.value)} className="h-8 text-sm"/>
             </div>
           </div>
           <div className="flex items-center gap-2 pt-1">

@@ -585,10 +585,11 @@ export default function SignPage() {
             {/* Typed Signature */}
             {signatureMethod === 'TYPED' && (
               <div>
-                <label className="block text-caption mb-2">
+                <label htmlFor="sign-typed-name" className="block text-caption mb-2">
                   Type your full name
                 </label>
                 <input
+                  id="sign-typed-name"
                   type="text"
                   value={typedName}
                   onChange={(e) => {

@@ -96,13 +96,14 @@ export default function PerformanceReportsPage() {
             <CardContent className="space-y-6">
               {/* Date Range */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Review Period (Optional)
-                </label>
+                </span>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-caption mb-1">From</label>
+                    <label htmlFor="review-period-start" className="block text-caption mb-1">From</label>
                     <input
+                      id="review-period-start"
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
@@ -110,8 +111,9 @@ export default function PerformanceReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-caption mb-1">To</label>
+                    <label htmlFor="review-period-end" className="block text-caption mb-1">To</label>
                     <input
+                      id="review-period-end"
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
@@ -126,9 +128,9 @@ export default function PerformanceReportsPage() {
 
               {/* Format Selection */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Export Format
-                </label>
+                </span>
                 <div className="grid grid-cols-3 gap-4">
                   {(['EXCEL', 'PDF', 'CSV'] as const).map((fmt) => (
                     <button

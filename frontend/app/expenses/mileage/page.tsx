@@ -528,10 +528,11 @@ export default function MileagePage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label htmlFor="mileage-travel-date" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                     Travel Date *
                   </label>
                   <input
+                    id="mileage-travel-date"
                     type="date"
                     {...register('travelDate')}
                     className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
@@ -543,10 +544,11 @@ export default function MileagePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label htmlFor="mileage-from-location" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       From Location *
                     </label>
                     <input
+                      id="mileage-from-location"
                       type="text"
                       {...register('fromLocation')}
                       placeholder="Starting point"
@@ -557,10 +559,11 @@ export default function MileagePage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label htmlFor="mileage-to-location" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       To Location *
                     </label>
                     <input
+                      id="mileage-to-location"
                       type="text"
                       {...register('toLocation')}
                       placeholder="Destination"
@@ -574,10 +577,11 @@ export default function MileagePage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label htmlFor="mileage-distance-km" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       Distance (km) *
                     </label>
                     <input
+                      id="mileage-distance-km"
                       type="number"
                       step="0.01"
                       min="0.01"
@@ -590,10 +594,11 @@ export default function MileagePage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                    <label htmlFor="mileage-vehicle-type" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                       Vehicle Type *
                     </label>
                     <select
+                      id="mileage-vehicle-type"
                       aria-label="Vehicle type"
                       {...register('vehicleType')}
                       className="w-full px-4 py-2 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-surface-900 dark:text-white focus:ring-2 focus:ring-accent-700 focus:border-transparent"
@@ -617,10 +622,11 @@ export default function MileagePage() {
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label htmlFor="mileage-purpose" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                     Purpose
                   </label>
                   <input
+                    id="mileage-purpose"
                     type="text"
                     {...register('purpose')}
                     placeholder="e.g., Client meeting, site visit"
@@ -629,10 +635,11 @@ export default function MileagePage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                  <label htmlFor="mileage-notes" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                     Notes
                   </label>
                   <textarea
+                    id="mileage-notes"
                     {...register('notes')}
                     rows={2}
                     placeholder="Additional notes..."

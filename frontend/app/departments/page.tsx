@@ -522,11 +522,12 @@ export default function DepartmentsPage() {
               <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="dept-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Department Code *
                     </label>
                     <input
                       type="text"
+                      id="dept-code"
                       {...register('code')}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="ENG, HR, FIN"
@@ -534,11 +535,12 @@ export default function DepartmentsPage() {
                     {errors.code && <p className="text-danger-500 text-sm mt-1">{errors.code.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="dept-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Department Name *
                     </label>
                     <input
                       type="text"
+                      id="dept-name"
                       {...register('name')}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Engineering"
@@ -548,10 +550,11 @@ export default function DepartmentsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                  <label htmlFor="dept-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                     Description
                   </label>
                   <textarea
+                    id="dept-description"
                     {...register('description')}
                     rows={3}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent resize-none"
@@ -562,7 +565,7 @@ export default function DepartmentsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="dept-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Department Type
                     </label>
                     <Controller
@@ -570,6 +573,7 @@ export default function DepartmentsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="dept-type"
                           aria-label="Department Type"
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
@@ -584,7 +588,7 @@ export default function DepartmentsPage() {
                     {errors.type && <p className="text-danger-500 text-sm mt-1">{errors.type.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="dept-parent" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Parent Department
                     </label>
                     <Controller
@@ -592,6 +596,7 @@ export default function DepartmentsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="dept-parent"
                           aria-label="Parent Department"
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
@@ -614,7 +619,7 @@ export default function DepartmentsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="dept-manager" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Department Manager
                     </label>
                     <Controller
@@ -622,6 +627,7 @@ export default function DepartmentsPage() {
                       control={control}
                       render={({field}) => (
                         <select
+                          id="dept-manager"
                           aria-label="Department Manager"
                           {...field}
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
@@ -638,11 +644,12 @@ export default function DepartmentsPage() {
                     {errors.managerId && <p className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="dept-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Location
                     </label>
                     <input
                       type="text"
+                      id="dept-location"
                       {...register('location')}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="Building A, Floor 2"
@@ -653,11 +660,12 @@ export default function DepartmentsPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                    <label htmlFor="dept-cost-center" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                       Cost Center
                     </label>
                     <input
                       type="text"
+                      id="dept-cost-center"
                       {...register('costCenter')}
                       className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                       placeholder="CC-1001"

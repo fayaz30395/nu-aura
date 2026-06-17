@@ -267,21 +267,22 @@ export default function PreboardingPortalPage() {
                 <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Date of Birth *</label>
-                    <Input type="date" {...registerPersonalInfo('dateOfBirth')} />
+                    <label htmlFor="preboarding-date-of-birth" className="block text-sm font-medium mb-1">Date of Birth *</label>
+                    <Input id="preboarding-date-of-birth" type="date" {...registerPersonalInfo('dateOfBirth')} />
                     {personalInfoErrors.dateOfBirth &&
                       <span className="text-danger-500 text-sm">{personalInfoErrors.dateOfBirth.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Phone Number</label>
-                    <Input placeholder="+91 9876543210" {...registerPersonalInfo('phoneNumber')} />
+                    <label htmlFor="preboarding-phone-number" className="block text-sm font-medium mb-1">Phone Number</label>
+                    <Input id="preboarding-phone-number" placeholder="+91 9876543210" {...registerPersonalInfo('phoneNumber')} />
                     {personalInfoErrors.phoneNumber &&
                       <span className="text-danger-500 text-sm">{personalInfoErrors.phoneNumber.message}</span>}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Address *</label>
+                  <label htmlFor="preboarding-address" className="block text-sm font-medium mb-1">Address *</label>
                   <textarea
+                    id="preboarding-address"
                     className="w-full px-4 py-2 border rounded-lg dark:bg-[var(--bg-secondary)] dark:border-[var(--border-main)]"
                     rows={2}
                     {...registerPersonalInfo('address')}
@@ -313,14 +314,14 @@ export default function PreboardingPortalPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Emergency Contact Name</label>
-                    <Input {...registerPersonalInfo('emergencyContactName')} />
+                    <label htmlFor="preboarding-emergency-contact-name" className="block text-sm font-medium mb-1">Emergency Contact Name</label>
+                    <Input id="preboarding-emergency-contact-name" {...registerPersonalInfo('emergencyContactName')} />
                     {personalInfoErrors.emergencyContactName && <span
                       className="text-danger-500 text-sm">{personalInfoErrors.emergencyContactName.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Emergency Contact Number</label>
-                    <Input {...registerPersonalInfo('emergencyContactNumber')} />
+                    <label htmlFor="preboarding-emergency-contact-number" className="block text-sm font-medium mb-1">Emergency Contact Number</label>
+                    <Input id="preboarding-emergency-contact-number" {...registerPersonalInfo('emergencyContactNumber')} />
                     {personalInfoErrors.emergencyContactNumber && <span
                       className="text-danger-500 text-sm">{personalInfoErrors.emergencyContactNumber.message}</span>}
                   </div>
@@ -339,28 +340,28 @@ export default function PreboardingPortalPage() {
                 <h2 className="text-xl font-semibold mb-4">Bank & Tax Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Bank Name *</label>
-                    <Input {...registerBankDetails('bankName')} />
+                    <label htmlFor="preboarding-bank-name" className="block text-sm font-medium mb-1">Bank Name *</label>
+                    <Input id="preboarding-bank-name" {...registerBankDetails('bankName')} />
                     {bankDetailsErrors.bankName &&
                       <span className="text-danger-500 text-sm">{bankDetailsErrors.bankName.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">Account Number *</label>
-                    <Input {...registerBankDetails('bankAccountNumber')} />
+                    <label htmlFor="preboarding-bank-account-number" className="block text-sm font-medium mb-1">Account Number *</label>
+                    <Input id="preboarding-bank-account-number" {...registerBankDetails('bankAccountNumber')} />
                     {bankDetailsErrors.bankAccountNumber &&
                       <span className="text-danger-500 text-sm">{bankDetailsErrors.bankAccountNumber.message}</span>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">IFSC Code *</label>
-                    <Input {...registerBankDetails('bankIfscCode')} />
+                    <label htmlFor="preboarding-bank-ifsc-code" className="block text-sm font-medium mb-1">IFSC Code *</label>
+                    <Input id="preboarding-bank-ifsc-code" {...registerBankDetails('bankIfscCode')} />
                     {bankDetailsErrors.bankIfscCode &&
                       <span className="text-danger-500 text-sm">{bankDetailsErrors.bankIfscCode.message}</span>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1">PAN Number *</label>
-                    <Input placeholder="ABCDE1234F" {...registerBankDetails('taxId')} />
+                    <label htmlFor="preboarding-pan-number" className="block text-sm font-medium mb-1">PAN Number *</label>
+                    <Input id="preboarding-pan-number" placeholder="ABCDE1234F" {...registerBankDetails('taxId')} />
                     {bankDetailsErrors.taxId &&
                       <span className="text-danger-500 text-sm">{bankDetailsErrors.taxId.message}</span>}
                   </div>

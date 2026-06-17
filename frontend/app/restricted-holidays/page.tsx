@@ -810,10 +810,11 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+            <label htmlFor="policy-max-selections" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
               Max Selections Per Year
             </label>
             <input
+              id="policy-max-selections"
               type="number"
               {...form.register('maxSelectionsPerYear', {valueAsNumber: true})}
               min={1}
@@ -829,10 +830,11 @@ function PolicyTab({policy, isLoading, year, onSave, isSaving}: PolicyTabProps) 
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
+            <label htmlFor="policy-min-days" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5">
               Min Days Before Selection
             </label>
             <input
+              id="policy-min-days"
               type="number"
               {...form.register('minDaysBeforeSelection', {valueAsNumber: true})}
               min={0}
@@ -932,10 +934,11 @@ function HolidayFormModal({isOpen, holiday, onClose, onSubmit, isSubmitting}: Ho
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <ModalBody className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label htmlFor="holiday-name" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
               Holiday Name *
             </label>
             <input
+              id="holiday-name"
               {...form.register('holidayName')}
               className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700
@@ -948,10 +951,11 @@ function HolidayFormModal({isOpen, holiday, onClose, onSubmit, isSubmitting}: Ho
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label htmlFor="holiday-date" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
               Date *
             </label>
             <input
+              id="holiday-date"
               type="date"
               {...form.register('holidayDate')}
               className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
@@ -964,10 +968,11 @@ function HolidayFormModal({isOpen, holiday, onClose, onSubmit, isSubmitting}: Ho
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label htmlFor="holiday-description" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
               Description
             </label>
             <textarea
+              id="holiday-description"
               {...form.register('description')}
               rows={2}
               className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
@@ -978,10 +983,11 @@ function HolidayFormModal({isOpen, holiday, onClose, onSubmit, isSubmitting}: Ho
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label htmlFor="holiday-category" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
               Category
             </label>
             <select
+              id="holiday-category"
               aria-label="Category"
               {...form.register('category')}
               className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
@@ -995,10 +1001,11 @@ function HolidayFormModal({isOpen, holiday, onClose, onSubmit, isSubmitting}: Ho
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+            <label htmlFor="holiday-applicable-regions" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
               Applicable Regions (JSON)
             </label>
             <input
+              id="holiday-applicable-regions"
               {...form.register('applicableRegions')}
               className="w-full rounded-lg border border-surface-300 dark:border-surface-600 px-4 py-2
                 text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:border-accent-700

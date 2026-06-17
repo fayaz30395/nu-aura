@@ -76,6 +76,7 @@ interface SearchableSelectProps {
   placeholder?: string;
   error?: string;
   className?: string;
+  id?: string;
 }
 
 function SearchableSelect({
@@ -84,7 +85,8 @@ function SearchableSelect({
                             onChange,
                             placeholder = 'Search...',
                             error,
-                            className
+                            className,
+                            id
                           }: SearchableSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -133,6 +135,7 @@ function SearchableSelect({
     <div ref={containerRef} className={`relative ${className || ''}`}>
       <div className="relative">
         <input
+          id={id}
           ref={inputRef}
           type="text"
           value={isOpen ? search : (selectedOption?.label || '')}
@@ -907,8 +910,9 @@ function InterviewsPage() {
                 <form onSubmit={handleSubmitCreate(onSubmitCreate)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate *</label>
+                      <label htmlFor="interview-candidate" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate *</label>
                       <SearchableSelect
+                        id="interview-candidate"
                         options={candidates.map(c => ({
                           value: c.id,
                           label: c.fullName,
@@ -927,9 +931,10 @@ function InterviewsPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening
+                      <label htmlFor="interview-job-opening" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Job Opening
                         *</label>
                       <SearchableSelect
+                        id="interview-job-opening"
                         options={jobOpenings.map(j => ({
                           value: j.id,
                           label: j.jobTitle,
@@ -1005,8 +1010,9 @@ function InterviewsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interviewer</label>
+                    <label htmlFor="interview-interviewer" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Interviewer</label>
                     <SearchableSelect
+                      id="interview-interviewer"
                       options={interviewers.map((emp: Employee) => ({
                         value: emp.id,
                         label: emp.fullName,
@@ -1109,8 +1115,9 @@ function InterviewsPage() {
                         <p className="text-danger-500 text-xs mt-1">{errorsCreate.meetingLink.message}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
+                      <label htmlFor="interview-location" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Location</label>
                       <input
+                        id="interview-location"
                         type="text"
                         {...registerCreate('location')}
                         placeholder="Conference Room A"
@@ -1121,7 +1128,7 @@ function InterviewsPage() {
 
                   <div>
                     <div className="row-between mb-1">
-                      <label className="block text-sm font-medium text-[var(--text-secondary)]">Notes</label>
+                      <label htmlFor="interview-notes" className="block text-sm font-medium text-[var(--text-secondary)]">Notes</label>
                       <button
                         type="button"
                         onClick={handleGenerateQuestions}
@@ -1133,6 +1140,7 @@ function InterviewsPage() {
                       </button>
                     </div>
                     <textarea
+                      id="interview-notes"
                       rows={3}
                       {...registerCreate('notes')}
                       placeholder="Additional notes..."
@@ -1183,7 +1191,7 @@ function InterviewsPage() {
 
                 <form onSubmit={handleSubmitFeedback(onSubmitFeedback)} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Rating (1-5)</label>
+                    <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Rating (1-5)</span>
                     <div className="flex gap-2">
                       {[1, 2, 3, 4, 5].map((rating) => (
                         <button
@@ -1204,8 +1212,9 @@ function InterviewsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Result</label>
+                    <label htmlFor="feedback-result" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Result</label>
                     <select
+                      id="feedback-result"
                       aria-label="Interview result"
                       {...registerFeedback('result')}
                       className="input-aura"
@@ -1218,8 +1227,9 @@ function InterviewsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Feedback *</label>
+                    <label htmlFor="feedback-text" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Feedback *</label>
                     <textarea
+                      id="feedback-text"
                       rows={4}
                       {...registerFeedback('feedback')}
                       placeholder="Provide detailed feedback about the candidate's performance..."

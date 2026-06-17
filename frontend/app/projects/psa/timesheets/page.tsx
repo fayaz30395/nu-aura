@@ -91,12 +91,12 @@ function CreateTimesheetPanel({employeeId, onClose}: {employeeId: string; onClos
         </div>
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Week Start *</label>
-            <Input type="date" value={form.weekStartDate} onChange={e => set('weekStartDate', e.target.value)} className="h-8 text-sm"/>
+            <label htmlFor="timesheet-week-start" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Week Start *</label>
+            <Input id="timesheet-week-start" type="date" value={form.weekStartDate} onChange={e => set('weekStartDate', e.target.value)} className="h-8 text-sm"/>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Week End *</label>
-            <Input type="date" value={form.weekEndDate} onChange={e => set('weekEndDate', e.target.value)} className="h-8 text-sm"/>
+            <label htmlFor="timesheet-week-end" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Week End *</label>
+            <Input id="timesheet-week-end" type="date" value={form.weekEndDate} onChange={e => set('weekEndDate', e.target.value)} className="h-8 text-sm"/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}
           <div className="flex gap-2 pt-2">
@@ -166,18 +166,18 @@ function AddEntryPanel({
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Date *</label>
-              <Input type="date" value={form.entryDate} onChange={e => set('entryDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="timesheet-entry-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Date *</label>
+              <Input id="timesheet-entry-date" type="date" value={form.entryDate} onChange={e => set('entryDate', e.target.value)} className="h-8 text-sm"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Hours *</label>
-              <Input type="number" step="0.5" min="0.5" max="24" value={form.hours}
+              <label htmlFor="timesheet-entry-hours" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Hours *</label>
+              <Input id="timesheet-entry-hours" type="number" step="0.5" min="0.5" max="24" value={form.hours}
                 onChange={e => set('hours', e.target.value)} className="h-8 text-sm" placeholder="8"/>
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Activity</label>
-            <select value={form.activityType} onChange={e => set('activityType', e.target.value)}
+            <label htmlFor="timesheet-entry-activity" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Activity</label>
+            <select id="timesheet-entry-activity" value={form.activityType} onChange={e => set('activityType', e.target.value)}
               className="input-aura w-full h-8 text-sm">
               {Object.values(PSATimeEntryActivityType).map(t => (
                 <option key={t} value={t}>{ACTIVITY_LABELS[t] ?? t}</option>
@@ -185,18 +185,18 @@ function AddEntryPanel({
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project ID</label>
-            <Input value={form.projectId} onChange={e => set('projectId', e.target.value)}
+            <label htmlFor="timesheet-entry-project-id" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project ID</label>
+            <Input id="timesheet-entry-project-id" value={form.projectId} onChange={e => set('projectId', e.target.value)}
               className="h-8 text-sm" placeholder="Optional project ID"/>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Task ID</label>
-            <Input value={form.taskId} onChange={e => set('taskId', e.target.value)}
+            <label htmlFor="timesheet-entry-task-id" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Task ID</label>
+            <Input id="timesheet-entry-task-id" value={form.taskId} onChange={e => set('taskId', e.target.value)}
               className="h-8 text-sm" placeholder="Optional task ID"/>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea value={form.workDescription} onChange={e => set('workDescription', e.target.value)}
+            <label htmlFor="timesheet-entry-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+            <textarea id="timesheet-entry-description" value={form.workDescription} onChange={e => set('workDescription', e.target.value)}
               rows={2} className="input-aura w-full text-sm resize-none" placeholder="What did you work on?"/>
           </div>
           <div className="flex items-center gap-4">

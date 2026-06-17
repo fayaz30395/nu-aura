@@ -671,9 +671,9 @@ function ExportSection() {
     <div className="space-y-6">
       {/* Export type selector */}
       <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+        <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
           Export Type
-        </label>
+        </span>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {EXPORT_TYPES.map(({value, label, description}) => (
             <button
@@ -698,9 +698,9 @@ function ExportSection() {
 
       {/* Format selector */}
       <div>
-        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+        <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
           Format
-        </label>
+        </span>
         <div className="flex gap-4">
           {FORMAT_OPTIONS.map(({value, label}) => (
             <button

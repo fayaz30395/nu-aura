@@ -650,10 +650,11 @@ export default function MyLeavesPage() {
             <ModalBody className="space-y-4">
                 {/* Leave Type */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="leave-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Leave Type *
                   </label>
                   <select
+                    id="leave-type"
                     aria-label="Leave type"
                     {...registerLeave('leaveTypeId')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
@@ -672,11 +673,12 @@ export default function MyLeavesPage() {
                 {/* Dates */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="leave-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Start Date *
                     </label>
                     <input
                       type="date"
+                      id="leave-start-date"
                       {...registerLeave('startDate')}
                       className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
                     />
@@ -684,11 +686,12 @@ export default function MyLeavesPage() {
                       <p className="text-danger-500 text-sm mt-1">{leaveErrors.startDate.message}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="leave-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       End Date *
                     </label>
                     <input
                       type="date"
+                      id="leave-end-date"
                       {...registerLeave('endDate')}
                       min={startDate}
                       className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-accent-500 dark:bg-[var(--bg-surface)]"
@@ -717,9 +720,9 @@ export default function MyLeavesPage() {
                 {/* Half Day Period (DATA-5: required by backend when isHalfDay) */}
                 {isHalfDay && (
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Which half? *
-                    </label>
+                    </span>
                     <div className="flex items-center gap-6">
                       <label className="flex items-center gap-2">
                         <input
@@ -754,10 +757,11 @@ export default function MyLeavesPage() {
 
                 {/* Reason */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="leave-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Reason *
                   </label>
                   <textarea
+                    id="leave-reason"
                     {...registerLeave('reason')}
                     rows={4}
                     placeholder="Please provide a reason for your leave..."
@@ -816,10 +820,11 @@ export default function MyLeavesPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="cancel-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Reason for cancellation *
                   </label>
                   <textarea
+                    id="cancel-reason"
                     {...registerCancel('reason')}
                     rows={3}
                     placeholder="Please provide a reason for cancelling this leave request..."
@@ -898,11 +903,12 @@ export default function MyLeavesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                <label htmlFor="encash-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                   Days to Encash *
                 </label>
                 <input
                   type="number"
+                  id="encash-days"
                   min={1}
                   max={encashBalance.available}
                   value={encashDays}
@@ -915,10 +921,11 @@ export default function MyLeavesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                <label htmlFor="encash-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                   Reason
                 </label>
                 <textarea
+                  id="encash-reason"
                   value={encashReason}
                   onChange={(e) => setEncashReason(e.target.value)}
                   rows={2}

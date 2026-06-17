@@ -102,19 +102,19 @@ function CreateTaskPanel({
         </div>
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Title *</label>
-            <Input value={form.title} onChange={e => set('title', e.target.value)}
+            <label htmlFor="task-title" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Title *</label>
+            <Input id="task-title" value={form.title} onChange={e => set('title', e.target.value)}
               className="h-8 text-sm" placeholder="Task title"/>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea value={form.description} onChange={e => set('description', e.target.value)}
+            <label htmlFor="task-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+            <textarea id="task-description" value={form.description} onChange={e => set('description', e.target.value)}
               rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional details..."/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
-              <select value={form.type} onChange={e => set('type', e.target.value)}
+              <label htmlFor="task-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
+              <select id="task-type" value={form.type} onChange={e => set('type', e.target.value)}
                 className="input-aura w-full h-8 text-sm">
                 {Object.values(CreateRequestType).map(t => (
                   <option key={t} value={t}>{TYPE_LABELS[t] ?? t}</option>
@@ -122,8 +122,8 @@ function CreateTaskPanel({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Priority</label>
-              <select value={form.priority} onChange={e => set('priority', e.target.value)}
+              <label htmlFor="task-priority" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Priority</label>
+              <select id="task-priority" value={form.priority} onChange={e => set('priority', e.target.value)}
                 className="input-aura w-full h-8 text-sm">
                 {Object.values(CreateRequestPriority).map(p => (
                   <option key={p} value={p}>{PRIORITY_LABELS[p] ?? p}</option>
@@ -133,18 +133,18 @@ function CreateTaskPanel({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Due Date</label>
-              <Input type="date" value={form.dueDate} onChange={e => set('dueDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="task-due-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Due Date</label>
+              <Input id="task-due-date" type="date" value={form.dueDate} onChange={e => set('dueDate', e.target.value)} className="h-8 text-sm"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Est. Hours</label>
-              <Input type="number" value={form.estimatedHours} onChange={e => set('estimatedHours', e.target.value)}
+              <label htmlFor="task-estimated-hours" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Est. Hours</label>
+              <Input id="task-estimated-hours" type="number" value={form.estimatedHours} onChange={e => set('estimatedHours', e.target.value)}
                 className="h-8 text-sm" placeholder="0"/>
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project ID</label>
-            <Input value={form.projectId} onChange={e => set('projectId', e.target.value)}
+            <label htmlFor="task-project-id" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project ID</label>
+            <Input id="task-project-id" value={form.projectId} onChange={e => set('projectId', e.target.value)}
               className="h-8 text-sm" placeholder="Optional project ID"/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}

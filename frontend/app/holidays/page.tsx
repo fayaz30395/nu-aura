@@ -574,7 +574,7 @@ export default function HolidaysPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="holiday-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Date *
                         </label>
                         <Controller
@@ -582,6 +582,7 @@ export default function HolidaysPage() {
                           control={form.control}
                           render={({field}) => (
                             <DateInput
+                              id="holiday-date"
                               value={field.value || null}
                               onChange={(d) => field.onChange(d ?? '')}
                               valueFormat="YYYY-MM-DD"
@@ -607,10 +608,11 @@ export default function HolidaysPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="holiday-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Description
                       </label>
                       <Textarea
+                        id="holiday-description"
                         {...form.register('description')}
                         rows={2}
                         placeholder="Brief description of the holiday"

@@ -398,7 +398,7 @@ export default function NineBoxPage() {
             <div className="bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg p-4">
               <div className="flex flex-col md:flex-row md:items-center gap-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="ninebox-review-cycle" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Review Cycle
                   </label>
                   {cyclesLoading ? (
@@ -406,6 +406,7 @@ export default function NineBoxPage() {
                       className="h-10 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
                   ) : (
                     <select
+                      id="ninebox-review-cycle"
                       aria-label="Cycle"
                       value={selectedCycleId}
                       onChange={e => setSelectedCycleId(e.target.value)}

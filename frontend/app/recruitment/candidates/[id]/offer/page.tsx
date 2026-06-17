@@ -197,7 +197,7 @@ export default function CreateOfferPage() {
 
                 {/* Template selector */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                  <label htmlFor="offer-template" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                     Offer Letter Template *
                   </label>
                   {isLoading ? (
@@ -207,6 +207,7 @@ export default function CreateOfferPage() {
                     </div>
                   ) : (
                     <Select
+                      id="offer-template"
                       value={form.templateId}
                       onChange={(e) => setForm((prev) => ({...prev, templateId: e.target.value}))}
                       disabled={submitting}
@@ -246,10 +247,11 @@ export default function CreateOfferPage() {
                 />
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                  <label htmlFor="offer-joining-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                     Proposed Joining Date *
                   </label>
                   <input
+                    id="offer-joining-date"
                     type="date"
                     value={form.proposedJoiningDate}
                     onChange={(e) =>
@@ -262,10 +264,11 @@ export default function CreateOfferPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                  <label htmlFor="offer-additional-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
                     Additional Notes
                   </label>
                   <Textarea
+                    id="offer-additional-notes"
                     placeholder="Any additional terms or notes to include…"
                     value={form.additionalNotes}
                     onChange={(e) =>

@@ -151,13 +151,14 @@ function PayslipsPageContent() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Search */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="payslip-filter-search" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Search
                 </label>
                 <div className="relative">
                   <Search
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                   <input
+                    id="payslip-filter-search"
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -169,10 +170,11 @@ function PayslipsPageContent() {
 
               {/* Month Filter */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="payslip-filter-month" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Month
                 </label>
                 <select
+                  id="payslip-filter-month"
                   aria-label="Month"
                   value={selectedMonth}
                   onChange={(e) => setSelectedMonth(e.target.value)}
@@ -189,10 +191,11 @@ function PayslipsPageContent() {
 
               {/* Year Filter */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="payslip-filter-year" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Year
                 </label>
                 <select
+                  id="payslip-filter-year"
                   aria-label="Year"
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
@@ -209,10 +212,11 @@ function PayslipsPageContent() {
 
               {/* Status Filter */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="payslip-filter-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Status
                 </label>
                 <select
+                  id="payslip-filter-status"
                   aria-label="Status"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as PayslipStatus)}

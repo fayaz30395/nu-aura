@@ -263,15 +263,15 @@ export default function SettingsPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <label className="text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">
+                        <span className="block text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">
                           Email Address
-                        </label>
+                        </span>
                         <p className="mt-1 text-sm text-[var(--text-1)]">{user?.email || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">
+                        <span className="block text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">
                           User ID
-                        </label>
+                        </span>
                         <p className="num mt-1 text-sm text-[var(--text-1)]">
                           {user?.id || 'N/A'}
                         </p>
@@ -293,9 +293,9 @@ export default function SettingsPage() {
                     <CardContent>
                       <div className="flex items-center justify-between gap-4">
                         <div>
-                          <label className="text-sm font-semibold text-[var(--text-1)]">
+                          <span className="block text-sm font-semibold text-[var(--text-1)]">
                             Dark Mode
-                          </label>
+                          </span>
                           <p className="mt-0.5 text-[12.5px] text-[var(--text-3)]">
                             Switch between light and dark theme
                           </p>

@@ -108,19 +108,19 @@ function CreateSurveyPanel({onClose}: {onClose: () => void}) {
         </div>
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Title *</label>
-            <Input value={form.title} onChange={e => set('title', e.target.value)}
+            <label htmlFor="pulse-survey-title" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Title *</label>
+            <Input id="pulse-survey-title" value={form.title} onChange={e => set('title', e.target.value)}
               className="h-8 text-sm" placeholder="Q2 Employee Engagement Survey"/>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea value={form.description} onChange={e => set('description', e.target.value)}
+            <label htmlFor="pulse-survey-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+            <textarea id="pulse-survey-description" value={form.description} onChange={e => set('description', e.target.value)}
               rows={2} className="input-aura w-full text-sm resize-none" placeholder="Purpose of this survey..."/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
-              <select value={form.surveyType} onChange={e => set('surveyType', e.target.value)}
+              <label htmlFor="pulse-survey-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
+              <select id="pulse-survey-type" value={form.surveyType} onChange={e => set('surveyType', e.target.value)}
                 className="input-aura w-full h-8 text-sm">
                 {Object.values(PulseSurveyRequestSurveyType).map(t => (
                   <option key={t} value={t}>{TYPE_LABELS[t] ?? t}</option>
@@ -128,8 +128,8 @@ function CreateSurveyPanel({onClose}: {onClose: () => void}) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Frequency</label>
-              <select value={form.frequency} onChange={e => set('frequency', e.target.value)}
+              <label htmlFor="pulse-survey-frequency" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Frequency</label>
+              <select id="pulse-survey-frequency" value={form.frequency} onChange={e => set('frequency', e.target.value)}
                 className="input-aura w-full h-8 text-sm">
                 {Object.values(PulseSurveyRequestFrequency).map(f => (
                   <option key={f} value={f}>{FREQ_LABELS[f] ?? f}</option>
@@ -139,12 +139,12 @@ function CreateSurveyPanel({onClose}: {onClose: () => void}) {
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Start Date *</label>
-              <Input type="date" value={form.startDate} onChange={e => set('startDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="pulse-survey-start-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Start Date *</label>
+              <Input id="pulse-survey-start-date" type="date" value={form.startDate} onChange={e => set('startDate', e.target.value)} className="h-8 text-sm"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">End Date *</label>
-              <Input type="date" value={form.endDate} onChange={e => set('endDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="pulse-survey-end-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">End Date *</label>
+              <Input id="pulse-survey-end-date" type="date" value={form.endDate} onChange={e => set('endDate', e.target.value)} className="h-8 text-sm"/>
             </div>
           </div>
           <div className="flex items-center gap-4">

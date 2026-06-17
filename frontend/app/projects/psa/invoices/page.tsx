@@ -148,12 +148,12 @@ function InvoicePanel({
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Invoice # *</label>
-              <Input value={form.invoiceNumber} onChange={e => set('invoiceNumber', e.target.value)} className="h-8 text-sm" placeholder="INV-001"/>
+              <label htmlFor="invoice-number" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Invoice # *</label>
+              <Input id="invoice-number" value={form.invoiceNumber} onChange={e => set('invoiceNumber', e.target.value)} className="h-8 text-sm" placeholder="INV-001"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
-              <select value={form.status} onChange={e => set('status', e.target.value)} className="input-aura w-full h-8 text-sm">
+              <label htmlFor="invoice-status" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
+              <select id="invoice-status" value={form.status} onChange={e => set('status', e.target.value)} className="input-aura w-full h-8 text-sm">
                 {Object.values(PSAInvoiceStatus).map(s => (
                   <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                 ))}
@@ -162,36 +162,36 @@ function InvoicePanel({
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Invoice Date</label>
-              <Input type="date" value={form.invoiceDate} onChange={e => set('invoiceDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="invoice-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Invoice Date</label>
+              <Input id="invoice-date" type="date" value={form.invoiceDate} onChange={e => set('invoiceDate', e.target.value)} className="h-8 text-sm"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Due Date</label>
-              <Input type="date" value={form.dueDate} onChange={e => set('dueDate', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="invoice-due-date" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Due Date</label>
+              <Input id="invoice-due-date" type="date" value={form.dueDate} onChange={e => set('dueDate', e.target.value)} className="h-8 text-sm"/>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Period Start</label>
-              <Input type="date" value={form.billingPeriodStart} onChange={e => set('billingPeriodStart', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="invoice-period-start" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Period Start</label>
+              <Input id="invoice-period-start" type="date" value={form.billingPeriodStart} onChange={e => set('billingPeriodStart', e.target.value)} className="h-8 text-sm"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Period End</label>
-              <Input type="date" value={form.billingPeriodEnd} onChange={e => set('billingPeriodEnd', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="invoice-period-end" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Period End</label>
+              <Input id="invoice-period-end" type="date" value={form.billingPeriodEnd} onChange={e => set('billingPeriodEnd', e.target.value)} className="h-8 text-sm"/>
             </div>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Hours</label>
-              <Input type="number" value={form.totalHours} onChange={e => set('totalHours', e.target.value)} className="h-8 text-sm" placeholder="0"/>
+              <label htmlFor="invoice-hours" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Hours</label>
+              <Input id="invoice-hours" type="number" value={form.totalHours} onChange={e => set('totalHours', e.target.value)} className="h-8 text-sm" placeholder="0"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Amount</label>
-              <Input type="number" value={form.billableAmount} onChange={e => set('billableAmount', e.target.value)} className="h-8 text-sm" placeholder="0.00"/>
+              <label htmlFor="invoice-amount" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Amount</label>
+              <Input id="invoice-amount" type="number" value={form.billableAmount} onChange={e => set('billableAmount', e.target.value)} className="h-8 text-sm" placeholder="0.00"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Tax</label>
-              <Input type="number" value={form.taxAmount} onChange={e => set('taxAmount', e.target.value)} className="h-8 text-sm" placeholder="0.00"/>
+              <label htmlFor="invoice-tax" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Tax</label>
+              <Input id="invoice-tax" type="number" value={form.taxAmount} onChange={e => set('taxAmount', e.target.value)} className="h-8 text-sm" placeholder="0.00"/>
             </div>
           </div>
           {(form.billableAmount || form.taxAmount) ? (
@@ -201,8 +201,8 @@ function InvoicePanel({
             </div>
           ) : null}
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Notes</label>
-            <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional notes..."/>
+            <label htmlFor="invoice-notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Notes</label>
+            <textarea id="invoice-notes" value={form.notes} onChange={e => set('notes', e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional notes..."/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}
           <div className="flex gap-2 pt-2">

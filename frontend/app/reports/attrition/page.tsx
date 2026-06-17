@@ -160,8 +160,9 @@ export default function AttritionReportPage() {
         {/* Filters */}
         <div className="flex items-center gap-4 mb-4">
           <div className="flex items-center gap-2">
-            <label className="text-caption">Min risk score:</label>
+            <label htmlFor="attrition-min-score" className="text-caption">Min risk score:</label>
             <input
+              id="attrition-min-score"
               type="number"
               min={0}
               max={100}

@@ -628,8 +628,9 @@ function EditRoleModal({
         <ModalBody className="space-y-6">
             <div className="grid grid-cols-1 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Name *</label>
+                <label htmlFor="edit-role-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Name *</label>
                 <input
+                  id="edit-role-name"
                   type="text"
                   {...form.register('name')}
                   className="input-aura"
@@ -640,8 +641,9 @@ function EditRoleModal({
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
+                <label htmlFor="edit-role-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
                 <textarea
+                  id="edit-role-description"
                   {...form.register('description')}
                   rows={2}
                   className="input-aura"
@@ -756,8 +758,9 @@ function CreateRoleModal({
         <ModalBody className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Code *</label>
+                <label htmlFor="create-role-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Role Code *</label>
                 <input
+                  id="create-role-code"
                   type="text"
                   {...form.register('roleCode')}
                   placeholder="e.g., FINANCE_MANAGER"
@@ -769,8 +772,9 @@ function CreateRoleModal({
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Display Name *</label>
+                <label htmlFor="create-role-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Display Name *</label>
                 <input
+                  id="create-role-name"
                   type="text"
                   {...form.register('name')}
                   placeholder="e.g., Finance Manager"
@@ -783,8 +787,9 @@ function CreateRoleModal({
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
+              <label htmlFor="create-role-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
               <textarea
+                id="create-role-description"
                 {...form.register('description')}
                 placeholder="Describe this role's purpose..."
                 rows={2}

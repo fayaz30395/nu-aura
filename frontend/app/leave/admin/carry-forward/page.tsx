@@ -78,10 +78,11 @@ export default function LeaveCarryForwardPage() {
 
           <div className="skeuo-card p-6 space-y-6">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="carry-forward-from-year" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Carry Forward From Year
               </label>
               <select
+                id="carry-forward-from-year"
                 aria-label="Carry Forward From Year"
                 value={fromYear}
                 onChange={(e) => setFromYear(Number(e.target.value))}

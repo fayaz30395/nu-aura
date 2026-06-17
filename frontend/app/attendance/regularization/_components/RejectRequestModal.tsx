@@ -74,10 +74,11 @@ export function RejectRequestModal({
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
+                      <label htmlFor="reject-reason" className="block text-sm font-semibold text-[var(--text-primary)] mb-4">
                         Reason for Rejection <span aria-hidden="true" className="text-danger-500">*</span>
                       </label>
                       <textarea
+                        id="reject-reason"
                         {...register('reason')}
                         aria-required="true"
                         rows={4}

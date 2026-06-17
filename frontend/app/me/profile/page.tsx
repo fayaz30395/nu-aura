@@ -360,23 +360,23 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
+                <span className="block text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
                   Full Name
-                </label>
+                </span>
                 <p className="text-[var(--text-1)] mt-2 font-medium">{displayName}</p>
               </div>
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
+                <span className="block text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
                   Date of Birth
-                </label>
+                </span>
                 <p className="text-[var(--text-1)] mt-2 font-medium">
                   {employee.dateOfBirth ? formatDate(employee.dateOfBirth) : 'Not provided'}
                 </p>
               </div>
               <div>
-                <label className="text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
+                <span className="block text-xs font-medium uppercase tracking-wider text-[var(--text-3)]">
                   Gender
-                </label>
+                </span>
                 <p className="text-[var(--text-1)] mt-2 font-medium">
                   {employee.gender || 'Not provided'}
                 </p>
@@ -397,9 +397,9 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Work Email
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1">{employee.workEmail}</p>
               </div>
               <div>
@@ -580,41 +580,41 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Joining Date
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1">
                   {formatDate(employee.joiningDate)}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Employment Type
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1">
                   {formatEnumValue(employee.employmentType)}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Department
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1">
                   {employee.departmentName || 'N/A'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Reporting Manager
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1">
                   {employee.managerName || 'N/A'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Status
-                </label>
+                </span>
                 <span
                   className={`badge-status mt-1 ${employee.status === 'ACTIVE'
                     ? 'status-success'
@@ -659,17 +659,17 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Bank Name
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1">
                   {employee.bankName || 'Not provided'}
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Account Number
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1 font-mono">
                   {employee.bankAccountNumber
                     ? `****${employee.bankAccountNumber.slice(-4)}`
@@ -677,9 +677,9 @@ export default function MyProfilePage() {
                 </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   IFSC Code
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1 font-mono">
                   {employee.bankIfscCode || 'Not provided'}
                 </p>
@@ -700,9 +700,9 @@ export default function MyProfilePage() {
             </CardHeader>
             <CardContent>
               <div>
-                <label className="text-sm font-medium text-[var(--text-secondary)]">
+                <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   PAN Number
-                </label>
+                </span>
                 <p className="text-[var(--text-primary)] mt-1 font-mono">
                   {employee.taxId || 'Not provided'}
                 </p>

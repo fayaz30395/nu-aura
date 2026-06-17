@@ -331,8 +331,9 @@ export default function CompOffPage() {
       >
         <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Attendance Date *</label>
+            <label htmlFor="comp-off-attendance-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Attendance Date *</label>
             <input
+              id="comp-off-attendance-date"
               type="date"
               {...register('attendanceDate')}
               className={`input-aura ${errors.attendanceDate ? 'border-danger-500' : ''}`}
@@ -343,8 +344,9 @@ export default function CompOffPage() {
             <p className="text-caption mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
+            <label htmlFor="comp-off-reason" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
             <textarea
+              id="comp-off-reason"
               {...register('reason')}
               rows={3}
               placeholder="Optional: why you worked overtime"

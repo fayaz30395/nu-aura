@@ -276,17 +276,17 @@ function CreateBudgetPanel({onClose}: {onClose: () => void}) {
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Budget Name *</label>
-            <Input value={form.name} onChange={e => set('name', e.target.value)} className="h-8 text-sm" placeholder="e.g. Engineering Q1 2025"/>
+            <label htmlFor="budget-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Budget Name *</label>
+            <Input id="budget-name" value={form.name} onChange={e => set('name', e.target.value)} className="h-8 text-sm" placeholder="e.g. Engineering Q1 2025"/>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Fiscal Year *</label>
-              <Input type="number" value={form.fiscalYear} onChange={e => set('fiscalYear', e.target.value)} className="h-8 text-sm"/>
+              <label htmlFor="budget-fiscal-year" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Fiscal Year *</label>
+              <Input id="budget-fiscal-year" type="number" value={form.fiscalYear} onChange={e => set('fiscalYear', e.target.value)} className="h-8 text-sm"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Currency</label>
-              <select value={form.currency} onChange={e => set('currency', e.target.value)} className="input-aura w-full h-8 text-sm">
+              <label htmlFor="budget-currency" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Currency</label>
+              <select id="budget-currency" value={form.currency} onChange={e => set('currency', e.target.value)} className="input-aura w-full h-8 text-sm">
                 <option value="USD">USD</option>
                 <option value="INR">INR</option>
                 <option value="EUR">EUR</option>
@@ -295,8 +295,9 @@ function CreateBudgetPanel({onClose}: {onClose: () => void}) {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Department *</label>
+            <label htmlFor="budget-department" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Department *</label>
             <select
+              id="budget-department"
               value={form.departmentId}
               onChange={e => set('departmentId', e.target.value)}
               className="input-aura w-full h-8 text-sm"
@@ -308,22 +309,22 @@ function CreateBudgetPanel({onClose}: {onClose: () => void}) {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Total Budget *</label>
-            <Input type="number" value={form.totalBudget} onChange={e => set('totalBudget', e.target.value)} className="h-8 text-sm" placeholder="0"/>
+            <label htmlFor="budget-total" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Total Budget *</label>
+            <Input id="budget-total" type="number" value={form.totalBudget} onChange={e => set('totalBudget', e.target.value)} className="h-8 text-sm" placeholder="0"/>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Opening Headcount *</label>
-              <Input type="number" value={form.openingHeadcount} onChange={e => set('openingHeadcount', e.target.value)} className="h-8 text-sm" placeholder="0"/>
+              <label htmlFor="budget-opening-headcount" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Opening Headcount *</label>
+              <Input id="budget-opening-headcount" type="number" value={form.openingHeadcount} onChange={e => set('openingHeadcount', e.target.value)} className="h-8 text-sm" placeholder="0"/>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Planned Hires</label>
-              <Input type="number" value={form.plannedHires} onChange={e => set('plannedHires', e.target.value)} className="h-8 text-sm" placeholder="0"/>
+              <label htmlFor="budget-planned-hires" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Planned Hires</label>
+              <Input id="budget-planned-hires" type="number" value={form.plannedHires} onChange={e => set('plannedHires', e.target.value)} className="h-8 text-sm" placeholder="0"/>
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Notes</label>
-            <textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={3} className="input-aura w-full text-sm resize-none" placeholder="Optional context..."/>
+            <label htmlFor="budget-notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Notes</label>
+            <textarea id="budget-notes" value={form.notes} onChange={e => set('notes', e.target.value)} rows={3} className="input-aura w-full text-sm resize-none" placeholder="Optional context..."/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}
           <div className="flex gap-2 pt-2">

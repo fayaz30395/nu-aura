@@ -403,8 +403,8 @@ export default function TicketDetailPage() {
                     {errors.comment && <p className="text-sm text-danger-500">{errors.comment.message}</p>}
                     <div className="row-between">
                       <PermissionGate permission={Permissions.HELPDESK_TICKET_ASSIGN}>
-                        <label className="flex items-center gap-2 text-body-secondary">
-                          <MantineCheckbox {...register('isInternal')}/>
+                        <label htmlFor="ticket-comment-internal" className="flex items-center gap-2 text-body-secondary">
+                          <MantineCheckbox id="ticket-comment-internal" {...register('isInternal')}/>
                           <Lock className="h-3.5 w-3.5"/>
                           Internal note (not visible to requester)
                         </label>

@@ -202,10 +202,11 @@ export default function EditWikiPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="wiki-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Title
             </label>
             <TextInput
+              id="wiki-title"
               placeholder="Enter page title"
               error={errors.title?.message}
               {...register('title')}
@@ -216,7 +217,7 @@ export default function EditWikiPage() {
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="wiki-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Status
             </label>
             <Controller
@@ -225,6 +226,7 @@ export default function EditWikiPage() {
               render={({field}) => (
                 <Select
                   {...field}
+                  id="wiki-status"
                   placeholder="Select status"
                   disabled={isSubmitting}
                   data={[
@@ -239,7 +241,7 @@ export default function EditWikiPage() {
 
           {/* Visibility */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="wiki-visibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Visibility
             </label>
             <Controller
@@ -248,6 +250,7 @@ export default function EditWikiPage() {
               render={({field}) => (
                 <Select
                   {...field}
+                  id="wiki-visibility"
                   placeholder="Select visibility"
                   disabled={isSubmitting}
                   data={[
@@ -274,10 +277,11 @@ export default function EditWikiPage() {
 
           {/* Post Editors */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="wiki-post-editors" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Post Editors (who can edit this page)
             </label>
             <MultiSelect
+              id="wiki-post-editors"
               data={editorOptions}
               value={editorIds}
               onChange={setEditorIds}
@@ -295,20 +299,22 @@ export default function EditWikiPage() {
 
           {/* Content Editor */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="wiki-content" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Content
             </label>
-            <Controller
-              control={control}
-              name="content"
-              render={({field}) => (
-                <FluenceEditor
-                  content={field.value}
-                  onChange={field.onChange}
-                  placeholder='Type "/" for commands, or just start writing...'
-                />
-              )}
-            />
+            <div id="wiki-content">
+              <Controller
+                control={control}
+                name="content"
+                render={({field}) => (
+                  <FluenceEditor
+                    content={field.value}
+                    onChange={field.onChange}
+                    placeholder='Type "/" for commands, or just start writing...'
+                  />
+                )}
+              />
+            </div>
           </div>
 
           {/* Actions */}

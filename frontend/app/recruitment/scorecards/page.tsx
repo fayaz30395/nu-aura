@@ -41,7 +41,7 @@ function CriteriaEditor({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-medium text-[var(--text-secondary)]">Criteria</label>
+        <span className="text-xs font-medium text-[var(--text-secondary)]">Criteria</span>
         <button type="button" onClick={add} className="text-xs text-[var(--accent)] hover:underline flex items-center gap-1">
           <Plus className="w-3 h-3"/>Add
         </button>
@@ -140,12 +140,12 @@ function TemplatePanel({
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Template Name *</label>
-            <Input value={name} onChange={e => setName(e.target.value)} className="h-8 text-sm" placeholder="e.g. Engineering Role Scorecard"/>
+            <label htmlFor="scorecard-template-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Template Name *</label>
+            <Input id="scorecard-template-name" value={name} onChange={e => setName(e.target.value)} className="h-8 text-sm" placeholder="e.g. Engineering Role Scorecard"/>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional description..."/>
+            <label htmlFor="scorecard-template-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+            <textarea id="scorecard-template-description" value={description} onChange={e => setDescription(e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional description..."/>
           </div>
           <div className="flex items-center gap-2">
             <button

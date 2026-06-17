@@ -431,12 +431,13 @@ export default function ShiftSwapPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Date *</label>
+              <label htmlFor="requester-shift-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">My Shift Date *</label>
               <Controller
                 name="requesterShiftDate"
                 control={control}
                 render={({field}) => (
                   <DateInput
+                    id="requester-shift-date"
                     value={field.value || null}
                     onChange={(d) => field.onChange(d ?? '')}
                     valueFormat="YYYY-MM-DD"
@@ -453,12 +454,13 @@ export default function ShiftSwapPage() {
             </div>
             {watchedSwapType === 'SWAP' && (
               <div>
-                <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Target Shift Date</label>
+                <label htmlFor="target-shift-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Target Shift Date</label>
                 <Controller
                   name="targetShiftDate"
                   control={control}
                   render={({field}) => (
                     <DateInput
+                      id="target-shift-date"
                       value={field.value || null}
                       onChange={(d) => field.onChange(d ?? '')}
                       valueFormat="YYYY-MM-DD"
@@ -507,8 +509,9 @@ export default function ShiftSwapPage() {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
+            <label htmlFor="shift-swap-reason" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
             <textarea
+              id="shift-swap-reason"
               {...register('reason')}
               rows={2}
               placeholder="Optional reason for the swap"

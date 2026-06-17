@@ -185,10 +185,11 @@ function CreatePanel({onClose, onCreate}: {onClose: () => void; onCreate: (r: Ap
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="api-key-name" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
               Name <span className="text-danger-500">*</span>
             </label>
             <Input
+              id="api-key-name"
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="e.g. Production Integration"
@@ -197,8 +198,9 @@ function CreatePanel({onClose, onCreate}: {onClose: () => void; onCreate: (r: Ap
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
+            <label htmlFor="api-key-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
             <Input
+              id="api-key-description"
               value={description}
               onChange={e => setDescription(e.target.value)}
               placeholder="Optional description"
@@ -207,7 +209,7 @@ function CreatePanel({onClose, onCreate}: {onClose: () => void; onCreate: (r: Ap
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-2">Scopes</label>
+            <span className="block text-xs font-medium text-[var(--text-secondary)] mb-2">Scopes</span>
             <ScopeSelector selected={scopes} onChange={setScopes}/>
             {scopes.length === 0 && (
               <p className="text-[10px] text-[var(--text-muted)] mt-1">No scopes = full access</p>
@@ -215,8 +217,9 @@ function CreatePanel({onClose, onCreate}: {onClose: () => void; onCreate: (r: Ap
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Expires At</label>
+            <label htmlFor="api-key-expires-at" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Expires At</label>
             <Input
+              id="api-key-expires-at"
               type="date"
               value={expiresAt}
               onChange={e => setExpiresAt(e.target.value)}

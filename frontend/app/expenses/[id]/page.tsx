@@ -435,13 +435,14 @@ export default function ExpenseDetailPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date
+                    <label htmlFor="expense-item-date" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">Date
                       *</label>
                     <Controller
                       name="expenseDate"
                       control={control}
                       render={({field}) => (
                         <DateInput
+                          id="expense-item-date"
                           value={field.value || null}
                           onChange={(d) => field.onChange(d ?? '')}
                           valueFormat="YYYY-MM-DD"

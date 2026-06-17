@@ -461,11 +461,12 @@ export default function RolesPage() {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   {/* Code Input */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="create-role-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Code *
                     </label>
                     <input
                       type="text"
+                      id="create-role-code"
                       {...createForm.register('code')}
                       className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                       placeholder="e.g., MANAGER"
@@ -480,11 +481,12 @@ export default function RolesPage() {
 
                   {/* Name Input */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                    <label htmlFor="create-role-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                       Name *
                     </label>
                     <input
                       type="text"
+                      id="create-role-name"
                       {...createForm.register('name')}
                       className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                       placeholder="e.g., Manager"
@@ -499,10 +501,11 @@ export default function RolesPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="create-role-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Description
                   </label>
                   <textarea
+                    id="create-role-description"
                     {...createForm.register('description')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                     rows={3}
@@ -515,12 +518,13 @@ export default function RolesPage() {
 
                 {/* Permissions Dropdown - Note: permissions are NOT part of the form, handled separately */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="create-role-permission-search" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Permissions
                   </label>
                   <div className="relative">
                     <input
                       type="text"
+                      id="create-role-permission-search"
                       value={permissionSearch}
                       onChange={(e) => setPermissionSearch(e.target.value)}
                       onFocus={() => setShowPermissionDropdown(true)}
@@ -635,22 +639,24 @@ export default function RolesPage() {
               <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Edit Role</h2>
               <form onSubmit={editForm.handleSubmit(handleUpdateRole)}>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="edit-role-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Code
                   </label>
                   <input
                     type="text"
+                    id="edit-role-code"
                     value={selectedRole.code}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)]"
                     disabled
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="edit-role-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Name
                   </label>
                   <input
                     type="text"
+                    id="edit-role-name"
                     {...editForm.register('name')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                   />
@@ -659,10 +665,11 @@ export default function RolesPage() {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="edit-role-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Description
                   </label>
                   <textarea
+                    id="edit-role-description"
                     {...editForm.register('description')}
                     className="w-full px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-accent-400"
                     rows={3}
@@ -672,10 +679,11 @@ export default function RolesPage() {
                   )}
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="edit-role-parent" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Parent Role
                   </label>
                   <select
+                    id="edit-role-parent"
                     aria-label="Parent role"
                     {...editForm.register('parentRoleId')}
                     value={selectedParentRoleId || ''}

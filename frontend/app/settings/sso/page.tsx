@@ -518,9 +518,9 @@ export default function SsoSettingsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+                  <span className="block text-sm font-medium text-[var(--text-primary)] mb-2">
                     Or upload a certificate file
-                  </label>
+                  </span>
                   <label
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] cursor-pointer hover:bg-[var(--bg-surface)] transition-colors">
                     <Upload className="h-4 w-4 text-[var(--text-secondary)]"/>

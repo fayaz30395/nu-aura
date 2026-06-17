@@ -397,20 +397,22 @@ export default function AgenciesPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="contractEndDate" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Contract End
                         </label>
                         <input
+                          id="contractEndDate"
                           {...form.register('contractEndDate')}
                           type="date"
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="rating" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Rating (1-5)
                         </label>
                         <input
+                          id="rating"
                           {...form.register('rating')}
                           type="number"
                           min={1}
@@ -419,10 +421,11 @@ export default function AgenciesPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                        <label htmlFor="specializations" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                           Specializations
                         </label>
                         <input
+                          id="specializations"
                           {...form.register('specializations')}
                           className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
                           placeholder="e.g., IT, Finance, Engineering"
@@ -430,20 +433,22 @@ export default function AgenciesPage() {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="address" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                         Address
                       </label>
                       <input
+                        id="address"
                         {...form.register('address')}
                         className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
                         placeholder="Full address"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                         Notes
                       </label>
                       <textarea
+                        id="notes"
                         {...form.register('notes')}
                         rows={3}
                         className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg resize-none input-skeuo"

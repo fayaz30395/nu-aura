@@ -170,10 +170,11 @@ export default function StatutoryPage() {
                 <form onSubmit={form.handleSubmit(handleCalculate)}>
                   <Stack gap="md">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                      <label htmlFor="statutory-employee-id" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         Employee ID
                       </label>
                       <input
+                        id="statutory-employee-id"
                         type="text"
                         placeholder="550e8400-e29b-41d4-a716-446655440000"
                         className="input-aura"
@@ -186,10 +187,11 @@ export default function StatutoryPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                      <label htmlFor="statutory-basic-salary" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         Basic Salary (INR / month)
                       </label>
                       <input
+                        id="statutory-basic-salary"
                         type="number"
                         min="0"
                         step="0.01"
@@ -204,10 +206,11 @@ export default function StatutoryPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                      <label htmlFor="statutory-gross-salary" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         Gross Salary (INR / month)
                       </label>
                       <input
+                        id="statutory-gross-salary"
                         type="number"
                         min="0"
                         step="0.01"
@@ -222,10 +225,11 @@ export default function StatutoryPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                      <label htmlFor="statutory-state" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
                         State
                       </label>
                       <select
+                        id="statutory-state"
                         aria-label="State"
                         className="input-aura"
                         {...form.register('state')}

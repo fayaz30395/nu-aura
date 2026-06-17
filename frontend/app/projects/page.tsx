@@ -1121,10 +1121,10 @@ export default function ProjectsPage() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+              <label htmlFor="project-description" className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                 Description
               </label>
-              <Textarea placeholder="Add a short description or scope notes" {...register('description')} />
+              <Textarea id="project-description" placeholder="Add a short description or scope notes" {...register('description')} />
               {errors.description && <p className="text-sm text-danger-500 mt-1">{errors.description.message}</p>}
             </div>
           </ModalBody>
@@ -1158,9 +1158,9 @@ export default function ProjectsPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+                <span className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                   Project code
-                </label>
+                </span>
                 <div
                   className="rounded-lg border border-[var(--border-main)] bg-[var(--bg-secondary)] px-4 py-2.5 text-body-secondary">
                   {editingProject?.projectCode}
@@ -1233,10 +1233,10 @@ export default function ProjectsPage() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
+              <label htmlFor="edit-project-description" className="mb-1.5 block text-sm font-medium text-[var(--text-secondary)]">
                 Description
               </label>
-              <Textarea placeholder="Add a short description or scope notes" {...editRegister('description')} />
+              <Textarea id="edit-project-description" placeholder="Add a short description or scope notes" {...editRegister('description')} />
               {editErrors.description &&
                 <p className="text-sm text-danger-500 mt-1">{editErrors.description.message}</p>}
             </div>

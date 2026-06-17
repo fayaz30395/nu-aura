@@ -969,7 +969,7 @@ export default function LettersPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="generate-effective-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Effective Date
                     </label>
                     <Controller
@@ -977,6 +977,7 @@ export default function LettersPage() {
                       control={generateLetterForm.control}
                       render={({field}) => (
                         <DateInput
+                          id="generate-effective-date"
                           value={field.value || null}
                           onChange={(d) => field.onChange(d ?? '')}
                           valueFormat="YYYY-MM-DD"
@@ -990,7 +991,7 @@ export default function LettersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="generate-expiry-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Expiry Date
                   </label>
                   <Controller
@@ -998,6 +999,7 @@ export default function LettersPage() {
                     control={generateLetterForm.control}
                     render={({field}) => (
                       <DateInput
+                        id="generate-expiry-date"
                         value={field.value || null}
                         onChange={(d) => field.onChange(d ?? '')}
                         valueFormat="YYYY-MM-DD"
@@ -1010,10 +1012,11 @@ export default function LettersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="generate-additional-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Additional Notes
                   </label>
                   <textarea
+                    id="generate-additional-notes"
                     rows={3}
                     {...generateLetterForm.register('additionalNotes')}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -1190,10 +1193,11 @@ export default function LettersPage() {
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="offer-template" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Template *
                   </label>
                   <select
+                    id="offer-template"
                     aria-label="Template"
                     {...offerLetterForm.register('templateId')}
                     onChange={(e) => handleOfferTemplateSelect(e.target.value)}
@@ -1218,10 +1222,11 @@ export default function LettersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="offer-candidate" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Candidate *
                   </label>
                   <select
+                    id="offer-candidate"
                     aria-label="Candidate"
                     {...offerLetterForm.register('candidateId')}
                     onChange={(e) => handleCandidateSelect(e.target.value)}
@@ -1245,10 +1250,11 @@ export default function LettersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="offer-letter-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Letter Title
                   </label>
                   <input
+                    id="offer-letter-title"
                     type="text"
                     {...offerLetterForm.register('letterTitle')}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -1258,10 +1264,11 @@ export default function LettersPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="offer-designation" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Offered Designation *
                     </label>
                     <input
+                      id="offer-designation"
                       type="text"
                       {...offerLetterForm.register('offeredDesignation')}
                       className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -1273,10 +1280,11 @@ export default function LettersPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="offer-ctc" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Offered CTC (Annual) *
                     </label>
                     <input
+                      id="offer-ctc"
                       type="number"
                       min="0"
                       {...offerLetterForm.register('offeredCtc', {valueAsNumber: true})}
@@ -1292,7 +1300,7 @@ export default function LettersPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="offer-proposed-joining-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Proposed Joining Date *
                     </label>
                     <Controller
@@ -1300,6 +1308,7 @@ export default function LettersPage() {
                       control={offerLetterForm.control}
                       render={({field}) => (
                         <DateInput
+                          id="offer-proposed-joining-date"
                           value={field.value || null}
                           onChange={(d) => field.onChange(d ?? '')}
                           valueFormat="YYYY-MM-DD"
@@ -1315,7 +1324,7 @@ export default function LettersPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="offer-letter-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Letter Date
                     </label>
                     <Controller
@@ -1323,6 +1332,7 @@ export default function LettersPage() {
                       control={offerLetterForm.control}
                       render={({field}) => (
                         <DateInput
+                          id="offer-letter-date"
                           value={field.value || null}
                           onChange={(d) => field.onChange(d ?? '')}
                           valueFormat="YYYY-MM-DD"
@@ -1340,7 +1350,7 @@ export default function LettersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="offer-expiry-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Offer Expiry Date
                   </label>
                   <Controller
@@ -1348,6 +1358,7 @@ export default function LettersPage() {
                     control={offerLetterForm.control}
                     render={({field}) => (
                       <DateInput
+                        id="offer-expiry-date"
                         value={field.value || null}
                         onChange={(d) => field.onChange(d ?? '')}
                         valueFormat="YYYY-MM-DD"
@@ -1360,10 +1371,11 @@ export default function LettersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="offer-additional-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Additional Notes
                   </label>
                   <textarea
+                    id="offer-additional-notes"
                     rows={3}
                     {...offerLetterForm.register('additionalNotes')}
                     className="w-full px-4 py-2 bg-[var(--bg-input)] text-[var(--text-primary)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"

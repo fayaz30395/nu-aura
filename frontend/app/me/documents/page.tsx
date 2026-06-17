@@ -457,9 +457,9 @@ export default function MyDocumentsPage() {
 
               {/* Delivery Mode */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Delivery Mode *
-                </label>
+                </span>
                 <div className="flex gap-4">
                   {(['DIGITAL', 'PHYSICAL', 'BOTH'] as DeliveryMode[]).map((mode) => (
                     <label key={mode} className="flex items-center gap-2 cursor-pointer">

@@ -796,8 +796,8 @@ export default function AdminEmployeesPage() {
 
                 <div className="flex items-center gap-2 mb-2">
                   <Shield className="h-4 w-4 text-[var(--text-secondary)]"/>
-                  <label className="text-sm font-medium text-[var(--text-secondary)]">Select Roles * <span
-                    className="text-caption">(multiple allowed)</span></label>
+                  <span className="text-sm font-medium text-[var(--text-secondary)]">Select Roles * <span
+                    className="text-caption">(multiple allowed)</span></span>
                 </div>
                 {errors.roleCodes && <p className="text-xs text-danger-500 mb-2">{errors.roleCodes.message}</p>}
 

@@ -194,10 +194,10 @@ export default function NewOnboardingPage() {
                 </CardHeader>
                 <CardContent className="p-8 space-y-8">
                   <div className="bg-accent-500/5 p-6 rounded-3xl border border-accent-500/10">
-                    <label
+                    <span
                       className="block text-sm font-bold uppercase tracking-widest text-accent-700 dark:text-accent-400 mb-4">
                       Find Employee
-                    </label>
+                    </span>
                     <EmployeeSearchAutocomplete
                       placeholder="Type name or ID..."
                       onChange={(emp) => setSelectedEmployee(emp)}
@@ -309,8 +309,8 @@ export default function NewOnboardingPage() {
                     )}
                   </div>
                   <div>
-                    <label className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Buddy
-                      (Optional)</label>
+                    <span className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] block mb-2">Buddy
+                      (Optional)</span>
                     <EmployeeSearchAutocomplete
                       placeholder="Find a mentor..."
                       onChange={(emp) => setSelectedBuddy(emp)}

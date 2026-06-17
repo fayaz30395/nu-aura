@@ -281,9 +281,9 @@ export default function CreateTemplatePage() {
             <div className="flex-1 space-y-6">
               {/* Template name preview */}
               <div>
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
+                <span className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
                   Template Name
-                </label>
+                </span>
                 <p className="text-sm text-[var(--text-primary)] font-medium">
                   {name || (
                     <span className="text-[var(--text-muted)] italic">
@@ -295,10 +295,11 @@ export default function CreateTemplatePage() {
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
+                <label htmlFor="template-description" className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
                   Description
                 </label>
                 <textarea
+                  id="template-description"
                   {...register('description')}
                   placeholder="Brief description of what this template is for..."
                   disabled={isSubmitting}
@@ -314,10 +315,10 @@ export default function CreateTemplatePage() {
 
               {/* Icon picker */}
               <div>
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
+                <span className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
                   <Smile className="w-3 h-3 inline mr-1"/>
                   Icon
-                </label>
+                </span>
                 <div className="grid grid-cols-8 gap-1">
                   {TEMPLATE_ICONS.map((icon) => (
                     <button
@@ -340,7 +341,7 @@ export default function CreateTemplatePage() {
 
               {/* Tags */}
               <div>
-                <label className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
+                <label htmlFor="template-tags" className="block text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-2">
                   <Tag className="w-3 h-3 inline mr-1"/>
                   Tags
                 </label>
@@ -350,6 +351,7 @@ export default function CreateTemplatePage() {
                   render={({field}) => (
                     <TagsInput
                       {...field}
+                      id="template-tags"
                       value={field.value ?? []}
                       placeholder="Type and press Enter to add tags"
                       disabled={isSubmitting}

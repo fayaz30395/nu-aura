@@ -158,10 +158,11 @@ export default function AvailabilityCalendarPage() {
             <CardContent className="flex flex-wrap items-center gap-4 p-4">
               {/* Department filter */}
               <div>
-                <label className="mb-1 block text-xs font-medium text-[var(--text-muted)]">
+                <label htmlFor="availability-department" className="mb-1 block text-xs font-medium text-[var(--text-muted)]">
                   Department
                 </label>
                 <select
+                  id="availability-department"
                   aria-label="Department"
                   value={selectedDepartment || ''}
                   onChange={(e) => setSelectedDepartment(e.target.value || undefined)}

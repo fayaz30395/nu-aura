@@ -201,10 +201,11 @@ export default function FeedbackPage() {
 
           <div className="p-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="feedback-filter-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Filter by Type
               </label>
               <select
+                id="feedback-filter-type"
                 aria-label="Filter by Type"
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as FeedbackType | 'ALL')}
@@ -318,10 +319,11 @@ export default function FeedbackPage() {
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="feedback-recipient-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Recipient Employee ID *
                       </label>
                       <input
+                        id="feedback-recipient-id"
                         type="text"
                         placeholder="Enter employee ID"
                         {...register('recipientId')}
@@ -333,10 +335,11 @@ export default function FeedbackPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="feedback-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Feedback Type *
                       </label>
                       <select
+                        id="feedback-type"
                         aria-label="Feedback Type"
                         {...register('feedbackType')}
                         className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -352,10 +355,11 @@ export default function FeedbackPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="feedback-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Category
                       </label>
                       <input
+                        id="feedback-category"
                         type="text"
                         placeholder="e.g., Communication, Leadership, Technical Skills"
                         {...register('category')}
@@ -367,10 +371,11 @@ export default function FeedbackPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                      <label htmlFor="feedback-text" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                         Feedback *
                       </label>
                       <textarea
+                        id="feedback-text"
                         rows={6}
                         placeholder="Provide detailed feedback..."
                         {...register('feedbackText')}

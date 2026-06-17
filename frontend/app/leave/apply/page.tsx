@@ -128,10 +128,11 @@ export default function ApplyLeavePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Leave Type */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="leave-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Leave Type *
               </label>
               <select
+                id="leave-type"
                 aria-label="Leave Type"
                 {...register('leaveTypeId')}
                 className="input-aura"
@@ -215,7 +216,7 @@ export default function ApplyLeavePage() {
 
             {/* Start Date */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="leave-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Start Date *
               </label>
               <Controller
@@ -223,6 +224,7 @@ export default function ApplyLeavePage() {
                 control={control}
                 render={({field}) => (
                   <DateInput
+                    id="leave-start-date"
                     value={field.value || null}
                     onChange={(d) => field.onChange(d ?? '')}
                     valueFormat="YYYY-MM-DD"
@@ -237,7 +239,7 @@ export default function ApplyLeavePage() {
 
             {/* End Date */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="leave-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 End Date *
               </label>
               <Controller
@@ -245,6 +247,7 @@ export default function ApplyLeavePage() {
                 control={control}
                 render={({field}) => (
                   <DateInput
+                    id="leave-end-date"
                     value={field.value || null}
                     onChange={(d) => field.onChange(d ?? '')}
                     minDate={startDate ? new Date(startDate) : undefined}
@@ -273,9 +276,9 @@ export default function ApplyLeavePage() {
             {/* Half Day Period */}
             {isHalfDay && (
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Half Day Period *
-                </label>
+                </span>
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2">
                     <input
@@ -308,10 +311,11 @@ export default function ApplyLeavePage() {
 
             {/* Reason */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="leave-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Reason *
               </label>
               <textarea
+                id="leave-reason"
                 {...register('reason')}
                 rows={4}
                 className="input-aura"

@@ -123,8 +123,9 @@ export default function MyLeavesPage() {
         {/* Filters */}
         <div className="skeuo-card p-6 mb-6">
           <div className="flex gap-4 items-center">
-            <label className="text-sm font-medium text-[var(--text-secondary)]">Filter by Status:</label>
+            <label htmlFor="leave-filter-status" className="text-sm font-medium text-[var(--text-secondary)]">Filter by Status:</label>
             <select
+              id="leave-filter-status"
               aria-label="Filter by Status"
               value={filterStatus}
               onChange={(e) => {

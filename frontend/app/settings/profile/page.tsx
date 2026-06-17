@@ -36,11 +36,11 @@ export default function SettingsProfilePage() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Name</label>
+                  <span className="block text-sm font-medium text-muted-foreground">Name</span>
                   <p className="text-foreground">{user?.fullName || 'N/A'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Email</label>
+                  <span className="block text-sm font-medium text-muted-foreground">Email</span>
                   <p className="text-foreground">{user?.email || 'N/A'}</p>
                 </div>
               </div>

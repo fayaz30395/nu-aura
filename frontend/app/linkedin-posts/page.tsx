@@ -593,9 +593,9 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
 
           {/* Engagement Stats */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+            <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
               Engagement Stats
-            </label>
+            </span>
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label htmlFor="li-likes" className="block text-xs text-[var(--text-secondary)] mb-1">

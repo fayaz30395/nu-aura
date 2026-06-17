@@ -396,10 +396,11 @@ export default function ReferralsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Candidate Name */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="referral-candidate-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Candidate Name *
                     </label>
                     <input
+                      id="referral-candidate-name"
                       {...register('candidateName')}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="Full name"
@@ -411,10 +412,11 @@ export default function ReferralsPage() {
 
                   {/* Email */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="referral-candidate-email" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Email *
                     </label>
                     <input
+                      id="referral-candidate-email"
                       {...register('candidateEmail')}
                       type="email"
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -427,10 +429,11 @@ export default function ReferralsPage() {
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="referral-candidate-phone" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Phone
                     </label>
                     <input
+                      id="referral-candidate-phone"
                       {...register('candidatePhone')}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="+1 (555) 000-0000"
@@ -439,10 +442,11 @@ export default function ReferralsPage() {
 
                   {/* LinkedIn */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="referral-candidate-linkedin" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       LinkedIn Profile
                     </label>
                     <input
+                      id="referral-candidate-linkedin"
                       {...register('candidateLinkedin')}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="https://linkedin.com/in/..."
@@ -451,10 +455,11 @@ export default function ReferralsPage() {
 
                   {/* Position */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="referral-job-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Position *
                     </label>
                     <input
+                      id="referral-job-title"
                       {...register('jobTitle')}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
                       placeholder="e.g., Senior Software Engineer"
@@ -466,10 +471,11 @@ export default function ReferralsPage() {
 
                   {/* Relationship */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="referral-relationship" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Relationship *
                     </label>
                     <select
+                      id="referral-relationship"
                       aria-label="Relationship to referral"
                       {...register('relationship')}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -490,10 +496,11 @@ export default function ReferralsPage() {
 
                 {/* Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="referral-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Notes
                   </label>
                   <textarea
+                    id="referral-notes"
                     {...register('referrerNotes')}
                     rows={3}
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"

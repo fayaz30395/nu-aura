@@ -657,10 +657,11 @@ export default function RecognitionPage() {
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="recognition-receiver-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Employee ID *
                 </label>
                 <Input
+                  id="recognition-receiver-id"
                   {...register('receiverId')}
                   placeholder="Enter employee ID to recognize"
                 />
@@ -670,10 +671,10 @@ export default function RecognitionPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="recognition-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Recognition Type *
                   </label>
-                  <Select {...register('type')}>
+                  <Select id="recognition-type" {...register('type')}>
                     {recognitionTypeOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
@@ -685,10 +686,10 @@ export default function RecognitionPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="recognition-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Category
                   </label>
-                  <Select {...register('category')}>
+                  <Select id="recognition-category" {...register('category')}>
                     {categoryOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {option.label}
@@ -701,10 +702,11 @@ export default function RecognitionPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="recognition-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Title *
                 </label>
                 <Input
+                  id="recognition-title"
                   {...register('title')}
                   placeholder="e.g., Great job on the project!"
                 />
@@ -713,10 +715,11 @@ export default function RecognitionPage() {
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="recognition-message" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Message
                 </label>
                 <Textarea
+                  id="recognition-message"
                   {...register('message')}
                   placeholder="Share more details about why you're recognizing this person..."
                   rows={3}
@@ -727,10 +730,11 @@ export default function RecognitionPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="recognition-points" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Points to Award
                   </label>
                   <Input
+                    id="recognition-points"
                     {...register('pointsAwarded', {valueAsNumber: true})}
                     type="number"
                     min={0}

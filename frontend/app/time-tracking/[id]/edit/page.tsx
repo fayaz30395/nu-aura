@@ -230,12 +230,13 @@ export default function EditTimeEntryPage() {
         >
           {/* Entry Date */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="time-entry-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Date *
             </label>
             <div className="relative">
               <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
+                id="time-entry-date"
                 type="date"
                 {...register('entryDate')}
                 className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
@@ -251,12 +252,13 @@ export default function EditTimeEntryPage() {
           {/* Time Range */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="time-entry-start-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Start Time
               </label>
               <div className="relative">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
+                  id="time-entry-start-time"
                   type="time"
                   {...register('startTime')}
                   className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -264,12 +266,13 @@ export default function EditTimeEntryPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="time-entry-end-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 End Time
               </label>
               <div className="relative">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
+                  id="time-entry-end-time"
                   type="time"
                   {...register('endTime')}
                   className="w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -280,10 +283,11 @@ export default function EditTimeEntryPage() {
 
           {/* Hours Worked */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="time-entry-hours-worked" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Hours Worked *
             </label>
             <input
+              id="time-entry-hours-worked"
               type="number"
               step="0.5"
               {...register('hoursWorked', {valueAsNumber: true})}
@@ -299,10 +303,11 @@ export default function EditTimeEntryPage() {
 
           {/* Entry Type */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="time-entry-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Entry Type
             </label>
             <select
+              id="time-entry-type"
               aria-label="Entry Type"
               {...register('entryType')}
               className="w-full px-4 py-4 bg-[var(--bg-secondary)] border border-[var(--border-main)] rounded-xl text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -345,12 +350,13 @@ export default function EditTimeEntryPage() {
           {/* Hourly Rate */}
           {watchedIsBillable && (
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="time-entry-hourly-rate" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Hourly Rate (optional)
               </label>
               <div className="relative">
                 <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
+                  id="time-entry-hourly-rate"
                   type="number"
                   step="0.01"
                   {...register('hourlyRate', {valueAsNumber: true})}
@@ -363,10 +369,11 @@ export default function EditTimeEntryPage() {
 
           {/* Client Name */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="time-entry-client-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Client / Project
             </label>
             <input
+              id="time-entry-client-name"
               type="text"
               {...register('clientName')}
               placeholder="Enter client or project name"
@@ -376,12 +383,13 @@ export default function EditTimeEntryPage() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="time-entry-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Description
             </label>
             <div className="relative">
               <FileText className="absolute left-4 top-4 h-5 w-5 text-[var(--text-muted)]"/>
               <textarea
+                id="time-entry-description"
                 {...register('description')}
                 placeholder="What did you work on?"
                 rows={4}
@@ -392,10 +400,11 @@ export default function EditTimeEntryPage() {
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="time-entry-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Notes
             </label>
             <textarea
+              id="time-entry-notes"
               {...register('notes')}
               placeholder="Any additional notes..."
               rows={2}

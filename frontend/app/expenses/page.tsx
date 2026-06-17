@@ -1136,13 +1136,13 @@ function NewClaimForm({
       </div>
       <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim date</label>
-          <Input type="date" {...register('claimDate')} />
+          <label htmlFor="claim-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Claim date</label>
+          <Input id="claim-date" type="date" {...register('claimDate')} />
           {errors.claimDate && <span className="text-danger-500 text-sm">{errors.claimDate.message}</span>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Category</label>
-          <Select {...register('category')}>
+          <label htmlFor="claim-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Category</label>
+          <Select id="claim-category" {...register('category')}>
             <option value="">Select category</option>
             <option value="TRAVEL">Travel</option>
             <option value="ACCOMMODATION">Accommodation</option>
@@ -1159,13 +1159,14 @@ function NewClaimForm({
           {errors.category && <span className="text-danger-500 text-sm">{errors.category.message}</span>}
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
-          <Textarea rows={3} placeholder="Describe your expense" {...register('description')} error={!!errors.description} />
+          <label htmlFor="claim-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Description</label>
+          <Textarea id="claim-description" rows={3} placeholder="Describe your expense" {...register('description')} error={!!errors.description} />
           {errors.description && <span className="text-danger-500 text-sm">{errors.description.message}</span>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Amount</label>
+          <label htmlFor="claim-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Amount</label>
           <Input
+            id="claim-amount"
             type="number"
             step="0.01"
             min="0"
@@ -1176,8 +1177,8 @@ function NewClaimForm({
           {errors.amount && <span className="text-danger-500 text-sm">{errors.amount.message}</span>}
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Currency</label>
-          <Select {...register('currency')}>
+          <label htmlFor="claim-currency" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Currency</label>
+          <Select id="claim-currency" {...register('currency')}>
             <option value="USD">USD</option>
             <option value="EUR">EUR</option>
             <option value="GBP">GBP</option>
@@ -1185,13 +1186,13 @@ function NewClaimForm({
           </Select>
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL</label>
-          <Input type="url" placeholder="https://example.com/receipt" {...register('receiptUrl')} />
+          <label htmlFor="claim-receipt-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Receipt URL</label>
+          <Input id="claim-receipt-url" type="url" placeholder="https://example.com/receipt" {...register('receiptUrl')} />
           {errors.receiptUrl && <span className="text-danger-500 text-sm">{errors.receiptUrl.message}</span>}
         </div>
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
-          <Textarea rows={2} placeholder="Additional notes" {...register('notes')} />
+          <label htmlFor="claim-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Notes</label>
+          <Textarea id="claim-notes" rows={2} placeholder="Additional notes" {...register('notes')} />
         </div>
         <div className="md:col-span-2 flex flex-wrap gap-4 pt-2">
           <PermissionGate permission={Permissions.EXPENSE_CREATE}>

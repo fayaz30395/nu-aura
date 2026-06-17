@@ -58,6 +58,9 @@ const restrictedSyntaxRules = [
 ];
 
 const baseRules = {
+  // A11y: every form control must have an associated <label> (htmlFor/id, nesting, or aria).
+  // Wrapping labels (<label>Text <input/></label>) satisfy this and are NOT flagged.
+  'jsx-a11y/label-has-associated-control': ['error', {assert: 'either'}],
   '@typescript-eslint/no-explicit-any': 'error',
   '@typescript-eslint/no-unused-vars': [
     'warn',

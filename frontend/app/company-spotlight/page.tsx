@@ -442,10 +442,11 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
             <div className="col-span-2 space-y-4">
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="spotlight-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Title <span aria-hidden="true" className="text-danger-500">*</span>
                 </label>
                 <input
+                  id="spotlight-title"
                   type="text"
                   {...register('title')}
                   aria-required="true"
@@ -459,10 +460,11 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="spotlight-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Description
                 </label>
                 <textarea
+                  id="spotlight-description"
                   {...register('description')}
                   rows={3}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white resize-none"
@@ -472,10 +474,11 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
 
               {/* Image URL */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="spotlight-image-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Image URL
                 </label>
                 <input
+                  id="spotlight-image-url"
                   type="url"
                   {...register('imageUrl')}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
@@ -486,10 +489,11 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
               {/* CTA Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="spotlight-cta-url" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     CTA URL
                   </label>
                   <input
+                    id="spotlight-cta-url"
                     type="url"
                     {...register('ctaUrl')}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
@@ -497,10 +501,11 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="spotlight-cta-label" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     CTA Label
                   </label>
                   <input
+                    id="spotlight-cta-label"
                     type="text"
                     {...register('ctaLabel')}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
@@ -511,10 +516,11 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
 
               {/* Background Gradient */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="spotlight-bg-gradient" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Background Gradient
                 </label>
                 <select
+                  id="spotlight-bg-gradient"
                   aria-label="Background Gradient"
                   {...register('bgGradient')}
                   className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
@@ -529,10 +535,11 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
 
               {/* Display Order */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="spotlight-display-order" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Display Order
                 </label>
                 <input
+                  id="spotlight-display-order"
                   type="number"
                   min="0"
                   {...register('displayOrder', {valueAsNumber: true})}
@@ -546,20 +553,22 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
               {/* Date Fields */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="spotlight-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Start Date
                   </label>
                   <input
+                    id="spotlight-start-date"
                     type="date"
                     {...register('startDate')}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="spotlight-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     End Date
                   </label>
                   <input
+                    id="spotlight-end-date"
                     type="date"
                     {...register('endDate')}
                     className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-lg focus:ring-2 focus:ring-warning-500 focus:border-transparent dark:bg-[var(--bg-secondary)] dark:text-white"
@@ -578,9 +587,9 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
 
             {/* Right: Preview */}
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+              <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                 Live Preview
-              </label>
+              </span>
               <div
                 className={`w-full aspect-video rounded-lg bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 text-center shadow-[var(--shadow-dropdown)] overflow-hidden`}
               >

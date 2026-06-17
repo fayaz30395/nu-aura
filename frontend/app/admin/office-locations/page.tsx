@@ -220,8 +220,9 @@ export default function OfficeLocationsPage() {
             </h2>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Name *</label>
+                <label htmlFor="location-name" className="block text-sm font-medium mb-1">Name *</label>
                 <input
+                  id="location-name"
                   type="text"
                   {...register('name')}
                   className="w-full p-2 border rounded-lg"
@@ -229,8 +230,9 @@ export default function OfficeLocationsPage() {
                 {errors.name && <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Address *</label>
+                <label htmlFor="location-address" className="block text-sm font-medium mb-1">Address *</label>
                 <input
+                  id="location-address"
                   type="text"
                   {...register('address')}
                   className="w-full p-2 border rounded-lg"
@@ -238,8 +240,9 @@ export default function OfficeLocationsPage() {
                 {errors.address && <p className="text-danger-500 text-sm mt-1">{errors.address.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">City *</label>
+                <label htmlFor="location-city" className="block text-sm font-medium mb-1">City *</label>
                 <input
+                  id="location-city"
                   type="text"
                   {...register('city')}
                   className="w-full p-2 border rounded-lg"
@@ -247,8 +250,9 @@ export default function OfficeLocationsPage() {
                 {errors.city && <p className="text-danger-500 text-sm mt-1">{errors.city.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">State *</label>
+                <label htmlFor="location-state" className="block text-sm font-medium mb-1">State *</label>
                 <input
+                  id="location-state"
                   type="text"
                   {...register('state')}
                   className="w-full p-2 border rounded-lg"
@@ -256,8 +260,9 @@ export default function OfficeLocationsPage() {
                 {errors.state && <p className="text-danger-500 text-sm mt-1">{errors.state.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Country *</label>
+                <label htmlFor="location-country" className="block text-sm font-medium mb-1">Country *</label>
                 <input
+                  id="location-country"
                   type="text"
                   {...register('country')}
                   className="w-full p-2 border rounded-lg"
@@ -265,8 +270,9 @@ export default function OfficeLocationsPage() {
                 {errors.country && <p className="text-danger-500 text-sm mt-1">{errors.country.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Postal Code</label>
+                <label htmlFor="location-postal-code" className="block text-sm font-medium mb-1">Postal Code</label>
                 <input
+                  id="location-postal-code"
                   type="text"
                   {...register('postalCode')}
                   className="w-full p-2 border rounded-lg"
@@ -274,8 +280,9 @@ export default function OfficeLocationsPage() {
                 {errors.postalCode && <p className="text-danger-500 text-sm mt-1">{errors.postalCode.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Latitude *</label>
+                <label htmlFor="location-latitude" className="block text-sm font-medium mb-1">Latitude *</label>
                 <input
+                  id="location-latitude"
                   type="number"
                   step="any"
                   {...register('latitude')}
@@ -284,8 +291,9 @@ export default function OfficeLocationsPage() {
                 {errors.latitude && <p className="text-danger-500 text-sm mt-1">{errors.latitude.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Longitude *</label>
+                <label htmlFor="location-longitude" className="block text-sm font-medium mb-1">Longitude *</label>
                 <input
+                  id="location-longitude"
                   type="number"
                   step="any"
                   {...register('longitude')}
@@ -294,8 +302,9 @@ export default function OfficeLocationsPage() {
                 {errors.longitude && <p className="text-danger-500 text-sm mt-1">{errors.longitude.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Geofence Radius (meters) *</label>
+                <label htmlFor="location-geofence-radius" className="block text-sm font-medium mb-1">Geofence Radius (meters) *</label>
                 <input
+                  id="location-geofence-radius"
                   type="number"
                   {...register('geofenceRadius')}
                   className="w-full p-2 border rounded-lg"

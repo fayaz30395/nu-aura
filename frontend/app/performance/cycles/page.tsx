@@ -455,10 +455,11 @@ export default function ReviewCyclesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="cycle-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Cycle Type *
                         </label>
                         <select
+                          id="cycle-type"
                           aria-label="Cycle Type"
                           {...register('cycleType')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -476,10 +477,11 @@ export default function ReviewCyclesPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="cycle-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Status *
                         </label>
                         <select
+                          id="cycle-status"
                           aria-label="Status"
                           {...register('status')}
                           className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
@@ -498,7 +500,7 @@ export default function ReviewCyclesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="cycle-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Start Date *
                         </label>
                         <Controller
@@ -506,6 +508,7 @@ export default function ReviewCyclesPage() {
                           control={control}
                           render={({field}) => (
                             <DateInput
+                              id="cycle-start-date"
                               value={field.value || null}
                               onChange={(d) => field.onChange(d ?? '')}
                               valueFormat="YYYY-MM-DD"
@@ -521,7 +524,7 @@ export default function ReviewCyclesPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="cycle-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           End Date *
                         </label>
                         <Controller
@@ -529,6 +532,7 @@ export default function ReviewCyclesPage() {
                           control={control}
                           render={({field}) => (
                             <DateInput
+                              id="cycle-end-date"
                               value={field.value || null}
                               onChange={(d) => field.onChange(d ?? '')}
                               valueFormat="YYYY-MM-DD"
@@ -546,7 +550,7 @@ export default function ReviewCyclesPage() {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="cycle-review-deadline" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Review Deadline *
                         </label>
                         <Controller
@@ -554,6 +558,7 @@ export default function ReviewCyclesPage() {
                           control={control}
                           render={({field}) => (
                             <DateInput
+                              id="cycle-review-deadline"
                               value={field.value || null}
                               onChange={(d) => field.onChange(d ?? '')}
                               valueFormat="YYYY-MM-DD"
@@ -569,7 +574,7 @@ export default function ReviewCyclesPage() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                        <label htmlFor="cycle-self-review-deadline" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                           Self Review Deadline
                         </label>
                         <Controller
@@ -577,6 +582,7 @@ export default function ReviewCyclesPage() {
                           control={control}
                           render={({field}) => (
                             <DateInput
+                              id="cycle-self-review-deadline"
                               value={field.value || null}
                               onChange={(d) => field.onChange(d ?? '')}
                               valueFormat="YYYY-MM-DD"
@@ -670,9 +676,9 @@ export default function ReviewCyclesPage() {
                 <div className="space-y-6">
                   {/* Scope Type Selection */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                    <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                       Activation Scope
-                    </label>
+                    </span>
                     <div className="grid grid-cols-3 gap-4">
                       <button
                         type="button"
@@ -741,9 +747,9 @@ export default function ReviewCyclesPage() {
                   {/* Department Selection */}
                   {activateFormData.scopeType === 'DEPARTMENT' && (
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                      <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                         Select Departments
-                      </label>
+                      </span>
                       <div
                         className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
                         {departments.length === 0 ? (
@@ -776,9 +782,9 @@ export default function ReviewCyclesPage() {
                   {/* Location Selection */}
                   {activateFormData.scopeType === 'LOCATION' && (
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                      <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                         Select Locations
-                      </label>
+                      </span>
                       <div
                         className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
                         {locations.length === 0 ? (
@@ -791,6 +797,7 @@ export default function ReviewCyclesPage() {
                             >
                               <input
                                 type="checkbox"
+                                aria-label={`${loc.name}, ${loc.city}, ${loc.country}`}
                                 checked={activateFormData.locationIds?.includes(loc.id) || false}
                                 onChange={() => handleLocationToggle(loc.id)}
                                 className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
@@ -813,13 +820,14 @@ export default function ReviewCyclesPage() {
 
                   {/* Review Options */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                    <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                       Review Types to Create
-                    </label>
+                    </span>
                     <div className="space-y-4">
                       <label className="flex items-center gap-4 cursor-pointer">
                         <input
                           type="checkbox"
+                          aria-label="Self Reviews"
                           checked={activateFormData.createSelfReviews}
                           onChange={(e) => setActivateFormData({
                             ...activateFormData,
@@ -835,6 +843,7 @@ export default function ReviewCyclesPage() {
                       <label className="flex items-center gap-4 cursor-pointer">
                         <input
                           type="checkbox"
+                          aria-label="Manager Reviews"
                           checked={activateFormData.createManagerReviews}
                           onChange={(e) => setActivateFormData({
                             ...activateFormData,

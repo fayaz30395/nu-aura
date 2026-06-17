@@ -776,10 +776,11 @@ export default function TimesheetsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="ts-entry-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Date *
                   </label>
                   <DateInput
+                    id="ts-entry-date"
                     required
                     value={entryForm.entryDate || null}
                     onChange={(d) => setEntryForm({...entryForm, entryDate: d ?? ''})}
@@ -790,10 +791,11 @@ export default function TimesheetsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="ts-entry-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Hours *
                   </label>
                   <input
+                    id="ts-entry-hours"
                     type="number"
                     required
                     min="0"
@@ -828,10 +830,11 @@ export default function TimesheetsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="ts-work-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Work Description
                 </label>
                 <textarea
+                  id="ts-work-description"
                   rows={3}
                   value={entryForm.workDescription}
                   onChange={(e) => setEntryForm({...entryForm, workDescription: e.target.value})}

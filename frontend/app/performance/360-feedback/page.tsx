@@ -1033,14 +1033,14 @@ export default function Feedback360Page() {
                   <h3 className="text-sm font-medium text-[var(--text-primary)]">Competency Ratings</h3>
                   <div className="grid gap-4">
                     <div className="flex justify-between items-center">
-                      <label className="text-body-secondary">Overall Performance</label>
+                      <span className="text-body-secondary">Overall Performance</span>
                       <RatingStars
                         rating={responseForm.overallRating || 0}
                         onChange={(r) => setResponseForm({...responseForm, overallRating: r})}
                       />
                     </div>
                     <div className="flex justify-between items-center">
-                      <label className="text-body-secondary">Communication</label>
+                      <span className="text-body-secondary">Communication</span>
                       <RatingStars
                         rating={responseForm.communicationRating || 0}
                         onChange={(r) =>
@@ -1049,14 +1049,14 @@ export default function Feedback360Page() {
                       />
                     </div>
                     <div className="flex justify-between items-center">
-                      <label className="text-body-secondary">Teamwork</label>
+                      <span className="text-body-secondary">Teamwork</span>
                       <RatingStars
                         rating={responseForm.teamworkRating || 0}
                         onChange={(r) => setResponseForm({...responseForm, teamworkRating: r})}
                       />
                     </div>
                     <div className="flex justify-between items-center">
-                      <label className="text-body-secondary">Leadership</label>
+                      <span className="text-body-secondary">Leadership</span>
                       <RatingStars
                         rating={responseForm.leadershipRating || 0}
                         onChange={(r) =>
@@ -1065,7 +1065,7 @@ export default function Feedback360Page() {
                       />
                     </div>
                     <div className="flex justify-between items-center">
-                      <label className="text-body-secondary">Problem Solving</label>
+                      <span className="text-body-secondary">Problem Solving</span>
                       <RatingStars
                         rating={responseForm.problemSolvingRating || 0}
                         onChange={(r) =>
@@ -1074,7 +1074,7 @@ export default function Feedback360Page() {
                       />
                     </div>
                     <div className="flex justify-between items-center">
-                      <label className="text-body-secondary">Technical Skills</label>
+                      <span className="text-body-secondary">Technical Skills</span>
                       <RatingStars
                         rating={responseForm.technicalSkillsRating || 0}
                         onChange={(r) =>

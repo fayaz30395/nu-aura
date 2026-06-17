@@ -205,10 +205,11 @@ export default function EditBlogPost() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Title
             </label>
             <TextInput
+              id="blog-title"
               placeholder="Enter post title"
               error={errors.title?.message}
               {...register('title')}
@@ -218,10 +219,11 @@ export default function EditBlogPost() {
 
           {/* Excerpt */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-excerpt" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Excerpt
             </label>
             <Textarea
+              id="blog-excerpt"
               placeholder="Enter a brief excerpt"
               error={errors.excerpt?.message}
               {...register('excerpt')}
@@ -232,7 +234,7 @@ export default function EditBlogPost() {
 
           {/* Category */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Category
             </label>
             <Controller
@@ -241,6 +243,7 @@ export default function EditBlogPost() {
               render={({field}) => (
                 <Select
                   {...field}
+                  id="blog-category"
                   placeholder="Select a category (optional)"
                   disabled={categoriesLoading || isSubmitting}
                   clearable
@@ -255,7 +258,7 @@ export default function EditBlogPost() {
 
           {/* Tags */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-tags" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Tags
             </label>
             <Controller
@@ -264,6 +267,7 @@ export default function EditBlogPost() {
               render={({field}) => (
                 <MultiSelect
                   {...field}
+                  id="blog-tags"
                   placeholder="Add tags (optional)"
                   disabled={isSubmitting}
                   searchable
@@ -275,10 +279,11 @@ export default function EditBlogPost() {
 
           {/* Cover Image */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-cover-image" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Cover Image URL
             </label>
             <TextInput
+              id="blog-cover-image"
               placeholder="https://example.com/image.jpg"
               error={errors.coverImageUrl?.message}
               {...register('coverImageUrl')}
@@ -288,7 +293,7 @@ export default function EditBlogPost() {
 
           {/* Status */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Status
             </label>
             <Controller
@@ -297,6 +302,7 @@ export default function EditBlogPost() {
               render={({field}) => (
                 <Select
                   {...field}
+                  id="blog-status"
                   placeholder="Select status"
                   disabled={isSubmitting}
                   data={[
@@ -311,7 +317,7 @@ export default function EditBlogPost() {
 
           {/* Visibility */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-visibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Visibility
             </label>
             <Controller
@@ -320,6 +326,7 @@ export default function EditBlogPost() {
               render={({field}) => (
                 <Select
                   {...field}
+                  id="blog-visibility"
                   placeholder="Select visibility"
                   disabled={isSubmitting}
                   data={[
@@ -346,10 +353,11 @@ export default function EditBlogPost() {
 
           {/* Post Editors */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <label htmlFor="blog-editors" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Post Editors (who can edit this post)
             </label>
             <MultiSelect
+              id="blog-editors"
               data={editorOptions}
               value={editorIds}
               onChange={setEditorIds}
@@ -367,9 +375,9 @@ export default function EditBlogPost() {
 
           {/* Content Editor */}
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+            <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
               Content
-            </label>
+            </span>
             <Controller
               control={control}
               name="content"

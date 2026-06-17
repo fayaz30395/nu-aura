@@ -397,11 +397,12 @@ export default function ShiftDefinitionsPage() {
                         ))}
                       </Select>
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label htmlFor="shift-color" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Color
                         </label>
                         <div className="flex items-center gap-2">
                           <Input
+                            id="shift-color"
                             type="color"
                             {...form.register('colorCode')}
                             className="h-8 w-8 cursor-pointer border-0 p-1"
@@ -422,9 +423,9 @@ export default function ShiftDefinitionsPage() {
 
                     {/* Working Days */}
                     <div>
-                      <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                      <span className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                         Working Days
-                      </label>
+                      </span>
                       <Controller
                         control={form.control}
                         name="workingDays"
@@ -500,10 +501,11 @@ export default function ShiftDefinitionsPage() {
                     {/* Flexible window */}
                     {form.watch('isFlexible') && (
                       <div>
-                        <label className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
+                        <label htmlFor="shift-flexible-window" className="block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1">
                           Flexible Window (minutes before/after)
                         </label>
                         <Input
+                          id="shift-flexible-window"
                           type="number"
                           {...form.register('flexibleWindowMinutes')}
                         />

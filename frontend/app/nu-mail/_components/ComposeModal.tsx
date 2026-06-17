@@ -185,10 +185,11 @@ export const ComposeModal = React.memo(function ComposeModal({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+            <label htmlFor="compose-body" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
               Message
             </label>
             <textarea
+              id="compose-body"
               value={composeEmail.body}
               onChange={(e) => onComposeChange({...composeEmail, body: e.target.value})}
               placeholder="Write your message..."

@@ -1012,10 +1012,10 @@ export default function CompensationPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="cycle-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Cycle Type
                   </label>
-                  <Select>
+                  <Select id="cycle-type">
                     <option value="ANNUAL">Annual</option>
                     <option value="MID_YEAR">Mid-Year</option>
                     <option value="QUARTERLY">Quarterly</option>
@@ -1024,10 +1024,10 @@ export default function CompensationPage() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="cycle-fiscal-year" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Fiscal Year
                   </label>
-                  <Select>
+                  <Select id="cycle-fiscal-year">
                     <option value="2025">2025</option>
                     <option value="2024">2024</option>
                   </Select>
@@ -1035,55 +1035,56 @@ export default function CompensationPage() {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="cycle-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Date
                   </label>
-                  <Input type="date"/>
+                  <Input id="cycle-start-date" type="date"/>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="cycle-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Date
                   </label>
-                  <Input type="date"/>
+                  <Input id="cycle-end-date" type="date"/>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="cycle-effective-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Effective Date
                   </label>
-                  <Input type="date"/>
+                  <Input id="cycle-effective-date" type="date"/>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="cycle-budget-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Budget Amount
                 </label>
-                <Input type="number" placeholder="Enter budget amount"/>
+                <Input id="cycle-budget-amount" type="number" placeholder="Enter budget amount"/>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="cycle-min-increment" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Min Increment %
                   </label>
-                  <Input type="number" placeholder="0"/>
+                  <Input id="cycle-min-increment" type="number" placeholder="0"/>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="cycle-target-avg" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Target Avg %
                   </label>
-                  <Input type="number" placeholder="8"/>
+                  <Input id="cycle-target-avg" type="number" placeholder="8"/>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="cycle-max-increment" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Max Increment %
                   </label>
-                  <Input type="number" placeholder="25"/>
+                  <Input id="cycle-max-increment" type="number" placeholder="25"/>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                <label htmlFor="cycle-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Description
                 </label>
                 <textarea
+                  id="cycle-description"
                   className="w-full rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-[var(--text-primary)]"
                   rows={3}
                   placeholder="Describe this review cycle..."

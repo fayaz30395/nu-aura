@@ -94,8 +94,9 @@ export default function CreateContractPage() {
         <Card>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium mb-1">Contract Title *</label>
+              <label htmlFor="contract-title" className="block text-sm font-medium mb-1">Contract Title *</label>
               <Input
+                id="contract-title"
                 placeholder="Enter contract title"
                 {...register('title')}
               />
@@ -103,12 +104,13 @@ export default function CreateContractPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Contract Type *</label>
+              <label htmlFor="contract-type" className="block text-sm font-medium mb-1">Contract Type *</label>
               <Controller
                 name="type"
                 control={control}
                 render={({field}) => (
                   <Select
+                    id="contract-type"
                     placeholder="Select type"
                     data={[
                       {value: 'EMPLOYMENT', label: 'Employment Contract'},
@@ -127,12 +129,13 @@ export default function CreateContractPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Start Date *</label>
+              <label htmlFor="contract-start-date" className="block text-sm font-medium mb-1">Start Date *</label>
               <Controller
                 name="startDate"
                 control={control}
                 render={({field}) => (
                   <DateInput
+                    id="contract-start-date"
                     value={field.value || null}
                     onChange={(d) => field.onChange(d ?? '')}
                     valueFormat="YYYY-MM-DD"
@@ -146,12 +149,13 @@ export default function CreateContractPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">End Date</label>
+              <label htmlFor="contract-end-date" className="block text-sm font-medium mb-1">End Date</label>
               <Controller
                 name="endDate"
                 control={control}
                 render={({field}) => (
                   <DateInput
+                    id="contract-end-date"
                     value={field.value || null}
                     onChange={(d) => field.onChange(d ?? '')}
                     valueFormat="YYYY-MM-DD"
@@ -165,8 +169,9 @@ export default function CreateContractPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Description</label>
+              <label htmlFor="contract-description" className="block text-sm font-medium mb-1">Description</label>
               <Textarea
+                id="contract-description"
                 placeholder="Enter contract description"
                 rows={4}
                 {...register('description')}

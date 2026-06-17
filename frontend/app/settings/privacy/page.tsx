@@ -173,10 +173,11 @@ function EmployeeView() {
               {isOpen && (
                 <div className="border-t border-[var(--border-subtle)] p-4 space-y-3">
                   <div>
-                    <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor={`dsr-reason-${type}`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">
                       Reason <span className="text-[var(--text-muted)] font-normal">(optional)</span>
                     </label>
                     <textarea
+                      id={`dsr-reason-${type}`}
                       value={reason}
                       onChange={e => setReason(e.target.value)}
                       rows={3}
@@ -298,8 +299,9 @@ function AdminView() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Admin Notes</label>
+                  <label htmlFor={`dsr-admin-notes-${req.id ?? ''}`} className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Admin Notes</label>
                   <textarea
+                    id={`dsr-admin-notes-${req.id ?? ''}`}
                     value={notes[req.id ?? ''] ?? ''}
                     onChange={e => setNotes(prev => ({...prev, [req.id ?? '']: e.target.value}))}
                     rows={2}

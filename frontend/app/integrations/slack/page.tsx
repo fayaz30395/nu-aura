@@ -307,10 +307,11 @@ export default function SlackIntegrationPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="slack-workspace-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Workspace ID *
                   </label>
                   <Input
+                    id="slack-workspace-id"
                     type="text"
                     {...register('slackWorkspaceId')}
                     placeholder="T0123456789"
@@ -324,11 +325,13 @@ export default function SlackIntegrationPage() {
 
                 <div>
                   <label
+                    htmlFor="slack-default-channel"
                     className="block text-sm font-medium text-[var(--text-secondary)] mb-2 flex items-center gap-1">
                     <Hash className="h-3.5 w-3.5"/>
                     Default Channel *
                   </label>
                   <Input
+                    id="slack-default-channel"
                     type="text"
                     {...register('slackDefaultChannel')}
                     placeholder="#hrms-notifications"
@@ -341,10 +344,11 @@ export default function SlackIntegrationPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="slack-bot-token" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Bot Token
                 </label>
                 <Input
+                  id="slack-bot-token"
                   type="password"
                   {...register('slackBotToken')}
                   placeholder="xoxb-..."
@@ -356,10 +360,11 @@ export default function SlackIntegrationPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                <label htmlFor="slack-signing-secret" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                   Signing Secret
                 </label>
                 <Input
+                  id="slack-signing-secret"
                   type="password"
                   {...register('slackSigningSecret')}
                   placeholder="Enter signing secret..."
@@ -372,10 +377,11 @@ export default function SlackIntegrationPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="slack-rate-limit-per-minute" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Rate Limit (per minute)
                   </label>
                   <Input
+                    id="slack-rate-limit-per-minute"
                     type="number"
                     {...register('rateLimitPerMinute')}
                     placeholder="60"
@@ -383,10 +389,11 @@ export default function SlackIntegrationPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  <label htmlFor="slack-rate-limit-per-hour" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                     Rate Limit (per hour)
                   </label>
                   <Input
+                    id="slack-rate-limit-per-hour"
                     type="number"
                     {...register('rateLimitPerHour')}
                     placeholder="1000"

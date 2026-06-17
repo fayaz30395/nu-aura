@@ -103,13 +103,14 @@ export default function LeaveReportsPage() {
             <CardContent className="space-y-6">
               {/* Date Range */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Date Range <span aria-hidden="true" className="text-danger-500">*</span>
-                </label>
+                </span>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-caption mb-1">From</label>
+                    <label htmlFor="leave-report-start-date" className="block text-caption mb-1">From</label>
                     <input
+                      id="leave-report-start-date"
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
@@ -118,8 +119,9 @@ export default function LeaveReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-caption mb-1">To</label>
+                    <label htmlFor="leave-report-end-date" className="block text-caption mb-1">To</label>
                     <input
+                      id="leave-report-end-date"
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
@@ -132,14 +134,15 @@ export default function LeaveReportsPage() {
 
               {/* Filters */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4 flex items-center gap-2">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4 flex items-center gap-2">
                   <Filter className="h-4 w-4"/>
                   Filters (Optional)
-                </label>
+                </span>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-caption mb-1">Leave Status</label>
+                    <label htmlFor="leave-report-status" className="block text-caption mb-1">Leave Status</label>
                     <select
+                      id="leave-report-status"
                       aria-label="Leave Status"
                       value={leaveStatus}
                       onChange={(e) => setLeaveStatus(e.target.value)}
@@ -157,9 +160,9 @@ export default function LeaveReportsPage() {
 
               {/* Format Selection */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Export Format
-                </label>
+                </span>
                 <div className="grid grid-cols-3 gap-4">
                   {(['EXCEL', 'PDF', 'CSV'] as const).map((fmt) => (
                     <button

@@ -460,10 +460,11 @@ export default function OvertimePage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Date */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="overtime-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Date *
                     </label>
                     <input
+                      id="overtime-date"
                       {...register('overtimeDate')}
                       type="date"
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -475,10 +476,11 @@ export default function OvertimePage() {
 
                   {/* Type */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="overtime-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Overtime Type *
                     </label>
                     <select
+                      id="overtime-type"
                       aria-label="Overtime Type"
                       {...register('overtimeType')}
                       className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2"
@@ -493,10 +495,11 @@ export default function OvertimePage() {
 
                   {/* Regular Hours */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="overtime-regular-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Regular Hours *
                     </label>
                     <input
+                      id="overtime-regular-hours"
                       {...register('regularHours')}
                       type="number"
                       step="0.5"
@@ -509,10 +512,11 @@ export default function OvertimePage() {
 
                   {/* Actual Hours */}
                   <div>
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="overtime-actual-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Actual Hours Worked *
                     </label>
                     <input
+                      id="overtime-actual-hours"
                       {...register('actualHours')}
                       type="number"
                       step="0.5"
@@ -525,10 +529,11 @@ export default function OvertimePage() {
 
                   {/* Overtime Hours */}
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                    <label htmlFor="overtime-hours" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                       Overtime Hours *
                     </label>
                     <input
+                      id="overtime-hours"
                       {...register('overtimeHours')}
                       type="number"
                       step="0.5"
@@ -542,10 +547,11 @@ export default function OvertimePage() {
 
                 {/* Notes */}
                 <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                  <label htmlFor="overtime-notes" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Reason / Notes
                   </label>
                   <textarea
+                    id="overtime-notes"
                     {...register('notes')}
                     rows={3}
                     className="w-full px-4 py-2 rounded-lg border border-[var(--border-main)] bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700 focus:ring-offset-2 resize-none"

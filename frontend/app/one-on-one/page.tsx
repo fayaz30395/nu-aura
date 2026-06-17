@@ -1060,8 +1060,8 @@ export default function OneOnOnePage() {
                           {showFeedbackForm ? (
                             <form onSubmit={feedbackForm.handleSubmit(handleSubmitFeedback)} className="space-y-4">
                               <div>
-                                <label
-                                  className="block text-sm font-medium text-[var(--text-primary)] mb-2">Rating</label>
+                                <span
+                                  className="block text-sm font-medium text-[var(--text-primary)] mb-2">Rating</span>
                                 <Controller
                                   name="rating"
                                   control={feedbackForm.control}

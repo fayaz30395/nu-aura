@@ -117,13 +117,14 @@ export default function PayrollReportsPage() {
             <CardContent className="space-y-6">
               {/* Date Range */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Payroll Period <span aria-hidden="true" className="text-danger-500">*</span>
-                </label>
+                </span>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-caption mb-1">From</label>
+                    <label htmlFor="payroll-report-date-from" className="block text-caption mb-1">From</label>
                     <input
+                      id="payroll-report-date-from"
                       type="date"
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
@@ -132,8 +133,9 @@ export default function PayrollReportsPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-caption mb-1">To</label>
+                    <label htmlFor="payroll-report-date-to" className="block text-caption mb-1">To</label>
                     <input
+                      id="payroll-report-date-to"
                       type="date"
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
@@ -146,9 +148,9 @@ export default function PayrollReportsPage() {
 
               {/* Format Selection */}
               <div>
-                <label className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
+                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
                   Export Format
-                </label>
+                </span>
                 <div className="grid grid-cols-3 gap-4">
                   {(['EXCEL', 'PDF', 'CSV'] as const).map((fmt) => (
                     <button
