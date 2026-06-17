@@ -146,24 +146,24 @@ Fix pattern for every item:
 | ✅ P1 | `InterviewManagementService` | DONE: `mapToInterviewResponse` batch-resolves candidate/jobOpening/interviewer names via 3 `findAllById` per page |
 | ✅ P1 | `PerformanceReviewService` | DONE: employee/reviewer + cycle names from per-page caches (2 `findAllById`), shared across Page+List paths |
 | ✅ P1 | `ReviewCycleService` | DONE: `getCalibration` batch-resolves employee names (1 `findAllById`). `mapToResponse(cycle)` had no per-cycle lookups — original description was inaccurate. |
-| P2 | `FeedbackService` | Per feedback item: giver + receiver employee name lookup |
-| P2 | `GoalService` | Per goal: employee name + optional assignee name |
-| P2 | `ProbationService` | Per probation record: employee name + manager name |
-| P2 | `ExitManagementService` | Per exit record: employee name + manager name |
-| P2 | `OnboardingManagementService` | Per onboarding task: employee + buddy name lookups |
-| P2 | `ContractService` | Per contract: employee name + department name |
-| P2 | `CompensationService` | Per compensation record: employee name lookup |
-| P2 | `BenefitManagementService` | Per benefit record: employee name lookup |
-| P3 | `SurveyManagementService` | Per survey response: respondent employee name |
-| P3 | `SurveyAnalyticsService` | Per result bucket: department/team name lookups |
-| P3 | `TimeTrackingService` | Per time entry: employee name + project name |
-| P3 | `ProjectTimesheetService` | Per timesheet row: employee + project name |
-| P3 | `ShiftScheduleService` | Per schedule entry: employee + shift name |
-| P3 | `TravelExpenseService` | Per expense: employee name + approver name |
-| P3 | `PIPService` | Per PIP record: employee + reviewer name lookups |
-| P3 | `ContractSignatureService` | Per signature record: employee name + contract title |
+| ✅ P2 | `FeedbackService` | DONE: giver+receiver names via 1 `findAllById` per batch |
+| ✅ P2 | `GoalService` | DONE: employee/createdBy/approvedBy names + parentGoal titles batch-loaded |
+| ✅ P2 | `ProbationService` | DONE: employee/manager/HR (+evaluator) names batch-loaded across 7 read methods |
+| ✅ P2 | `ExitManagementService` | DONE: employee/manager/HR-SPOC names via `findFullNamesByIds` projection (avoids hydrating encrypted fields) |
+| ✅ P2 | `OnboardingManagementService` | DONE: employee+buddy names via 1 `findAllById` per batch |
+| ✅ P2 | `ContractService` | DONE: employee names (new `EmployeeRepository` inject) + pending-signature counts (new grouped `countPendingByContractIds`) batched across 11 read methods. Desc said "department name" but real 2nd N+1 was pending-signature count. |
+| ✅ P2 | `CompensationService` | DONE: revision employee (name/code) + cycle names via 2 `findAllById` per batch |
+| ⬜ P2 | `BenefitManagementService` | NO-OP: false positive — operates on `BenefitPlan` (no employee FK); `mapToResponse` does zero per-row lookups |
+| ✅ P3 | `SurveyManagementService` | DONE: `createdBy` user name via 1 `findAllById` across 3 read methods |
+| ✅ P3 | `SurveyAnalyticsService` | DONE: insight `assignedTo`/`acknowledgedBy` user names batch-loaded |
+| ⬜ P3 | `TimeTrackingService` | NO-OP: false positive — `TimeEntryDto.fromEntity` is a pure field-copy; name fields left null, no per-row lookup |
+| ✅ P3 | `ProjectTimesheetService` | DONE: time-entry (employee+approver) + project-member names batch-loaded across 8 endpoints |
+| ✅ P3 | `ShiftScheduleService` | DONE: schedule-entry employee/shift lookups batch-loaded per page/list |
+| ⬜ P3 | `TravelExpenseService` | NO-OP: false positive — `toDto` copies employeeId/approvedBy as raw UUIDs; no name resolution exists |
+| ✅ P3 | `PIPService` | DONE: employee+manager names batch-loaded across 5 read methods |
+| ⬜ P3 | `ContractSignatureService` | NO-OP: false positive — `toDto` reads denormalized `signerName`/`signerEmail` off the entity; no employee/contract-title lookup |
 
-Owner: **agent** · No user decision needed · Each service is a 1–3 hour self-contained fix.
+Owner: **agent** · **ALL ITEMS RESOLVED 2026-06-17** — 12 real N+1s fixed + committed, 4 false-positive backlog rows confirmed no-op. Verification: `mvn compile -q` green after each commit.
 
 ---
 
@@ -177,3 +177,4 @@ Owner: **agent** · No user decision needed · Each service is a 1–3 hour self
 - ✅ Stopped 2 rogue agents + cleared scheduler lock (others respawn — see #0).
 - ✅ N+1 fixes: AnalyticsService, MileageService, ReferralService, ScheduledReportService, OvertimeManagementService, TrainingManagementService (commits 3a4f9e35, 4459924d, 840b8318).
 - ✅ N+1 fixes (P1 batch): WallService comments + InterviewManagementService; PerformanceReviewService + ReviewCycleService (2 commits this session).
+- ✅ N+1 fixes (P2/P3 batch, 2026-06-17): Feedback, Goal, Exit, Onboarding, Compensation, Probation, SurveyManagement, Contract (+ grouped signature-count query), ProjectTimesheet, ShiftSchedule, SurveyAnalytics, PIP — 12 services across 4 commits. Benefit/TimeTracking/TravelExpense/ContractSignature confirmed false-positive no-ops (pure field-copy mappers / no employee FK).
