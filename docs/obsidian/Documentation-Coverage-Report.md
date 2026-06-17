@@ -25,7 +25,7 @@ Generated 2026-06-16 by full-codebase discovery (parallel section authors, each 
 | Modules (4 sub-apps + platform) | [[Nu-HRMS]] [[Nu-Hire]] [[Nu-Grow]] [[Nu-Fluence]] [[Shared-Platform]] | ✅ Complete | High — controllers + routes grepped (former `apps/` folded in) |
 | Frontend | [[Routes]] [[Pages]] [[Components]] | ✅ Complete | High — counts measured live; route table sampled |
 | Backend | [[APIs]] [[Services]] [[Middleware]] | ✅ Complete | High — filter order read from `SecurityConfig` (former `reference/api.md` folded in) |
-| RBAC | [[Roles]] [[Permissions]] [[RBAC-Matrix]] | ✅ Complete | High — `RoleHierarchy.java` enumerated |
+| RBAC | [[Roles]] [[Permissions]] [[RBAC-Matrix]] [[Permission-Ownership]] | ✅ Complete | High — `RoleHierarchy.java` enumerated; per-permission/role→sub-app ownership mapped from `apps.ts` + `RoleHierarchy` app tags |
 | Database | [[Schema]] [[ERD]] [[Migrations]] | ✅ Complete | High — migrations + sampled DDL; core ERD (former `reference/database.md` + `reference/migrations.md` folded in) |
 | DevOps | [[Deployment]] [[CI-CD]] [[Local-Setup]] | ✅ Complete | High — workflows + compose enumerated; local-dev run steps (former `setup/` folded in) |
 | Security | [[Security-Audit]] | ✅ Complete | High — controls + known findings |
@@ -34,7 +34,7 @@ Generated 2026-06-16 by full-codebase discovery (parallel section authors, each 
 | Decisions | [[ADR-001]]…[[ADR-005]] | ✅ Complete | High — reverse-engineered from code |
 | Knowledge graph | [[Module-Relationships]] [[Data-Flows]] [[System-Flows]] | ✅ Complete | High — flows traced to classes |
 
-**40 notes** across 13 sections (plus [[00-Home]] and this report). **0 unresolved wikilinks**, **0 unbalanced Mermaid fences** (validated). Mermaid diagrams across architecture, C4, ERD, sequence, and flow types. Recent additions: [[Migrations]], [[Code-Patterns]], [[Local-Setup]] (merge round) and [[Scheduled-Jobs]] (pass-2 re-verification).
+**41 notes** across 13 sections (plus [[00-Home]] and this report). **0 unresolved wikilinks**, **0 unbalanced Mermaid fences** (validated). Mermaid diagrams across architecture, C4, ERD, sequence, and flow types. Recent additions: [[Migrations]], [[Code-Patterns]], [[Local-Setup]] (merge round), [[Scheduled-Jobs]] (pass-2 re-verification), and [[Permission-Ownership]] (per-permission/role→sub-app ownership map).
 
 ## 2. Verified metrics (point-in-time, 2026-06-16)
 
@@ -79,15 +79,16 @@ These are real inconsistencies the discovery surfaced between docs/memory and co
 
 - **Test coverage below standard.** Backend JaCoCo line ~0.19 (target 0.80, per `pom.xml`); frontend Vitest threshold 60% (not 80%). Not independently re-run (needs Docker). See [[Test-Coverage]].
 - **Runbooks are templated.** `docs/runbooks/` doesn't exist on disk; [[Production-Support]] / [[Incident-Response]] procedural detail is aspirational pending real runbooks.
-- **Scheduled-jobs deep-dive — closed.** [[Scheduled-Jobs]] enumerates all 25 jobs (schedules, ShedLock names + windows) and pointer-documents the WebSocket relay (`RedisWebSocketRelay`) and read-replica routing (`RoutingDataSourceConfig`). Remaining thin spot: per-permission sub-app ownership.
+- **Scheduled-jobs deep-dive — closed.** [[Scheduled-Jobs]] enumerates all 25 jobs (schedules, ShedLock names + windows) and pointer-documents the WebSocket relay (`RedisWebSocketRelay`) and read-replica routing (`RoutingDataSourceConfig`).
+- **Per-permission sub-app ownership — closed.** [[Permission-Ownership]] maps every `Permission` family and role onto the four sub-apps + platform, grounded in `frontend/lib/config/apps.ts` (`permissionPrefixes`), `RoleHierarchy.java` app-tag comments, and `@RequiresPermission` controller packages.
 - **Generated API client layer** (`frontend/lib/generated/api/*`) is gitignored — documented from `orval.config.ts` + snapshot, not read directly. See [[Routes]] / [[APIs]].
 - **RBAC matrix reflects default grants** from `RoleHierarchy`, not live tenant `role_permissions` (admins can diverge per tenant). See [[RBAC-Matrix]].
 - **Live RLS proof** (NOBYPASSRLS `nu_app_rls` role) is CI-only; local guard is static-source only. See [[Migrations]] / [[Code-Patterns]].
 
 ## 5. Validation performed
 
-- ✅ All 40 notes present in the prescribed 13-section structure (plus Home + this report); link integrity re-checked 2026-06-16.
-- ✅ Wikilink integrity: every `[[target]]` resolves to an existing note basename (0 broken), including the three merged-in notes [[Migrations]], [[Code-Patterns]], [[Local-Setup]].
+- ✅ All 41 notes present in the prescribed 13-section structure (plus Home + this report); link integrity re-checked 2026-06-16.
+- ✅ Wikilink integrity: every `[[target]]` resolves to an existing note basename (0 broken), including [[Permission-Ownership]] and the three merged-in notes [[Migrations]], [[Code-Patterns]], [[Local-Setup]].
 - ✅ Mermaid fence balance: all code fences even (0 malformed blocks).
 - ✅ Counts re-measured live from source (not copied from prior docs).
 - ✅ Flat-doc references removed: Home and this report no longer point at the retired `architecture/`, `reference/`, `patterns/`, `setup/` folders.

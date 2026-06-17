@@ -221,12 +221,12 @@ swarm, memory, hooks). **CLI** is the same via Bash.
 ## Imported Claude Cowork project instructions
 
 You are working on NU-AURA, an enterprise HRMS platform built with:
-- Backend: Java 21 + Spring Boot 3.4.1 (monolith architecture)
-- Frontend: Next.js 14 + TypeScript + Mantine UI
+- Backend: Java 21 + Spring Boot 3.5.14 (DDD-layered modular monolith)
+- Frontend: Next.js 16 (App Router) + React 19 + TypeScript (strict) + Mantine UI 9
 - Database: PostgreSQL 16 (multi-tenant with RLS)
 - Caching: Redis 7
 - Messaging: Kafka
-- Storage: MinIO
+- Storage: Google Drive (behind a `StorageProvider` abstraction; MinIO removed)
 
 Code Standards:
 - Always read existing files before modifying
@@ -234,12 +234,12 @@ Code Standards:
 - All forms must use React Hook Form + Zod
 - All data fetching must use React Query
 - TypeScript strict mode - no 'any' types
-- Backend tests require 80% coverage (JaCoCo)
+- Backend JaCoCo enforces a ratcheting line-coverage floor (currently min 0.10; backlog target 0.80) — see `backend/pom.xml`
 
 Architecture Rules:
 - Multi-tenant: All queries must filter by tenant_id
-- RBAC: Use @RequiresPermission annotations (500+ permissions)
-- Never skip migrations - always create new Flyway migration (next: V63)
+- RBAC: enforce with `@RequiresPermission` (190 sites; ~95 permission families in `Permission.java`) — NOT Spring `@PreAuthorize`
+- Never skip migrations - always create the next Flyway migration (latest V294; next: V295)
 - SuperAdmin role bypasses all permission checks
 
 Documentation:

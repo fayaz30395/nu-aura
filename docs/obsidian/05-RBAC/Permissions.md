@@ -5,7 +5,7 @@ tags: [rbac, security, permissions, authorization, redis, enforcement]
 
 # Permissions
 
-> Part of the **05-RBAC** section. See also [[Roles]] · [[RBAC-Matrix]] · [[00-Home]]
+> Part of the **05-RBAC** section. See also [[Roles]] · [[RBAC-Matrix]] · [[Permission-Ownership]] · [[00-Home]]
 
 ## Purpose
 
@@ -153,7 +153,7 @@ flowchart TD
 
 ## Related Links
 
-[[Roles]] · [[RBAC-Matrix]] · [[Data-Flows]] · [[System-Flows]] · [[Schema]] · [[Middleware]] ·
+[[Roles]] · [[RBAC-Matrix]] · [[Permission-Ownership]] · [[Data-Flows]] · [[System-Flows]] · [[Schema]] · [[Middleware]] ·
 [[APIs]] · [[Routes]] · [[Pages]] · [[Security-Audit]] · [[Shared-Platform]] · [[00-Home]]
 
 ## Risks

@@ -5,7 +5,7 @@ tags: [rbac, security, matrix, authorization, capabilities]
 
 # RBAC Matrix
 
-> Part of the **05-RBAC** section. See also [[Roles]] · [[Permissions]] · [[00-Home]]
+> Part of the **05-RBAC** section. See also [[Roles]] · [[Permissions]] · [[Permission-Ownership]] · [[00-Home]]
 
 ## Purpose
 
@@ -28,7 +28,7 @@ a tenant admin can later diverge a role's `role_permissions` rows ([[Permissions
 | Confidence | What | Why |
 |------------|------|-----|
 | **Verified** | Per-role permission sets, ranks, superset chains, field perms, the 3-layer enforcement | Read directly from `RoleHierarchy.java`, `SecurityContext.java`, `SecurityService.java`, `PermissionHandlerInterceptor.java`, `PermissionAspect.java`, `usePermissions.ts` |
-| **Inferred** | Mapping of a permission to a *sub-app* (e.g. `OKR:*`→[[Nu-Grow]]) and a few specialized-admin edges | Sub-app ownership inferred from module naming + module docs, not a code-level app tag on each permission |
+| **Inferred** | Mapping of a permission to a *sub-app* (e.g. `OKR:*`→[[Nu-Grow]]) and a few specialized-admin edges | Sub-app ownership inferred from module naming + module docs, not a code-level app tag on each permission — see [[Permission-Ownership]] for the full family/role→sub-app map |
 | **Not exhaustive** | Every one of ~350 permission keys | Matrix covers representative capabilities per app, not the full catalogue (see [[Permissions]]) |
 
 ## Role × Capability Matrix (by sub-app)
@@ -146,7 +146,7 @@ permission(s); `SUPER_ADMIN` always allowed via bypass.
 
 ## Related Links
 
-[[Roles]] · [[Permissions]] · [[Data-Flows]] · [[System-Flows]] · [[Schema]] · [[Security-Audit]] ·
+[[Roles]] · [[Permissions]] · [[Permission-Ownership]] · [[Data-Flows]] · [[System-Flows]] · [[Schema]] · [[Security-Audit]] ·
 [[Nu-HRMS]] · [[Nu-Hire]] · [[Nu-Grow]] · [[Nu-Fluence]] · [[Shared-Platform]] · [[APIs]] ·
 [[Routes]] · [[Pages]] · [[Middleware]] · [[00-Home]]
 

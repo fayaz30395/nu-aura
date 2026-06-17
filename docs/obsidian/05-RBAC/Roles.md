@@ -5,7 +5,7 @@ tags: [rbac, security, roles, authorization, multi-tenant]
 
 # Roles
 
-> Part of the **05-RBAC** section. See also [[Permissions]] · [[RBAC-Matrix]] · [[00-Home]]
+> Part of the **05-RBAC** section. See also [[Permissions]] · [[RBAC-Matrix]] · [[Permission-Ownership]] · [[00-Home]]
 
 ## Purpose
 
@@ -163,7 +163,7 @@ set. This is called out in `usePermissions.ts:671–673` and `SecurityContext.is
 
 ## Related Links
 
-[[Permissions]] · [[RBAC-Matrix]] · [[Data-Flows]] · [[System-Flows]] · [[Schema]] ·
+[[Permissions]] · [[RBAC-Matrix]] · [[Permission-Ownership]] · [[Data-Flows]] · [[System-Flows]] · [[Schema]] ·
 [[Middleware]] · [[Security-Audit]] · [[Nu-HRMS]] · [[Nu-Hire]] · [[Nu-Grow]] ·
 [[Nu-Fluence]] · [[Shared-Platform]] · [[00-Home]]
 
