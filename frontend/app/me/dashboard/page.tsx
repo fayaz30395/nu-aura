@@ -400,7 +400,7 @@ function PageHeader({firstName, designation, department, hasInbox, inboxCount}: 
             : "Here's what's on your plate today — attendance, approvals, and your team at a glance."}
         </p>
       </div>
-      <Link href="/approvals/inbox" className="self-start sm:self-end">
+      <Link href="/approvals/inbox" prefetch={false} className="self-start sm:self-end">
         <Button variant={hasInbox ? 'primary' : 'outline'} size="md">
           <Inbox className="mr-2 h-4 w-4" aria-hidden="true"/>
           Inbox
@@ -470,7 +470,7 @@ function AttentionStrip({count}: {count: number}) {
           {count === 1 ? 'item is' : 'items are'} waiting on your action.
         </p>
       </div>
-      <Link href="/approvals/inbox">
+      <Link href="/approvals/inbox" prefetch={false}>
         <Button variant="outline" size="sm">
           Review
           <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true"/>

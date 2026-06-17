@@ -102,6 +102,7 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
           </div>
           <Link
             href="/leave"
+            prefetch={false}
             className="inline-flex items-center gap-0.5 text-caption text-[var(--text-3)] hover:text-[var(--text-2)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
             aria-label="View all leave"
           >
@@ -157,6 +158,7 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
         <div className="space-y-2 pt-4 border-t border-[var(--border-soft)]">
           <Link
             href="/leave/apply"
+            prefetch={false}
             className="block w-full rounded-aura-control py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 bg-[var(--accent)] hover:shadow-sh-md hover:-translate-y-0.5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
             style={{
               boxShadow: buttonShadow,
@@ -166,6 +168,7 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
           </Link>
           <Link
             href="/leave/my-leaves"
+            prefetch={false}
             className="block w-full rounded-aura-control border border-[var(--border)] py-2.5 text-center text-xs font-medium text-[var(--text-2)] hover:bg-[var(--surface-hover)] hover:border-[var(--border-aura-strong)] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
           >
             View All Balances
