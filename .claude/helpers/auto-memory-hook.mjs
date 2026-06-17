@@ -282,15 +282,8 @@ async function doImport() {
   const memPkg = await loadMemoryPackage();
   if (!memPkg || !memPkg.AutoMemoryBridge) {
     debug('Memory package not available; skipping auto memory import');
-    if (isHookJSON) {
-      console.log(JSON.stringify({
-        continue: true,
-        hookSpecificOutput: {
-          hookEventName: 'SessionStart',
-          additionalContext: 'SessionStart auto-memory import skipped: package unavailable',
-        },
-      }));
-    }
+    // Optional dependency missing is a routine no-op. Emit nothing — empty hook
+    // output is always schema-valid and avoids per-session context noise.
     return;
   }
 
@@ -365,7 +358,7 @@ async function doSync() {
     const payload = {
       continue: true,
       hookSpecificOutput: {
-        hookEventName: 'SessionEnd',
+        hookEventName: 'Stop',
         additionalContext: 'SessionEnd: dry-run sync skipped',
       },
     };
@@ -376,15 +369,8 @@ async function doSync() {
   const memPkg = await loadMemoryPackage();
   if (!memPkg || !memPkg.AutoMemoryBridge) {
     debug('Memory package not available; skipping sync');
-    if (isHookJSON) {
-      console.log(JSON.stringify({
-        continue: true,
-        hookSpecificOutput: {
-          hookEventName: 'SessionEnd',
-          additionalContext: 'SessionEnd auto-memory sync skipped: package unavailable',
-        },
-      }));
-    }
+    // Routine no-op when the optional memory package isn't installed. Stay silent
+    // (empty output is always valid) instead of surfacing context on every Stop.
     return;
   }
 
@@ -396,17 +382,7 @@ async function doSync() {
 
   const entryCount = await backend.count();
   if (entryCount === 0) {
-    if (isHookJSON) {
-      console.log(JSON.stringify({
-        continue: true,
-        hookSpecificOutput: {
-          hookEventName: 'SessionEnd',
-          additionalContext: 'SessionEnd auto-memory sync skipped: no entries',
-        },
-      }));
-    } else {
-      dim('No entries to sync');
-    }
+    if (!isHookJSON) dim('No entries to sync');
     await backend.shutdown();
     return;
   }
@@ -439,7 +415,7 @@ async function doSync() {
       console.log(JSON.stringify({
         continue: true,
         hookSpecificOutput: {
-          hookEventName: 'SessionEnd',
+          hookEventName: 'Stop',
           additionalContext: `Synced ${syncResult.synced} entries to auto memory; categories=${syncResult.categories?.join(', ') || 'none'}; backend entries=${entryCount}`,
         },
       }));
@@ -460,7 +436,7 @@ async function doSync() {
       console.log(JSON.stringify({
         continue: true,
         hookSpecificOutput: {
-          hookEventName: 'SessionEnd',
+          hookEventName: 'Stop',
           additionalContext: `SessionEnd auto-memory sync failed: ${err.message}`,
         },
       }));
@@ -476,13 +452,8 @@ async function doStatus() {
   const config = readConfig();
 
   if (isHookJSON) {
-    console.log(JSON.stringify({
-      continue: true,
-      hookSpecificOutput: {
-        hookEventName: 'SessionLifecycle',
-        additionalContext: `Status requested for auto-memory hook (${memPkg ? 'available' : 'missing package'})`,
-      },
-    }));
+    // 'status' is a manual command, not wired to a lifecycle event; emit nothing
+    // rather than an invalid hookEventName that would fail schema validation.
     return;
   }
 
@@ -534,10 +505,14 @@ try {
   try {
     dim(`Error (non-critical): ${err.message}`);
     if (isHookJSON) {
+      // hookEventName must match the lifecycle event this command is wired to
+      // (settings.json): import → SessionStart, sync → Stop. An invalid name
+      // (e.g. "SessionLifecycle") fails the harness hook-output schema check.
+      const evt = command === 'import' ? 'SessionStart' : 'Stop';
       console.log(JSON.stringify({
         continue: true,
         hookSpecificOutput: {
-          hookEventName: 'SessionLifecycle',
+          hookEventName: evt,
           additionalContext: `Auto-memory hook error: ${err.message}`,
         },
       }));
