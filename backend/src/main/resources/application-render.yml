@@ -105,7 +105,7 @@ spring:
     type: simple
 
   flyway:
-    # Enable Flyway so new migrations (e.g. V298 outbox table) are applied on deploy.
+    # Enable Flyway so new migrations (e.g. V300 outbox table) are applied on deploy.
     # Railway uses always-on PostgreSQL so migration time is not a concern.
     # Override to false via FLYWAY_ENABLED=false env var if needed.
     enabled: ${FLYWAY_ENABLED:true}
