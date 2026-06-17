@@ -7,6 +7,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   getListByAssigneeQueryKey,
@@ -93,12 +94,11 @@ function CreateTaskPanel({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose}/>
-      <div className="relative w-full max-w-sm bg-[var(--bg-primary)] border-l border-[var(--border-main)] h-full overflow-y-auto p-6 shadow-2xl">
+    <SlidePanel onClose={onClose} title="New Task">
+      <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-base font-semibold">New Task</h2>
-          <button type="button" onClick={onClose}><X className="w-4 h-4 text-[var(--text-muted)]"/></button>
+          <button type="button" onClick={onClose} aria-label="Close"><X className="w-4 h-4 text-[var(--text-muted)]"/></button>
         </div>
         <div className="space-y-3">
           <div>
@@ -156,7 +156,7 @@ function CreateTaskPanel({
           </div>
         </div>
       </div>
-    </div>
+    </SlidePanel>
   );
 }
 

@@ -15,7 +15,6 @@ import {
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Input} from '@/components/ui/Input';
-import {Badge} from '@/components/ui/Badge';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {

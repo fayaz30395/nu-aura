@@ -5,7 +5,6 @@ import {usePathname, useRouter} from 'next/navigation';
 import {AnimatePresence} from 'framer-motion';
 import {logger} from '@/lib/utils/logger';
 import {PageTransition} from '@/components/motion';
-import {AuthGuard} from '@/components/auth/AuthGuard';
 import {useUiStore} from '@/lib/stores/useUiStore';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
 import {cn} from '@/lib/utils';
@@ -328,12 +327,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         className
       )}
     >
-      <a
-        href="#app-main-content"
-        className="skip-link"
-      >
-        Skip to main content
-      </a>
+      {/* Skip-link lives in the root layout (app/layout.tsx) and targets
+          #main-content (the <main> below), so it bypasses the product rail +
+          nav panel. No second skip-link here — one is sufficient and avoids
+          redundant "Skip to content" controls in the tab order. */}
 
       {/* Aura desktop shell — product rail (72px) + contextual nav panel (232px).
           Hidden below md; mobile uses the drawer below. */}
@@ -406,30 +403,39 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           userRole={headerProps.userRole ?? getBestRoleLabel(user?.roles) ?? 'Employee'}
         />
 
-        {/* Content Area — scrollable, fills remaining vertical space */}
+        {/* Content Area — scrollable, fills remaining vertical space.
+            id="main-content" is the skip-link target for both the root layout
+            skip-link and AppLayout's own skip-link, so the link bypasses the
+            product rail + nav panel and lands on the actual content region.
+            tabIndex=-1 lets the anchor move focus here programmatically
+            without adding it to the tab order. */}
         <main
-          className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent"
+          id="main-content"
+          tabIndex={-1}
+          className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent focus:outline-none"
         >
-          <AuthGuard>
-            <ErrorBoundary resetKeys={[pathname]}>
-              {/* Route-level fade+rise. AnimatePresence mode="wait" lets the
-                  outgoing route finish its exit before the new one enters;
-                  keyed on pathname. PageTransition honors reduced motion. */}
-              <AnimatePresence mode="wait" initial={false}>
-                <PageTransition
-                  key={pathname}
-                  className={cn(
-                    'page-shell py-4 md:py-6',
-                    'stagger-children overflow-x-hidden',
-                    // Bottom padding: mobile needs space for fixed bottom nav
-                    'pb-20 md:pb-6'
-                  )}
-                >
-                  {children}
-                </PageTransition>
-              </AnimatePresence>
-            </ErrorBoundary>
-          </AuthGuard>
+          {/* Auth is evaluated once by the AuthGuard in app/providers.tsx,
+              which wraps the entire app tree. No second AuthGuard here — a
+              redundant inner guard re-runs authorization + session-restore
+              logic on every authed page. */}
+          <ErrorBoundary resetKeys={[pathname]}>
+            {/* Route-level fade+rise. AnimatePresence mode="wait" lets the
+                outgoing route finish its exit before the new one enters;
+                keyed on pathname. PageTransition honors reduced motion. */}
+            <AnimatePresence mode="wait" initial={false}>
+              <PageTransition
+                key={pathname}
+                className={cn(
+                  'page-shell py-4 md:py-6',
+                  'stagger-children overflow-x-hidden',
+                  // Bottom padding: mobile needs space for fixed bottom nav
+                  'pb-20 md:pb-6'
+                )}
+              >
+                {children}
+              </PageTransition>
+            </AnimatePresence>
+          </ErrorBoundary>
         </main>
 
         {/* Mobile Bottom Navigation */}

@@ -7,6 +7,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
 import {
@@ -82,12 +83,11 @@ function CreateTimesheetPanel({employeeId, onClose}: {employeeId: string; onClos
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose}/>
-      <div className="relative w-full max-w-sm bg-[var(--bg-primary)] border-l border-[var(--border-main)] h-full overflow-y-auto p-6 shadow-2xl">
+    <SlidePanel onClose={onClose} title="New Timesheet">
+      <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-base font-semibold">New Timesheet</h2>
-          <button type="button" onClick={onClose}><X className="w-4 h-4 text-[var(--text-muted)]"/></button>
+          <button type="button" onClick={onClose} aria-label="Close"><X className="w-4 h-4 text-[var(--text-muted)]"/></button>
         </div>
         <div className="space-y-3">
           <div>
@@ -107,7 +107,7 @@ function CreateTimesheetPanel({employeeId, onClose}: {employeeId: string; onClos
           </div>
         </div>
       </div>
-    </div>
+    </SlidePanel>
   );
 }
 
@@ -154,15 +154,14 @@ function AddEntryPanel({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose}/>
-      <div className="relative w-full max-w-sm bg-[var(--bg-primary)] border-l border-[var(--border-main)] h-full overflow-y-auto p-6 shadow-2xl">
+    <SlidePanel onClose={onClose} title="Add Time Entry">
+      <div className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-base font-semibold">Add Time Entry</h2>
             <p className="text-xs text-[var(--text-muted)]">{timesheet.weekStartDate} – {timesheet.weekEndDate}</p>
           </div>
-          <button type="button" onClick={onClose}><X className="w-4 h-4 text-[var(--text-muted)]"/></button>
+          <button type="button" onClick={onClose} aria-label="Close"><X className="w-4 h-4 text-[var(--text-muted)]"/></button>
         </div>
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
@@ -221,7 +220,7 @@ function AddEntryPanel({
           </div>
         </div>
       </div>
-    </div>
+    </SlidePanel>
   );
 }
 

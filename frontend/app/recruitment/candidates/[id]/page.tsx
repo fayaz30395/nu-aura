@@ -9,6 +9,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useCandidate} from '@/lib/hooks/queries/useRecruitment';
 import {getStageColor, getStatusColor} from '../utils';
+import {safeUrl} from '@/lib/utils/safeUrl';
 import {AlertCircle, ArrowLeft, Briefcase, Building, Calendar, Edit2, ExternalLink, Mail, MapPin, Phone, User,} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
@@ -386,7 +387,7 @@ export default function CandidateDetailPage() {
                   <div>
                     <p className="text-caption mb-1">Resume</p>
                     <a
-                      href={candidate.resumeUrl}
+                      href={safeUrl(candidate.resumeUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-sm text-accent-700 dark:text-accent-400 hover:underline"

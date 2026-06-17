@@ -68,6 +68,10 @@ export type {SidebarProps, SidebarItem, SidebarSection} from './Sidebar';
 export {Modal, ModalHeader, ModalBody, ModalFooter} from './Modal';
 export type {ModalProps, ModalHeaderProps, ModalBodyProps, ModalFooterProps} from './Modal';
 
+// SlidePanel (accessible right-side drawer)
+export {SlidePanel} from './SlidePanel';
+export type {SlidePanelProps} from './SlidePanel';
+
 // Loading Components
 export {Loading, SkeletonStatCard, SkeletonTable, SkeletonChart, SkeletonCard, NuAuraLoader} from './Loading';
 export type {LoadingProps} from './Loading';

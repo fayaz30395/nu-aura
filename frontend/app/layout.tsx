@@ -70,6 +70,10 @@ export default async function RootLayout({
     </head>
     <body
       className="font-sans overflow-x-hidden antialiased bg-[var(--bg-page)] text-[var(--text-primary)]">
+    {/* Skip link targets #main-content — the <main> content region inside
+        AppLayout — so it bypasses the product rail + nav panel. The wrapper
+        below is the fallback target id for public/auth pages that render no
+        AppLayout shell (and therefore no inner <main id="main-content">). */}
     <a
       href="#main-content"
       className="skip-link"
@@ -77,7 +81,7 @@ export default async function RootLayout({
       Skip to content
     </a>
     <Providers>
-      <div id="main-content" className="relative fade-slide-up">
+      <div id="page-root" className="relative fade-slide-up">
         <div className="stagger-children">
           {children}
         </div>

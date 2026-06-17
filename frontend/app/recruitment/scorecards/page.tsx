@@ -8,6 +8,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
+import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
 import {
@@ -131,12 +132,11 @@ function TemplatePanel({
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose}/>
-      <div className="relative w-full max-w-md bg-[var(--bg-primary)] border-l border-[var(--border-main)] h-full overflow-y-auto p-6 shadow-2xl">
+    <SlidePanel onClose={onClose} ariaLabel={template ? 'Edit Template' : 'New Scorecard Template'} widthClassName="max-w-md">
+      <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-base font-semibold">{template ? 'Edit Template' : 'New Scorecard Template'}</h2>
-          <button type="button" onClick={onClose}><X className="w-4 h-4 text-[var(--text-muted)]"/></button>
+          <button type="button" onClick={onClose} aria-label="Close"><X className="w-4 h-4 text-[var(--text-muted)]"/></button>
         </div>
         <div className="space-y-4">
           <div>
@@ -169,7 +169,7 @@ function TemplatePanel({
           </div>
         </div>
       </div>
-    </div>
+    </SlidePanel>
   );
 }
 

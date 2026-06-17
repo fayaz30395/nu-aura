@@ -1,23 +1,16 @@
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 import nextTypescript from 'eslint-config-next/typescript';
 
+// NOTE: The 8px-grid spacing restrictions (p-3 / px-3 / py-3 / gap-3 /
+// space-y-3 / space-x-3 / m-3 = 12px) were intentionally removed. NU-AURA
+// ships a deliberate COMPACT, desktop-first design system (36px buttons,
+// text-xs labels) where the 12px (3-unit) step is a sanctioned token, not an
+// off-grid mistake. Re-flagging it forced 80+ files toward looser 16px spacing,
+// which conflicts with the documented compact look. The remaining rules below
+// still catch genuinely banned patterns (gradient text, side-stripe borders,
+// decorative icon-tile gradients, undefined status classes, brand colors, and
+// bare .toLocaleDateString()).
 const restrictedSyntaxRules = [
-  {
-    selector: String.raw`Literal[value=/\bp-3\b/]`,
-    message: 'Design system: p-3 (12px) is off the 8px grid. Use p-4 (16px) or p-2 (8px).',
-  },
-  {
-    selector: String.raw`Literal[value=/\bgap-3\b/]`,
-    message: 'Design system: gap-3 (12px) is off the 8px grid. Use gap-4 (16px) or gap-2 (8px).',
-  },
-  {
-    selector: String.raw`Literal[value=/\bspace-y-3\b/]`,
-    message: 'Design system: space-y-3 (12px) is off the 8px grid. Use space-y-4 (16px) or space-y-2 (8px).',
-  },
-  {
-    selector: String.raw`Literal[value=/\bm-3\b/]`,
-    message: 'Design system: m-3 (12px) is off the 8px grid. Use m-4 (16px) or m-2 (8px).',
-  },
   {
     selector: String.raw`CallExpression[callee.type='MemberExpression'][callee.property.name='toLocaleDateString']`,
     message: 'Use formatDate / formatDateTime from @/lib/utils/format/date instead of bare .toLocaleDateString(). Bare calls bypass the canonical 12-hour, MMM d, yyyy format.',

@@ -249,7 +249,7 @@ function ContentViewer({
       return content.documentUrl ? (
         <div className="space-y-4">
           <a
-            href={content.documentUrl}
+            href={safeUrl(content.documentUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-accent-600 hover:underline text-sm"
@@ -275,7 +275,7 @@ function ContentViewer({
       return content.documentUrl ? (
         <div className="space-y-4">
           <a
-            href={content.documentUrl}
+            href={safeUrl(content.documentUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-accent-600 hover:underline text-sm"

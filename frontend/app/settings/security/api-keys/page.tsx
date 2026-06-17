@@ -22,6 +22,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
+import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   getListApiKeys1QueryKey,
@@ -173,12 +174,11 @@ function CreatePanel({onClose, onCreate}: {onClose: () => void; onCreate: (r: Ap
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose}/>
-      <div className="relative w-full max-w-md bg-[var(--bg-primary)] border-l border-[var(--border-main)] h-full overflow-y-auto p-6 shadow-2xl">
+    <SlidePanel onClose={onClose} title="New API Key" widthClassName="max-w-md">
+      <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-base font-semibold text-[var(--text-primary)]">New API Key</h2>
-          <button type="button" onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
+          <button type="button" onClick={onClose} aria-label="Close" className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]">
             <X className="w-4 h-4"/>
           </button>
         </div>
@@ -244,7 +244,7 @@ function CreatePanel({onClose, onCreate}: {onClose: () => void; onCreate: (r: Ap
           </div>
         </div>
       </div>
-    </div>
+    </SlidePanel>
   );
 }
 
