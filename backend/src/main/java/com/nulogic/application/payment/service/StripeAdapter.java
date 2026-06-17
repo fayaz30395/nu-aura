@@ -1,5 +1,6 @@
 package com.nulogic.application.payment.service;
 
+import com.nulogic.common.util.WebhookSignatureVerifier;
 import com.nulogic.domain.payment.PaymentConfig;
 import com.nulogic.domain.payment.PaymentRefund;
 import com.nulogic.domain.payment.PaymentTransaction;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -114,17 +116,22 @@ public class StripeAdapter implements PaymentGatewayAdapter {
 
     @Override
     public boolean verifyWebhookSignature(String payload, String signature) {
-        // FUTURE: NUAURA-PAYMENT-005 — Implement Stripe webhook signature verification using
-        // Webhook.constructEvent(payload, signature, webhookSecret) from the Stripe Java SDK.
-        // Requires: stripe-java dependency + STRIPE_WEBHOOK_SECRET env var.
-        // Until the SDK is integrated, REJECT all signatures to prevent unverified
-        // webhook payloads from mutating payment state (fail-secure posture).
-        // QA sweep S2-C K-6: log once per startup so this fail-secure stub is visible
-        // in deployment logs without spamming each webhook.
-        if (SIGNATURE_WARN_LOGGED.compareAndSet(false, true)) {
-            log.warn("Stripe webhook signature verification is STUBBED — every webhook will be rejected until NUAURA-PAYMENT-005 ships.");
+        // RBAC-01: real Stripe webhook verification — HMAC-SHA256 over "<t>.<payload>" using the
+        // per-tenant webhook secret, with a 5-minute replay tolerance and constant-time compare.
+        // Fail-secure: if no secret is configured, reject (the rest of the adapter is still a stub,
+        // and charges are gated by app.payments.adapters.enabled, but the signature gate is real).
+        if (config == null || config.getWebhookSecret() == null || config.getWebhookSecret().isBlank()) {
+            if (SIGNATURE_WARN_LOGGED.compareAndSet(false, true)) {
+                log.warn("Stripe webhook secret not configured for tenant — rejecting all webhooks (fail-secure).");
+            }
+            return false;
         }
-        return false;
+        boolean valid = WebhookSignatureVerifier.verifyStripe(
+                payload, signature, config.getWebhookSecret(), 300L, Instant.now().getEpochSecond());
+        if (!valid) {
+            log.warn("Stripe webhook signature verification failed (bad signature or expired timestamp).");
+        }
+        return valid;
     }
 
     @Override

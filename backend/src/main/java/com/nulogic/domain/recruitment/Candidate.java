@@ -1,5 +1,6 @@
 package com.nulogic.domain.recruitment;
 
+import com.nulogic.common.converter.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
@@ -77,7 +78,9 @@ public class Candidate {
     @Column(name = "notice_period_days")
     private Integer noticePeriodDays;
 
-    @Column(name = "resume_url", length = 500)
+    // SEC-002: resume URL may embed candidate PII — encrypted at rest (AES-256-GCM). Not queried by value.
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "resume_url")
     private String resumeUrl;
 
     @Column(name = "source", length = 100)

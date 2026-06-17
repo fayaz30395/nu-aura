@@ -1,5 +1,6 @@
 package com.nulogic.domain.statutory;
 
+import com.nulogic.common.converter.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,10 +29,13 @@ public class EmployeeESIRecord {
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
-    @Column(name = "esi_number", length = 17)
+    // SEC-002: government identifier — encrypted at rest (AES-256-GCM). Not queried by value.
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "esi_number")
     private String esiNumber;
 
-    @Column(name = "ip_number", length = 20) // Insurance Person Number
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "ip_number") // Insurance Person Number
     private String ipNumber;
 
     @Column(name = "enrollment_date")

@@ -408,6 +408,9 @@ public class ContractService {
      */
     @Transactional(readOnly = true)
     public List<Map<String, Object>> getVersionHistory(UUID contractId) {
+        // SEC (BE-01): assert the contract belongs to the current tenant before exposing
+        // its version content — prevents cross-tenant IDOR via an arbitrary contractId.
+        getContractEntity(contractId);
         List<ContractVersion> versions = versionRepository.findByContractIdOrderByVersionNumberDesc(contractId);
         return versions.stream()
                 .map(v -> Map.of(
@@ -424,6 +427,8 @@ public class ContractService {
      */
     @Transactional(readOnly = true)
     public Page<Map<String, Object>> getVersionHistory(UUID contractId, Pageable pageable) {
+        // SEC (BE-01): tenant-ownership guard before exposing version content (cross-tenant IDOR).
+        getContractEntity(contractId);
         return versionRepository.findByContractIdOrderByVersionNumberDesc(contractId, pageable)
                 .map(v -> Map.of(
                         "versionNumber", (Object) v.getVersionNumber(),

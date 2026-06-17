@@ -1,5 +1,6 @@
 package com.nulogic.common.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -26,35 +27,48 @@ public abstract class BaseEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    // Server-controlled identity/audit fields. READ_ONLY so Jackson never binds
+    // them from request bodies (mass-assignment guard) while still serializing
+    // them out in responses. The id is DB-generated; audit fields are stamped by
+    // AuditingEntityListener; version is JPA-managed; soft-delete state is
+    // controlled via softDelete()/restore().
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime updatedAt;
 
     @CreatedBy
     @Column(name = "created_by", updatable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID createdBy;
 
     @LastModifiedBy
     @Column(name = "updated_by")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID lastModifiedBy;
 
     @Version
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long version;
 
     @Builder.Default
     @Column(name = "is_deleted", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private boolean isDeleted = false;
 
     @Column(name = "deleted_at")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime deletedAt;
 
     /**

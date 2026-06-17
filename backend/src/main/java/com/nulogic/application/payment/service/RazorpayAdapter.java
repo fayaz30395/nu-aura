@@ -1,5 +1,6 @@
 package com.nulogic.application.payment.service;
 
+import com.nulogic.common.util.WebhookSignatureVerifier;
 import com.nulogic.domain.payment.PaymentConfig;
 import com.nulogic.domain.payment.PaymentRefund;
 import com.nulogic.domain.payment.PaymentTransaction;
@@ -113,16 +114,20 @@ public class RazorpayAdapter implements PaymentGatewayAdapter {
 
     @Override
     public boolean verifyWebhookSignature(String payload, String signature) {
-        // FUTURE: NUAURA-PAYMENT-006 — Implement Razorpay webhook signature verification using
-        // HmacSHA256(webhookSecret, payload) and compare with X-Razorpay-Signature header.
-        // Requires: RAZORPAY_WEBHOOK_SECRET env var.
-        // Until wired in, REJECT all signatures to prevent unverified payloads from
-        // mutating payment state (fail-secure posture).
-        // QA sweep S2-C K-6: log once per startup so this fail-secure stub is visible.
-        if (SIGNATURE_WARN_LOGGED.compareAndSet(false, true)) {
-            log.warn("Razorpay webhook signature verification is STUBBED — every webhook will be rejected until NUAURA-PAYMENT-006 ships.");
+        // RBAC-01: real Razorpay webhook verification — HMAC-SHA256(payload, webhookSecret) hex,
+        // constant-time compared to the X-Razorpay-Signature header. Fail-secure when no secret
+        // is configured (charges remain gated by app.payments.adapters.enabled).
+        if (config == null || config.getWebhookSecret() == null || config.getWebhookSecret().isBlank()) {
+            if (SIGNATURE_WARN_LOGGED.compareAndSet(false, true)) {
+                log.warn("Razorpay webhook secret not configured for tenant — rejecting all webhooks (fail-secure).");
+            }
+            return false;
         }
-        return false;
+        boolean valid = WebhookSignatureVerifier.verifyHmacSha256Hex(payload, signature, config.getWebhookSecret());
+        if (!valid) {
+            log.warn("Razorpay webhook signature verification failed (bad signature).");
+        }
+        return valid;
     }
 
     @Override

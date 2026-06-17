@@ -1,5 +1,6 @@
 package com.nulogic.domain.statutory;
 
+import com.nulogic.common.converter.EncryptedStringConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,10 +30,13 @@ public class EmployeePFRecord {
     @Column(name = "employee_id", nullable = false)
     private UUID employeeId;
 
-    @Column(name = "uan_number", length = 12) // Universal Account Number
+    // SEC-002: government identifier — encrypted at rest (AES-256-GCM). Not queried by value.
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "uan_number") // Universal Account Number (column is unlimited VARCHAR)
     private String uanNumber;
 
-    @Column(name = "pf_number", length = 50)
+    @Convert(converter = EncryptedStringConverter.class)
+    @Column(name = "pf_number")
     private String pfNumber;
 
     @Column(name = "enrollment_date")

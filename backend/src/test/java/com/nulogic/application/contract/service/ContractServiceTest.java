@@ -604,6 +604,9 @@ class ContractServiceTest {
                             .build()
             );
 
+            // BE-01: getVersionHistory now asserts tenant ownership first (findByIdAndTenantId).
+            when(contractRepository.findByIdAndTenantId(CONTRACT_ID, TENANT_ID))
+                    .thenReturn(Optional.of(Contract.builder().id(CONTRACT_ID).tenantId(TENANT_ID).build()));
             when(versionRepository.findByContractIdOrderByVersionNumberDesc(CONTRACT_ID))
                     .thenReturn(versions);
 
