@@ -49,7 +49,14 @@ export default function LeaveCarryForwardPage() {
   }
 
   return (
-    <AppLayout activeMenuItem="leave">
+    <AppLayout
+      activeMenuItem="leave-carry-forward"
+      breadcrumbs={[
+        {label: 'Leave Management', href: '/leave'},
+        {label: 'Admin'},
+        {label: 'Carry Forward'},
+      ]}
+    >
       <PermissionGate
         permission={Permissions.LEAVE_VIEW_ALL}
         fallback={

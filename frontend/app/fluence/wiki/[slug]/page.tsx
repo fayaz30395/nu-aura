@@ -810,6 +810,7 @@ export default function WikiPageDetailPage() {
                     <ActionIcon
                       size="lg"
                       variant="subtle"
+                      aria-label="Edit page"
                       onClick={() => router.push(`/fluence/wiki/${page.id}/edit`)}
                       className="hover:bg-[var(--bg-secondary)] transition-colors"
                     >
@@ -821,6 +822,7 @@ export default function WikiPageDetailPage() {
                   <ActionIcon
                     size="lg"
                     variant="subtle"
+                    aria-label="View page history"
                     onClick={() => setShowHistory(true)}
                     className="hover:bg-[var(--bg-secondary)] transition-colors"
                   >
@@ -834,6 +836,7 @@ export default function WikiPageDetailPage() {
                     <ActionIcon
                       size="lg"
                       variant="subtle"
+                      aria-label="Export page"
                       onClick={() => setExportMenuOpen((prev) => !prev)}
                       loading={exporting}
                       className="hover:bg-[var(--bg-secondary)] transition-colors"

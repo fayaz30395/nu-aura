@@ -48,6 +48,14 @@ const formatDate = (dateString: string) => formatDateShort(dateString);
 
 const formatFullDate = (dateString: string) => formatDateCanonical(dateString);
 
+/** Returns the local calendar date as YYYY-MM-DD, avoiding UTC-offset shift from toISOString(). */
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 const ACTIVITY_TYPES: { value: ActivityType; label: string }[] = [
   {value: 'DEVELOPMENT', label: 'Development'},
   {value: 'TESTING', label: 'Testing'},
@@ -119,7 +127,7 @@ export default function TimesheetsPage() {
 
   // Compute current week timesheet ID and fetch its entries
   const currentWeekTimesheetId = useMemo(() => {
-    const weekStart = currentWeekStart.toISOString().split('T')[0];
+    const weekStart = toLocalDateString(currentWeekStart);
     const ts = timesheets.find(ts => ts.weekStartDate === weekStart);
     return ts?.id || '';
   }, [timesheets, currentWeekStart]);
@@ -148,7 +156,7 @@ export default function TimesheetsPage() {
   };
 
   const getCurrentWeekTimesheet = () => {
-    const weekStart = currentWeekStart.toISOString().split('T')[0];
+    const weekStart = toLocalDateString(currentWeekStart);
     return timesheets.find(ts => ts.weekStartDate === weekStart);
   };
 
@@ -163,8 +171,8 @@ export default function TimesheetsPage() {
 
       await createTimesheetMutation.mutateAsync({
         employeeId: user.employeeId,
-        weekStartDate: currentWeekStart.toISOString().split('T')[0],
-        weekEndDate: weekEnd.toISOString().split('T')[0],
+        weekStartDate: toLocalDateString(currentWeekStart),
+        weekEndDate: toLocalDateString(weekEnd),
         totalHours: 0,
         billableHours: 0,
         nonBillableHours: 0,
@@ -401,10 +409,10 @@ export default function TimesheetsPage() {
               <table className="w-full text-sm">
                 <thead>
                 <tr className="border-b border-[var(--border-main)]">
-                  <th className="px-4 py-2 text-left font-medium text-[var(--text-secondary)] min-w-[200px]">Project
+                  <th scope="col" className="px-4 py-2 text-left font-medium text-[var(--text-secondary)] min-w-[200px]">Project
                   </th>
                   {weekDates.map((date, i) => (
-                    <th key={i} className={`px-2 py-2 text-center font-medium min-w-[80px] ${
+                    <th key={i} scope="col" className={`px-2 py-2 text-center font-medium min-w-[80px] ${
                       date.getDay() === 0 || date.getDay() === 6
                         ? 'text-[var(--text-muted)] bg-[var(--bg-secondary)]'
                         : 'text-[var(--text-secondary)]'
@@ -413,7 +421,7 @@ export default function TimesheetsPage() {
                       <div className="text-sm">{date.getDate()}</div>
                     </th>
                   ))}
-                  <th className="px-4 py-2 text-center font-semibold text-[var(--text-primary)] min-w-[70px]">Total</th>
+                  <th scope="col" className="px-4 py-2 text-center font-semibold text-[var(--text-primary)] min-w-[70px]">Total</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -447,7 +455,7 @@ export default function TimesheetsPage() {
 
                   return projectRows.map(([projectId, {name, entries}]) => {
                     const rowTotal = weekDates.reduce((sum, date) => {
-                      const key = date.toISOString().split('T')[0];
+                      const key = toLocalDateString(date);
                       return sum + (entries.get(key)?.hours || 0);
                     }, 0);
 
@@ -457,7 +465,7 @@ export default function TimesheetsPage() {
                           <span className="font-medium text-[var(--text-primary)]">{name}</span>
                         </td>
                         {weekDates.map((date, i) => {
-                          const key = date.toISOString().split('T')[0];
+                          const key = toLocalDateString(date);
                           const entry = entries.get(key);
                           const isWeekend = date.getDay() === 0 || date.getDay() === 6;
                           return (
@@ -482,7 +490,7 @@ export default function TimesheetsPage() {
                 <tr className="border-t-2 border-[var(--border-main)] bg-[var(--bg-secondary)]">
                   <td className="px-4 py-4 font-semibold text-[var(--text-primary)]">Daily Total</td>
                   {weekDates.map((date, i) => {
-                    const key = date.toISOString().split('T')[0];
+                    const key = toLocalDateString(date);
                     const dayTotal = entriesForCurrentWeek
                       .filter(e => e.entryDate === key)
                       .reduce((sum, e) => sum + (e.hours || 0), 0);

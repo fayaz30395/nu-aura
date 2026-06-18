@@ -111,7 +111,14 @@ export default function AgencyDetailPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="agencies"
+      breadcrumbs={[
+        {label: 'Recruitment', href: '/recruitment'},
+        {label: 'Agencies', href: '/recruitment/agencies'},
+        {label: 'Agency Detail'},
+      ]}
+    >
       <PermissionGate permission={Permissions.AGENCY_VIEW}>
         <motion.div
           className="space-y-6"

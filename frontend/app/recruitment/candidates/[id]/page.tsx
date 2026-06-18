@@ -72,7 +72,14 @@ export default function CandidateDetailPage() {
   }
 
   return (
-    <AppLayout activeMenuItem="recruitment">
+    <AppLayout
+      activeMenuItem="candidates"
+      breadcrumbs={[
+        {label: 'Recruitment', href: '/recruitment'},
+        {label: 'Candidates', href: '/recruitment/candidates'},
+        {label: 'Candidate Detail'},
+      ]}
+    >
       <PageTransition className="p-6 space-y-6">
         {/* Back navigation + actions */}
         <div className="row-between">

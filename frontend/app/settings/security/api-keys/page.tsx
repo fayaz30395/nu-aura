@@ -465,7 +465,14 @@ export default function ApiKeysPage() {
   const activeCount = keyList.filter(k => k.isActive !== false).length;
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="settings"
+      breadcrumbs={[
+        {label: 'Settings', href: '/settings'},
+        {label: 'Security', href: '/settings/security'},
+        {label: 'API Keys'},
+      ]}
+    >
       <div className="page-shell fade-slide-up">
         <div className="page-header">
           <div>

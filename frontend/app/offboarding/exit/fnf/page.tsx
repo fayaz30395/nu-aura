@@ -212,7 +212,14 @@ export default function FnFPage() {
   const canApprove = canManageFnF && (data.status === 'DRAFT' || data.status === 'PENDING_APPROVAL');
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="offboarding-fnf-hire"
+      breadcrumbs={[
+        {label: 'Offboarding', href: '/offboarding'},
+        {label: 'F&F Settlements', href: '/offboarding/fnf'},
+        {label: 'Settlement Detail'},
+      ]}
+    >
       <Stack gap="lg" p="md">
         <Group justify="space-between">
           <div>

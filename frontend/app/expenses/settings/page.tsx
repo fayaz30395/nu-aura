@@ -2,6 +2,7 @@
 
 import {useState} from 'react';
 import {AppLayout} from '@/components/layout';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 import {Edit2, Plus, Settings, Shield, Tag, ToggleLeft, ToggleRight, Trash2} from 'lucide-react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -94,6 +95,12 @@ export default function ExpenseSettingsPage() {
     resolver: zodResolver(policySchema),
     defaultValues: {requiresPreApproval: false, currency: 'INR'},
   });
+
+  // Warn on navigation when either drawer form has unsaved changes
+  useUnsavedChanges(
+    (showCategoryModal && categoryForm.formState.isDirty) ||
+    (showPolicyModal && policyForm.formState.isDirty)
+  );
 
   const openCategoryEdit = (cat: ExpenseCategoryEntity) => {
     setEditingCategory(cat);

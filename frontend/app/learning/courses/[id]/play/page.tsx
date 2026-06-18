@@ -390,7 +390,14 @@ export default function CoursePlayerPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="learning-grow"
+      breadcrumbs={[
+        {label: 'Learning', href: '/learning'},
+        {label: 'Course Detail'},
+        {label: 'Play'},
+      ]}
+    >
       <div className="flex flex-col min-h-[100dvh] bg-[var(--bg-surface)] overflow-hidden">
         {/* Top bar */}
         <div className="row-between px-4 py-2 bg-[var(--bg-card)] border-b border-[var(--border-main)] shrink-0 z-10">

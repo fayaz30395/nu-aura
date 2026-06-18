@@ -151,7 +151,7 @@ export default function TaxDeclarationsPage() {
         <Group gap={0} justify="flex-end">
           <Menu transitionProps={{transition: 'pop'}} withArrow position="bottom-end">
             <Menu.Target>
-              <ActionIcon variant="subtle" color="gray">
+              <ActionIcon variant="subtle" color="gray" aria-label="Declaration actions">
                 <IconDotsVertical size={16} stroke={1.5}/>
               </ActionIcon>
             </Menu.Target>

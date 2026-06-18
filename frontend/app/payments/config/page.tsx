@@ -17,6 +17,7 @@ import {
 } from '@/lib/hooks/queries/usePayments';
 import {paymentService} from '@/lib/services/core/payment.service';
 import {PaymentProvider, SavePaymentConfigRequest} from '@/lib/types/core/payment';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // Phase 2 stabilization: payments module gated behind feature flag
 const PAYMENTS_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true';
@@ -55,7 +56,7 @@ export default function PaymentConfigPage() {
     handleSubmit,
     watch,
     reset,
-    formState: {errors, isSubmitting},
+    formState: {errors, isSubmitting, isDirty},
   } = useForm<ConfigFormData>({
     resolver: zodResolver(configFormSchema),
     defaultValues: {
@@ -63,6 +64,8 @@ export default function PaymentConfigPage() {
       testMode: false,
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const selectedConfig = configs.find((c) => c.provider === selectedProvider);
 

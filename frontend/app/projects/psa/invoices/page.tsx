@@ -294,7 +294,14 @@ export default function PSAInvoicesPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="psa-invoices"
+      breadcrumbs={[
+        {label: 'Projects', href: '/projects'},
+        {label: 'PSA', href: '/projects/psa'},
+        {label: 'Invoices'},
+      ]}
+    >
       <div className="page-shell fade-slide-up">
         <div className="page-header">
           <div>

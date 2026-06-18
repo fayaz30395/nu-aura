@@ -129,6 +129,7 @@ export default function SystemDashboard() {
         <ActionIcon
           variant="light"
           size="lg"
+          aria-label="Refresh dashboard data"
           onClick={() => {
             overviewQuery.refetch();
             tenantListQuery.refetch();

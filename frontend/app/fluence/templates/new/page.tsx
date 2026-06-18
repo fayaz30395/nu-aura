@@ -181,7 +181,14 @@ export default function CreateTemplatePage() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="fluence-templates"
+      breadcrumbs={[
+        {label: 'NU-Fluence', href: '/fluence'},
+        {label: 'Templates', href: '/fluence/templates'},
+        {label: 'New Template'},
+      ]}
+    >
       <motion.div {...dsMotion.pageEnter} className="fluence-page-editor">
         {/* ── Top Action Bar ──────────────────────────────────────── */}
         <div className="fluence-page-topbar">

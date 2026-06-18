@@ -337,7 +337,14 @@ export default function EditEmployeePage() {
   }
 
   return (
-    <AppLayout activeMenuItem="employees">
+    <AppLayout
+      activeMenuItem="employees"
+      breadcrumbs={[
+        {label: 'Employees', href: '/employees'},
+        {label: 'Employee Detail'},
+        {label: 'Edit'},
+      ]}
+    >
       <div className="page-shell-centered fade-slide-up auth-delay-20">
         {/* Navigation Bar */}
         <nav

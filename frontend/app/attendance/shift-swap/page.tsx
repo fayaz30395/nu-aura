@@ -305,12 +305,12 @@ export default function ShiftSwapPage() {
               <table className="w-full text-sm table-aura">
                 <thead>
                 <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
-                  <th className="px-4 py-2 text-left font-medium">Type</th>
-                  <th className="px-4 py-2 text-left font-medium">Shift Date</th>
-                  <th className="px-4 py-2 text-left font-medium">Target Date</th>
-                  <th className="px-4 py-2 text-left font-medium">Reason</th>
-                  <th className="px-4 py-2 text-left font-medium">Status</th>
-                  <th className="px-4 py-2 text-left font-medium">Actions</th>
+                  <th scope="col" className="px-4 py-2 text-left font-medium">Type</th>
+                  <th scope="col" className="px-4 py-2 text-left font-medium">Shift Date</th>
+                  <th scope="col" className="px-4 py-2 text-left font-medium">Target Date</th>
+                  <th scope="col" className="px-4 py-2 text-left font-medium">Reason</th>
+                  <th scope="col" className="px-4 py-2 text-left font-medium">Status</th>
+                  <th scope="col" className="px-4 py-2 text-left font-medium">Actions</th>
                 </tr>
                 </thead>
                 <tbody>

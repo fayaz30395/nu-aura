@@ -211,7 +211,13 @@ export default function ExitInterviewPage() {
   const isCompleted = interview?.status === InterviewStatus.COMPLETED;
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="offboarding-overview-hire"
+      breadcrumbs={[
+        {label: 'Offboarding', href: '/offboarding'},
+        {label: 'Exit Interview'},
+      ]}
+    >
       <PermissionGate anyOf={[Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE]}
                       fallback={<Stack p="md"><Text c="red">You do not have permission to view exit
                         interviews.</Text></Stack>}>
@@ -219,7 +225,7 @@ export default function ExitInterviewPage() {
           {/* Header */}
           <Group justify="space-between" align="flex-start">
             <Group>
-              <ActionIcon variant="subtle" size="lg" onClick={() => router.push(`/offboarding/${exitProcessId}`)}>
+              <ActionIcon variant="subtle" size="lg" aria-label="Back to offboarding" onClick={() => router.push(`/offboarding/${exitProcessId}`)}>
                 <IconArrowLeft size={20}/>
               </ActionIcon>
               <div>

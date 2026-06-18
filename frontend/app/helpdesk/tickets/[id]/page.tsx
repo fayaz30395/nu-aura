@@ -228,7 +228,14 @@ export default function TicketDetailPage() {
   const priorityCfg = PRIORITY_CONFIG[ticket.priority] ?? PRIORITY_CONFIG.MEDIUM;
 
   return (
-    <AppLayout activeMenuItem="helpdesk">
+    <AppLayout
+      activeMenuItem="helpdesk-tickets"
+      breadcrumbs={[
+        {label: 'Helpdesk', href: '/helpdesk'},
+        {label: 'Tickets', href: '/helpdesk/tickets'},
+        {label: 'Ticket Detail'},
+      ]}
+    >
       <ConfirmDialog
         isOpen={showDeleteConfirm}
         onClose={() => setShowDeleteConfirm(false)}

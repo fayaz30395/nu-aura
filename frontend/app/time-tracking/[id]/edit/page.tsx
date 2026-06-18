@@ -193,7 +193,13 @@ export default function EditTimeEntryPage() {
   const isLoading = isSubmitting || updateMutation.isPending || submitMutation.isPending;
 
   return (
-    <AppLayout activeMenuItem="time-tracking">
+    <AppLayout
+      activeMenuItem="time-tracking"
+      breadcrumbs={[
+        {label: 'Time Tracking', href: '/time-tracking'},
+        {label: 'Edit Entry'},
+      ]}
+    >
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">

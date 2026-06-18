@@ -100,20 +100,21 @@ export default function ExpenseApprovalsPage() {
                 <thead>
                 <tr
                   className="text-left text-sm text-surface-500 border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800">
-                  <th className="px-4 py-2">
+                  <th scope="col" className="px-4 py-2">
                     <input
                       type="checkbox"
+                      aria-label="Select all expense claims"
                       checked={selected.size === claims.length && claims.length > 0}
                       onChange={toggleAll}
                       className="rounded border-surface-300"
                     />
                   </th>
-                  <th className="px-4 py-2 font-medium">Claim #</th>
-                  <th className="px-4 py-2 font-medium">Employee</th>
-                  <th className="px-4 py-2 font-medium">Category</th>
-                  <th className="px-4 py-2 font-medium">Date</th>
-                  <th className="px-4 py-2 font-medium text-right">Amount</th>
-                  <th className="px-4 py-2 font-medium text-right">Actions</th>
+                  <th scope="col" className="px-4 py-2 font-medium">Claim #</th>
+                  <th scope="col" className="px-4 py-2 font-medium">Employee</th>
+                  <th scope="col" className="px-4 py-2 font-medium">Category</th>
+                  <th scope="col" className="px-4 py-2 font-medium">Date</th>
+                  <th scope="col" className="px-4 py-2 font-medium text-right">Amount</th>
+                  <th scope="col" className="px-4 py-2 font-medium text-right">Actions</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -180,7 +180,13 @@ export default function ExpenseDetailPage() {
   if (!claim) {
     return (
       <AppLayout>
-        <div className="text-center py-20 text-surface-500">Expense claim not found.</div>
+        <div className="p-6">
+          <EmptyState
+            title="Expense Claim Not Found"
+            description="This expense claim could not be found or you may not have access to it."
+            size="compact"
+          />
+        </div>
       </AppLayout>
     );
   }

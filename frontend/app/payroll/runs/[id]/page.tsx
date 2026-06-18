@@ -112,7 +112,14 @@ export default function PayrollRunDetailPage() {
   const payslipState = run ? PAYSLIP_STATE_BY_RUN_STATUS[run.status] : '';
 
   return (
-    <AppLayout activeMenuItem="payroll">
+    <AppLayout
+      activeMenuItem="payroll"
+      breadcrumbs={[
+        {label: 'Payroll', href: '/payroll'},
+        {label: 'Runs', href: '/payroll/runs'},
+        {label: 'Run Details'},
+      ]}
+    >
       <PermissionGate
         permission={Permissions.PAYROLL_VIEW}
         fallback={

@@ -30,7 +30,7 @@ public interface KnowledgeAttachmentRepository extends JpaRepository<KnowledgeAt
 
     long countByTenantIdAndContentIdAndContentType(UUID tenantId, UUID contentId, KnowledgeAttachment.ContentType contentType);
 
-    List<KnowledgeAttachment> findByTenantIdAndIsDeletedFalseOrderByCreatedAtDesc(UUID tenantId);
+    List<KnowledgeAttachment> findByTenantIdAndIsDeletedFalseOrderByCreatedAtDesc(UUID tenantId, Pageable pageable);
 
     List<KnowledgeAttachment> findByTenantIdAndContentIdAndContentTypeAndIsDeletedFalse(
             UUID tenantId, UUID contentId, KnowledgeAttachment.ContentType contentType);

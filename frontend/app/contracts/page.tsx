@@ -152,13 +152,13 @@ export default function ContractsPage() {
             <Table striped>
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th>Title</Table.Th>
-                  <Table.Th>Type</Table.Th>
-                  <Table.Th>Status</Table.Th>
-                  <Table.Th>Employee/Vendor</Table.Th>
-                  <Table.Th>End Date</Table.Th>
-                  <Table.Th>Signatures</Table.Th>
-                  <Table.Th>Actions</Table.Th>
+                  <Table.Th scope="col">Title</Table.Th>
+                  <Table.Th scope="col">Type</Table.Th>
+                  <Table.Th scope="col">Status</Table.Th>
+                  <Table.Th scope="col">Employee/Vendor</Table.Th>
+                  <Table.Th scope="col">End Date</Table.Th>
+                  <Table.Th scope="col">Signatures</Table.Th>
+                  <Table.Th scope="col">Actions</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>

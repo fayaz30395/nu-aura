@@ -308,7 +308,14 @@ export default function PSATimesheetsPage() {
     : all.filter(t => t.status === statusFilter);
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="psa-timesheets"
+      breadcrumbs={[
+        {label: 'Projects', href: '/projects'},
+        {label: 'PSA', href: '/projects/psa'},
+        {label: 'Timesheets'},
+      ]}
+    >
       <div className="page-shell fade-slide-up">
         <div className="page-header">
           <div>

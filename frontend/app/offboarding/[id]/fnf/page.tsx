@@ -269,7 +269,14 @@ export default function FnFSettlementPage() {
   const liveNet = liveEarnings - liveDeductions;
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="offboarding-fnf-hire"
+      breadcrumbs={[
+        {label: 'Offboarding', href: '/offboarding'},
+        {label: 'Employee Detail'},
+        {label: 'F&F Settlement'},
+      ]}
+    >
       <PermissionGate anyOf={[Permissions.EXIT_MANAGE, Permissions.SYSTEM_ADMIN]}
                       fallback={<Stack p="md"><Text c="red">You do not have permission to view FnF
                         settlements.</Text></Stack>}>
@@ -277,7 +284,7 @@ export default function FnFSettlementPage() {
           {/* Header */}
           <Group justify="space-between" align="flex-start">
             <Group>
-              <ActionIcon variant="subtle" size="lg" onClick={() => router.push(`/offboarding/${exitProcessId}`)}>
+              <ActionIcon variant="subtle" size="lg" aria-label="Back to offboarding" onClick={() => router.push(`/offboarding/${exitProcessId}`)}>
                 <IconArrowLeft size={20}/>
               </ActionIcon>
               <div>

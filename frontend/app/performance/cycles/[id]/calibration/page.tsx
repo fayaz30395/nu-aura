@@ -87,7 +87,14 @@ export default function CalibrationPage() {
   const totalEmployees = data.totalEmployees || 0;
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="performance"
+      breadcrumbs={[
+        {label: 'Performance', href: '/performance'},
+        {label: 'Cycles', href: '/performance/cycles'},
+        {label: 'Calibration'},
+      ]}
+    >
       <Stack gap="lg" p="md">
         <Group justify="space-between">
           <div>

@@ -464,7 +464,14 @@ export default function KanbanPage() {
   }
 
   return (
-    <AppLayout activeMenuItem="recruitment">
+    <AppLayout
+      activeMenuItem="recruitment"
+      breadcrumbs={[
+        {label: 'Recruitment', href: '/recruitment'},
+        {label: 'Job Openings', href: '/recruitment/jobs'},
+        {label: 'Kanban'},
+      ]}
+    >
       {/* DEF-52: Gate entire kanban page on RECRUITMENT_VIEW to prevent UI leak */}
       <PermissionGate
         anyOf={[Permissions.RECRUITMENT_VIEW, Permissions.CANDIDATE_VIEW]}

@@ -140,7 +140,14 @@ export default function TemplateDetailPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="fluence-templates"
+      breadcrumbs={[
+        {label: 'NU-Fluence', href: '/fluence'},
+        {label: 'Templates', href: '/fluence/templates'},
+        {label: 'Template Detail'},
+      ]}
+    >
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-start justify-between gap-4">

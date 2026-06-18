@@ -358,13 +358,14 @@ export default function LWFPage() {
                           <PermissionGate permission="STATUTORY:MANAGE">
                             <Group gap="xs">
                               <Tooltip label="Edit">
-                                <ActionIcon variant="subtle" color="sky" onClick={() => openEditModal(config)}>
+                                <ActionIcon variant="subtle" color="sky" aria-label="Edit LWF configuration" onClick={() => openEditModal(config)}>
                                   <IconEdit size={16}/>
                                 </ActionIcon>
                               </Tooltip>
                               {config.isActive && (
                                 <Tooltip label="Deactivate">
                                   <ActionIcon variant="subtle" color="red"
+                                              aria-label="Deactivate LWF configuration"
                                               onClick={() => handleDeactivate(config.stateCode)}>
                                     <IconTrash size={16}/>
                                   </ActionIcon>

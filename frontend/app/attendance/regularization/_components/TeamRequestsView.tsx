@@ -76,22 +76,27 @@ export function TeamRequestsView({onReject}: TeamRequestsViewProps) {
               <thead className="bg-[var(--bg-secondary)]/50">
               <tr>
                 <th
+                  scope="col"
                   className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Employee
                 </th>
                 <th
+                  scope="col"
                   className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Date
                 </th>
                 <th
+                  scope="col"
                   className="hidden md:table-cell px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Reason
                 </th>
                 <th
+                  scope="col"
                   className="hidden md:table-cell px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Requested On
                 </th>
                 <th
+                  scope="col"
                   className="px-4 md:px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                   Action
                 </th>

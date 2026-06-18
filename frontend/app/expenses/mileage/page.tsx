@@ -330,25 +330,25 @@ export default function MileagePage() {
                   <table className="w-full text-sm">
                     <thead className="bg-surface-50 dark:bg-surface-700/50">
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                      <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                         Date
                       </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                      <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                         Route
                       </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                      <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                         Distance
                       </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                      <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                         Vehicle
                       </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                      <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                         Reimbursement
                       </th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                      <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                         Status
                       </th>
-                      <th className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
+                      <th scope="col" className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
                         Actions
                       </th>
                     </tr>
@@ -388,22 +388,22 @@ export default function MileagePage() {
                     <table className="w-full text-sm">
                       <thead className="bg-surface-50 dark:bg-surface-700/50">
                       <tr>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Employee
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Date
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Route
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Distance
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
+                        <th scope="col" className="px-4 py-2 text-left text-xs font-medium text-surface-500 uppercase">
                           Amount
                         </th>
-                        <th className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
+                        <th scope="col" className="px-4 py-2 text-right text-xs font-medium text-surface-500 uppercase">
                           Actions
                         </th>
                       </tr>

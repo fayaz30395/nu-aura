@@ -144,7 +144,13 @@ export default function CourseDetailPage() {
   const completionPercentage = progress;
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="learning-grow"
+      breadcrumbs={[
+        {label: 'Learning', href: '/learning'},
+        {label: 'Course Detail'},
+      ]}
+    >
       <div className="page-shell-centered fade-slide-up auth-delay-20">
         {/* Hero */}
         <div className="bg-[var(--bg-sidebar)] text-white">

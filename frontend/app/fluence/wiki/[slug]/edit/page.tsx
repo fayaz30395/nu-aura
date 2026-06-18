@@ -167,7 +167,14 @@ export default function EditWikiPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="fluence-wiki"
+      breadcrumbs={[
+        {label: 'NU-Fluence', href: '/fluence'},
+        {label: 'Wiki', href: '/fluence/wiki'},
+        {label: 'Edit Page'},
+      ]}
+    >
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6 row-between">

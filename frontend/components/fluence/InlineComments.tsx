@@ -238,12 +238,16 @@ export function InlineCommentsPanel({pageId, isOpen, onToggle}: InlineCommentsPa
   useEffect(() => {
     if (isOpen) {
       triggerRef.current = document.activeElement as HTMLElement;
-      // Defer to allow framer-motion to mount the panel content
+      // Defer to allow framer-motion to mount the panel content.
+      // Guard: skip if an autoFocus element inside the panel already took focus.
       const t = setTimeout(() => {
-        const firstFocusable = panelRef.current?.querySelector<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        firstFocusable?.focus();
+        const panelContainsFocus = panelRef.current?.contains(document.activeElement);
+        if (!panelContainsFocus) {
+          const firstFocusable = panelRef.current?.querySelector<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          firstFocusable?.focus();
+        }
       }, 50);
       return () => clearTimeout(t);
     } else if (triggerRef.current) {

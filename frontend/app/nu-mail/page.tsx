@@ -14,6 +14,7 @@ import {employeeService} from '@/lib/services/hrms/employee.service';
 import {Employee} from '@/lib/types/hrms/employee';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDateShort, formatWeekday} from '@/lib/utils/format/date';
+import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 
 import {
   ComposeEmail,
@@ -158,7 +159,7 @@ function MailContent() {
           cleanedSignature = cleanedSignature.replace(/(&nbsp;)+/g, ' ');
           setEmailSignatureHtml(cleanedSignature);
           const div = document.createElement('div');
-          div.innerHTML = cleanedSignature;
+          div.innerHTML = sanitizeEmailHtml(cleanedSignature);
           const plainTextSignature = div.textContent || div.innerText || '';
           setEmailSignature(plainTextSignature);
         }

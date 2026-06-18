@@ -213,7 +213,9 @@ function DeliveryPanel({webhookId, onClose}: {webhookId: string; onClose: () => 
             if (!d.id) return;
             retryMutation.mutate({deliveryId: d.id}, {
               onSuccess: () => toast.success('Delivery queued for retry'),
-              onError: () => toast.error('Failed to queue retry'),
+              onError: (err: unknown) => toast.error(
+                (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to queue retry'
+              ),
             });
           }}/>
         ))}
@@ -249,7 +251,9 @@ function CreateWebhookPanel({onClose, onCreated}: {onClose: () => void; onCreate
         toast.success('Webhook created');
         onCreated();
       },
-      onError: () => toast.error('Failed to create webhook'),
+      onError: (err: unknown) => toast.error(
+        (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to create webhook'
+      ),
     });
   };
 
@@ -385,12 +389,16 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
     if (isActive) {
       deactivateMutation.mutate({id: webhook.id}, {
         onSuccess: () => {toast.success('Webhook paused'); refetchList();},
-        onError: () => toast.error('Failed to pause webhook'),
+        onError: (err: unknown) => toast.error(
+          (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to pause webhook'
+        ),
       });
     } else {
       activateMutation.mutate({id: webhook.id}, {
         onSuccess: () => {toast.success('Webhook activated'); refetchList();},
-        onError: () => toast.error('Failed to activate webhook'),
+        onError: (err: unknown) => toast.error(
+          (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to activate webhook'
+        ),
       });
     }
   };
@@ -399,7 +407,9 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
     if (!webhook.id) return;
     deleteMutation.mutate({id: webhook.id}, {
       onSuccess: () => {toast.success('Webhook deleted'); refetchList();},
-      onError: () => toast.error('Failed to delete webhook'),
+      onError: (err: unknown) => toast.error(
+        (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to delete webhook'
+      ),
     });
   };
 
@@ -410,7 +420,9 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
         setShowSecret(data?.newSecret ?? null);
         toast.success('Secret rotated — copy the new secret now');
       },
-      onError: () => toast.error('Failed to rotate secret'),
+      onError: (err: unknown) => toast.error(
+        (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to rotate secret'
+      ),
     });
   };
 
@@ -543,7 +555,14 @@ export default function WebhooksPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="integrations"
+      breadcrumbs={[
+        {label: 'Admin', href: '/admin'},
+        {label: 'Integrations', href: '/admin/integrations'},
+        {label: 'Webhooks'},
+      ]}
+    >
       <div className="page-shell fade-slide-up">
         <div className="page-header">
           <div>

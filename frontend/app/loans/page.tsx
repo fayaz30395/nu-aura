@@ -227,25 +227,25 @@ export default function LoansPage() {
                 <table className="w-full">
                   <thead>
                   <tr className="bg-[color-mix(in_srgb,var(--surface)_50%,transparent)] border-b border-[var(--border)]">
-                    <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
                       Loan #
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
                       Type
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
                       Amount
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
                       Term
                     </th>
-                    <th className="px-6 py-3 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
+                    <th scope="col" className="px-6 py-3 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
                       Balance
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-[var(--text-3)]">
                       Actions
                     </th>
                   </tr>

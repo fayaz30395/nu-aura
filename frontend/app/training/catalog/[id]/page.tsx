@@ -514,7 +514,14 @@ export default function CourseDetailPage() {
   const isEnrolled = !!enrollment && enrollment.status !== 'DROPPED';
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="training-catalog"
+      breadcrumbs={[
+        {label: 'Training', href: '/training'},
+        {label: 'Catalog', href: '/training/catalog'},
+        {label: 'Program Detail'},
+      ]}
+    >
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
 
         {/* Back navigation */}

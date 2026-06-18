@@ -170,7 +170,14 @@ export default function EditBlogPost() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="fluence-blogs"
+      breadcrumbs={[
+        {label: 'NU-Fluence', href: '/fluence'},
+        {label: 'Articles', href: '/fluence/blogs'},
+        {label: 'Edit Article'},
+      ]}
+    >
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6 row-between">

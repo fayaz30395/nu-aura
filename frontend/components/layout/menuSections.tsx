@@ -208,6 +208,20 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           href: '/dashboards/executive',
           requiredPermission: Permissions.DASHBOARD_EXECUTIVE
         },
+        {
+          id: 'employee-dashboard',
+          label: 'Employee Dashboard',
+          icon: icon.user,
+          href: '/dashboards/employee',
+          requiredPermission: Permissions.DASHBOARD_EMPLOYEE
+        },
+        {
+          id: 'manager-dashboard',
+          label: 'Manager Dashboard',
+          icon: icon.usersRound,
+          href: '/dashboards/manager',
+          requiredPermission: Permissions.DASHBOARD_MANAGER
+        },
       ],
     },
     // ─── 2. MY SPACE (Self-Service) ─────────────────────────────────
@@ -397,6 +411,27 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.calendar,
               requiredPermission: Permissions.LEAVE_VIEW_ALL
             },
+            {
+              id: 'leave-team',
+              label: 'Team Leave',
+              href: '/leave/team',
+              icon: sm.users,
+              requiredPermission: Permissions.LEAVE_VIEW_TEAM
+            },
+            {
+              id: 'leave-encashment',
+              label: 'Encashment',
+              href: '/leave/encashment',
+              icon: sm.dollarSign,
+              requiredPermission: Permissions.LEAVE_MANAGE
+            },
+            {
+              id: 'leave-carry-forward',
+              label: 'Carry Forward',
+              href: '/leave/admin/carry-forward',
+              icon: sm.repeat,
+              requiredPermission: Permissions.LEAVE_MANAGE
+            },
           ],
         },
         {
@@ -453,7 +488,79 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'Performance Hub',
           icon: icon.barChart3,
           href: '/performance',
-          requiredPermission: Permissions.REVIEW_VIEW
+          requiredPermission: Permissions.REVIEW_VIEW,
+          children: [
+            {
+              id: 'performance-overview',
+              label: 'Overview',
+              href: '/performance',
+              icon: sm.dashboard,
+              requiredPermission: Permissions.REVIEW_VIEW
+            },
+            {
+              id: 'performance-cycles',
+              label: 'Cycles',
+              href: '/performance/cycles',
+              icon: sm.repeat,
+              requiredPermission: Permissions.REVIEW_VIEW
+            },
+            {
+              id: 'performance-reviews',
+              label: 'Reviews',
+              href: '/performance/reviews',
+              icon: sm.clipboardCheck,
+              requiredPermission: Permissions.REVIEW_VIEW
+            },
+            {
+              id: 'performance-goals',
+              label: 'Goals',
+              href: '/performance/goals',
+              icon: sm.trendingUp,
+              requiredPermission: Permissions.REVIEW_VIEW
+            },
+            {
+              id: 'performance-feedback',
+              label: 'Feedback',
+              href: '/performance/feedback',
+              icon: sm.messageCircle,
+              requiredPermission: Permissions.REVIEW_VIEW
+            },
+            {
+              id: 'performance-okrs',
+              label: 'OKRs',
+              href: '/performance/okrs',
+              icon: sm.barChart2,
+              requiredPermission: Permissions.OKR_VIEW
+            },
+            {
+              id: 'performance-9box',
+              label: '9-Box Grid',
+              href: '/performance/9box',
+              icon: sm.barChart3,
+              requiredPermission: Permissions.REVIEW_VIEW
+            },
+            {
+              id: 'performance-calibration',
+              label: 'Calibration',
+              href: '/performance/calibration',
+              icon: sm.sliders,
+              requiredPermission: Permissions.CALIBRATION_VIEW
+            },
+            {
+              id: 'performance-pip',
+              label: 'PIP',
+              href: '/performance/pip',
+              icon: sm.alertTriangle,
+              requiredPermission: Permissions.PIP_VIEW
+            },
+            {
+              id: 'performance-competency',
+              label: 'Competency Framework',
+              href: '/performance/competency-framework',
+              icon: sm.network,
+              requiredPermission: Permissions.REVIEW_VIEW
+            },
+          ],
         },
         {
           id: 'performance-revolution',
@@ -481,7 +588,30 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'Training',
           icon: icon.graduationCap,
           href: '/training',
-          requiredPermission: Permissions.TRAINING_VIEW
+          requiredPermission: Permissions.TRAINING_VIEW,
+          children: [
+            {
+              id: 'training-overview',
+              label: 'Overview',
+              href: '/training',
+              icon: sm.dashboard,
+              requiredPermission: Permissions.TRAINING_VIEW
+            },
+            {
+              id: 'training-catalog',
+              label: 'Catalog',
+              href: '/training/catalog',
+              icon: sm.bookOpen,
+              requiredPermission: Permissions.TRAINING_VIEW
+            },
+            {
+              id: 'training-my-learning',
+              label: 'My Learning',
+              href: '/training/my-learning',
+              icon: sm.user,
+              requiredPermission: Permissions.TRAINING_VIEW
+            },
+          ],
         },
         {
           id: 'learning',
@@ -747,7 +877,23 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'Wellness',
           icon: icon.heart,
           href: '/wellness',
-          requiredPermission: Permissions.WELLNESS_VIEW
+          requiredPermission: Permissions.WELLNESS_VIEW,
+          children: [
+            {
+              id: 'wellness-overview',
+              label: 'Overview',
+              href: '/wellness',
+              icon: sm.dashboard,
+              requiredPermission: Permissions.WELLNESS_VIEW
+            },
+            {
+              id: 'wellness-admin',
+              label: 'Admin',
+              href: '/wellness/admin',
+              icon: sm.settings,
+              requiredPermission: Permissions.WELLNESS_MANAGE
+            },
+          ],
         },
       ],
     },
@@ -838,6 +984,34 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               label: 'Statutory',
               href: '/payroll/statutory',
               icon: sm.landmark,
+              requiredPermission: Permissions.PAYROLL_VIEW
+            },
+            {
+              id: 'payroll-runs',
+              label: 'Payroll Runs',
+              href: '/payroll/runs',
+              icon: sm.repeat,
+              requiredPermission: Permissions.PAYROLL_PROCESS
+            },
+            {
+              id: 'payroll-bulk',
+              label: 'Bulk Processing',
+              href: '/payroll/bulk-processing',
+              icon: sm.fileText,
+              requiredPermission: Permissions.PAYROLL_PROCESS
+            },
+            {
+              id: 'payroll-salary-structures',
+              label: 'Salary Structures',
+              href: '/payroll/salary-structures',
+              icon: sm.sliders,
+              requiredPermission: Permissions.PAYROLL_VIEW
+            },
+            {
+              id: 'payroll-components',
+              label: 'Pay Components',
+              href: '/payroll/components',
+              icon: sm.barChart2,
               requiredPermission: Permissions.PAYROLL_VIEW
             },
           ],
@@ -1064,6 +1238,20 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               requiredPermission: Permissions.RESOURCE_VIEW
             },
           ],
+        },
+        {
+          id: 'timesheets',
+          label: 'Timesheets',
+          icon: icon.fileSpreadsheet,
+          href: '/timesheets',
+          requiredPermission: Permissions.TIMESHEET_VIEW
+        },
+        {
+          id: 'time-tracking',
+          label: 'Time Tracking',
+          icon: icon.timer,
+          href: '/time-tracking',
+          requiredPermission: Permissions.TIME_TRACKING_VIEW
         },
         {
           id: 'nu-calendar',
@@ -1298,6 +1486,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               href: '/admin/leave-requests',
               icon: sm.fileText,
               requiredPermission: Permissions.LEAVE_VIEW_ALL
+            },
+            {
+              id: 'leave-carry-forward-admin',
+              label: 'Carry Forward',
+              href: '/leave/admin/carry-forward',
+              icon: sm.repeat,
+              requiredPermission: Permissions.LEAVE_MANAGE
             },
           ],
         },

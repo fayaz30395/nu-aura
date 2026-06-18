@@ -342,7 +342,14 @@ export default function QuizPage() {
     const isLastQuestion = currentQuestionIdx === quiz.questions.length - 1;
 
     return (
-      <AppLayout>
+      <AppLayout
+        activeMenuItem="learning-grow"
+        breadcrumbs={[
+          {label: 'Learning', href: '/learning'},
+          {label: 'Course Detail'},
+          {label: 'Quiz'},
+        ]}
+      >
         <div className="page-shell-centered fade-slide-up auth-delay-20 flex flex-col">
           {/* Header */}
           <div className="bg-[var(--bg-card)] border-b border-[var(--border-main)] sticky top-0 z-40">

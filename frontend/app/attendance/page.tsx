@@ -490,12 +490,12 @@ function WeeklyHeatmap({rows, now}: {rows: HeatRow[]; now: Date}) {
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="text-aura-micro text-[var(--text-3)]">
-                <th className="px-3 py-2.5 text-left font-bold">Employee</th>
+                <th scope="col" className="px-3 py-2.5 text-left font-bold">Employee</th>
                 {HEAT_DAYS.map((d) => (
-                  <th key={d} className="px-2 py-2.5 text-center font-bold">{d}</th>
+                  <th key={d} scope="col" className="px-2 py-2.5 text-center font-bold">{d}</th>
                 ))}
-                <th className="px-2 py-2.5 text-center font-bold">Check-in</th>
-                <th className="px-2 py-2.5 text-center font-bold">Avg hrs</th>
+                <th scope="col" className="px-2 py-2.5 text-center font-bold">Check-in</th>
+                <th scope="col" className="px-2 py-2.5 text-center font-bold">Avg hrs</th>
               </tr>
             </thead>
             <tbody>
@@ -639,7 +639,7 @@ const BentoHero = memo(function BentoHero({
       <div className="flex h-full flex-col rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-7 sm:p-9">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
               <span
                 className={`inline-block h-2 w-2 rounded-full ${
                   dayComplete
@@ -667,7 +667,7 @@ const BentoHero = memo(function BentoHero({
             <p className="font-mono text-3xl sm:text-4xl font-semibold tabular-nums text-[var(--text-heading)]">
               {currentTime.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}
             </p>
-            <p className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)] mt-1">
+            <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] mt-1">
               Live time
             </p>
           </div>
@@ -675,19 +675,19 @@ const BentoHero = memo(function BentoHero({
 
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div>
-            <p className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">Check-in</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">Check-in</p>
             <p className="mt-1 font-mono text-lg font-semibold tabular-nums text-[var(--text-heading)]">
               {todayRecord?.checkInTime ? formatTime(todayRecord.checkInTime) : '--:--'}
             </p>
           </div>
           <div>
-            <p className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">Check-out</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">Check-out</p>
             <p className="mt-1 font-mono text-lg font-semibold tabular-nums text-[var(--text-heading)]">
               {todayRecord?.checkOutTime ? formatTime(todayRecord.checkOutTime) : '--:--'}
             </p>
           </div>
           <div>
-            <p className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">Hours</p>
+            <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">Hours</p>
             <p className="mt-1 font-mono text-lg font-semibold tabular-nums text-[var(--text-heading)]">
               {currentWorkHours.toFixed(1)}h
             </p>
@@ -697,7 +697,7 @@ const BentoHero = memo(function BentoHero({
         {/* Progress bar — flat, no nested card */}
         <div className="mt-8" aria-hidden={!isCheckedIn}>
           <div className="flex items-center justify-between mb-2">
-            <p className="text-2xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
+            <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
               Progress
             </p>
             <p className="font-mono text-xs tabular-nums text-[var(--text-secondary)]">
@@ -717,7 +717,7 @@ const BentoHero = memo(function BentoHero({
 
         {/* Action */}
         <div className="mt-8 flex items-center justify-between gap-4">
-          <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
             {dayComplete
               ? `Logged ${formatDuration(currentWorkHours)}`
               : isCheckedIn

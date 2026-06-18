@@ -5,9 +5,11 @@ import com.nulogic.api.employee.dto.EmployeeImportResult;
 import com.nulogic.application.employee.service.EmployeeImportService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,7 @@ import java.io.IOException;
 @RequestMapping("/api/v1/employees/import")
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 public class EmployeeImportController {
 
     private final EmployeeImportService employeeImportService;
@@ -62,7 +65,7 @@ public class EmployeeImportController {
     @PostMapping("/preview")
     @RequiresPermission(Permission.EMPLOYEE_CREATE)
     public ResponseEntity<EmployeeImportPreview> previewImport(
-            @RequestParam("file") MultipartFile file
+            @NotNull @RequestParam("file") MultipartFile file
     ) {
         log.info("Previewing employee import from file: {}", file.getOriginalFilename());
 
@@ -86,7 +89,7 @@ public class EmployeeImportController {
     @PostMapping("/execute")
     @RequiresPermission(Permission.EMPLOYEE_CREATE)
     public ResponseEntity<EmployeeImportResult> executeImport(
-            @RequestParam("file") MultipartFile file,
+            @NotNull @RequestParam("file") MultipartFile file,
             @RequestParam(value = "skipInvalid", defaultValue = "true") boolean skipInvalid
     ) {
         log.info("Executing employee import from file: {}, skipInvalid: {}", file.getOriginalFilename(), skipInvalid);

@@ -82,7 +82,14 @@ export default function NineBoxPage() {
   const perfCols: Array<'low' | 'med' | 'high'> = ['low', 'med', 'high'];
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="performance"
+      breadcrumbs={[
+        {label: 'Performance', href: '/performance'},
+        {label: 'Cycles', href: '/performance/cycles'},
+        {label: '9-Box Grid'},
+      ]}
+    >
       <PermissionGate permission={Permissions.CALIBRATION_VIEW}>
         <Stack gap="lg" p="md">
           <Group justify="space-between">

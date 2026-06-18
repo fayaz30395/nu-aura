@@ -189,7 +189,14 @@ export default function CreateWikiPage() {
   const VisIcon = selectedVisibility?.icon ?? Globe;
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="fluence-wiki"
+      breadcrumbs={[
+        {label: 'NU-Fluence', href: '/fluence'},
+        {label: 'Wiki', href: '/fluence/wiki'},
+        {label: 'New Page'},
+      ]}
+    >
       <motion.div {...dsMotion.pageEnter} className="fluence-page-editor">
         {/* ── Top Action Bar (Confluence-like) ──────────────────── */}
         <div className="fluence-page-topbar">

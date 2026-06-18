@@ -57,6 +57,12 @@ import {safeUrl} from '@/lib/utils/safeUrl';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {useToast} from '@/components/notifications/ToastProvider';
 
+/** Returns today's local calendar date as YYYY-MM-DD, avoiding UTC-offset shift from toISOString(). */
+function todayLocalDate(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 const log = createLogger('LettersPage');
 
 // Zod schemas for forms
@@ -190,7 +196,7 @@ export default function LettersPage() {
       templateId: '',
       employeeId: '',
       letterTitle: '',
-      letterDate: new Date().toISOString().split('T')[0],
+      letterDate: todayLocalDate(),
       effectiveDate: '',
       expiryDate: '',
       additionalNotes: '',
@@ -206,7 +212,7 @@ export default function LettersPage() {
       offeredCtc: 0,
       offeredDesignation: '',
       proposedJoiningDate: '',
-      letterDate: new Date().toISOString().split('T')[0],
+      letterDate: todayLocalDate(),
       expiryDate: '',
       additionalNotes: '',
       submitForApproval: false,
@@ -232,7 +238,7 @@ export default function LettersPage() {
       templateId: '',
       employeeId: '',
       letterTitle: '',
-      letterDate: new Date().toISOString().split('T')[0],
+      letterDate: todayLocalDate(),
       effectiveDate: '',
       expiryDate: '',
       additionalNotes: '',
@@ -248,7 +254,7 @@ export default function LettersPage() {
       offeredCtc: 0,
       offeredDesignation: '',
       proposedJoiningDate: '',
-      letterDate: new Date().toISOString().split('T')[0],
+      letterDate: todayLocalDate(),
       expiryDate: '',
       additionalNotes: '',
       submitForApproval: false,
@@ -1407,8 +1413,8 @@ export default function LettersPage() {
               <Button variant="outline" type="button" onClick={() => setShowOfferLetterModal(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={generateLetterMutation.isPending}>
-                {generateLetterMutation.isPending ? (
+              <Button type="submit" disabled={generateOfferLetterMutation.isPending}>
+                {generateOfferLetterMutation.isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin"/>
                     Generating...

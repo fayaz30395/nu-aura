@@ -9,6 +9,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useExpenseReport} from '@/lib/hooks/queries';
 import {endOfMonth, format, startOfMonth, subMonths} from 'date-fns';
+import {EmptyState} from '@/components/ui/EmptyState';
 
 // Chart skeleton displayed while the recharts bundle lazy-loads.
 // Recharts uses browser-only SVG/ResizeObserver APIs so ssr: false is required.
@@ -108,7 +109,12 @@ export default function ExpenseReportsPage() {
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-700"/>
             </div>
           ) : !report ? (
-            <div className="text-center py-20 text-surface-500">No report data available.</div>
+            <EmptyState
+              icon={<BarChart3 className="w-full h-full" />}
+              title="No Report Data"
+              description="No expense report data available for the selected period."
+              size="compact"
+            />
           ) : (
             <>
               {/* Summary Cards */}

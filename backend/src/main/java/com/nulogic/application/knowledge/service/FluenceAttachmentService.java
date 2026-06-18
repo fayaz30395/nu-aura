@@ -6,6 +6,7 @@ import com.nulogic.domain.knowledge.KnowledgeAttachment;
 import com.nulogic.infrastructure.knowledge.repository.KnowledgeAttachmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +25,7 @@ public class FluenceAttachmentService {
 
     private static final String CATEGORY_FLUENCE = "fluence-attachments";
     private static final long MAX_FILE_SIZE = 50L * 1024 * 1024; // 50MB
+    private static final int RECENT_ATTACHMENTS_LIMIT = 200;
 
     private final FileStorageService fileStorageService;
     private final KnowledgeAttachmentRepository attachmentRepository;
@@ -124,11 +126,12 @@ public class FluenceAttachmentService {
     }
 
     /**
-     * Get all recent attachments for a tenant (for Drive page).
+     * Get recent attachments for a tenant (for Drive page), capped at {@code RECENT_ATTACHMENTS_LIMIT}.
      */
     @Transactional(readOnly = true)
     public List<KnowledgeAttachment> getRecentAttachments(UUID tenantId) {
-        return attachmentRepository.findByTenantIdAndIsDeletedFalseOrderByCreatedAtDesc(tenantId);
+        return attachmentRepository.findByTenantIdAndIsDeletedFalseOrderByCreatedAtDesc(
+                tenantId, PageRequest.of(0, RECENT_ATTACHMENTS_LIMIT));
     }
 
     private String getFileExtension(String filename) {

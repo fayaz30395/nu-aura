@@ -37,8 +37,8 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500',
 };
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: 'text-slate-400', MEDIUM: 'text-blue-500',
-  HIGH: 'text-amber-500', CRITICAL: 'text-red-500',
+  LOW: 'text-slate-400 dark:text-slate-500', MEDIUM: 'text-blue-500 dark:text-blue-400',
+  HIGH: 'text-amber-500 dark:text-amber-400', CRITICAL: 'text-red-500 dark:text-red-400',
 };
 const PRIORITY_LABELS: Record<string, string> = {
   LOW: 'Low', MEDIUM: 'Medium', HIGH: 'High', CRITICAL: 'Critical',

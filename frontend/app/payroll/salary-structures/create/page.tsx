@@ -59,7 +59,14 @@ export default function CreateSalaryStructurePage() {
   };
 
   return (
-    <AppLayout activeMenuItem="payroll">
+    <AppLayout
+      activeMenuItem="payroll"
+      breadcrumbs={[
+        {label: 'Payroll', href: '/payroll'},
+        {label: 'Salary Structures', href: '/payroll/salary-structures'},
+        {label: 'Create'},
+      ]}
+    >
       <PermissionGate
         permission={Permissions.PAYROLL_VIEW}
         fallback={

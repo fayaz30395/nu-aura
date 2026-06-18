@@ -327,7 +327,14 @@ export default function EmployeeCompensationPage() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout
+      activeMenuItem="employees"
+      breadcrumbs={[
+        {label: 'Employees', href: '/employees'},
+        {label: 'Employee Detail'},
+        {label: 'Compensation'},
+      ]}
+    >
       <motion.div
         className="p-4 md:p-6 lg:p-8 max-w-4xl mx-auto"
         variants={pageEnter}

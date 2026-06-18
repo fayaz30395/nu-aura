@@ -14,6 +14,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {useDisableMfa, useMfaStatus} from '@/lib/hooks/queries/useMfa';
 import {MfaSetup} from '@/components/auth/MfaSetup';
 import {formatDateTime} from '@/lib/utils/format/date';
+import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
 // Zod schema for disable MFA form
 const disableMfaFormSchema = z.object({
@@ -48,13 +49,15 @@ export default function SecuritySettingsPage() {
     register,
     handleSubmit,
     reset: resetForm,
-    formState: {errors},
+    formState: {errors, isDirty},
   } = useForm<DisableMfaFormData>({
     resolver: zodResolver(disableMfaFormSchema),
     defaultValues: {
       code: '',
     },
   });
+
+  useUnsavedChanges(isDirty);
 
   const handleMfaSetupSuccess = () => {
     setShowMfaSetup(false);
