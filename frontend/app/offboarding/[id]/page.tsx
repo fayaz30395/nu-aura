@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useState} from 'react';
+import {toLocalDateString} from '@/lib/utils/date';
 import {useParams, useRouter} from 'next/navigation';
 import {
   ActionIcon,
@@ -186,7 +187,7 @@ export default function SeparationDetailPage() {
         id: selectedClearance.id,
         data: {
           status: clearanceAction,
-          approvedDate: clearanceAction === ClearanceStatus.APPROVED ? new Date().toISOString().split('T')[0] : undefined,
+          approvedDate: clearanceAction === ClearanceStatus.APPROVED ? toLocalDateString(new Date()) : undefined,
           comments: clearanceComment || undefined,
         },
       });

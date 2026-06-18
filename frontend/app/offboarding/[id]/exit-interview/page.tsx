@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useState} from 'react';
+import {toLocalDateString} from '@/lib/utils/date';
 import {useParams, useRouter} from 'next/navigation';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -176,7 +177,7 @@ export default function ExitInterviewPage() {
       await conductMutation.mutateAsync({
         id: interview.id,
         data: {
-          actualDate: new Date().toISOString().split('T')[0],
+          actualDate: toLocalDateString(new Date()),
           ...data,
           detailedReason: data.detailedReason ?? undefined,
           whatLikedMost: data.whatLikedMost ?? undefined,
@@ -281,7 +282,7 @@ export default function ExitInterviewPage() {
                         value={field.value}
                         onChange={field.onChange}
                         error={fieldState.error?.message}
-                        min={new Date().toISOString().split('T')[0]}
+                        min={toLocalDateString(new Date())}
                       />
                     )}
                   />

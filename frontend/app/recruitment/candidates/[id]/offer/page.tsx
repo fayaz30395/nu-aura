@@ -10,6 +10,7 @@
 // Returning to pipeline after success is done via router.back().
 
 import {useEffect, useRef, useState} from 'react';
+import {toLocalDateString} from '@/lib/utils/date';
 import {useParams, useRouter, useSearchParams} from 'next/navigation';
 import {AlertCircle, ArrowLeft, CheckCircle, FileText, Loader2} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
@@ -257,7 +258,7 @@ export default function CreateOfferPage() {
                     onChange={(e) =>
                       setForm((prev) => ({...prev, proposedJoiningDate: e.target.value}))
                     }
-                    min={new Date().toISOString().split('T')[0]}
+                    min={toLocalDateString(new Date())}
                     disabled={submitting}
                     className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] bg-[var(--bg-input)] focus:border-accent-500 disabled:bg-[var(--bg-secondary)] disabled:text-[var(--text-muted)]"
                   />

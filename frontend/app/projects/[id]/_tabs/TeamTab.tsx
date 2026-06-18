@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useEffect, useMemo, useRef, useState} from 'react';
+import {toLocalDateString} from '@/lib/utils/date';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -268,7 +269,7 @@ export function TeamTab({projectId}: TeamTabProps) {
   const addMemberSaving = assignMutation.isPending;
   const endAllocationLoading = endAllocationMutation.isPending;
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = toLocalDateString(new Date());
 
   const isActiveAllocation = (allocation: ProjectAllocation) => {
     if (!allocation.endDate) return true;

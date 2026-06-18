@@ -1,6 +1,7 @@
 'use client';
 
 import {Suspense, useEffect, useState} from 'react';
+import {toLocalDateString} from '@/lib/utils/date';
 import {useSearchParams} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -110,7 +111,7 @@ function OfferPortalPage() {
       setOffer({
         ...offer,
         status: 'OFFER_ACCEPTED',
-        offerAcceptedDate: new Date().toISOString().split('T')[0],
+        offerAcceptedDate: toLocalDateString(new Date()),
       });
       setShowAcceptModal(false);
     } catch (err: unknown) {
@@ -134,7 +135,7 @@ function OfferPortalPage() {
       setOffer({
         ...offer,
         status: 'OFFER_DECLINED',
-        offerDeclinedDate: new Date().toISOString().split('T')[0],
+        offerDeclinedDate: toLocalDateString(new Date()),
       });
       setShowDeclineModal(false);
     } catch (err: unknown) {
