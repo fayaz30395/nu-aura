@@ -237,7 +237,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
     private Page<CandidateResponse> mapCandidatePageBatch(Page<Candidate> page) {
         List<Candidate> candidates = page.getContent();
         if (candidates.isEmpty()) {
-            return page.map(this::mapToCandidateResponse);
+            return page.map(c -> mapToCandidateResponseBatch(c, Map.of(), Map.of()));
         }
 
         // Batch-fetch job titles

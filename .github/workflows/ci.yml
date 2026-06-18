@@ -72,6 +72,7 @@ jobs:
           # is belt-and-suspenders for any code path that reads the env var directly.
           APP_SECURITY_ENCRYPTION_KEY: test-encryption-key-32-bytes-xx!
           ENCRYPTION_KEY: test-encryption-key-32-bytes-xx!
+          DOCKER_AVAILABLE: 'true'
 
       - name: Generate coverage report
         working-directory: ./backend

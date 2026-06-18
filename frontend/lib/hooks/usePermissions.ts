@@ -548,7 +548,10 @@ export const Roles = {
   DEPARTMENT_HEAD: 'DEPARTMENT_HEAD',
   DEPARTMENT_MANAGER: 'DEPARTMENT_MANAGER',
   TEAM_LEAD: 'TEAM_LEAD',
-  // L-1: MANAGER is not a real backend role — use DEPARTMENT_MANAGER or TEAM_LEAD instead
+  /**
+   * @deprecated Not a real backend role. Use Roles.DEPARTMENT_MANAGER or Roles.TEAM_LEAD instead.
+   * Kept for backward compatibility — will be removed after zero-usage audit.
+   */
   MANAGER: 'MANAGER',
   EMPLOYEE: 'EMPLOYEE',
   FINANCE_ADMIN: 'FINANCE_ADMIN',

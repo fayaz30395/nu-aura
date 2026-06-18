@@ -1,8 +1,8 @@
 package com.nulogic.integration;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -56,8 +56,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *      prevents session-scoped {@code set_config} calls from reappearing in production code.
  */
 @DisplayName("ARCH-01: NOBYPASSRLS — RLS correctly isolates tenant data when accessed via nu_app_rls role")
-@Disabled("Docker required — enable in CI with DOCKER_AVAILABLE=true env var, or run explicitly: " +
-        "mvn -pl backend test -Dtest=RlsNoBypassTest")
+@EnabledIfEnvironmentVariable(named = "DOCKER_AVAILABLE", matches = "true")
 class RlsNoBypassTest {
 
     private static final String POSTGRES_IMAGE = "postgres:16-alpine";

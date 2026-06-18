@@ -425,7 +425,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   // Statutory Compliance & Tax
   {
     path: '/tax/declarations',
-    requiresAuth: true,
+    anyPermission: [Permissions.TDS_DECLARE, Permissions.STATUTORY_VIEW],
   },
   {
     path: '/tax',
@@ -997,15 +997,15 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   // Enterprise Tools
   {
     path: '/nu-calendar',
-    requiresAuth: true,
+    anyPermission: [Permissions.CALENDAR_VIEW, Permissions.CALENDAR_MANAGE],
   },
   {
     path: '/nu-drive',
-    requiresAuth: true,
+    anyPermission: [Permissions.DOCUMENT_VIEW, Permissions.DOCUMENT_UPLOAD],
   },
   {
     path: '/nu-mail',
-    requiresAuth: true,
+    anyPermission: [Permissions.EMAIL_VIEW, Permissions.EMAIL_SEND],
   },
 ];
 
