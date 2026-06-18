@@ -86,6 +86,7 @@ function NewKeyBanner({creation, onDismiss}: {creation: ApiKeyCreationResponse; 
             </span>
             <button
               type="button"
+              aria-label={visible ? 'Hide API key' : 'Show API key'}
               onClick={() => setVisible(v => !v)}
               className="p-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             >
@@ -101,6 +102,7 @@ function NewKeyBanner({creation, onDismiss}: {creation: ApiKeyCreationResponse; 
         </div>
         <button
           type="button"
+          aria-label="Dismiss API key notice"
           onClick={onDismiss}
           className="text-warning-500 hover:text-warning-700 shrink-0"
         >

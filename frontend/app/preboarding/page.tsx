@@ -80,23 +80,23 @@ function PreBoardingModal({onClose, createMutation}: PreBoardingModalProps) {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
-              <Input placeholder="First Name *" {...register('firstName')} />
+              <Input placeholder="First Name *" aria-label="First Name" {...register('firstName')} />
               {errors.firstName && <span className="text-danger-500 text-sm">{errors.firstName.message}</span>}
             </div>
             <div>
-              <Input placeholder="Last Name" {...register('lastName')} />
+              <Input placeholder="Last Name" aria-label="Last Name" {...register('lastName')} />
               {errors.lastName && <span className="text-danger-500 text-sm">{errors.lastName.message}</span>}
             </div>
             <div>
-              <Input type="email" placeholder="Email *" {...register('email')} />
+              <Input type="email" placeholder="Email *" aria-label="Email" {...register('email')} />
               {errors.email && <span className="text-danger-500 text-sm">{errors.email.message}</span>}
             </div>
             <div>
-              <Input type="date" {...register('joiningDate')} />
+              <Input type="date" aria-label="Joining date" {...register('joiningDate')} />
               {errors.joiningDate && <span className="text-danger-500 text-sm">{errors.joiningDate.message}</span>}
             </div>
             <div>
-              <Input placeholder="Designation" {...register('designation')} />
+              <Input placeholder="Designation" aria-label="Designation" {...register('designation')} />
               {errors.designation && <span className="text-danger-500 text-sm">{errors.designation.message}</span>}
             </div>
           </div>

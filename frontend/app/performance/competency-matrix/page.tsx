@@ -559,6 +559,7 @@ function MyCompetenciesTab({employeeId}: { employeeId: string }) {
                           color="red"
                           size="sm"
                           ml="xs"
+                          aria-label="Remove skill"
                           onClick={() => removeSkillMutation.mutate(skill.id)}
                           loading={removeSkillMutation.isPending}
                         >

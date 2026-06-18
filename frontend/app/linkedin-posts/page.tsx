@@ -698,6 +698,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
                   onChange={(e) => field.onChange(e.target.checked)}
                   onBlur={field.onBlur}
                   name={field.name}
+                  aria-label="This post is from Nulogic"
                   className="w-4 h-4 text-accent-600 rounded focus:ring-accent-500"
                 />
               )}

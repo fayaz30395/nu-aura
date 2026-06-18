@@ -179,6 +179,7 @@ export default function NewEventPage() {
         <div className="flex items-center gap-4">
           <button
             type="button"
+            aria-label="Go back"
             onClick={() => router.back()}
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
@@ -241,12 +242,13 @@ export default function NewEventPage() {
           {/* Date/Time */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="calendar-event-start-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 Start {watchedAllDay ? 'Date' : 'Date & Time'} *
               </label>
               <div className="relative">
                 <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
+                  id="calendar-event-start-time"
                   type={watchedAllDay ? 'date' : 'datetime-local'}
                   {...register('startTime')}
                   className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${
@@ -260,12 +262,13 @@ export default function NewEventPage() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+              <label htmlFor="calendar-event-end-time" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
                 End {watchedAllDay ? 'Date' : 'Date & Time'} *
               </label>
               <div className="relative">
                 <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
+                  id="calendar-event-end-time"
                   type={watchedAllDay ? 'date' : 'datetime-local'}
                   {...register('endTime')}
                   className={`w-full pl-12 pr-4 py-4 bg-[var(--bg-secondary)] border ${

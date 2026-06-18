@@ -25,6 +25,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {formatCurrency} from '@/lib/utils';
 import {format} from 'date-fns';
+import {toLocalDateString} from '@/lib/utils/date';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useActiveExpenseCategories,
@@ -105,7 +106,7 @@ export default function ExpenseDetailPage() {
   } = useForm<ItemFormData>({
     resolver: zodResolver(itemSchema),
     defaultValues: {
-      expenseDate: new Date().toISOString().split('T')[0],
+      expenseDate: toLocalDateString(new Date()),
       isBillable: false,
     },
   });
@@ -128,7 +129,7 @@ export default function ExpenseDetailPage() {
     resetForm({
       description: ocrData.merchantName ? `Receipt from ${ocrData.merchantName}` : 'Scanned receipt',
       amount: ocrData.amount || 0,
-      expenseDate: ocrData.receiptDate || new Date().toISOString().split('T')[0],
+      expenseDate: ocrData.receiptDate || toLocalDateString(new Date()),
       merchantName: ocrData.merchantName || '',
       isBillable: false,
     });

@@ -44,6 +44,7 @@ import {
   useUpdateHrmsProject,
 } from '@/lib/hooks/queries/useProjects';
 import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
+import {toLocalDateString} from '@/lib/utils/date';
 
 interface EmployeeSummary {
   id: string;
@@ -474,7 +475,7 @@ export default function ProjectsPage() {
       type: 'INTERNAL',
       status: 'PLANNED',
       priority: 'MEDIUM',
-      startDate: new Date().toISOString().split('T')[0],
+      startDate: toLocalDateString(new Date()),
       expectedEndDate: '',
       clientName: '',
       description: '',

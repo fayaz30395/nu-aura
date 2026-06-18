@@ -121,6 +121,7 @@ export default function EventDetailPage() {
         {/* Header */}
         <div className="flex items-center gap-4">
           <button
+            aria-label="Go back"
             onClick={() => router.back()}
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >

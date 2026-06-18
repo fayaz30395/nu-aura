@@ -44,6 +44,7 @@ import {createLogger} from '@/lib/utils/logger';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate} from '@/lib/utils/format/date';
+import {toLocalDateString} from '@/lib/utils/date';
 
 const log = createLogger('FeedbackPage');
 
@@ -245,7 +246,7 @@ export default function Feedback360Page() {
     setCycleForm({
       name: '',
       description: '',
-      startDate: new Date().toISOString().split('T')[0],
+      startDate: toLocalDateString(new Date()),
       endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       minPeersRequired: 3,
       maxPeersAllowed: 5,

@@ -292,22 +292,22 @@ export default function PreboardingPortalPage() {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <Input placeholder="City" {...registerPersonalInfo('city')} />
+                    <Input placeholder="City" aria-label="City" {...registerPersonalInfo('city')} />
                     {personalInfoErrors.city &&
                       <span className="text-danger-500 text-sm">{personalInfoErrors.city.message}</span>}
                   </div>
                   <div>
-                    <Input placeholder="State" {...registerPersonalInfo('state')} />
+                    <Input placeholder="State" aria-label="State" {...registerPersonalInfo('state')} />
                     {personalInfoErrors.state &&
                       <span className="text-danger-500 text-sm">{personalInfoErrors.state.message}</span>}
                   </div>
                   <div>
-                    <Input placeholder="Postal Code" {...registerPersonalInfo('postalCode')} />
+                    <Input placeholder="Postal Code" aria-label="Postal Code" {...registerPersonalInfo('postalCode')} />
                     {personalInfoErrors.postalCode &&
                       <span className="text-danger-500 text-sm">{personalInfoErrors.postalCode.message}</span>}
                   </div>
                   <div>
-                    <Input placeholder="Country" {...registerPersonalInfo('country')} />
+                    <Input placeholder="Country" aria-label="Country" {...registerPersonalInfo('country')} />
                     {personalInfoErrors.country &&
                       <span className="text-danger-500 text-sm">{personalInfoErrors.country.message}</span>}
                   </div>

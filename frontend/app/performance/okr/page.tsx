@@ -30,6 +30,7 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate} from '@/lib/utils/format/date';
+import {toLocalDateString} from '@/lib/utils/date';
 import {
   useAddKeyResult,
   useCompanyObjectives,
@@ -178,7 +179,7 @@ export default function OKRPage() {
     defaultValues: {
       title: '',
       description: '',
-      startDate: new Date().toISOString().split('T')[0],
+      startDate: toLocalDateString(new Date()),
       endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       objectiveLevel: 'INDIVIDUAL',
       weight: 1,
@@ -250,7 +251,7 @@ export default function OKRPage() {
     objectiveForm.reset({
       title: '',
       description: '',
-      startDate: new Date().toISOString().split('T')[0],
+      startDate: toLocalDateString(new Date()),
       endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       objectiveLevel: 'INDIVIDUAL',
       weight: 1,

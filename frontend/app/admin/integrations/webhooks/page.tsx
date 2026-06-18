@@ -200,7 +200,7 @@ function DeliveryPanel({webhookId, onClose}: {webhookId: string; onClose: () => 
           <Activity className="w-4 h-4 text-[var(--text-muted)]"/>
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">Delivery History</h3>
         </div>
-        <button type="button" onClick={onClose}
+        <button type="button" aria-label="Close" onClick={onClose}
           className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors">
           <XCircle className="w-4 h-4"/>
         </button>
@@ -264,7 +264,7 @@ function CreateWebhookPanel({onClose, onCreated}: {onClose: () => void; onCreate
           <Plus className="w-4 h-4 text-[var(--text-muted)]"/>
           <h3 className="text-sm font-semibold text-[var(--text-primary)]">New Webhook</h3>
         </div>
-        <button type="button" onClick={onClose}
+        <button type="button" aria-label="Close" onClick={onClose}
           className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors">
           <XCircle className="w-4 h-4"/>
         </button>

@@ -234,6 +234,7 @@ export default function SecuritySettingsPage() {
                         maxLength={6}
                         placeholder="000000"
                         disabled={disableMfaMutation.isPending}
+                        aria-label="6-digit authenticator code"
                         className="w-full px-4 py-2 text-center text-xl tracking-widest border border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:opacity-50"
                         autoComplete="off"
                         {...register('code', {

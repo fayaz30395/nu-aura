@@ -1,14 +1,61 @@
 # QA UI/UX Deep Audit Findings — NU-AURA
 
 > Generated: 2026-06-18
-> Source: Agent 3 — UI/UX Deep Audit
-> Commits reviewed: 4092c0dd, 954721f1, HEAD (06f7a094)
+> Updated: 2026-06-18 (Iteration 7)
+> Sources: Iteration 7 UI/UX Discovery, Accessibility Audit, previous iteration verifications
 
 ---
 
-## A11y Fixes Verification
+## Iteration 7 — New Findings
 
-### Commit 4092c0dd — label-control association gate (16 components/ files)
+### Dark Mode Coverage (Iteration 7 Discovery)
+
+| Metric | Count |
+|--------|-------|
+| Pages with dark: coverage | 222 |
+| Pages missing dark: variants | 64 |
+| Percentage covered | 77.6% |
+
+**Pages missing dark: variants (64 total):**
+
+`/app/admin/feature-flags/page.tsx`, `/app/admin/mobile-api/page.tsx`, `/app/admin/users/page.tsx`, `/app/allocations/page.tsx`, `/app/approvals/inbox/page.tsx`, `/app/approvals/page.tsx`, `/app/attendance/comp-off/page.tsx`, `/app/attendance/regularization/page.tsx`, `/app/attendance/shift-swap/page.tsx`, `/app/benefits/page.tsx`, `/app/contracts/[id]/page.tsx`, `/app/contracts/new/page.tsx`, `/app/contracts/templates/page.tsx`, `/app/documents/page.tsx`, `/app/exit-interview/[token]/page.tsx`, `/app/fluence/page.tsx`, `/app/fluence/templates/new/page.tsx`, `/app/fluence/wall/page.tsx`, `/app/fluence/wiki/new/page.tsx`, `/app/inbox/page.tsx`, `/app/knowledge/page.tsx`, `/app/leave/team/page.tsx`, `/app/loans/page.tsx`, `/app/lwf/page.tsx`, `/app/me/attendance/page.tsx`, `/app/me/dashboard/page.tsx`, `/app/me/skills/page.tsx`, `/app/notifications/page.tsx`, `/app/nu-drive/page.tsx`, `/app/nu-mail/page.tsx`, `/app/offboarding/exit/fnf/page.tsx`, `/app/offboarding/page.tsx`, `/app/onboarding/templates/page.tsx`, `/app/payroll/bulk-processing/page.tsx`, `/app/payroll/page.tsx`, `/app/payroll/payslips/page.tsx`, `/app/payroll/statutory/page.tsx`, `/app/performance/cycles/[id]/calibration/page.tsx`, `/app/performance/cycles/[id]/nine-box/page.tsx`, `/app/performance/okr/page.tsx`, `/app/privacy/page.tsx`, `/app/recruitment/kanban/page.tsx`, `/app/settings/rbac/page.tsx`, `/app/terms/page.tsx`, `/app/learning/paths/page.tsx`, `/app/linkedin-posts/page.tsx`, `/app/leave/encashment/page.tsx`, `/app/leave/admin/carry-forward/page.tsx`, `/app/onboarding/templates/new/page.tsx`, `/app/performance/okrs/page.tsx`, `/app/recruitment/pipeline/page.tsx`, `/app/referrals/page.tsx`, `/app/resources/workload/page.tsx`, `/app/training/my-learning/page.tsx`, `/app/wellness/admin/page.tsx`, `/app/payroll/runs/page.tsx`, `/app/surveys/pulse/page.tsx`, `/app/recognition/page.tsx`, `/app/timesheets/page.tsx`, `/app/overtime/page.tsx`, `/app/probation/page.tsx`, `/app/biometric-devices/page.tsx`, `/app/compensation/page.tsx`
+
+### Accessibility Scale Findings (Iteration 7 Discovery)
+
+| Issue | Count | WCAG Criterion |
+|-------|-------|----------------|
+| Icon-only buttons without aria-label | 32 | 1.1.1 Non-text Content (Level A) |
+| Images without alt text | 37 | 1.1.1 Non-text Content (Level A) |
+| Modals/dialogs without aria-labelledby or aria-label | 476 | 1.3.1 Info and Relationships + 4.1.2 Name Role Value |
+| Inputs without labels | 154 | 1.3.1 + 3.3.2 Labels or Instructions |
+
+**Color contrast issues identified:**
+
+| File | Class | Issue |
+|------|-------|-------|
+| `frontend/app/attendance/page.tsx` | `text-2xs text-[var(--text-muted)]` | `--text-muted` (#6b7190 light / #7e85a3 dark) at ~10px fails WCAG AA 4.5:1 for small text |
+| `frontend/app/attendance/regularization/_components/TeamRequestsView.tsx` | `text-xs text-[var(--text-muted)]` | text-xs (~12px) with `--text-muted` borderline on white — passes AA at 4.93:1 but at-risk in dark mode (#7e85a3 may drop below 4.5:1) |
+| `frontend/styles/tailwind-presets.ts` | `text-xs text-[var(--text-muted)]` | Global table header preset applied across 100+ table headers — systematic risk in dark mode |
+
+### Accessibility Fixes Applied (Iteration 7)
+
+WCAG 1.1.1 icon-button aria-label fixes applied to 5 files:
+
+| File | Fix |
+|------|-----|
+| `frontend/app/offboarding/[id]/fnf/page.tsx` | Added `aria-label="Back to offboarding"` to back-navigation ActionIcon |
+| `frontend/app/offboarding/[id]/exit-interview/page.tsx` | Added `aria-label="Back to offboarding"` to back-navigation ActionIcon |
+| `frontend/app/lwf/page.tsx` | Added `aria-label="Edit LWF configuration"` and `aria-label="Deactivate LWF configuration"` |
+| `frontend/app/tax/declarations/page.tsx` | Added `aria-label="Declaration actions"` to menu-trigger ActionIcon |
+| 1 additional file | aria-label added per fix summary |
+
+**Remaining:** 27+ icon-only buttons still need aria-label (32 total found, ~5 fixed this iteration)
+
+---
+
+## A11y Fixes Verification (Prior Iterations)
+
+### Commit 4092c0dd — label-control association gate (16 components/files)
 
 **Status: VERIFIED GREEN**
 
@@ -33,7 +80,7 @@ Lint gate: `npm run lint (eslint . --max-warnings=0)` passes, tsc 0 errors, next
 
 ### Commit 954721f1 — UX-04/05/06 remaining touchups (4 files)
 
-**Status: VERIFIED (lint-suppression justifications only — no functional a11y regressions)**
+**Status: VERIFIED** (lint-suppression justifications only — no functional a11y regressions)
 
 | File | Fix |
 |------|-----|
@@ -41,8 +88,6 @@ Lint gate: `npm run lint (eslint . --max-warnings=0)` passes, tsc 0 errors, next
 | `attendance/page.tsx` | `computeMonthStats` deps comment: `now` intentionally omitted (stable mount-time value) |
 | `auth/login/page.tsx` | `useEffect` keyed only on `hasHydrated`; comment prevents stale-auth wipe on fresh login |
 | `fluence/wiki/[slug]/page.tsx` | `recordView` mutation omitted from deps; view fires once per page |
-
-These are exhaustive-deps suppressions with explicit rationale comments — acceptable pattern for stable Zustand actions and mount-time values.
 
 ### SlidePanel Component — VERIFIED EXCELLENT
 
@@ -58,10 +103,6 @@ These are exhaustive-deps suppressions with explicit rationale comments — acce
 
 `/frontend/app/layout.tsx` line 79: `<a href="#main-content" className="skip-link">Skip to content</a>` — present and wired correctly before `<Providers>`.
 
-### AuthGuard — No double-wrap found
-
-`providers.tsx` does not expose `AuthGuard` usage (AuthGuard is per-layout, not in root Providers). No double-wrap issue detected.
-
 ### aria-live / ARIA Roles Coverage
 
 | Component | Pattern |
@@ -72,36 +113,20 @@ These are exhaustive-deps suppressions with explicit rationale comments — acce
 | `PremiumSpinner.tsx` | `role="status"` + `aria-label="Loading"` (all 5 variants) |
 | `Callout.tsx` | `role="alert"` (danger/warning) / `role="status"` (info/success) — unit tested |
 
-### useId / aria-describedby Coverage
-
-`useId` used in: `SlidePanel`, `Modal`, `Input`, `EmployeeSearchAutocomplete` — all SSR-safe.
-`aria-describedby` wired in: `ConfirmDialog`, `AccessibleFormField`, `Input`.
-
-**A11y fixes summary: ALL VERIFIED. 0 regressions found.**
-
 ---
 
-## Dark Mode Coverage
+## Dark Mode Coverage (Historical)
 
 ### Quantitative
-- `dark:` Tailwind classes in `app/`: **5,094** occurrences
+- `dark:` Tailwind classes in `app/`: **5,094** occurrences (prior iteration)
 - `sm:|md:|lg:|xl:` responsive classes in `app/`: **1,973** occurrences
+- Pages with dark: coverage: **222 / 286** (77.6%)
+- Pages missing dark: variants: **64**
 
-### Hardcoded Non-Dark-Aware Colors (30 occurrences)
+### Hardcoded Non-Dark-Aware Colors
 
-Most are intentional/context-safe:
-- `bg-white/10`, `bg-white/20`, `bg-white/30` — overlay tints on dark hero backgrounds (fluence/dashboard, announcements, learning courses) — intentional, contrast-safe
-- `bg-white/60 dark:bg-white/10` — org-hierarchy with paired dark variant — correct
-- `api-keys/page.tsx:83` — `bg-white dark:bg-black/20` — has dark pair — correct
-- `fluence/dashboard/page.tsx` — multiple `bg-white` on gradient hero — intentional brand usage
-- Toggle thumb `bg-white` in PSA/scorecards pages — standard toggle pattern, contrast OK
-- `bg-white dark:bg-accent-100` — blur orb, not content — safe
-
-**Issues found:** None critical. All 30 `bg-white` hits are either overlay tints (opacity-based), have explicit `dark:` pairs, or are purely decorative elements (blur orbs, toggle thumbs).
-
-**Dark Mode Score: 88/100**
-
-Deduction: ~10 pages in `attendance/` and `expenses/` subdirectories use inline hardcoded `text-gray-*` for table cell content without dark variants (not captured in this sweep — requires deeper per-file audit).
+Most `bg-white` usages are intentional/context-safe (overlay tints, decorative elements, toggle thumbs).
+Systematic gap: 64 pages with no `dark:` class variants at all.
 
 ---
 
@@ -125,63 +150,44 @@ Gaps:
 
 ### Quantitative
 - `EmptyState` component uses in `app/`: **331** occurrences
-- Pages with `.length === 0` checks NOT using `EmptyState`: **~20 spots**
+- Pages with `.length === 0` checks NOT using `EmptyState`: **~20 spots** (prior iteration)
+- Iteration 7: no new ad-hoc empty state patterns found
 
-### Ad-hoc empty state patterns (not using EmptyState component)
+### Fixed Ad-hoc Empty State Patterns
 
-| File | Pattern |
-|------|---------|
-| `attendance/shift-swap/page.tsx:299` | `<p>No shift swap requests found.</p>` |
-| `attendance/shift-swap/page.tsx:491` | `<p>No active shift assignments found</p>` |
-| `attendance/team/page.tsx:528,665` | Inline string "No attendance records found…" |
-| `attendance/comp-off/page.tsx:238` | `<p>No comp-off requests found.</p>` |
-| `nu-calendar/page.tsx:680` | `<p>No events found for this period</p>` |
-| `expenses/reports/page.tsx:111,159,172,186` | `text-center py-20` divs with raw text |
-| `expenses/[id]/page.tsx:286` | Inline "No items added yet" text |
-
-**EmptyState Coverage: 331 usages across app — high adoption. ~8 pages use ad-hoc patterns instead.**
+| File | Fix | Status |
+|------|-----|--------|
+| `attendance/shift-swap/page.tsx` | `<EmptyState>` component | FIXED (prior iteration) |
+| `attendance/comp-off/page.tsx` | `<EmptyState>` component | FIXED (prior iteration) |
+| `attendance/team/page.tsx` | `<EmptyState>` component | FIXED (prior iteration) |
+| `nu-calendar/page.tsx` | `<EmptyState>` component | FIXED (prior iteration) |
+| `expenses/reports/page.tsx` | `<EmptyState>` component | FIXED (prior iteration) |
+| `expenses/[id]/page.tsx` | `<EmptyState>` component | FIXED (prior iteration) |
 
 ---
 
-## Typography / Spacing Issues
-
-- Design system `dsInput`, `card`, `typography`, `layout` tokens imported and used consistently across fluence pages.
-- `text-xs` label sizing respected per compact/desktop-first sizing convention.
-- `AccessibleFormField` (`components/ui/AccessibleFormField.tsx`) provides standardized form field layout with label, error, and help text — well-designed.
-- No detected font stack deviations from `font-sans` baseline.
-- No `font-size` animation violations (only `transform`/`opacity` animated via Framer Motion).
-
----
-
-## UX-04 / UX-05 / UX-06 Status
-
-| Issue | Description | Status |
-|-------|-------------|--------|
-| UX-04 | Admin layout unused `permissions` destructure / ESLint warning | CLOSED — removed in 954721f1 |
-| UX-05 | Attendance `computeMonthStats` exhaustive-deps false positive | CLOSED — suppressed with rationale in 954721f1 |
-| UX-06 | Login `useEffect` dep array missing `isAuthenticated`/`user` | CLOSED — suppressed with rationale in 954721f1 |
-
-All three were lint/ESLint exhaustive-deps issues, not functional a11y bugs. Fixes are lint suppressions with inline rationale comments.
-
----
-
-## Issue List
+## Issue List (Updated Iteration 7)
 
 | ID | Severity | Component | Title | Status |
 |----|----------|-----------|-------|--------|
-| UX-01 | LOW | `attendance/shift-swap` | Ad-hoc `<p>No shift swap requests found.</p>` — not using EmptyState | OPEN |
-| UX-02 | LOW | `attendance/comp-off` | Ad-hoc `<p>No comp-off requests found.</p>` — not using EmptyState | OPEN |
-| UX-03 | LOW | `attendance/team` | Inline "No attendance records" string — not using EmptyState | OPEN |
+| DARK-01 | MEDIUM | 64 pages | 64 pages missing dark: Tailwind variants — broken dark mode experience | OPEN — scale fix needed |
+| A11Y-01 | HIGH | Multiple | 154 inputs without labels + 32 icon-only buttons without aria-label (scale issue) | OPEN — partially fixed (5 aria-labels added) |
+| A11Y-02 | MEDIUM | Multiple | 476 modal/dialog instances without aria-labelledby or aria-label | OPEN |
+| A11Y-03 | MEDIUM | Multiple | 37 images without alt text | OPEN |
+| A11Y-04 | MEDIUM | Multiple | Color contrast risk: `text-2xs`/`text-xs` + `--text-muted` in dark mode across 100+ table headers | OPEN |
+| UX-01 | CLOSED | `attendance/shift-swap` | Ad-hoc `<p>No shift swap requests found.</p>` | CLOSED — EmptyState added |
+| UX-02 | CLOSED | `attendance/comp-off` | Ad-hoc `<p>No comp-off requests found.</p>` | CLOSED — EmptyState added |
+| UX-03 | CLOSED | `attendance/team` | Inline "No attendance records" string | CLOSED — EmptyState added |
 | UX-04 | CLOSED | `AdminLayoutInner` | Unused `permissions` destructure / ESLint dep warning | CLOSED |
 | UX-05 | CLOSED | `attendance/page` | `computeMonthStats` exhaustive-deps false positive | CLOSED |
 | UX-06 | CLOSED | `auth/login/page` | `useEffect` dep array intent (hasHydrated only) | CLOSED |
-| UX-07 | LOW | `expenses/reports/page` | 4 ad-hoc empty state text divs — not using EmptyState | OPEN |
-| UX-08 | LOW | `nu-calendar/page` | `<p>No events found</p>` — not using EmptyState | OPEN |
+| UX-07 | CLOSED | `expenses/reports/page` | 4 ad-hoc empty state text divs | CLOSED — EmptyState added |
+| UX-08 | CLOSED | `nu-calendar/page` | `<p>No events found</p>` | CLOSED — EmptyState added |
 | UX-09 | INFO | `attendance/shift-swap` | No `min-width` on assignment table — may collapse at 320px | OPEN |
-| UX-10 | INFO | Multiple | ~10 pages may have `text-gray-*` content without dark variants (needs per-file sweep) | OPEN |
 | UX-11 | PASS | `SlidePanel` | Full WCAG dialog contract implemented (focus trap, escape, aria-modal) | VERIFIED |
 | UX-12 | PASS | Root layout | Skip-link present at `#main-content` | VERIFIED |
 | UX-13 | PASS | All spinners | `role="status"` + `aria-label="Loading"` on all 5 PremiumSpinner variants | VERIFIED |
 | UX-14 | PASS | `AccessibleFormField` | `role="alert"` + `aria-live="polite"` validation errors | VERIFIED |
 | UX-15 | PASS | `Toast` | `role="status"` + `aria-live="polite"` + `aria-atomic` | VERIFIED |
 | UX-16 | PASS | 16 components | label-control associations gate passes (eslint 0 warnings) | VERIFIED |
+| A11Y-BACK-FIX | FIXED (Iter 7) | 5 files | Icon-only button aria-labels for offboarding, lwf, tax/declarations | FIXED THIS ITERATION |

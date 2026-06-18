@@ -26,6 +26,7 @@ import type {CreatePIPRequest, PIPCheckInRequest, PIPResponse, PIPStatus,} from 
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
+import {toLocalDateString} from '@/lib/utils/date';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -170,7 +171,7 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
       employeeId: '',
       managerId: '',
       reason: '',
-      startDate: new Date().toISOString().split('T')[0],
+      startDate: toLocalDateString(new Date()),
       endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       goals: '',
       checkInFrequency: 'WEEKLY',

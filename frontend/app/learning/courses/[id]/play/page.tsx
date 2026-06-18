@@ -406,6 +406,7 @@ export default function CoursePlayerPage() {
               <X className="h-5 w-5"/>
             </Link>
             <button
+              aria-label="Toggle course sidebar"
               onClick={() => setSidebarOpen(o => !o)}
               className="text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             >

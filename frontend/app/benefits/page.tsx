@@ -52,6 +52,7 @@ import {
 } from '@/lib/hooks/queries';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate} from '@/lib/utils/format/date';
+import {toLocalDateString} from '@/lib/utils/date';
 
 const log = createLogger('BenefitsPage');
 
@@ -192,7 +193,7 @@ export default function BenefitsPage() {
     resolver: zodResolver(enrollmentFormSchema),
     defaultValues: {
       coverageLevel: 'EMPLOYEE_ONLY',
-      effectiveDate: new Date().toISOString().split('T')[0],
+      effectiveDate: toLocalDateString(new Date()),
       useFlexCredits: false,
     },
   });
@@ -209,7 +210,7 @@ export default function BenefitsPage() {
       enrollmentId: '',
       claimType: 'MEDICAL',
       claimAmount: 0,
-      serviceDate: new Date().toISOString().split('T')[0],
+      serviceDate: toLocalDateString(new Date()),
       serviceProvider: '',
       description: '',
       receiptUrl: '',
@@ -335,7 +336,7 @@ export default function BenefitsPage() {
       enrollmentId: enrollments.find(e => e.status === 'ACTIVE')?.id || '',
       claimType: 'MEDICAL',
       claimAmount: 0,
-      serviceDate: new Date().toISOString().split('T')[0],
+      serviceDate: toLocalDateString(new Date()),
       serviceProvider: '',
       description: '',
       receiptUrl: '',

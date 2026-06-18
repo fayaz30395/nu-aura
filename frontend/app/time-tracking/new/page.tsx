@@ -12,6 +12,7 @@ import {useCreateTimeEntry, useSubmitTimeEntry} from '@/lib/hooks/queries/useTim
 import {logger} from '@/lib/utils/logger';
 import {AlertCircle, ArrowLeft, Calendar, Clock, DollarSign, FileText, Loader2,} from 'lucide-react';
 import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
+import {toLocalDateString} from '@/lib/utils/date';
 
 // ─── Zod Schema ────────────────────────────────────────────────────────────────
 
@@ -69,7 +70,7 @@ export default function NewTimeEntryPage() {
   } = useForm<TimeEntryFormData>({
     resolver: zodResolver(timeEntrySchema),
     defaultValues: {
-      entryDate: new Date().toISOString().split('T')[0],
+      entryDate: toLocalDateString(new Date()),
       hoursWorked: 8,
       billableHours: 8,
       isBillable: true,

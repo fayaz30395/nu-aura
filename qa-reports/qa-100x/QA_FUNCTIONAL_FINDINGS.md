@@ -1,8 +1,61 @@
-# Performance & Infrastructure Findings — NU-AURA
+# Functional & Performance Findings — NU-AURA
 
-**Generated:** 2026-06-18  
-**Agent:** Agent 6 — Performance & Infrastructure Audit  
-**Sources:** next.config.mjs, vercel.json, application-prod.yml, CacheConfig.java, ShedLockConfig.java, .next/static chunks
+**Generated:** 2026-06-18 | Updated: 2026-06-18 (Iteration 7)
+**Agent:** Agent 6 — Functional, Performance & Infrastructure Audit
+**Sources:** next.config.mjs, vercel.json, application-prod.yml, CacheConfig.java, ShedLockConfig.java, .next/static chunks, functional audit findings
+
+---
+
+## Functional Audit (Iteration 7)
+
+### Modules Audited
+
+27 modules reviewed: attendance/regularization, attendance/shift-swap, attendance/my-attendance, attendance/comp-off, attendance (main/clock-in), leave/apply, leave/approvals, leave/my-leaves, leave/encashment, payroll (dashboard), payroll/runs, payroll/structures, payroll/payslips, contracts, contracts/new, recruitment/jobs, recruitment/candidates, recruitment/interviews, recruitment/agencies, recruitment/pipeline, performance/goals, performance/cycles, performance/okrs, performance/calibration, performance/9box, surveys, fluence/wiki.
+
+### Forms Without Loading Guard (Iteration 7)
+
+| File | Form | Issue |
+|------|------|-------|
+| `frontend/app/performance/goals/page.tsx` | Create/Edit Goal form | `isSubmitting` from RHF used, but NOT `createGoalMutation.isPending \|\| updateGoalMutation.isPending`; `loading` aggregate only referenced for delete button |
+| Additional forms noted in partial audit | — | Submit buttons potentially double-submittable during async operations |
+
+### Date/Timezone Issues (Iteration 7)
+
+| File | Issue | Severity |
+|------|-------|----------|
+| `frontend/app/timesheets/page.tsx` | `currentWeekStart.toISOString().split('T')[0]` used for weekStartDate/weekEndDate API params and as map keys; UTC midnight offset causes off-by-one for UTC+5:30 users | **MEDIUM** — fix applied this iteration (`toLocalDateString` helper added) |
+| Additional `.toISOString()` patterns | Multiple date computation sites across attendance/leave modules may have similar UTC offset issues | LOW — survey needed |
+
+### Forms Audit Summary (Iteration 7)
+
+| Metric | Count |
+|--------|-------|
+| Total forms identified | 133 |
+| Forms without Zod validation | 5 |
+| Forms with generic error handlers | 8 files (multiple instances) |
+| Forms without submit loading guard | 0 (systematic issue in goals form) |
+| Date/timezone issues | 2 confirmed + survey needed |
+
+### Forms Without Zod Validation
+
+| File | Gap |
+|------|-----|
+| `me/skills/page.tsx` | No Zod schema — browser validation only |
+| `surveys/[id]/respond/page.tsx` | Survey response form lacks schema validation |
+| `employees/[id]/compensation/page.tsx` | Compensation revision form lacks Zod |
+| `leave/my-leaves/page.tsx` | Leave application form lacks Zod |
+| `time-tracking/[id]/page.tsx` | Time entry form lacks Zod |
+
+### Forms With Generic Error Handlers (before iteration 7 fixes)
+
+| File | Instances | Status |
+|------|-----------|--------|
+| `admin/integrations/webhooks/page.tsx` | 6 (create/pause/activate/delete/rotate/retry) | **FIXED** — `error?.response?.data?.message` extraction added |
+| `letters/page.tsx` | 5 (submit-approval/approve/issue/e-sign/revoke) | OPEN |
+| `employees/change-requests/page.tsx` | 1 duplicate generic handler | **FIXED** — duplicate removed |
+| `learning/certificates/page.tsx` | 1 | OPEN |
+| `learning/courses/[id]/page.tsx` | 1 | OPEN |
+| `onboarding/[id]/page.tsx` | 1 | OPEN |
 
 ---
 
@@ -52,13 +105,6 @@ Estimated gzip ~5-6 MB for the full static folder (typical 3-4x ratio for JS).
 | Total chunks | 179 files |
 
 **Chunks >100 KB uncompressed:** 12 chunks — within acceptable range for an enterprise SPA.
-
-### Dual Date Library Concern
-
-- `dayjs` declared in `dependencies` but **0 direct imports** found in `/app`
-- `date-fns` has 27 import sites
-- `dayjs` is kept as a Mantine peer dependency but not tree-shaken out — adds ~25 KB gzip to the bundle unnecessarily
-- **Recommendation:** Remove `dayjs` from `dependencies` or verify it is only pulled by Mantine (peer) and not bundled standalone
 
 ### Dynamic Code Splitting
 
@@ -112,6 +158,14 @@ Estimated gzip ~5-6 MB for the full static folder (typical 3-4x ratio for JS).
 - `@EntityGraph` (eager path overrides): 5 usages (ApiKey scopes, Webhook events, PostReaction employee join)
 - `JOIN FETCH` in JPQL: 3 usages (RestrictedHolidaySelection, RoleRepository auth path, PostReaction wall)
 
+### N+1 Risk Sites (Iteration 7 Discovery)
+
+| File | Method | Description | Severity |
+|------|--------|-------------|----------|
+| `PerformanceReviewService.java` | `getReviewDetails` (line 252) | `employeeRepository.findById()` called inside single-review lookup without batch pre-load; becomes N+1 when iterating a list | LOW |
+| `ESignatureService.java` | `createSignatureRequest` (line 54) + `addSigner` (line 250) | `employeeRepository.findById()` called once per signer addition; if called in a loop for bulk invite, this is N+1 | LOW |
+| `ResourceAllocationService.java` | `getAllocations` (line 108) | `projectRepository.findByIdAndTenantId()` called inside stream map over project entries, producing one SELECT per row | LOW |
+
 ### Batch / N+1 Mitigation
 
 - `hibernate.default_batch_fetch_size: 25` — IN-clause batching for lazy collections
@@ -144,24 +198,22 @@ Estimated gzip ~5-6 MB for the full static folder (typical 3-4x ratio for JS).
 
 All critical business schedulers (LeaveAccrual, ContractLifecycle, AutoRegularization, WebhookDelivery, OutboxEventProcessor) confirmed to use `@SchedulerLock`. Infrastructure schedulers (RateLimitingFilter cleanup, TokenBlacklist cleanup) use `@Scheduled` without locks — **acceptable** since they are node-local operations.
 
-### Vercel Deployment
-
-- Fluid Compute enabled — concurrent request handling, lower cold starts
-- Standalone output mode — correct Docker-like container packaging
-- No explicit function region pinning in `vercel.json` — defaults to nearest region
-- No `headers()` configuration in `vercel.json` — security headers must come from Next.js middleware (verified in prior audits)
-
 ---
 
 ## Issues Found
 
 | ID | Severity | Domain | Title | Status |
 |----|----------|--------|-------|--------|
-| PERF-01 | LOW | Bundle | `dayjs` declared as dependency but 0 direct app imports — dead weight ~25KB gzip | OPEN |
+| FUNC-01 | MEDIUM | Forms | 5 forms without Zod validation (`me/skills`, `surveys/respond`, `compensation`, `leave/my-leaves`, `time-tracking`) | OPEN |
+| FUNC-02 | MEDIUM | Forms/UX | Generic `catch (error)` handlers in `letters/page.tsx` (5), `learning/certificates` (1), `learning/courses/[id]` (1), `onboarding/[id]` (1) | OPEN |
+| TZ-01 | MEDIUM | Frontend | `timesheets/page.tsx` UTC `.toISOString()` off-by-one for east-of-UTC users | FIXED this iteration (`toLocalDateString` helper added) |
+| FUNC-03 | LOW | Forms | `performance/goals/page.tsx` submit button uses `isSubmitting` not mutation `.isPending` — double-submit possible | OPEN |
+| PERF-01 | LOW | Bundle | `dayjs` declared as dependency but 0 direct app imports — dead weight ~25KB gzip | FIXED — moved to peer dependency |
 | PERF-02 | LOW | Bundle | Bundle analyzer (`ANALYZE=true`) never triggered in CI — bundle regressions go undetected | OPEN |
 | PERF-03 | LOW | Database | Hibernate statistics disabled in all profiles — N+1 regressions cannot be caught automatically | OPEN |
-| PERF-04 | INFO | Caching | Only 5 `staleTime` overrides in frontend — most queries use 5min global default which is appropriate | PASS |
-| PERF-05 | INFO | Bundle | 12 chunks >100KB uncompressed — acceptable for enterprise SPA; all served with Content-Addressable filenames | PASS |
-| PERF-06 | INFO | Scheduling | 25 `@SchedulerLock` annotations across 18 scheduler files — full coverage of business-critical jobs | PASS |
-| PERF-07 | INFO | Images | 0 raw `<img>` tags, 14 `next/image` usages — image optimization fully applied | PASS |
-| PERF-08 | INFO | Cache | 26 Redis cache names with tiered TTLs (30s–24h) and tenant-prefix isolation — production-ready | PASS |
+| PERF-04 | LOW | Database | 3 confirmed N+1 risk sites: PerformanceReviewService, ESignatureService, ResourceAllocationService | OPEN |
+| PERF-05 | INFO | Caching | Only 5 `staleTime` overrides in frontend — most queries use 5min global default which is appropriate | PASS |
+| PERF-06 | INFO | Bundle | 12 chunks >100KB uncompressed — acceptable for enterprise SPA; all served with Content-Addressable filenames | PASS |
+| PERF-07 | INFO | Scheduling | 25 `@SchedulerLock` annotations across 18 scheduler files — full coverage of business-critical jobs | PASS |
+| PERF-08 | INFO | Images | 0 raw `<img>` tags, 14 `next/image` usages — image optimization fully applied | PASS |
+| PERF-09 | INFO | Cache | 26 Redis cache names with tiered TTLs (30s–24h) and tenant-prefix isolation — production-ready | PASS |

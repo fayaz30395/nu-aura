@@ -155,7 +155,7 @@ function TemplatePanel({
               onClick={() => setIsDefault(v => !v)}
               className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${isDefault ? 'bg-[var(--accent)]' : 'bg-[var(--border-main)]'}`}
             >
-              <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${isDefault ? 'translate-x-4' : 'translate-x-0.5'}`}/>
+              <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white dark:bg-gray-100 shadow transition-all ${isDefault ? 'translate-x-4' : 'translate-x-0.5'}`}/>
             </button>
             <span className="text-xs text-[var(--text-secondary)]">Set as default template</span>
           </div>
@@ -219,7 +219,7 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
             )}
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <button type="button" onClick={onEdit} className="w-7 h-7 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded hover:bg-[var(--bg-secondary)]">
+            <button type="button" aria-label="Edit scorecard" onClick={onEdit} className="w-7 h-7 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded hover:bg-[var(--bg-secondary)]">
               <Edit2 className="w-3.5 h-3.5"/>
             </button>
             {confirmDelete ? (

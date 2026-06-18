@@ -488,6 +488,7 @@ export default function TeamAttendancePage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="text-sm"
+                aria-label="Search by employee ID"
               />
             </div>
             <select

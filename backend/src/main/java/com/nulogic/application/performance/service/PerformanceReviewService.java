@@ -246,13 +246,11 @@ public class PerformanceReviewService {
 
         review = reviewRepository.save(review);
 
-        // Resolve reviewer name for the event payload
-        String reviewerName = null;
-        if (review.getReviewerId() != null) {
-            reviewerName = employeeRepository.findById(review.getReviewerId())
-                    .map(emp -> emp.getFullName())
-                    .orElse(null);
-        }
+        // Build the single-review name cache (2 queries max) and reuse it for both the
+        // event payload and the response mapping — avoids a separate findById for reviewer.
+        ReviewNameCaches caches = buildReviewCaches(List.of(review));
+        String reviewerName = review.getReviewerId() != null
+                ? caches.employeeNames().get(review.getReviewerId()) : null;
 
         // Publish domain event — deferred to AFTER_COMMIT by DomainEventPublisher
         domainEventPublisher.publish(PerformanceReviewCompletedEvent.of(
@@ -275,7 +273,7 @@ public class PerformanceReviewService {
         log.info("Performance review {} completed for employee {} with rating {}",
                 reviewId, review.getEmployeeId(), review.getOverallRating());
 
-        return mapToResponse(review);
+        return mapToResponse(review, caches);
     }
 
     @Transactional
@@ -382,8 +380,27 @@ public class PerformanceReviewService {
         return new ReviewNameCaches(employeeNames, cycleNames);
     }
 
+    /**
+     * Single-record fast-path: resolve display names with direct findById calls instead
+     * of routing through buildReviewCaches which iterates a collection result for one ID.
+     * Saves an unnecessary stream allocation and Collection wrapping per single-review call.
+     */
     private ReviewResponse mapToResponse(PerformanceReview review) {
-        return mapToResponse(review, buildReviewCaches(List.of(review)));
+        Map<UUID, String> employeeNames = new HashMap<>();
+        Map<UUID, String> cycleNames = new HashMap<>();
+        if (review.getEmployeeId() != null) {
+            employeeRepository.findById(review.getEmployeeId())
+                    .ifPresent(e -> employeeNames.put(e.getId(), e.getFullName()));
+        }
+        if (review.getReviewerId() != null && !employeeNames.containsKey(review.getReviewerId())) {
+            employeeRepository.findById(review.getReviewerId())
+                    .ifPresent(e -> employeeNames.put(e.getId(), e.getFullName()));
+        }
+        if (review.getReviewCycleId() != null) {
+            reviewCycleRepository.findById(review.getReviewCycleId())
+                    .ifPresent(c -> cycleNames.put(c.getId(), c.getCycleName()));
+        }
+        return mapToResponse(review, new ReviewNameCaches(employeeNames, cycleNames));
     }
 
     private ReviewResponse mapToResponse(PerformanceReview review, ReviewNameCaches caches) {

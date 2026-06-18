@@ -224,6 +224,8 @@ export default function OrgHierarchyPage() {
                 </div>
                 {hasSubordinates && (
                   <button
+                    aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                    aria-expanded={isExpanded}
                     className="ml-2 flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-white/30 dark:hover:bg-white/10 transition-colors"
                   >
                     <svg

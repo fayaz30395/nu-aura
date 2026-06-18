@@ -12,6 +12,7 @@ import {DateInput} from '@mantine/dates';
 import {ArrowLeft} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {createLogger} from '@/lib/utils/logger';
+import {toLocalDateString} from '@/lib/utils/date';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
@@ -46,7 +47,7 @@ export default function CreateContractPage() {
     defaultValues: {
       title: '',
       type: 'EMPLOYMENT',
-      startDate: new Date().toISOString().split('T')[0],
+      startDate: toLocalDateString(new Date()),
       endDate: undefined,
       description: '',
       currency: 'USD',
