@@ -70,6 +70,13 @@ const expenseClaimSchema = z.object({
 
 const log = createLogger('ExpensesPage');
 
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 type ExpenseClaimFormData = z.infer<typeof expenseClaimSchema>;
 
 type TabType = 'my-claims' | 'pending' | 'all' | 'analytics';
@@ -134,7 +141,7 @@ export default function ExpenseClaims() {
   } = useForm<ExpenseClaimFormData>({
     resolver: zodResolver(expenseClaimSchema),
     defaultValues: {
-      claimDate: new Date().toISOString().split('T')[0],
+      claimDate: toLocalDateString(new Date()),
       category: 'TRAVEL',
       description: '',
       amount: 0,

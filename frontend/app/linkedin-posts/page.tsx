@@ -42,6 +42,13 @@ import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const logger = createLogger('LinkedInPosts');
 
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 export default function LinkedInPostsPage() {
   const {user} = useAuth();
   const {hasPermission} = usePermissions();
@@ -378,7 +385,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
       authorTitle: post?.authorTitle || '',
       contentSnippet: post?.contentSnippet || '',
       imageUrl: post?.imageUrl || '',
-      postedAt: post?.postedAt ? post.postedAt.split('T')[0] : new Date().toISOString().split('T')[0],
+      postedAt: post?.postedAt ? post.postedAt.split('T')[0] : toLocalDateString(new Date()),
       likes: post?.engagement.likes || 0,
       comments: post?.engagement.comments || 0,
       shares: post?.engagement.shares || 0,
@@ -445,7 +452,7 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
         authorTitle: '',
         contentSnippet: '',
         imageUrl: '',
-        postedAt: new Date().toISOString().split('T')[0],
+        postedAt: toLocalDateString(new Date()),
         likes: 0,
         comments: 0,
         shares: 0,

@@ -76,6 +76,13 @@ interface CalendarList {
 
 type ViewMode = 'month' | 'week' | 'day' | 'agenda';
 
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 function CalendarContent() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
@@ -364,10 +371,10 @@ function CalendarContent() {
 
   // Get events for a specific day
   const getEventsForDay = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = toLocalDateString(date);
     return events.filter(event => {
       const eventDate = event.start.dateTime
-        ? event.start.dateTime.split('T')[0]
+        ? toLocalDateString(new Date(event.start.dateTime))
         : event.start.date;
       return eventDate === dateStr;
     });
@@ -422,8 +429,8 @@ function CalendarContent() {
     const targetDate = date || new Date();
     setNewEvent({
       ...newEvent,
-      startDate: targetDate.toISOString().split('T')[0],
-      endDate: targetDate.toISOString().split('T')[0],
+      startDate: toLocalDateString(targetDate),
+      endDate: toLocalDateString(targetDate),
     });
     setShowCreateModal(true);
   };

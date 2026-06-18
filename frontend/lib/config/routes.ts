@@ -119,6 +119,10 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.SYSTEM_ADMIN, Permissions.DEPARTMENT_MANAGE],
   },
   {
+    path: '/admin/*',
+    adminOnly: true,
+  },
+  {
     path: '/admin',
     adminOnly: true,
   },

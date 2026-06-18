@@ -58,6 +58,13 @@ import type {HealthLog} from '@/lib/types/grow/wellness';
 import {MetricType, ProgramCategory} from '@/lib/types/grow/wellness';
 import {formatDate} from '@/lib/utils/format/date';
 
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 const healthLogSchema = z.object({
   metricType: z.string().min(1, 'Select a metric type'),
   value: z.coerce.number().positive('Value must be positive'),
@@ -124,7 +131,7 @@ export default function WellnessPage() {
     defaultValues: {
       metricType: MetricType.STEPS,
       value: 0,
-      loggedAt: new Date().toISOString().split('T')[0],
+      loggedAt: toLocalDateString(new Date()),
       notes: '',
     },
   });
@@ -162,7 +169,7 @@ export default function WellnessPage() {
         resetLogForm({
           metricType: MetricType.STEPS,
           value: 0,
-          loggedAt: new Date().toISOString().split('T')[0],
+          loggedAt: toLocalDateString(new Date()),
           notes: '',
         });
       },
@@ -302,7 +309,7 @@ export default function WellnessPage() {
                         resetLogForm({
                           metricType: metric.value,
                           value: 0,
-                          loggedAt: new Date().toISOString().split('T')[0],
+                          loggedAt: toLocalDateString(new Date()),
                           notes: '',
                         });
                         setIsLogModalOpen(true);
