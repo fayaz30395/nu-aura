@@ -2,6 +2,7 @@
 
 import {QueryClientProvider} from '@tanstack/react-query';
 import {GoogleOAuthProvider} from '@react-oauth/google';
+import {MotionConfig} from 'framer-motion';
 import {useEffect, useState} from 'react';
 import {Notifications} from '@mantine/notifications';
 import {DarkModeProvider, MantineThemeProvider} from '@/components/layout';
@@ -48,6 +49,7 @@ export function Providers({children}: { children: React.ReactNode }) {
   const [queryClient] = useState(() => getQueryClient());
 
   const content = (
+    <MotionConfig reducedMotion="user">
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
         <NotificationsToastProvider>
@@ -66,6 +68,7 @@ export function Providers({children}: { children: React.ReactNode }) {
         </NotificationsToastProvider>
       </ToastProvider>
     </QueryClientProvider>
+    </MotionConfig>
   );
 
   // Always wrap with GoogleOAuthProvider to avoid "must be used within GoogleOAuthProvider"
