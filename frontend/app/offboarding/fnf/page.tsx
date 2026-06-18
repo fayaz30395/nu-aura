@@ -182,6 +182,7 @@ export default function FnFManagementPage() {
           <Paper withBorder p="sm" radius="md">
             <Group gap="sm">
               <TextInput
+                aria-label="Search employees"
                 placeholder="Search by employee name..."
                 leftSection={<IconSearch size={14}/>}
                 value={search}

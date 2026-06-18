@@ -4,6 +4,8 @@ import com.nulogic.infrastructure.kafka.FailedKafkaEvent;
 import com.nulogic.infrastructure.kafka.FailedKafkaEvent.FailedEventStatus;
 import com.nulogic.infrastructure.kafka.IdempotencyService;
 import com.nulogic.infrastructure.kafka.KafkaTopics;
+import com.nulogic.infrastructure.kafka.outbox.OutboxEvent;
+import com.nulogic.infrastructure.kafka.outbox.OutboxEventRepository;
 import com.nulogic.infrastructure.kafka.repository.FailedKafkaEventRepository;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -11,6 +13,7 @@ import io.micrometer.core.instrument.Tag;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -66,9 +69,13 @@ public class DeadLetterHandler {
      */
     private static final int MAX_SAFE_REPLAY_COUNT = 3;
 
+    @Value("${app.outbox.enabled:false}")
+    private boolean outboxEnabled;
+
     private final MeterRegistry meterRegistry;
     private final FailedKafkaEventRepository failedKafkaEventRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final OutboxEventRepository outboxEventRepository;
     private final IdempotencyService idempotencyService;
 
     /**
@@ -246,8 +253,19 @@ public class DeadLetterHandler {
                     "No target topic configured for event " + failedEventId);
         }
 
-        // Publish to the target topic
-        kafkaTemplate.send(targetTopic, event.getPayload());
+        // Route replay through outbox when Kafka is not available (e.g. Railway deployment),
+        // otherwise publish directly so the event re-enters the normal consumer pipeline.
+        if (outboxEnabled) {
+            OutboxEvent outboxEvent = new OutboxEvent();
+            outboxEvent.setEventId(UUID.randomUUID().toString());
+            outboxEvent.setTopic(targetTopic);
+            outboxEvent.setEventClass(FailedKafkaEvent.class.getName());
+            outboxEvent.setPayload(event.getPayload());
+            outboxEventRepository.save(outboxEvent);
+            log.info("[DLT] Queued replay via outbox for event {} → topic={}", failedEventId, targetTopic);
+        } else {
+            kafkaTemplate.send(targetTopic, event.getPayload());
+        }
 
         // Update record
         event.setStatus(FailedEventStatus.REPLAYED);

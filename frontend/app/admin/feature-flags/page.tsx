@@ -126,6 +126,7 @@ export default function FeatureFlagsPage() {
       {/* Filters */}
       <Group>
         <TextInput
+          aria-label="Search features"
           placeholder="Search features..."
           leftSection={<Search size={16}/>}
           value={search}

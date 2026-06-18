@@ -161,6 +161,7 @@ export default function CalibrationPage() {
                     <Table.Td>
                       {emp.editable ? (
                         <NumberInput
+                          aria-label="Rating (1-5)"
                           min={1}
                           max={5}
                           value={displayRating ?? ''}

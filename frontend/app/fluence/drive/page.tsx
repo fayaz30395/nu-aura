@@ -147,6 +147,7 @@ function FluenceDriveContent() {
         {/* Search & Filter */}
         <div className="flex flex-col sm:flex-row gap-4">
           <TextInput
+            aria-label="Search files"
             placeholder="Search files..."
             leftSection={<Search className="h-4 w-4"/>}
             value={searchQuery}

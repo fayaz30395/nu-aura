@@ -512,6 +512,7 @@ export default function AdminEmployeesPage() {
               </div>
               <div className="relative w-full sm:w-72">
                 <TextInput
+                  aria-label="Search employees"
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.currentTarget.value)}
                   placeholder="Search by name, email, code..."

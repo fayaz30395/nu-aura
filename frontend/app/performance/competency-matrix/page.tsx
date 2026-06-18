@@ -307,6 +307,7 @@ function FrameworkAdminTab() {
             <Text size="sm" fw={500}>Filters:</Text>
           </div>
           <TextInput
+            aria-label="Search competencies"
             placeholder="Search competencies..."
             size="sm"
             leftSection={<Search className="h-3.5 w-3.5"/>}
