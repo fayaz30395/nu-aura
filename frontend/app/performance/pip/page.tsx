@@ -419,7 +419,7 @@ function PIPDetailModal({
 
   const addCheckInMutation = useMutation({
     mutationFn: (data: CheckInFormData) => addCheckIn(pip!.id, {
-      checkInDate: new Date().toISOString().split('T')[0],
+      checkInDate: toLocalDateString(new Date()),
       progressNotes: data.progressNotes,
       managerComments: data.managerComments,
     }),
