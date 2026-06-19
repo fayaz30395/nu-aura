@@ -93,7 +93,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                                                showBreadcrumbs = true,
                                                sidebarCollapsed: initialCollapsed,
                                                onSidebarCollapsedChange,
-                                               activeMenuItem = 'dashboard',
+                                               activeMenuItem,
                                                onMenuItemClick,
                                              }) => {
   const router = useRouter();
@@ -283,6 +283,89 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     [filteredSections]
   );
 
+  // Auto-derive the active menu item from the current pathname using longest-prefix match.
+  // Pages that explicitly pass `activeMenuItem` override this (e.g. fluence sub-pages).
+  const autoActiveMenuId = useMemo(() => {
+    const PATH_TO_MENU_ID: Record<string, string> = {
+      '/me/dashboard': 'my-dashboard',
+      '/me/profile': 'profile',
+      '/me/payslips': 'payslips',
+      '/me/attendance': 'my-attendance',
+      '/me/leaves': 'leaves',
+      '/me/documents': 'my-documents',
+      '/me/skills': 'my-skills',
+      '/me/assets': 'my-assets',
+      '/dashboards/executive': 'executive-dashboard',
+      '/dashboard': 'dashboard',
+      '/employees/directory': 'team-directory',
+      '/employees': 'employees',
+      '/departments': 'departments',
+      '/admin/org-hierarchy': 'org-chart',
+      '/announcements': 'announcements',
+      '/approvals': 'approvals',
+      '/attendance': 'attendance',
+      '/shifts': 'shift-management',
+      '/leave': 'leave',
+      '/overtime': 'overtime',
+      '/probation': 'probation',
+      '/assets': 'assets',
+      '/letters/templates': 'letter-templates',
+      '/letters': 'letters',
+      '/contracts': 'contracts',
+      '/payroll': 'payroll',
+      '/compensation': 'compensation',
+      '/benefits': 'benefits',
+      '/expenses': 'expenses',
+      '/loans': 'loans',
+      '/travel': 'travel',
+      '/statutory': 'statutory',
+      '/tax': 'tax',
+      '/tasks': 'my-tasks',
+      '/projects/psa/invoices': 'psa-invoices',
+      '/projects/psa/timesheets': 'psa-timesheets',
+      '/projects/psa': 'psa-projects',
+      '/projects': 'projects',
+      '/resources': 'resources',
+      '/timesheets': 'timesheets',
+      '/time-tracking': 'time-tracking',
+      '/nu-calendar': 'nu-calendar',
+      '/nu-drive': 'nu-drive',
+      '/nu-mail': 'nu-mail',
+      '/analytics/org-health': 'org-health',
+      '/analytics': 'analytics',
+      '/predictive-analytics': 'predictive-analytics',
+      '/reports': 'reports',
+      '/admin/budget': 'budget-planning',
+      '/admin/audit': 'admin-audit',
+      '/admin/roles': 'admin-roles',
+      '/admin/permissions': 'admin-permissions',
+      '/admin/holidays': 'holidays',
+      '/admin/leave-types': 'leave-types',
+      '/admin/integrations': 'integrations',
+      '/admin': 'admin-page',
+      '/workflows': 'workflows',
+      '/import-export': 'import-export',
+      '/helpdesk': 'helpdesk-tickets',
+      '/settings': 'settings',
+      '/biometric-devices': 'biometric-devices',
+      '/compliance': 'compliance',
+      '/allocations': 'allocations',
+    };
+    let bestId = 'dashboard';
+    let bestLen = 0;
+    for (const [path, id] of Object.entries(PATH_TO_MENU_ID)) {
+      if (pathname === path || pathname.startsWith(path + '/')) {
+        if (path.length > bestLen) {
+          bestLen = path.length;
+          bestId = id;
+        }
+      }
+    }
+    return bestId;
+  }, [pathname]);
+
+  const resolvedActiveMenuItem = activeMenuItem ?? autoActiveMenuId;
+
   // Mobile bottom nav items based on active app
   const mobileNavItems: NavItem[] = useMemo(() => {
     // Approval count for badge
@@ -347,7 +430,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <NavPanel
           activeApp={appCode}
           sections={filteredSections}
-          activeId={activeMenuItem}
+          activeId={resolvedActiveMenuItem}
           onItemClick={handleMenuItemClick}
           collapsed={isCollapsed}
           hasGrow={hasAppAccess('GROW')}
@@ -375,7 +458,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             <Sidebar
               items={menuItems}
               sections={filteredSections}
-              activeId={activeMenuItem}
+              activeId={resolvedActiveMenuItem}
               collapsed={false}
               onItemClick={(item: SidebarItem) => {
                 setIsMobileMenuOpen(false);
