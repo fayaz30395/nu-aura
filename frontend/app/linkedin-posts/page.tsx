@@ -95,7 +95,7 @@ export default function LinkedInPostsPage() {
   const formatDate = (dateString: string) => formatDateCanonical(dateString);
 
   return (
-    <AppLayout activeMenuItem="linkedin-posts">
+    <AppLayout>
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}

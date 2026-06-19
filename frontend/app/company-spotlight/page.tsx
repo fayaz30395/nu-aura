@@ -106,7 +106,7 @@ export default function CompanySpotlightPage() {
   // "not available" guard instead of letting every action 404.
   if (!SPOTLIGHT_API_AVAILABLE) {
     return (
-      <AppLayout activeMenuItem="company-spotlight">
+      <AppLayout>
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <EmptyState
@@ -123,7 +123,7 @@ export default function CompanySpotlightPage() {
   // Only admins can access this page
   if (!isAdmin(user?.roles)) {
     return (
-      <AppLayout activeMenuItem="company-spotlight">
+      <AppLayout>
         <div className="p-6">
           <div className="max-w-7xl mx-auto">
             <EmptyState
@@ -150,7 +150,7 @@ export default function CompanySpotlightPage() {
   };
 
   return (
-    <AppLayout activeMenuItem="company-spotlight">
+    <AppLayout>
       <PageTransition className="p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}

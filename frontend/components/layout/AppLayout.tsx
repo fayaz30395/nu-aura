@@ -394,9 +394,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       '/import-export': 'import-export',
       '/helpdesk': 'helpdesk-tickets',
       '/settings': 'settings',
-      '/biometric-devices': 'biometric-devices',
-      '/compliance': 'compliance',
-      '/allocations': 'allocations',
       // NU-Hire
       '/recruitment': 'recruitment',
       '/onboarding': 'onboarding-hire',
@@ -417,7 +414,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       '/recognition': 'recognition-grow',
       '/surveys': 'surveys-grow',
       '/wellness': 'wellness-grow',
-      '/feedback360': 'performance-grow',
+      '/feedback360': 'feedback360-grow',
       // NU-Fluence (more-specific paths first)
       '/fluence/analytics': 'fluence-analytics',
       '/fluence/search': 'fluence-search',
