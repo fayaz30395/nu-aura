@@ -623,7 +623,8 @@ export default function NineBoxPage() {
                         className="bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] border-b border-[var(--border-main)]">
                         <th className="px-4 py-2.5 text-left font-semibold text-[var(--text-secondary)]">
                           <button
-                            onClick={() => setSortField(sortField === 'name' ? 'name' : 'name')}
+                            type="button"
+                            onClick={() => setSortField('name')}
                             className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
                           >
                             Employee {sortField === 'name' ? '↑' : ''}
@@ -631,7 +632,8 @@ export default function NineBoxPage() {
                         </th>
                         <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                           <button
-                            onClick={() => setSortField(sortField === 'performance' ? 'performance' : 'performance')}
+                            type="button"
+                            onClick={() => setSortField('performance')}
                             className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
                           >
                             Performance {sortField === 'performance' ? '↑' : ''}
@@ -639,7 +641,8 @@ export default function NineBoxPage() {
                         </th>
                         <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                           <button
-                            onClick={() => setSortField(sortField === 'potential' ? 'potential' : 'potential')}
+                            type="button"
+                            onClick={() => setSortField('potential')}
                             className="hover:text-[var(--text-primary)] dark:hover:text-white transition-colors"
                           >
                             Potential {sortField === 'potential' ? '↑' : ''}
