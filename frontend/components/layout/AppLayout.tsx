@@ -1,13 +1,14 @@
 'use client';
 
 import React, {lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {usePathname, useRouter} from 'next/navigation';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 import {AnimatePresence} from 'framer-motion';
 import {logger} from '@/lib/utils/logger';
 import {PageTransition} from '@/components/motion';
 import {useUiStore} from '@/lib/stores/useUiStore';
 // Icons moved to menuSections.tsx — only layout-specific imports remain
 import {cn} from '@/lib/utils';
+import {useToast} from '@/components/notifications';
 import {
   MobileBottomNav,
   Sidebar,
@@ -98,6 +99,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                                              }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const toast = useToast();
   const {logout, user} = useAuth();
   const {roles, hasPermission, isReady} = usePermissions();
   const isSuperAdmin = useMemo(
@@ -113,6 +116,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   );
 
   const {appCode, getAppEntryRoute, hasAppAccess} = useActiveApp();
+
+  // Global ?denied=1 toast — fires whenever any route lands with this param.
+  // Individual pages (recruitment, me/dashboard) also handle it; the shell-level
+  // handler covers every other route so no redirect is ever silent.
+  useEffect(() => {
+    if (searchParams.get('denied') === '1') {
+      toast.error('Access Denied', 'You do not have permission to access that page.');
+    }
+  }, [searchParams, toast]);
 
   // Approval inbox count for sidebar badge (polls every 30s)
   const canReadApprovalInbox = isReady && hasPermission(Permissions.WORKFLOW_VIEW);

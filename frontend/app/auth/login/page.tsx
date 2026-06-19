@@ -111,11 +111,11 @@ const DEMO_ACCOUNTS: DemoAccount[] = IS_DEMO_MODE
       color: 'from-accent-500 to-accent-600'
     },
     {
-      name: 'Dhanush A',
-      email: 'dhanush@nulogic.io',
-      role: 'TEAM_LEAD',
-      department: 'HR',
-      level: 'HR Lead',
+      name: 'Fiona Nance',
+      email: 'finance@nulogic.io',
+      role: 'FINANCE_ADMIN',
+      department: 'Finance',
+      level: 'Finance Admin',
       color: 'from-accent-600 to-accent-700'
     },
   ]
