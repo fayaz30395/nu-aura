@@ -771,7 +771,7 @@ Legend: ✅=granted, ❌=denied, (inherit)=via HR_MANAGER superset, (field)=fiel
 - **Fix (config-only, user action):** Flip Railway env `DEMO_CREDENTIALS_ENABLED=false`, do a one-shot `SPRING_FLYWAY_ENABLED=true` deploy to apply V299, then disable Flyway again. Code is fail-closed; no code change required.
 
 ### Verdict
-RBAC enforcement model is **sound**: server-authoritative, deny-by-default at the interceptor, SUPER_ADMIN app-layer-only bypass with RLS preserved, clean role scope separation in `RoleHierarchy`, TENANT_ADMIN bug genuinely fixed. The one architectural risk (PERM-ISSUE-001) is fragility in how specialized-role permissions are seeded, not a live over/under-permission exploit. **No CRITICAL permission-matrix defects found.** Recommend converging role seeding onto a single initializer + namespace.
+RBAC enforcement model is **sound**: server-authoritative, deny-by-default at the interceptor, SUPER_ADMIN app-layer-only bypass with RLS preserved, clean role scope separation in `RoleHierarchy`, TENANT_ADMIN bug genuinely fixed. The one architectural risk (PERM-ISSUE-001) is fragility in how specialized-role permissions are seeded, not a live over/under-permission exploit. PERM-ISSUE-004 (NOTIFICATION vs NOTIFICATIONS resource drift) and PERM-ISSUE-005 (24 declared codes missing from the V96 catalog) are LOW maintenance/correctness traps, not exploits. **No CRITICAL permission-matrix defects found.** Recommend converging role seeding onto a single initializer + namespace, and adding build-time guards: (1) `Permission.java` constants ⊆ V96 catalog, (2) no duplicate-resource spellings.
 
 ---
 
