@@ -1460,3 +1460,146 @@ All 6 code fixes + wall empty-state fix applied. SEC-001 remains (config-only, u
 | **Projected Total** | **84** | **≈86** | Once SEC-001 flipped → projected 88+ |
 
 **SEC-001 is the only item between CONDITIONAL-GO and GO.**
+
+---
+
+## Session-4 Continuation — RBAC Testing + Cross-Route Sweep — 2026-06-19
+
+**Tester:** Claude Orchestrator (Chrome live browser)
+**Roles tested:** TEAM_LEAD (Mani S), HR_ADMIN+EMPLOYEE dual (Saran V), SUPER_ADMIN (continued)
+**Branch:** main HEAD (fd069ba2 + cedf3664)
+
+---
+
+### RBAC Test: TEAM_LEAD (Mani S) — PASS
+
+| Check | API/Route | Result |
+|---|---|---|
+| Login via demo panel | /auth/login | ✅ PASS — "Welcome, Mani S!" dashboard |
+| auth/me roles | /api/v1/auth/me | ✅ `["TEAM_LEAD","REPORTING_MANAGER"]` |
+| Header role display | Top-right badge | ✅ "TEAM LEAD" shown correctly |
+| Payroll blocked (API) | GET /api/v1/payroll/runs | ✅ 403 Forbidden |
+| Roles admin blocked (API) | GET /api/v1/roles | ✅ 403 Forbidden |
+| Payroll route blocked (UI) | /payroll/runs | ✅ Redirect → `/me/dashboard?denied=1` |
+| Expenses allowed (API) | GET /api/v1/expenses | ✅ 200 OK |
+| Loans allowed (API) | GET /api/v1/loans | ✅ 200 OK |
+| Dashboard accessible | /me/dashboard | ✅ PASS |
+
+**VERDICT: TEAM_LEAD RBAC correctly blocks payroll + admin; allows expense/loan read. ✅ PASS**
+
+---
+
+### RBAC Test: Saran V (HR_ADMIN + EMPLOYEE dual-role) — PASS WITH NOTE
+
+| Check | Result |
+|---|---|
+| Login via demo panel (listed as EMPLOYEE) | ✅ PASS — dashboard loads |
+| auth/me roles | `["EMPLOYEE", "HR_ADMIN"]` — dual role confirmed |
+| Header role display | ✅ Shows "HR ADMIN" (picks highest-privilege role correctly) |
+| Demo panel role label | ⚠️ Shows "EMPLOYEE" only — BUG-MED-005 below |
+
+---
+
+### BUG-MED-005: Demo panel mislabels dual-role user Saran V as EMPLOYEE only
+
+| Field | Value |
+|---|---|
+| Severity | LOW (demo-only, no auth impact) |
+| Type | UX / Demo Panel |
+| Route | /auth/login |
+| Status | NEW — INFORMATIONAL |
+
+Demo panel hard-codes "EMPLOYEE" for Saran V who actually holds `["EMPLOYEE","HR_ADMIN"]`. Auth system correctly identifies HR_ADMIN as primary (header shows "HR ADMIN"). No privilege issue — misleading to QA testers selecting roles. Fix: update demo account list to show highest role or all roles.
+
+---
+
+### BROWSER-ISSUE-007: PAYROLL_ADMIN and TENANT_ADMIN absent from production roles DB
+
+| Field | Value |
+|---|---|
+| Severity | HIGH |
+| Type | Data Integrity / RBAC Configuration |
+| Module | Admin / Roles Management |
+| URL | /admin/roles → GET /api/v1/roles |
+| Environment | Live (Railway) |
+| Status | NEW — CONFIRMED |
+
+#### Evidence
+
+`GET /api/v1/roles` (SUPER_ADMIN) returns exactly **8 roles**:
+`FINANCE_ADMIN, HR_MANAGER, RECRUITMENT_ADMIN, TEAM_LEAD, SUPER_ADMIN, HR_ADMIN, EMPLOYEE, MANAGER`
+
+**Missing:** `PAYROLL_ADMIN` and `TENANT_ADMIN` — both declared in the Java `Role` enum.
+
+#### V305 FK Risk
+
+Commit `a6a3922c` added `V305__specialized_role_permission_backfill.sql` which INSERTs permission grants referencing PAYROLL_ADMIN. If the PAYROLL_ADMIN role row doesn't exist in `roles` table, V305 will fail FK constraint on Railway's next migration run. **This is a production migration risk.**
+
+#### Proposed Fix
+
+Add V307 to seed missing role rows before V305's permission grants:
+```sql
+INSERT INTO roles (name, display_name) VALUES
+  ('PAYROLL_ADMIN', 'Payroll Admin'),
+  ('TENANT_ADMIN', 'Tenant Admin')
+ON CONFLICT (name) DO NOTHING;
+```
+
+**Status:** CONFIRMED — HIGH. Needs V307 migration before next Railway deploy.
+
+---
+
+### BROWSER-ISSUE-008: Admin users API role filter non-functional
+
+| Field | Value |
+|---|---|
+| Severity | LOW |
+| Type | API / Admin UX |
+| Route | GET /api/v1/admin/users?role=PAYROLL_ADMIN |
+| Status | NEW — CONFIRMED |
+
+`?role=X` filter returns all 18 users regardless of filter value. Admin role-filter UI is non-functional. Fix: verify `role` query param is wired into the JPA Specification in `AdminUserController`.
+
+---
+
+### Session-4 Route Coverage Snapshot
+
+| Route | Status | Notes |
+|---|---|---|
+| /me/dashboard (TEAM_LEAD) | ✅ PASS | Correct post-denial landing |
+| /me/dashboard (HR_ADMIN) | ✅ PASS | "HR ADMIN" primary role shown |
+| /payroll/runs (TEAM_LEAD) | ✅ BLOCKED | → /me/dashboard?denied=1 |
+| /admin/roles | ✅ PASS | 8 roles listed, Create Role CTA visible |
+| /settings/security | ✅ PASS | 2FA settings + Active Sessions |
+| /leave/my-leaves | ✅ PASS | Calendar + balance card + empty pending |
+| /reports/headcount | ⚠️ ISSUE | BROWSER-ISSUE-005 confirmed (85 vs 18) |
+| /recruitment/jobs | ✅ PASS | "No job openings found" empty state |
+| /performance/cycles | ✅ PASS | "No review cycles found" empty state |
+| /fluence/wall | ⏳ PENDING | fd069ba2 fix pushed, awaiting Vercel deploy |
+| /approvals/inbox | ✅ PASS | "You're all caught up!" — 7 category tabs |
+
+---
+
+### Session-4 Score Adjustment
+
+| Change | Delta | Reason |
+|---|---|---|
+| TEAM_LEAD RBAC negative tests | +0 | Confirmed as expected — already scored |
+| BROWSER-ISSUE-007 HIGH (missing roles + V305 FK risk) | -1 | Production migration risk |
+| BROWSER-ISSUE-008 LOW (role filter) | -0 | Below scoring threshold |
+| /approvals/inbox + 10 additional routes verified | +0 | Already scored in prior sessions |
+
+**Session-4 Score: 83/100 CONDITIONAL-GO** (↓1 from Session-3's 84 due to BROWSER-ISSUE-007)
+
+**Production Gate Updates:**
+
+| Gate | Severity | Status |
+|---|---|---|
+| SEC-001: DEMO_CREDENTIALS_ENABLED=false | CRITICAL | ⚠️ PENDING USER ACTION |
+| BROWSER-ISSUE-007: Seed PAYROLL_ADMIN + TENANT_ADMIN roles (V307) | HIGH | 🔴 NEW — needs migration |
+| BROWSER-ISSUE-005: Headcount dept query fix | HIGH | 🔍 AWAITING ROOT CAUSE |
+| BROWSER-ISSUE-004: Wall empty state | MEDIUM | ✅ FIXED fd069ba2 (pending Vercel) |
+| BROWSER-ISSUE-002: Stale header badge | MEDIUM | 🔄 APPROVED_TO_FIX |
+| BROWSER-ISSUE-006: Intermittent session drop | MEDIUM | 🔍 AWAITING ROOT CAUSE |
+| BROWSER-ISSUE-008: Admin users role filter | LOW | DOCUMENTED |
+| BUG-MED-005: Demo panel dual-role label | LOW | DOCUMENTED |
