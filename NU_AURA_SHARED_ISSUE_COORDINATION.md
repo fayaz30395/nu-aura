@@ -1938,6 +1938,57 @@ P1 sidebar fix (commit 90798199) + P4/BROWSER-ISSUE-002 fix (commit 38597874) bo
 
 ---
 
+## Session — Phase 6/7 Sidebar Retest COMPLETE (2026-06-19, deployment ibqq094i7)
+
+### Context
+
+Vercel deployment `ibqq094i7` is now live at `hrms-frontend-vert.vercel.app`.
+This deployment includes: sidebar fix (`90798199`), hydration fix (`38597874`), fluence sidebar fix (`1bf35bcc`), build prebuild orval fix (`0d313a74`), and next-env.d.ts restore (`4af28238`).
+
+### Phase 6 — Full Browser Sidebar Validation (COMPLETE)
+
+All routes verified via React fiber inspection (`memoizedProps.activeId`) on the live deployment:
+
+| Route | Expected activeId | Actual activeId | Status |
+|---|---|---|---|
+| `/recruitment` | `recruitment` | `recruitment` | ✓ PASS |
+| `/performance` | `performance-grow` | `performance-grow` | ✓ PASS |
+| `/performance/okr` | `okr-grow` | `okr-grow` | ✓ PASS |
+| `/performance/competency-matrix` | `competency-matrix-grow` | `competency-matrix-grow` | ✓ PASS |
+| `/surveys` | `surveys-grow` | `surveys-grow` | ✓ PASS |
+| `/training` | `training-grow` | `training-grow` | ✓ PASS |
+| `/one-on-one` | `one-on-one-grow` | `one-on-one-grow` | ✓ PASS |
+| `/wellness` | `wellness-grow` | `wellness-grow` | ✓ PASS |
+| `/learning` | `learning-grow` | `learning-grow` | ✓ PASS |
+| `/recognition` | `recognition-grow` | `recognition-grow` | ✓ PASS |
+| `/onboarding` | `onboarding-hire` | `onboarding-hire` | ✓ PASS (was "recruitment") |
+| `/preboarding` | `preboarding-hire` | `preboarding-hire` | ✓ PASS (was "recruitment") |
+| `/offboarding` | `offboarding-group-hire` | `offboarding-group-hire` | ✓ PASS |
+| `/referrals` | `referrals-hire` | `referrals-hire` | ✓ PASS |
+| `/fluence/search` | `fluence-search` | `fluence-search` | ✓ PASS |
+| `/fluence/wiki` | `fluence-wiki` | `fluence-wiki` | ✓ PASS |
+| `/fluence/blogs` | `fluence-blogs` | `fluence-blogs` | ✓ PASS |
+| `/fluence/templates` | `fluence-templates` | `fluence-templates` | ✓ PASS |
+| `/fluence/analytics` | `fluence-analytics` | `fluence-analytics` | ✓ PASS |
+| `/me/dashboard` | `my-dashboard` | `my-dashboard` | ✓ PASS |
+
+### Phase 7 — HRMS Regression (COMPLETE)
+
+| Route | Expected activeId | Actual activeId | Status |
+|---|---|---|---|
+| `/employees` | `employees` | `employees` | ✓ PASS |
+| `/payroll` | `payroll` | `payroll` | ✓ PASS |
+| `/admin/roles` | `roles` | `roles` | ✓ PASS |
+| `/dashboard` | `dashboard` | `dashboard` | ✓ PASS |
+| `/leave` | `leave` | `leave` | ✓ PASS |
+
+### Verdict
+
+**P1 SIDEBAR FIX: RETEST_PASSED — CLOSED**
+20 routes tested across all 4 sub-apps. Zero regressions. `activeId` matches expected sidebar item for every route.
+
+---
+
 ## Session — Parallel Orchestrator Run 2026-06-19
 
 ### Agent Status Board Update
@@ -2132,3 +2183,44 @@ Score held near prior level because two CRITICAL issues remain open (HIRE-004 cr
 
 12. **SEC-001 (existing blocker):** Railway DEMO_CREDENTIALS_ENABLED env var must be flipped to false before real-user launch. User action only.
 Phase 6 browser validation pending Vercel deployment of both commits.
+
+---
+
+## Session — Critical Fix Wave (2026-06-19, commit 1bf35bcc)
+
+### Fixes Applied
+
+| Issue ID | Severity | Title | Fix | Commit |
+|---|---|---|---|---|
+| GROW-001 | CRITICAL | Calibration Publish is a no-op stub | `handleConfirmPublish` now calls `useUpdateCalibrationRating` via `Promise.allSettled` for all rows; refetches; Mantine notifications | 1bf35bcc |
+| CRIT-2 | CRITICAL | Hired employee never receives login credentials | `EmployeeLifecycleConsumer.handleEmployeeOnboarded` wires `emailNotificationService.sendWelcomeEmail` on ONBOARDED event | 1bf35bcc |
+| FLUENCE-HIGH-1 | HIGH | `/fluence` renders HRMS sidebar | `apps.ts` FLUENCE `routePrefixes` was missing root `/fluence`; `getAppForRoute` fell through to HRMS default | 1bf35bcc |
+| FLUENCE-HIGH-2 | HIGH | Wall posts never rendered | `wall/page.tsx` used `ActivityFeed` (wiki events) instead of `useWallPosts`; replaced with `WallFeed` component with reactions/comments/pin/vote | 1bf35bcc |
+
+### Overall Status After This Wave
+
+| Metric | Value |
+|---|---|
+| Commits this session | 2 (`8cb30f10` + `1bf35bcc`) |
+| Total fixes applied | 14 (10 auto + 4 manual critical/high) |
+| CRITICALs remaining | 0 (both closed) |
+| HIGH remaining | ~7 (scorecards blank, kanban route missing, sidebar ID mismatch on 17 pages, RBAC sidebar leak, leave balance fabrication, notification bell static aria, 13 unlabeled nav landmarks) |
+| Only user-action blocker | SEC-001 — Railway `DEMO_CREDENTIALS_ENABLED=false` |
+
+### Updated Readiness Estimate
+
+**~93/100 CONDITIONAL-GO**
+- All CRITICALs closed
+- 10 AUTO + 4 manual fixes pushed
+- Ceiling ~96 once SEC-001 env flip done and HIGH backlog addressed
+- SEC-001 remains the only production blocker (config, no code needed)
+
+### Next Priority Actions (for next session)
+
+1. **SEC-001** (user action): Railway → Variables → `DEMO_CREDENTIALS_ENABLED=false` + Vercel → `NEXT_PUBLIC_DEMO_MODE=false`
+2. **HIGH** Fix scorecards blank screen — `/recruitment/scorecards` renders empty
+3. **HIGH** Fix notification bell `aria-label` (currently static "Notifications" regardless of count)
+4. **HIGH** Fix 13 unlabeled nav landmarks across main nav sections
+5. **MEDIUM** Leave balance day calculation ignores weekends/holidays
+6. **MEDIUM** 247 form validation errors missing `role="alert"` for screen readers
+
