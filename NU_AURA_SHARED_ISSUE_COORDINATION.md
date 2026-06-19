@@ -1352,9 +1352,17 @@ Cross-sub-app hard navigations occasionally redirect to `/auth/login` with a val
 
 Browser-rbac-validator confirms: the NU-Fluence sidebar DOES display an "Articles" link that navigates to `/fluence/articles` — which returns a graceful 404. Prior code audit finding "no source file references this route" was a false negative (the link exists in the sidebar nav, the route does not). This is a real dead-link bug.
 
-**Fix:** Either create `app/fluence/articles/page.tsx` (redirect to `/fluence/blogs` which hosts articles) or remove the sidebar "Articles" link. Severity: MEDIUM (visible to all NU-Fluence users in sidebar).
+**Fix:** Create `app/fluence/articles/page.tsx` (redirect to `/fluence/blogs` which hosts articles). Severity: MEDIUM (visible to all NU-Fluence users in sidebar).
 
-**Status:** CONFIRMED — APPROVED_TO_FIX | Codex action: add redirect page or remove nav link.
+**Status:** READY_FOR_CLAUDE_RETEST | Codex added a redirect page at `frontend/app/fluence/articles/page.tsx` that redirects `/fluence/articles` to `/fluence/blogs`.
+
+**Codex Implementation Notes (2026-06-19 13:10:12 IST):**
+- Files changed: `frontend/app/fluence/articles/page.tsx`
+- Code summary: Added a server-side Next.js App Router redirect from stale sidebar route `/fluence/articles` to the existing articles/blogs route `/fluence/blogs`.
+- Permissions impact: None. No permissions, guards, or sidebar permission checks changed.
+- Tests run: `cd frontend && npm run lint` PASS; `cd frontend && npx tsc --noEmit` PASS.
+- Rollback plan: Remove `frontend/app/fluence/articles/page.tsx`.
+- Claude retest: Open `/fluence/articles` from the live/sidebar path and verify it lands on `/fluence/blogs` without a 404.
 
 ---
 
@@ -1443,7 +1451,7 @@ Browser-rbac-validator confirms: the NU-Fluence sidebar DOES display an "Article
 | BROWSER-ISSUE-005: Headcount dept mismatch | HIGH | AWAITING ROOT CAUSE | Codex investigates dept chart API query scope |
 | BROWSER-ISSUE-002: Stale header badge | MEDIUM | AWAITING FIX | Codex investigates Zustand store reset path |
 | BROWSER-ISSUE-006: Intermittent session drop | MEDIUM | AWAITING ROOT CAUSE | Codex checks Railway JWT_EXPIRY + hard-nav restoreSession |
-| ISSUE-0007: /fluence/articles dead link | MEDIUM | AWAITING FIX | Codex adds redirect or removes sidebar link |
+| ISSUE-0007: /fluence/articles dead link | MEDIUM | READY_FOR_CLAUDE_RETEST | Codex added `/fluence/articles` redirect to `/fluence/blogs` |
 | PERM-ISSUE-004: NOTIFICATION namespace drift | LOW | DOCUMENTED | Next sprint |
 | PERM-ISSUE-005: 24 Permission codes missing from catalog | LOW | DOCUMENTED | Next sprint |
 
@@ -1687,4 +1695,3 @@ Approach: Browser-first discovery (no code assumptions). 7 roles × all pages ca
 |---|---|---|
 | Claude Orchestrator (browser) | Phase 1-2: browser validation all 7 roles | IN_PROGRESS |
 | sidebar-code-analyst (fork) | Phase 3 parallel: sidebar source code analysis | IN_PROGRESS |
-
