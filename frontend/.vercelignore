@@ -1,0 +1,9 @@
+node_modules/
+.next/
+lib/generated/
+playwright-report/
+test-results/
+playwright/.auth/
+*.tsbuildinfo
+.DS_Store
+*.log
