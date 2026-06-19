@@ -1597,8 +1597,8 @@ ON CONFLICT (name) DO NOTHING;
 |---|---|---|
 | SEC-001: DEMO_CREDENTIALS_ENABLED=false | CRITICAL | ⚠️ PENDING USER ACTION |
 | BROWSER-ISSUE-007: Seed PAYROLL_ADMIN + TENANT_ADMIN roles (V307) | HIGH | ✅ FIXED — V307 migration created (pending Railway deploy) |
-| BROWSER-ISSUE-005: Headcount dept query fix | HIGH | 🔍 AWAITING ROOT CAUSE |
-| BROWSER-ISSUE-004: Wall empty state | MEDIUM | ✅ FIXED fd069ba2 (pending Vercel) |
+| BROWSER-ISSUE-005: Headcount dept query fix | HIGH | ✅ FIXED — AnalyticsService uses findDepartmentDistribution(ACTIVE-only); totalEmployees=activeEmployees |
+| BROWSER-ISSUE-004: Wall empty state | MEDIUM | ✅ RETEST_PASSED — live verified 2026-06-19 (shows "No activity yet" correctly) |
 | BROWSER-ISSUE-002: Stale header badge | MEDIUM | 🔄 APPROVED_TO_FIX |
 | BROWSER-ISSUE-006: Intermittent session drop | MEDIUM | 🔍 AWAITING ROOT CAUSE |
 | BROWSER-ISSUE-008: Admin users role filter | LOW | DOCUMENTED |

@@ -99,11 +99,11 @@ public class AnalyticsService {
 
     @Transactional(readOnly = true)
     public EmployeeMetrics getEmployeeMetrics(UUID tenantId) {
-        long totalEmployees = employeeRepository.countByTenantId(tenantId);
         long activeEmployees = employeeRepository.countByTenantIdAndStatus(
                 tenantId, com.nulogic.domain.employee.Employee.EmployeeStatus.ACTIVE);
+        long totalEmployees = activeEmployees;
 
-        List<Object[]> deptDistribution = employeeRepository.getEmployeeCountByDepartment(tenantId);
+        List<Object[]> deptDistribution = employeeRepository.findDepartmentDistribution(tenantId);
         Map<String, Long> departmentCounts = new LinkedHashMap<>();
         for (Object[] row : deptDistribution) {
             String deptName = (String) row[0];

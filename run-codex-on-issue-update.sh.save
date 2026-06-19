@@ -1,0 +1,44 @@
+#!/bin/bash
+
+ISSUE_FILE="NU_AURA_SHARED_ISSUE_COORDINATION.md"
+PROMPT_FILE="NU_AURA_CODEX_PARALLEL_FIXER_PROMPT.md"
+LOCK_FILE=".codex_issue_runner.lock"
+
+echo "Watching $ISSUE_FILE for updates..."
+
+fswatch -o "$ISSUE_FILE" | while read event
+do
+  if [ -f "$LOCK_FILE" ]; then
+    echo "Codex already running. Skipping duplicate trigger."
+    continue
+  fi
+
+  touch "$LOCK_FILE"
+
+  echo "Issue file updated. Triggering Codex..."
+
+  codex exec --full-auto "
+Read $PROMPT_FILE.
+Read $ISSUE_FILE.
+
+Pick the highest-priority issue with status:
+OPEN, DISCOVERED, ANALYZED, or READY_FOR_CODEX.
+
+Do only one issue.
+
+Rules:
+1. Confirm the issue is still valid.
+2. Analyze root cause from code.
+3. Propose solution inside $ISSUE_FILE.
+4. If solution is low-risk, implement it.
+5. Add or update tests.
+6. Run relevant tests.
+7. Update the issue status to READY_FOR_CLAUDE_RETEST.
+8. Stop after one issue.
+
+Do not work on multiple issues.
+Do not overwrite other agents' updates.
+"
+
+  rm -f "$LOCK_FILE"
+done
