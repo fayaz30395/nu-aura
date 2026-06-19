@@ -132,7 +132,9 @@ export const useAuth = create<AuthState>()(
       },
 
       login: async (credentials: LoginRequest) => {
-        set({isLoading: true});
+        // Clear any stale user data immediately so the header never shows a
+        // previous session's name/role while the new login request is in-flight.
+        set({user: null, isAuthenticated: false, isLoading: true});
         try {
           const response = await authApi.login(credentials);
 

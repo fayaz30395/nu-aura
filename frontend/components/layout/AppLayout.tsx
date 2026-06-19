@@ -1,6 +1,6 @@
 'use client';
 
-import React, {lazy, Suspense, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import {AnimatePresence} from 'framer-motion';
 import {logger} from '@/lib/utils/logger';
@@ -131,8 +131,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   const isCommandPaletteOpen = useUiStore((s) => s.commandPaletteOpen);
   const setCommandPaletteOpen = useUiStore((s) => s.setCommandPaletteOpen);
 
+  // Defer sidebar collapse state to after mount to prevent SSR/hydration mismatch.
+  // Zustand rehydrates `sidebarCollapsed` from localStorage on the client —
+  // rendering collapsed=false on the server then true on mount causes a width flash.
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => { setIsMounted(true); }, []);
+
   // If a parent supplies `sidebarCollapsed`, it wins; otherwise use the store.
-  const isCollapsed = initialCollapsed ?? storeSidebarCollapsed;
+  // Before mount, always render expanded so SSR matches the initial client paint.
+  const isCollapsed = isMounted ? (initialCollapsed ?? storeSidebarCollapsed) : false;
 
   // Refs for mobile drawer focus management (audit N-6)
   const mobileDrawerRef = useRef<HTMLElement | null>(null);
