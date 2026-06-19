@@ -1668,3 +1668,23 @@ ON CONFLICT (name) DO NOTHING;
 - **BROWSER-ISSUE-007** (HIGH): V307 migration pushed to git — Railway will auto-apply on next deploy.
 
 **Score ceiling**: Would reach ~96/100 after SEC-001 env flip + V307 Railway deploy. Only LOW issues remain beyond that (stale badge, role filter label, upsell banner).
+
+---
+
+## Sidebar Consistency Investigation — 2026-06-19
+
+**Initiated by:** User | **Method:** Chrome browser + code analysis | **Phases:** 7 (Discovery → Fix → Retest → Regression)
+**Status:** IN_PROGRESS — Phase 1 (Discovery)
+
+### Investigation Entry
+
+Issue: "Sidebar inconsistency seen on multiple pages for different users."
+Approach: Browser-first discovery (no code assumptions). 7 roles × all pages captured before any fix.
+
+### Agent Status Board
+
+| Agent | Role | Status |
+|---|---|---|
+| Claude Orchestrator (browser) | Phase 1-2: browser validation all 7 roles | IN_PROGRESS |
+| sidebar-code-analyst (fork) | Phase 3 parallel: sidebar source code analysis | IN_PROGRESS |
+
