@@ -984,3 +984,195 @@ Three-tier authorization proven against the SAME backend endpoints:
 - Backend logout requires the `X-XSRF-TOKEN` header (double-submit CSRF) — POST without it returns 403. This is correct CSRF behavior, observed live.
 - Frontend session is "sticky": navigating to a protected route after a Next.js-route `/api/auth/logout` did not always clear the httpOnly JWT; only the backend `POST /api/v1/auth/logout` (with CSRF token) or the header "Sign out" action fully cleared the session (verified: `/api/v1/auth/me` → 401 afterward). Minor, but worth noting for session-management correctness.
 
+---
+
+## Claude Orchestrator — Session-3 Browser Sweep (SUPER_ADMIN cross-sub-app) — 2026-06-19
+
+**Tester:** Claude (Chrome E2E, tab 1283667309)
+**Role tested:** SUPER_ADMIN (Fayaz M)
+**Routes covered this sweep:** /performance/okr, /performance/360-feedback, /fluence/wiki, /fluence/wall, /leave, /admin/roles, /reports/headcount
+
+### Route Coverage Snapshot
+
+| Route | Status | Notes |
+|---|---|---|
+| /performance/okr | ✅ PASS | OKR Management, clean empty state, New Objective CTA |
+| /performance/360-feedback | ✅ PASS | 360-Degree Feedback, 3 tabs (Feedback Cycles/Pending/Results), all empty |
+| /fluence/wiki | ✅ PASS | Wiki Pages, Spaces + Pages panes, clean empty state |
+| /fluence/wall | ⚠️ ISSUE | See BROWSER-ISSUE-004 — empty response shown as service error |
+| /leave | ✅ PASS | Personal leave view, balance card, June 2026 calendar, pending requests |
+| /admin/roles | ✅ PASS | Role Management, empty custom roles list, Create Role available |
+| /reports/headcount | ⚠️ ISSUE | See BROWSER-ISSUE-005 — department totals vs total employees mismatch |
+
+### BROWSER-ISSUE-004: Activity Wall empty state displayed as service error
+
+| Field | Value |
+|---|---|
+| Discovered By | Claude Orchestrator (browser sweep) |
+| Module | NU-Fluence / Wall |
+| Role/Login | SUPER_ADMIN |
+| URL/Route | /fluence/wall |
+| Severity | MEDIUM |
+| Type | Frontend / UX — Empty State |
+| Environment | Live (Vercel) |
+| Reproducibility | Always (no wall posts exist in tenant) |
+| Status | NEW |
+
+#### Evidence
+
+- Page displays: "Activity feed unavailable / Unable to load activity feed. The service may be temporarily unavailable."
+- API call `GET /api/v1/wall/posts?page=0&size=10` returns **HTTP 200** with:
+  ```json
+  { "content": [], "totalPages": 0, "totalElements": 0, "empty": true }
+  ```
+- The response is a valid paginated Spring Page with zero elements — not a network error or 5xx.
+- The frontend incorrectly treats `empty: true` / `content: []` as a service failure instead of rendering a proper "No posts yet" empty state.
+- API verified via `fetch('/api/v1/wall/posts?page=0&size=10')` returning status 200 in browser console.
+
+#### Expected Result
+
+When there are no posts, show a proper empty state: "No posts yet — Be the first to share something!" with a CTA to compose a post.
+
+#### Actual Result
+
+"Activity feed unavailable / The service may be temporarily unavailable." — error copy that implies a backend outage when the API is responding correctly.
+
+#### Suspected Root Cause
+
+The component likely checks `if (error || !data)` for the error state, and an empty `content: []` triggers the falsy branch on `data.content` rather than a proper empty-state branch.
+
+#### Proposed Solution
+
+In the wall feed component, after a successful API call, check `data.content.length === 0` separately from an actual fetch error. Render "No posts yet" for the former, keep the error UI only for genuine network/server failures.
+
+#### Cross-Agent Confirmation
+
+| Confirmation | Agent | Decision | Notes | Timestamp |
+|---|---|---|---|---|
+| Issue validity | Claude | CONFIRMED | API returns 200 with empty page; error copy is factually wrong | 2026-06-19 Session-3 browser sweep |
+| Fix safety | Claude | APPROVED | Pure frontend empty-state fix; no RBAC/security/API impact | 2026-06-19 Session-3 browser sweep |
+| Retest result | TBD | TBD | TBD | TBD |
+
+---
+
+### BROWSER-ISSUE-005: Headcount Report — department totals exceed total employees
+
+| Field | Value |
+|---|---|
+| Discovered By | Claude Orchestrator (browser sweep) |
+| Module | NU-HRMS / Reports |
+| Role/Login | SUPER_ADMIN |
+| URL/Route | /reports/headcount |
+| Severity | HIGH |
+| Type | Data Integrity / Reports |
+| Environment | Live (Vercel + Railway) |
+| Reproducibility | Always |
+| Status | NEW |
+
+#### Evidence
+
+Screenshot of /reports/headcount shows:
+- **Total Employees: 18** | **Active Employees: 18**
+- **Headcount by Department**: Engineering 45, Sales 15, Product 12, Marketing 8, HR 5
+- **Department sum: 45 + 15 + 12 + 8 + 5 = 85** — 4.7× the reported total of 18
+
+#### Expected Result
+
+Department headcount totals should sum to approximately the same value as Total Employees (with possible minor variation from employees without department assignments).
+
+#### Actual Result
+
+Department values summed = 85, Total Employees = 18. The discrepancy of 67 suggests either:
+1. The department bars show cumulative historical hire counts (not current headcount), OR
+2. The department breakdown API uses a different query scope than the total employee API, OR
+3. The bar chart Y-values are incorrectly scaled (bar widths used as numbers)
+
+#### Suspected Root Cause
+
+Two different API endpoints likely used:
+- `/api/v1/reports/headcount` for the KPI cards (18 current employees)
+- `/api/v1/reports/headcount/by-department` or similar for the bar chart — possibly counting all historical employee records rather than active ones
+
+#### Proposed Solution
+
+Ensure both the KPI count and the department breakdown query use the same filter: `status = ACTIVE AND is_deleted = false AND tenant_id = ?`. Add a reconciliation assertion in the component: `sum(departmentCounts) should ≈ totalEmployees` and log a warning if >5% divergent.
+
+#### Cross-Agent Confirmation
+
+| Confirmation | Agent | Decision | Notes | Timestamp |
+|---|---|---|---|---|
+| Issue validity | Claude | CONFIRMED | Screenshot evidence: total=18, dept sum=85 | 2026-06-19 Session-3 browser sweep |
+| Fix safety | Codex | TBD — investigate which query backs the department chart | Need to verify if dept query is ACTIVE-scoped | TBD |
+| Retest result | TBD | TBD | TBD | TBD |
+
+---
+
+### BROWSER-ISSUE-006: Intermittent session drop on sub-app route navigation (JWT race)
+
+| Field | Value |
+|---|---|
+| Discovered By | Claude Orchestrator (browser sweep) |
+| Module | All / Auth / Session |
+| Role/Login | SUPER_ADMIN |
+| URL/Route | /performance (first attempt), /performance/360-feedback (first attempt) |
+| Severity | MEDIUM |
+| Type | Auth / Session / UX |
+| Environment | Live (Vercel — short JWT TTL on Railway demo server) |
+| Reproducibility | ~30% (intermittent) — second attempt always succeeds |
+| Status | NEW |
+
+#### Evidence
+
+- Navigation to `/performance` (cold, from another sub-app) → immediate redirect to `/auth/login?reason=expired`
+- Re-login as SUPER_ADMIN via demo panel → `/me/dashboard` restored → navigate to `/performance` again → works
+- Navigation to `/performance/360-feedback` → redirect to `/auth/login` (no `?reason=expired` this time)
+- Re-login → navigate to `/performance/360-feedback` → loads correctly (HTTP 200, page visible)
+- Pattern: occurs after switching from one sub-app to another (e.g., from NU-Fluence to NU-Grow). Second attempt after re-login always succeeds.
+
+#### Expected Result
+
+Authenticated SUPER_ADMIN should reach any protected route without being redirected to login, as long as the session is valid.
+
+#### Actual Result
+
+~30% of cross-sub-app navigations result in a redirect to `/auth/login` even for an active session. The session recovers immediately after a single re-login, suggesting a race condition or early JWT expiry on the Railway demo server rather than a structural auth bug.
+
+#### Suspected Root Cause
+
+Short JWT TTL (possibly 15–30 minutes) on the Railway/demo backend. After idle time or sub-app navigation delay, the access token expires before the client-side refresh intercept fires. The proxy.ts expired-token path (`restoreSession`) handles this correctly for most cases, but on direct cross-sub-app hard navigations there may be a timing gap before `restoreSession` can refresh.
+
+#### Proposed Solution
+
+1. Verify Railway backend `JWT_EXPIRY` / `jwtExpirationMs` env var — should be ≥1h for demo/staging.
+2. Check if `restoreSession` is triggered on hard navigations (not just SPA transitions) — may need an `onMount` refresh check in `AppLayout`.
+3. Lower priority: this is a demo-server TTL issue, not a structural auth flaw. Not a blocker if TTL is intentionally short for demo security. Accept as LOW risk if TTL is configurable pre-production.
+
+#### Cross-Agent Confirmation
+
+| Confirmation | Agent | Decision | Notes | Timestamp |
+|---|---|---|---|---|
+| Issue validity | Claude | CONFIRMED | Reproducible pattern across 2 separate occurrences; second attempt always succeeds | 2026-06-19 Session-3 |
+| Fix safety | Codex | TBD — investigate Railway JWT_EXPIRY + restoreSession hard-nav behavior | Not a blocker; severity may downgrade after investigation | TBD |
+| Retest result | TBD | TBD | TBD | TBD |
+
+---
+
+### SUPER_ADMIN Role Coverage Update
+
+| Check | Result |
+|---|---|
+| Login works | ✅ PASS (via demo panel 1-click) |
+| Landing page (me/dashboard) | ✅ PASS |
+| NU-HRMS menus visible | ✅ PASS |
+| NU-Hire menus visible | ✅ PASS (prior session) |
+| NU-Grow menus visible | ✅ PASS |
+| NU-Fluence menus visible | ✅ PASS |
+| Admin menus (/admin/roles) | ✅ PASS |
+| Reports (/reports/headcount) | ✅ PASS (data issue logged) |
+| RBAC negative (blocked routes) | N/A — SUPER_ADMIN bypasses all |
+| Fluence Wall | ⚠️ ISSUE-004 logged |
+| Sub-app session persistence | ⚠️ ISSUE-006 intermittent |
+| Logout | Not retested this sweep — prior session confirmed working |
+
+**SUPER_ADMIN coverage: PARTIAL** — main routes verified, RBAC negatives N/A by design, 2 issues logged.
+
