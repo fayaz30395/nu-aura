@@ -45,6 +45,7 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 |---|---|---|---|---|
 | Claude | Orchestration — Parallel RBAC/Security/Tenant/Browser swarm | IN_PROGRESS | None | 2026-06-19 Session-3 parallel launch |
 | Codex | Next.js / Mantine / React / forms / validation / UI bugs / Playwright failure coordination | FRONTEND_STATUS_SYNC_COMPLETE | No new approved frontend code fix selected in this pass; existing frontend fixes are pushed and awaiting Claude/browser retest where noted | 2026-06-19 17:26:17 IST |
+| Codex backend auto-runner | Spring Boot / PostgreSQL / Redis / Kafka / Security / RBAC / API issue triage and approved fixes | AUTO_RUNNER_ACTIVE | Single `codex-issue-runner` watcher active; no stale lock; approval gate enforced | 2026-06-19 17:27:21 IST |
 | backend-rbac-auditor | SecurityConfig, @RequiresPermission coverage, JWT, RLS, DEMO flag | RUNNING | None | 2026-06-19 Session-3 |
 | frontend-auth-auditor | middleware.ts, nu-rbac.config.ts, NavPanel, usePermissions, bug status | RUNNING | None | 2026-06-19 Session-3 |
 | permission-matrix-auditor | Full role×permission matrix from Flyway migrations V0→V304 | RUNNING | None | 2026-06-19 Session-3 |
@@ -90,6 +91,8 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | 2026-06-19 12:10:23 IST | Codex | Preserved active watcher process | Existing `./run-codex-on-issue-update.sh` process and spawned `codex exec` were already running from 12:04-12:05; Codex did not kill or restart them to avoid interrupting another agent's work | NOTED |
 | 2026-06-19 17:26:17 IST | Codex | Re-read frontend fixer prompt and shared coordination file | Latest local `main` is up to date at `5b9dce7b`; `qa-reports/CHROME_E2E_2026-06-19.md` records 93/100 CONDITIONAL-GO with LOW/MEDIUM frontend items resolved and SEC-001 still config-only | DONE |
 | 2026-06-19 17:26:17 IST | Codex | Updated frontend issue status summary | Marked stale summary rows for BROWSER-ISSUE-002 and sidebar P1/P4 as pushed and ready for Claude/browser retest based on existing coordination-file commits `90798199` and `38597874`; no source code changed | DONE |
+| 2026-06-19 17:27:21 IST | Codex | Re-read backend/security fixer prompt and shared coordination file | Confirmed `NU_AURA_CODEX_PARALLEL_FIXER_PROMPT.md` still requires shared-file protocol and `APPROVED_TO_FIX` before implementation; shared file already contains backend/security auto-runner scope | DONE |
+| 2026-06-19 17:27:21 IST | Codex | Reconciled watcher state | Removed duplicate non-tmux watcher, stopped stale child `codex exec`, verified lock cleared, and restored one `codex-issue-runner` tmux watcher for future shared-file changes | DONE |
 
 ## Codex Focus Scope
 
@@ -434,7 +437,7 @@ N/A
 | ID | Decision | Made By | Confirmed By | Reason | Risk | Timestamp |
 |---|---|---|---|---|---|---|
 | DEC-0001 | Codex will not implement any issue from this run until Claude records evidence and marks the issue `APPROVED_TO_FIX` | Claude protocol / Codex confirmation | Codex | Preserves shared-file protocol and avoids overwriting another agent's findings | Slower fixes, but lower RBAC/security regression risk | 2026-06-19 11:48:25 IST |
-| DEC-0002 | `run-codex-on-issue-update.sh` is the backend/security auto-runner for shared-file changes; it must pull, process one approved-or-analysis issue, update status/details, commit findings, and push | User request / Codex | Codex | Makes the requested auto behavior explicit while preserving the approval gate | Active watcher may still be running the older in-memory script until restarted | 2026-06-19 12:10:23 IST |
+| DEC-0002 | `run-codex-on-issue-update.sh` is the backend/security auto-runner for shared-file changes; it must pull, process one approved-or-analysis issue, update status/details, commit findings, and push | User request / Codex | Codex | Makes the requested auto behavior explicit while preserving the approval gate | Single active watcher verified at 2026-06-19 17:27:21 IST | 2026-06-19 12:10:23 IST |
 
 ---
 
