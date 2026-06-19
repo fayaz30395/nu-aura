@@ -2,6 +2,7 @@ package com.nulogic.infrastructure.kafka.consumer;
 
 import com.nulogic.application.integration.service.IntegrationEventRouter;
 import com.nulogic.application.leave.service.LeaveBalanceService;
+import com.nulogic.application.notification.service.EmailNotificationService;
 import com.nulogic.application.user.service.ImplicitRoleEngine;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.integration.IntegrationEvent;
@@ -48,6 +49,7 @@ public class EmployeeLifecycleConsumer {
     private final ImplicitRoleEngine implicitRoleEngine;
     private final EmployeeRepository employeeRepository;
     private final IntegrationEventRouter integrationEventRouter;
+    private final EmailNotificationService emailNotificationService;
 
     /**
      * Called from both the Kafka listener and OutboxEventProcessor.
@@ -209,9 +211,23 @@ public class EmployeeLifecycleConsumer {
                 // Don't throw; continue with welcome notification
             }
 
-            // Send welcome notification
-            // This would be handled by notificationService in production
-            log.debug("Sent welcome notification to employee: {}", employeeId);
+            // Send welcome notification with login credentials
+            try {
+                employeeRepository.findByIdWithUser(employeeId, tenantId).ifPresent(emp -> {
+                    if (emp.getUser() != null && emp.getUser().getEmail() != null) {
+                        String employeeName = emp.getFirstName() + (emp.getLastName() != null ? " " + emp.getLastName() : "");
+                        emailNotificationService.sendWelcomeEmail(
+                            emp.getUser().getEmail(),
+                            employeeName,
+                            "Welcome@123"
+                        );
+                        log.info("Sent welcome email to new employee: {}", employeeId);
+                    }
+                });
+            } catch (RuntimeException e) {
+                log.warn("Failed to send welcome email to employee {}: {}", employeeId, e.getMessage());
+                // Don't fail onboarding for email errors
+            }
 
             log.info("Successfully processed ONBOARDED event for employee: {}", employeeId);
 

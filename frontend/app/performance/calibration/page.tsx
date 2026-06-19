@@ -4,6 +4,8 @@ import {AppLayout} from '@/components/layout';
 import {useEffect, useMemo, useState} from 'react';
 import {AlertTriangle, BarChart3, Download, Info, RefreshCw, Search, Target, TrendingUp, Users,} from 'lucide-react';
 import {useAllReviews, usePerformanceAllCycles, useUpdateReview} from '@/lib/hooks/queries/usePerformance';
+import {useUpdateCalibrationRating} from '@/lib/generated/api/review-cycle-controller/review-cycle-controller';
+import {notifications} from '@mantine/notifications';
 import type {ReviewRequest} from '@/lib/types/grow/performance';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {PageTransition} from '@/components/motion';
@@ -123,6 +125,7 @@ export default function CalibrationPage() {
   const cyclesQuery = usePerformanceAllCycles(0, 100);
   const allReviewsQuery = useAllReviews(0, 500);
   const updateReviewMutation = useUpdateReview();
+  const updateCalibrationRatingMutation = useUpdateCalibrationRating();
 
   // Local state
   const [selectedCycleId, setSelectedCycleId] = useState('');
@@ -133,6 +136,7 @@ export default function CalibrationPage() {
   const [finalOverrides, setFinalOverrides] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState<string | null>(null);
   const [publishConfirm, setPublishConfirm] = useState(false);
+  const [publishing, setPublishing] = useState(false);
 
   // Initialize selected cycle (moved to useEffect to avoid setState during render)
   useEffect(() => {
@@ -313,8 +317,36 @@ export default function CalibrationPage() {
   };
 
   const handleConfirmPublish = async () => {
-    // API call would go here
-    setPublishConfirm(false);
+    setPublishing(true);
+    try {
+      const mutations: Promise<unknown>[] = [];
+      for (const row of filteredAndSorted) {
+        const finalRating = finalOverrides[row.employeeId] ?? row.finalRating;
+        if (finalRating != null && row.reviewIds.length > 0) {
+          for (const reviewId of row.reviewIds) {
+            mutations.push(
+              updateCalibrationRatingMutation.mutateAsync({reviewId, params: {finalRating}})
+            );
+          }
+        }
+      }
+      await Promise.allSettled(mutations);
+      await allReviewsQuery.refetch();
+      notifications.show({
+        title: 'Ratings published',
+        message: 'Calibrated ratings have been published successfully.',
+        color: 'green',
+      });
+    } catch (err) {
+      notifications.show({
+        title: 'Publish failed',
+        message: err instanceof Error ? err.message : 'An error occurred while publishing ratings.',
+        color: 'red',
+      });
+    } finally {
+      setPublishing(false);
+      setPublishConfirm(false);
+    }
   };
 
   const cycles = cyclesQuery.data?.content || [];
@@ -354,10 +386,11 @@ export default function CalibrationPage() {
                 <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
                   <button
                     onClick={publishRatings}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    disabled={publishing}
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 disabled:opacity-50"
                   >
                     <TrendingUp size={16}/>
-                    Publish
+                    {publishing ? 'Publishing...' : 'Publish'}
                   </button>
                 </PermissionGate>
               </div>

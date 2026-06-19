@@ -1,19 +1,32 @@
 'use client';
 
-import {useMemo} from 'react';
+import {useMemo, useState} from 'react';
 import {IconActivity, IconFlame, IconTrendingUp} from '@tabler/icons-react';
 import {AppLayout} from '@/components/layout';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
-import ActivityFeed from '@/components/fluence/ActivityFeed';
 import {Reveal} from '@/components/motion';
-import {PostComposer} from '@/components/wall';
-import {useCreatePost} from '@/lib/hooks/queries/useWall';
+import {PostComposer, WallCard} from '@/components/wall';
+import {
+  useAddComment,
+  useAddWallReaction,
+  useCreatePost,
+  useDeletePost,
+  useDeleteWallComment,
+  usePinPost,
+  useRemoveVote,
+  useRemoveWallReaction,
+  useVote,
+  useWallComments,
+  useWallPosts,
+} from '@/lib/hooks/queries/useWall';
 import {useActivityFeed, useBlogPosts, useWikiPages} from '@/lib/hooks/queries/useFluence';
 import {notifications} from '@mantine/notifications';
 import {BookOpen, Eye, Heart, Newspaper} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {formatDateShort} from '@/lib/utils/format/date';
+import {Center, Loader, Pagination, Text} from '@mantine/core';
+import {useAuth} from '@/lib/hooks/useAuth';
 
 interface TrendingItem {
   id: string;
@@ -183,6 +196,225 @@ function formatTimeAgo(dateString: string): string {
   return formatDateShort(dateString);
 }
 
+// ─── Per-post comment state manager ─────────────────────────────────────────
+
+interface PostCommentState {
+  showComments: boolean;
+  page: number;
+}
+
+function usePostCommentState(postId: string, open: boolean, page: number) {
+  const {data, isLoading} = useWallComments(postId, page, 20, open);
+  return {
+    comments: data?.content ?? [],
+    commentsLoading: isLoading,
+    commentsHasMore: !(data?.last ?? true),
+  };
+}
+
+// ─── Single post row — isolates per-post comment state ──────────────────────
+
+interface WallPostRowProps {
+  postId: string;
+  commentState: PostCommentState;
+  currentUserId: string | undefined;
+  onToggleComments: (id: string) => void;
+  onPageChange: (id: string, page: number) => void;
+  onReact: (id: string, type: string) => void;
+  onRemoveReact: (id: string) => void;
+  onAddComment: (postId: string, content: string, parentCommentId?: string) => void;
+  onDeleteComment: (commentId: string, postId: string) => void;
+  onDelete: (id: string) => void;
+  onPin: (id: string, pinned: boolean) => void;
+  onVote: (postId: string, optionId: string) => void;
+  commentSubmitting: boolean;
+  post: import('@/lib/services/core/wall.service').WallPostResponse;
+}
+
+function WallPostRow({
+  post,
+  postId,
+  commentState,
+  currentUserId,
+  onToggleComments,
+  onPageChange,
+  onReact,
+  onRemoveReact,
+  onAddComment,
+  onDeleteComment,
+  onDelete,
+  onPin,
+  onVote,
+  commentSubmitting,
+}: WallPostRowProps) {
+  const {comments, commentsLoading, commentsHasMore} = usePostCommentState(
+    postId,
+    commentState.showComments,
+    commentState.page,
+  );
+
+  return (
+    <WallCard
+      key={postId}
+      post={post}
+      currentUserId={currentUserId}
+      comments={comments}
+      commentsLoading={commentsLoading}
+      commentsHasMore={commentsHasMore}
+      showComments={commentState.showComments}
+      commentSubmitting={commentSubmitting}
+      onReact={onReact}
+      onRemoveReact={onRemoveReact}
+      onToggleComments={onToggleComments}
+      onAddComment={onAddComment}
+      onDeleteComment={onDeleteComment}
+      onLoadMoreComments={(id) => onPageChange(id, commentState.page + 1)}
+      onDelete={onDelete}
+      onPin={onPin}
+      onVote={onVote}
+    />
+  );
+}
+
+// ─── Wall posts feed ─────────────────────────────────────────────────────────
+
+function WallFeed() {
+  const {user} = useAuth();
+  const [page, setPage] = useState(0);
+  const [commentStates, setCommentStates] = useState<Record<string, PostCommentState>>({});
+  const [commentSubmittingFor, setCommentSubmittingFor] = useState<string | null>(null);
+
+  const {data, isLoading, isError} = useWallPosts(undefined, page, 10);
+
+  const addReaction = useAddWallReaction();
+  const removeReaction = useRemoveWallReaction();
+  const addComment = useAddComment();
+  const deleteComment = useDeleteWallComment();
+  const deletePost = useDeletePost();
+  const pinPost = usePinPost();
+  const vote = useVote();
+  const removeVote = useRemoveVote();
+
+  const posts = data?.content ?? [];
+  const totalPages = data?.totalPages ?? 0;
+
+  const handleToggleComments = (postId: string) => {
+    setCommentStates((prev) => ({
+      ...prev,
+      [postId]: {
+        showComments: !prev[postId]?.showComments,
+        page: prev[postId]?.page ?? 0,
+      },
+    }));
+  };
+
+  const handlePageChange = (postId: string, newPage: number) => {
+    setCommentStates((prev) => ({
+      ...prev,
+      [postId]: {...prev[postId], page: newPage},
+    }));
+  };
+
+  const handleReact = (postId: string, type: string) => {
+    addReaction.mutate({postId, reactionType: type as import('@/lib/services/core/wall.service').ReactionType});
+  };
+
+  const handleRemoveReact = (postId: string) => {
+    removeReaction.mutate(postId);
+  };
+
+  const handleAddComment = (postId: string, content: string, parentCommentId?: string) => {
+    setCommentSubmittingFor(postId);
+    addComment.mutate({postId, content, parentCommentId}, {
+      onSettled: () => setCommentSubmittingFor(null),
+    });
+  };
+
+  const handleDeleteComment = (commentId: string, postId: string) => {
+    deleteComment.mutate({commentId, postId});
+  };
+
+  const handleDelete = (postId: string) => {
+    deletePost.mutate(postId, {
+      onSuccess: () => notifications.show({title: 'Deleted', message: 'Post removed.', color: 'green'}),
+    });
+  };
+
+  const handlePin = (postId: string, pinned: boolean) => {
+    pinPost.mutate({postId, pinned});
+  };
+
+  const handleVote = (postId: string, optionId: string) => {
+    vote.mutate({postId, optionId});
+  };
+
+  if (isLoading) {
+    return (
+      <Center py="xl">
+        <Loader size="md"/>
+      </Center>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Center py="xl">
+        <Text c="red" size="sm">Failed to load wall posts. Please try again.</Text>
+      </Center>
+    );
+  }
+
+  if (posts.length === 0) {
+    return (
+      <EmptyState
+        icon={<IconActivity size={32} strokeWidth={1.5} aria-hidden="true"/>}
+        title="No posts yet"
+        description="Be the first to share something with your team."
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {posts.map((post) => {
+        const cs = commentStates[post.id] ?? {showComments: false, page: 0};
+        return (
+          <WallPostRow
+            key={post.id}
+            post={post}
+            postId={post.id}
+            commentState={cs}
+            currentUserId={user?.id}
+            onToggleComments={handleToggleComments}
+            onPageChange={handlePageChange}
+            onReact={handleReact}
+            onRemoveReact={handleRemoveReact}
+            onAddComment={handleAddComment}
+            onDeleteComment={handleDeleteComment}
+            onDelete={handleDelete}
+            onPin={handlePin}
+            onVote={handleVote}
+            commentSubmitting={commentSubmittingFor === post.id}
+          />
+        );
+      })}
+
+      {totalPages > 1 && (
+        <div className="flex justify-center pt-2">
+          <Pagination
+            total={totalPages}
+            value={page + 1}
+            onChange={(p) => setPage(p - 1)}
+            size="sm"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Page shell ──────────────────────────────────────────────────────────────
+
 function WallPageContent() {
   const createPost = useCreatePost();
   // Permission gate handled by <PermissionGate> wrapper in default export.
@@ -197,7 +429,7 @@ function WallPageContent() {
               Activity Wall
             </h1>
             <p className="text-sm text-[var(--text-2)]">
-              See what is happening across your knowledge base
+              Share updates, polls, and praise with your team
             </p>
           </div>
           <span
@@ -235,7 +467,7 @@ function WallPageContent() {
               }}
               isSubmitting={createPost.isPending}
             />
-            <ActivityFeed/>
+            <WallFeed/>
           </div>
 
           <div className="md:col-span-4">
