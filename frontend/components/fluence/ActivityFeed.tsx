@@ -37,6 +37,7 @@ export default function ActivityFeed() {
   const isLoading = queryLoading && !loadingTimedOut;
   const activities = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
+  const hasReceivedData = data !== undefined;
 
   return (
     <Stack gap="md">
@@ -67,9 +68,9 @@ export default function ActivityFeed() {
       {!isLoading && activities.length === 0 && (
         <EmptyState
           icon={<Activity className="h-8 w-8"/>}
-          title={isError || loadingTimedOut ? 'Activity feed unavailable' : 'No activity yet'}
+          title={isError || (!hasReceivedData && loadingTimedOut) ? 'Activity feed unavailable' : 'No activity yet'}
           description={
-            isError || loadingTimedOut
+            isError || (!hasReceivedData && loadingTimedOut)
               ? 'Unable to load activity feed. The service may be temporarily unavailable.'
               : 'Create or edit content to see it here.'
           }
