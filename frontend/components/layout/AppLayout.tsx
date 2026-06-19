@@ -93,11 +93,13 @@ const LEGACY_ID_REMAP: Record<string, string> = {
   'performance': 'performance-grow',
   'learning': 'learning-grow',
   'training': 'training-grow',
+  'training-catalog': 'training-grow',
   'surveys': 'surveys-grow',
   'wellness': 'wellness-grow',
   'recognition': 'recognition-grow',
   'one-on-one': 'one-on-one-grow',
   'okr': 'okr-grow',
+  'competency-matrix': 'competency-matrix-grow',
   'onboarding': 'onboarding-hire',
 };
 
