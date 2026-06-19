@@ -118,6 +118,20 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     path: '/admin/org-hierarchy',
     anyPermission: [Permissions.SYSTEM_ADMIN, Permissions.DEPARTMENT_MANAGE],
   },
+  // FRONT-02: explicit SYSTEM_ADMIN gates for super-admin-only sub-pages
+  // (without these, /admin/* catch-all only checks adminOnly, allowing HR_MANAGER access)
+  {
+    path: '/admin/system',
+    anyPermission: [Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/implicit-roles',
+    anyPermission: [Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/mobile-api',
+    anyPermission: [Permissions.SYSTEM_ADMIN],
+  },
   {
     path: '/admin/*',
     adminOnly: true,
