@@ -43,7 +43,31 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | Agent | Current Task | Status | Blocker | Last Update |
 |---|---|---|---|---|
 | Claude | Orchestration / Chrome E2E / validation | IN_PROGRESS | None | 2026-06-19 Session-2 start |
-| Codex | Code discovery / fix implementation / regression tests | STANDBY | None | Awaiting Claude issue logs |
+| Codex | Spring Boot / PostgreSQL / Redis / Kafka / Security / RBAC / API triage and fixes after approval | READY_FOR_ISSUES | No actionable issue entries beyond template ISSUE-0001 | 2026-06-19 11:48:25 IST |
+
+---
+
+## Codex Intake Log
+
+| Timestamp | Agent | Action | Evidence | Status |
+|---|---|---|---|---|
+| 2026-06-19 11:48:25 IST | Codex | Pulled latest changes before starting | `git pull --rebase --autostash` -> current branch `main` is up to date | DONE |
+| 2026-06-19 11:48:25 IST | Codex | Re-read shared coordination file after pull | File now contains Session 2 metadata and only the template issue `ISSUE-0001`; no Claude-discovered issue entries are present yet | DONE |
+| 2026-06-19 11:48:25 IST | Codex | Read Codex parallel fixer prompt | `NU_AURA_CODEX_PARALLEL_FIXER_PROMPT.md` requires confirmation/proposed solution before fixes and implementation only after `APPROVED_TO_FIX` | DONE |
+| 2026-06-19 11:48:25 IST | Codex | Loaded required process/security context | Read `tools/PROCESS-RULES.md`, `tools/CONSTRAINT.md`, `tools/MERMAID.md`, `CLAUDE.md`, `MEMORY.md`, `docs/obsidian/00-Home.md`, `docs/obsidian/01-Architecture/Code-Patterns.md`, `docs/obsidian/08-Security/Security-Audit.md`, and `docs/obsidian/12-Knowledge-Graph/Data-Flows.md` | DONE |
+| 2026-06-19 11:48:25 IST | Codex | Checked legacy pattern path | `docs/patterns/README.md` is missing in this checkout; current `CLAUDE.md` routes patterns to `docs/obsidian/01-Architecture/Code-Patterns.md` | NOTED |
+
+## Codex Focus Scope
+
+Codex is ready to triage and fix only issues that have enough evidence and are approved by Claude. Current requested focus areas:
+
+- Spring Boot controllers, services, repositories, DTOs, validators, filters, and `@RequiresPermission` enforcement.
+- PostgreSQL tenant isolation, Flyway migration impact, RLS behavior, constraints, idempotency, and audit fields.
+- Redis cache, permission cache, rate limit, token blacklist, distributed lock, and failover behavior.
+- Kafka or transactional-outbox events, consumers, idempotency, and fallback behavior.
+- Security, RBAC, APIs, authentication/session, tenant isolation, validation, and server-side authorization.
+
+Codex will not implement a fix from this run until an issue is written below with evidence and its status is moved to `APPROVED_TO_FIX`.
 
 ---
 
@@ -126,7 +150,7 @@ TBD
 
 | ID | Decision | Made By | Confirmed By | Reason | Risk | Timestamp |
 |---|---|---|---|---|---|---|
-| DEC-0001 | TBD | Claude | Codex | TBD | TBD | TBD |
+| DEC-0001 | Codex will not implement any issue from this run until Claude records evidence and marks the issue `APPROVED_TO_FIX` | Claude protocol / Codex confirmation | Codex | Preserves shared-file protocol and avoids overwriting another agent's findings | Slower fixes, but lower RBAC/security regression risk | 2026-06-19 11:48:25 IST |
 
 ---
 
@@ -169,4 +193,3 @@ TBD
 | Security baseline | 10 | 0 | TBD |
 | Performance/accessibility | 5 | 0 | TBD |
 | **Total** | **100** | **0** | NOT_READY |
-
