@@ -647,6 +647,10 @@ export default function NineBoxPage() {
                           >
                             Potential {sortField === 'potential' ? '↑' : ''}
                           </button>
+                          <span
+                            title="Potential scores are estimated from review ratings until a dedicated potential assessment is completed"
+                            className="ml-1 text-[10px] font-normal text-amber-500 dark:text-amber-400 cursor-help"
+                          >est.</span>
                         </th>
                         <th className="px-4 py-2.5 text-center font-semibold text-[var(--text-secondary)]">
                           Category
