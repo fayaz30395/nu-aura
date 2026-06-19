@@ -123,7 +123,6 @@ class AnalyticsServiceTest {
         @Test
         @DisplayName("Should get employee metrics successfully")
         void shouldGetEmployeeMetricsSuccessfully() {
-            when(employeeRepository.countByTenantId(tenantId)).thenReturn(100L);
             when(employeeRepository.countByTenantIdAndStatus(eq(tenantId), eq(Employee.EmployeeStatus.ACTIVE)))
                     .thenReturn(95L);
 
@@ -131,7 +130,7 @@ class AnalyticsServiceTest {
             deptDistribution.add(new Object[]{"Engineering", 50L});
             deptDistribution.add(new Object[]{"HR", 20L});
             deptDistribution.add(new Object[]{null, 5L}); // Unassigned department
-            when(employeeRepository.getEmployeeCountByDepartment(tenantId)).thenReturn(deptDistribution);
+            when(employeeRepository.findDepartmentDistribution(tenantId)).thenReturn(deptDistribution);
 
             when(employeeRepository.countTerminatedAfterDate(eq(tenantId), any(LocalDate.class))).thenReturn(5L);
             when(employeeRepository.countNewHiresAfterDate(eq(tenantId), any(LocalDate.class))).thenReturn(10L);
@@ -139,7 +138,7 @@ class AnalyticsServiceTest {
             EmployeeMetrics result = analyticsService.getEmployeeMetrics(tenantId);
 
             assertThat(result).isNotNull();
-            assertThat(result.getTotalEmployees()).isEqualTo(100L);
+            assertThat(result.getTotalEmployees()).isEqualTo(95L); // totalEmployees = activeEmployees (ACTIVE-only)
             assertThat(result.getActiveEmployees()).isEqualTo(95L);
             assertThat(result.getDepartmentDistribution()).isNotEmpty();
             assertThat(result.getDepartmentDistribution()).containsKey("Engineering");
@@ -151,10 +150,9 @@ class AnalyticsServiceTest {
         @Test
         @DisplayName("Should handle zero employees")
         void shouldHandleZeroEmployees() {
-            when(employeeRepository.countByTenantId(tenantId)).thenReturn(0L);
             when(employeeRepository.countByTenantIdAndStatus(eq(tenantId), eq(Employee.EmployeeStatus.ACTIVE)))
                     .thenReturn(0L);
-            when(employeeRepository.getEmployeeCountByDepartment(tenantId)).thenReturn(new ArrayList<>());
+            when(employeeRepository.findDepartmentDistribution(tenantId)).thenReturn(new ArrayList<>());
             when(employeeRepository.countTerminatedAfterDate(eq(tenantId), any(LocalDate.class))).thenReturn(0L);
             when(employeeRepository.countNewHiresAfterDate(eq(tenantId), any(LocalDate.class))).thenReturn(0L);
 
