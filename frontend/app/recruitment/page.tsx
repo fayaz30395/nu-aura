@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useEffect, useMemo, useState} from 'react';
-import {useRouter} from 'next/navigation';
+import {useRouter, useSearchParams} from 'next/navigation';
 import Link from 'next/link';
 import {motion} from 'framer-motion';
 import {
@@ -19,6 +19,7 @@ import {
   Users,
 } from 'lucide-react';
 
+import {useToast} from '@/components/notifications';
 import {AppLayout} from '@/components/layout';
 import {PageTransition} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
@@ -71,7 +72,15 @@ function isThisWeek(dateString?: string): boolean {
 
 export default function RecruitmentDashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const toast = useToast();
   const {hasAnyRole, isReady} = usePermissions();
+
+  useEffect(() => {
+    if (searchParams.get('denied') === '1') {
+      toast.error('Access Denied', 'You do not have permission to access that page.');
+    }
+  }, [searchParams, toast]);
   const hasAccess = hasAnyRole(...RECRUITMENT_ALLOWED_ROLES);
 
   const jobOpeningsQuery = useJobOpenings(0, 100);
