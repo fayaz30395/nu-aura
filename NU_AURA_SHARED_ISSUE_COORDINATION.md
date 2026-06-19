@@ -58,17 +58,17 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 - API authorization: missing @RequiresPermission endpoints
 - Browser validation: live cross-role access tests
 
-### Carry-Forward Open Issues (from 87/100 baseline)
+### Carry-Forward Open Issues (updated 2026-06-19 post-session)
 | ID | Description | Severity | Status |
 |---|---|---|---|
-| SEC-001 | DEMO_CREDENTIALS_ENABLED=true in production | CRITICAL | OPEN — config-only fix |
-| BUG-HIGH-003 | /system-admin → 404 (broken sidebar link) | HIGH | OPEN |
-| BUG-MED-001 | /leave/admin index → 404 | MEDIUM | OPEN |
-| BUG-MED-004 | /auth/logout → 404 | MEDIUM | OPEN |
-| BUG-MED-005 | Saran V demo badge shows EMPLOYEE vs actual HR_ADMIN | MEDIUM | OPEN |
-| NEW-001 | /fluence/articles → 404 | MEDIUM | OPEN |
-| BUG-LOW-001 | "Unlock NU-Grow" banner shows for SUPER_ADMIN | LOW | OPEN |
-| BUG-LOW-002 | ?denied=1 redirect produces no toast/notification | LOW | OPEN |
+| SEC-001 | DEMO_CREDENTIALS_ENABLED=true in production | CRITICAL | OPEN — user action: flip Railway env var |
+| BUG-HIGH-003 | /system-admin → 404 | HIGH | FALSE POSITIVE — menu links to /admin/system (page exists); d895c9c0 |
+| BUG-MED-001 | /leave/admin index → 404 | MEDIUM | FIXED — app/leave/admin/page.tsx exists (verified 2026-06-19) |
+| BUG-MED-004 | /auth/logout → 404 | MEDIUM | FIXED — app/auth/logout/page.tsx added; commit ced68589 |
+| BUG-MED-005 | Saran V demo badge shows EMPLOYEE vs actual HR_ADMIN | MEDIUM | FIXED — commit d895c9c0 |
+| NEW-001 | /fluence/articles → 404 | MEDIUM | FALSE POSITIVE — app/fluence/articles/page.tsx exists (verified 2026-06-19) |
+| BUG-LOW-001 | "Unlock NU-Grow" banner shows for SUPER_ADMIN | LOW | FIXED — isSuperAdmin guard added to hasGrow prop; commit ced68589 |
+| BUG-LOW-002 | ?denied=1 redirect produces no toast/notification | LOW | FIXED — me/dashboard + recruitment both show toast on ?denied=1 |
 
 ---
 
