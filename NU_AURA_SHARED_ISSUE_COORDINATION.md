@@ -1895,3 +1895,39 @@ Once the new deployment is live (build hash changes from `15e6a7b40eb14893`), va
 | /overtime | "Overtime" (no regression) | Pending |
 | /me/dashboard | "My Dashboard" (no regression) | Pending |
 
+
+---
+
+## Session Update — Continued Fix Wave (commit 38597874)
+
+### Fixes Applied
+
+**Commit:** `38597874` pushed to both remotes
+
+| Bug | File | Fix |
+|-----|------|-----|
+| P4: Sidebar hydration flash | `AppLayout.tsx` | `isMounted` guard — SSR renders `collapsed=false`, client applies stored value after mount |
+| BROWSER-ISSUE-002: Stale header after demo login | `useAuth.ts` | Clear `user + isAuthenticated` at login() start before API call |
+
+### Stale Issues Verified Closed (code evidence)
+
+| Issue | Finding | Status |
+|-------|---------|--------|
+| BUG-HIGH-003: /system-admin → 404 | No `/system-admin` links in codebase; all links use `/admin/system` (verified grep) | STALE — no action needed |
+| BUG-MED-001: /leave/admin → 404 | `app/leave/admin/page.tsx` EXISTS — redirects to `/leave/admin/carry-forward` | ALREADY FIXED |
+| NEW-001: /fluence/articles → 404 | `app/fluence/articles/page.tsx` EXISTS | ALREADY FIXED |
+| BUG-LOW-001: Upsell banner for SUPER_ADMIN | NavPanel already uses `{!hasGrow && …}`; `hasAppAccess('GROW')` returns `true` for SUPER_ADMIN at line 56 | ALREADY CORRECT |
+| BUG-MED-005: Role badge EMPLOYEE vs HR_ADMIN | `getBestRoleLabel()` already sorts by `ROLE_PRIORITY` (HR_ADMIN: 80, EMPLOYEE: 10) | ALREADY CORRECT |
+
+### Remaining Open (unfixable from frontend)
+
+| Issue | Blocker |
+|-------|---------|
+| SEC-001: DEMO_CREDENTIALS_ENABLED=true on Railway | User action only — Railway dashboard env var flip |
+| BROWSER-ISSUE-005: Headcount KPI vs dept chart mismatch | Backend data inconsistency (two different queries); frontend displays what API returns |
+| BROWSER-ISSUE-006: Intermittent session drop | Complex auth/JWT race; needs reproduction and backend investigation |
+
+### Phase 6 Retest Status
+
+P1 sidebar fix (commit 90798199) + P4/BROWSER-ISSUE-002 fix (commit 38597874) both pushed.
+Phase 6 browser validation pending Vercel deployment of both commits.
