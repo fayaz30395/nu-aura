@@ -1874,3 +1874,24 @@ Post-implementation browser validation planned:
 - /leave → still correct ✓
 - /overtime → still correct ✓
 - RBAC, navigation, deep links unaffected
+
+### Phase 5 — Implementation COMPLETE (commit 90798199)
+
+**Commit:** `90798199` pushed to both remotes (Fayaz-Deen/nu-aura + fayaz30395/nu-aura)
+**TypeScript type check:** CLEAN (zero errors, per sidebar-fixer agent)
+**Change:** Single file, `frontend/components/layout/AppLayout.tsx` — 86 lines added
+
+**Deployment blocker:** GitHub Actions billing is blocked ("spending limit needs to be increased"), so the CI/CD pipeline to GKE didn't run. However, Vercel should deploy via its own GitHub integration (not via GitHub Actions). As of 13 minutes post-push, Vercel still serves old build hash `15e6a7b40eb14893`. User should check Vercel dashboard to confirm deployment status.
+
+### Phase 6 — Retest (pending Vercel deployment)
+
+Once the new deployment is live (build hash changes from `15e6a7b40eb14893`), validate:
+
+| Page | Expected active item | Verified? |
+|---|---|---|
+| /contracts | "Contracts" | Pending |
+| /admin/budget | "Budget Planning" | Pending |
+| /leave | "Leave Management" (no regression) | Pending |
+| /overtime | "Overtime" (no regression) | Pending |
+| /me/dashboard | "My Dashboard" (no regression) | Pending |
+
