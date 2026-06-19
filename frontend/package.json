@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "prebuild": "npm run api:generate && node scripts/validate-release-env.mjs",
+    "prebuild": "API_DOCS_URL=./openapi-snapshot.json npm run api:generate && node scripts/validate-release-env.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
