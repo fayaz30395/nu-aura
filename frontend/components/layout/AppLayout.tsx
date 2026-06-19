@@ -350,6 +350,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           activeId={activeMenuItem}
           onItemClick={handleMenuItemClick}
           collapsed={isCollapsed}
+          hasGrow={hasAppAccess('GROW')}
         />
       </div>
 

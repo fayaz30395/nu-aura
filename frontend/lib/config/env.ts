@@ -229,7 +229,7 @@ export const isTest = env.NODE_ENV === 'test';
 /**
  * Check if demo mode is enabled
  */
-export const isDemoMode = isDevelopment || env.NEXT_PUBLIC_DEMO_MODE === 'true';
+export const isDemoMode = env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
 /**
  * Check if realtime WebSocket notifications are enabled

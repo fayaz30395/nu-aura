@@ -21,15 +21,6 @@ public interface TenantApplicationRepository extends JpaRepository<TenantApplica
      */
     Optional<TenantApplication> findByTenantIdAndApplicationId(UUID tenantId, UUID applicationId);
 
-    @Query(
-            value = "SELECT * FROM tenant_applications WHERE tenant_id = :tenantId AND application_id = :applicationId",
-            nativeQuery = true
-    )
-    Optional<TenantApplication> findByTenantIdAndApplicationIdUnscoped(
-            @Param("tenantId") UUID tenantId,
-            @Param("applicationId") UUID applicationId
-    );
-
     @Modifying
     @Transactional
     @Query(

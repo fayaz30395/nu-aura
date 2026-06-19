@@ -43,6 +43,8 @@ export interface NavPanelProps {
   workspaceSub?: string;
   /** "Start trial" upsell CTA. */
   onUpsell?: () => void;
+  /** When true the upsell banner is hidden (workspace already includes GROW). */
+  hasGrow?: boolean;
 }
 
 function isItemActive(item: SidebarItem, activeId?: string): boolean {
@@ -136,6 +138,7 @@ export function NavPanel({
                            workspaceName = 'All Modules Active',
                            workspaceSub = 'Pro Plan',
                            onUpsell,
+                           hasGrow = false,
                          }: NavPanelProps) {
   const product = getShellProduct(activeApp);
 
@@ -208,25 +211,27 @@ export function NavPanel({
         ))}
       </div>
 
-      {/* Upsell footer */}
-      <div className="border-t border-white/[0.05] px-3.5 py-2.5">
-        <div className="rounded-[11px] border border-white/[0.07] bg-[linear-gradient(150deg,rgba(104,132,220,0.16),rgba(139,92,246,0.10))] p-4">
-          <div className="flex items-center gap-1.5 text-[12.5px] font-bold text-white">
-            <Sparkles className="h-3.5 w-3.5 text-[var(--accent-300)]"/>
-            Unlock NU-Grow
+      {/* Upsell footer — hidden when workspace already includes GROW */}
+      {!hasGrow && (
+        <div className="border-t border-white/[0.05] px-3.5 py-2.5">
+          <div className="rounded-[11px] border border-white/[0.07] bg-[linear-gradient(150deg,rgba(104,132,220,0.16),rgba(139,92,246,0.10))] p-4">
+            <div className="flex items-center gap-1.5 text-[12.5px] font-bold text-white">
+              <Sparkles className="h-3.5 w-3.5 text-[var(--accent-300)]"/>
+              Unlock NU-Grow
+            </div>
+            <div className="mb-[9px] mt-[3px] text-[11px] leading-[1.5] text-[var(--on-rail)]">
+              Reviews, OKRs &amp; learning in one place.
+            </div>
+            <button
+              type="button"
+              onClick={onUpsell}
+              className="inline-flex h-7 items-center rounded-[8px] bg-white/[0.08] px-3 text-[12px] font-semibold text-white transition-[background-color,transform] duration-[var(--t-fast)] ease-[var(--ease)] hover:bg-white/[0.14] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+            >
+              Start trial
+            </button>
           </div>
-          <div className="mb-[9px] mt-[3px] text-[11px] leading-[1.5] text-[var(--on-rail)]">
-            Reviews, OKRs &amp; learning in one place.
-          </div>
-          <button
-            type="button"
-            onClick={onUpsell}
-            className="inline-flex h-7 items-center rounded-[8px] bg-white/[0.08] px-3 text-[12px] font-semibold text-white transition-[background-color,transform] duration-[var(--t-fast)] ease-[var(--ease)] hover:bg-white/[0.14] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
-          >
-            Start trial
-          </button>
         </div>
-      </div>
+      )}
     </nav>
   );
 }
