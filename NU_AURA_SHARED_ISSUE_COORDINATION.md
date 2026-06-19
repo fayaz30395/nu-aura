@@ -458,3 +458,81 @@ Auditor: backend-rbac-auditor fork (tenant isolation specialist). Scope: 29 nati
 ### Tenant Isolation Net Verdict
 
 **No IDOR or RLS bypass vulnerabilities detected.** Architecture is mature (29/29 native queries clean, 884 fail-safe tenant context calls, dual-layer RLS, IDOR fixes verified). ONE medium issue: superuser RLS bypass risk needs `FORCE ROW LEVEL SECURITY` migration before true multi-tenant production go-live.
+
+---
+
+## Permission Matrix Audit — 2026-06-19
+
+**Auditor:** @qa | **Scope:** Flyway role_permission seeds + `@RequiresPermission` enforcement + role→permission resolution. **Branch:** main (Already up to date with fayaz-deen).
+
+### How RBAC resolves at runtime (evidence)
+
+Permissions are **server-authoritative** and resolved by `AuthService.loadPermissionsForUser` (`com/nulogic/application/auth/service/AuthService.java`). Two parallel sources merge into the `SecurityContext` permission map:
+
+1. **Primary — UserAppAccess (app-scoped):** roles/permissions on `AppRole`/`AppPermission`, codes in the `HRMS:RESOURCE:ACTION` namespace (`AuthService.java:652-668`).
+2. **Legacy — Matrix RBAC:** `User → Role → RolePermission` from the `role_permissions` table, codes in the `RESOURCE:ACTION` namespace = `Permission.java` constants (`AuthService.java:711-714`).
+3. **Fallback — in-memory defaults:** `RoleHierarchy.getDefaultPermissions(roleCode)` fires **only when the accumulated map is still empty** (`AuthService.java:672`, `:732`).
+
+Enforcement at the edge is `PermissionHandlerInterceptor.preHandle` (`com/nulogic/common/security/PermissionHandlerInterceptor.java:54-105`), running BEFORE `@Valid` so unauthorized requests get 403 not 400. `@RequiresPermission` (`com/nulogic/common/security/RequiresPermission.java`) supports `value` (anyOf/OR), `allOf` (AND), and `revalidate=true` (forces a DB re-check for sensitive ops). Controllers reference `Permission.*` constants (e.g. `Permission.PAYROLL_VIEW_ALL` = `PAYROLL:VIEW_ALL`).
+
+### SUPER_ADMIN bypass — VERIFIED CORRECT
+
+- App-layer bypass in **3 consistent places**: `PermissionHandlerInterceptor.java:77` (audit-logged: `AUDIT: SUPER_ADMIN bypass …`), `CustomPermissionEvaluator.java:24,38`, `DataScopeService.java:36-38`, plus `FeatureFlagAspect.java:28-33` and `PermissionAspect` (service layer).
+- **DB-layer isolation is NOT bypassed**: `RlsStartupProbe.java:155-192` fails app startup (`fail-on-bypass=true` default) if the DB role has `SUPERUSER`/`BYPASSRLS`, asserting *"SuperAdmin bypass must remain application-layer only."* **Confirmed: SUPER_ADMIN bypasses permission checks at the interceptor, never tenant RLS at the SQL layer.** ✅
+
+### TENANT_ADMIN bug (V289–V294) — VERIFIED FIXED
+
+Root cause (`V290` header): `TenantProvisioningService` created the role with `code='ADMIN'`, unknown to `RoleHierarchy.getDefaultPermissions()` (which switches on `'TENANT_ADMIN'`) → empty perms → 403 everywhere. V289 also no-oped (searched for `TENANT_ADMIN`, found none).
+- **V290** renames `ADMIN → TENANT_ADMIN` (idempotent, LEFT-JOIN guard) then re-runs the V289 backfill.
+- `RoleHierarchy.getDefaultPermissions` line 72 maps **both** `TENANT_ADMIN` and legacy `"ADMIN"` → `getTenantAdminPermissions()` (belt-and-suspenders).
+- V289/V290 enumerate ~190 permission codes for TENANT_ADMIN (incl. COMPENSATION:*, PAYMENT:*, EMPLOYMENT_CHANGE:*, ROLE:MANAGE, USER:MANAGE) + 6 field perms (SALARY/BANK/TAX). Scope `ALL`. Inheritance verified in code: `getTenantAdminPermissions ⊃ getHRAdminPermissions ⊃ getHRManagerPermissions`. **Fix confirmed.** ✅
+
+### Permission Matrix (representative — App-layer bypass for SUPER_ADMIN; others from seeds + RoleHierarchy)
+
+| Permission | SUPER_ADMIN | TENANT_ADMIN | HR_ADMIN | HR_MANAGER | EMPLOYEE | RECRUITMENT_ADMIN | PAYROLL_ADMIN |
+|---|---|---|---|---|---|---|---|
+| EMPLOYEE:VIEW_ALL | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ (VIEW_SELF only) | ✅ | ✅ |
+| EMPLOYEE:CREATE/UPDATE/DELETE | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ | ❌ | ❌ |
+| EMPLOYEE:SALARY_EDIT | ✅ bypass | ✅ (field) | ✅ | ❌ (SALARY_VIEW only) | ❌ | ❌ | ✅ |
+| EMPLOYEE:BANK_EDIT | ✅ bypass | ✅ (field) | ✅ | ❌ | ❌ | ❌ | ✅ |
+| PAYROLL:VIEW_ALL | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ (PAYROLL_VIEW_SELF) | ❌ | ✅ |
+| PAYROLL:PROCESS | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ | ❌ | ✅ |
+| PAYROLL:APPROVE | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ | ❌ | ✅ |
+| COMPENSATION:MANAGE/APPROVE | ✅ bypass | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| RECRUITMENT:MANAGE | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ | ✅ | ❌ |
+| CANDIDATE:EVALUATE | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ | ✅ | ❌ |
+| ONBOARDING:MANAGE | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ | ✅ (V174) | ❌ |
+| ROLE:MANAGE / USER:MANAGE | ✅ bypass | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| SETTINGS:UPDATE / AUDIT:VIEW | ✅ bypass | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| STATUTORY:MANAGE / TDS:APPROVE | ✅ bypass | ✅ | ✅ (inherit) | ✅ | ❌ | ❌ | ✅ |
+| EXPENSE:CREATE (self) | ✅ bypass | ✅ | ✅ (V267 SELF) | ✅ (V267 SELF) | ✅ (V267 SELF) | ✅ (V267 SELF) | ❌* |
+| LEAVE:REQUEST (self) | ✅ bypass | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| DASHBOARD:VIEW | ✅ bypass | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+Legend: ✅=granted, ❌=denied, (inherit)=via HR_MANAGER superset, (field)=field_permissions table, (V###)=migration source, (SELF)=scope-limited. *PAYROLL_ADMIN not in the V267 self-service grant list.
+
+**Scope-separation findings (positive):** `RoleHierarchy.getRecruitmentAdminPermissions()` is correctly fenced to recruitment/candidate/onboarding/referral/letters — **NO** payroll, compensation, settings, role-manage. `getPayrollAdminPermissions()` holds payroll/compensation/salary/bank/statutory — **NO** recruitment, role-manage, settings. `getEmployeePermissions()` is self-service only (`_SELF`, `_VIEW`, create-own). No EXCESS grants detected in the in-memory model. ✅
+
+### GAPS / ISSUES
+
+#### PERM-ISSUE-001: Specialized roles (PAYROLL_ADMIN, RECRUITMENT_ADMIN, HR_ADMIN, TENANT_ADMIN) are not seeded by the canonical role initializer
+- **Severity:** MEDIUM (architectural fragility, not a live exploit)
+- **Roles:** PAYROLL_ADMIN, RECRUITMENT_ADMIN, HR_ADMIN, TENANT_ADMIN, and all specialized roles
+- **Gap Type:** MISSING (incomplete seeding) + namespace divergence
+- **Evidence:** `HrmsRoleInitializer.seedDefaultRoles` (`com/nulogic/application/platform/service/HrmsRoleInitializer.java:156-264`) is the documented "single source of truth" for role_permissions (per `V96__canonical_permission_reseed.sql:11-13`, which only seeds the *permissions catalog*, no role grants). It creates only **6 roles: SUPER_ADMIN, HR_MANAGER, DEPARTMENT_MANAGER, TEAM_LEAD, EMPLOYEE, CEO** — and grants them `HRMS:RESOURCE:ACTION`-namespaced perms (`HrmsPermissionInitializer.java`, e.g. `HRMS:EMPLOYEE:VIEW_ALL`). The controller `@RequiresPermission` enforcement uses the **different** `Permission.java` namespace (`EMPLOYEE:VIEW_ALL`, no `HRMS:` prefix — `Permission.java`). TENANT_ADMIN/HR_ADMIN/PAYROLL_ADMIN/RECRUITMENT_ADMIN exist only as `RoleHierarchy` definitions + scattered DB-seed migrations (V289/V290 for TENANT_ADMIN; V174/V176 partials for the others).
+- **Why it matters:** The in-memory `RoleHierarchy` fallback fires **only when the whole accumulated permission map is empty** (`AuthService.java:672`, global not per-role). A PAYROLL_ADMIN whose DB rows are *partial* (e.g. only V176 time-tracking grants) makes the map non-empty → fallback suppressed → role left with ONLY time-tracking perms instead of its full payroll set. This is the same failure class as the original TENANT_ADMIN bug.
+- **Fix:** Either (a) extend `HrmsRoleInitializer` to create ALL `RoleHierarchy.ALL_EXPLICIT_ROLES` from `RoleHierarchy.getDefaultPermissions()` so the canonical seed is complete and single-namespace, or (b) add comprehensive `role_permissions` backfill migrations for PAYROLL_ADMIN / RECRUITMENT_ADMIN / HR_ADMIN mirroring V289's enumerated TENANT_ADMIN grant. Recommend (a) — converge on one initializer + one namespace.
+
+#### PERM-ISSUE-002: Dual permission namespace (`HRMS:X:Y` vs `X:Y`) with no documented reconciliation
+- **Severity:** LOW (works today via merge, but a latent correctness/maintenance trap)
+- **Gap Type:** Design inconsistency
+- **Evidence:** `HrmsPermissionInitializer.SYSTEM_ADMIN = "HRMS:SYSTEM:ADMIN"` vs `Permission.SYSTEM_ADMIN = "SYSTEM:ADMIN"`; `HRMS:EMPLOYEE:VIEW_ALL` vs `EMPLOYEE:VIEW_ALL`. AuthService merges both into one map so SUPER_ADMIN/EMPLOYEE work, but a perm granted only in one namespace will silently fail a check expressed in the other.
+- **Fix:** Document the mapping (or add an alias layer in `SecurityService.hasPermission`), and add a build-time test asserting every `Permission.java` constant used in a `@RequiresPermission` is seedable by the initializer under a resolvable code.
+
+#### PERM-ISSUE-003: SEC-001 demo-credential neutralization is config-gated, not yet applied on Railway
+- **Severity:** HIGH (known, tracked — restated for completeness; not new)
+- **Evidence:** `V295`/`V299` lock the three known `Welcome@123` bcrypt digests + SUSPEND, but both are gated by `${demoCredentialsEnabled}` and `application-render.yml` sets `spring.flyway.enabled=false`, so V295/V299 never ran on live Railway (`V299` header lines 4-14). Live `tenant.admin@nulogic.io` may still hold the public password.
+- **Fix (config-only, user action):** Flip Railway env `DEMO_CREDENTIALS_ENABLED=false`, do a one-shot `SPRING_FLYWAY_ENABLED=true` deploy to apply V299, then disable Flyway again. Code is fail-closed; no code change required.
+
+### Verdict
+RBAC enforcement model is **sound**: server-authoritative, deny-by-default at the interceptor, SUPER_ADMIN app-layer-only bypass with RLS preserved, clean role scope separation in `RoleHierarchy`, TENANT_ADMIN bug genuinely fixed. The one architectural risk (PERM-ISSUE-001) is fragility in how specialized-role permissions are seeded, not a live over/under-permission exploit. **No CRITICAL permission-matrix defects found.** Recommend converging role seeding onto a single initializer + namespace.
