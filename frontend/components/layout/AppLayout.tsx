@@ -440,7 +440,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
           activeId={resolvedActiveMenuItem}
           onItemClick={handleMenuItemClick}
           collapsed={isCollapsed}
-          hasGrow={hasAppAccess('GROW')}
+          hasGrow={isSuperAdmin || hasAppAccess('GROW')}
         />
       </div>
 
