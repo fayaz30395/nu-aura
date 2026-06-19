@@ -42,8 +42,32 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 
 | Agent | Current Task | Status | Blocker | Last Update |
 |---|---|---|---|---|
-| Claude | Orchestration / Chrome E2E / validation | IN_PROGRESS | None | 2026-06-19 Session-2 start |
-| Codex | Spring Boot / PostgreSQL / Redis / Kafka / Security / RBAC / API triage and fixes after approval | READY_FOR_ISSUES | No actionable issue entries beyond template ISSUE-0001 | 2026-06-19 11:48:25 IST |
+| Claude | Orchestration — Parallel RBAC/Security/Tenant/Browser swarm | IN_PROGRESS | None | 2026-06-19 Session-3 parallel launch |
+| Codex | Awaiting APPROVED_TO_FIX issues from Session-3 | READY_FOR_ISSUES | Waiting for agent findings | 2026-06-19 11:48:25 IST |
+| backend-rbac-auditor | SecurityConfig, @RequiresPermission coverage, JWT, RLS, DEMO flag | RUNNING | None | 2026-06-19 Session-3 |
+| frontend-auth-auditor | middleware.ts, nu-rbac.config.ts, NavPanel, usePermissions, bug status | RUNNING | None | 2026-06-19 Session-3 |
+| permission-matrix-auditor | Full role×permission matrix from Flyway migrations V0→V304 | RUNNING | None | 2026-06-19 Session-3 |
+| browser-rbac-validator | Live Chrome: unauthenticated access, cross-role RBAC, API headers | RUNNING | None | 2026-06-19 Session-3 |
+
+### Session-3 Focus Areas (Parallel Orchestrator)
+- RBAC enforcement depth (all 7 roles)
+- Security: JWT, cookie flags, CSP headers
+- Permission matrix completeness (Flyway migrations)
+- Tenant isolation: RLS scope, native query gaps
+- API authorization: missing @RequiresPermission endpoints
+- Browser validation: live cross-role access tests
+
+### Carry-Forward Open Issues (from 87/100 baseline)
+| ID | Description | Severity | Status |
+|---|---|---|---|
+| SEC-001 | DEMO_CREDENTIALS_ENABLED=true in production | CRITICAL | OPEN — config-only fix |
+| BUG-HIGH-003 | /system-admin → 404 (broken sidebar link) | HIGH | OPEN |
+| BUG-MED-001 | /leave/admin index → 404 | MEDIUM | OPEN |
+| BUG-MED-004 | /auth/logout → 404 | MEDIUM | OPEN |
+| BUG-MED-005 | Saran V demo badge shows EMPLOYEE vs actual HR_ADMIN | MEDIUM | OPEN |
+| NEW-001 | /fluence/articles → 404 | MEDIUM | OPEN |
+| BUG-LOW-001 | "Unlock NU-Grow" banner shows for SUPER_ADMIN | LOW | OPEN |
+| BUG-LOW-002 | ?denied=1 redirect produces no toast/notification | LOW | OPEN |
 
 ---
 
