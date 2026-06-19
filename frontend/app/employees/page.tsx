@@ -449,42 +449,6 @@ export default function EmployeesPage() {
               <span className={listStyles.bulkSep} />
               <button
                 type="button"
-                className={listStyles.bulkBtn}
-                aria-label={`Message ${selected.size} selected ${selected.size===1?'employee':'employees'}`}
-                onClick={() => { window.nuToast?.('Message sent', { msg: `Message drafted to ${selected.size} ${selected.size===1?'person':'people'}.`, type:'ok' }); }}
-              >
-                <Mail size={14} aria-hidden />
-                Message
-              </button>
-              <button
-                type="button"
-                className={listStyles.bulkBtn}
-                aria-label={`Move ${selected.size} selected ${selected.size===1?'employee':'employees'} to new team`}
-                onClick={() => { window.nuToast?.('Moved to new team', { msg: `${selected.size} ${selected.size===1?'employee':'employees'} reassigned.`, type:'ok' }); setSelected(new Set()); }}
-              >
-                <FolderInput size={14} aria-hidden />
-                Move team
-              </button>
-              <button
-                type="button"
-                className={listStyles.bulkBtn}
-                aria-label={`Export ${selected.size} selected ${selected.size===1?'record':'records'}`}
-                onClick={() => { window.nuToast?.('Export started', { msg: `Preparing CSV for ${selected.size} ${selected.size===1?'record':'records'}…`, type:'info' }); }}
-              >
-                <Download size={14} aria-hidden />
-                Export
-              </button>
-              <button
-                type="button"
-                className={listStyles.bulkBtn}
-                aria-label={`Offboard ${selected.size} selected ${selected.size===1?'employee':'employees'}`}
-                onClick={() => { window.nuToast?.('Offboarding initiated', { msg: `${selected.size} ${selected.size===1?'employee':'employees'} queued for offboarding.`, type:'warn' }); setSelected(new Set()); }}
-              >
-                <UserX size={14} aria-hidden />
-                Offboard
-              </button>
-              <button
-                type="button"
                 className={listStyles.bulkX}
                 aria-label="Clear selection"
                 onClick={() => setSelected(new Set())}

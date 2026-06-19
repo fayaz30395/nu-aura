@@ -390,7 +390,21 @@ export default function KanbanPage() {
       if (!destination) return;
       if (destination.droppableId === source.droppableId) return;
 
+      const sourceStage = source.droppableId as RecruitmentStage;
       const targetStage = destination.droppableId as RecruitmentStage;
+
+      // Stage-skip guard: reject forward moves of more than 1 step
+      const sourceIdx = PIPELINE_STAGES.indexOf(sourceStage);
+      const targetIdx = PIPELINE_STAGES.indexOf(targetStage);
+      const isForward = targetIdx > sourceIdx;
+      if (isForward && targetIdx - sourceIdx > 1) {
+        notifications.show({
+          title: 'Invalid move',
+          message: 'Candidates must advance one stage at a time',
+          color: 'orange',
+        });
+        return;
+      }
 
       // Fire mutation
       stageMutation.mutate({candidateId: draggableId, stage: targetStage});

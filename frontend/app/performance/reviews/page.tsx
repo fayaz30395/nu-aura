@@ -4,6 +4,15 @@ import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
+
+// Standard competency framework used for self-assessments
+const SELF_ASSESSMENT_COMPETENCIES: Array<{name: string; label: string}> = [
+  {name: 'Technical Skills', label: 'Technical Skills'},
+  {name: 'Behavioral Skills', label: 'Behavioral Skills'},
+  {name: 'Leadership', label: 'Leadership'},
+  {name: 'Domain Knowledge', label: 'Domain Knowledge'},
+  {name: 'Problem Solving', label: 'Problem Solving'},
+];
 import {
   CheckCircle2,
   ClipboardList,
@@ -71,6 +80,11 @@ export default function PerformanceReviewsPage() {
   const [filterType, setFilterType] = useState<ReviewType | 'ALL'>('ALL');
   const [filterStatus, setFilterStatus] = useState<ReviewStatus | 'ALL'>('ALL');
 
+  // Per-competency ratings for self-assessment form (1–5 scale)
+  const [competencyRatings, setCompetencyRatings] = useState<Record<string, number>>(
+    () => Object.fromEntries(SELF_ASSESSMENT_COMPETENCIES.map((c) => [c.name, 3]))
+  );
+
   const {
     register,
     handleSubmit,
@@ -113,17 +127,18 @@ export default function PerformanceReviewsPage() {
       };
 
       if (selectedReview?.reviewType === 'SELF') {
-        const rating = Math.round(Number(formData.overallRating));
+        const mappedCompetencies = SELF_ASSESSMENT_COMPETENCIES.map((c) => ({
+          competencyName: c.name,
+          rating: competencyRatings[c.name] ?? 3,
+          comments: formData.employeeComments || '',
+        }));
+        const avgRating = mappedCompetencies.reduce((sum, c) => sum + c.rating, 0) / mappedCompetencies.length;
         await submitSelfAssessmentMutation.mutateAsync({
           reviewId: selectedReview.id,
           data: {
-            competencyRatings: [{
-              competencyName: 'Overall performance',
-              rating,
-              comments: formData.employeeComments || formData.strengths || '',
-            }],
+            competencyRatings: mappedCompetencies,
             overallComments: formData.employeeComments || formData.strengths || '',
-            goalAchievementPercent: Math.min(100, Math.max(0, rating * 20)),
+            goalAchievementPercent: Math.min(100, Math.max(0, Math.round(avgRating * 20))),
           },
         });
       } else if (selectedReview) {
@@ -177,6 +192,7 @@ export default function PerformanceReviewsPage() {
 
   const resetFormHandler = () => {
     setSelectedReview(null);
+    setCompetencyRatings(Object.fromEntries(SELF_ASSESSMENT_COMPETENCIES.map((c) => [c.name, 3])));
     reset({
       employeeId: '',
       reviewerId: '',
@@ -443,206 +459,237 @@ export default function PerformanceReviewsPage() {
           }}
           size="xl"
         >
-          <ModalHeader
-            onClose={() => {
-              setShowModal(false);
-              resetFormHandler();
-            }}
-          >
-            {selectedReview ? 'Edit Review' : 'Create Review'}
-          </ModalHeader>
-          <form onSubmit={handleSubmit(handleFormSubmit)}>
-            <ModalBody>
-              <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="review-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Review Type *
-                        </label>
-                        <select
-                          id="review-type"
-                          {...register('reviewType')}
-                          className="w-full input-aura px-4 py-2 rounded-lg"
-                        >
-                          <option value="SELF">Self Review</option>
-                          <option value="MANAGER">Manager Review</option>
-                          <option value="PEER">Peer Review</option>
-                          <option value="SUBORDINATE">Subordinate Review</option>
-                          <option value="SKIP_LEVEL">Skip Level</option>
-                        </select>
-                        {errors.reviewType && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.reviewType.message}</p>
-                        )}
+          {(() => {
+            const isEditable = !selectedReview || selectedReview.status === 'DRAFT';
+            return (
+              <>
+                <ModalHeader
+                  onClose={() => {
+                    setShowModal(false);
+                    resetFormHandler();
+                  }}
+                >
+                  {selectedReview ? (isEditable ? 'Edit Review' : 'View Review') : 'Create Review'}
+                </ModalHeader>
+                <form onSubmit={handleSubmit(handleFormSubmit)}>
+                  <ModalBody>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="review-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                            Review Type *
+                          </label>
+                          <select
+                            id="review-type"
+                            {...register('reviewType')}
+                            disabled={!isEditable}
+                            className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            <option value="SELF">Self Review</option>
+                            <option value="MANAGER">Manager Review</option>
+                            <option value="PEER">Peer Review</option>
+                            <option value="SUBORDINATE">Subordinate Review</option>
+                            <option value="SKIP_LEVEL">Skip Level</option>
+                          </select>
+                          {errors.reviewType && (
+                            <p className="text-danger-500 text-sm mt-1">{errors.reviewType.message}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label htmlFor="review-period-start" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                            Review Period Start *
+                          </label>
+                          <input
+                            id="review-period-start"
+                            type="date"
+                            {...register('reviewPeriodStart')}
+                            disabled={!isEditable}
+                            className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                          />
+                          {errors.reviewPeriodStart && (
+                            <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodStart.message}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="review-period-end" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                            Review Period End *
+                          </label>
+                          <input
+                            id="review-period-end"
+                            type="date"
+                            {...register('reviewPeriodEnd')}
+                            disabled={!isEditable}
+                            className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                          />
+                          {errors.reviewPeriodEnd && (
+                            <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodEnd.message}</p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label htmlFor="review-rating" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                            Overall Rating (1-5) *
+                          </label>
+                          <input
+                            id="review-rating"
+                            type="number"
+                            min="1"
+                            max="5"
+                            step="0.1"
+                            {...register('overallRating')}
+                            disabled={!isEditable}
+                            className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                          />
+                          {errors.overallRating && (
+                            <p className="text-danger-500 text-sm mt-1">{errors.overallRating.message}</p>
+                          )}
+                        </div>
                       </div>
 
                       <div>
-                        <label htmlFor="review-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Status *
+                        <label htmlFor="review-strengths" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Strengths
                         </label>
-                        <select
-                          id="review-status"
-                          {...register('status')}
-                          className="w-full input-aura px-4 py-2 rounded-lg"
-                        >
-                          <option value="DRAFT">Draft</option>
-                          <option value="SUBMITTED">Submitted</option>
-                          <option value="IN_REVIEW">In Review</option>
-                          <option value="COMPLETED">Completed</option>
-                          <option value="APPROVED">Approved</option>
-                          <option value="REJECTED">Rejected</option>
-                        </select>
-                        {errors.status && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="review-period-start" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Review Period Start *
-                        </label>
-                        <input
-                          id="review-period-start"
-                          type="date"
-                          {...register('reviewPeriodStart')}
-                          className="w-full input-aura px-4 py-2 rounded-lg"
+                        <textarea
+                          id="review-strengths"
+                          rows={3}
+                          {...register('strengths')}
+                          disabled={!isEditable}
+                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                         />
-                        {errors.reviewPeriodStart && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodStart.message}</p>
+                        {errors.strengths && (
+                          <p className="text-danger-500 text-sm mt-1">{errors.strengths.message}</p>
                         )}
                       </div>
 
                       <div>
-                        <label htmlFor="review-period-end" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Review Period End *
+                        <label htmlFor="review-areas-improvement" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Areas for Improvement
                         </label>
-                        <input
-                          id="review-period-end"
-                          type="date"
-                          {...register('reviewPeriodEnd')}
-                          className="w-full input-aura px-4 py-2 rounded-lg"
+                        <textarea
+                          id="review-areas-improvement"
+                          rows={3}
+                          {...register('areasForImprovement')}
+                          disabled={!isEditable}
+                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
                         />
-                        {errors.reviewPeriodEnd && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodEnd.message}</p>
+                        {errors.areasForImprovement && (
+                          <p className="text-danger-500 text-sm mt-1">{errors.areasForImprovement.message}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label htmlFor="review-goals" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Goals
+                        </label>
+                        <textarea
+                          id="review-goals"
+                          rows={3}
+                          {...register('goals')}
+                          disabled={!isEditable}
+                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                        />
+                        {errors.goals && (
+                          <p className="text-danger-500 text-sm mt-1">{errors.goals.message}</p>
+                        )}
+                      </div>
+
+                      {selectedReview?.reviewType === 'SELF' && (
+                        <div>
+                          <p className="text-sm font-semibold text-[var(--text-secondary)] mb-3">Competency Ratings (1–5)</p>
+                          <div className="space-y-3">
+                            {SELF_ASSESSMENT_COMPETENCIES.map((comp) => (
+                              <div key={comp.name} className="flex items-center gap-3">
+                                <label
+                                  htmlFor={`competency-${comp.name}`}
+                                  className="flex-1 text-sm text-[var(--text-secondary)]"
+                                >
+                                  {comp.label}
+                                </label>
+                                <input
+                                  id={`competency-${comp.name}`}
+                                  type="number"
+                                  min={1}
+                                  max={5}
+                                  step={1}
+                                  disabled={!isEditable}
+                                  value={competencyRatings[comp.name] ?? 3}
+                                  onChange={(e) =>
+                                    setCompetencyRatings((prev) => ({
+                                      ...prev,
+                                      [comp.name]: Math.min(5, Math.max(1, Number(e.target.value))),
+                                    }))
+                                  }
+                                  className="w-20 input-aura px-2 py-1 rounded-lg text-center disabled:opacity-60 disabled:cursor-not-allowed"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <label htmlFor="review-reviewer-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Reviewer Comments
+                        </label>
+                        <textarea
+                          id="review-reviewer-comments"
+                          rows={3}
+                          {...register('reviewerComments')}
+                          disabled={!isEditable}
+                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                        />
+                        {errors.reviewerComments && (
+                          <p className="text-danger-500 text-sm mt-1">{errors.reviewerComments.message}</p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label htmlFor="review-employee-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Employee Comments
+                        </label>
+                        <textarea
+                          id="review-employee-comments"
+                          rows={3}
+                          {...register('employeeComments')}
+                          disabled={!isEditable}
+                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                        />
+                        {errors.employeeComments && (
+                          <p className="text-danger-500 text-sm mt-1">{errors.employeeComments.message}</p>
                         )}
                       </div>
                     </div>
-
-                    <div>
-                      <label htmlFor="review-rating" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Overall Rating (1-5) *
-                      </label>
-                      <input
-                        id="review-rating"
-                        type="number"
-                        min="1"
-                        max="5"
-                        step="0.1"
-                        {...register('overallRating')}
-                        className="w-full input-aura px-4 py-2 rounded-lg"
-                      />
-                      {errors.overallRating && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.overallRating.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="review-strengths" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Strengths
-                      </label>
-                      <textarea
-                        id="review-strengths"
-                        rows={3}
-                        {...register('strengths')}
-                        className="w-full input-aura px-4 py-2 rounded-lg"
-                      />
-                      {errors.strengths && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.strengths.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="review-areas-improvement" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Areas for Improvement
-                      </label>
-                      <textarea
-                        id="review-areas-improvement"
-                        rows={3}
-                        {...register('areasForImprovement')}
-                        className="w-full input-aura px-4 py-2 rounded-lg"
-                      />
-                      {errors.areasForImprovement && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.areasForImprovement.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="review-goals" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Goals
-                      </label>
-                      <textarea
-                        id="review-goals"
-                        rows={3}
-                        {...register('goals')}
-                        className="w-full input-aura px-4 py-2 rounded-lg"
-                      />
-                      {errors.goals && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.goals.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="review-reviewer-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Reviewer Comments
-                      </label>
-                      <textarea
-                        id="review-reviewer-comments"
-                        rows={3}
-                        {...register('reviewerComments')}
-                        className="w-full input-aura px-4 py-2 rounded-lg"
-                      />
-                      {errors.reviewerComments && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.reviewerComments.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="review-employee-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Employee Comments
-                      </label>
-                      <textarea
-                        id="review-employee-comments"
-                        rows={3}
-                        {...register('employeeComments')}
-                        className="w-full input-aura px-4 py-2 rounded-lg"
-                      />
-                      {errors.employeeComments && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.employeeComments.message}</p>
-                      )}
-                    </div>
-              </div>
-            </ModalBody>
-            <ModalFooter>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowModal(false);
-                  resetFormHandler();
-                }}
-                className="flex-1 btn-secondary px-4 py-2 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-1 btn-primary px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              >
-                {isSubmitting ? 'Saving...' : selectedReview ? 'Update' : 'Create'}
-              </button>
-            </ModalFooter>
-          </form>
+                  </ModalBody>
+                  <ModalFooter>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowModal(false);
+                        resetFormHandler();
+                      }}
+                      className="flex-1 btn-secondary px-4 py-2 rounded-lg"
+                    >
+                      {isEditable ? 'Cancel' : 'Close'}
+                    </button>
+                    {isEditable && (
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="flex-1 btn-primary px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      >
+                        {isSubmitting ? 'Saving...' : selectedReview ? 'Update' : 'Create'}
+                      </button>
+                    )}
+                  </ModalFooter>
+                </form>
+              </>
+            );
+          })()}
         </Modal>
 
         <Modal

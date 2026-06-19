@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useParams} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -27,11 +27,17 @@ const personalInfoSchema = z.object({
   emergencyContactNumber: z.string().optional().or(z.literal('')),
 });
 
+const IFSC_REGEX = /^[A-Z]{4}0[A-Z0-9]{6}$/;
+
 const bankDetailsSchema = z.object({
   bankName: z.string().min(1, 'Bank name required'),
   bankAccountNumber: z.string().min(1, 'Account number required'),
-  bankIfscCode: z.string().min(1, 'IFSC code required'),
+  bankAccountNumberConfirm: z.string().min(1, 'Please confirm account number'),
+  bankIfscCode: z.string().regex(IFSC_REGEX, 'Invalid IFSC code (e.g. SBIN0001234)'),
   taxId: z.string().min(1, 'PAN number required'),
+}).refine((d) => d.bankAccountNumber === d.bankAccountNumberConfirm, {
+  message: 'Account numbers do not match',
+  path: ['bankAccountNumberConfirm'],
 });
 
 type PersonalInfoFormData = z.infer<typeof personalInfoSchema>;
@@ -75,6 +81,33 @@ export default function PreboardingPortalPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
+  const idProofRef = useRef<HTMLInputElement>(null);
+  const addressProofRef = useRef<HTMLInputElement>(null);
+  const educationDocsRef = useRef<HTMLInputElement>(null);
+
+  const uploadDocument = async (file: File, docType: string) => {
+    setUploading(docType);
+    setUploadError(null);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('documentType', docType);
+      const response = await publicApiClient.post<PreboardingData>(
+        `/preboarding/portal/${token}/documents`,
+        formData,
+        {headers: {'Content-Type': 'multipart/form-data'}},
+      );
+      setData(response.data);
+    } catch (err) {
+      log.error('Failed to upload document:', err);
+      setUploadError('Upload failed. Please try again.');
+    } finally {
+      setUploading(null);
+    }
+  };
 
   useEffect(() => {
     loadData();
@@ -136,6 +169,7 @@ export default function PreboardingPortalPage() {
     defaultValues: {
       bankName: data?.bankName || '',
       bankAccountNumber: data?.bankAccountNumber || '',
+      bankAccountNumberConfirm: '',
       bankIfscCode: data?.bankIfscCode || '',
       taxId: data?.taxId || '',
     },
@@ -143,8 +177,10 @@ export default function PreboardingPortalPage() {
 
   const saveBankDetails = async (formData: BankDetailsFormData) => {
     setSaving(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {bankAccountNumberConfirm: _confirm, ...payload} = formData;
     try {
-      const response = await publicApiClient.put<PreboardingData>(`/preboarding/portal/${token}/bank-details`, formData);
+      const response = await publicApiClient.put<PreboardingData>(`/preboarding/portal/${token}/bank-details`, payload);
       setData(response.data);
       setActiveStep(2);
     } catch (err) {
@@ -347,18 +383,26 @@ export default function PreboardingPortalPage() {
                   </div>
                   <div>
                     <label htmlFor="preboarding-bank-account-number" className="block text-sm font-medium mb-1">Account Number *</label>
-                    <Input id="preboarding-bank-account-number" {...registerBankDetails('bankAccountNumber')} />
+                    <Input id="preboarding-bank-account-number" type="password" autoComplete="off" {...registerBankDetails('bankAccountNumber')} />
                     {bankDetailsErrors.bankAccountNumber &&
                       <span className="text-danger-500 text-sm">{bankDetailsErrors.bankAccountNumber.message}</span>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
+                    <label htmlFor="preboarding-bank-account-number-confirm" className="block text-sm font-medium mb-1">Confirm Account Number *</label>
+                    <Input id="preboarding-bank-account-number-confirm" type="password" autoComplete="off" {...registerBankDetails('bankAccountNumberConfirm')} />
+                    {bankDetailsErrors.bankAccountNumberConfirm &&
+                      <span className="text-danger-500 text-sm">{bankDetailsErrors.bankAccountNumberConfirm.message}</span>}
+                  </div>
+                  <div>
                     <label htmlFor="preboarding-bank-ifsc-code" className="block text-sm font-medium mb-1">IFSC Code *</label>
-                    <Input id="preboarding-bank-ifsc-code" {...registerBankDetails('bankIfscCode')} />
+                    <Input id="preboarding-bank-ifsc-code" placeholder="SBIN0001234" {...registerBankDetails('bankIfscCode')} />
                     {bankDetailsErrors.bankIfscCode &&
                       <span className="text-danger-500 text-sm">{bankDetailsErrors.bankIfscCode.message}</span>}
                   </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="preboarding-pan-number" className="block text-sm font-medium mb-1">PAN Number *</label>
                     <Input id="preboarding-pan-number" placeholder="ABCDE1234F" {...registerBankDetails('taxId')} />
@@ -380,57 +424,108 @@ export default function PreboardingPortalPage() {
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold mb-4">Document Upload</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div
-                    className={`rounded-lg p-4 border-2 ${data.photoUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)]'}`}>
+                  {/* Passport Photo — Required */}
+                  <button
+                    type="button"
+                    disabled={!!uploading || data.photoUploaded}
+                    onClick={() => photoRef.current?.click()}
+                    className={`rounded-lg p-4 border-2 w-full text-left transition-colors ${data.photoUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)] hover:border-accent-400 cursor-pointer'}`}
+                    aria-label="Upload passport photo"
+                  >
                     <div className="flex items-center gap-4">
-                      {data.photoUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
-                        <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
+                      {data.photoUploaded
+                        ? <CheckCircle2 className="h-6 w-6 text-success-500"/>
+                        : uploading === 'PASSPORT_PHOTO'
+                          ? <div className="animate-spin rounded-full h-6 w-6 border-2 border-accent-500 border-t-transparent"/>
+                          : <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
                       <div>
-                        <p className="font-medium">Passport Photo</p>
-                        <p className="text-caption">{data.photoUploaded ? 'Uploaded' : 'Required'}</p>
+                        <p className="font-medium">Passport Photo <span className="text-danger-500">*</span></p>
+                        <p className="text-caption">{data.photoUploaded ? 'Uploaded' : uploading === 'PASSPORT_PHOTO' ? 'Uploading…' : 'Click to upload'}</p>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    className={`rounded-lg p-4 border-2 ${data.idProofUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)]'}`}>
+                  </button>
+                  <input ref={photoRef} type="file" accept="image/*,.pdf" className="hidden" aria-hidden="true"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadDocument(f, 'PASSPORT_PHOTO'); e.target.value = ''; }}/>
+
+                  {/* ID Proof — Required */}
+                  <button
+                    type="button"
+                    disabled={!!uploading || data.idProofUploaded}
+                    onClick={() => idProofRef.current?.click()}
+                    className={`rounded-lg p-4 border-2 w-full text-left transition-colors ${data.idProofUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)] hover:border-accent-400 cursor-pointer'}`}
+                    aria-label="Upload ID proof"
+                  >
                     <div className="flex items-center gap-4">
-                      {data.idProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
-                        <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
+                      {data.idProofUploaded
+                        ? <CheckCircle2 className="h-6 w-6 text-success-500"/>
+                        : uploading === 'ID_PROOF'
+                          ? <div className="animate-spin rounded-full h-6 w-6 border-2 border-accent-500 border-t-transparent"/>
+                          : <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
                       <div>
-                        <p className="font-medium">ID Proof</p>
-                        <p className="text-caption">{data.idProofUploaded ? 'Uploaded' : 'Aadhar/Passport'}</p>
+                        <p className="font-medium">ID Proof <span className="text-danger-500">*</span></p>
+                        <p className="text-caption">{data.idProofUploaded ? 'Uploaded' : uploading === 'ID_PROOF' ? 'Uploading…' : 'Aadhar / Passport'}</p>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    className={`rounded-lg p-4 border-2 ${data.addressProofUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)]'}`}>
+                  </button>
+                  <input ref={idProofRef} type="file" accept="image/*,.pdf" className="hidden" aria-hidden="true"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadDocument(f, 'ID_PROOF'); e.target.value = ''; }}/>
+
+                  {/* Address Proof — Optional */}
+                  <button
+                    type="button"
+                    disabled={!!uploading || data.addressProofUploaded}
+                    onClick={() => addressProofRef.current?.click()}
+                    className={`rounded-lg p-4 border-2 w-full text-left transition-colors ${data.addressProofUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)] hover:border-accent-400 cursor-pointer'}`}
+                    aria-label="Upload address proof"
+                  >
                     <div className="flex items-center gap-4">
-                      {data.addressProofUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
-                        <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
+                      {data.addressProofUploaded
+                        ? <CheckCircle2 className="h-6 w-6 text-success-500"/>
+                        : uploading === 'ADDRESS_PROOF'
+                          ? <div className="animate-spin rounded-full h-6 w-6 border-2 border-accent-500 border-t-transparent"/>
+                          : <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
                       <div>
-                        <p className="font-medium">Address Proof</p>
-                        <p className="text-caption">{data.addressProofUploaded ? 'Uploaded' : 'Optional'}</p>
+                        <p className="font-medium">Address Proof <span className="text-caption">(optional)</span></p>
+                        <p className="text-caption">{data.addressProofUploaded ? 'Uploaded' : uploading === 'ADDRESS_PROOF' ? 'Uploading…' : 'Click to upload'}</p>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    className={`rounded-lg p-4 border-2 ${data.educationDocsUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)]'}`}>
+                  </button>
+                  <input ref={addressProofRef} type="file" accept="image/*,.pdf" className="hidden" aria-hidden="true"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadDocument(f, 'ADDRESS_PROOF'); e.target.value = ''; }}/>
+
+                  {/* Education Docs — Optional */}
+                  <button
+                    type="button"
+                    disabled={!!uploading || data.educationDocsUploaded}
+                    onClick={() => educationDocsRef.current?.click()}
+                    className={`rounded-lg p-4 border-2 w-full text-left transition-colors ${data.educationDocsUploaded ? 'border-success-500 bg-[var(--bg-main)]' : 'border-dashed border-[var(--border-main)] bg-[var(--bg-main)] hover:border-accent-400 cursor-pointer'}`}
+                    aria-label="Upload education documents"
+                  >
                     <div className="flex items-center gap-4">
-                      {data.educationDocsUploaded ? <CheckCircle2 className="h-6 w-6 text-success-500"/> :
-                        <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
+                      {data.educationDocsUploaded
+                        ? <CheckCircle2 className="h-6 w-6 text-success-500"/>
+                        : uploading === 'EDUCATION_DOCS'
+                          ? <div className="animate-spin rounded-full h-6 w-6 border-2 border-accent-500 border-t-transparent"/>
+                          : <Upload className="h-6 w-6 text-[var(--text-muted)]"/>}
                       <div>
-                        <p className="font-medium">Education Docs</p>
-                        <p
-                          className="text-caption">{data.educationDocsUploaded ? 'Uploaded' : 'Degrees/Certificates'}</p>
+                        <p className="font-medium">Education Docs <span className="text-caption">(optional)</span></p>
+                        <p className="text-caption">{data.educationDocsUploaded ? 'Uploaded' : uploading === 'EDUCATION_DOCS' ? 'Uploading…' : 'Degrees / Certificates'}</p>
                       </div>
                     </div>
-                  </div>
+                  </button>
+                  <input ref={educationDocsRef} type="file" accept="image/*,.pdf" className="hidden" aria-hidden="true"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadDocument(f, 'EDUCATION_DOCS'); e.target.value = ''; }}/>
                 </div>
-                <p className="text-body-muted">Note: Document upload functionality will be integrated with file
-                  storage.</p>
+                {uploadError && <p className="text-danger-500 text-sm">{uploadError}</p>}
+                <p className="text-caption text-[var(--text-muted)]">Required: Passport Photo and ID Proof. Accepted formats: images, PDF.</p>
                 <div className="flex justify-between pt-4">
                   <Button type="button" variant="ghost" onClick={() => setActiveStep(1)}>Back</Button>
-                  <Button type="button" variant="primary" onClick={() => setActiveStep(3)}>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    disabled={!data.photoUploaded || !data.idProofUploaded || !!uploading}
+                    onClick={() => setActiveStep(3)}
+                  >
                     Continue
                     <ChevronRight className="h-4 w-4 ml-1"/>
                   </Button>

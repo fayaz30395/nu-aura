@@ -16,7 +16,6 @@ import {
   Clock,
   Eye,
   FileText,
-  Filter,
   Plus,
   Search,
   TrendingUp,
@@ -27,6 +26,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
 import {toLocalDateString} from '@/lib/utils/date';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
@@ -159,11 +159,15 @@ function formatDate(dateStr: string): string {
 // ─── Components ────────────────────────────────────────────────────────────────
 
 function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: () => void; onSuccess: () => void }) {
+  const [selectedEmployee, setSelectedEmployee] = useState<{ id: string; name: string } | null>(null);
+  const [selectedManager, setSelectedManager] = useState<{ id: string; name: string } | null>(null);
+
   const {
     register,
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: {errors, isSubmitting},
   } = useForm<CreatePIPFormData>({
     resolver: zodResolver(createPIPSchema),
@@ -185,6 +189,8 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
     onSuccess: () => {
       onSuccess();
       reset();
+      setSelectedEmployee(null);
+      setSelectedManager(null);
     },
   });
 
@@ -192,11 +198,7 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
 
   const setDuration = (days: number) => {
     const newEndDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
-    const dateInput = document.querySelector('input[type="date"][value*="' + endDate + '"]') as HTMLInputElement;
-    if (dateInput) {
-      dateInput.value = newEndDate.toISOString().split('T')[0];
-      dateInput.dispatchEvent(new Event('change', {bubbles: true}));
-    }
+    setValue('endDate', newEndDate.toISOString().split('T')[0], { shouldValidate: true, shouldDirty: true });
   };
 
   return (
@@ -219,30 +221,28 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
           {/* Employee & Manager */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="pip-employee-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                Employee
-              </label>
-              <input
-                id="pip-employee-id"
-                type="text"
-                placeholder="Employee name or ID"
-                {...register('employeeId')}
-                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+              <EmployeeSearchAutocomplete
+                label="Employee"
+                placeholder="Search employee..."
+                value={selectedEmployee}
+                onChange={(emp) => {
+                  setSelectedEmployee(emp);
+                  setValue('employeeId', emp?.id ?? '', {shouldValidate: true});
+                }}
               />
               {errors.employeeId && (
                 <p className="text-danger-500 text-sm mt-1">{errors.employeeId.message}</p>
               )}
             </div>
             <div>
-              <label htmlFor="pip-manager-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
-                Manager
-              </label>
-              <input
-                id="pip-manager-id"
-                type="text"
-                placeholder="Manager name or ID"
-                {...register('managerId')}
-                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
+              <EmployeeSearchAutocomplete
+                label="Manager"
+                placeholder="Search manager..."
+                value={selectedManager}
+                onChange={(emp) => {
+                  setSelectedManager(emp);
+                  setValue('managerId', emp?.id ?? '', {shouldValidate: true});
+                }}
               />
               {errors.managerId && (
                 <p className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>
@@ -696,7 +696,6 @@ export default function PIPPage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedPIP, setSelectedPIP] = useState<PIPResponse | null>(null);
   const [search, setSearch] = useState('');
-  const [filterDepartment] = useState('');
 
   const filters: PIPFilter = useMemo(() => {
     const statusMap: Record<PIPTab, PIPStatus | undefined> = {
@@ -707,9 +706,8 @@ export default function PIPPage() {
     return {
       status: statusMap[activeTab],
       search,
-      departmentId: filterDepartment || undefined,
     };
-  }, [activeTab, search, filterDepartment]);
+  }, [activeTab, search]);
 
   const {data: pips = [], isLoading, error} = useQuery({
     queryKey: ['pips', filters],
@@ -850,11 +848,6 @@ export default function PIPPage() {
                   className="w-full pl-10 pr-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-surface)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500"
                 />
               </div>
-              <button
-                className="px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg bg-[var(--bg-input)] text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
-                <Filter size={16}/>
-                Filter
-              </button>
             </div>
           </div>
 
