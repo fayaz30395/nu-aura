@@ -1695,3 +1695,120 @@ Approach: Browser-first discovery (no code assumptions). 7 roles × all pages ca
 |---|---|---|
 | Claude Orchestrator (browser) | Phase 1-2: browser validation all 7 roles | IN_PROGRESS |
 | sidebar-code-analyst (fork) | Phase 3 parallel: sidebar source code analysis | IN_PROGRESS |
+
+---
+
+## Sidebar Code Analysis — 2026-06-19
+
+**Analyst**: sidebar-code-analyst fork | **Phase**: 3 — Root Cause Analysis (pre-browser)
+
+---
+
+### Menu Definition
+
+**ONE source of truth** for all menu items: `frontend/components/layout/menuSections.tsx` exports a single `buildMenuSections(pendingApprovalCount: number): SidebarSection[]` function.
+
+- All ~200 items (top-level + children) are defined here, regardless of sub-app.
+- Sub-app scoping is NOT done in menuSections — it lives in `frontend/lib/config/apps.ts` as `APP_SIDEBAR_SECTIONS`:
+  - `HRMS` → 8 section ids (`home`, `my-space`, `people`, `hr-ops`, `finance`, `projects-workspace`, `reports-analytics`, `admin`)
+  - `HIRE` → 1 section id (`hire-hub`)
+  - `GROW` → 1 section id (`grow-hub`)
+  - `FLUENCE` → 1 section id (`fluence-hub`)
+- Items use `requiredPermission: Permissions.XXX` for RBAC gating. Items in "My Space" (personal pages) have NO `requiredPermission` — visible to all authenticated users.
+- Only the Approvals badge count (`pendingApprovalCount`) is dynamic. All other menu structure and href values are module-level static constants.
+- Icons are pre-allocated at module scope (not inside the function) to avoid re-creating ~90 React elements on every render.
+- One item uses an env var: `Payments` is conditionally included only when `process.env.NEXT_PUBLIC_PAYMENTS_ENABLED === 'true'`. This evaluates at **module load time** (server-side) — consistent across renders.
+
+**No menu items are hardcoded in components other than AppLayout's mobile bottom nav** (which defines its own separate 5-item `appNavConfig` per sub-app inline at AppLayout:287-318).
+
+---
+
+### NavPanel Component
+
+`frontend/components/layout/shell/NavPanel.tsx` is a **pure presentational component**:
+- Receives `sections: SidebarSection[]` (already filtered by AppLayout) — does NO filtering itself.
+- Receives `activeId?: string` from parent — does NOT derive it from `usePathname`.
+- Receives `collapsed?: boolean` from parent — no internal expand/collapse state.
+- `NavRow` is a local sub-component: renders a Next.js `<Link>` (with `prefetch={false}`) or a `<button>`. Active state is computed by `isItemActive(item, activeId)` — checks `item.id === activeId` OR any `item.children[].id === activeId`.
+- Icon rendering: spans with inline Lucide SVG elements, consistent 18px for top-level, 14px for child items (set in menuSections via className, not NavPanel).
+- Collapsed state: NavPanel becomes `w-0 border-0` when `collapsed=true` — the entire panel hides, no icon-only rail.
+- **NavPanel has no Zustand access, no localStorage reads, no auth hooks.** It is fully prop-driven.
+- The upsell footer banner is conditional: `{!hasGrow && ...}` — `hasGrow` is passed from AppLayout's `hasAppAccess('GROW')`.
+
+---
+
+### Layout/Shell Structure
+
+**All sub-apps use the SAME `AppLayout` component** at `frontend/components/layout/AppLayout.tsx`.
+
+Sub-app layouts (`frontend/app/leave/layout.tsx`, `payroll/layout.tsx`, `performance/layout.tsx`, etc.) are minimal pass-throughs:
+```tsx
+export default function Layout({ children }) { return <>{children}</>; }
+```
+They add metadata only — none override the sidebar.
+
+The `AppLayout` component itself wires the full shell:
+- `ProductRail` (72px, hidden on mobile) — sub-app switcher icons
+- `NavPanel` (232px, hidden on mobile) — contextual nav panel
+- `Sidebar` component (via mobile drawer, uses `filteredSections` too)
+- `TopBar` (60px sticky)
+- `MobileBottomNav` (5 items, app-specific hardcoded config)
+
+**Admin section filtering**: The `admin` section is additionally gated by `canSeeAdminSection`:
+```ts
+canSeeAdminSection = isSuperAdmin || roles.includes('TENANT_ADMIN') || roles.includes('HR_MANAGER')
+```
+This is a CLIENT-SIDE role check in addition to the per-item `requiredPermission` check. The double-gate means even if a user has a `SETTINGS_VIEW` permission, they will not see the admin section if their role is not in this list.
+
+**Active sub-app detection**: `useActiveApp()` hook reads `usePathname()` and calls `getAppForRoute(pathname)` which matches against `routePrefixes` arrays. This is computed on every navigation — no persistence risk.
+
+---
+
+### CSS/Theme
+
+- Sidebar width is hardcoded in NavPanel: `w-[232px]` (Tailwind JIT) — defined in ONE place.
+- Collapsed state uses Tailwind: `collapsed ? 'w-0 border-0' : 'w-[232px]'` — CSS transition on `width`.
+- CSS vars for nav colors:
+  - `--nav: #0f1424` (light mode), `#080b16` (dark mode)
+  - `--nav-active: rgba(88,121,224,0.18)` (light), `rgba(104,132,220,0.20)` (dark)
+  - `--prod-hrms/hire/grow/fluence` — product accent colors, defined in `globals.css`
+- No responsive breakpoints on NavPanel itself — the entire shell `div` is `hidden md:flex`, so NavPanel is only visible at `md+`. Below `md`, mobile drawer + `MobileBottomNav` replace it.
+- No conditional CSS classes based on route (only `active` boolean drives `bg-[var(--nav-active)]`).
+- Active icon color: `text-[var(--accent-300)]` when active, `text-[var(--on-rail-dim)]` otherwise.
+
+---
+
+### Hydration Risks
+
+**CONFIRMED hydration risk**: `sidebarCollapsed` is persisted in `localStorage` via Zustand persist middleware (`useUiStore`). The persistence uses a custom `legacySidebarStorage` adapter that reads from `localStorage` keys `sidebar-collapsed` and `admin-sidebar-collapsed`.
+
+- The store is initialized with `sidebarCollapsed: false` (default). Zustand's `persist` middleware rehydrates from localStorage on client mount (after hydration).
+- **Risk**: On first render, `sidebarCollapsed` is `false` regardless of user preference. After rehydration, it may flip to `true` if user had previously collapsed it. This causes a **layout shift** (width transition from 232px → 0px) immediately after mount — visually jarring.
+- The `safeStorage` wrapper protects against SSR crashes (returns null on server), so no React hydration mismatch/error is thrown. But the visible jump exists.
+- `mobileNavOpen` and `commandPaletteOpen` are ephemeral (not persisted) — no hydration risk.
+
+**No other sidebar state is read from localStorage or sessionStorage directly.** The auth token is in an httpOnly cookie (not accessible to localStorage reads).
+
+---
+
+### Potential Inconsistency Sources (Pre-Browser)
+
+**STRUCTURAL** — code issues that will predictably cause inconsistency:
+
+1. **`activeMenuItem` prop is passed per-page, not derived from pathname** (`AppLayout:97`, default value: `'dashboard'`). ~195 pages do not pass `activeMenuItem`, so they default to `'dashboard'` — the "Dashboard" item will incorrectly appear highlighted on those pages. Pages like `/attendance/shift-swap/page.tsx:79` use `<AppLayout>` with no `activeMenuItem`.
+
+2. **Mobile bottom nav is a separate hardcoded config** (`AppLayout:287-320`). It is defined independently from `menuSections.tsx` and has only 5 fixed items per app. If HRMS menu sections change, the mobile bottom nav does NOT automatically reflect the change. The two nav surfaces are maintained separately.
+
+3. **HIRE/GROW/FLUENCE sections are single-hub** but HRMS has 8 sections with hundreds of items. Role filtering (`isSuperAdmin || hasPermission`) could produce very different visible section counts per role. A PAYROLL_ADMIN seeing ~3 sections vs SUPER_ADMIN seeing all 8 sections of HRMS is expected, but if PAYROLL_ADMIN permissions are not correctly seeded (PERM-ISSUE-001 — partially mitigated by V305), large portions of the HRMS sidebar could appear empty.
+
+4. **`canSeeAdminSection` dual-gates the admin section** via role check AND per-item permission check. A user with `SETTINGS_VIEW` permission but role `EMPLOYEE` will NOT see the admin section at all. This is arguably correct behavior, but it's an inconsistency source during the post-V305 migration if roles are present but the admin section check fails for newly backfilled roles.
+
+5. **`buildMenuSections` is called fresh each time `pendingApprovalCount` changes** (every 30s for users with `WORKFLOW_VIEW`). Because of `useMemo([pendingApprovalCount])`, this only re-runs when the count changes, but the full `filteredSections` memo chain reruns whenever `[menuSections, appCode, canSeeAdminSection, filterSidebarItems]` changes. `filterSidebarItems` is wrapped in `useCallback([isSuperAdmin, hasPermission])` — changes when permissions load/reload.
+
+6. **Hydration layout shift** (confirmed): `sidebarCollapsed` defaults to `false` on SSR/initial render, then Zustand rehydrates from localStorage. If user had collapsed sidebar, there's a visible 232px→0px flash on mount.
+
+7. **No `aria-expanded` on collapsed state** — when the panel is hidden via `w-0`, keyboard/screen reader users have no indicator of the panel's current state. (Out of scope for this investigation, noted for a11y.)
+
+---
+
+**Status**: Code analysis complete. Browser validation (Phase 1) in progress via parallel agent.
