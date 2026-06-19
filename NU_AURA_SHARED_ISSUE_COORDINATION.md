@@ -750,6 +750,18 @@ Legend: ✅=granted, ❌=denied, (inherit)=via HR_MANAGER superset, (field)=fiel
 - **Evidence:** `HrmsPermissionInitializer.SYSTEM_ADMIN = "HRMS:SYSTEM:ADMIN"` vs `Permission.SYSTEM_ADMIN = "SYSTEM:ADMIN"`; `HRMS:EMPLOYEE:VIEW_ALL` vs `EMPLOYEE:VIEW_ALL`. AuthService merges both into one map so SUPER_ADMIN/EMPLOYEE work, but a perm granted only in one namespace will silently fail a check expressed in the other.
 - **Fix:** Document the mapping (or add an alias layer in `SecurityService.hasPermission`), and add a build-time test asserting every `Permission.java` constant used in a `@RequiresPermission` is seedable by the initializer under a resolvable code.
 
+#### PERM-ISSUE-004: Permission catalog naming drift — `NOTIFICATION:*` (singular) and `NOTIFICATIONS:*` (plural) both exist
+- **Severity:** LOW (no security impact; correctness/maintenance trap)
+- **Gap Type:** Naming inconsistency / duplicate resource
+- **Evidence:** `Permission.java` declares BOTH families: `NOTIFICATIONS_VIEW/CREATE/DELETE = "NOTIFICATIONS:*"` (`Permission.java:216-218`) AND `NOTIFICATION_VIEW/CREATE/MANAGE/SEND = "NOTIFICATION:*"` (`Permission.java:328-331`). The V96 catalog seeds all 7 distinct codes (`NOTIFICATION:CREATE/MANAGE/SEND/VIEW` + `NOTIFICATIONS:CREATE/DELETE/VIEW`). A grant under one resource name will not satisfy a `@RequiresPermission` check expressed against the other.
+- **Fix:** Pick one canonical resource (recommend singular `NOTIFICATION:*` for consistency with every other resource), migrate the 3 plural grants, deprecate the duplicates, and add a build-time guard rejecting both spellings of the same resource.
+
+#### PERM-ISSUE-005: 24 `Permission.java` constants have no row in the V96 seed catalog
+- **Severity:** LOW (latent — a `@RequiresPermission` against an unseeded code only resolves via the in-memory `RoleHierarchy` fallback, never via DB grant)
+- **Gap Type:** MISSING (catalog incompleteness)
+- **Evidence:** `Permission.java` declares **358** distinct `RESOURCE:ACTION` string constants; `V96__canonical_permission_reseed.sql` inserts **334** distinct codes — a 24-code delta. Any controller annotated with one of the 24 unseeded codes is grantable only through `RoleHierarchy.getDefaultPermissions()` (fallback), so an explicit DB `role_permissions` grant for it cannot be created (no catalog FK target).
+- **Fix:** Diff `Permission.java` constants against the V96 catalog, add the missing inserts to a forward migration, and add a build-time test asserting `Permission.java` ⊆ catalog.
+
 #### PERM-ISSUE-003: SEC-001 demo-credential neutralization is config-gated, not yet applied on Railway
 - **Severity:** HIGH (known, tracked — restated for completeness; not new)
 - **Evidence:** `V295`/`V299` lock the three known `Welcome@123` bcrypt digests + SUSPEND, but both are gated by `${demoCredentialsEnabled}` and `application-render.yml` sets `spring.flyway.enabled=false`, so V295/V299 never ran on live Railway (`V299` header lines 4-14). Live `tenant.admin@nulogic.io` may still hold the public password.
@@ -757,3 +769,125 @@ Legend: ✅=granted, ❌=denied, (inherit)=via HR_MANAGER superset, (field)=fiel
 
 ### Verdict
 RBAC enforcement model is **sound**: server-authoritative, deny-by-default at the interceptor, SUPER_ADMIN app-layer-only bypass with RLS preserved, clean role scope separation in `RoleHierarchy`, TENANT_ADMIN bug genuinely fixed. The one architectural risk (PERM-ISSUE-001) is fragility in how specialized-role permissions are seeded, not a live over/under-permission exploit. **No CRITICAL permission-matrix defects found.** Recommend converging role seeding onto a single initializer + namespace.
+
+---
+
+## Session-3 Consolidated Issue Register & Final Readiness Score
+
+> Claude Orchestrator synthesis — all 4 code-audit agent findings consolidated.
+> Browser validation (browser-rbac-validator) results pending — score below is code-audit-based.
+
+---
+
+### ISSUE-0002 — SEC-001 (carry-forward CRITICAL): Demo credentials live in production
+
+| Field | Value |
+|---|---|
+| Status | CONFIRMED — APPROVED_TO_FIX (config-only, no code change) |
+| Source | Permission-matrix-auditor PERM-ISSUE-003; prior sessions |
+
+**Fix (config-only, user action — no code change):**
+1. Railway: `DEMO_CREDENTIALS_ENABLED=false`
+2. Railway: temporarily `SPRING_FLYWAY_ENABLED=true`, redeploy once → V299 applies (revokes demo passwords)
+3. Railway: `SPRING_FLYWAY_ENABLED=false` again
+4. Vercel: `NEXT_PUBLIC_DEMO_MODE=false`
+
+---
+
+### ISSUE-0003 — PERM-ISSUE-001: Specialized role seeding gap (HIGH)
+
+| Field | Value |
+|---|---|
+| Severity | HIGH |
+| Type | RBAC |
+| Roles | PAYROLL_ADMIN, RECRUITMENT_ADMIN, HR_ADMIN |
+| Status | CONFIRMED — APPROVED_TO_FIX |
+| Source | permission-matrix-auditor |
+
+**Root cause:** `HrmsRoleInitializer.seedDefaultRoles` creates only 6 roles (not PAYROLL_ADMIN, RECRUITMENT_ADMIN, HR_ADMIN). Scattered migrations (V174, V176) create partial DB seeds for these roles. `RoleHierarchy` fallback fires only when the accumulated permission map is **completely empty** — if any partial seed exists, fallback is suppressed → role gets only partial permissions. Same failure class as original TENANT_ADMIN bug (fixed by V289-V290).
+
+**Approved fix (interim V305 migration):** Enumerate all PAYROLL_ADMIN, RECRUITMENT_ADMIN, HR_ADMIN permissions from `RoleHierarchy.get*Permissions()` into a comprehensive backfill migration mirroring V289's approach for TENANT_ADMIN.
+
+**Codex action:** Create `V305__specialized_role_permission_backfill.sql` — enumerate all permissions from `RoleHierarchy.getPayrollAdminPermissions()`, `getRecruitmentAdminPermissions()`, `getHrAdminPermissions()`. Use idempotent INSERT with conflict-on-role-perm guard like V289.
+
+---
+
+### ISSUE-0004 — TENANT-ISO-004: FORCE ROW LEVEL SECURITY not applied (MEDIUM)
+
+| Field | Value |
+|---|---|
+| Severity | MEDIUM |
+| Type | Tenant Isolation |
+| File | `TenantRlsTransactionManager.java:55-65` |
+| Status | CONFIRMED — APPROVED_TO_FIX |
+| Source | backend-rbac-auditor (tenant isolation fork) |
+
+**Root cause:** PostgreSQL superusers bypass RLS by default. If Railway assigns a superuser DB role to the connection pool, DB-layer RLS policies are bypassed. Application-layer filtering (884 `requireCurrentTenant()` calls) provides defense-in-depth but is not a substitute for DB-layer enforcement.
+
+**Approved fix:** `V306__force_rls_all_tables.sql` — apply `ALTER TABLE ... FORCE ROW LEVEL SECURITY;` on all tables that have RLS policies. DDL-only, no data change.
+
+---
+
+### ISSUE-0005 — FRONTEND-AUTH-001: isDemoMode auto-true in isDevelopment (MEDIUM)
+
+| Field | Value |
+|---|---|
+| Severity | MEDIUM |
+| Type | Security / Config |
+| File | `frontend/lib/config/env.ts:232` |
+| Status | CONFIRMED — APPROVED_TO_FIX |
+| Source | frontend-auth-auditor |
+
+**Fix:** Change `env.ts:232` from:
+```ts
+export const isDemoMode = isDevelopment || env.NEXT_PUBLIC_DEMO_MODE === 'true';
+```
+to:
+```ts
+export const isDemoMode = env.NEXT_PUBLIC_DEMO_MODE === 'true';
+```
+
+**Note:** Login panel is correctly fail-closed already (uses strict equality, no isDevelopment short-circuit). This fix affects only demo-mode UI affordances in non-production hosting.
+
+---
+
+### ISSUE-0006 — BUG-HIGH-003 (STATUS: RESOLVED)
+
+Previously reported `/system-admin` nav link. `menuSections.tsx:1417` links to `/admin/system` — `app/admin/system/page.tsx` exists. **RESOLVED.**
+
+---
+
+### ISSUE-0007 — NEW-001 `/fluence/articles` (STATUS: N/A)
+
+No source file references this route. Browser first-pass observation was incorrect. **ACCEPTED_RISK — N/A.**
+
+---
+
+## Code Audit Final Readiness Score (Session-3)
+
+> Code-audit complete. Browser validation pending. Score will be updated when browser results land.
+
+| Category | Weight | Score | Notes |
+|---|---:|---:|---|
+| Authentication / session | 10 | 8 | httpOnly JWT ✅, deny-by-default proxy.ts ✅, token blacklist ✅; -2 SEC-001 demo creds live |
+| RBAC / authorization | 20 | 16 | 100% @RequiresPermission ✅, server-auth perms ✅, TENANT_ADMIN fix verified ✅; -3 PERM-ISSUE-001 seeding gap; -1 dual namespace |
+| Tenant isolation | 15 | 13 | 29/29 native queries ✅, dual-layer RLS ✅, IDOR fixes re-verified ✅; -2 FORCE RLS migration missing |
+| Critical workflows | 20 | 17 | All 4 sub-apps verified prior sessions ✅; browser re-validation pending |
+| API / data integrity | 10 | 9 | 100% @RequiresPermission ✅; -1 dual namespace risk |
+| UI/UX quality | 10 | 8 | BUG-HIGH-003 ✅ RESOLVED; -1 /leave/admin 404; -1 upsell banner unconditional |
+| Security baseline | 10 | 7 | Strong code posture ✅; -2 SEC-001 (config-only); -1 isDemoMode not fail-closed |
+| Performance / accessibility | 5 | 4 | Carrying from prior sessions |
+| **Total** | **100** | **82** | **CONDITIONAL-GO (code audit) — browser validation pending** |
+
+### Production Gate Checklist
+
+| Gate | Status | Owner |
+|---|---|---|
+| SEC-001: Flip Railway/Vercel env vars | ⚠️ PENDING | User (config-only) |
+| ISSUE-0003: V305 specialized role backfill migration | 🔄 APPROVED_TO_FIX | Codex |
+| ISSUE-0004: V306 FORCE ROW LEVEL SECURITY migration | 🔄 APPROVED_TO_FIX | Codex |
+| ISSUE-0005: isDemoMode env.ts fix | 🔄 APPROVED_TO_FIX | Codex |
+| BUG-MED-001: /leave/admin redirect | 🔄 APPROVED_TO_FIX | Codex |
+| BUG-LOW-001: Gate upsell banner behind entitlement | 🔄 APPROVED_TO_FIX | Codex |
+| TENANT-ISO-006: Remove unused unscoped repo method | 🔄 APPROVED_TO_FIX | Codex |
+| Browser validation retest | ⏳ PENDING | browser-rbac-validator |
