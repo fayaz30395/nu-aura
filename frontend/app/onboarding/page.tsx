@@ -91,7 +91,7 @@ export default function OnboardingPage() {
 
   if (!canView) {
     return (
-      <AppLayout activeMenuItem="recruitment" breadcrumbs={[{label: 'Onboarding', href: '/onboarding'}]}>
+      <AppLayout breadcrumbs={[{label: 'Onboarding', href: '/onboarding'}]}>
         <div className="mx-auto w-full max-w-7xl px-6 py-16 text-center">
           <p className="text-body-secondary">You do not have access to onboarding.</p>
         </div>
@@ -100,7 +100,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <AppLayout activeMenuItem="recruitment" breadcrumbs={[{label: 'Onboarding', href: '/onboarding'}]}>
+    <AppLayout breadcrumbs={[{label: 'Onboarding', href: '/onboarding'}]}>
       <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
         <PageHeader
           onInitiate={() => router.push('/onboarding/new')}

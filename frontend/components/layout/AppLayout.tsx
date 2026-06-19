@@ -101,6 +101,9 @@ const LEGACY_ID_REMAP: Record<string, string> = {
   'okr': 'okr-grow',
   'competency-matrix': 'competency-matrix-grow',
   'onboarding': 'onboarding-hire',
+  'preboarding': 'preboarding-hire',
+  'offboarding': 'offboarding-group-hire',
+  'referrals': 'referrals-hire',
 };
 
 const AppLayout: React.FC<AppLayoutProps> = ({
