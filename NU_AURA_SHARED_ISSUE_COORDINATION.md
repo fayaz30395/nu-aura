@@ -35,6 +35,7 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | Browser | Chrome (Extension connected — 3 tabs active) |
 | Approval Mode | Autonomous; Claude decides when user unavailable |
 | Baseline Commit | c25bade5 |
+| Latest Codex Sync Commit | c295ba63 |
 
 ---
 
@@ -43,7 +44,7 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | Agent | Current Task | Status | Blocker | Last Update |
 |---|---|---|---|---|
 | Claude | Orchestration — Parallel RBAC/Security/Tenant/Browser swarm | IN_PROGRESS | None | 2026-06-19 Session-3 parallel launch |
-| Codex | Awaiting APPROVED_TO_FIX issues from Session-3 | READY_FOR_ISSUES | Waiting for agent findings | 2026-06-19 11:48:25 IST |
+| Codex | Next.js / Mantine / React / forms / validation / UI bugs / Playwright failure triage and fixes after approval | READY_FOR_FRONTEND_ISSUES | Waiting for agent findings or issue-register entries with evidence | 2026-06-19 11:50:52 IST |
 | backend-rbac-auditor | SecurityConfig, @RequiresPermission coverage, JWT, RLS, DEMO flag | RUNNING | None | 2026-06-19 Session-3 |
 | frontend-auth-auditor | middleware.ts, nu-rbac.config.ts, NavPanel, usePermissions, bug status | RUNNING | None | 2026-06-19 Session-3 |
 | permission-matrix-auditor | Full role×permission matrix from Flyway migrations V0→V304 | RUNNING | None | 2026-06-19 Session-3 |
@@ -80,8 +81,27 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | 2026-06-19 11:48:25 IST | Codex | Read Codex parallel fixer prompt | `NU_AURA_CODEX_PARALLEL_FIXER_PROMPT.md` requires confirmation/proposed solution before fixes and implementation only after `APPROVED_TO_FIX` | DONE |
 | 2026-06-19 11:48:25 IST | Codex | Loaded required process/security context | Read `tools/PROCESS-RULES.md`, `tools/CONSTRAINT.md`, `tools/MERMAID.md`, `CLAUDE.md`, `MEMORY.md`, `docs/obsidian/00-Home.md`, `docs/obsidian/01-Architecture/Code-Patterns.md`, `docs/obsidian/08-Security/Security-Audit.md`, and `docs/obsidian/12-Knowledge-Graph/Data-Flows.md` | DONE |
 | 2026-06-19 11:48:25 IST | Codex | Checked legacy pattern path | `docs/patterns/README.md` is missing in this checkout; current `CLAUDE.md` routes patterns to `docs/obsidian/01-Architecture/Code-Patterns.md` | NOTED |
+| 2026-06-19 11:50:52 IST | Codex | Pulled latest before frontend fixer intake | Initial `git pull --rebase --autostash` reported stale upstream ref; explicit fetch of `fayaz-deen/main` completed and local `HEAD` now matches `c295ba63` | DONE |
+| 2026-06-19 11:50:52 IST | Codex | Re-read shared coordination file after latest sync | File contains Session-3 agents, carry-forward open issues, and template `ISSUE-0001`; no approved issue-register entry is present yet | DONE |
+| 2026-06-19 11:50:52 IST | Codex | Loaded frontend-focused context | Read `NU_AURA_CODEX_PARALLEL_FIXER_PROMPT.md`, `docs/obsidian/03-Frontend/Routes.md`, `docs/obsidian/03-Frontend/Components.md`, `docs/obsidian/09-Testing/QA-Strategy.md`, `docs/obsidian/09-Testing/Test-Catalog.md`, and `docs/obsidian/11-Decisions/ADR-004.md` | DONE |
 
 ## Codex Focus Scope
+
+### Active Frontend Fixer Scope
+
+Codex is ready to triage and fix only frontend issues that have enough evidence and are approved by Claude. Current requested focus areas:
+
+- Next.js 16 App Router routes, layouts, loading/error boundaries, and protected/public route handling.
+- Mantine 9 components, theming, notifications, modals, tables, and UI composition regressions.
+- React 19 client components, state boundaries, Zustand client state, and TanStack Query server-state usage.
+- Forms using React Hook Form + Zod, including validation schemas, submit states, field errors, and boundary cases.
+- API usage through the existing `frontend/lib/api/client.ts` / Orval mutator path only; no new Axios instances.
+- UI bugs affecting navigation, responsive layout, error/loading/empty states, accessibility, and visible workflow completion.
+- Playwright failures, especially role-based route access, regression specs, live/production configs, and original failing reproduction paths.
+
+Codex will not implement a frontend fix from this run until an issue is written below with evidence and its status is moved to `APPROVED_TO_FIX`.
+
+### Existing Backend Fixer Scope
 
 Codex is ready to triage and fix only issues that have enough evidence and are approved by Claude. Current requested focus areas:
 
