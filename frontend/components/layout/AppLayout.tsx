@@ -86,6 +86,21 @@ function getBestRoleLabel(roles?: Array<{ code: string; name: string }>): string
   return sorted[0].name;
 }
 
+// Maps legacy activeMenuItem IDs (pre-hub-suffix era) to current sidebar item IDs.
+// Pages that explicitly pass e.g. activeMenuItem="performance" are transparently
+// remapped to 'performance-grow' without requiring mass page-file edits.
+const LEGACY_ID_REMAP: Record<string, string> = {
+  'performance': 'performance-grow',
+  'learning': 'learning-grow',
+  'training': 'training-grow',
+  'surveys': 'surveys-grow',
+  'wellness': 'wellness-grow',
+  'recognition': 'recognition-grow',
+  'one-on-one': 'one-on-one-grow',
+  'okr': 'okr-grow',
+  'onboarding': 'onboarding-hire',
+};
+
 const AppLayout: React.FC<AppLayoutProps> = ({
                                                children,
                                                breadcrumbs = [],
@@ -306,6 +321,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   // Pages that explicitly pass `activeMenuItem` override this (e.g. fluence sub-pages).
   const autoActiveMenuId = useMemo(() => {
     const PATH_TO_MENU_ID: Record<string, string> = {
+      // HRMS — My Space
       '/me/dashboard': 'my-dashboard',
       '/me/profile': 'profile',
       '/me/payslips': 'payslips',
@@ -314,12 +330,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       '/me/documents': 'my-documents',
       '/me/skills': 'my-skills',
       '/me/assets': 'my-assets',
+      // HRMS — Dashboards
       '/dashboards/executive': 'executive-dashboard',
       '/dashboard': 'dashboard',
+      // HRMS — People
       '/employees/directory': 'team-directory',
       '/employees': 'employees',
       '/departments': 'departments',
       '/admin/org-hierarchy': 'org-chart',
+      // HRMS — HR Ops
       '/announcements': 'announcements',
       '/approvals': 'approvals',
       '/attendance': 'attendance',
@@ -331,6 +350,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       '/letters/templates': 'letter-templates',
       '/letters': 'letters',
       '/contracts': 'contracts',
+      // HRMS — Finance
       '/payroll': 'payroll',
       '/compensation': 'compensation',
       '/benefits': 'benefits',
@@ -339,6 +359,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       '/travel': 'travel',
       '/statutory': 'statutory',
       '/tax': 'tax',
+      // HRMS — Projects
       '/tasks': 'my-tasks',
       '/projects/psa/invoices': 'psa-invoices',
       '/projects/psa/timesheets': 'psa-timesheets',
@@ -350,10 +371,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       '/nu-calendar': 'nu-calendar',
       '/nu-drive': 'nu-drive',
       '/nu-mail': 'nu-mail',
+      // HRMS — Reports & Analytics
       '/analytics/org-health': 'org-health',
       '/analytics': 'analytics',
       '/predictive-analytics': 'predictive-analytics',
       '/reports': 'reports',
+      // HRMS — Admin
       '/admin/budget': 'budget-planning',
       '/admin/audit': 'admin-audit',
       '/admin/roles': 'admin-roles',
@@ -369,8 +392,40 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       '/biometric-devices': 'biometric-devices',
       '/compliance': 'compliance',
       '/allocations': 'allocations',
+      // NU-Hire
+      '/recruitment': 'recruitment',
+      '/onboarding': 'onboarding-hire',
+      '/preboarding': 'preboarding-hire',
+      '/offboarding': 'offboarding-group-hire',
+      '/offer-portal': 'offer-portal-hire',
+      '/careers': 'careers-hire',
+      '/referrals': 'referrals-hire',
+      // NU-Grow (more-specific paths first so prefix match picks the right item)
+      '/performance/competency-matrix': 'competency-matrix-grow',
+      '/performance/okr': 'okr-grow',
+      '/performance/revolution': 'performance-revolution-grow',
+      '/performance': 'performance-grow',
+      '/okr': 'okr-grow',
+      '/one-on-one': 'one-on-one-grow',
+      '/training': 'training-grow',
+      '/learning': 'learning-grow',
+      '/recognition': 'recognition-grow',
+      '/surveys': 'surveys-grow',
+      '/wellness': 'wellness-grow',
+      '/feedback360': 'performance-grow',
+      // NU-Fluence (more-specific paths first)
+      '/fluence/analytics': 'fluence-analytics',
+      '/fluence/search': 'fluence-search',
+      '/fluence/drive': 'fluence-drive',
+      '/fluence/templates': 'fluence-templates',
+      '/fluence/my-content': 'fluence-my-content',
+      '/fluence/blogs': 'fluence-blogs',
+      '/fluence/wall': 'fluence-wiki',
+      '/fluence/wiki': 'fluence-wiki',
+      '/fluence/dashboard': 'fluence-wiki',
+      '/fluence': 'fluence-wiki',
     };
-    let bestId = 'dashboard';
+    let bestId = 'my-dashboard';
     let bestLen = 0;
     for (const [path, id] of Object.entries(PATH_TO_MENU_ID)) {
       if (pathname === path || pathname.startsWith(path + '/')) {
@@ -383,7 +438,10 @@ const AppLayout: React.FC<AppLayoutProps> = ({
     return bestId;
   }, [pathname]);
 
-  const resolvedActiveMenuItem = activeMenuItem ?? autoActiveMenuId;
+  const resolvedActiveMenuItem = useMemo(() => {
+    const raw = activeMenuItem ?? autoActiveMenuId;
+    return LEGACY_ID_REMAP[raw] ?? raw;
+  }, [activeMenuItem, autoActiveMenuId]);
 
   // Mobile bottom nav items based on active app
   const mobileNavItems: NavItem[] = useMemo(() => {
