@@ -1398,3 +1398,48 @@ Browser-rbac-validator confirms: the NU-Fluence sidebar DOES display an "Article
 
 **84/100 CONDITIONAL-GO.** Production deployment is gated solely on **SEC-001** (flip two env vars — no code change needed). All RBAC/security/tenant isolation findings are PASS in production. Six code fixes are implementing. BROWSER-ISSUE-005 (headcount data) and BROWSER-ISSUE-006 (session drop) need root-cause investigation before resolution.
 
+
+---
+
+## Session-3 Fix Wave — Status Update
+
+**Timestamp:** 2026-06-19 post-synthesis | **Commits:** `a6a3922c` (6 fixes) + `fd069ba2` (wall empty state) + `cedf3664` (denied toast)
+
+### Fixes Committed
+
+| Issue | Fix | Commit | Status |
+|---|---|---|---|
+| ISSUE-0005: isDemoMode auto-true in isDevelopment | `env.ts:232` — removed `isDevelopment \|\|` | `a6a3922c` | FIXED_PENDING_RETEST |
+| BUG-MED-001: /leave/admin 404 | New `app/leave/admin/page.tsx` redirect to carry-forward | `a6a3922c` | FIXED_PENDING_RETEST |
+| BUG-LOW-001: Unconditional upsell banner | Hidden when workspace includes GROW (`NavPanel.tsx` + `AppLayout.tsx`) | `a6a3922c` | FIXED_PENDING_RETEST |
+| TENANT-ISO-006: Unused unscoped repo method | Removed `findByTenantIdAndApplicationIdUnscoped()` | `a6a3922c` | FIXED_PENDING_RETEST |
+| ISSUE-0003: V305 specialized role backfill | New `V305__specialized_role_permission_backfill.sql` — PAYROLL_ADMIN/RECRUITMENT_ADMIN/HR_ADMIN full permission grants | `a6a3922c` | FIXED_PENDING_RETEST |
+| ISSUE-0004: V306 FORCE ROW LEVEL SECURITY | New `V306__force_row_level_security.sql` — 82 tenant-scoped tables | `a6a3922c` | FIXED_PENDING_RETEST |
+| BROWSER-ISSUE-004: Wall empty state shows error | "No activity yet" empty state instead of service error | `fd069ba2` | FIXED_PENDING_RETEST |
+| BROWSER-ISSUE-003: Silent ?denied=1 redirect | Access-denied toast on dashboard + recruitment | `cedf3664` | RETEST_PASSED (confirmed by browser agent) |
+
+### Remaining Open Items
+
+| Issue | Severity | Status | Next Action |
+|---|---|---|---|
+| SEC-001 | CRITICAL | PENDING USER ACTION | User flips Railway `DEMO_CREDENTIALS_ENABLED=false` + Vercel `NEXT_PUBLIC_DEMO_MODE=false` |
+| BROWSER-ISSUE-005: Headcount dept mismatch | HIGH | AWAITING ROOT CAUSE | Codex investigates dept chart API query scope |
+| BROWSER-ISSUE-002: Stale header badge | MEDIUM | AWAITING FIX | Codex investigates Zustand store reset path |
+| BROWSER-ISSUE-006: Intermittent session drop | MEDIUM | AWAITING ROOT CAUSE | Codex checks Railway JWT_EXPIRY + hard-nav restoreSession |
+| ISSUE-0007: /fluence/articles dead link | MEDIUM | AWAITING FIX | Codex adds redirect or removes sidebar link |
+| PERM-ISSUE-004: NOTIFICATION namespace drift | LOW | DOCUMENTED | Next sprint |
+| PERM-ISSUE-005: 24 Permission codes missing from catalog | LOW | DOCUMENTED | Next sprint |
+
+### Post-Fix Score Projection
+
+All 6 code fixes + wall empty-state fix applied. SEC-001 remains (config-only, user action). Score with fixes applied:
+
+| Category | Pre-fix | Post-fix | Delta |
+|---|---:|---:|---|
+| RBAC / authorization | 18 | 18.5 | +0.5 (V305 role seeding gap closed) |
+| Tenant isolation | 13 | 14.5 | +1.5 (V306 FORCE RLS applied) |
+| UI/UX quality | 7 | 8 | +1 (wall empty-state fixed, /leave/admin redirect, denied toast) |
+| Security baseline | 8 | 8.5 | +0.5 (isDemoMode fail-closed) |
+| **Projected Total** | **84** | **≈86** | Once SEC-001 flipped → projected 88+ |
+
+**SEC-001 is the only item between CONDITIONAL-GO and GO.**
