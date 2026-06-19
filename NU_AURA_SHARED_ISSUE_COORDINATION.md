@@ -44,7 +44,7 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | Agent | Current Task | Status | Blocker | Last Update |
 |---|---|---|---|---|
 | Claude | Orchestration — Parallel RBAC/Security/Tenant/Browser swarm | IN_PROGRESS | None | 2026-06-19 Session-3 parallel launch |
-| Codex | Next.js / Mantine / React / forms / validation / UI bugs / Playwright failure triage and fixes after approval | READY_FOR_FRONTEND_ISSUES | Waiting for agent findings or issue-register entries with evidence | 2026-06-19 11:50:52 IST |
+| Codex | Spring Boot / PostgreSQL / Redis / Kafka / Security / RBAC / API issue triage and approved fixes | READY_FOR_BACKEND_SECURITY_ISSUES | Existing watcher active; updated runner file applies on next restart/launch | 2026-06-19 12:10:23 IST |
 | backend-rbac-auditor | SecurityConfig, @RequiresPermission coverage, JWT, RLS, DEMO flag | RUNNING | None | 2026-06-19 Session-3 |
 | frontend-auth-auditor | middleware.ts, nu-rbac.config.ts, NavPanel, usePermissions, bug status | RUNNING | None | 2026-06-19 Session-3 |
 | permission-matrix-auditor | Full role×permission matrix from Flyway migrations V0→V304 | RUNNING | None | 2026-06-19 Session-3 |
@@ -84,8 +84,24 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | 2026-06-19 11:50:52 IST | Codex | Pulled latest before frontend fixer intake | Initial `git pull --rebase --autostash` reported stale upstream ref; explicit fetch of `fayaz-deen/main` completed and local `HEAD` now matches `c295ba63` | DONE |
 | 2026-06-19 11:50:52 IST | Codex | Re-read shared coordination file after latest sync | File contains Session-3 agents, carry-forward open issues, and template `ISSUE-0001`; no approved issue-register entry is present yet | DONE |
 | 2026-06-19 11:50:52 IST | Codex | Loaded frontend-focused context | Read `NU_AURA_CODEX_PARALLEL_FIXER_PROMPT.md`, `docs/obsidian/03-Frontend/Routes.md`, `docs/obsidian/03-Frontend/Components.md`, `docs/obsidian/09-Testing/QA-Strategy.md`, `docs/obsidian/09-Testing/Test-Catalog.md`, and `docs/obsidian/11-Decisions/ADR-004.md` | DONE |
+| 2026-06-19 12:10:23 IST | Codex | Pulled latest before backend/security auto-runner alignment | `git pull --rebase --autostash` -> already up to date; latest local commit observed as `e100af3d` | DONE |
+| 2026-06-19 12:10:23 IST | Codex | Re-read shared coordination file and fixer prompt after pull | File now includes ISSUE-0001 through ISSUE-0004 plus audit sections; no backend/security issue currently has `APPROVED_TO_FIX` in the issue register | DONE |
+| 2026-06-19 12:10:23 IST | Codex | Updated shared-file auto-runner on disk | `run-codex-on-issue-update.sh` now pulls before processing, limits work to one Spring Boot/PostgreSQL/Redis/Kafka/Security/RBAC/API issue, requires `APPROVED_TO_FIX` before implementation, and commits/pushes tracked findings after each run | DONE |
+| 2026-06-19 12:10:23 IST | Codex | Preserved active watcher process | Existing `./run-codex-on-issue-update.sh` process and spawned `codex exec` were already running from 12:04-12:05; Codex did not kill or restart them to avoid interrupting another agent's work | NOTED |
 
 ## Codex Focus Scope
+
+### Active Backend/Security Auto-Runner Scope
+
+Codex is ready to triage and fix only backend/security/API issues that have enough evidence and are approved by Claude. Current requested focus areas:
+
+- Spring Boot controllers, services, repositories, DTOs, validators, filters, and `@RequiresPermission` enforcement.
+- PostgreSQL tenant isolation, Flyway migration impact, RLS behavior, constraints, idempotency, and audit fields.
+- Redis cache, permission cache, rate limit, token blacklist, distributed lock, and failover behavior.
+- Kafka or transactional-outbox events, consumers, idempotency, and fallback behavior.
+- Security, RBAC, APIs, authentication/session, tenant isolation, validation, and server-side authorization.
+
+Automation rule: every future `NU_AURA_SHARED_ISSUE_COORDINATION.md` change handled by `run-codex-on-issue-update.sh` must pull latest, process only one relevant issue, update the issue status/details, commit findings, and push changes. The runner must not implement code unless the selected issue is marked `APPROVED_TO_FIX`.
 
 ### Active Frontend Fixer Scope
 
@@ -416,6 +432,7 @@ N/A
 | ID | Decision | Made By | Confirmed By | Reason | Risk | Timestamp |
 |---|---|---|---|---|---|---|
 | DEC-0001 | Codex will not implement any issue from this run until Claude records evidence and marks the issue `APPROVED_TO_FIX` | Claude protocol / Codex confirmation | Codex | Preserves shared-file protocol and avoids overwriting another agent's findings | Slower fixes, but lower RBAC/security regression risk | 2026-06-19 11:48:25 IST |
+| DEC-0002 | `run-codex-on-issue-update.sh` is the backend/security auto-runner for shared-file changes; it must pull, process one approved-or-analysis issue, update status/details, commit findings, and push | User request / Codex | Codex | Makes the requested auto behavior explicit while preserving the approval gate | Active watcher may still be running the older in-memory script until restarted | 2026-06-19 12:10:23 IST |
 
 ---
 
