@@ -675,6 +675,13 @@ export default function DashboardPage() {
   });
 
   // Widget 3: Department Distribution (conditional) — divide-y list, no nested cards
+  // Use the larger of the API total or the actual distribution sum as denominator
+  // — guards against backend inconsistency where dept counts > headcount.total.
+  const distribSum = safeAnalytics.headcount.departmentDistribution.reduce(
+    (acc, d) => acc + (d.count || 0), 0
+  );
+  const distribDenominator = Math.max(safeAnalytics.headcount.total, distribSum);
+
   if (safeAnalytics.headcount.departmentDistribution && safeAnalytics.headcount.departmentDistribution.length > 0) {
     dashboardWidgets.push({
       id: 'department-distribution',
@@ -683,8 +690,8 @@ export default function DashboardPage() {
       component: (
         <ul className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]">
           {safeAnalytics.headcount.departmentDistribution.slice(0, 5).map((dept, idx) => {
-            const percentage = safeAnalytics.headcount.total > 0
-              ? Math.round((dept.count / safeAnalytics.headcount.total) * 100)
+            const percentage = distribDenominator > 0
+              ? Math.min(100, Math.round((dept.count / distribDenominator) * 100))
               : 0;
             return (
               <li key={idx} className="grid grid-cols-[1fr_auto] items-center gap-4 py-4">

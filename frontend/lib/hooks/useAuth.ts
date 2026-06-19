@@ -307,6 +307,15 @@ export const useAuth = create<AuthState>()(
               // failures where the backend simply hiccupped.
               const status = (err as { response?: { status?: number } })?.response?.status;
               if (status === undefined || status >= 500) {
+                // Transient backend error — preserve session from storage rather than
+                // dropping the user. The httpOnly cookies are still valid; the next
+                // real API call will re-validate. If the backend is permanently down,
+                // those calls will 401 and redirect normally.
+                const cachedUser = readUserFromStorage();
+                if (cachedUser?.roles?.length) {
+                  set({user: cachedUser, isAuthenticated: true, isLoading: false});
+                  return true;
+                }
                 set({isLoading: false});
                 return false;
               }
