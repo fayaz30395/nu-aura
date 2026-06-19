@@ -412,7 +412,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <div
       className={cn(
-        'relative isolate flex min-h-[100dvh] overflow-hidden bg-main text-primary transition-colors duration-300',
+        'relative isolate flex h-[100dvh] overflow-hidden bg-main text-primary transition-colors duration-300',
         'page-reveal',
         className
       )}

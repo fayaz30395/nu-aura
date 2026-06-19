@@ -339,7 +339,7 @@ export default function AdminLayoutInner({
 
   return (
     <DarkModeProvider>
-      <div className="flex min-h-[100dvh] overflow-hidden bg-[var(--bg-page)]">
+      <div className="flex h-[100dvh] overflow-hidden bg-[var(--bg-page)]">
         {/* Sidebar — fixed width, stable layout */}
         <aside
           className="hidden md:flex flex-shrink-0 transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
