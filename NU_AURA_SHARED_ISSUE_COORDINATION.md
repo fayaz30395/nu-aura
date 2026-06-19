@@ -708,6 +708,9 @@ Root cause (`V290` header): `TenantProvisioningService` created the role with `c
 - `RoleHierarchy.getDefaultPermissions` line 72 maps **both** `TENANT_ADMIN` and legacy `"ADMIN"` → `getTenantAdminPermissions()` (belt-and-suspenders).
 - V289/V290 enumerate ~190 permission codes for TENANT_ADMIN (incl. COMPENSATION:*, PAYMENT:*, EMPLOYMENT_CHANGE:*, ROLE:MANAGE, USER:MANAGE) + 6 field perms (SALARY/BANK/TAX). Scope `ALL`. Inheritance verified in code: `getTenantAdminPermissions ⊃ getHRAdminPermissions ⊃ getHRManagerPermissions`. **Fix confirmed.** ✅
 
+### Matrix baseline source (re-confirmed)
+The role→permission matrix below is baselined from **`RoleHierarchy.java`** (`com/nulogic/common/security/RoleHierarchy.java`) — the authoritative `get*Permissions()` definitions called by `HrmsRoleInitializer` at startup. **V96 is catalog-only** (334 distinct permission codes, DELETE+reinsert; no `role_permissions` grants — confirmed by its header and a zero-grant scan). Incremental migrations (V174/V176/V267/V289–V294) are deltas layered on top. Salary edits map to **`COMPENSATION:MANAGE`/`COMPENSATION:APPROVE`** + the `FieldPermission.EMPLOYEE_SALARY_EDIT` field-permission — there is **no `SALARY:*` resource** in `Permission.java` (verified). RoleHierarchy defines **26 roles** (19 explicit + 7 implicit); inheritance chain `TENANT_ADMIN ⊃ HR_ADMIN ⊃ HR_MANAGER`, with PAYROLL_ADMIN/RECRUITMENT_ADMIN/etc. as flat (non-inheriting) sets.
+
 ### Permission Matrix (representative — App-layer bypass for SUPER_ADMIN; others from seeds + RoleHierarchy)
 
 | Permission | SUPER_ADMIN | TENANT_ADMIN | HR_ADMIN | HR_MANAGER | EMPLOYEE | RECRUITMENT_ADMIN | PAYROLL_ADMIN |
@@ -891,3 +894,93 @@ No source file references this route. Browser first-pass observation was incorre
 | BUG-LOW-001: Gate upsell banner behind entitlement | 🔄 APPROVED_TO_FIX | Codex |
 | TENANT-ISO-006: Remove unused unscoped repo method | 🔄 APPROVED_TO_FIX | Codex |
 | Browser validation retest | ⏳ PENDING | browser-rbac-validator |
+
+---
+
+## Browser RBAC Validation — 2026-06-19
+
+**Validator:** browser-rbac-validator (live Chrome E2E against deployed Vercel + Railway)
+**Targets:** Frontend `https://hrms-frontend-vert.vercel.app` · Backend `https://nu-aura-backend-production.up.railway.app`
+**Method:** Live browser (Claude-in-Chrome) + same-origin proxy fetches + direct backend curl. Identity verified via `GET /api/v1/auth/me` and `POST /api/v1/auth/login` returning role arrays.
+
+### PASS/FAIL Summary Table
+
+| Test | Role | Expected | Actual | Status |
+|---|---|---|---|---|
+| Demo panel hidden | Unauthenticated | Hidden | **VISIBLE — 8 one-click accounts** | **FAIL** |
+| JWT not in document.cookie (httpOnly) | SUPER_ADMIN | httpOnly | Only XSRF-TOKEN readable; JWT httpOnly | PASS |
+| CSRF enforced on state-change | any | required | logout w/o X-XSRF-TOKEN → 403; with token → 200 | PASS |
+| Unauth route `/employees` | Unauthenticated | redirect login | redirect to /auth/login | PASS |
+| Unauth route `/payroll/runs` | Unauthenticated | redirect login | redirect to /auth/login | PASS |
+| Unauth API `/api/v1/employees` | Unauthenticated | 401 | 401 | PASS |
+| Unauth API `/api/v1/payroll/runs` | Unauthenticated | 401 | 401 | PASS |
+| Unauth API `/api/v1/roles` | Unauthenticated | 401 | 401 | PASS |
+| Unauth API `/api/v1/permissions` | Unauthenticated | 401 | 401 | PASS |
+| Route `/payroll/runs` blocked | RECRUITMENT_ADMIN | blocked | redirect `/me/dashboard?denied=1` | PASS |
+| Route `/admin/roles` blocked | RECRUITMENT_ADMIN | blocked | redirect `/me/dashboard?denied=1` | PASS |
+| API `/api/v1/payroll/runs` | RECRUITMENT_ADMIN | 403 | **403** | PASS |
+| API `/api/v1/employees` | RECRUITMENT_ADMIN | 200 | 200 | PASS |
+| Route `/admin/roles` blocked | HR_MANAGER | blocked | redirect `/reports/headcount` | PASS |
+| API `/api/v1/roles` | HR_MANAGER | 403 | **403** | PASS |
+| API `/api/v1/permissions` | HR_MANAGER | 403 | **403** | PASS |
+| API `/api/v1/payroll/runs` | HR_MANAGER | 200 (by design) | 200 | PASS (note) |
+| API `/api/v1/roles` | SUPER_ADMIN | 200 | 200 | PASS |
+| API `/api/v1/permissions` | SUPER_ADMIN | 200 | 200 | PASS |
+| CORS reject foreign origin | n/a | reject | OPTIONS evil.example.com → 403 | PASS |
+| CORS allow frontend origin | n/a | allow | 200 + ACAO=frontend, ACAC=true | PASS |
+| Actuator sensitive endpoints | Unauthenticated | protected | /env, /metrics, / → 401 (/health 200) | PASS |
+| CSP / HSTS / XFO / nosniff headers | n/a | present | all present (FE + BE) | PASS |
+
+### RBAC Enforcement Verdict — CONFIRMED SOUND (live)
+Three-tier authorization proven against the SAME backend endpoints:
+- `/api/v1/roles` & `/api/v1/permissions`: SUPER_ADMIN **200** · HR_MANAGER **403** · Unauthenticated **401**.
+- `/api/v1/payroll/runs`: RECRUITMENT_ADMIN **403** (correctly denied) · HR_MANAGER 200 (HR needs payroll — likely by design).
+- Server-authoritative, deny-by-default, method-level `@RequiresPermission` enforced (403 on real paths, not just route guards). UI route guards redirect blocked roles to `/me/dashboard?denied=1`.
+- Confirms the code-level PERM-ISSUE analysis above: enforcement model is correct in production. No over-permission found in tested matrix.
+
+### BROWSER-ISSUE-001: Demo credential panel exposed on public login (SEC-001 live confirmation)
+- **Severity:** CRITICAL
+- **Type:** Security / Auth
+- **Role:** Unauthenticated
+- **URL:** `https://hrms-frontend-vert.vercel.app/auth/login`
+- **Expected:** No demo accounts on a production login page
+- **Actual:** "Demo Accounts — 8 roles" panel renders with one-click sign-in cards (Fayaz M / SUPER ADMIN, Sumit Kumar / MANAGER, Mani S / TEAM LEAD, Gokul R / TEAM LEAD, Saran V / EMPLOYEE, + 3 more). All accounts authenticate with `Welcome@123`. Verified live: `POST /api/v1/auth/login` with suresh@nulogic.io / Welcome@123 → 200 RECRUITMENT_ADMIN; jagadeesh@nulogic.io → 200 HR_MANAGER; fayaz.m@nulogic.io → 200 SUPER_ADMIN. Anyone on the internet can obtain a SUPER_ADMIN session in one click.
+- **Evidence:** login-page screenshot; live login API 200s for 3 roles.
+- **Fix:** config-only (matches PERM-ISSUE-003) — flip Railway `DEMO_CREDENTIALS_ENABLED=false` (+ one-shot Flyway to apply V299 password lock), and gate the demo panel render on the same flag in the frontend. Code is fail-closed; no code change required for the backend block.
+- **Status:** FAIL (open — config gate not yet flipped on live)
+
+### BROWSER-ISSUE-002: Header identity badge stale after re-login (role/name not refreshed)
+- **Severity:** MEDIUM
+- **Type:** RBAC / UX (information integrity)
+- **Role:** RECRUITMENT_ADMIN, HR_MANAGER (reproduced across both)
+- **URL:** any authenticated page top-right user menu
+- **Expected:** Header avatar + name + role reflect the current session user
+- **Actual:** After logging out of SUPER_ADMIN and logging in as Suresh (RECRUITMENT_ADMIN) then Jagadeesh (HR_MANAGER), the page body correctly greeted "Good morning, Suresh. Recruitment Lead", but the **top-right header badge kept showing "Fayaz M / SUPER ADMIN"** across both role switches. The header user widget is cached/not invalidated on session change. (This is BUG-MED-005 "Saran V badge mismatch" generalized — it is a global header-refresh bug, not Saran-specific.)
+- **Evidence:** dashboard screenshot shows body "Good morning, Suresh… Recruitment Lead · Administration" while header reads "Fayaz M / SUPER ADMIN".
+- **Risk:** Misleads the user about their effective privilege; in a shared/kiosk scenario could mask that a lower-priv session is active. No actual privilege escalation — backend authz is by session token, verified independently (Suresh got 403 on payroll).
+- **Status:** FAIL (open)
+
+### BROWSER-ISSUE-003: `?denied=1` access-denial redirect is silent (no toast)
+- **Severity:** LOW
+- **Type:** RBAC UX
+- **Role:** RECRUITMENT_ADMIN
+- **URL:** `/payroll/runs`, `/admin/roles` → `/me/dashboard?denied=1`
+- **Expected:** A visible "Access Restricted" notification explaining the block
+- **Actual:** Silent redirect to dashboard with `?denied=1` query param; no toast or banner surfaced. User has no feedback as to why navigation was blocked. (Confirms BUG-LOW-002.)
+- **Status:** FAIL (open, minor)
+
+### Known-Bug Retest Results (404 routes)
+| Route | Result | Bug ID | Status |
+|---|---|---|---|
+| `/system-admin` | 404 "Page not found" (graceful 404 page w/ Go to Dashboard) | BUG-HIGH-003 | STILL 404 |
+| `/leave/admin` | 404 | BUG-MED-001 | STILL 404 |
+| `/auth/logout` | 404 (no logout *route*; logout is a header-menu action only) | BUG-MED-004 | STILL 404 |
+| `/fluence/articles` | 404 — but sidebar HAS an "Articles" link (route-path mismatch; real path differs) | NEW-001 | STILL 404 |
+
+- The 404 page itself is well-designed (graceful, with "Go to Dashboard"/"Go Back"), so these are dead-link/route-naming bugs, not crashes. `/fluence/articles` is the most user-visible since the NU-Fluence sidebar advertises "Articles".
+
+### Notes / caveats
+- Could not test true cross-tenant isolation from the browser (only one tenant's demo accounts available). Employee list + headcount report consistently showed the same 18-employee tenant scope across roles — no cross-tenant leakage observed, but this is NOT a multi-tenant isolation proof.
+- Backend logout requires the `X-XSRF-TOKEN` header (double-submit CSRF) — POST without it returns 403. This is correct CSRF behavior, observed live.
+- Frontend session is "sticky": navigating to a protected route after a Next.js-route `/api/auth/logout` did not always clear the httpOnly JWT; only the backend `POST /api/v1/auth/logout` (with CSRF token) or the header "Sign out" action fully cleared the session (verified: `/api/v1/auth/me` → 401 afterward). Minor, but worth noting for session-management correctness.
+
