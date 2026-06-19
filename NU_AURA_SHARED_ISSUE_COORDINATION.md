@@ -334,3 +334,127 @@ Auditor: @reviewer. Scope: Next.js route guard (`proxy.ts`), `usePermissions`, `
 
 ### Net verdict (frontend auth surface)
 Route guard and permission sourcing are **sound** (deny-by-default edge guard, server-authoritative perms, httpOnly tokens, no JWT-forgery vector). Open items are **2 MEDIUM** (`isDemoMode` non-fail-closed content gate; `/leave/admin` 404) and **3 LOW** (denial UX, unconditional upsell, verify no `/auth/logout` link). SEC-001 remains a **backend** env-var concern, not a frontend code defect.
+
+---
+
+## Backend @RequiresPermission Coverage Audit — 2026-06-19
+
+Auditor: backend-rbac-auditor fork. Scope: 40+ sensitive controllers — payroll, compensation, admin, statutory, loan, payment, budget, expense, audit, integration, webhook, feature flags, organization.
+
+### BACKEND-RBAC-FINDING-001: @RequiresPermission coverage is 100% on state-changing endpoints
+
+- Severity: **PASS** (positive finding)
+- Type: API Authorization
+- Evidence: Comprehensive audit of all sensitive controller categories
+
+| Controller Category | Coverage | Notes |
+|---|---|---|
+| Payroll (PayrollController, BonusController, GlobalPayrollController, PayrollStatutoryController, StatutoryFilingController) | ✅ 100% | Critical ops (run/approve/lock) use `revalidate=true` |
+| Compensation (CompensationController) | ✅ 100% | Cycle creation, revision workflows (approve/reject/apply) all guarded |
+| Admin (AdminController, SystemAdminController, SystemAuditLogController) | ✅ 100% | Tenant suspend/activate/impersonate use `revalidate=true` |
+| User/Role/Permission (UserController, RoleController, PermissionController) | ✅ 100% | Role assignment + permission changes use `revalidate=true` |
+| Statutory (ProvidentFundController, ESIController) | ✅ 100% | STATUTORY_MANAGE for writes, STATUTORY_VIEW for reads |
+| Loan (LoanController) | ✅ 100% | Apply/Approve/Disburse all guarded |
+| Payment (PaymentController, PaymentConfigController) | ✅ 100% | PAYMENT_INITIATE/VIEW/CONFIG_MANAGE |
+| Budget (BudgetPlanningController) | ✅ 100% | BUDGET_CREATE/MANAGE |
+| Expense (ExpenseClaimController, ExpenseAdvanceController) | ✅ 100% | EXPENSE_CREATE/APPROVE/MANAGE |
+| Audit (AuditLogController) | ✅ 100% | AUDIT_VIEW required on all reads |
+| Integration/Webhook (IntegrationController, WebhookController) | ✅ 100% | SYSTEM_ADMIN + optional @RequiresWebhookScope |
+| Feature Flags (FeatureFlagController) | ✅ 100% | SYSTEM_ADMIN for mutations |
+| Organization (OrganizationController) | ✅ 100% | SYSTEM_ADMIN / ORG_STRUCTURE_VIEW |
+
+### BACKEND-RBAC-FINDING-002: Intentional public exceptions (design-approved, no gap)
+
+| Endpoint | No @RequiresPermission | Reason |
+|---|---|---|
+| `POST /api/v1/tenants/register` | ✅ Intentional | Public registration — in SecurityConfig.permitAll() |
+| `GET /api/v1/users/me` | ✅ Intentional | Self-service; returns only current user's data (JWT auth sufficient) |
+| `GET /api/v1/admin/feature-flags/check/{featureKey}` | ✅ Intentional | Any authenticated user can check feature gates for UI-side gating (RBAC-02 approved) |
+
+### BACKEND-RBAC-FINDING-003: Defense-in-Depth via revalidate=true
+
+Critical operations use `revalidate=true` to re-check permissions from DB (not cached JWT):
+- Tenant management: suspend/activate/impersonate
+- User management: password reset, role updates
+- Role/permission assignments
+- Sensitive payroll: process/approve
+- Compensation approval workflows
+
+**Risk mitigated:** Stale JWT claims cannot authorize sensitive mutations. Permission is re-validated from DB on every critical state change.
+
+### BACKEND-RBAC-FINDING-004: SUPER_ADMIN bypass is at interceptor level only (correct)
+
+- SUPER_ADMIN bypasses `PermissionHandlerInterceptor` (by design)
+- Tenant RLS still applies — SUPER_ADMIN cannot cross tenant boundaries via SQL
+- This is the correct posture: capability bypass but not isolation bypass
+
+### Backend RBAC Net Verdict
+
+✅ **API Authorization: PASS** — 100% @RequiresPermission coverage on all sensitive state-changing endpoints. Defense-in-depth via `revalidate=true` on critical operations. SUPER_ADMIN bypass scoped correctly to capability layer only (not RLS).
+
+**No new backend API authorization gaps found in this session.**
+
+---
+
+## Tenant Isolation Audit — 2026-06-19
+
+Auditor: backend-rbac-auditor fork (tenant isolation specialist). Scope: 29 native queries, 884 service-layer tenant-context calls, RLS config, IDOR re-verification, soft-delete guards, superadmin cross-tenant endpoints.
+
+### TENANT-ISO-FINDING-001: Native Query Tenant Scoping — PASS (29/29 clean)
+
+- Severity: **PASS**
+- Evidence: All 29 native queries audited include explicit `tenant_id = :tenantId` predicate or rely correctly on RLS
+- Key queries verified: NotificationTemplateRepository, WikiPageRepository, BlogPostRepository, StepExecutionRepository, WorkflowExecutionRepository, PayslipRepository (double-filters employee JOIN), EmployeeRepository (10+ native queries), LeaveRequestRepository, LeaveBalanceRepository, FluenceContentRetriever (EntityManager.createNativeQuery with parameterized binding — no injection risk)
+- Soft-delete guard: all JOIN queries explicitly filter `is_deleted = false` ✅
+
+### TENANT-ISO-FINDING-002: Service Layer Tenant Context — PASS (884 fail-safe calls)
+
+- Severity: **PASS**
+- Evidence: `TenantContext.requireCurrentTenant()` used 884 times across all services (throws `IllegalStateException` if tenant context absent — fail-safe)
+- Not using the permissive `getCurrentTenant()` which could return null silently
+
+### TENANT-ISO-FINDING-003: Dual-Layer RLS Enforcement — PASS
+
+- Severity: **PASS**
+- Layer 1 — `TenantRlsTransactionManager`: Uses `SET LOCAL app.current_tenant_id` (transaction-scoped, auto-reverts at commit/rollback). Uses parameterized `set_config()` to prevent SQL injection. Explicitly RESETS on cleanup.
+- Layer 2 — `TenantAwareDataSourceConfig`: Wraps HikariCP DataSource; sets `app.current_tenant_id` on every connection checkout; unconditionally RESETS on return to prevent stale leakage.
+- Edge cases handled: Flyway migrations (null context skip), health checks (skipped), scheduled jobs (tenant-aware)
+
+### TENANT-ISO-FINDING-004: RLS Superuser Bypass — MEDIUM (documented, not critical)
+
+| Field | Value |
+|---|---|
+| Severity | MEDIUM |
+| Type | Tenant Isolation / Security |
+| File | `TenantRlsTransactionManager.java:55-65` |
+| Evidence | DB connection pool user must NOT be a PostgreSQL superuser. Superusers bypass RLS by default. Currently documented as "Future: strict RLS enforcement" awaiting Flyway migration. |
+| Risk | If Railway/Neon assigns a superuser role to the connection pool user, RLS policies are not enforced at the DB layer (application-layer filtering still applies). |
+| Fix | Apply `ALTER TABLE ... FORCE ROW LEVEL SECURITY;` on all tables with RLS policies. This forces RLS even for table owners/superusers. Needs a Flyway migration (next V305+). |
+| Status | DOCUMENTED — P0 before production with real user data |
+
+### TENANT-ISO-FINDING-005: Previously-Fixed IDOR Areas — PASS (re-verified)
+
+| Area | Fix Status | Evidence |
+|---|---|---|
+| WallService cross-tenant employee reference | ✅ CLEAN | `findByIdAndTenantId()` used for both post author AND praise recipient |
+| StatutoryContributionController | ✅ CLEAN | tenantId derived from `TenantContext`, not from request params |
+| Wall post batch hydration (N+1 fix) | ✅ CLEAN | JPQL visibility checks enforce tenant scope |
+
+### TENANT-ISO-FINDING-006: Unused Unscoped Query Method — LOW
+
+- Severity: LOW
+- Type: Code Hygiene
+- File: `TenantApplicationRepository.java:28-31`
+- Evidence: `findByTenantIdAndApplicationIdUnscoped()` exists but is NOT called anywhere
+- Risk: Confusion — another developer could use it accidentally. No active exploit path.
+- Fix: Remove the unused method
+
+### TENANT-ISO-FINDING-007: SuperAdmin Cross-Tenant Endpoints — PASS (properly gated)
+
+- `SystemAdminController` — suspend/activate/impersonate require `SYSTEM_ADMIN + revalidate=true` ✅
+- `SystemAuditLogController` — cross-tenant audit search requires `SYSTEM_ADMIN + revalidate=true` ✅
+- `PlatformController` — `/migrate/{tenantId}` requires `SYSTEM:ADMIN` ✅
+
+### Tenant Isolation Net Verdict
+
+**No IDOR or RLS bypass vulnerabilities detected.** Architecture is mature (29/29 native queries clean, 884 fail-safe tenant context calls, dual-layer RLS, IDOR fixes verified). ONE medium issue: superuser RLS bypass risk needs `FORCE ROW LEVEL SECURITY` migration before true multi-tenant production go-live.
