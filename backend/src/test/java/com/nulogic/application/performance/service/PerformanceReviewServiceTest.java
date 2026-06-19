@@ -175,8 +175,6 @@ class PerformanceReviewServiceTest {
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(employeeRepository.findByIdAndTenantId(reviewerId, tenantId)).thenReturn(Optional.of(reviewer));
             when(reviewCycleRepository.findByIdAndTenantId(reviewCycleId, tenantId)).thenReturn(Optional.of(reviewCycle));
-            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
-            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.createReview(request);
 
@@ -203,7 +201,6 @@ class PerformanceReviewServiceTest {
             });
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(employeeRepository.findByIdAndTenantId(reviewerId, tenantId)).thenReturn(Optional.of(reviewer));
-            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
 
             ReviewResponse result = performanceReviewService.createReview(request);
 
@@ -224,9 +221,6 @@ class PerformanceReviewServiceTest {
 
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            // request carries no FK ids -> no validation lookups; only batch name resolution runs
-            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
-            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.updateReview(reviewId, request);
 
@@ -257,8 +251,9 @@ class PerformanceReviewServiceTest {
         @DisplayName("Should get review by ID")
         void shouldGetReviewById() {
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
-            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
-            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
+            when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employee));
+            when(employeeRepository.findById(reviewerId)).thenReturn(Optional.of(reviewer));
+            when(reviewCycleRepository.findById(reviewCycleId)).thenReturn(Optional.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.getReviewById(reviewId);
 
@@ -334,8 +329,6 @@ class PerformanceReviewServiceTest {
         void shouldSubmitReviewSuccessfully() {
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
-            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
             ReviewResponse result = performanceReviewService.submitReview(reviewId);
 
@@ -368,8 +361,6 @@ class PerformanceReviewServiceTest {
 
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            // completeReview resolves reviewer name for the domain event via findById, then batch-maps via findAllById
-            when(employeeRepository.findById(reviewerId)).thenReturn(Optional.of(reviewer));
             when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
             when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 

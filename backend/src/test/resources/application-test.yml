@@ -44,14 +44,6 @@ spring:
 
   cache:
     type: simple
-    cache-names:
-      - dashboardMetrics
-      - dashboardAnalytics
-      - employeeMetrics
-      - attendanceMetrics
-      - leaveMetrics
-      - payrollMetrics
-      - unreadCountByUser
 
   kafka:
     bootstrap-servers: localhost:9092

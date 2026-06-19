@@ -87,7 +87,8 @@ class RlsNoBypassTest {
                      new PostgreSQLContainer<>(DockerImageName.parse(POSTGRES_IMAGE))
                              .withDatabaseName("rls_test")
                              .withUsername("superuser")
-                             .withPassword("superpass")) {
+                             .withPassword("superpass")
+                             .withEnv("POSTGRES_HOST_AUTH_METHOD", "trust")) {
 
             postgres.start();
 
@@ -249,8 +250,8 @@ class RlsNoBypassTest {
         try (Connection conn = appRoleConnection(jdbcUrl);
              Statement st = conn.createStatement()) {
 
-            // Transaction-local GUC — the application role sets this in every transaction
-            st.execute("SET LOCAL app.current_tenant_id = '" + tenantId + "'");
+            // Session-scoped GUC — SET (not SET LOCAL) persists across autocommit boundaries
+            st.execute("SET app.current_tenant_id = '" + tenantId + "'");
 
             try (ResultSet rs = st.executeQuery("SELECT full_name FROM employees ORDER BY full_name")) {
                 while (rs.next()) {
