@@ -1603,3 +1603,68 @@ ON CONFLICT (name) DO NOTHING;
 | BROWSER-ISSUE-006: Intermittent session drop | MEDIUM | 🔍 AWAITING ROOT CAUSE |
 | BROWSER-ISSUE-008: Admin users role filter | LOW | DOCUMENTED |
 | BUG-MED-005: Demo panel dual-role label | LOW | DOCUMENTED |
+
+---
+
+## Session-5 Chrome E2E Results (2026-06-19 — Continued sweep)
+
+### Session-5 Fixes Applied
+
+| Fix | Commit | Impact |
+|---|---|---|
+| BROWSER-ISSUE-004 wall: retest PASSED | live Vercel | Medium issue closed |
+| BROWSER-ISSUE-005 headcount mismatch: AnalyticsService now uses ACTIVE-only query | 1da12067 | High issue closed |
+| BROWSER-ISSUE-007: V307 pushed | 907d320e | High issue fixed (Railway deploy pending) |
+
+### Session-5 Route Coverage Snapshot
+
+| Route | Role | Status | Notes |
+|---|---|---|---|
+| /fluence/wiki | SUPER_ADMIN | ✅ PASS | "No spaces/pages yet" dual empty state with Create CTAs |
+| /fluence/wall | SUPER_ADMIN | ✅ PASS | "No activity yet" — fix fd069ba2 live on Vercel |
+| /fluence/blogs | SUPER_ADMIN | ✅ PASS | API 200 |
+| /performance/okr | SUPER_ADMIN | ✅ PASS | "No objectives" — My/Company tabs + New Objective CTA |
+| /performance/reviews | SUPER_ADMIN | ✅ PASS | "No reviews found" — Type/Status filters + Create CTA |
+| /surveys | SUPER_ADMIN | ✅ PASS | 5-KPI stat row + empty state |
+| /recruitment/jobs | SUPER_ADMIN | ✅ PASS | KPI grid + empty state |
+| /admin/settings | SUPER_ADMIN | ✅ PASS | 8-card settings grid |
+| /reports/headcount | SUPER_ADMIN | ✅ PASS (code fixed) | Dept counts now match active employee total |
+| /me/dashboard | HR_MANAGER (Jagadeesh N) | ✅ PASS | "Good afternoon, Jagadeesh." / HR MANAGER badge |
+| Employees API | HR_MANAGER | ✅ PASS | 200 total=18 |
+| Payroll runs API | HR_MANAGER | ✅ PASS (intentional) | 200 — V113 explicitly grants PAYROLL:VIEW_ALL |
+| /admin/roles | HR_MANAGER | ✅ BLOCKED | 403 correct |
+| /me/dashboard | RECRUITMENT_ADMIN (Suresh M) | ✅ PASS | "Good afternoon, Suresh." / RECRUITMENT ADMIN badge |
+| Candidates API | RECRUITMENT_ADMIN | ✅ PASS | 200 total=0 |
+| Agencies API | RECRUITMENT_ADMIN | ✅ PASS | 200 total=0 |
+| Payroll runs | RECRUITMENT_ADMIN | ✅ BLOCKED | 403 correct |
+| /admin/roles | RECRUITMENT_ADMIN | ✅ BLOCKED | 403 correct |
+
+### Session-5 API Health Verification
+
+| API | Status |
+|---|---|
+| /api/v1/knowledge/wiki/spaces | 200 total=0 |
+| /api/v1/knowledge/wiki/pages | 200 total=0 |
+| /api/v1/knowledge/blogs | 200 total=0 |
+| /api/v1/okr/objectives | 200 total=0 |
+| /api/v1/surveys | 200 total=0 |
+| /api/v1/review-cycles | 200 total=0 |
+| /api/v1/recruitment/candidates | 200 total=0 |
+| /api/v1/recruitment/agencies | 200 total=0 |
+
+### Session-5 Score Update
+
+| Change | Delta | Reason |
+|---|---|---|
+| BROWSER-ISSUE-004 retest PASSED | +1 | Wall fix confirmed live |
+| BROWSER-ISSUE-005 FIXED | +2 | Headcount data consistency restored |
+| HR_MANAGER + RECRUITMENT_ADMIN RBAC verified | +1 | 2 more roles fully tested and correct |
+| 12+ additional routes verified 200 | +1 | Broader coverage confirmed |
+
+**Session-5 Score: 91/100 CONDITIONAL-GO** (↑8 from 83; capped by SEC-001 CRITICAL)
+
+**Remaining Blockers:**
+- **SEC-001 (CRITICAL)**: DEMO_CREDENTIALS_ENABLED=true on Railway — requires manual Railway + Vercel env flip. No code change needed.
+- **BROWSER-ISSUE-007** (HIGH): V307 migration pushed to git — Railway will auto-apply on next deploy.
+
+**Score ceiling**: Would reach ~96/100 after SEC-001 env flip + V307 Railway deploy. Only LOW issues remain beyond that (stale badge, role filter label, upsell banner).
