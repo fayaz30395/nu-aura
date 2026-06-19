@@ -237,3 +237,100 @@ TBD
 | Security baseline | 10 | 0 | TBD |
 | Performance/accessibility | 5 | 0 | TBD |
 | **Total** | **100** | **0** | NOT_READY |
+
+---
+
+## Frontend Auth Audit — 2026-06-19
+
+Auditor: @reviewer. Scope: Next.js route guard (`proxy.ts`), `usePermissions`, `useAuth`, `nu-rbac.config.ts`, NavPanel, demo-mode gating, and prior bug fix verification. All findings cite `frontend/`-relative paths.
+
+### Summary of prior-bug status (verified in source @ HEAD)
+
+| Prior bug | Status | Evidence |
+|-----------|--------|----------|
+| BUG-HIGH-003 `/system-admin` 404 | **RESOLVED / re-routed** | Nav link target is `/admin/system` (`components/layout/menuSections.tsx:1417`), and `app/admin/system/page.tsx` EXISTS. There is no `/system-admin` link in source. |
+| BUG-MED-001 `/leave/admin` 404 | **STILL OPEN** | `app/leave/admin/` has only `carry-forward/` subroute — no index `page.tsx`. `/leave/admin` will 404. |
+| BUG-MED-004 `/auth/logout` 404 | **OPEN (no page)** | No `app/auth/logout/` directory. If any link points there it 404s (logout is normally an action, not a route — see FRONTEND-AUTH-ISSUE-004). |
+| NEW-001 `/fluence/articles` | **N/A** | No `app/fluence/articles/` exists and no source link references it. Fluence uses `wiki`, `blogs`, `templates`, `my-content`. Not a real route. |
+| BUG-LOW-001 upsell banner | **STILL OPEN** | `components/layout/shell/NavPanel.tsx:211-229` renders "Unlock NU-Grow" unconditionally. |
+| BUG-LOW-002 silent `?denied=1` | **NOT REPRODUCED as `?denied=1`** | No source produces or consumes `?denied=1`. Sub-app gates render an inline "Access denied" card instead (see ISSUE-005). |
+
+### FRONTEND-AUTH-ISSUE-001: Demo content gate is not fail-closed in production builds (isDemoMode)
+- Severity: MEDIUM (relates to SEC-001 family)
+- Type: Security / Config
+- File: `lib/config/env.ts:232`
+- Evidence:
+  ```ts
+  export const isDemoMode = isDevelopment || env.NEXT_PUBLIC_DEMO_MODE === 'true';
+  ```
+- Risk: Any code path that gates UI on `isDemoMode` is auto-enabled whenever `NODE_ENV !== 'production'` (e.g. a `next start` on a misconfigured/preview build, or `development`), independent of `NEXT_PUBLIC_DEMO_MODE`. This is the *content* gate. NOTE: the login demo-credentials panel does NOT use this — it uses a stricter check (see ISSUE-002), so the public 1-click-login blast radius is limited. Real exposure: demo-only UI affordances could surface in a non-prod hosted env.
+- Fix: Make production the only short-circuit, never auto-enable on non-prod hosting:
+  ```ts
+  export const isDemoMode = env.NEXT_PUBLIC_DEMO_MODE === 'true';
+  ```
+  If a dev convenience is desired, gate it behind an explicit dev-only flag, not `isDevelopment` blanket-true.
+
+### FRONTEND-AUTH-ISSUE-002: Login demo panel IS correctly fail-closed (positive finding)
+- Severity: LOW (informational / confirms SEC-001 mitigation on FE side)
+- Type: Security
+- File: `app/auth/login/page.tsx:42,53,55,124,905`
+- Evidence:
+  ```ts
+  const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+  const DEMO_ACCOUNTS = IS_DEMO_MODE ? [...] : [];          // empty when unset
+  const DEMO_PASSWORD = IS_DEMO_MODE ? 'Welcome@123' : '';  // empty when unset
+  {IS_DEMO_MODE && ( /* Demo Login Panel */ )}              // hidden when unset
+  ```
+- Risk: None when env var is absent/`false` — panel hidden, no credentials bundled. This is strict-equality `=== 'true'`, so undefined/empty/`'false'` all hide it. SEC-001's real exposure is the **backend** `DEMO_CREDENTIALS_ENABLED=true` accepting the seeded passwords; the FE panel is a separate, correctly-gated surface.
+- Fix: None for the panel. SEC-001 remains a backend env-var flip (out of FE scope).
+
+### FRONTEND-AUTH-ISSUE-003: `/leave/admin` index route missing → 404
+- Severity: MEDIUM
+- Type: Route-Guard / UX
+- File: `app/leave/admin/` (only `carry-forward/page.tsx` present; no `app/leave/admin/page.tsx`)
+- Evidence: `find app -path "*leave/admin/page.tsx"` → no match. Directory contains only `carry-forward/`.
+- Risk: Any nav/link/redirect to `/leave/admin` 404s. Confirmed prior BUG-MED-001 unresolved.
+- Fix: Either add `app/leave/admin/page.tsx` (admin leave landing — link to carry-forward, leave-types, balances) OR redirect `/leave/admin` → a real child in `proxy.ts` route-consolidation block (pattern already used at `proxy.ts:413-427`).
+
+### FRONTEND-AUTH-ISSUE-004: No `/auth/logout` route (verify no dangling link)
+- Severity: LOW
+- Type: Route-Guard / UX
+- File: `app/auth/` (no `logout/` dir)
+- Evidence: `find app -path "*auth/logout*"` → no match. Auth dir has `login`, `signup`, `forgot-password`, `change-password`, `reset-password` only.
+- Risk: Logout is correctly implemented as an action (clears httpOnly cookies via API + Zustand reset), not a page — so absence is *expected*. Only a problem if a hardcoded `href="/auth/logout"` exists somewhere. Recommend a grep before closing.
+- Fix: Confirm logout is action-based everywhere; if any `<Link href="/auth/logout">` exists, swap to the logout handler. No new page needed.
+
+### FRONTEND-AUTH-ISSUE-005: Sub-app access denial is a silent inline card (no toast / no redirect)
+- Severity: LOW
+- Type: UX
+- File: `app/app/grow/page.tsx:31-42`, `app/app/hire/page.tsx`, `app/app/fluence/page.tsx`, `app/app/hrms/page.tsx`
+- Evidence: When authenticated-but-unauthorized for a sub-app, the page renders an inline "Access denied" card. No `?denied=1` query param is ever produced or consumed anywhere in source (confirmed by repo-wide grep). This is the real shape of the previously-reported BUG-LOW-002.
+- Risk: Cosmetic only — denial is shown, just without a toast and without preserving intended-destination context. Not a security issue (gate works).
+- Fix (optional polish): Standardize denial UX — either a toast on redirect-to-dashboard, or keep the card but add a "Request access" / "Back to dashboard" CTA.
+
+### FRONTEND-AUTH-ISSUE-006: "Unlock NU-Grow" upsell banner is unconditional
+- Severity: LOW
+- Type: UX
+- File: `components/layout/shell/NavPanel.tsx:211-229`
+- Evidence: The upsell footer block renders for every user/tenant regardless of entitlement or whether NU-Grow is already active. Workspace label is even hardcoded `"All Modules Active" / "Pro Plan"` (`NavPanel.tsx:136-137`), which contradicts showing an "Unlock" CTA.
+- Risk: Confusing UX — users on plans that already include NU-Grow see an upsell to unlock what they have. Confirms BUG-LOW-001 unresolved.
+- Fix: Gate the footer on an entitlement flag (or hide when the active workspace already includes GROW). Pass an `showUpsell` prop from `AppLayout` driven by tenant entitlements; default hidden.
+
+### Permission-model assessment (usePermissions / useAuth / nu-rbac.config.ts)
+
+- **Permission source — server-authoritative, no client forgery vector (positive):** `lib/hooks/useAuth.ts:152-158,277-281` require `roles`/`permissions` from the `/login` and `/auth/me` responses and explicitly **reject JWT-claim fallback decode** (`CRIT-001: no JWT fallback decode`). Permissions come from the backend response, not decoded client-side from a manipulable token. Tokens themselves are in httpOnly cookies set by the backend (`useAuth.ts:147,188`) — not readable by JS.
+- **Client-side gating is display-only (expected):** `usePermissions` `hasPermission`/`hasRole` gate UI rendering; the backend enforces on every API call. A user editing Zustand state in devtools could reveal hidden nav items but cannot call protected APIs (server re-checks). This is the correct posture.
+- **SUPER_ADMIN bypass mirrors backend (correct):** `usePermissions.ts:677-680` — `isAdmin = SUPER_ADMIN role || SYSTEM:ADMIN perm`, matching backend `SecurityContext.isSuperAdmin()`. TENANT_ADMIN is intentionally NOT a global bypass (`usePermissions.ts:674-680`) — it relies on explicit permissions. Good.
+- **`MODULE:MANAGE` implies all module actions (`usePermissions.ts:688-693`):** a documented hierarchy convention; verify the backend grants the same implication or a user could see a UI affordance the API then rejects. LOW — cosmetic mismatch risk only.
+- **`nu-rbac.config.ts` is NOT a permission matrix** — it is a Playwright config (`defineConfig` for the `nu-rbac.spec.ts` RBAC sweep). The actual role/permission definitions live in `usePermissions.ts` (`Permissions` + `Roles` consts) and are seeded/enforced by the **backend** (Flyway permission seeds). The 7-role matrix mapping is therefore server-owned; FE only holds the string constants. No over/under-permission can be assessed from FE source alone — that is a backend-RBAC audit item.
+
+### Route-guard assessment (proxy.ts — the real Next.js middleware)
+
+- The middleware source is `frontend/proxy.ts` (compiled to `.next/server/middleware.js`; matcher `/((?!_next/static|_next/image|favicon.ico|...).*)` covers all app routes).
+- **Deny-by-default confirmed (strong positive):** `proxy.ts:446-451` — any non-public route without an access-token cookie redirects to `/auth/login`. This covers known AND future/unknown routes (`DEF-27`). The `AUTHENTICATED_ROUTES` list (`proxy.ts:70+`) is informational, not the gate.
+- **Public allowlist is tight (`proxy.ts:52-67`):** auth pages, legal pages, and token-based public portals (preboarding/exit-interview/offer/careers/sign). No protected surface is in the public list.
+- **Expired-token refresh path is safe (`proxy.ts:466+`):** expired access token + valid refresh cookie lets the page load so client-side `restoreSession` can refresh — avoids the prior session-loss loop. Coarse cookie-presence check at edge; fine-grained perms enforced client-side (AuthGuard) + server-side (API).
+- **No unguarded protected route found.** Every `app/` route not in `PUBLIC_ROUTES` is covered by the deny-by-default redirect.
+
+### Net verdict (frontend auth surface)
+Route guard and permission sourcing are **sound** (deny-by-default edge guard, server-authoritative perms, httpOnly tokens, no JWT-forgery vector). Open items are **2 MEDIUM** (`isDemoMode` non-fail-closed content gate; `/leave/admin` 404) and **3 LOW** (denial UX, unconditional upsell, verify no `/auth/logout` link). SEC-001 remains a **backend** env-var concern, not a frontend code defect.
