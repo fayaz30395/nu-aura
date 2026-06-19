@@ -44,7 +44,7 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | Agent | Current Task | Status | Blocker | Last Update |
 |---|---|---|---|---|
 | Claude | Orchestration — Parallel RBAC/Security/Tenant/Browser swarm | IN_PROGRESS | None | 2026-06-19 Session-3 parallel launch |
-| Codex | Spring Boot / PostgreSQL / Redis / Kafka / Security / RBAC / API issue triage and approved fixes | READY_FOR_BACKEND_SECURITY_ISSUES | Existing watcher active; updated runner file applies on next restart/launch | 2026-06-19 12:10:23 IST |
+| Codex | Next.js / Mantine / React / forms / validation / UI bugs / Playwright failure coordination | FRONTEND_STATUS_SYNC_COMPLETE | No new approved frontend code fix selected in this pass; existing frontend fixes are pushed and awaiting Claude/browser retest where noted | 2026-06-19 17:26:17 IST |
 | backend-rbac-auditor | SecurityConfig, @RequiresPermission coverage, JWT, RLS, DEMO flag | RUNNING | None | 2026-06-19 Session-3 |
 | frontend-auth-auditor | middleware.ts, nu-rbac.config.ts, NavPanel, usePermissions, bug status | RUNNING | None | 2026-06-19 Session-3 |
 | permission-matrix-auditor | Full role×permission matrix from Flyway migrations V0→V304 | RUNNING | None | 2026-06-19 Session-3 |
@@ -88,6 +88,8 @@ If the user is unavailable, Claude acts as final decision owner. Codex must not 
 | 2026-06-19 12:10:23 IST | Codex | Re-read shared coordination file and fixer prompt after pull | File now includes ISSUE-0001 through ISSUE-0004 plus audit sections; no backend/security issue currently has `APPROVED_TO_FIX` in the issue register | DONE |
 | 2026-06-19 12:10:23 IST | Codex | Updated shared-file auto-runner on disk | `run-codex-on-issue-update.sh` now pulls before processing, limits work to one Spring Boot/PostgreSQL/Redis/Kafka/Security/RBAC/API issue, requires `APPROVED_TO_FIX` before implementation, and commits/pushes tracked findings after each run | DONE |
 | 2026-06-19 12:10:23 IST | Codex | Preserved active watcher process | Existing `./run-codex-on-issue-update.sh` process and spawned `codex exec` were already running from 12:04-12:05; Codex did not kill or restart them to avoid interrupting another agent's work | NOTED |
+| 2026-06-19 17:26:17 IST | Codex | Re-read frontend fixer prompt and shared coordination file | Latest local `main` is up to date at `5b9dce7b`; `qa-reports/CHROME_E2E_2026-06-19.md` records 93/100 CONDITIONAL-GO with LOW/MEDIUM frontend items resolved and SEC-001 still config-only | DONE |
+| 2026-06-19 17:26:17 IST | Codex | Updated frontend issue status summary | Marked stale summary rows for BROWSER-ISSUE-002 and sidebar P1/P4 as pushed and ready for Claude/browser retest based on existing coordination-file commits `90798199` and `38597874`; no source code changed | DONE |
 
 ## Codex Focus Scope
 
@@ -1449,7 +1451,7 @@ Browser-rbac-validator confirms: the NU-Fluence sidebar DOES display an "Article
 |---|---|---|---|
 | SEC-001 | CRITICAL | PENDING USER ACTION | User flips Railway `DEMO_CREDENTIALS_ENABLED=false` + Vercel `NEXT_PUBLIC_DEMO_MODE=false` |
 | BROWSER-ISSUE-005: Headcount dept mismatch | HIGH | AWAITING ROOT CAUSE | Codex investigates dept chart API query scope |
-| BROWSER-ISSUE-002: Stale header badge | MEDIUM | AWAITING FIX | Codex investigates Zustand store reset path |
+| BROWSER-ISSUE-002: Stale header badge | MEDIUM | READY_FOR_CLAUDE_RETEST | Fix pushed in `38597874`; Claude/browser should retest logout + relogin role switch |
 | BROWSER-ISSUE-006: Intermittent session drop | MEDIUM | AWAITING ROOT CAUSE | Codex checks Railway JWT_EXPIRY + hard-nav restoreSession |
 | ISSUE-0007: /fluence/articles dead link | MEDIUM | READY_FOR_CLAUDE_RETEST | Codex added `/fluence/articles` redirect to `/fluence/blogs` |
 | PERM-ISSUE-004: NOTIFICATION namespace drift | LOW | DOCUMENTED | Next sprint |
@@ -1607,7 +1609,7 @@ ON CONFLICT (name) DO NOTHING;
 | BROWSER-ISSUE-007: Seed PAYROLL_ADMIN + TENANT_ADMIN roles (V307) | HIGH | ✅ FIXED — V307 migration created (pending Railway deploy) |
 | BROWSER-ISSUE-005: Headcount dept query fix | HIGH | ✅ FIXED — AnalyticsService uses findDepartmentDistribution(ACTIVE-only); totalEmployees=activeEmployees |
 | BROWSER-ISSUE-004: Wall empty state | MEDIUM | ✅ RETEST_PASSED — live verified 2026-06-19 (shows "No activity yet" correctly) |
-| BROWSER-ISSUE-002: Stale header badge | MEDIUM | 🔄 APPROVED_TO_FIX |
+| BROWSER-ISSUE-002: Stale header badge | MEDIUM | READY_FOR_CLAUDE_RETEST — fix pushed in `38597874`, pending browser confirmation |
 | BROWSER-ISSUE-006: Intermittent session drop | MEDIUM | 🔍 AWAITING ROOT CAUSE |
 | BROWSER-ISSUE-008: Admin users role filter | LOW | DOCUMENTED |
 | BUG-MED-005: Demo panel dual-role label | LOW | DOCUMENTED |
@@ -1682,7 +1684,7 @@ ON CONFLICT (name) DO NOTHING;
 ## Sidebar Consistency Investigation — 2026-06-19
 
 **Initiated by:** User | **Method:** Chrome browser + code analysis | **Phases:** 7 (Discovery → Fix → Retest → Regression)
-**Status:** IN_PROGRESS — Phase 1 (Discovery)
+**Status:** READY_FOR_CLAUDE_RETEST — P1 active-menu fix pushed in `90798199`; P4 hydration fix pushed in `38597874`; browser retest pending deployment/live confirmation.
 
 ### Investigation Entry
 
@@ -1815,7 +1817,7 @@ This is a CLIENT-SIDE role check in addition to the per-item `requiredPermission
 
 ## SIDEBAR-INVESTIGATION — Phase 3 Root Cause + Phase 4 Proposal (2026-06-19)
 
-**Status: IMPLEMENTATION IN PROGRESS (sidebar-fixer agent running)**
+**Status: IMPLEMENTED — READY_FOR_CLAUDE_RETEST**
 
 ### Browser Validation Summary
 
@@ -1864,9 +1866,9 @@ Evidence: On `/contracts`, `aria-current="page"` is on `href="/dashboard"` (conf
 
 ### Phase 5 — Implementation
 
-Agent `sidebar-fixer` implementing change in `AppLayout.tsx`. Will build + commit + push upon completion.
+Implementation is complete. `sidebar-fixer` pushed the `AppLayout.tsx` active-menu derivation fix in commit `90798199`.
 
-### Phase 6/7 — Retest + Regression (pending implementation)
+### Phase 6/7 — Retest + Regression (pending deployment/browser retest)
 
 Post-implementation browser validation planned:
 - /contracts → "Contracts" should be highlighted ✓
