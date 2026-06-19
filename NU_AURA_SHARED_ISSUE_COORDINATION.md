@@ -1812,3 +1812,65 @@ This is a CLIENT-SIDE role check in addition to the per-item `requiredPermission
 ---
 
 **Status**: Code analysis complete. Browser validation (Phase 1) in progress via parallel agent.
+
+## SIDEBAR-INVESTIGATION — Phase 3 Root Cause + Phase 4 Proposal (2026-06-19)
+
+**Status: IMPLEMENTATION IN PROGRESS (sidebar-fixer agent running)**
+
+### Browser Validation Summary
+
+| Page | Expected Active | Actual Active | Correct? |
+|---|---|---|---|
+| /leave | "Leave Management" | "Leave Management" | ✓ |
+| /overtime | "Overtime" | "Overtime" | ✓ |
+| /contracts | "Contracts" | **"Dashboard"** | ✗ |
+| /me/dashboard | "My Dashboard" | "My Dashboard" | ✓ |
+
+Evidence: On `/contracts`, `aria-current="page"` is on `href="/dashboard"` (confirmed via Chrome MCP JavaScript evaluation).
+
+### Phase 3 — Root Causes (Confirmed)
+
+**P1 (HIGH) — 78 pages missing `activeMenuItem` prop**
+- File: `AppLayout.tsx:96` — `activeMenuItem = 'dashboard'` default
+- Pages without explicit prop always show "Dashboard" highlighted
+- Fix: auto-derive from `usePathname()` in AppLayout using longest-prefix URL matching
+
+**P2 (MEDIUM) — RECRUITMENT_ADMIN sees 54 items (same as SUPER_ADMIN)**
+- Demo user Suresh has `["RECRUITMENT_ADMIN", "REPORTING_MANAGER"]` roles
+- REPORTING_MANAGER grants broad permissions that unlock most menu sections
+- NOT a sidebar bug — permission seeding breadth issue (PERM-ISSUE-001, mitigated by V305)
+- `canSeeAdminSection` is CORRECT — excludes REPORTING_MANAGER deliberately
+
+**P3 (LOW) — Mobile nav hardcoded separately from menuSections.tsx**
+- MobileBottomNav has 5 hardcoded items, not derived from the desktop nav
+- Deferred to mobile UX sprint
+
+**P4 (LOW) — Hydration layout shift on sidebarCollapsed**
+- Zustand rehydrates from localStorage after initial SSR → visible width flash
+- Deferred
+
+### Phase 4 — Fix Proposal (Implemented)
+
+**Only Change:** `AppLayout.tsx`
+1. Remove `= 'dashboard'` default from `activeMenuItem` prop
+2. Add `autoActiveMenuId` useMemo: longest-prefix URL match against `PATH_TO_MENU_ID` table (~54 entries)
+3. Use `activeMenuItem ?? autoActiveMenuId` when passing to NavPanel (explicit prop still wins)
+
+**Risk:** LOW — pages with explicit `activeMenuItem` prop are unaffected. Auto-derive fixes 78 pages in one change.
+
+**Documents produced:**
+- `sidebar-role-matrix.md` (Phase 1 + 2 output)
+- `sidebar-fix-proposal.md` (Phase 4 output)
+
+### Phase 5 — Implementation
+
+Agent `sidebar-fixer` implementing change in `AppLayout.tsx`. Will build + commit + push upon completion.
+
+### Phase 6/7 — Retest + Regression (pending implementation)
+
+Post-implementation browser validation planned:
+- /contracts → "Contracts" should be highlighted ✓
+- /admin/budget → "Budget Planning" should be highlighted ✓
+- /leave → still correct ✓
+- /overtime → still correct ✓
+- RBAC, navigation, deep links unaffected
