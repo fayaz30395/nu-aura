@@ -201,3 +201,7 @@ docs/.obsidian/
 /Untitled.*
 /*-image.md
 /20[0-9][0-9]-[0-9][0-9]-[0-9][0-9].md
+
+# graphify local analysis artifacts (large build outputs)
+graphify-out/
+.graphifyignore

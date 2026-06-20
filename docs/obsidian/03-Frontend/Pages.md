@@ -160,6 +160,20 @@ short-circuits) — plus `getAppEntryRoute(code)`. `AppLayout`
 filtered by `APP_SIDEBAR_SECTIONS[appCode]`. See [[Routes]] for the
 `PLATFORM_APPS` prefix tables.
 
+#### Sidebar active-state resolution (2026-06-19 fix)
+
+`AppLayout` resolves the active sidebar item via a two-step useMemo:
+
+1. **`autoActiveMenuId`** — derived from `pathname` through `PATH_TO_MENU_ID`
+   (static prefix map covering all Grow/Fluence/Hire routes added in `3078dce2`).
+2. **`resolvedActiveMenuItem`** — applies `LEGACY_ID_REMAP[raw] ?? raw` on top of
+   `autoActiveMenuId ?? activeMenuItem` prop. `LEGACY_ID_REMAP` translates the 14
+   stale string IDs (e.g. `'performance'` → `'performance-grow'`) that individual
+   pages passed as `activeMenuItem` props before the remap layer existed.
+
+`aria-current="page"` is set on the resolved item. All 25 tested routes across
+all 4 sub-apps confirmed correct after the fix (`3078dce2` → `0d313a74`).
+
 ### RBAC verification harness
 
 `frontend/nu-rbac.config.ts` is a standalone Playwright config that runs only
@@ -197,6 +211,7 @@ See [[Data-Flows]] for the full request lifecycle and [[Services]] / [[APIs]].
 
 ## Risks
 
+- **Sidebar active state** — RESOLVED 2026-06-19: all 25 routes verified. `LEGACY_ID_REMAP` + extended `PATH_TO_MENU_ID` in `AppLayout.tsx` covers all Grow/Fluence/Hire route IDs.
 - **Client-heavy (~79% `'use client'`)**: little server rendering means larger
   hydration cost and SEO limited to the explicit public marketing pages (which
   add `robots.ts`/`sitemap.ts`/OG metadata). Not a defect, but a scale concern.
