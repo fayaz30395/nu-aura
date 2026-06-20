@@ -242,3 +242,13 @@ Evidence: /tmp/uilive_run.log, frontend/test-results/dashboard-*.png, frontend/e
 
 ### Run-4 repo-state note
 - **Concurrent autopilot active on `main`:** during this run a process committed `8b332133` (fix(rbac): scope helpdesk endpoints + ownership checks, RBAC-GF-5) on top of my `19c4868a` — the documented ruflo autopilot. Non-blocking for this run; my deploys were explicit `railway up` of my own commits. Live backend includes my V307/V309 + UI-03 attempts; helpdesk RBAC-GF-5 ships whenever `8b332133` deploys.
+
+### Run-4 NEW HIGH — Asset DELETE 500 (outbox RLS regression)
+
+| ID | Severity | Module | Description | Impact | Exact Fix | Status |
+|----|----------|--------|-------------|--------|-----------|--------|
+| R4-ASSET-DEL | HIGH | assets/outbox | `DELETE /api/v1/assets/{id}` returns **500** and the asset is NOT deleted (tx rolls back). Live log: `ERROR: new row violates row-level security policy for table "outbox_events"` — the audit→outbox insert (`AuditEvent`, action=DELETE, tenant_id=660…0001, user_id=null) fails the V303 RLS WITH CHECK at flush/commit. `AssetManagementService.publishAssetAuditEvent` wraps `eventPublisher` in try/catch but the RLS error throws at COMMIT flush (outside the catch) → 500 + rollback. Asset CREATE (same audit path) succeeds — so the GUC matches on create but not after `assetRepository.delete()`. | Admins cannot delete assets; any audited mutation whose outbox insert hits an unset/mismatched `app.current_tenant_id` GUC at flush will 500. **Regression surfaced by B1 de-stale deploy** (outbox V300/V303 + FORCE RLS V306 went live; pre-2026-06-17 backend had no outbox). | Ensure the audit→outbox insert always runs with the matching tenant GUC at flush (investigate why `assetRepository.delete()` changes the GUC context); OR move outbox writes to a connection/role that bypasses RLS (OutboxEventProcessor already polls with BYPASSRLS); OR relax/verify the V303 outbox WITH CHECK. Needs DB-level repro + unit/integration test. Also scope: sweep other entity deletes that emit outbox audit events. | Open (HIGH) — root-caused, fix needs dev cycle |
+
+**Leftover test data (could not delete due to this bug):** assets `GF-AST-001` (3991e27c…), `GF-AST-DEL` (7d036a59…), `GF-TEST-001` serials — tagged "QA GF Test", safe to remove. Delete via DB or after the fix ships.
+
+**Scope note:** department delete (204) does NOT emit an outbox event so it's unaffected; the issue is specific to outbox-emitting mutations. Severity HIGH because asset deletion is a core admin CRUD op and the failure mode (500 + silent rollback) may extend to other audited deletes.
