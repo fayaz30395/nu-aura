@@ -289,7 +289,13 @@ Until a real API exists, add a visible `⚠️ Estimated` badge on the Potential
 
 #### Fix Details
 
-TBD — awaiting Codex investigation of backend entity schema
+INTERIM MITIGATION IN PLACE (verified 2026-06-21): the Potential column header in
+`frontend/app/performance/9box/page.tsx` already renders an amber **"est."** badge with a
+tooltip ("Potential scores are estimated from review ratings until a dedicated potential
+assessment is completed"), so the synthetic data is no longer presented as authoritative.
+FULL FIX DEFERRED: a real potential axis needs a backend `PotentialRating` model
+(tenant × employee × cycle) + endpoint + RBAC decision on who may set it — a product/data-model
+decision, not a mechanical fix. Tracked as a feature, not built speculatively this session.
 
 #### Retest Evidence
 
@@ -353,7 +359,11 @@ Blocked by ISSUE-0002. Once the potential score API is implemented, the override
 
 #### Fix Details
 
-TBD — blocked by ISSUE-0002
+DEFERRED (2026-06-21) — blocked by ISSUE-0002. Persisting overrides requires the
+`PotentialRating` persistence layer (see ISSUE-0002 Fix Details). A localStorage-only stopgap
+was considered but rejected: it would not give the cross-HR-admin visibility the issue requires
+and would mask the missing backend. Build the real endpoint, then wire override `onChange` →
+`PATCH … /potential/{employeeId}` with debounce.
 
 #### Retest Evidence
 
@@ -1296,11 +1306,13 @@ Cross-role negative tests (EMPLOYEE attempting `/payroll/runs`) require a separa
 | Source | browser-rbac-validator |
 | URL | Any authenticated page — top-right header |
 | Roles | RECRUITMENT_ADMIN, HR_MANAGER (reproduced) |
-| Status | CONFIRMED — APPROVED_TO_FIX |
+| Status | NO_CODE_DEFECT_FOUND (Claude, 2026-06-21) — see investigation below |
 
 After logout + re-login with a different demo account, page body shows the correct greeting but the **top-right user badge continues showing the prior session's name/role** (e.g. "Fayaz M / SUPER ADMIN" while the active session is RECRUITMENT_ADMIN). No actual privilege escalation — backend authz is by session token. Misleading display only.
 
 **Fix:** Invalidate and re-fetch the user header widget on session change / auth state change. Likely a Zustand store that isn't cleared on logout. Codex to investigate `useAuth.ts` store reset path.
+
+**INVESTIGATION (Claude, 2026-06-21):** Traced the data source. The header badge (`AppLayout → Header → UserMenu`) reads `user?.fullName` and `getBestRoleLabel(user?.roles)` from `useAuth().user`; `usePermissions` also derives its roles from `useAuth` — **same single source as the body greeting**, so they cannot diverge within a render. `useAuth.login()` clears `user` to null before setting the new user and overwrites the persisted `nu-aura-user`; `logout()` clears the store, the persisted key, and the query cache. No second/stale source was found and the clearing paths are correct. No reproducible code defect; likely a demo-only artifact of switching accounts without a full logout in one tab. Declined to make a speculative edit to security-sensitive auth code without a reproduction. Re-open with exact repro steps (same tab? logout used? hard nav?) if it recurs.
 
 ---
 
@@ -1356,9 +1368,13 @@ Total Employees KPI = 18; Department bar chart sums to 85 (Engineering 45, Sales
 | Type | Auth / Session |
 | Source | Claude Orchestrator browser sweep |
 | Reproducibility | ~30% (intermittent) |
-| Status | CONFIRMED — AWAITING_CODEX_ROOT_CAUSE |
+| Status | FIXED — root cause found + fixed (Claude, 2026-06-21) |
 
 Cross-sub-app hard navigations occasionally redirect to `/auth/login` with a valid session. Second attempt always succeeds. Likely short JWT TTL on Railway demo server (15-30 min) racing with hard navigation before `restoreSession` fires. Codex to check `JWT_EXPIRY` env var and whether `restoreSession` is triggered on hard-nav in `AppLayout`.
+
+**ROOT CAUSE (confirmed):** `frontend/proxy.ts` edge gate. The `isExpired` branch already deferred to the client refresh flow when a refresh cookie existed, but the **`if (!accessToken)` branch redirected to `/auth/login` unconditionally** — without checking the refresh token. With a short access-token TTL the browser *drops* the expired `access_token` cookie entirely, so a hard navigation arrives with no access cookie but a still-valid `refresh_token`, hits that branch, and bounces to login. ("Second attempt succeeds" = `restoreSession` had refreshed by then.) The Axios 401 interceptor and `AuthGuard.restoreSession` were already correct.
+
+**FIX:** hoisted the `hasRefreshToken` check above the `!accessToken` branch; when a refresh cookie is present the page is allowed to load so `AuthGuard/restoreSession` can refresh, mirroring the existing `isExpired` path. Only redirect when neither token exists. Verified `tsc --noEmit` clean. Server-side authz unchanged (data APIs still require a valid access token).
 
 ---
 
@@ -1386,7 +1402,7 @@ Browser-rbac-validator confirms: the NU-Fluence sidebar DOES display an "Article
 |---|---|
 | Evidence | `Permission.java` declares both singular `NOTIFICATION:*` (4 codes, lines 216-218) AND plural `NOTIFICATIONS:*` (3 codes, lines 328-331); both seeded in V96. A grant under one name won't satisfy a check against the other. |
 | Fix | Canonicalize on singular `NOTIFICATION:*`; deprecate plural; migration to rename existing grants |
-| Status | CONFIRMED — LOW priority, no live exploit |
+| Status | DEFERRED (Claude, 2026-06-21) — blast radius checked: the plural `NOTIFICATIONS_*` codes are used only in `NotificationController` (10 `@RequiresPermission`), which works today → roles are granted the plural codes. Renaming the controller to singular would break notification access unless every grant is migrated in lockstep, and that needs the RBAC/Testcontainers integration suite to verify (Docker not available in this env). Not worth the lockout risk for a LOW no-security-impact drift; needs a verified grant-migration pass. |
 
 ---
 
@@ -1396,7 +1412,7 @@ Browser-rbac-validator confirms: the NU-Fluence sidebar DOES display an "Article
 |---|---|
 | Evidence | Permission.java declares 358 distinct codes; V96 seeds 334 → 24-code delta. Controllers using these 24 codes can only be grantable via in-memory fallback, never via DB row (no FK target in catalog). |
 | Fix | Forward migration adding the 24 missing codes to the permissions catalog + build-time test asserting `Permission.java ⊆ catalog` |
-| Status | CONFIRMED — LOW priority, no live exploit |
+| Status | FIXED (Claude, 2026-06-21) — `V308__backfill_missing_permission_catalog_codes.sql` idempotently seeds the 24 missing codes (AGENCY ×5, GOAL ×3, HELPDESK ×2, KNOWLEDGE ×1, OKR ×1, PROJECT ×2, SCORECARD ×5, SURVEY ×3, TRAINING ×2), matching V96's `ON CONFLICT (code) … DO NOTHING` pattern. Build-time `⊆ catalog` guard test deferred (LOW). |
 
 ---
 

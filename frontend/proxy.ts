@@ -443,8 +443,25 @@ export function proxy(request: NextRequest) {
     request.cookies.get(ACCESS_TOKEN_COOKIE_HOST) ?? request.cookies.get(ACCESS_TOKEN_COOKIE);
   const accessToken = accessTokenCookie?.value;
 
+  // P0-SESSION-FIX / BROWSER-ISSUE-006: a refresh token (longer TTL) standing in
+  // for an absent-or-expired access token means the session is still recoverable
+  // client-side. Compute it up front so BOTH the "no access cookie" and "access
+  // expired" paths can defer to the client-side refresh flow instead of bouncing
+  // to /auth/login.
+  const hasRefreshToken =
+    !!request.cookies.get(REFRESH_TOKEN_COOKIE_HOST)?.value ||
+    !!request.cookies.get(REFRESH_TOKEN_COOKIE)?.value;
+
   if (!accessToken) {
-    // DEF-27: Deny-by-default — any non-public route without a cookie redirects to login.
+    // BROWSER-ISSUE-006: with a short access-token TTL the browser drops the
+    // expired access_token cookie entirely, so a cross-sub-app hard navigation
+    // arrives here with no access cookie but a still-valid refresh cookie.
+    // Let the page load so AuthGuard/restoreSession can refresh — only redirect
+    // when there is genuinely no way to recover the session.
+    if (hasRefreshToken) {
+      return allowWithSecurity(request, nonce);
+    }
+    // DEF-27: Deny-by-default — no tokens at all → redirect to login.
     // This covers both known authenticated routes AND unknown/future routes.
     const loginUrl = new URL('/auth/login', request.url);
     return NextResponse.redirect(loginUrl);
@@ -452,16 +469,6 @@ export function proxy(request: NextRequest) {
 
   // DEF-29: Decode JWT and check expiry
   const {role, roles, isExpired} = decodeJwt(accessToken);
-
-  // P0-SESSION-FIX: Check if a valid refresh token cookie exists alongside
-  // the expired access token. If so, let the page load — the client-side
-  // AuthGuard/restoreSession will use the refresh token to get new credentials.
-  // Previously, middleware redirected to /auth/login immediately on access token
-  // expiry, which prevented the refresh flow from ever running and caused session
-  // loss during cross-sub-app navigation.
-  const hasRefreshToken =
-    !!request.cookies.get(REFRESH_TOKEN_COOKIE_HOST)?.value ||
-    !!request.cookies.get(REFRESH_TOKEN_COOKIE)?.value;
 
   if (isExpired) {
     if (hasRefreshToken) {
