@@ -1,0 +1,22 @@
+# Green-Flag Security Re-Audit — Security Findings
+
+**Scope:** New exposure surface since `74c61449`; V305–V308 migrations; secret history.
+**HEAD:** `f1f530c4`  ·  **Date:** 2026-06-21  ·  **Auditor:** rbac-security (code-only)
+
+| ID | Severity | Class | Finding | Impact | Fix | Owner | Status |
+|----|----------|-------|---------|--------|-----|-------|--------|
+| SEC-GF-1 | **CRITICAL** | secrets-in-history | Live Groq API key `gsk_ryq7hgo9…` is committed in git history at commit `83f70807` ("test") in file `backend/start-backend.sh`. The full 56-char key value is present in the blob (not masked). `83f70807` IS an ancestor of `main` and is reachable from pushed refs incl. `remotes/fayaz-deen/main` and 6 local branches. The key is NOT in the HEAD tree (file was later edited), but remains permanently in history. | Anyone with repo (or fork/clone) access can extract a working AI key → quota theft / billing abuse / potential prompt-pipeline abuse. Pushed to remote, so treat as publicly exposed. | 1) **USER must rotate the key immediately** at console.groq.com — rotation is the only real remediation; history rewrite alone is insufficient once pushed. 2) Optionally scrub history (`git filter-repo --replace-text`) and force-push, coordinating with all clone holders. 3) Add `gsk_` to a pre-commit secret-scan (gitleaks). Evidence: `git log -S 'gsk_ryq7hgo9' --all` → hits incl. `83f70807`; `git grep gsk_ryq7hgo9M9... 83f70807` → `backend/start-backend.sh`. | USER | **OPEN** |
+| SEC-GF-2 | INFO | secrets-config | `backend/.env` (which holds the live key in the working tree) is correctly gitignored and is NOT tracked — `git ls-files backend/.env` returns nothing. `.gitignore` (root `.env`, `.env.local`, `.env.production*`) and `backend/.gitignore` (`.env`, `.env.local`, `.env.*.local`) both cover it. Only `*.env.example` files are tracked. Working-tree exposure is acceptable; the only history leak is SEC-GF-1's `start-backend.sh`. | None (preventive control is in place). | No action; covered by .gitignore. Already tracked as SEC-4 in ISSUE_BOARD.md (masked reference only). | — | Resolved-control |
+| SEC-GF-3 | INFO | cross-tenant-repo (SEC-3/SEC-4 class) | All 50 repositories changed since `74c61449` were reviewed for id-without-tenant queries. New finder methods consistently use `findByIdAndTenantId(...)`. The few cross-entity `@Query` joins carry `tenantId` in WHERE (`ExpenseItem`: `c.tenantId = :tenantId`; `ContractSignature.findByContractIdAndTenantId`). Collection/`IN` aggregation queries (`AttendanceTimeEntry.findOpenEntriesByAttendanceRecordIdIn`, `HeadcountPosition.countByStatusForBudgets`) are fed id-lists derived from prior tenant-scoped queries (e.g. `BudgetPlanningService:569` maps over tenant-filtered budgets) — batch-optimization pattern, not a cross-tenant path. | None — the SEC-3/SEC-4 fix pattern is being applied correctly to new code. | No new cross-tenant repo query introduced. | — | Clean |
+| SEC-GF-4 | INFO | rls / migration | V306 applies `FORCE ROW LEVEL SECURITY` to all tenant-scoped tables, closing the table-owner/superuser RLS-bypass path. Strict security improvement; idempotent (per-table BEGIN/EXCEPTION). | Strengthens tenant isolation. | None — keep. | — | Clean |
+
+## V305–V308 permission-migration verdict (cross-ref RBAC report)
+
+- **V308** (the backfill named in the brief): inserts exactly **24** rows into `permissions` catalog only, every statement `ON CONFLICT (code) WHERE is_deleted=false DO NOTHING`. **Zero** `role_permissions` / `GRANT` / `UPDATE` statements (the lone "role_permissions" token is in a comment). Idempotent, RLS-safe, does NOT widen any role. **CLEAN.**
+- **V305**: grants only to `PAYROLL_ADMIN`, `RECRUITMENT_ADMIN`, `HR_ADMIN` (all admin roles) + field-perms; per-tenant loop; `ON CONFLICT DO NOTHING`; only inserts where the permission code already exists. No EMPLOYEE widening. **CLEAN.**
+- **V307**: creates only `PAYROLL_ADMIN` and `TENANT_ADMIN` roles and grants their sets; per-tenant; idempotent. No EMPLOYEE grant. **CLEAN.**
+
+## Bottom line
+One **CRITICAL** (this file): a real Groq key is in pushed git history (`83f70807` / `backend/start-backend.sh`) — **rotate now**. V305–V308, new repository queries, .env gitignore coverage, and FORCE RLS are clean.
+
+Separately, **4 HIGH + 1 MEDIUM IDOR/BOLA** in Helpdesk + Feedback controllers (tenant-only scoping behind EMPLOYEE-held gates) — see `rbac.md` RBAC-GF-1..5.
