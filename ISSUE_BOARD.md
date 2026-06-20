@@ -114,3 +114,51 @@ Severity: CRITICAL | HIGH | MEDIUM | LOW · Status: Open → In Progress → Fix
 - **Frontend TypeScript:** `tsc --noEmit` exit 0 · zero type errors across all modified files
 - **Browser validator agent:** still running (warm-path login, RBAC boundaries, leave flow on deployed Vercel app)
 - **Commits:** fca3178b (RBAC-7 + RBAC-8 + issue board), 74c61449 (QW1 + QW4 + Mockito fix + audit docs)
+
+---
+
+## Run-4 (2026-06-21) — 10h Autonomous Green-Flag — Orchestrator: Bridge (Claude Opus 4.8)
+
+**Method:** code-for-root-cause + browser-for-truth on LIVE (Vercel FE + Railway BE). Chrome MCP extension is DISCONNECTED → browser-truth via Playwright (production config, real demo login) + live HTTP/API probes with cookie auth. Backend warm (health UP).
+
+**KILL-SWITCH NOTE:** No deploy issued yet this run. Live backend deploy is `d5486d46` (2026-06-17, SUCCESS) — **4 days stale**; HEAD `f1f530c4` (V307/V308 + fixes) NOT deployed. If a Wave-2 batched deploy fails its smoke gate → halt deploys, keep `d5486d46` live, log CRITICAL, test-only.
+
+| ID | Severity | Module | Description | Impact | Exact Fix | Owner | Status |
+|----|----------|--------|-------------|--------|-----------|-------|--------|
+| R4-SEC-3b | CRITICAL | deploy/auth | Live demo `Welcome@123` SUPER_ADMIN login returns 200 + full roles on Railway+Vercel, **despite `DEMO_CREDENTIALS_ENABLED=false`** in Railway env. Root cause: neutralization migrations V270/V295/V299 are gated on Flyway placeholder `${demoCredentialsEnabled}` and already ran ONCE (when placeholder was true) → recorded applied → Flyway never re-runs them. Env flip alone is now a no-op. | Public unauth → SUPER_ADMIN takeover of live tenant on true-prod | Add a NEW migration `V309__neutralize_demo_credentials.sql` (fresh version, same hash-list + sentinel, gated on `${demoCredentialsEnabled}`) OR run V299's SQL block directly on Railway PG. **Kept ENABLED intentionally for this campaign per owner policy (demo accounts = test identities).** Final pre-prod step. | release/USER | Open (intentional during run) |
+| R4-RBAC-1 | HIGH | rbac/roles | Live demo tenant role catalog has only **8 roles — missing `TENANT_ADMIN` and `PAYROLL_ADMIN`** (GET /api/v1/roles as SUPER_ADMIN). `tenant.admin@nulogic.io` logs in 200 with `roles:[]` → 403 on every module. Root cause: demo tenant (V19/V49) seeded without an `ADMIN` row → V290 rename found 0 rows → no TENANT_ADMIN created; V305 PAYROLL_ADMIN loop found 0 rows. | TENANT_ADMIN tier non-functional; TENANT_ADMIN-exclusive grants (REVIEW:*, agency CRUD, Fluence knowledge mgmt) have no working user except SUPER_ADMIN-bypass; latent fresh-tenant provisioning gap | **Fix already committed**: `V307__seed_missing_payroll_admin_and_tenant_admin_roles.sql` + `V308__backfill_missing_permission_catalog_codes.sql` (idempotent, ON CONFLICT DO NOTHING). **Undeployed** — ships in Wave-2 batched Railway deploy, then re-verify TENANT_ADMIN appears live + tenant.admin gets roles. | release | Open (fix staged, undeployed) |
+| R4-DEPLOY-1 | HIGH | devops | Railway backend not auto-deploying `main`: last deploy 2026-06-17, HEAD is 4 days ahead (V300 outbox, V301–V308, BROWSER-ISSUE-006 proxy gate all absent live). | Committed fixes never reach users; live ≠ repo | Trigger a gated redeploy of HEAD to Railway (Wave-2); confirm Flyway applies V300–V308; verify GitHub auto-deploy hook or document manual-deploy requirement | release | Open |
+| R4-INFO-1 | INFO | rbac | RBAC scoping for the 8 real roles verified healthy live: MANAGER→payroll 403 + users 403; HR_MANAGER→users 403; HR/SUPER_ADMIN broad 200. POST→403 uniform across ALL roles incl SUPER_ADMIN = CSRF (missing X-XSRF-TOKEN header in probe), NOT an RBAC defect. | — | — | rbac | Closed (verified) |
+
+**Live evidence captured:** `/tmp/rbac_matrix.txt` (11-account × 20-endpoint live RBAC sweep), `/tmp/sa_login.json` (SEC-3b proof), `/tmp/roles.json` (8-role catalog). Railway env confirmed via MCP: DEMO_CREDENTIALS_ENABLED=false, FLYWAY enabled, last deploy d5486d46 2026-06-17.
+
+### Run-4 additional findings + Deploy Log
+
+| ID | Severity | Module | Description | Impact | Exact Fix | Owner | Status |
+|----|----------|--------|-------------|--------|-----------|-------|--------|
+| R4-UI-03 | HIGH | leave/notifications | Live: leave apply (saran→201 PENDING) + manager approve (sumit→200 APPROVED) works, but employee `GET /api/v1/notifications` stays EMPTY after approval — no in-app notification of leave decision. Reproduced live on stale build. Root cause: stale deploy lacks effective NOTIF-1 persistence. HEAD `LeaveRequestService.notifyLeaveApproved` (NOTIF-1) resolves employee→user id and persists via `WebSocketNotificationService.persistQuietly` → `notificationRepository.save`. | Employees unaware of leave decisions in-app | Deploy HEAD (NOTIF-1 already committed). Verify post-deploy that approval persists a notification under recipient user id. | release | Retest (fix in HEAD, deploying) |
+| R4-CRUD-1 | INFO | departments | Live full CRUD verified as SUPER_ADMIN with CSRF: CREATE 201 → UPDATE 200 → DELETE 204 → GET 404. Write-path functional; test data cleaned up. | — | — | qa | Closed (verified live) |
+| R4-LEAVE-1 | INFO | leave | Live leave lifecycle apply→approve→cancel verified (201/200/200). Balance validation + manager-scope approval enforced. Test record cancelled (cleanup). Note: create requires `employeeId` in body — IDOR check (does service reject employeeId≠caller?) flagged to sec-audit. | — | — | qa | Closed (verified live) |
+
+#### DEPLOY LOG
+| Batch | Deploy ID | Shipped | Build | Smoke Gate | Result |
+|-------|-----------|---------|-------|------------|--------|
+| B1 | d993180f-bd68-4343-8513-4f9732fe9637 | HEAD f1f530c4 → Railway BE: V300-V308 (TENANT_ADMIN/PAYROLL_ADMIN seed + perm backfill), NOTIF-1, BROWSER-ISSUE-006, outbox. Aligns 4-day-stale BE with main. | in-progress | pending | — |
+
+**Prior live deploy (rollback target):** d5486d46 (2026-06-17 SUCCESS).
+
+### Run-4 feat-scan findings (code-level breadth, HEAD)
+
+| ID | Sev | Module | Description | Evidence | Triage |
+|----|-----|--------|-------------|----------|--------|
+| R4-F-001 | MEDIUM | payroll/LWF | `LWFService.calculateForPayrollRun` throws UnsupportedOperationException (501) when `app.features.lwf=false` (default). = DEV-8 carry-over. | LWFService.java:296, LWFController.java:139 | **Descoped (PROD-3)** — IN LWF off for release; main payroll run skips LWF when flag off. Documented known risk, not a blocker. |
+| R4-F-002 | HIGH (latent) | payments | `RazorpayAdapter`/`StripeAdapter.parseWebhookPayload` throw UnsupportedOperationException → payment webhooks 500. `APP_PAYMENTS_ENABLED=true` on Railway BUT no Razorpay/Stripe provider keys configured (no webhooks arrive). | RazorpayAdapter.java:137, StripeAdapter.java:142, PaymentService.java:276 | Latent — no provider wired. **Fix before enabling a real payment provider**: implement parser OR set APP_PAYMENTS_ENABLED=false. Not blocking current demo/prod (no live provider). |
+| R4-F-003 | MEDIUM | mobile/leave | `MobileLeaveService.getLeaveBalance` 501 (`app.features.mobile-leave-balance=false` default). | MobileLeaveService.java:79 | Latent — mobile leave-balance feature off; no mobile client shipping. Document. |
+| R4-F-004 | MEDIUM | payroll/statutory | US/UK statutory calculators throw; no `isImplemented()` guard in factory → 500 if a tenant's country=US/GB. | UsStatutoryCalculator.java:52, StatutoryCalculatorFactory.java | IN-only launch → not triggered. Add factory guard returning 422 for unimplemented countries (defensive). Not blocking IN. |
+| R4-F-008 | LOW | projects | Projects calendar hardcodes `return [] as TaskWithProject[]` → tasks never render. | projects/calendar/page.tsx:135 | Real FE placeholder; cosmetic for core HR. P2 polish. |
+| R4-F-009 | LOW | benefits | `GET /benefits/plans` returns `providerName:null` (provider entity not joined). | BenefitManagementService.java:162 | Minor data gap; BenefitPlanEnhanced endpoint populates it. P2. |
+| R4-F-010 | LOW | recruitment | Job board post (Naukri/Indeed/LinkedIn) throws 500 without creds; Pause is no-op. | JobBoardIntegrationService.java:134 | Gate UI on creds-configured; show CTA not 500. P2. |
+| R4-F-014 | LOW | import/keka | API-driven Keka import 501 (CLI path works). | KekaImportService.java:124 | Migration-only; hide UI option or document CLI. P2. |
+| R4-SEC-4 | HIGH | secrets | Groq key in untracked `backend/.env:36` (never committed; git history clean). | git verified | USER: rotate at console.groq.com. Not a code/deploy blocker. |
+
+**Triage verdict:** 0 NEW CRITICAL/HIGH that block the core IN-market HR flows. F-002 is HIGH-latent (no provider wired). All P0-labelled stubs are feature-flag-gated and off for this release. Always-on gaps (F-008/009/010) are P1/P2 polish. Full report: docs/audit/green-flag/r4-features.md + r4-security.md.

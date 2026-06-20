@@ -165,11 +165,20 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                // Send WebSocket notification to approver/manager
-                notifyLeaveRequestCreated(saved, leaveEmployee, leaveType);
+                // UI-03 FIX: afterCommit runs after the request's tenant context is gone, so any
+                // RLS-scoped query/insert inside these notification paths (resolveRecipientUserId,
+                // persistQuietly) silently returns/affects zero rows. Restore the tenant context for
+                // the callback — mirrors ApprovalNotificationListener's AFTER_COMMIT handler.
+                TenantContext.setCurrentTenant(tenantId);
+                try {
+                    // Send WebSocket notification to approver/manager
+                    notifyLeaveRequestCreated(saved, leaveEmployee, leaveType);
 
-                // Publish domain event for downstream consumers (notifications, analytics, audit)
-                publishLeaveRequestedEvent(saved, tenantId, leaveEmployee, leaveType);
+                    // Publish domain event for downstream consumers (notifications, analytics, audit)
+                    publishLeaveRequestedEvent(saved, tenantId, leaveEmployee, leaveType);
+                } finally {
+                    TenantContext.clear();
+                }
             }
         });
 
@@ -228,11 +237,18 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                // Send WebSocket notification to employee
-                notifyLeaveApproved(saved);
+                // UI-03 FIX: restore tenant context so RLS-scoped notification persistence works
+                // in afterCommit (see createLeaveRequest for the full rationale).
+                TenantContext.setCurrentTenant(tenantId);
+                try {
+                    // Send WebSocket notification to employee
+                    notifyLeaveApproved(saved);
 
-                // Publish domain event for downstream consumers
-                publishLeaveApprovedEvent(saved, tenantId, approverId, daysToDeduct);
+                    // Publish domain event for downstream consumers
+                    publishLeaveApprovedEvent(saved, tenantId, approverId, daysToDeduct);
+                } finally {
+                    TenantContext.clear();
+                }
             }
         });
 
@@ -283,11 +299,18 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                // Send WebSocket notification to employee
-                notifyLeaveRejected(saved, reason);
+                // UI-03 FIX: restore tenant context so RLS-scoped notification persistence works
+                // in afterCommit (see createLeaveRequest for the full rationale).
+                TenantContext.setCurrentTenant(tenantId);
+                try {
+                    // Send WebSocket notification to employee
+                    notifyLeaveRejected(saved, reason);
 
-                // Publish domain event for downstream consumers
-                publishLeaveRejectedEvent(saved, tenantId, approverId, reason);
+                    // Publish domain event for downstream consumers
+                    publishLeaveRejectedEvent(saved, tenantId, approverId, reason);
+                } finally {
+                    TenantContext.clear();
+                }
             }
         });
 

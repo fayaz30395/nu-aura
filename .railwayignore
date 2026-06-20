@@ -1,0 +1,14 @@
+# Heavy local-only artifacts — NOT needed for backend Docker build (keeps upload lean)
+graphify-out/
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/.turbo/
+frontend/playwright-report/
+frontend/playwright-report-production/
+frontend/test-results/
+backend/target/
+.git/
+*.log
+.obsidian/
+docs/obsidian/
