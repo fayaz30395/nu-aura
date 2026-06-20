@@ -14,9 +14,10 @@ interface EmployeeMetrics {
   activeEmployees: number;
   newHiresThisMonth: number;
   exitedThisMonth: number;
-  byDepartment: Array<{ department: string; count: number }>;
-  byEmploymentType: Record<string, number>;
-  byLocation: Record<string, number>;
+  // Backend (`/analytics/employees`) returns an ACTIVE-scoped, tenant-scoped Map here.
+  departmentDistribution: Record<string, number>;
+  byEmploymentType?: Record<string, number>;
+  byLocation?: Record<string, number>;
 }
 
 interface HeadcountTrend {
@@ -72,11 +73,19 @@ export default function HeadcountReportPage() {
   const orgHealth = data?.orgHealth ?? null;
   const error = queryError ? 'Failed to load headcount data.' : null;
 
+  // BROWSER-ISSUE-005: the backend sends `departmentDistribution` (ACTIVE + tenant
+  // scoped — the same population as the "Total Employees" KPI), not `byDepartment`.
+  // Normalize it here so the chart matches the KPI instead of falling back to the
+  // hardcoded org-health diversity mock (which summed to a bogus 85 vs the real 18).
+  const byDepartment = Object.entries(metrics?.departmentDistribution ?? {})
+    .map(([department, count]) => ({department, count}))
+    .sort((a, b) => b.count - a.count);
+
   function exportCSV() {
     if (!metrics) return;
     const rows = [
       ['Department', 'Headcount'],
-      ...(metrics.byDepartment ?? []).map(d => [d.department, d.count]),
+      ...byDepartment.map(d => [d.department, d.count]),
     ];
     const csv = rows.map(r => r.join(',')).join('\n');
     const blob = new Blob([csv], {type: 'text/csv'});
@@ -89,7 +98,7 @@ export default function HeadcountReportPage() {
   }
 
   // compute max for bar width scaling
-  const maxDeptCount = Math.max(...(metrics?.byDepartment?.map(d => d.count) ?? [1]), 1);
+  const maxDeptCount = Math.max(...byDepartment.map(d => d.count), 1);
   const maxTrendCount = Math.max(...trend.map(t => t.headcount), 1);
 
   return (
@@ -179,43 +188,22 @@ export default function HeadcountReportPage() {
                   <Building2 className="h-4 w-4 text-accent-600"/>
                   <h2 className="text-sm font-semibold text-[var(--text-primary)]">Headcount by Department</h2>
                 </div>
-                {metrics?.byDepartment && metrics.byDepartment.length > 0 ? (
+                {byDepartment.length > 0 ? (
                   <div className="space-y-2">
-                    {metrics.byDepartment
-                      .sort((a, b) => b.count - a.count)
-                      .map(dept => (
-                        <div key={dept.department}>
-                          <div className="flex justify-between text-xs mb-1">
-                            <span className="text-[var(--text-secondary)] truncate pr-2">{dept.department}</span>
-                            <span className="font-semibold text-[var(--text-primary)] shrink-0">{dept.count}</span>
-                          </div>
-                          <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-accent-500 rounded-full"
-                              style={{width: `${(dept.count / maxDeptCount) * 100}%`}}
-                            />
-                          </div>
+                    {byDepartment.map(dept => (
+                      <div key={dept.department}>
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-[var(--text-secondary)] truncate pr-2">{dept.department}</span>
+                          <span className="font-semibold text-[var(--text-primary)] shrink-0">{dept.count}</span>
                         </div>
-                      ))}
-                  </div>
-                ) : orgHealth?.diversity?.departmentDistribution ? (
-                  <div className="space-y-2">
-                    {Object.entries(orgHealth.diversity.departmentDistribution)
-                      .sort(([, a], [, b]) => b - a)
-                      .map(([dept, count]) => (
-                        <div key={dept}>
-                          <div className="flex justify-between text-xs mb-1">
-                            <span className="text-[var(--text-secondary)] truncate pr-2">{dept}</span>
-                            <span className="font-semibold text-[var(--text-primary)] shrink-0">{count}</span>
-                          </div>
-                          <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-accent-500 rounded-full"
-                              style={{width: `${(count / maxDeptCount) * 100}%`}}
-                            />
-                          </div>
+                        <div className="h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-accent-500 rounded-full"
+                            style={{width: `${(dept.count / maxDeptCount) * 100}%`}}
+                          />
                         </div>
-                      ))}
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <EmptyState

@@ -36,7 +36,7 @@ public class OrganizationHealthService {
         return OrganizationHealthResponse.builder()
                 .healthScore(calculateOverallHealth(activeEmployees))
                 .turnover(calculateTurnover(allEmployees, today))
-                .diversity(calculateDiversity(activeEmployees))
+                .diversity(calculateDiversity(tenantId, activeEmployees))
                 .tenure(calculateTenure(activeEmployees, today))
                 .engagement(mockEngagementData())
                 .training(mockTrainingData())
@@ -77,17 +77,20 @@ public class OrganizationHealthService {
                 .build();
     }
 
-    private DiversityMetrics calculateDiversity(List<Employee> activeEmployees) {
+    private DiversityMetrics calculateDiversity(UUID tenantId, List<Employee> activeEmployees) {
         Map<String, Long> genderDist = activeEmployees.stream()
                 .collect(Collectors.groupingBy(e -> e.getGender() != null ? e.getGender().name() : "UNKNOWN",
                         Collectors.counting()));
 
-        Map<String, Long> deptDist = new HashMap<>();
-        deptDist.put("Engineering", 45L);
-        deptDist.put("Product", 12L);
-        deptDist.put("Marketing", 8L);
-        deptDist.put("Sales", 15L);
-        deptDist.put("HR", 5L);
+        // Real ACTIVE + tenant-scoped department distribution (same population as the
+        // headcount KPI). Previously hardcoded mock data that summed to 85 and did not
+        // match the real active headcount — BROWSER-ISSUE-005.
+        Map<String, Long> deptDist = new LinkedHashMap<>();
+        for (Object[] row : employeeRepository.findDepartmentDistribution(tenantId)) {
+            String deptName = (String) row[0];
+            long count = ((Number) row[1]).longValue();
+            deptDist.put(deptName != null ? deptName : "Unassigned", count);
+        }
 
         return DiversityMetrics.builder()
                 .genderDistribution(genderDist)

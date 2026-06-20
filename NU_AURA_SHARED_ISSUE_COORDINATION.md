@@ -1333,9 +1333,18 @@ API `GET /api/v1/wall/posts?page=0&size=10` returns HTTP 200 with `{"content":[]
 | Type | Data Integrity / Reports |
 | Source | Claude Orchestrator browser sweep |
 | URL | /reports/headcount |
-| Status | CONFIRMED — AWAITING_CODEX_ROOT_CAUSE |
+| Status | FIXED — root cause found + fixed (Claude, this session) |
 
 Total Employees KPI = 18; Department bar chart sums to 85 (Engineering 45, Sales 15, Product 12, Marketing 8, HR 5). Discrepancy 85 vs 18 suggests the department chart API uses a different query (possibly historical, not ACTIVE-scoped). Codex to verify which endpoint backs the chart and whether it filters `status=ACTIVE`.
+
+**ROOT CAUSE (confirmed):** two compounding bugs.
+1. Frontend `EmployeeMetrics` interface declared `byDepartment: Array<...>`, but the backend `/analytics/employees` DTO field is `departmentDistribution: Map<String,Long>` (ACTIVE + tenant scoped). So `metrics.byDepartment` was always `undefined`.
+2. The chart therefore fell back to `orgHealth.diversity.departmentDistribution`, and `OrganizationHealthService.calculateDiversity` returned **hardcoded mock data** (`Engineering 45, Product 12, Marketing 8, Sales 15, HR 5` = exactly 85), while the KPI used the real ACTIVE count (18).
+
+**FIX:**
+- Frontend `frontend/app/reports/headcount/page.tsx`: consume the real `departmentDistribution` Map (normalized to an array), removed the mock org-health fallback. Chart now sums to the same ACTIVE headcount as the KPI.
+- Backend `OrganizationHealthService.calculateDiversity`: replaced the hardcoded department map with the real ACTIVE + tenant-scoped `employeeRepository.findDepartmentDistribution(tenantId)` query.
+- Verified: frontend `tsc --noEmit` clean; backend `mvn -o compile` clean.
 
 ---
 
