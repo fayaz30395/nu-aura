@@ -3,12 +3,14 @@
 > **VERDICT: NO-GO for unrestricted public production · GO for staging/demo on read/auth/RBAC + non-outbox writes.**
 > Auth, RBAC across all tiers, page rendering, and core read/CRUD paths are **verified green on the live stack**,
 > and a missing core RBAC role tier was **fixed and verified live**. Three blockers gate full GO:
-> **(1) R4-OUTBOX (CRITICAL code)** — this run's de-stale deploy surfaced a broken transactional outbox: every
-> audited/event-emitting mutation 500s on RLS; **fix V310 deployed in B4, verifying live at report time**.
+> **(1) R4-OUTBOX (CRITICAL code, OPEN)** — this run's de-stale deploy surfaced a broken transactional outbox:
+> every audited/event-emitting mutation 500s on an `outbox_events` RLS violation. **A migration fix (V310) was
+> deployed but did NOT resolve it live** — the insert still fails with `tenant_id` set, so the session GUC at
+> audit-insert time is *mismatched*, not null; needs the revised fix in §7 (or an owner rollback decision).
 > **(2) SEC-3b (CRITICAL, owner/config)** — public demo SUPER_ADMIN login, intentionally ON for this campaign.
 > **(3) SEC-4 (HIGH, owner)** — rotate the Groq API key. One **MEDIUM** gap (UI-03 leave-decision notification)
-> is root-caused with a scoped fix. Honest call: this run **found and forward-fixed a CRITICAL** the prior
-> stale build hid; GO depends on V310 confirming green + the two owner actions.
+> is root-caused with a scoped fix. Honest call: this run **found a CRITICAL the prior stale build hid**; one
+> fix attempt did not land — GO depends on resolving R4-OUTBOX + the two owner actions. **No fabricated greens.**
 
 **Method (PRIMARY RULE honored):** *Code for root cause, browser for truth.* The repo determined WHY;
 Vercel + Railway determined WHETHER. Chrome MCP was unavailable, so live "browser truth" came from
@@ -21,24 +23,20 @@ HTTP/API probes** + **live Railway backend logs**. Targets:
 ## 1. VERDICT
 
 **NO-GO for unrestricted public production** — open blockers: SEC-3b (CRITICAL, owner/config), SEC-4 (HIGH,
-owner key rotation), and **R4-OUTBOX (CRITICAL code regression — the transactional outbox is broken on live,
-so every audited/event-emitting mutation 500s; surfaced by this run's de-stale deploy, fix V310 deployed in
-B4 and verifying)**. **GO for the current staging/demo deployment** for read/auth/RBAC and non-outbox writes;
-asset assign/return/delete and other audited mutations are blocked until V310 verifies. Demo accounts
+owner key rotation), and **R4-OUTBOX (CRITICAL code regression — transactional outbox broken on live; every audited/event-emitting mutation 500s; surfaced by this run's de-stale deploy; migration fix V310 deployed but INEFFECTIVE live — still open)**. **GO for the current staging/demo deployment** for read/auth/RBAC and non-outbox writes;
+asset assign/return/delete and other audited mutations are blocked until R4-OUTBOX is resolved. Demo accounts
 authorized as test identities by the owner.
 
-> **De-stale deploy tradeoff + CRITICAL regression found & fixed (transparent):** Bringing the 4-day-stale
+> **De-stale deploy tradeoff + CRITICAL regression found, fix attempt did NOT land (transparent):** Bringing the 4-day-stale
 > backend current (B1) **fixed a HIGH RBAC gap** (missing TENANT_ADMIN/PAYROLL_ADMIN tiers) but **surfaced a
 > CRITICAL outbox regression (R4-OUTBOX)**: V303's strict `outbox_events` RLS + V306 FORCE RLS reject every
 > `EventPublisher.publishAuditEvent → outbox_events` insert (the audit row flushes with the session GUC unset,
 > which standard tables tolerate but the strict outbox policy did not) → **500 + rollback on every audited/
 > event-emitting mutation** (live-confirmed on asset DELETE *and* ASSIGN; pattern shared platform-wide). The
 > defined smoke gate (login + reads + FE) passed all deploys because it exercised no outbox-emitting mutation.
-> **Forward-fixed this run: V310** relaxes the outbox policy to tolerate an unset GUC (row still carries an
-> explicit tenant_id) — deployed in B4, verifying live. This was the right call over rollback (which would
-> re-break the RBAC tier and lose 4 days of fixes).
+> **Fix attempt V310** (relax outbox policy to tolerate an unset GUC) was deployed in B4 but **did NOT resolve it** — the insert still violates RLS with tenant_id set, so the GUC is mismatched (wrong value), not null. R4-OUTBOX stays OPEN; the owner must choose the revised forward-fix (§7) or rollback to the pre-outbox 2026-06-17 build (which re-breaks the RBAC tier).
 
-## 2. PRODUCTION READINESS SCORE — 80 / 100 (pending V310 live confirm; → ~88 once outbox verified green)
+## 2. PRODUCTION READINESS SCORE — 76 / 100 (R4-OUTBOX CRITICAL unresolved live; → ~88 once outbox is actually fixed)
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
@@ -83,7 +81,7 @@ EMPLOYEE in the demo panel but is actually HR_ADMIN (UI-07) — true EMPLOYEE ti
 | Leave apply → manager approve → cancel | ✅ PASS (flow) | saran create 201 PENDING → sumit approve 200 APPROVED (manager-scope enforced) → cancel 200. Balance deduct/release correct. |
 | Leave-decision in-app notification | 🔴 FAIL | employee notifications stay 0 after approval (UI-03, MEDIUM) — status still visible in /leave-requests |
 | Leave-create IDOR guard | ✅ PASS | non-LEAVE_MANAGE user cannot set another employeeId (AccessDeniedException); totalDays server-computed |
-| Asset CRUD | 🔴 BLOCKED | create 201 → read 200 → update 200; assign 500 + delete 500 (R4-OUTBOX CRITICAL, outbox RLS — V310 fix deploying) |
+| Asset CRUD | 🔴 BLOCKED | create 201 → read 200 → update 200; assign 500 + delete 500 (R4-OUTBOX CRITICAL, outbox RLS — V310 fix attempt INEFFECTIVE live) |
 | Announcement CRUD | ✅ PASS | create 201 → delete 204 (priority enum validation enforced) |
 
 ## 6. DEFECTS FIXED (with live re-test evidence)
@@ -99,7 +97,7 @@ EMPLOYEE in the demo panel but is actually HR_ADMIN (UI-07) — true EMPLOYEE ti
 |----|-----|------------------------------|------------------|
 | **SEC-3b** | CRITICAL | Demo `Welcome@123` SUPER_ADMIN login is public on the live URL. `DEMO_CREDENTIALS_ENABLED=false` is already set, but V270/V295/V299 neutralization ran once when the placeholder was `true` and Flyway never re-runs them → env flip is a no-op. **Intentionally left ON for this campaign** (owner authorized demo accounts as test identities). | Deploy a fresh `V310` neutralization migration (drafted in `docs/audit/green-flag/r4-security.md`) with env `false`, OR run V299's SQL directly on Railway PG. Then re-smoke. |
 | **SEC-4** | HIGH | Live Groq API key in untracked `backend/.env:36` (never committed; git history clean). | USER: rotate at console.groq.com, replace in `.env`. |
-| **R4-OUTBOX** | CRITICAL (code, **fix deployed B4**) | Every `EventPublisher.publishAuditEvent → outbox_events` insert → **500 + rollback** (`new row violates row-level security policy for table "outbox_events"`). Live-confirmed on asset DELETE (AUDIT_DELETE) **and** ASSIGN (AUDIT_ASSIGN); pattern shared by asset return/maintenance + blog/wiki/employee/esignature/etc. audited ops → the transactional outbox is broken platform-wide. V303 strict policy (no GUC-null fallback) + V306 FORCE RLS reject the audit insert (flushes with GUC unset). **Surfaced by the B1 de-stale deploy.** | **V310** (deployed B4 `4b6c1775`): relax outbox policy to tolerate unset GUC. **Verify live: asset assign/delete return non-500.** Then sweep all outbox-emitting ops. |
+| **R4-OUTBOX** | CRITICAL (code, **OPEN — V310 attempt INEFFECTIVE live**) | Every `EventPublisher.publishAuditEvent → outbox_events` insert → **500 + rollback** (`new row violates row-level security policy for table "outbox_events"`). Live-confirmed on asset DELETE (AUDIT_DELETE) **and** ASSIGN (AUDIT_ASSIGN); pattern shared by asset return/maintenance + blog/wiki/employee/esignature/etc. → transactional outbox broken platform-wide. **Surfaced by the B1 de-stale deploy** (V300/V303/V306). | **V310 (B4 `4b6c1775`, live) did NOT fix it** — relaxing the policy to allow a *null* GUC failed because the insert still violates RLS with `tenant_id` SET, i.e. the session GUC at audit-insert time is **mismatched (wrong value), not null** (or V310 did not apply). **Revised fix:** set `app.current_tenant_id` correctly on the connection that flushes the outbox audit (the audit/`AuditLogAspect`→`EventPublisher` path persists with `user_id:null` = detached from the request's tenant connection), OR write `outbox_events` via the BYPASSRLS path the processor already uses, OR (last resort) `DROP POLICY`/exclude `outbox_events` from FORCE RLS. **Owner should weigh rollback to the pre-outbox 2026-06-17 build vs. this forward-fix** (rollback re-breaks the RBAC tier). |
 | **R4-UI-03** | MEDIUM | Employee gets no in-app bell notification on leave decision. Direct approve cancels the workflow (BA-5) and uses a hand-rolled afterCommit notification whose RLS-scoped reads run without the per-tx tenant GUC → silent no-op. 2 fix attempts shipped (insufficient); proper fix risks tx-rollback coupling. Leave flow otherwise works. | Publish `ApprovalDecisionEvent` in-tx (reuse proven `onApprovalDecision` listener) OR `sendToUser` `@Transactional(REQUIRES_NEW)` + in-tx call. Needs unit/integration tests. |
 | R4-F-002 | HIGH (latent) | Razorpay/Stripe `parseWebhookPayload` throw; `APP_PAYMENTS_ENABLED=true` but no provider keys configured → no webhooks arrive. | Implement parser before wiring a real provider, OR set `APP_PAYMENTS_ENABLED=false`. |
 | R4-F-001/003/004 | MEDIUM | LWF (DEV-8, descoped PROD-3), mobile leave-balance, US/UK statutory — all feature-flag-gated OFF and not on the IN-market launch path. | Implement + enable flag when those markets/features ship. |
@@ -172,9 +170,9 @@ Rollback target if needed: `d5486d46` (2026-06-17). Kill-switch never triggered.
 ## Definition of Done — status
 
 - [x] Every page loads + functions for every role on the live URL (44/45 renders, 0 console/network errors; /fluence non-SA empty = likely RBAC-gated)
-- [~] CRUD + leave lifecycle pass live — dept/announcement CRUD + leave lifecycle green; **audited mutations 500 (R4-OUTBOX, CRITICAL — fix V310 deployed B4, verifying)**; notification delivery is a MEDIUM gap
+- [~] CRUD + leave lifecycle pass live — dept/announcement CRUD + leave lifecycle green; **audited mutations 500 (R4-OUTBOX, CRITICAL — V310 fix attempt ineffective live, OPEN)**; notification delivery is a MEDIUM gap
 - [x] RBAC + tenant isolation enforced; SuperAdmin bypass intact & verified
-- [ ] **Zero open CRITICAL/HIGH** — SEC-3b (CRITICAL, config) + SEC-4 (HIGH, owner) + **R4-OUTBOX (CRITICAL, code — V310 fix deployed, pending live confirm)** → **this gates GO**
+- [ ] **Zero open CRITICAL/HIGH** — SEC-3b (CRITICAL, config) + SEC-4 (HIGH, owner) + **R4-OUTBOX (CRITICAL, code — UNRESOLVED live; V310 attempt ineffective)** → **this gates GO**
 - [x] Backend builds clean (in-container JDK 21); last deploy passed its smoke gate
 - [x] Demo-credentials state on deployed env documented (ENABLED; closure = V310)
 - [x] Final full-matrix verification green on the live URL (except the documented items above)
