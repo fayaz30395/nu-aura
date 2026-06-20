@@ -19,17 +19,25 @@ HTTP/API probes** + **live Railway backend logs**. Targets:
 
 ## 1. VERDICT
 
-**NO-GO for unrestricted public production** — open blockers: 1 CRITICAL (SEC-3b, owner/config), 1 HIGH
-config (SEC-4 key rotation), and **1 HIGH code defect (R4-ASSET-DEL — asset delete returns 500 via an
-outbox RLS regression surfaced by this run's de-stale deploy)**. **GO for the current staging/demo
-deployment** for everything except asset deletion (demo accounts authorized as test identities by the owner).
+**NO-GO for unrestricted public production** — open blockers: SEC-3b (CRITICAL, owner/config), SEC-4 (HIGH,
+owner key rotation), and **R4-OUTBOX (CRITICAL code regression — the transactional outbox is broken on live,
+so every audited/event-emitting mutation 500s; surfaced by this run's de-stale deploy, fix V310 deployed in
+B4 and verifying)**. **GO for the current staging/demo deployment** for read/auth/RBAC and non-outbox writes;
+asset assign/return/delete and other audited mutations are blocked until V310 verifies. Demo accounts
+authorized as test identities by the owner.
 
-> **De-stale deploy tradeoff (transparent):** Bringing the 4-day-stale backend current (B1) **fixed a HIGH
-> RBAC gap** (missing TENANT_ADMIN/PAYROLL_ADMIN tiers) but **surfaced a HIGH regression** (asset delete 500
-> from the new outbox + FORCE-RLS path, V300/V303/V306). Net kept current — rolling back would re-break the
-> RBAC tier and lose 4 days of fixes for one module's delete. R4-ASSET-DEL is flagged for a targeted fix.
+> **De-stale deploy tradeoff + CRITICAL regression found & fixed (transparent):** Bringing the 4-day-stale
+> backend current (B1) **fixed a HIGH RBAC gap** (missing TENANT_ADMIN/PAYROLL_ADMIN tiers) but **surfaced a
+> CRITICAL outbox regression (R4-OUTBOX)**: V303's strict `outbox_events` RLS + V306 FORCE RLS reject every
+> `EventPublisher.publishAuditEvent → outbox_events` insert (the audit row flushes with the session GUC unset,
+> which standard tables tolerate but the strict outbox policy did not) → **500 + rollback on every audited/
+> event-emitting mutation** (live-confirmed on asset DELETE *and* ASSIGN; pattern shared platform-wide). The
+> defined smoke gate (login + reads + FE) passed all deploys because it exercised no outbox-emitting mutation.
+> **Forward-fixed this run: V310** relaxes the outbox policy to tolerate an unset GUC (row still carries an
+> explicit tenant_id) — deployed in B4, verifying live. This was the right call over rollback (which would
+> re-break the RBAC tier and lose 4 days of fixes).
 
-## 2. PRODUCTION READINESS SCORE — 83 / 100
+## 2. PRODUCTION READINESS SCORE — 80 / 100 (pending V310 live confirm; → ~88 once outbox verified green)
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
@@ -74,7 +82,7 @@ EMPLOYEE in the demo panel but is actually HR_ADMIN (UI-07) — true EMPLOYEE ti
 | Leave apply → manager approve → cancel | ✅ PASS (flow) | saran create 201 PENDING → sumit approve 200 APPROVED (manager-scope enforced) → cancel 200. Balance deduct/release correct. |
 | Leave-decision in-app notification | 🔴 FAIL | employee notifications stay 0 after approval (UI-03, MEDIUM) — status still visible in /leave-requests |
 | Leave-create IDOR guard | ✅ PASS | non-LEAVE_MANAGE user cannot set another employeeId (AccessDeniedException); totalDays server-computed |
-| Asset CRUD | 🟡 PARTIAL | create 201 → read 200 → update 200 → **delete 500 (R4-ASSET-DEL, outbox RLS)** |
+| Asset CRUD | 🔴 BLOCKED | create 201 → read 200 → update 200; assign 500 + delete 500 (R4-OUTBOX CRITICAL, outbox RLS — V310 fix deploying) |
 | Announcement CRUD | ✅ PASS | create 201 → delete 204 (priority enum validation enforced) |
 
 ## 6. DEFECTS FIXED (with live re-test evidence)
@@ -90,7 +98,7 @@ EMPLOYEE in the demo panel but is actually HR_ADMIN (UI-07) — true EMPLOYEE ti
 |----|-----|------------------------------|------------------|
 | **SEC-3b** | CRITICAL | Demo `Welcome@123` SUPER_ADMIN login is public on the live URL. `DEMO_CREDENTIALS_ENABLED=false` is already set, but V270/V295/V299 neutralization ran once when the placeholder was `true` and Flyway never re-runs them → env flip is a no-op. **Intentionally left ON for this campaign** (owner authorized demo accounts as test identities). | Deploy a fresh `V310` neutralization migration (drafted in `docs/audit/green-flag/r4-security.md`) with env `false`, OR run V299's SQL directly on Railway PG. Then re-smoke. |
 | **SEC-4** | HIGH | Live Groq API key in untracked `backend/.env:36` (never committed; git history clean). | USER: rotate at console.groq.com, replace in `.env`. |
-| **R4-ASSET-DEL** | HIGH (code) | `DELETE /api/v1/assets/{id}` → **500 + asset not deleted** (tx rollback). Live log: `new row violates row-level security policy for table "outbox_events"` — the audit→outbox insert fails the V303 RLS WITH CHECK at commit flush (outside `publishAssetAuditEvent`'s try/catch). Asset CREATE (same audit path) works; only after `assetRepository.delete()` does the outbox insert's tenant GUC mismatch. **Regression surfaced by the B1 de-stale deploy** (outbox V300/V303 + FORCE RLS V306). | Ensure audit→outbox insert flushes with the matching `app.current_tenant_id` GUC (root-cause why delete differs from create); OR route outbox writes through the BYPASSRLS management path the processor already uses; OR isolate the best-effort audit in `REQUIRES_NEW` so it can't roll back the delete. Needs DB-level repro + tests; sweep other audited deletes for the same failure. |
+| **R4-OUTBOX** | CRITICAL (code, **fix deployed B4**) | Every `EventPublisher.publishAuditEvent → outbox_events` insert → **500 + rollback** (`new row violates row-level security policy for table "outbox_events"`). Live-confirmed on asset DELETE (AUDIT_DELETE) **and** ASSIGN (AUDIT_ASSIGN); pattern shared by asset return/maintenance + blog/wiki/employee/esignature/etc. audited ops → the transactional outbox is broken platform-wide. V303 strict policy (no GUC-null fallback) + V306 FORCE RLS reject the audit insert (flushes with GUC unset). **Surfaced by the B1 de-stale deploy.** | **V310** (deployed B4 `4b6c1775`): relax outbox policy to tolerate unset GUC. **Verify live: asset assign/delete return non-500.** Then sweep all outbox-emitting ops. |
 | **R4-UI-03** | MEDIUM | Employee gets no in-app bell notification on leave decision. Direct approve cancels the workflow (BA-5) and uses a hand-rolled afterCommit notification whose RLS-scoped reads run without the per-tx tenant GUC → silent no-op. 2 fix attempts shipped (insufficient); proper fix risks tx-rollback coupling. Leave flow otherwise works. | Publish `ApprovalDecisionEvent` in-tx (reuse proven `onApprovalDecision` listener) OR `sendToUser` `@Transactional(REQUIRES_NEW)` + in-tx call. Needs unit/integration tests. |
 | R4-F-002 | HIGH (latent) | Razorpay/Stripe `parseWebhookPayload` throw; `APP_PAYMENTS_ENABLED=true` but no provider keys configured → no webhooks arrive. | Implement parser before wiring a real provider, OR set `APP_PAYMENTS_ENABLED=false`. |
 | R4-F-001/003/004 | MEDIUM | LWF (DEV-8, descoped PROD-3), mobile leave-balance, US/UK statutory — all feature-flag-gated OFF and not on the IN-market launch path. | Implement + enable flag when those markets/features ship. |
@@ -147,9 +155,10 @@ Rollback target if needed: `d5486d46` (2026-06-17). Kill-switch never triggered.
    `DEMO_CREDENTIALS_ENABLED=false`, then re-run the smoke gate to confirm demo SUPER_ADMIN login now fails. *Do this
    only when ending the demo/test phase — it disables the test identities used for QA.*
 2. **SEC-4 (HIGH, owner):** rotate the Groq key at console.groq.com; replace in `backend/.env`.
-3. **R4-ASSET-DEL (HIGH code, dev cycle):** fix the outbox-RLS-on-delete regression so asset deletion (and any
-   other audited delete) doesn't 500/rollback — root-cause the GUC mismatch at audit-outbox flush, or isolate the
-   best-effort audit in `REQUIRES_NEW`. Regression test + sweep other audited deletes. **Surfaced by this run's deploy.**
+3. **R4-OUTBOX (CRITICAL, fix V310 deployed B4):** confirm asset assign/return/delete + other audited mutations
+   return non-500 on the live build; then sweep all `EventPublisher.publishAuditEvent` call sites. Separately,
+   investigate WHY the audit-outbox insert flushes with the tenant GUC unset (deeper correctness fix) — V310 is the
+   immediate unbreak; aligning the audit path to set/propagate the GUC is the follow-up.
 4. **R4-UI-03 (MEDIUM, dev cycle):** implement the in-tx notification fix (Option A: publish `ApprovalDecisionEvent`
    in-tx; Option B: `REQUIRES_NEW` `sendToUser`) with regression tests; re-verify live.
 4. **R4-F-002 (HIGH-latent):** before enabling any real payment provider, implement webhook parsing or disable
@@ -162,9 +171,9 @@ Rollback target if needed: `d5486d46` (2026-06-17). Kill-switch never triggered.
 ## Definition of Done — status
 
 - [x] Every page loads + functions for every role on the live URL (44/45 renders, 0 console/network errors; /fluence non-SA empty = likely RBAC-gated)
-- [~] CRUD + leave lifecycle pass live — dept/announcement CRUD + leave lifecycle green; **asset DELETE 500 (R4-ASSET-DEL)**; notification delivery is a MEDIUM gap
+- [~] CRUD + leave lifecycle pass live — dept/announcement CRUD + leave lifecycle green; **audited mutations 500 (R4-OUTBOX, CRITICAL — fix V310 deployed B4, verifying)**; notification delivery is a MEDIUM gap
 - [x] RBAC + tenant isolation enforced; SuperAdmin bypass intact & verified
-- [ ] **Zero open CRITICAL/HIGH** — SEC-3b (CRITICAL, config) + SEC-4 (HIGH, owner) + **R4-ASSET-DEL (HIGH, code)** remain → **this gates GO**
+- [ ] **Zero open CRITICAL/HIGH** — SEC-3b (CRITICAL, config) + SEC-4 (HIGH, owner) + **R4-OUTBOX (CRITICAL, code — V310 fix deployed, pending live confirm)** → **this gates GO**
 - [x] Backend builds clean (in-container JDK 21); last deploy passed its smoke gate
 - [x] Demo-credentials state on deployed env documented (ENABLED; closure = V310)
 - [x] Final full-matrix verification green on the live URL (except the documented items above)

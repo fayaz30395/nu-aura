@@ -252,3 +252,21 @@ Evidence: /tmp/uilive_run.log, frontend/test-results/dashboard-*.png, frontend/e
 **Leftover test data (could not delete due to this bug):** assets `GF-AST-001` (3991e27c…), `GF-AST-DEL` (7d036a59…), `GF-TEST-001` serials — tagged "QA GF Test", safe to remove. Delete via DB or after the fix ships.
 
 **Scope note:** department delete (204) does NOT emit an outbox event so it's unaffected; the issue is specific to outbox-emitting mutations. Severity HIGH because asset deletion is a core admin CRUD op and the failure mode (500 + silent rollback) may extend to other audited deletes.
+
+### Run-4 outbox-RLS scope assessment + blog-create finding
+
+- **R4-ASSET-DEL scope:** 1 LIVE-CONFIRMED (asset delete 500, outbox RLS). Code pattern (`repository.delete()` + in-tx `eventPublisher` outbox write) is SHARED by `BlogPostService`, `WikiPageService`, `EmployeeService`, `ESignatureService`, `DocumentTemplateService`, `ExitManagementService`, `RecruitmentManagementService`, `BiometricIntegrationService` → **likely systemic across outbox-emitting deletes** (potential CRITICAL). Could not extend live confirmation to blog (blocked by the separate jsonb issue below). **Recommend: sweep all outbox-emitting delete paths post-fix.** Announcement/department deletes work (they don't emit outbox).
+
+| ID | Severity | Module | Description | Status |
+|----|----------|--------|-------------|--------|
+| R4-BLOG-CREATE | MEDIUM | fluence/blog | `POST /api/v1/knowledge/blogs` with `content` as a plain string → **500**: `column "content" is of type jsonb but expression is of type character varying`. The `blog_posts.content` column is JSONB but the create path passed a varchar. Either the API must document/require a JSON payload for `content`, or the entity↔column type mapping needs a JSON converter. Verify against the real FE payload (may be FE-shaped JSON). | Open — verify expected payload vs type-mapping bug |
+
+### Run-4 ESCALATION — R4-OUTBOX (CRITICAL, systemic) + V310 fix
+
+| ID | Severity | Module | Description | Status |
+|----|----------|--------|-------------|--------|
+| R4-OUTBOX | **CRITICAL** | infra/outbox | **CONFIRMED SYSTEMIC** (was R4-ASSET-DEL HIGH): EVERY operation writing to `outbox_events` via `EventPublisher.publishAuditEvent` returns 500 + rolls back — live-confirmed on asset DELETE (AUDIT_DELETE) AND asset ASSIGN (AUDIT_ASSIGN). Same `repository.delete()`+outbox or mutate+outbox pattern is shared by asset return/maintenance + blog/wiki/employee/esignature/documenttemplate/exitmanagement/recruitment audited ops → the transactional outbox is broken across the platform. Root cause: V303 strict outbox RLS (no GUC-null fallback that standard tables have) + V306 FORCE RLS reject the audit insert because it flushes with `app.current_tenant_id` effectively unset. **Regression surfaced by the B1 de-stale deploy** (outbox V300/V303/V306 went live; pre-2026-06-17 backend had none). | **Fix: V310** (relax outbox policy to allow unset GUC, row still carries explicit tenant_id) — deploying B4 `4b6c1775`, verifying live. |
+
+**Severity correction:** R4-ASSET-DEL is upgraded to **CRITICAL R4-OUTBOX** (systemic, not asset-specific). The defined smoke gate (login+reads+FE) passed all 3 prior deploys because it exercised no outbox-emitting mutation; this surfaced only in Wave-3 CRUD.
+
+**Report note:** the demo-cred neutralization migration referenced in §7/§12 is now **V311** (V310 is this outbox fix).
