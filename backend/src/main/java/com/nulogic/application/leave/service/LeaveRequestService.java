@@ -158,6 +158,16 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
 
         startLeaveApprovalWorkflow(saved, tenantId, leaveEmployee, leaveType);
 
+        // UI-03 FIX: resolve the manager's user id + display strings WHILE STILL IN THE TRANSACTION.
+        // afterCommit runs without the RLS tenant GUC, so resolveRecipientUserId()'s employee lookup
+        // would be RLS-filtered to empty there (the original cause of the dropped manager notification).
+        final String createdEmployeeName = leaveEmployee != null
+                ? leaveEmployee.getFirstName() + " " + leaveEmployee.getLastName() : null;
+        final String createdLeaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
+        final String createdDates = formatDateRange(saved);
+        final UUID createdManagerUserId = (leaveEmployee != null && leaveEmployee.getManagerId() != null)
+                ? resolveRecipientUserId(leaveEmployee.getManagerId(), tenantId) : null;
+
         // FIX: Defer non-critical operations to AFTER_COMMIT to prevent
         // "Transaction silently rolled back because it has been marked as rollback-only".
         // WebSocketNotificationService methods are @Transactional; deferring them to
@@ -165,14 +175,14 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                // UI-03 FIX: afterCommit runs after the request's tenant context is gone, so any
-                // RLS-scoped query/insert inside these notification paths (resolveRecipientUserId,
-                // persistQuietly) silently returns/affects zero rows. Restore the tenant context for
-                // the callback — mirrors ApprovalNotificationListener's AFTER_COMMIT handler.
+                // Restore tenant context so the @Transactional persist in sendToUser gets the RLS GUC.
                 TenantContext.setCurrentTenant(tenantId);
                 try {
                     // Send WebSocket notification to approver/manager
-                    notifyLeaveRequestCreated(saved, leaveEmployee, leaveType);
+                    if (createdManagerUserId != null && createdEmployeeName != null) {
+                        webSocketNotificationService.notifyLeaveRequestSubmitted(
+                                createdManagerUserId, createdEmployeeName, createdLeaveTypeName, createdDates);
+                    }
 
                     // Publish domain event for downstream consumers (notifications, analytics, audit)
                     publishLeaveRequestedEvent(saved, tenantId, leaveEmployee, leaveType);
@@ -233,16 +243,26 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                 saved.getLeaveTypeId(),
                 daysToDeduct);
 
+        // UI-03 FIX: resolve recipient user id + leave-type/dates WHILE STILL IN THE TRANSACTION.
+        // The afterCommit callback runs without the RLS tenant GUC (set per-tx by
+        // TenantRlsTransactionManager.doBegin), so these RLS-scoped reads would be filtered to
+        // empty there — the original cause of the silently-dropped employee notification.
+        final UUID approveRecipientUserId = resolveRecipientUserId(saved.getEmployeeId(), tenantId);
+        final LeaveType approveLeaveType = leaveTypeRepository.findByIdAndTenantId(saved.getLeaveTypeId(), tenantId).orElse(null);
+        final String approveLeaveTypeName = approveLeaveType != null ? approveLeaveType.getLeaveName() : "Leave";
+        final String approveDates = formatDateRange(saved);
+
         // Defer non-critical operations to AFTER_COMMIT (same fix as createLeaveRequest)
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                // UI-03 FIX: restore tenant context so RLS-scoped notification persistence works
-                // in afterCommit (see createLeaveRequest for the full rationale).
+                // Restore tenant context so the @Transactional persist in sendToUser gets the RLS GUC.
                 TenantContext.setCurrentTenant(tenantId);
                 try {
-                    // Send WebSocket notification to employee
-                    notifyLeaveApproved(saved);
+                    if (approveRecipientUserId != null) {
+                        webSocketNotificationService.notifyLeaveApproved(
+                                approveRecipientUserId, approveLeaveTypeName, approveDates);
+                    }
 
                     // Publish domain event for downstream consumers
                     publishLeaveApprovedEvent(saved, tenantId, approverId, daysToDeduct);
@@ -295,16 +315,23 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             log.warn("Failed to release pending leave on rejection for request {}: {}", saved.getId(), e.getMessage());
         }
 
+        // UI-03 FIX: resolve recipient + leave-type in-transaction (afterCommit has no RLS GUC).
+        final UUID rejectRecipientUserId = resolveRecipientUserId(saved.getEmployeeId(), tenantId);
+        final LeaveType rejectLeaveType = leaveTypeRepository.findByIdAndTenantId(saved.getLeaveTypeId(), tenantId).orElse(null);
+        final String rejectLeaveTypeName = rejectLeaveType != null ? rejectLeaveType.getLeaveName() : "Leave";
+        final String rejectReasonText = reason != null ? reason : "No reason provided";
+
         // Defer non-critical operations to AFTER_COMMIT (same fix as createLeaveRequest)
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                // UI-03 FIX: restore tenant context so RLS-scoped notification persistence works
-                // in afterCommit (see createLeaveRequest for the full rationale).
+                // Restore tenant context so the @Transactional persist in sendToUser gets the RLS GUC.
                 TenantContext.setCurrentTenant(tenantId);
                 try {
-                    // Send WebSocket notification to employee
-                    notifyLeaveRejected(saved, reason);
+                    if (rejectRecipientUserId != null) {
+                        webSocketNotificationService.notifyLeaveRejected(
+                                rejectRecipientUserId, rejectLeaveTypeName, rejectReasonText);
+                    }
 
                     // Publish domain event for downstream consumers
                     publishLeaveRejectedEvent(saved, tenantId, approverId, reason);
