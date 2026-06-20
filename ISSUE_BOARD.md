@@ -270,3 +270,9 @@ Evidence: /tmp/uilive_run.log, frontend/test-results/dashboard-*.png, frontend/e
 **Severity correction:** R4-ASSET-DEL is upgraded to **CRITICAL R4-OUTBOX** (systemic, not asset-specific). The defined smoke gate (login+reads+FE) passed all 3 prior deploys because it exercised no outbox-emitting mutation; this surfaced only in Wave-3 CRUD.
 
 **Report note:** the demo-cred neutralization migration referenced in §7/§12 is now **V311** (V310 is this outbox fix).
+
+### Run-4 FINAL — R4-OUTBOX V310 fix INEFFECTIVE (still OPEN CRITICAL)
+
+V310 deployed live (B4 `4b6c1775` SUCCESS) but did **NOT** fix R4-OUTBOX. Asset assign/delete still 500 with `new row violates row-level security policy for table "outbox_events"` and `tenant_id=660…0001` SET in the row. Since V310's relaxed policy allows `tenant_id IS NULL OR GUC-null OR tenant_id=GUC`, a still-failing insert with tenant_id set means **the session GUC at audit-insert time is a MISMATCHED non-null value (not unset)** — my "GUC unset" hypothesis was wrong (or V310 did not apply via Flyway). Revised fix: set `app.current_tenant_id` correctly on the connection that flushes the audit/outbox insert (the `AuditLogAspect → EventPublisher` path persists with `user_id:null` = detached from the request's tenant connection state), OR write outbox via a BYPASSRLS connection, OR exclude outbox_events from FORCE RLS. **Owner decision: revised forward-fix vs. rollback to pre-outbox 2026-06-17 build** (rollback re-breaks the RBAC tier). **Leftover undeletable test assets** (GF-AST-*, GF-B4-*, GF-V310-X, GF-FINAL-1) — clean via DB after the fix.
+
+**Deploy log final:** B4 `4b6c1775` SUCCESS, V310 applied/attempted — smoke gate (login+reads+FE) GREEN but R4-OUTBOX unresolved (smoke gate doesn't exercise outbox writes). 4 deploys total this run, 0 rollbacks.
