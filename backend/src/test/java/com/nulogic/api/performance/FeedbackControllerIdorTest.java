@@ -1,5 +1,6 @@
 package com.nulogic.api.performance;
 
+import com.nulogic.application.performance.dto.FeedbackResponse;
 import com.nulogic.application.performance.service.FeedbackService;
 import com.nulogic.common.config.TestMeterRegistryConfig;
 import com.nulogic.common.exception.GlobalExceptionHandler;
@@ -32,9 +33,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Regression tests for the IDOR scope guard on FeedbackController.
- * Covers /received/{employeeId} and /given/{employeeId}:
- * self-only caller blocked for foreign employeeId; HR manager / VIEW_ALL / team allowed.
+ * Regression tests for the IDOR scope guards on FeedbackController.
+ * Covers:
+ *   Task 1 — /received/{employeeId} and /given/{employeeId} ownership guards
+ *   RBAC-GF-5 — /{id} post-fetch ownership check for single-feedback reads
  */
 @WebMvcTest(FeedbackController.class)
 @ContextConfiguration(classes = {FeedbackController.class, GlobalExceptionHandler.class})
@@ -228,6 +230,134 @@ class FeedbackControllerIdorTest {
                         .andExpect(status().isOk());
 
                 verify(feedbackService).getGivenFeedback(foreignEmployeeId);
+            }
+        }
+    }
+
+    // ==================== RBAC-GF-5: /{id} ownership check ====================
+
+    @Nested
+    @DisplayName("GET /{id} — ownership check (RBAC-GF-5)")
+    class GetFeedbackByIdOwnershipTests {
+
+        @Test
+        @DisplayName("should_return_403_when_unrelated_self_only_caller_requests_foreign_feedback")
+        void should_return_403_when_unrelated_self_only_caller_requests_foreign_feedback() throws Exception {
+            UUID self = UUID.randomUUID();
+            UUID feedbackId = UUID.randomUUID();
+            FeedbackResponse foreignFeedback = FeedbackResponse.builder()
+                    .id(feedbackId)
+                    .recipientId(UUID.randomUUID())   // different recipient
+                    .giverId(UUID.randomUUID())        // different giver
+                    .build();
+
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(SecurityContext::isSuperAdmin).thenReturn(false);
+                sc.when(SecurityContext::isTenantAdmin).thenReturn(false);
+                sc.when(SecurityContext::isHRManager).thenReturn(false);
+                sc.when(() -> SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)).thenReturn(false);
+                sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(self);
+                sc.when(() -> SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)).thenReturn(false);
+                when(feedbackService.getFeedbackById(feedbackId)).thenReturn(foreignFeedback);
+
+                mockMvc.perform(get(BASE_URL + "/{id}", feedbackId))
+                        .andExpect(status().isForbidden());
+            }
+        }
+
+        @Test
+        @DisplayName("should_return_200_when_caller_is_recipient_of_feedback")
+        void should_return_200_when_caller_is_recipient_of_feedback() throws Exception {
+            UUID self = UUID.randomUUID();
+            UUID feedbackId = UUID.randomUUID();
+            FeedbackResponse ownFeedback = FeedbackResponse.builder()
+                    .id(feedbackId)
+                    .recipientId(self)               // caller is recipient
+                    .giverId(UUID.randomUUID())
+                    .build();
+
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(SecurityContext::isSuperAdmin).thenReturn(false);
+                sc.when(SecurityContext::isTenantAdmin).thenReturn(false);
+                sc.when(SecurityContext::isHRManager).thenReturn(false);
+                sc.when(() -> SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)).thenReturn(false);
+                sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(self);
+                when(feedbackService.getFeedbackById(feedbackId)).thenReturn(ownFeedback);
+
+                mockMvc.perform(get(BASE_URL + "/{id}", feedbackId))
+                        .andExpect(status().isOk());
+            }
+        }
+
+        @Test
+        @DisplayName("should_return_200_when_caller_is_giver_of_feedback")
+        void should_return_200_when_caller_is_giver_of_feedback() throws Exception {
+            UUID self = UUID.randomUUID();
+            UUID feedbackId = UUID.randomUUID();
+            FeedbackResponse givenFeedback = FeedbackResponse.builder()
+                    .id(feedbackId)
+                    .recipientId(UUID.randomUUID())
+                    .giverId(self)                   // caller is giver
+                    .build();
+
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(SecurityContext::isSuperAdmin).thenReturn(false);
+                sc.when(SecurityContext::isTenantAdmin).thenReturn(false);
+                sc.when(SecurityContext::isHRManager).thenReturn(false);
+                sc.when(() -> SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)).thenReturn(false);
+                sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(self);
+                when(feedbackService.getFeedbackById(feedbackId)).thenReturn(givenFeedback);
+
+                mockMvc.perform(get(BASE_URL + "/{id}", feedbackId))
+                        .andExpect(status().isOk());
+            }
+        }
+
+        @Test
+        @DisplayName("should_return_200_when_hr_manager_requests_any_feedback")
+        void should_return_200_when_hr_manager_requests_any_feedback() throws Exception {
+            UUID feedbackId = UUID.randomUUID();
+            FeedbackResponse anyFeedback = FeedbackResponse.builder()
+                    .id(feedbackId)
+                    .recipientId(UUID.randomUUID())
+                    .giverId(UUID.randomUUID())
+                    .build();
+
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(SecurityContext::isSuperAdmin).thenReturn(false);
+                sc.when(SecurityContext::isTenantAdmin).thenReturn(false);
+                sc.when(SecurityContext::isHRManager).thenReturn(true);
+                when(feedbackService.getFeedbackById(feedbackId)).thenReturn(anyFeedback);
+
+                mockMvc.perform(get(BASE_URL + "/{id}", feedbackId))
+                        .andExpect(status().isOk());
+            }
+        }
+
+        @Test
+        @DisplayName("should_return_200_when_team_manager_requests_reportee_feedback")
+        void should_return_200_when_team_manager_requests_reportee_feedback() throws Exception {
+            UUID self = UUID.randomUUID();
+            UUID reporteeId = UUID.randomUUID();
+            UUID feedbackId = UUID.randomUUID();
+            FeedbackResponse reporteeFeedback = FeedbackResponse.builder()
+                    .id(feedbackId)
+                    .recipientId(reporteeId)         // recipient is a reportee
+                    .giverId(UUID.randomUUID())
+                    .build();
+
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(SecurityContext::isSuperAdmin).thenReturn(false);
+                sc.when(SecurityContext::isTenantAdmin).thenReturn(false);
+                sc.when(SecurityContext::isHRManager).thenReturn(false);
+                sc.when(() -> SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)).thenReturn(false);
+                sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(self);
+                sc.when(() -> SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)).thenReturn(true);
+                sc.when(SecurityContext::getAllReporteeIds).thenReturn(Set.of(reporteeId));
+                when(feedbackService.getFeedbackById(feedbackId)).thenReturn(reporteeFeedback);
+
+                mockMvc.perform(get(BASE_URL + "/{id}", feedbackId))
+                        .andExpect(status().isOk());
             }
         }
     }

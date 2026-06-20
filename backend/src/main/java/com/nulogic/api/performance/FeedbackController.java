@@ -37,6 +37,7 @@ public class FeedbackController {
     @RequiresPermission(Permission.REVIEW_VIEW)
     public ResponseEntity<FeedbackResponse> getFeedbackById(@PathVariable UUID id) {
         FeedbackResponse response = feedbackService.getFeedbackById(id);
+        enforceFeedbackOwnershipCheck(response);
         return ResponseEntity.ok(response);
     }
 
@@ -72,6 +73,27 @@ public class FeedbackController {
         feedbackService.deleteFeedback(id);
         return ResponseEntity.noContent().build();
     }
+    /**
+     * RBAC-GF-5 FIX: Post-fetch ownership check for /feedback/{id}.
+     * Allows the caller to view the feedback record if they are the recipient or the giver,
+     * or if they have HR-manager or EMPLOYEE_VIEW_ALL privileges.
+     * Managers may also view feedback for their direct/indirect reportees (by recipient).
+     */
+    private void enforceFeedbackOwnershipCheck(FeedbackResponse feedback) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) return;
+        if (SecurityContext.isHRManager()) return;
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) return;
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        if (self == null) throw new AccessDeniedException("Authentication required");
+        if (self.equals(feedback.getRecipientId())) return;   // feedback recipient
+        if (self.equals(feedback.getGiverId())) return;       // feedback giver
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)) {
+            Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+            if (reporteeIds.contains(feedback.getRecipientId())) return;
+        }
+        throw new AccessDeniedException("You are not authorized to view this feedback record");
+    }
+
     /**
      * IDOR FIX: Enforces data-scope on /received/{employeeId} and /given/{employeeId}.
      * Scope hierarchy: isHRManager (implicit VIEW_ALL) > EMPLOYEE_VIEW_ALL > VIEW_TEAM > VIEW_SELF.

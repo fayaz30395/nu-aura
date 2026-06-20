@@ -209,6 +209,27 @@ public class HelpdeskService {
         return tickets.stream().map(t -> mapToTicketResponse(t, nameMap, categoryNameMap)).collect(Collectors.toList());
     }
 
+    /**
+     * RBAC-GF-5 FIX: Returns all tickets where the given employee is the reporter OR the assignee.
+     * Used by getAllTickets when the caller only has EMPLOYEE_VIEW_SELF — they should see their own
+     * submitted tickets as well as tickets currently assigned to them (e.g. after self-assignment).
+     * Results are deduplicated by ticket ID to handle the overlap case.
+     */
+    @Transactional(readOnly = true)
+    public List<TicketResponse> getTicketsByCaller(UUID employeeId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        List<Ticket> reported = ticketRepository.findByTenantIdAndEmployeeId(tenantId, employeeId);
+        List<Ticket> assigned = ticketRepository.findByTenantIdAndAssignedTo(tenantId, employeeId);
+        // Merge and deduplicate — a ticket may appear in both lists if reporter == assignee
+        Map<UUID, Ticket> merged = new java.util.LinkedHashMap<>();
+        reported.forEach(t -> merged.put(t.getId(), t));
+        assigned.forEach(t -> merged.putIfAbsent(t.getId(), t));
+        List<Ticket> tickets = new java.util.ArrayList<>(merged.values());
+        Map<UUID, String> nameMap = buildEmployeeNameMap(ticketEmployeeIds(tickets), tenantId);
+        Map<UUID, String> categoryNameMap = buildCategoryNameMap(tenantId);
+        return tickets.stream().map(t -> mapToTicketResponse(t, nameMap, categoryNameMap)).collect(Collectors.toList());
+    }
+
     @Transactional(readOnly = true)
     public List<TicketResponse> getTicketsByAssignee(UUID assigneeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();

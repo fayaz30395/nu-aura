@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -123,7 +125,9 @@ public class HelpdeskController {
     })
     public ResponseEntity<TicketResponse> getTicketById(
             @Parameter(description = "Ticket UUID") @PathVariable UUID id) {
-        return ResponseEntity.ok(helpdeskService.getTicketById(id));
+        TicketResponse ticket = helpdeskService.getTicketById(id);
+        enforceTicketOwnershipCheck(ticket);
+        return ResponseEntity.ok(ticket);
     }
 
     @GetMapping("/tickets/number/{ticketNumber}")
@@ -136,15 +140,27 @@ public class HelpdeskController {
     })
     public ResponseEntity<TicketResponse> getTicketByNumber(
             @Parameter(description = "Ticket number", example = "TKT-2026-00123") @PathVariable String ticketNumber) {
-        return ResponseEntity.ok(helpdeskService.getTicketByNumber(ticketNumber));
+        TicketResponse ticket = helpdeskService.getTicketByNumber(ticketNumber);
+        enforceTicketOwnershipCheck(ticket);
+        return ResponseEntity.ok(ticket);
     }
 
     @GetMapping("/tickets")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    @Operation(summary = "List all tickets", description = "Returns a paginated list of helpdesk tickets")
+    @Operation(summary = "List all tickets", description = "Returns a paginated list of helpdesk tickets. " +
+            "Agents/admins receive tenant-wide results; employees with VIEW_SELF only see their own tickets.")
     @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
     public ResponseEntity<Page<TicketResponse>> getAllTickets(Pageable pageable) {
-        return ResponseEntity.ok(helpdeskService.getAllTickets(pageable));
+        if (isHelpdeskAgent()) {
+            return ResponseEntity.ok(helpdeskService.getAllTickets(pageable));
+        }
+        // VIEW_SELF caller: scope results to tickets they reported or are assigned to
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        List<TicketResponse> own = helpdeskService.getTicketsByCaller(self);
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), own.size());
+        List<TicketResponse> slice = start >= own.size() ? List.of() : own.subList(start, end);
+        return ResponseEntity.ok(new PageImpl<>(slice, pageable, own.size()));
     }
 
     @GetMapping("/tickets/employee/{employeeId}")
@@ -172,19 +188,24 @@ public class HelpdeskController {
     @GetMapping("/tickets/status/{status}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
     @Operation(summary = "List tickets by status",
-            description = "Filter tickets by status (OPEN, IN_PROGRESS, RESOLVED, CLOSED, etc.)")
+            description = "Agent/admin triage view — filter tenant tickets by status. " +
+                    "Requires helpdesk agent or administrator privileges.")
     @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
     public ResponseEntity<List<TicketResponse>> getTicketsByStatus(
             @Parameter(description = "Ticket status", example = "OPEN") @PathVariable Ticket.TicketStatus status) {
+        requireHelpdeskAgentScope();
         return ResponseEntity.ok(helpdeskService.getTicketsByStatus(status));
     }
 
     @GetMapping("/tickets/category/{categoryId}")
     @RequiresPermission({SYSTEM_ADMIN, EMPLOYEE_VIEW_SELF})
-    @Operation(summary = "List tickets by category", description = "Filter tickets by category UUID")
+    @Operation(summary = "List tickets by category",
+            description = "Agent/admin triage view — filter tenant tickets by category. " +
+                    "Requires helpdesk agent or administrator privileges.")
     @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
     public ResponseEntity<List<TicketResponse>> getTicketsByCategory(
             @Parameter(description = "Category UUID") @PathVariable UUID categoryId) {
+        requireHelpdeskAgentScope();
         return ResponseEntity.ok(helpdeskService.getTicketsByCategory(categoryId));
     }
 
@@ -359,6 +380,52 @@ public class HelpdeskController {
 
         throw new AccessDeniedException(
                 "You are not authorized to view helpdesk tickets for this employee");
+    }
+
+    /**
+     * Returns true when the caller has helpdesk agent or administrator privileges,
+     * meaning they may view and triage tickets across the entire tenant.
+     * Used to gate agent-only triage views (by-status, by-category) and to decide
+     * whether getAllTickets should return tenant-wide or self-scoped results.
+     */
+    private boolean isHelpdeskAgent() {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) return true;
+        if (SecurityContext.hasPermission(Permission.HELPDESK_TICKET_MANAGE)) return true;
+        return SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL);
+    }
+
+    /**
+     * Throws AccessDeniedException when the caller does not have helpdesk agent privileges.
+     * Applied to agent-only triage endpoints (by-status, by-category) that have no legitimate
+     * self-service use-case for regular employees.
+     */
+    private void requireHelpdeskAgentScope() {
+        if (!isHelpdeskAgent()) {
+            throw new AccessDeniedException(
+                    "This endpoint requires helpdesk agent or administrator privileges");
+        }
+    }
+
+    /**
+     * Post-fetch ownership check for single-ticket read endpoints (/{id} and /number/{n}).
+     * Allows the caller to view the ticket if they are the reporter, the assignee, or have
+     * agent-level privileges. Throws AccessDeniedException otherwise.
+     */
+    private void enforceTicketOwnershipCheck(TicketResponse ticket) {
+        if (isHelpdeskAgent()) return;
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        if (self == null) {
+            throw new AccessDeniedException("Authentication required");
+        }
+        if (self.equals(ticket.getEmployeeId())) return;   // reporter
+        if (self.equals(ticket.getAssignedTo())) return;   // assignee
+        // VIEW_TEAM: managers can view their reportees' tickets
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)) {
+            Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+            if (reporteeIds.contains(ticket.getEmployeeId())) return;
+        }
+        throw new AccessDeniedException(
+                "You are not authorized to view this ticket");
     }
 
 
