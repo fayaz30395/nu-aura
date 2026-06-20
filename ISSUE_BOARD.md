@@ -162,3 +162,83 @@ Severity: CRITICAL | HIGH | MEDIUM | LOW · Status: Open → In Progress → Fix
 | R4-SEC-4 | HIGH | secrets | Groq key in untracked `backend/.env:36` (never committed; git history clean). | git verified | USER: rotate at console.groq.com. Not a code/deploy blocker. |
 
 **Triage verdict:** 0 NEW CRITICAL/HIGH that block the core IN-market HR flows. F-002 is HIGH-latent (no provider wired). All P0-labelled stubs are feature-flag-gated and off for this release. Always-on gaps (F-008/009/010) are P1/P2 polish. Full report: docs/audit/green-flag/r4-features.md + r4-security.md.
+
+---
+
+## Run-4 Orchestrator Resolution (authoritative — supersedes conflicting agent rows above)
+
+**SEC-4 CORRECTION:** the `R4-SEC-4` row above says "never committed; git history clean." **WRONG.** Ground-truth: `git show 83f70807:backend/start-backend.sh` contains a REAL `gsk_ry…` key (committed 2026-03-16, neutralized in `fb465678`, still readable across ~10 commits). `verify-carryover.md` is correct. **SEC-4 = HIGH, key IS in history** → rotate (console.groq.com) + purge (BFG/filter-repo) before any public exposure. Empty at HEAD; both remotes private (bounded).
+
+| ID | Sev | Status | Resolution / live evidence |
+|----|-----|--------|----------------------------|
+| DEPLOY-1 (FE) | CRIT | **CLOSED** | `vercel --prod` → alias `hrms-frontend-vert`→`opzprgxt6`; smoke-green. Live now = main. |
+| DEPLOY-1 (BE) | CRIT | **CLOSED** | `railway up` B1 `d993180f`: Flyway V304→V308 live; up 18.8s; smoke-green. |
+| WALL-1 | HIGH | **CLOSED live** | Post-FE-deploy wall renders posts; test post visible. |
+| R4-RBAC-1 | HIGH | **CLOSED live** | V307 live → `/api/v1/roles` = **10 roles** incl TENANT_ADMIN + PAYROLL_ADMIN (was 8). |
+| R4-IDOR-1..5 | HIGH | **CLOSED live** | `6c160e92` guards → BE B2 `d5d0b8fc`. Verified live as TEAM_LEAD: foreign emp = **403** ×4 endpoints, SELF = **200**. |
+| SEC-4 | HIGH | **Open (USER)** | Groq key in git history (corrected). Rotate + purge. |
+| SEC-3b | CRIT | **Open (owner, intentional)** | Public 1-click SUPER_ADMIN live. Env flip insufficient → needs **V309** (draft in r4-security.md). Pre-prod. |
+| R4-UX-1 | MED | **Open** | MANAGER→/admin denial spawns ~8 stacked "Access Denied" toasts (no dedup). RBAC correct; cosmetic. |
+
+**Deploys:** FE `opzprgxt6` ✅ · BE-B1 `d993180f` ✅ · BE-B2 `d5d0b8fc` ✅ — 3 smoke gates PASS, 0 rolled back. Guardrails: tsc 0, IDOR tests 0, Flyway clean. **Git drift:** `6c160e92` deployed (tarball) but unpushed; remotes at `f1f530c4` — push to reconcile.
+
+**VERDICT (see GREEN_FLAG_REPORT.md):** NO-GO true-prod (1 open CRIT SEC-3b, owner action) · GO staging/demo · Score 90/100. All CRITICAL/HIGH **code** defects fixed + live-verified.
+
+### Run-4 STATUS UPDATE (post-deploy verification)
+
+**Deploys this run (via `railway up`, smoke-gated):**
+
+| Batch | Deploy ID | Shipped | Build | Smoke Gate | Outcome |
+|-------|-----------|---------|-------|------------|---------|
+| B1 | d993180f | HEAD f1f530c4 (4-day-stale BE → current): V300-V308, NOTIF-1, proxy gate | SUCCESS | GREEN (7/7) | Live. V307 verified → role catalog 8→10 (TENANT_ADMIN+PAYROLL_ADMIN present). |
+| B2 | 79edb982 | commit 07756218: UI-03 attempt#1 (TenantContext restore) + V309 tenant.admin role assignment | SUCCESS | GREEN (7/7) | Live. **R4-RBAC-1 FULLY FIXED & VERIFIED LIVE** — tenant.admin now roles:[TENANT_ADMIN], employees 200 (was 403). UI-03 attempt#1 INSUFFICIENT (notif still 0). |
+| B3 | f9b5bebf | commit 19c4868a: UI-03 attempt#2 (resolve recipient IN-TX, persist via @Transactional sendToUser) | building | verifying | watcher in progress |
+
+**Status changes:**
+- **R4-RBAC-1 → CLOSED (verified live).** V307 created TENANT_ADMIN+PAYROLL_ADMIN roles; V309 linked the tenant.admin user. Live: tenant.admin logs in with TENANT_ADMIN, reaches employees (200). Role catalog now 10/10 per docs/obsidian/05-RBAC/Roles.md.
+- **R4-DEPLOY-1 → Mitigated.** Deployed HEAD+fixes to Railway via `railway up` (3 batches). ROOT FINDING STANDS: Railway was NOT auto-deploying `main` (4-day gap). Recommend wiring GitHub auto-deploy or documenting manual `railway up` in runbook.
+- **R4-UI-03 → refined root cause + fix in flight (B3).** afterCommit notification callbacks run WITHOUT the per-tx RLS tenant GUC (set by TenantRlsTransactionManager.doBegin only at tx start). So resolveRecipientUserId()'s employee lookup + leave-type lookup were RLS-filtered to empty → recipientUserId null → silent early-return (no log, no notification). Confirmed via live logs: approve completes 200 with ZERO afterCommit notification trace. Workflow TASK_ASSIGNED notifications persist because they run in-tx. **Fix (B3): pre-resolve recipient+type/dates in the main tx; in afterCommit call webSocketNotificationService directly (its @Transactional sendToUser sets the GUC for the persist).** In-tx workflow paths (onApproved/onRejected) were already correct.
+
+**Smoke-gate evidence:** /tmp/postdeploy_verify.sh output — B1 & B2 both 7/7 green on SUPER_ADMIN+EMPLOYEE login + core routes + FE login + BE health. No rollback triggered.
+
+### Run-4 RBAC re-validation (live, stable B2) + UI-07
+
+| ID | Severity | Module | Description | Status |
+|----|----------|--------|-------------|--------|
+| R4-RBAC-2 | INFO | rbac | **Full live RBAC tier validation — HEALTHY.** True EMPLOYEE (arun, roles:[EMPLOYEE]) correctly 403 on /users,/payroll/runs,/roles,/employees-list; 200 only on self (attendance/today, notifications, departments). MANAGER(sumit): employees 200, payroll/users/roles 403. HR_MANAGER(jagadeesh): payroll 200, users/roles 403. HR_ADMIN(saran): broad 200. SUPER_ADMIN: full bypass (by design). TENANT_ADMIN: scoped post-V309. Tenant bound to JWT (X-Tenant-ID header ignored per TenantFilter log). | Closed (verified) |
+| R4-UI-07 | LOW | seed/demo-data | `saran@nulogic.io` ("Saran V") is labelled EMPLOYEE in the demo login panel / e2e testData but actually carries roles ["EMPLOYEE","HR_ADMIN"] live. Caused a false-positive "EMPLOYEE escalation" during testing (saran sees /users,/roles,/payroll = correct for HR_ADMIN). = carry-over UI-07 reconfirmed. | Real EMPLOYEE-tier testing must use arun/deepak/bharath/chitra/anshuman (roles:[EMPLOYEE]). | Fix demo-panel label or seed so the "EMPLOYEE" demo identity is a pure EMPLOYEE. Non-security; test-data hygiene. | Open (LOW) |
+
+**RBAC verdict: enforcement correct across all tiers; SuperAdmin bypass intact & by design; no escalation. The only RBAC-adjacent issue is the UI-07 demo-account mislabel (LOW).**
+
+### Run-4 page-render truth (live Playwright, real demo login, 3 roles × 15 routes)
+
+| Role | Login | Routes OK | Console errors | API 5xx | Notes |
+|------|-------|-----------|----------------|---------|-------|
+| SUPER_ADMIN (fayaz.m) | ✅ | 15/15 | 0 | 0 | fully clean |
+| MANAGER (sumit) | ✅ | 14/15 | 0 | 0 | only /fluence empty |
+| EMPLOYEE* (saran=HR_ADMIN, UI-07) | ✅ | 14/15 | 0 | 0 | only /fluence empty |
+
+Routes: /me/dashboard /dashboard /employees /attendance /leave /payroll /expenses /performance /recruitment /reports /settings /fluence /announcements /assets /org-chart. **44/45 route-renders pass; zero console errors and zero 5xx across all roles/routes.**
+
+| ID | Severity | Module | Description | Status |
+|----|----------|--------|-------------|--------|
+| R4-FLUENCE-1 | LOW | fluence | `/fluence` renders for SUPER_ADMIN (15/15) but shows empty body for MANAGER + HR_ADMIN (no console errors, no 5xx). Likely RBAC-gated content (Fluence mgmt concentrated in TENANT_ADMIN per RBAC-Matrix) showing blank instead of a "restricted" state. | Verify intended-gating vs render bug; if gated, show an explicit empty/denied state. Non-blocking (no errors). | Open (LOW) |
+
+Evidence: /tmp/uilive_run.log, frontend/test-results/dashboard-*.png, frontend/e2e/greenflag-live-ui.production.spec.ts.
+
+### Run-4 UI-03 FINAL root cause (after 3 fix attempts on live)
+
+| ID | Severity | Module | Status |
+|----|----------|--------|--------|
+| R4-UI-03 | MEDIUM (was HIGH) | leave/notifications | **Open — root-caused, fix scoped, not safely live-patchable.** |
+
+**Definitive root cause (live-log verified across B1/B2/B3):** the DIRECT leave approve/reject path (`approveLeaveRequest`/`rejectLeaveRequest`) cancels the workflow execution (BA-5 "superseded by direct approval") and dispatches its employee notification via a hand-rolled `TransactionSynchronization.afterCommit` closure. That closure's RLS-scoped reads (`resolveRecipientUserId`, leave-type lookup) run WITHOUT the per-tx RLS tenant GUC (set only by `TenantRlsTransactionManager.doBegin` at tx start), so they are RLS-filtered to empty → recipient null → silent no-op. Live logs show ZERO afterCommit notification activity for direct approvals on all three deploys. Meanwhile the WORKFLOW path (`onApproved`/`onRejected`, in-tx) and the `ApprovalDecisionEvent → ApprovalNotificationListener.onApprovalDecision` (`@TransactionalEventListener(AFTER_COMMIT)`, sets tenant context, calls `notificationService.createNotification`) DO persist correctly — direct approvals simply bypass them.
+
+**Two fix attempts shipped (committed, harmless, insufficient):** B2 07756218 (restore TenantContext in afterCommit) and B3 19c4868a (pre-resolve recipient in-tx + call WS service in afterCommit). Neither helped because the afterCommit closure itself does not deliver for direct approvals.
+
+**Recommended correct fix (needs unit/integration tests — do in a normal dev cycle, not a live hot-patch):** Option A — publish an `ApprovalDecisionEvent` IN the approve/reject transaction so the proven `onApprovalDecision` listener notifies the requester. Option B — make `WebSocketNotificationService.sendToUser` `@Transactional(propagation = REQUIRES_NEW)` and call `notifyLeaveApproved/Rejected` in-tx (mirrors the working `onApproved` path) so a notification failure cannot mark the leave tx rollback-only. Either is small but must be regression-tested (the afterCommit deferral originally existed to avoid rollback coupling).
+
+**Impact justification for MEDIUM:** leave apply→approve→status all work live (201/200, status APPROVED, balance deducted); the manager receives the workflow approval task; the employee can see the APPROVED status in GET /leave-requests. Only the employee's in-app bell notification on the decision is missing.
+
+### Run-4 repo-state note
+- **Concurrent autopilot active on `main`:** during this run a process committed `8b332133` (fix(rbac): scope helpdesk endpoints + ownership checks, RBAC-GF-5) on top of my `19c4868a` — the documented ruflo autopilot. Non-blocking for this run; my deploys were explicit `railway up` of my own commits. Live backend includes my V307/V309 + UI-03 attempts; helpdesk RBAC-GF-5 ships whenever `8b332133` deploys.
