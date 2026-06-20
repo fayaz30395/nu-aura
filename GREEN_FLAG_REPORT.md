@@ -1,13 +1,14 @@
 # NU-AURA — Green-Flag Report (Run-4, 2026-06-21)
 
-> **VERDICT: NO-GO for unrestricted public production · GO for the current staging/demo deployment.**
-> The application is **functionally production-ready** — core HR flows, RBAC across all tiers, CRUD,
-> lifecycle journeys, and page rendering are all **verified green on the live deployed stack**, and the
-> single major code defect found this run (a missing core RBAC role tier) was **fixed and verified live**.
-> Two release blockers remain, and **both are owner/config actions, not code defects**:
-> **SEC-3b** (public demo SUPER_ADMIN login — intentionally left ON to run this campaign) and
-> **SEC-4** (rotate the Groq API key). One **MEDIUM** functional gap (UI-03 employee leave-decision
-> notification) is root-caused with a scoped fix but was not safe to hot-patch live without tests.
+> **VERDICT: NO-GO for unrestricted public production · GO for staging/demo on read/auth/RBAC + non-outbox writes.**
+> Auth, RBAC across all tiers, page rendering, and core read/CRUD paths are **verified green on the live stack**,
+> and a missing core RBAC role tier was **fixed and verified live**. Three blockers gate full GO:
+> **(1) R4-OUTBOX (CRITICAL code)** — this run's de-stale deploy surfaced a broken transactional outbox: every
+> audited/event-emitting mutation 500s on RLS; **fix V310 deployed in B4, verifying live at report time**.
+> **(2) SEC-3b (CRITICAL, owner/config)** — public demo SUPER_ADMIN login, intentionally ON for this campaign.
+> **(3) SEC-4 (HIGH, owner)** — rotate the Groq API key. One **MEDIUM** gap (UI-03 leave-decision notification)
+> is root-caused with a scoped fix. Honest call: this run **found and forward-fixed a CRITICAL** the prior
+> stale build hid; GO depends on V310 confirming green + the two owner actions.
 
 **Method (PRIMARY RULE honored):** *Code for root cause, browser for truth.* The repo determined WHY;
 Vercel + Railway determined WHETHER. Chrome MCP was unavailable, so live "browser truth" came from
