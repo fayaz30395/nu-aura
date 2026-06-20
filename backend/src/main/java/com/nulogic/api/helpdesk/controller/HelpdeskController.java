@@ -2,7 +2,10 @@ package com.nulogic.api.helpdesk.controller;
 
 import com.nulogic.api.helpdesk.dto.*;
 import com.nulogic.application.helpdesk.service.HelpdeskService;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
+import org.springframework.security.access.AccessDeniedException;
 import com.nulogic.domain.helpdesk.Ticket;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static com.nulogic.common.security.Permission.*;
@@ -150,6 +154,7 @@ public class HelpdeskController {
     @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
     public ResponseEntity<List<TicketResponse>> getTicketsByEmployee(
             @Parameter(description = "Reporter employee UUID") @PathVariable UUID employeeId) {
+        enforceHelpdeskViewScope(employeeId);
         return ResponseEntity.ok(helpdeskService.getTicketsByEmployee(employeeId));
     }
 
@@ -160,6 +165,7 @@ public class HelpdeskController {
     @ApiResponse(responseCode = "200", description = "Tickets retrieved successfully")
     public ResponseEntity<List<TicketResponse>> getTicketsByAssignee(
             @Parameter(description = "Assignee employee UUID") @PathVariable UUID assigneeId) {
+        enforceHelpdeskViewScope(assigneeId);
         return ResponseEntity.ok(helpdeskService.getTicketsByAssignee(assigneeId));
     }
 
@@ -312,4 +318,48 @@ public class HelpdeskController {
         helpdeskService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
+    /**
+     * IDOR FIX: Enforces ownership scope on /tickets/employee/{employeeId} and
+     * /tickets/assignee/{assigneeId} endpoints.
+     * Scope hierarchy: HELPDESK_TICKET_MANAGE (tenant-wide) > VIEW_TEAM (reportees) > VIEW_SELF.
+     * Department-level scope is omitted for helpdesk: ticket ownership is personal/assignee-based
+     * and does not follow department boundaries, so VIEW_DEPARTMENT would create false access.
+     * SuperAdmin and TenantAdmin bypass all scope checks.
+     */
+    private void enforceHelpdeskViewScope(UUID targetEmployeeId) {
+        // SuperAdmin and TenantAdmin bypass all scope checks
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) {
+            return;
+        }
+
+        // HELPDESK_TICKET_MANAGE: tenant-wide helpdesk administration — can view any employee's tickets
+        if (SecurityContext.hasPermission(Permission.HELPDESK_TICKET_MANAGE)) {
+            return;
+        }
+
+        // EMPLOYEE_VIEW_ALL: cross-department visibility implies all helpdesk ticket views
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+            return;
+        }
+
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+
+        // VIEW_SELF: caller may only access their own ticket history
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return;
+        }
+
+        // VIEW_TEAM: managers/team-leads may view their direct and indirect reportees' tickets
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)) {
+            Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+            if (reporteeIds.contains(targetEmployeeId)) {
+                return;
+            }
+        }
+
+        throw new AccessDeniedException(
+                "You are not authorized to view helpdesk tickets for this employee");
+    }
+
+
 }
