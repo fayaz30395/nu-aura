@@ -45,6 +45,30 @@ check `docs/obsidian/01-Architecture/Code-Patterns.md` for an existing pattern. 
 a security-sensitive path, read `docs/obsidian/08-Security/` and the RLS flow in
 `docs/obsidian/12-Knowledge-Graph/`.
 
+### Code RAG — graphify knowledge graph (`graphify-out/`)
+
+For **locating code/data across the codebase** ("where is X defined", "what calls Y", "how does
+A reach B"), query the local graphify knowledge graph BEFORE falling back to broad grep/glob
+sweeps. It is a code-only corpus of **58,753 nodes / 140,991 edges** built from this repo.
+
+- **Location:** `graphify-out/` — **gitignored, local-only** (not committed; `graph.json` is ~85MB).
+  If the directory is missing, rebuild with `/graphify .` (the `graphify` skill).
+- **Scope:** **code only** — docs/`*.md`/images are excluded (see `.graphifyignore`). For prose
+  knowledge use the Obsidian vault table above; for code structure use this graph.
+
+| Query | Command |
+|-------|---------|
+| Broad context ("what is X connected to") | `graphify query "<question>"` (BFS) |
+| Trace a chain ("how does X reach Y") | `graphify query "<question>" --dfs` |
+| Shortest dependency path between two nodes | `graphify path "A" "B"` |
+| Explain one node + its neighbors | `graphify explain "X"` |
+| Plain-language overview | read `graphify-out/GRAPH_REPORT.md` |
+
+Answer using **only** what the graph contains and cite `source_location` when quoting a fact;
+if the graph lacks the edge, say so rather than inventing it. The graph is a point-in-time
+snapshot (`built_at_commit` in `graph.json`, currently `7c9d0dd3`) — after large code changes
+re-run `/graphify .` to refresh it.
+
 > **Note:** the `docs/swarm/` YAMLs (DDD domains + RuFlo registry + 6 workflow pipelines) are
 > the tracked source for `./scripts/ruflo-sync.sh` (`docs/swarm/` → gitignored `.claude-flow/`
 > runtime). Removed in the `ed6f023d` docs reset, they were re-added in `b2801919` and are
