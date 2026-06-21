@@ -27,11 +27,12 @@ against the live backend** (`https://nu-aura-backend-production.up.railway.app`,
 **Sole remaining gate → GO:** **SEC-4 (HIGH)** — rotate the Groq API key present in git history. Owner-only;
 not code-fixable. After rotation: **GO**.
 
-## 2. PRODUCTION READINESS SCORE — 90 / 100
+## 2. PRODUCTION READINESS SCORE — 92 / 100
 
-(Run-4 was 76/100 with R4-OUTBOX open. +14 for closing two CRITICALs and confirming demo-creds off; −10 held back
-solely for the open SEC-4 key rotation and the fact that a full per-module live regression sweep was not re-run this
-pass — the run was scoped to closing the CRITICAL.)
+(Run-4 was 76/100 with R4-OUTBOX open. +14 for closing two CRITICALs and confirming demo-creds off; +2 for a strong
+live RBAC matrix pass across all 10 roles with 0 defects; −8 held back solely for the open SEC-4 key rotation and the
+fact that a full per-module page/CRUD regression sweep was not re-run this pass — the run was scoped to the CRITICAL +
+RBAC hardening.)
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
@@ -51,15 +52,39 @@ pass — the run was scoped to closing the CRITICAL.)
 | Asset CRUD lifecycle (the R4-OUTBOX repro) | create/assign/return/delete | 4/4 | 0 | 🟢 |
 | Outbox durability | 3 audit events persisted PROCESSED | 3/3 | 0 | 🟢 |
 | Tenant isolation (probe) | tenant rows hidden w/o context | pass | 0 | 🟢 |
+| **RBAC matrix (10 roles × 5 gates)** | 50 role/endpoint cells | 50/50 | 0 | 🟢 |
+| RBAC write-gating | low-role admin mutations denied | 2/2 (403) | 0 | 🟢 |
+| Tenant spoof (X-Tenant-ID) | header ignored, JWT governs | pass | 0 | 🟢 |
 | Demo-credentials state | disabled on live | pass | 0 | 🟢 |
 | Groq key in history (SEC-4) | — | — | 1 | 🔴 owner action |
 
-## 4. ROLE × MODULE (this run)
-- **SUPER_ADMIN (live):** full asset lifecycle exercised end-to-end (create/assign/return/delete) → all 2xx; SuperAdmin
-  bypass remains application-layer only (DB role `nu_app_rls` is NOBYPASSRLS, verified). Cross-tenant isolation proven
-  by the startup canary (0 tenant rows visible without context across 317 tables).
-- Per-role full-matrix page sweep was **not** re-run this pass (Run-4 verified 44/45 renders across roles; scope this
-  run was the CRITICAL). Listed under Next Actions for a final clean pass.
+## 4. ROLE × MODULE — LIVE RBAC MATRIX (all 10 roles, this run)
+
+Created one tagged test user per role (demo one-click login is off), authenticated each to the **live API**, and probed
+a permission-gated battery. Expected derived from live `role_permissions` + the documented `SecurityContext` hierarchy
+(`MODULE:MANAGE`⇒`MODULE:*`, `READ`⇒`VIEW`, `VIEW_ALL`>`VIEW_TEAM`>`VIEW_DEPARTMENT`>`VIEW_SELF`). **Actual = expected
+for all 10 — 0 defects.**
+
+| Role | /users/me | /payroll/runs (PAYROLL:VIEW_ALL) | /roles (ROLE:MANAGE) | /audit (AUDIT:VIEW) | /users (USER:VIEW) |
+|------|-----------|----------------------------------|----------------------|---------------------|--------------------|
+| SUPER_ADMIN | 200 | 200 | 200 | 200 | 200 |
+| HR_ADMIN | 200 | 200 | 200 | 200 | 200† |
+| TENANT_ADMIN | 200 | 200 | 200 | 200 | 200† |
+| HR_MANAGER | 200 | 200 | 403 | 403 | 403 |
+| PAYROLL_ADMIN | 200 | 200 | 403 | 403 | 403 |
+| FINANCE_ADMIN | 200 | 200 | 403 | 403 | 403 |
+| RECRUITMENT_ADMIN | 200 | 403 | 403 | 403 | 403 |
+| MANAGER | 200 | 403 | 403 | 403 | 403 |
+| TEAM_LEAD | 200 | 403 | 403 | 403 | 403 |
+| EMPLOYEE | 200 | 403 | 403 | 403 | 403 |
+
+† Correct: HR_ADMIN/TENANT_ADMIN hold `USER:MANAGE`, which the permission hierarchy treats as implying `USER:VIEW`
+(verified in `SecurityContext.hasPermission`).
+
+- **Write-gating (not just reads):** EMPLOYEE → `POST /assets` **403**, `POST /roles` **403**; SUPER_ADMIN → `POST /assets` **201** (bypass intact, app-layer only).
+- **Tenant isolation:** `X-Tenant-ID` spoof ignored (JWT governs); DB-level startup canary shows 0 tenant rows visible
+  without context across 317 tables + 1 view; runtime role `nu_app_rls` is NOBYPASSRLS.
+- Per-role full page-render sweep was not re-run (Run-4 verified 44/45); listed under Next Actions.
 
 ## 5. LIFECYCLE RESULTS
 - **Asset lifecycle (hardware):** create → assign (to employee Sumit Kumar) → return → delete, all live 2xx, with the

@@ -312,3 +312,30 @@ V310 deployed live (B4 `4b6c1775` SUCCESS) but did **NOT** fix R4-OUTBOX. Asset 
 - **SEC-3b (was CRITICAL):** **RESOLVED on live** — `DEMO_CREDENTIALS_ENABLED=false` in Railway (production-correct; public one-click SUPER_ADMIN takeover closed).
 - **SEC-4 (HIGH):** **OPEN — owner action.** Real Groq key `gsk_ryq7hgo9…` is in git **history** (`backend/start-backend.sh` @ `83f70807`), absent at HEAD, not in Railway env. Only remediation = **rotate at console.groq.com** (+ optional history scrub via filter-repo, a destructive force-push deliberately NOT auto-performed). Cannot be code-fixed.
 - **UI-03 (MEDIUM):** leave-decision in-app notification — root-caused prior; the notification event also flows through the now-fixed outbox, so likely improved; not separately re-verified this run.
+
+---
+
+## RUN-5 (2026-06-22) — STRONG RBAC verification (live, all 10 roles) → 0 defects
+
+Method: created one tagged test user per role in the demo tenant (demo one-click login is off), authenticated each to the **live API**, and probed a permission-gated battery. Expected matrix derived from live `role_permissions` + the `SecurityContext` permission hierarchy (`MODULE:MANAGE` implies `MODULE:*`; `READ`→`VIEW`; `VIEW_ALL`>`VIEW_TEAM`>`VIEW_DEPARTMENT`>`VIEW_SELF`).
+
+**Live read battery — actual = expected for all 10 roles** (`/users/me` self, `/payroll/runs` PAYROLL:VIEW_ALL, `/roles` ROLE:MANAGE, `/audit` AUDIT:VIEW, `/users` USER:VIEW):
+
+| Role | me | payroll | roles | audit | users | Verdict |
+|------|----|---------|-------|-------|-------|---------|
+| SUPER_ADMIN | 200 | 200 | 200 | 200 | 200 | ✅ full (bypass) |
+| HR_ADMIN | 200 | 200 | 200 | 200 | 200* | ✅ (*USER:MANAGE⇒VIEW) |
+| TENANT_ADMIN | 200 | 200 | 200 | 200 | 200* | ✅ (*USER:MANAGE⇒VIEW) |
+| HR_MANAGER | 200 | 200 | 403 | 403 | 403 | ✅ |
+| PAYROLL_ADMIN | 200 | 200 | 403 | 403 | 403 | ✅ |
+| FINANCE_ADMIN | 200 | 200 | 403 | 403 | 403 | ✅ |
+| RECRUITMENT_ADMIN | 200 | 403 | 403 | 403 | 403 | ✅ |
+| MANAGER | 200 | 403 | 403 | 403 | 403 | ✅ |
+| TEAM_LEAD | 200 | 403 | 403 | 403 | 403 | ✅ |
+| EMPLOYEE | 200 | 403 | 403 | 403 | 403 | ✅ |
+
+**Write-gating (mutations, not just reads):** EMPLOYEE → `POST /api/v1/assets` **403**, `POST /api/v1/roles` **403**, `GET /payroll/runs` **403**. SUPER_ADMIN → `POST /api/v1/assets` **201** (bypass intact).
+
+**Tenant isolation:** `X-Tenant-ID` spoof to the other tenant is **ignored** — `/users/me` still returns the caller's own (demo-tenant) identity; JWT governs. DB-level: the boot `RlsStartupProbe` proved **0 tenant rows visible without context across 317 tables + 1 view**. Other tenant has no data rows to fetch cross-tenant.
+
+**Result: 0 RBAC defects.** The two `/users`=200 cases for HR_ADMIN/TENANT_ADMIN are CORRECT — they hold `USER:MANAGE`, which the documented permission hierarchy treats as implying `USER:VIEW` (verified in `SecurityContext.hasPermission`). Cleanup: all 10 `qa.rbac.*` test users + auto-linked employees + test assets deleted (0 residual).
