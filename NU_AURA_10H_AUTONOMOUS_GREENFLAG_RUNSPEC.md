@@ -36,9 +36,14 @@ Operational meaning:
 
 ## Accounts & data policy (per owner decision)
 
-- **Use the one-click demo accounts** on the live login screen as test identities only.
-- **Create additional test accounts yourself** if a role/scenario is missing — clearly
-  named (e.g. `qa.manager.<ts>@test`), tagged as test data.
+- **Use the one-click DEMO LOGINS on the live login screen as the primary test path.**
+  This is mandatory — drive the real UI through the demo accounts, not API-only probes.
+- **Demo credentials must be ENABLED for the test window:** ensure
+  `DEMO_CREDENTIALS_ENABLED=true` on Railway so the one-click demo logins work. Flip it
+  back to `false` before declaring production GO (this is the SEC-3b lockdown gate).
+- **Create additional test accounts yourself** only if a role/scenario is missing from the
+  demo set — clearly named (e.g. `qa.<role>.<ts>@test.local`), tagged as test data, and
+  deleted at the end of the run.
 - **Full CRUD is authorized on the live app** via these demo/test identities. Clean up
   obvious junk where feasible; never touch records that look like genuine customer data.
 - SuperAdmin bypasses ALL permission checks — that is **by design**, never a bug.
@@ -84,11 +89,17 @@ Post a status line each iteration: `green / red / fixed-this-pass / deployed / u
 
 ## Coverage — 100% of
 
-- **Roles:** SuperAdmin, TenantAdmin, HR, Manager, Employee + every other role in
-  `docs/obsidian/05-RBAC` / `04_RBAC_PERMISSION_MATRIX`. Each role = a **fresh login from
-  clean browser state**; never infer one role's behavior from another.
+- **Roles (STRONG RBAC — first-class):** SuperAdmin, TenantAdmin, HR_ADMIN, HR_MANAGER,
+  PAYROLL_ADMIN, FINANCE_ADMIN, RECRUITMENT_ADMIN, MANAGER, TEAM_LEAD, EMPLOYEE — i.e.
+  **every role in the live role catalog**. For EACH role: a **fresh demo login from clean
+  browser state**, then **click through every sidebar section and every actionable button**
+  in the real UI (Chrome) — create/edit/save/delete/approve/export/filter — and confirm each
+  either works or is correctly permission-gated. Never infer one role's behavior from another.
+  Cross-check the live UI behavior against the backend `@RequiresPermission` matrix so an
+  over-permissive 200 or an incorrectly-denied 403 is caught.
 - **Pages:** every route, happy path AND edge/failure (empty, invalid input, permission
   denied, expired session, concurrent edit, boundary values, direct-URL, back/forward/refresh).
+  Wait out Railway free-tier cold starts (~5–8s on first hit) before calling a page broken.
 - **CRUD:** create/read/update/delete per module + cross-module data flow + tenant isolation.
 - **Lifecycles:** hire-to-retire, leave escalation, payroll cycle, performance review,
   expense reimbursement, asset lifecycle.
@@ -150,8 +161,14 @@ cd /Users/fayaz.m/IdeaProjects/nulogic/nu-aura
 claude "/nu-prod-green-flag — Execute NU_AURA_10H_AUTONOMOUS_GREENFLAG_RUNSPEC.md as the \
 operating spec. Run the full 10-hour autonomous campaign against the LIVE app \
 (https://hrms-frontend-vert.vercel.app + Railway backend). PRIMARY RULE: code for root \
-cause, browser for truth. Use demo accounts only; create extra test accounts as needed; \
-full CRUD authorized on live demo/test data. Auto-deploy each fix batch with the tsc/build \
-+ smoke-gate guardrails. Loop until all-green or budget spent, then write GREEN_FLAG_REPORT.md \
-with an explicit GO/NO-GO verdict. Do not pause for approval mid-run."
+cause, browser for truth — repo determines WHY, Vercel+Railway determine WHETHER fixed. \
+TEST IN THE REAL BROWSER (Chrome), not API-only: log in via the ONE-CLICK DEMO ACCOUNTS \
+(ensure DEMO_CREDENTIALS_ENABLED=true for the test window, flip back to false before GO) \
+and, for EVERY role, click through every section and every button in the UI and make sure \
+each works or is correctly RBAC-gated. Do RBAC strong: build a live role × section/button \
+matrix and reconcile it with the backend @RequiresPermission rules. Create extra test \
+accounts only if a role is missing; full CRUD authorized on live demo/test data; clean up \
+test data at the end. Auto-deploy each fix batch with the tsc/build + smoke-gate guardrails. \
+Loop until all-green or budget spent, then write GREEN_FLAG_REPORT.md with an explicit \
+GO/NO-GO verdict. Do not pause for approval mid-run. Fix everything yourself."
 ```
