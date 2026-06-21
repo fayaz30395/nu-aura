@@ -48,15 +48,29 @@ export default function AdminLayoutInner({
     [roles]
   );
 
-  // H-4: Only SUPER_ADMIN, TENANT_ADMIN, and HR_MANAGER have admin area access.
-  // HR_MANAGER replaces the non-existent HR_ADMIN backend role (M-3).
-  // Note: plain HR_MANAGER users may receive 403 on some admin API calls — acceptable UX.
+  // Admin-shell entry is PERMISSION-driven, not a hard-coded role list. A user may
+  // open the /admin shell if they hold at least one admin-area permission; the
+  // per-page AuthGuard (route config in lib/config/routes.ts) then enforces each
+  // page's specific requirement and shows "Access Restricted" for the rest.
+  //
+  // GF Run-5 FIX: this previously gated on {SUPER_ADMIN, TENANT_ADMIN, HR_MANAGER}
+  // with a stale comment ("HR_MANAGER replaces the non-existent HR_ADMIN role").
+  // HR_ADMIN now exists (top HR role, holds ROLE:MANAGE/AUDIT:VIEW/USER:MANAGE) and
+  // PAYROLL_ADMIN/FINANCE_ADMIN hold PAYROLL:VIEW_ALL — all were silently redirected
+  // to /me/dashboard before the AuthGuard could grant their permitted pages.
   const hasAdminAccess = useMemo(
     () =>
       isSuperAdmin ||
       roles.includes(Roles.TENANT_ADMIN) ||
-      roles.includes(Roles.HR_MANAGER),
-    [isSuperAdmin, roles]
+      roles.includes(Roles.HR_MANAGER) ||
+      hasPermission(Permissions.ROLE_MANAGE) ||
+      hasPermission(Permissions.PERMISSION_MANAGE) ||
+      hasPermission(Permissions.USER_MANAGE) ||
+      hasPermission(Permissions.AUDIT_VIEW) ||
+      hasPermission(Permissions.SETTINGS_UPDATE) ||
+      hasPermission(Permissions.PAYROLL_VIEW_ALL) ||
+      hasPermission(Permissions.REPORT_VIEW),
+    [isSuperAdmin, roles, hasPermission]
   );
   const {data: unreadCount} = useUnreadNotificationCount(isReady && hasAdminAccess);
 
