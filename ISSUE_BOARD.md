@@ -360,3 +360,11 @@ Verified the admin route guards in `lib/config/routes.ts` are **permission-aware
 - `/admin/payroll` has no specific entry → falls to `/admin/*` `adminOnly` (SUPER_ADMIN / SYSTEM:ADMIN only). FINANCE_ADMIN / PAYROLL_ADMIN are denied the admin **console** — **by design**; they use the non-admin `/payroll` UI (route guard `[PAYROLL_VIEW, PAYROLL_VIEW_SELF]`, satisfied by their `PAYROLL_VIEW_ALL`; API `/payroll/runs` = 200 in the matrix). No gap.
 
 Verdict: RBAC UI gating is consistent and correct. Denials render gracefully (main-app: redirect + single toast; `/admin/*`: full-page "Access Restricted"). Testing caveat: the live login keeps a sticky session ("Remember me" + httpOnly cookie) — switching demo roles needs an explicit logout first; this is test-harness friction, not an app defect.
+
+### Run-5 UI RBAC — R5-UI-3 (HIGH) admin shell locked out HR_ADMIN/PAYROLL_ADMIN/FINANCE_ADMIN
+
+| ID | Sev | Finding | Status |
+|----|-----|---------|--------|
+| R5-UI-3 | HIGH | `AdminLayoutInner` gated the entire `/admin/*` shell on a hard-coded role list `{SUPER_ADMIN, TENANT_ADMIN, HR_MANAGER}` and `router.replace('/me/dashboard')` for everyone else — running BEFORE the permission-aware AuthGuard. Stale comment: "HR_MANAGER replaces the non-existent HR_ADMIN backend role". But HR_ADMIN now exists (top HR role, 300 perms incl. ROLE:MANAGE/AUDIT:VIEW/USER:MANAGE) and PAYROLL_ADMIN/FINANCE_ADMIN hold PAYROLL:VIEW_ALL. Live-confirmed: HR_ADMIN (Saran V demo) → `/admin/roles` and `/admin/audit` both silently redirected to `/me/dashboard` despite holding ROLE_MANAGE/AUDIT_VIEW (and the route configs granting them). | **FIXED** `e86f4531` — admin-shell entry now permission-driven (SUPER_ADMIN / TENANT_ADMIN / HR_MANAGER / any of ROLE_MANAGE,PERMISSION_MANAGE,USER_MANAGE,AUDIT_VIEW,SETTINGS_UPDATE,PAYROLL_VIEW_ALL,REPORT_VIEW); per-page AuthGuard still enforces each page. tsc clean. Vercel deploy in progress; verify HR_ADMIN reaches /admin/roles live. |
+
+This is the highest-impact UI RBAC defect of the run: a real admin role (HR_ADMIN) was fully locked out of the admin console it has permissions for.
