@@ -71,26 +71,27 @@
       "max": 5,
       "threshold": 300000
     },
-    "runAgents": "none",
     "shard": null,
     "tags": [],
     "updateSnapshots": "missing",
     "updateSourceMethod": "patch",
-    "version": "1.58.2",
+    "version": "1.60.0",
     "workers": 1,
     "webServer": null
   },
   "suites": [
     {
-      "title": "api-backend-trace.production.spec.ts",
-      "file": "api-backend-trace.production.spec.ts",
+      "title": "greenflag-live-ui.production.spec.ts",
+      "file": "greenflag-live-ui.production.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "trace deployed API base",
+          "title": "green-flag smoke — SUPER_ADMIN (fayaz.m@nulogic.io)",
           "ok": true,
-          "tags": [],
+          "tags": [
+            "nulogic.io)"
+          ],
           "tests": [
             {
               "timeout": 120000,
@@ -103,67 +104,137 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 8779,
+                  "duration": 16925,
                   "errors": [],
                   "stdout": [
                     {
-                      "text": "API calls:\n"
+                      "text": "[greenflag] SUPER_ADMIN login: OK\n"
                     },
                     {
-                      "text": "POST https://hrms-frontend-vert.vercel.app/api/v1/auth/login\n"
+                      "text": "[greenflag] screenshot saved: /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/dashboard-super_admin.png\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/notifications/unread/count\n"
+                      "text": "[greenflag] SUPER_ADMIN /me/dashboard: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/workflow/inbox/count\n"
+                      "text": "[greenflag] SUPER_ADMIN /dashboard: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/self-service/dashboard?employeeId=550e8400-e29b-41d4-a716-446655440041\n"
+                      "text": "[greenflag] SUPER_ADMIN /employees: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/holidays?days=90\n"
+                      "text": "[greenflag] SUPER_ADMIN /attendance: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/on-leave\n"
+                      "text": "[greenflag] SUPER_ADMIN /leave: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/remote-workers\n"
+                      "text": "[greenflag] SUPER_ADMIN /payroll: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=1\n"
+                      "text": "[greenflag] SUPER_ADMIN /expenses: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=14\n"
+                      "text": "[greenflag] SUPER_ADMIN /performance: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/anniversaries?days=14\n"
+                      "text": "[greenflag] SUPER_ADMIN /recruitment: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30\n"
+                      "text": "[greenflag] SUPER_ADMIN /reports: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/announcements/active?employeeId=550e8400-e29b-41d4-a716-446655440041&page=0&size=10\n"
+                      "text": "[greenflag] SUPER_ADMIN /settings: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/birthdays?days=14\n"
+                      "text": "[greenflag] SUPER_ADMIN /fluence: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/anniversaries?days=14\n"
+                      "text": "[greenflag] SUPER_ADMIN /announcements: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/home/new-joinees?days=30\n"
+                      "text": "[greenflag] SUPER_ADMIN /assets: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/recognition/feed?page=0&size=10\n"
+                      "text": "[greenflag] SUPER_ADMIN /org-chart: OK\n"
                     },
                     {
-                      "text": "GET https://hrms-frontend-vert.vercel.app/api/v1/wall/posts?page=0&size=10\n"
+                      "text": "___GFLAG___ {\"role\":\"SUPER_ADMIN\",\"email\":\"fayaz.m@nulogic.io\",\"loginOk\":true,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-06-15T20:59:31.876Z",
+                  "steps": [
+                    {
+                      "title": "login as SUPER_ADMIN",
+                      "duration": 4840
+                    },
+                    {
+                      "title": "screenshot /me/dashboard",
+                      "duration": 815
+                    },
+                    {
+                      "title": "probe /me/dashboard",
+                      "duration": 467
+                    },
+                    {
+                      "title": "probe /dashboard",
+                      "duration": 772
+                    },
+                    {
+                      "title": "probe /employees",
+                      "duration": 743
+                    },
+                    {
+                      "title": "probe /attendance",
+                      "duration": 697
+                    },
+                    {
+                      "title": "probe /leave",
+                      "duration": 687
+                    },
+                    {
+                      "title": "probe /payroll",
+                      "duration": 691
+                    },
+                    {
+                      "title": "probe /expenses",
+                      "duration": 687
+                    },
+                    {
+                      "title": "probe /performance",
+                      "duration": 706
+                    },
+                    {
+                      "title": "probe /recruitment",
+                      "duration": 767
+                    },
+                    {
+                      "title": "probe /reports",
+                      "duration": 688
+                    },
+                    {
+                      "title": "probe /settings",
+                      "duration": 677
+                    },
+                    {
+                      "title": "probe /fluence",
+                      "duration": 677
+                    },
+                    {
+                      "title": "probe /announcements",
+                      "duration": 747
+                    },
+                    {
+                      "title": "probe /assets",
+                      "duration": 657
+                    },
+                    {
+                      "title": "probe /org-chart",
+                      "duration": 731
+                    }
+                  ],
+                  "startTime": "2026-06-20T22:02:36.339Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -171,19 +242,341 @@
               "status": "expected"
             }
           ],
-          "id": "b793d9a621d9ed0b881a-3b59d17ea0d4f0f49dbd",
-          "file": "api-backend-trace.production.spec.ts",
-          "line": 3,
-          "column": 5
+          "id": "b9964562569c5fc90185-fe1fab734029eb419583",
+          "file": "greenflag-live-ui.production.spec.ts",
+          "line": 188,
+          "column": 7
+        },
+        {
+          "title": "green-flag smoke — MANAGER (sumit@nulogic.io)",
+          "ok": true,
+          "tags": [
+            "nulogic.io)"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production-chromium",
+              "projectName": "production-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11682,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[greenflag] MANAGER login: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] screenshot saved: /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/dashboard-manager.png\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /me/dashboard: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /dashboard: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /employees: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /attendance: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /leave: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /payroll: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /expenses: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /performance: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /recruitment: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /reports: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /settings: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /fluence: FAIL\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /announcements: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /assets: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] MANAGER /org-chart: OK\n"
+                    },
+                    {
+                      "text": "___GFLAG___ {\"role\":\"MANAGER\",\"email\":\"sumit@nulogic.io\",\"loginOk\":true,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]}]}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "login as MANAGER",
+                      "duration": 3120
+                    },
+                    {
+                      "title": "screenshot /me/dashboard",
+                      "duration": 632
+                    },
+                    {
+                      "title": "probe /me/dashboard",
+                      "duration": 584
+                    },
+                    {
+                      "title": "probe /dashboard",
+                      "duration": 593
+                    },
+                    {
+                      "title": "probe /employees",
+                      "duration": 465
+                    },
+                    {
+                      "title": "probe /attendance",
+                      "duration": 434
+                    },
+                    {
+                      "title": "probe /leave",
+                      "duration": 446
+                    },
+                    {
+                      "title": "probe /payroll",
+                      "duration": 497
+                    },
+                    {
+                      "title": "probe /expenses",
+                      "duration": 477
+                    },
+                    {
+                      "title": "probe /performance",
+                      "duration": 417
+                    },
+                    {
+                      "title": "probe /recruitment",
+                      "duration": 473
+                    },
+                    {
+                      "title": "probe /reports",
+                      "duration": 452
+                    },
+                    {
+                      "title": "probe /settings",
+                      "duration": 419
+                    },
+                    {
+                      "title": "probe /fluence",
+                      "duration": 453
+                    },
+                    {
+                      "title": "probe /announcements",
+                      "duration": 441
+                    },
+                    {
+                      "title": "probe /assets",
+                      "duration": 420
+                    },
+                    {
+                      "title": "probe /org-chart",
+                      "duration": 556
+                    }
+                  ],
+                  "startTime": "2026-06-20T22:02:53.564Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b9964562569c5fc90185-6e2cb34ebef72b2e0814",
+          "file": "greenflag-live-ui.production.spec.ts",
+          "line": 188,
+          "column": 7
+        },
+        {
+          "title": "green-flag smoke — EMPLOYEE (saran@nulogic.io)",
+          "ok": true,
+          "tags": [
+            "nulogic.io)"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production-chromium",
+              "projectName": "production-chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11089,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[greenflag] EMPLOYEE login: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] screenshot saved: /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/dashboard-employee.png\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /me/dashboard: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /dashboard: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /employees: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /attendance: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /leave: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /payroll: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /expenses: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /performance: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /recruitment: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /reports: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /settings: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /fluence: FAIL\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /announcements: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /assets: OK\n"
+                    },
+                    {
+                      "text": "[greenflag] EMPLOYEE /org-chart: OK\n"
+                    },
+                    {
+                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"saran@nulogic.io\",\"loginOk\":true,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"consoleErrors\":0,\"api5xx\":0,\"errorSamples\":[]}]}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "login as EMPLOYEE",
+                      "duration": 2671
+                    },
+                    {
+                      "title": "screenshot /me/dashboard",
+                      "duration": 655
+                    },
+                    {
+                      "title": "probe /me/dashboard",
+                      "duration": 478
+                    },
+                    {
+                      "title": "probe /dashboard",
+                      "duration": 401
+                    },
+                    {
+                      "title": "probe /employees",
+                      "duration": 415
+                    },
+                    {
+                      "title": "probe /attendance",
+                      "duration": 429
+                    },
+                    {
+                      "title": "probe /leave",
+                      "duration": 420
+                    },
+                    {
+                      "title": "probe /payroll",
+                      "duration": 442
+                    },
+                    {
+                      "title": "probe /expenses",
+                      "duration": 623
+                    },
+                    {
+                      "title": "probe /performance",
+                      "duration": 539
+                    },
+                    {
+                      "title": "probe /recruitment",
+                      "duration": 398
+                    },
+                    {
+                      "title": "probe /reports",
+                      "duration": 463
+                    },
+                    {
+                      "title": "probe /settings",
+                      "duration": 408
+                    },
+                    {
+                      "title": "probe /fluence",
+                      "duration": 387
+                    },
+                    {
+                      "title": "probe /announcements",
+                      "duration": 397
+                    },
+                    {
+                      "title": "probe /assets",
+                      "duration": 669
+                    },
+                    {
+                      "title": "probe /org-chart",
+                      "duration": 521
+                    }
+                  ],
+                  "startTime": "2026-06-20T22:03:05.253Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b9964562569c5fc90185-b764cde1c7ba4939b414",
+          "file": "greenflag-live-ui.production.spec.ts",
+          "line": 188,
+          "column": 7
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-15T20:59:30.857Z",
-    "duration": 11218.938999999998,
-    "expected": 1,
+    "startTime": "2026-06-20T22:02:35.985Z",
+    "duration": 40557.817,
+    "expected": 3,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
