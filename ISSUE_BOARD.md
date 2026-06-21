@@ -352,3 +352,11 @@ Demo logins re-enabled for the test window (`DEMO_CREDENTIALS_ENABLED=true`; rev
 | R5-UI-2 | MEDIUM | dashboard/audit | `/dashboard` showed "Analytics data could not be loaded" for audit-capable roles. Root cause: `GET /api/v1/audit-logs/statistics` typed params `LocalDateTime` but FE sends date-only `yyyy-MM-dd` → 400 "Expected type: LocalDateTime" (super_admin/hr_admin/tenant_admin). MANAGER correctly 403 (no AUDIT:VIEW). | **FIXED** `c477b94a` — backend accepts date-only or date-time (flexible parse, inclusive end-of-day), keeps 30-day default. Railway deploy `a6365686` in progress. |
 
 UI verified working (SUPER_ADMIN): /me/dashboard, /employees (19, after cold-start wait), /attendance, /leave, /expenses, /assets, /admin/users, /admin/roles, /admin/payroll, /admin/audit, /analytics, /fluence/wiki. MANAGER: manager dashboard + /employees (200) render; admin sections correctly denied (single toast). Note: Railway free-tier cold-start needs ~6-8s before a data page is "loaded".
+
+### Run-5 UI RBAC — admin-route gating analysis (no defect)
+
+Verified the admin route guards in `lib/config/routes.ts` are **permission-aware**, not blanket role-locked:
+- `/admin/roles` → `[ROLE_MANAGE, SYSTEM_ADMIN]`, `/admin/audit` → `[AUDIT_VIEW, SYSTEM_ADMIN]`, `/admin/users` → `[USER_MANAGE, SYSTEM_ADMIN]`, etc. → HR_ADMIN/TENANT_ADMIN (who hold these) reach them; scoped roles get the "Access Restricted" page. Correct.
+- `/admin/payroll` has no specific entry → falls to `/admin/*` `adminOnly` (SUPER_ADMIN / SYSTEM:ADMIN only). FINANCE_ADMIN / PAYROLL_ADMIN are denied the admin **console** — **by design**; they use the non-admin `/payroll` UI (route guard `[PAYROLL_VIEW, PAYROLL_VIEW_SELF]`, satisfied by their `PAYROLL_VIEW_ALL`; API `/payroll/runs` = 200 in the matrix). No gap.
+
+Verdict: RBAC UI gating is consistent and correct. Denials render gracefully (main-app: redirect + single toast; `/admin/*`: full-page "Access Restricted"). Testing caveat: the live login keeps a sticky session ("Remember me" + httpOnly cookie) — switching demo roles needs an explicit logout first; this is test-harness friction, not an app defect.
