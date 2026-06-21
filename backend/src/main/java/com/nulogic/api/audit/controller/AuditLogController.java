@@ -14,7 +14,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -116,15 +119,45 @@ public class AuditLogController {
     @GetMapping("/statistics")
     @RequiresPermission(Permission.AUDIT_VIEW)
     public ResponseEntity<AuditStatisticsResponse> getAuditStatistics(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        // NU-006 FIX: the stats widget previously 400'd whenever the date range was
-        // omitted (params were mandatory). Default to a trailing 30-day window so the
-        // dashboard renders without forcing the client to supply a range.
-        LocalDateTime resolvedEnd = endDate != null ? endDate : LocalDateTime.now();
-        LocalDateTime resolvedStart = startDate != null ? startDate : resolvedEnd.minusDays(30);
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        // GF Run-5 FIX: the dashboard stats widget sends a date-only range
+        // (yyyy-MM-dd) but the params were typed LocalDateTime, so every call from
+        // an audit-capable role 400'd ("Expected type: LocalDateTime") and surfaced
+        // the "Analytics data could not be loaded" banner. Accept BOTH date-only and
+        // full date-time (backward compatible), and keep the NU-006 default 30-day
+        // window when the range is omitted.
+        LocalDateTime resolvedEnd = parseFlexibleDateTime(endDate, true);
+        if (resolvedEnd == null) {
+            resolvedEnd = LocalDateTime.now();
+        }
+        LocalDateTime resolvedStart = parseFlexibleDateTime(startDate, false);
+        if (resolvedStart == null) {
+            resolvedStart = resolvedEnd.minusDays(30);
+        }
         log.info("Getting audit statistics from {} to {}", resolvedStart, resolvedEnd);
         return ResponseEntity.ok(auditLogService.getAuditStatistics(resolvedStart, resolvedEnd));
+    }
+
+    /**
+     * Parses a query-string date that may be either a full ISO date-time
+     * ({@code 2026-05-23T10:15:00}) or a date-only value ({@code 2026-05-23}).
+     * Date-only values are widened to the start of day, or the end of day when
+     * {@code endOfDay} is true so the range is inclusive. Returns {@code null}
+     * for null/blank input; throws {@link DateTimeParseException} (→ HTTP 400)
+     * only when the value is genuinely unparseable.
+     */
+    private static LocalDateTime parseFlexibleDateTime(String value, boolean endOfDay) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String trimmed = value.trim();
+        try {
+            return LocalDateTime.parse(trimmed);
+        } catch (DateTimeParseException ignored) {
+            LocalDate date = LocalDate.parse(trimmed);
+            return endOfDay ? date.atTime(LocalTime.MAX) : date.atStartOfDay();
+        }
     }
 
     @GetMapping("/summary")
