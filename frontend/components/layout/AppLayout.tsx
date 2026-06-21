@@ -137,14 +137,26 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
   const {appCode, getAppEntryRoute, hasAppAccess} = useActiveApp();
 
-  // Global ?denied=1 toast — fires whenever any route lands with this param.
-  // Individual pages (recruitment, me/dashboard) also handle it; the shell-level
-  // handler covers every other route so no redirect is ever silent.
+  // Global ?denied=1 toast — the single source of truth for access-denied feedback.
+  // Fires EXACTLY ONCE per denial: a ref guards against re-fires from re-renders
+  // (useToast returns an unstable reference, so a naive [searchParams, toast] effect
+  // would re-run on every render while ?denied=1 stays in the URL → toast cascade),
+  // and the param is stripped immediately so back/forward/refresh can't replay it.
+  // The guard re-arms once the param is gone, so a subsequent denial still notifies.
+  const deniedShownRef = useRef(false);
   useEffect(() => {
-    if (searchParams.get('denied') === '1') {
+    const denied = searchParams.get('denied') === '1';
+    if (denied && !deniedShownRef.current) {
+      deniedShownRef.current = true;
       toast.error('Access Denied', 'You do not have permission to access that page.');
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('denied');
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, {scroll: false});
+    } else if (!denied) {
+      deniedShownRef.current = false;
     }
-  }, [searchParams, toast]);
+  }, [searchParams, toast, router, pathname]);
 
   // Approval inbox count for sidebar badge (polls every 30s)
   const canReadApprovalInbox = isReady && hasPermission(Permissions.WORKFLOW_VIEW);

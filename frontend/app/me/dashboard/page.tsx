@@ -2,7 +2,6 @@
 
 import React, {useCallback, useEffect, useState} from 'react';
 import Link from 'next/link';
-import {useSearchParams} from 'next/navigation';
 import {format, parseISO} from 'date-fns';
 import {motion} from 'framer-motion';
 import {ArrowRight, CalendarDays, CheckCircle2, Clock, Inbox, User} from 'lucide-react';
@@ -50,13 +49,9 @@ export default function MyDashboardPage() {
   const {user, hasHydrated} = useAuth();
   const queryClient = useQueryClient();
   const toast = useToast();
-  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (searchParams.get('denied') === '1') {
-      toast.error('Access Denied', 'You do not have permission to access that page.');
-    }
-  }, [searchParams, toast]);
+  // Access-denied feedback is handled centrally in AppLayout (single toast, param
+  // stripped) — no per-page handler here, which previously double-fired the toast.
   const [feedRefreshKey, setFeedRefreshKey] = useState(0);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
