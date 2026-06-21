@@ -339,3 +339,16 @@ Method: created one tagged test user per role in the demo tenant (demo one-click
 **Tenant isolation:** `X-Tenant-ID` spoof to the other tenant is **ignored** — `/users/me` still returns the caller's own (demo-tenant) identity; JWT governs. DB-level: the boot `RlsStartupProbe` proved **0 tenant rows visible without context across 317 tables + 1 view**. Other tenant has no data rows to fetch cross-tenant.
 
 **Result: 0 RBAC defects.** The two `/users`=200 cases for HR_ADMIN/TENANT_ADMIN are CORRECT — they hold `USER:MANAGE`, which the documented permission hierarchy treats as implying `USER:VIEW` (verified in `SecurityContext.hasPermission`). Cleanup: all 10 `qa.rbac.*` test users + auto-linked employees + test assets deleted (0 residual).
+
+---
+
+## RUN-5 (2026-06-22) — UI RBAC sweep (real browser, demo logins) + 2 fixes
+
+Demo logins re-enabled for the test window (`DEMO_CREDENTIALS_ENABLED=true`; revert before GO). Driving the live Vercel UI in Chrome per role.
+
+| ID | Sev | Area | Finding | Status |
+|----|-----|------|---------|--------|
+| R5-UI-1 | MEDIUM | rbac/ux | Direct-nav to a forbidden route as a scoped role correctly redirected to `/me/dashboard?denied=1` but spawned ~8+ stacked "Access Denied" toasts. Root cause: toast registered in two effects (`AppLayout` + `me/dashboard`) keyed on `[searchParams, toast]`; `useToast` returns an unstable ref so each re-fired every render while `?denied=1` persisted. | **FIXED** `234cc368` — single AppLayout handler, fire-once ref + strip param; removed duplicate. Vercel deploy `nddz1dnbf` Ready; **verified live** (single toast, was 8+). |
+| R5-UI-2 | MEDIUM | dashboard/audit | `/dashboard` showed "Analytics data could not be loaded" for audit-capable roles. Root cause: `GET /api/v1/audit-logs/statistics` typed params `LocalDateTime` but FE sends date-only `yyyy-MM-dd` → 400 "Expected type: LocalDateTime" (super_admin/hr_admin/tenant_admin). MANAGER correctly 403 (no AUDIT:VIEW). | **FIXED** `c477b94a` — backend accepts date-only or date-time (flexible parse, inclusive end-of-day), keeps 30-day default. Railway deploy `a6365686` in progress. |
+
+UI verified working (SUPER_ADMIN): /me/dashboard, /employees (19, after cold-start wait), /attendance, /leave, /expenses, /assets, /admin/users, /admin/roles, /admin/payroll, /admin/audit, /analytics, /fluence/wiki. MANAGER: manager dashboard + /employees (200) render; admin sections correctly denied (single toast). Note: Railway free-tier cold-start needs ~6-8s before a data page is "loaded".

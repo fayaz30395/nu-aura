@@ -166,3 +166,25 @@ for all 10 — 0 defects.**
 _Definition of Done: all CRITICAL/HIGH must be zero for an unconditional GO. CRITICAL = 0. One HIGH (SEC-4) remains and
 is owner-gated (key rotation). Hence **CONDITIONAL GO** — not a fabricated green; the one open item is explicit and
 non-code._
+
+---
+
+## ADDENDUM — Run-5 LIVE UI RBAC SWEEP (real browser, demo logins)
+
+Per owner request, switched from API-only probes to **real Chrome UI testing via the one-click demo logins** (`DEMO_CREDENTIALS_ENABLED=true` re-enabled for the test window — must revert to `false` before GO). Two real UI defects found and fixed live:
+
+| ID | Sev | Defect | Fix | Verified live |
+|----|-----|--------|-----|---------------|
+| R5-UI-1 | MEDIUM | Forbidden-route redirect spawned ~8+ stacked "Access Denied" toasts (duplicate handlers + unstable `toast` dep re-firing while `?denied=1` persisted) | `234cc368` — single AppLayout handler, fire-once ref, strip param; removed duplicate (FE, Vercel `nddz1dnbf`) | ✅ single toast now |
+| R5-UI-2 | MEDIUM | `/dashboard` "Analytics data could not be loaded" for audit-capable roles — `/audit-logs/statistics` typed `LocalDateTime` but FE sends date-only `yyyy-MM-dd` → 400 | `c477b94a` — backend accepts date-only or date-time (BE, Railway `a6365686`) | ✅ now 200, totalEvents:77 |
+
+**Per-role UI verified (demo logins, live):**
+- **SUPER ADMIN (Fayaz M):** /me/dashboard, /employees (19), /attendance, /leave, /expenses, /assets, /admin/users, /admin/roles, /admin/payroll, /admin/audit, /analytics, /fluence/wiki — all render + buttons present.
+- **MANAGER (Sumit Kumar):** manager dashboard + /employees render; `/admin/*` correctly denied (redirect + single toast).
+- **RECRUITMENT ADMIN (Suresh M):** /recruitment (NU-Hire) renders fully; `/admin/payroll` correctly shows "Access Restricted" full-page guard.
+
+**RBAC denial UX confirmed in both shells:** main-app routes → redirect to dashboard + one toast; `/admin/*` routes → full-page "Access Restricted". No crashes, no data leaks.
+
+**Demo accounts available (8):** SUPER ADMIN, MANAGER, TEAM LEAD ×2, HR ADMIN, HR MANAGER, RECRUITMENT ADMIN, FINANCE ADMIN. (EMPLOYEE / TENANT_ADMIN / PAYROLL_ADMIN are not in the demo set — covered via the API matrix above.)
+
+**Remaining UI sweep (in progress, autonomous):** HR ADMIN, HR MANAGER, FINANCE ADMIN, TEAM LEAD — allowed-section + button click-through and denial checks.
