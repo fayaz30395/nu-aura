@@ -53,6 +53,23 @@ public class RlsStartupProbe implements ApplicationRunner {
     private static final String SKIP_ENV_VAR = "RLS_PROBE_SKIP";
     private static final String SKIP_SYS_PROP = "rls.probe.skip";
     private static final int MAX_FAILURES_IN_MESSAGE = 20;
+
+    /**
+     * Infrastructure tables that carry a {@code tenant_id} column for routing but are
+     * NOT tenant-data tables and have no user/API read path. They are excluded from the
+     * strict-policy assertion and the tenant-isolation canary because they are read
+     * cross-tenant by trusted internal machinery, not by tenant requests.
+     *
+     * <p>{@code outbox_events} is the transactional-outbox queue: written by trusted
+     * server code (with an explicit, correct {@code tenant_id}) inside the business
+     * transaction, and polled across ALL tenants by {@code OutboxEventProcessor} on a
+     * scheduler thread with no tenant context. Its relaxed RLS policy (see
+     * {@code V311__outbox_events_infra_rls_policy.sql}) intentionally allows unset-GUC
+     * reads so cross-tenant polling works; that would otherwise trip this fail-closed
+     * canary. Tenant DATA tables are never added here.</p>
+     */
+    private static final java.util.Set<String> INFRA_EXCLUDED_TABLES = java.util.Set.of("outbox_events");
+
     private static final String ROLE_INSPECTION_SQL = """
             SELECT current_user,
                    COALESCE((SELECT rolsuper FROM pg_roles WHERE rolname = current_user), false) AS superuser,
@@ -213,9 +230,19 @@ public class RlsStartupProbe implements ApplicationRunner {
              ResultSet rs = ps.executeQuery()) {
             List<TenantTableInspection> tables = new java.util.ArrayList<>();
             while (rs.next()) {
+                String schema = rs.getString(1);
+                String table = rs.getString(2);
+                // Skip infrastructure queues (e.g. outbox_events) — they carry a
+                // tenant_id for routing but are read cross-tenant by trusted internal
+                // machinery and have no user/API read path. See INFRA_EXCLUDED_TABLES.
+                if ("public".equals(schema) && INFRA_EXCLUDED_TABLES.contains(table)) {
+                    log.info("RLS startup probe: skipping infrastructure table {}.{} "
+                            + "(no tenant-user read path; polled cross-tenant by design)", schema, table);
+                    continue;
+                }
                 tables.add(new TenantTableInspection(
-                        rs.getString(1),
-                        rs.getString(2),
+                        schema,
+                        table,
                         rs.getBoolean(3),
                         rs.getBoolean(4),
                         rs.getBoolean(5),

@@ -152,6 +152,29 @@ class RlsStartupProbeTest {
     }
 
     @Test
+    @DisplayName("excludes infrastructure table outbox_events from the tenant-isolation canary")
+    void excludesOutboxEventsInfraTable() throws Exception {
+        // Two rows: outbox_events (infra — would individually FAIL: no context policy)
+        // followed by employees (clean tenant table). The probe must skip outbox_events
+        // and pass on employees alone.
+        when(tableResultSet.next()).thenReturn(true, true, false);
+        // getString is read for both rows (before the infra-skip); the boolean getters
+        // are only reached for the surviving row (employees), since outbox_events is
+        // skipped before its attributes are inspected.
+        when(tableResultSet.getString(1)).thenReturn("public", "public");
+        when(tableResultSet.getString(2)).thenReturn("outbox_events", "employees");
+        when(tableResultSet.getBoolean(3)).thenReturn(true);
+        when(tableResultSet.getBoolean(4)).thenReturn(true);
+        when(tableResultSet.getBoolean(5)).thenReturn(false);
+        when(tableResultSet.getBoolean(6)).thenReturn(true);
+        when(resultSet.getLong(2)).thenReturn(0L);
+
+        RlsStartupProbe probe = new RlsStartupProbe(dataSource, true, false);
+
+        assertThatCode(() -> probe.run(null)).doesNotThrowAnyException();
+    }
+
+    @Test
     @DisplayName("fails closed when a tenant table is missing context-required policy")
     void failsClosedWhenTenantTableMissingContextRequiredPolicy() throws Exception {
         when(tableResultSet.getBoolean(6)).thenReturn(false);
