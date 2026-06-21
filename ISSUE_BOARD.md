@@ -276,3 +276,39 @@ Evidence: /tmp/uilive_run.log, frontend/test-results/dashboard-*.png, frontend/e
 V310 deployed live (B4 `4b6c1775` SUCCESS) but did **NOT** fix R4-OUTBOX. Asset assign/delete still 500 with `new row violates row-level security policy for table "outbox_events"` and `tenant_id=660…0001` SET in the row. Since V310's relaxed policy allows `tenant_id IS NULL OR GUC-null OR tenant_id=GUC`, a still-failing insert with tenant_id set means **the session GUC at audit-insert time is a MISMATCHED non-null value (not unset)** — my "GUC unset" hypothesis was wrong (or V310 did not apply via Flyway). Revised fix: set `app.current_tenant_id` correctly on the connection that flushes the audit/outbox insert (the `AuditLogAspect → EventPublisher` path persists with `user_id:null` = detached from the request's tenant connection state), OR write outbox via a BYPASSRLS connection, OR exclude outbox_events from FORCE RLS. **Owner decision: revised forward-fix vs. rollback to pre-outbox 2026-06-17 build** (rollback re-breaks the RBAC tier). **Leftover undeletable test assets** (GF-AST-*, GF-B4-*, GF-V310-X, GF-FINAL-1) — clean via DB after the fix.
 
 **Deploy log final:** B4 `4b6c1775` SUCCESS, V310 applied/attempted — smoke gate (login+reads+FE) GREEN but R4-OUTBOX unresolved (smoke gate doesn't exercise outbox writes). 4 deploys total this run, 0 rollbacks.
+
+---
+
+## RUN-5 (2026-06-22) — R4-OUTBOX **RESOLVED + LIVE-VERIFIED** (CRITICAL closed)
+
+| ID | Severity | Module | Status |
+|----|----------|--------|--------|
+| R4-OUTBOX | CRITICAL | infra/outbox | **RESOLVED** — fixed in commit `33197715` (V311 + RlsStartupProbe), deployed Railway `69e3bfbc` SUCCESS, verified live. |
+
+**Definitive root cause (ground-truthed on the live Railway DB, not theorized):**
+- The live failure was an `outbox_events` RLS `WITH CHECK` rejection. Reproduced the exact insert as `nu_app_rls` against prod: **unset-GUC → OK, matching-GUC → OK, MISMATCHED non-null GUC → FAIL** (the reported error). So V310's "allow unset GUC" was a non-fix: at audit/outbox flush time the session GUC is a *mismatched* non-null value, not null.
+- The prior board's "asset CREATE works, same audit path" reasoning was wrong: `createAsset` emits **no** outbox event — only assign/return/delete/maintenance do, so CREATE never proved the GUC matched. Every outbox write was failing.
+- `outbox_events` is an **infrastructure queue**: written by trusted server code with an explicit, correct `tenant_id`; polled **cross-tenant** by `OutboxEventProcessor` (scheduler, no tenant context). It has **no user/API read path**. Gating its WRITE on the request GUC added zero isolation value and only made durable event publication fragile.
+- **Second latent CRITICAL found this run:** under V310's relaxed `USING`, the fail-closed `RlsStartupProbe` canary (`RLS_PROBE_FAIL_ON_BYPASS` effective true) sees outbox tenant rows with an unset GUC → **any restart with pending events would have failed boot**. The current pod had only survived because outbox was empty at its boot. (Confirmed live: canary returned true with 2 pending tenant rows.)
+
+**Fix (commit `33197715`):**
+- `V311__outbox_events_infra_rls_policy.sql` — single PERMISSIVE policy: relaxed `USING` (tenant readers + processor's unset-GUC cross-tenant poll both work) + `WITH CHECK (true)` so trusted-code writes are never RLS-vetoed. Replaces the V303/V310 + out-of-band `allow_all` policies.
+- `RlsStartupProbe` — excludes `outbox_events` (infra, no user read path) from the strict-policy assertion **and** the visibility canary. 16/16 probe unit tests green.
+- Tenant DATA tables (employees, payslips, leave_*, …) **untouched** — strict fail-closed preserved.
+
+**Live verification (browser/API = truth, on the deployed Vercel/Railway stack):**
+- Flyway applied **V311** on boot; `RlsStartupProbe` logged *"skipping infrastructure table public.outbox_events"* and **passed: 0 tenant rows visible across 317 tenant tables + 1 view** → boot time-bomb defused, tenant isolation intact.
+- Authenticated to the **live API** as a tagged test SUPER_ADMIN and ran the exact previously-500 flow:
+  - `POST /api/v1/assets` → **201**
+  - `POST /api/v1/assets/{id}/assign` → **200** (was 500)
+  - `POST /api/v1/assets/{id}/return` → **200**
+  - `DELETE /api/v1/assets/{id}` → **204** (was 500)
+- Outbox rows for AUDIT_ASSIGN/RETURN/DELETE all persisted **PROCESSED** (retry_count 0) — durable event pipeline restored end-to-end.
+- Zero `row-level security` errors in the new deployment logs.
+
+**Cleanup done:** deleted 45 leftover undeletable `GF-*` test assets (now removable), removed the tagged test user `qa.greenflag.r5@test.local` + its auto-linked employee. Live DB clean.
+
+### Run-5 carry-over status
+- **SEC-3b (was CRITICAL):** **RESOLVED on live** — `DEMO_CREDENTIALS_ENABLED=false` in Railway (production-correct; public one-click SUPER_ADMIN takeover closed).
+- **SEC-4 (HIGH):** **OPEN — owner action.** Real Groq key `gsk_ryq7hgo9…` is in git **history** (`backend/start-backend.sh` @ `83f70807`), absent at HEAD, not in Railway env. Only remediation = **rotate at console.groq.com** (+ optional history scrub via filter-repo, a destructive force-push deliberately NOT auto-performed). Cannot be code-fixed.
+- **UI-03 (MEDIUM):** leave-decision in-app notification — root-caused prior; the notification event also flows through the now-fixed outbox, so likely improved; not separately re-verified this run.
