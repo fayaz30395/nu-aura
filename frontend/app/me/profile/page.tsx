@@ -657,7 +657,7 @@ export default function MyProfilePage() {
                 </button>
               </div>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               <div>
                 <span className="block text-sm font-medium text-[var(--text-secondary)]">
                   Bank Name

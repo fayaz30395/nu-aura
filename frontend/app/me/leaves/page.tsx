@@ -372,7 +372,7 @@ export default function MyLeavesPage() {
         )}
 
         {/* Leave Balances */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {leaveBalances.map((balance) => {
             const leaveType = leaveTypes.find((lt) => lt.id === balance.leaveTypeId);
             const isEncashable = leaveType?.isEncashable && balance.available > 0;

@@ -433,7 +433,7 @@ function StatsRow({attendancePercentage, presentDays, pendingActions, teamOnLeav
   ];
 
   return (
-    <Stagger className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-soft)] divide-x divide-[var(--border-soft)]" aria-label="Your month at a glance">
+    <Stagger className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-soft)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--border-soft)]" aria-label="Your month at a glance">
       {items.map((item) => (
         <StaggerItem key={item.label} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0 hover:bg-[var(--surface-sunken)] transition-colors">
           <div className="flex items-center gap-2 text-[var(--text-3)]">

@@ -111,7 +111,7 @@ export default function MyPayslipsPage() {
     return (
       <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
         <PageTransition className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {Array.from({length: 3}).map((_, i) => (
               <SkeletonStatCard key={i}/>
             ))}

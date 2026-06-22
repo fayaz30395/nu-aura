@@ -527,7 +527,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Stats skeleton — borderly, no cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+          <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--border-subtle)]">
             {Array.from({length: 4}).map((_, i) => (
               <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
                 <Skeleton className="h-3 w-24 rounded-aura-xs"/>
@@ -613,7 +613,7 @@ export default function DashboardPage() {
             View all
           </Button>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+        <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--border-subtle)]">
           {[
             {label: 'On time', value: safeAnalytics.attendance.onTime, icon: UserCheck, tone: 'neutral' as const},
             {label: 'Late', value: safeAnalytics.attendance.late, icon: Clock, tone: safeAnalytics.attendance.late > 0 ? 'warning' as const : 'neutral' as const},

@@ -25,9 +25,33 @@ endpoints/query-keys, record CWV. Tick the row.
 |-------|----------------|--------|--------------|---------------------|
 | Foundation | `employees/[id]`, `[id]/edit`, `[id]/compensation`, `ProfileSheet` | ProfileHero adoption (committed `84ace7f6`) | PASS | baseline · axe · network-parity |
 | **B2** | `team-directory` (list + grid cards) | bespoke initials → shared photo-forward `Avatar` | _pending this scope_ | baseline · axe · network-parity |
-| **B2** | `employees/directory` (table row) | identity cell → `ProfileIdentity` | _pending this scope_ | baseline · axe · network-parity |
+| **B2** | `employees/directory` (table row) | identity cell → `ProfileIdentity` | PASS | baseline · axe · network-parity |
+| **C** | `employees/directory` (grid card, detail modal, table, search, empty) | C2 photo-forward avatars · C3 table scroll · C4 responsive search · C5 EmptyState | PASS | baseline · axe · network-parity (avatar size deltas to eyeball) |
+| **E** | `me/dashboard`, `dashboard`, `me/leaves`, `me/payslips`, `me/profile` | 375px divider + grid-cols `sm:` fixes | PASS | screenshot @375/640/768 |
 
-## B2 deferrals (NOT done this scope — documented trade-offs)
+## Deferred scopes (documented trade-offs)
+
+### Epic F — Dashboard decomposition (DEFERRED — needs runtime)
+F is the highest-risk **operator** screen: strict query-safety (no query-key/cache/poll/invalidation
+drift), 3 role-based `Array.push` widget-visibility predicates that must be preserved verbatim, and a
+`LiveGreeting` 1-sec re-render to extract. Its own rollback rule requires **section-by-section parity
+verification (visual + role-matrix)** before the original `page.tsx` is replaced — that verification
+is **impossible without a runtime/browser session**. Decomposing it blind would risk silent
+query-behavior or role-visibility drift (a CRITICAL per the severity rubric). **Deferred to a session
+with browser access.** Discovery scope captured by the read-only workflow (F-agent result).
+
+### Epic D — State hygiene (DEFERRED — premise unverified)
+The discovery agent's core premise (skeleton presets `SkeletonDashboard`/`SkeletonTable`/
+`SkeletonEmployeeCard` live in `@/components/ui/Skeleton`) **did not survive first source check** —
+`grep 'export (function|const) Skeleton' components/ui/Skeleton.tsx` returned nothing, so the proposed
+`import {SkeletonX} from '@/components/ui/Skeleton'` swaps (D1) are not trustworthy as-scoped.
+Additionally **D3** (remove inline page-level spinners) is behaviorally nuanced — removing feedback
+shown during client refetch would be a behavioral change, not presentation — and **D4** (merge
+`Skeleton.tsx` + `Loading.tsx`) touches **20+ importers** (broad blast radius, unsafe without runtime
+verification). **Deferred pending an export-map verification pass**; only then can the safe D1 subset
+proceed. Do NOT apply the agent's D1 swaps verbatim.
+
+## B2 deferrals (NOT done — documented trade-offs)
 - **`me/profile` hero** — already photo-forward (next/image 128px avatar + status dot) and uses a
   **divergent token family** (`--surface`/`--text-1`) vs ProfileHero's Studio-Slate tokens.
   Full ProfileHero adoption risks an unvalidated token clash → deferred pending baseline +
