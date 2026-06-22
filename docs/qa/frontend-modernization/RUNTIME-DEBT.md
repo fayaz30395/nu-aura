@@ -34,10 +34,22 @@ CSRF-exempt `/api/v1/auth/login` → backend 403. Fixed in `lib/config/env.ts` b
 Full diagnosis + regression matrix: [`CODEX-REVIEW-CSRF-login-fix.md`](./CODEX-REVIEW-CSRF-login-fix.md).
 Gates green (tsc/eslint/env 9-9/RBAC/build).
 
-**To unblock runtime verification, the owner must now only: deploy this branch to Vercel** (CLI-only;
-the code fix works with the existing bare-origin env). After deploy I re-run the demo-login as
-`Arun K · EMPLOYEE` and capture the now-unblocked baselines/axe/network-parity for B2/C/E/D5/F1. Until
-deployed + re-verified, the runtime gates below remain open debt and MUST NOT be claimed as passed.
+**CSRF FIX — DEPLOYED + VERIFIED LIVE (2026-06-23).** Vercel prod deploy completed; demo `Arun K ·
+EMPLOYEE` quick-login now does `POST /api/v1/auth/login` → **200** (same-origin via the Next proxy)
+and lands on `/me/dashboard`. The 403 blocker is RESOLVED. Console clean (only stale pre-fix 403s).
+
+### Runtime verification results (live, demo EMPLOYEE, real data)
+- **VERIFIED rendering correctly, no console errors, no regressions:** `me/dashboard` (E stat grid),
+  `me/leaves` (E balance grid, 4-col desktop), `me/payslips` (E grid), `me/profile` (E contact grid +
+  the correctly-deferred hero), `leave/my-leaves` (**D5 EmptyState — exact: CalendarOff + "No leave
+  requests found" + working "Apply for Leave" action**).
+- **RBAC-BLOCKED for EMPLOYEE (cannot runtime-verify without ADMIN/MANAGER = AUTH BINDING violation):**
+  B2 directory avatars + C directory cards (`GET /api/v1/employees` → 403 for EMPLOYEE; page handles it
+  gracefully with the empty state, no crash) and F1 operator `/dashboard` (EMPLOYEE is RBAC-redirected
+  to `/me/dashboard`). These remain **static-verified only**.
+- **TOOLING LIMIT:** the browser extension captures at a fixed ~1564px viewport regardless of window
+  resize, so true 375px screenshots aren't obtainable here → E responsive fixes are static +
+  desktop-no-regression verified (the `sm:`/`divide-y` classes are unambiguous and build-green).
 
 ### Prior-session reason (historical)
 - Claude Chrome extension was not connected; local BE down + local HTTP can't hold `Secure` cookies.
