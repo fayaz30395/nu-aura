@@ -10,6 +10,7 @@
 - NEVER commit secrets, credentials, or .env files
 - Keep files under 500 lines
 - Validate input at system boundaries
+- Codex will review the code — write changes expecting an external Codex code review pass
 
 ## Knowledge Base — read before acting
 
