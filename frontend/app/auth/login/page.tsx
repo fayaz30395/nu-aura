@@ -39,7 +39,10 @@ type EmailPasswordForm = z.infer<typeof emailPasswordSchema>;
 
 export const dynamic = 'force-dynamic';
 
-const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
+// Demo accounts render by default for this staging/demo product. Set
+// NEXT_PUBLIC_DEMO_MODE=false to hide the panel (and tree-shake the array)
+// for a hardened production deployment.
+const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE !== 'false';
 
 interface DemoAccount {
   name: string;
@@ -50,10 +53,28 @@ interface DemoAccount {
   color: string;
 }
 
-// HIGH-1: Demo accounts only included in bundle when NEXT_PUBLIC_DEMO_MODE=true.
-// Tree-shaking removes the array entirely in production builds without the flag.
+// Demo accounts are bundled unless NEXT_PUBLIC_DEMO_MODE=false, in which case
+// tree-shaking removes the array entirely (hardened-prod opt-out). Listed
+// lowest-privilege first so the EMPLOYEE account is the default quick-login for
+// employee-facing testing.
 const DEMO_ACCOUNTS: DemoAccount[] = IS_DEMO_MODE
   ? [
+    {
+      name: 'Arun K',
+      email: 'arun@nulogic.io',
+      role: 'EMPLOYEE',
+      department: 'Engineering',
+      level: 'Employee',
+      color: 'from-accent-400 to-accent-500'
+    },
+    {
+      name: 'Anshuman P',
+      email: 'anshuman@nulogic.io',
+      role: 'EMPLOYEE',
+      department: 'Engineering',
+      level: 'Employee',
+      color: 'from-accent-400 to-accent-500'
+    },
     {
       name: 'Fayaz M',
       email: 'fayaz.m@nulogic.io',
