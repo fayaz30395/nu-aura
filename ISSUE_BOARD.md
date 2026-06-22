@@ -383,3 +383,48 @@ Self-review of the e86f4531 gate caught an **over-grant**: it included `REPORT:V
 
 ### Run-5 testing-environment note
 Chrome extension disconnected mid-run (environmental). Remaining live UI click-through for HR_MANAGER / TEAM_LEAD / PAYROLL_ADMIN / EMPLOYEE is pending a browser reconnect; their RBAC is already verified at the API/DB level (matrix 10/10 + gate analysis). `DEMO_CREDENTIALS_ENABLED=true` remains on for testing — revert to false before GO.
+
+---
+## RUN-6 (2026-06-22) — full per-role sweep + strong RBAC (LIVE)
+
+**Setup verified live:** FE redeployed to HEAD via `vercel --prod` (dpl_69gHQJYPzj9P..., includes 3 RBAC-UI fixes that were 14 commits unpushed/un-deployed). BE current (V311, audit-stats date-only fix live). Smoke gate PASS. qa.ui.<role>@test.local (all 10 roles) restored to Welcome@123 for testing; demo @nulogic.io accounts also live with Welcome@123.
+
+**RBAC API probe — 10 roles × representative endpoints, exact @RequiresPermission gates, /auth/me effective perms.**
+
+| Finding | Severity | Status |
+|---|---|---|
+| Privileged-endpoint escalation (low roles vs admin/payroll/attendance-mgmt) | — | 🟢 NONE. admin/system/* → only SUPER_ADMIN 200 (9 roles 403); payroll/runs → finance/payroll/HR/tenant 200, ops roles 403; attendance/all → HR/admin 200; pending-regularizations → people-mgrs+HR 200. SUPER_ADMIN never blocked (bypass intact). |
+| R6-WELLNESS-500 | LOW | wellness/dashboard (+ likely other self-service GETs) returns 500 (not graceful) when the authenticated user has NO employee record. arun@nulogic.io (employee-backed)→200 w/ data; qa.ui.employee (no employee)→500. Real users always have an employee row → no prod impact. Edge: an admin user w/o employee record. Fix = graceful empty/404. |
+| R6-AUTHME-PERMS | INFO/LOW | GET /auth/me under-reports effective permissions — omits RoleHierarchy baseline grants (e.g. EMPLOYEE_VIEW_SELF, CONTRACT_VIEW for TEAM_LEAD). Backend enforces the fuller RoleHierarchy set; FE gates on the narrower /auth/me set → FE is MORE restrictive than BE (benign for security; can hide features a role may use). |
+| Probe false-positives (documented) | — | "loans 200/403" → real gate is LOAN_VIEW_ALL not LOAN_VIEW (correct); "referrals 403" → real gate REFERRAL_MANAGE (correct deny); "announcements 200 for tenant/payroll admin" → RoleHierarchy EMPLOYEE_VIEW_SELF baseline (by design). |
+
+### RUN-6 browser UI-layer sweep (ruflo Chromium on live URL — Chrome extension was disconnected)
+| Check | Result |
+|---|---|
+| SUPER_ADMIN login + /me/dashboard | 🟢 renders, full nav |
+| SUPER_ADMIN render: employees(29 rows), payroll, admin/audit, recruitment, performance/reviews, fluence, expenses, assets | 🟢 all render w/ proper titles, no error/denial |
+| EMPLOYEE login + nav | 🟢 admin nav hidden; /admin/audit → redirect ?denied=1 (single clean redirect, no toast cascade) |
+| HR_ADMIN → /admin/audit | 🟢 ALLOWED (renders Audit Logs) — **R5-UI-3 admin-shell fix d2f55191 VALIDATED on fresh deploy** |
+| MANAGER → /admin/audit | 🟢 DENIED → ?denied=1 (fix correctly NOT over-granting operational roles) |
+
+**Wave 1 verdict: STRONG RBAC PASS.** API matrix (10 roles) + UI gate (4 roles) consistent; SUPER_ADMIN bypass intact; no privilege escalation; admin-shell gate precisely scoped. Page render healthy across 9 modules.
+
+### RUN-6 visual CRUD (Chrome UI, SUPER_ADMIN) + defect found
+| Test | Result |
+|---|---|
+| Employees list render | 🟢 19 people, real data, filters/search/sort |
+| CREATE employee (full form) | 🟢 works — cross-tab required-field validation (Designation/Department), **12-char password policy enforced visually** ("Password must be at least 12 characters"); count 19→20, new row appears |
+| DELETE employee (soft-delete) | 🟢 backend soft-deletes → status TERMINATED + linked user INACTIVE (by design, reversible); list invalidates; CSRF enforced on write (403 without token) — **R4-OUTBOX NOT regressed** (no 500 on audited delete) |
+| **R6-UI-DELETE-COPY** | **MEDIUM (FIXED)** — Delete-Employee confirm dialog said "This action cannot be undone … will be permanently deleted" but the op is a **reversible soft-delete** (TERMINATED, record retained, reactivatable). Misleading/incorrect copy → trust + compliance risk. Fix: `frontend/app/employees/page.tsx:1377` reworded to "will be deactivated and marked as terminated. Records retained … can be reactivated." FE-only; ships next Vercel deploy. |
+
+**R4-OUTBOX re-confirmation:** employee CREATE + soft-DELETE both emit audit→outbox events and returned 2xx with no RLS 500 → the Run-5 outbox fix (V311) holds on live.
+
+### RUN-6 demo one-click login sweep (visual)
+| Demo card | Result |
+|---|---|
+| One-click demo login mechanism | 🟢 works (auto-fill + auto-submit); clear error UX on failure ("Authentication Failed / Bad credentials") |
+| Suresh M / RECRUITMENT ADMIN | 🟢 logs in → dashboard renders, correct role label |
+| **R6-DEMO-FINANCE (MEDIUM, FIXED)** | Finance Admin demo card (Fiona Nance) submitted `finance@nulogic.io` which was **never seeded** → "Bad credentials", card unusable. Demo-only (panel disabled in prod via SEC-3b) but a real gap. **Fix:** `V312__seed_demo_finance_admin_user.sql` (mirrors V291) — seeds finance@nulogic.io (FINANCE_ADMIN, employee-backed, Welcome@123). Applied to live DB now → card logs in ✓. Migration committed for durability. |
+| R6-PROFILE-DASH (LOW) | Freshly-seeded admin demo accounts (finance@, and the pre-existing V291 tenant.admin@ pattern) show a graceful "No employee profile linked" on /me/dashboard — minimal seed lacks dept/manager. Non-crashing fallback; real employees have full profiles. Not a blocker. |
+
+**Updated defect tally (Run-6):** 2 fixed (R6-UI-DELETE-COPY MEDIUM, R6-DEMO-FINANCE MEDIUM); 2 LOW non-blockers (R6-WELLNESS-500 employee-less 500, R6-PROFILE-DASH); 1 INFO (R6-AUTHME-PERMS under-report). Zero CRITICAL/HIGH found. RBAC strong. R4-OUTBOX confirmed not regressed.

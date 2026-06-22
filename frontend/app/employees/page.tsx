@@ -1375,8 +1375,8 @@ export default function EmployeesPage() {
           </ModalHeader>
           <ModalBody>
             <p className="text-body-secondary mb-6">
-              This action cannot be undone. <strong
-              className="text-[var(--text-primary)]">{employeeToDelete?.fullName}</strong> will be permanently deleted.
+              <strong
+              className="text-[var(--text-primary)]">{employeeToDelete?.fullName}</strong> will be deactivated and marked as terminated. Their employment records are retained for compliance and the account can be reactivated later.
             </p>
             <div className="flex gap-4">
               <Button
