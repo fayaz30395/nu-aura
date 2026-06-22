@@ -26,10 +26,18 @@ the **live demo login is BROKEN** — verification is still unreachable, for a n
   NOT yet include this session's commits (B2/C/E/D5/F1). So even if login worked, baselines would reflect
   an OLD frontend, not the modernized screens.
 
-**To unblock runtime verification, the owner must:** (1) fix the live demo-login CSRF (fetch/attach the
-CSRF token before `POST /auth/login`, or correct the cross-origin cookie config) so the EMPLOYEE demo
-session is reachable; and (2) deploy this branch (HEAD `0fc4ff23`) to Vercel so the live FE reflects the
-changes. Until both hold, all runtime gates below remain open debt and MUST NOT be claimed as passed.
+**CSRF login fix — LANDED IN CODE (pending deploy + re-verify).** Root cause was NOT cross-origin
+cookies but a **path-prefix bug**: the live `NEXT_PUBLIC_API_URL` is the bare Railway origin (no
+`/api/v1`), so the hand-written `/auth/login` resolved to `<origin>/auth/login` instead of the
+CSRF-exempt `/api/v1/auth/login` → backend 403. Fixed in `lib/config/env.ts` by normalizing
+`apiConfig.baseUrl` to always end with `/api/v1` (idempotent; WS/generated paths provably unaffected).
+Full diagnosis + regression matrix: [`CODEX-REVIEW-CSRF-login-fix.md`](./CODEX-REVIEW-CSRF-login-fix.md).
+Gates green (tsc/eslint/env 9-9/RBAC/build).
+
+**To unblock runtime verification, the owner must now only: deploy this branch to Vercel** (CLI-only;
+the code fix works with the existing bare-origin env). After deploy I re-run the demo-login as
+`Arun K · EMPLOYEE` and capture the now-unblocked baselines/axe/network-parity for B2/C/E/D5/F1. Until
+deployed + re-verified, the runtime gates below remain open debt and MUST NOT be claimed as passed.
 
 ### Prior-session reason (historical)
 - Claude Chrome extension was not connected; local BE down + local HTTP can't hold `Secure` cookies.

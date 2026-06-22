@@ -242,11 +242,31 @@ export const isWebSocketEnabled = env.NEXT_PUBLIC_ENABLE_WEBSOCKET === 'true';
 export const isGoogleAuthEnabled = Boolean(env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
 
 /**
+ * Guarantee the API base URL ends with the `/api/v1` prefix exactly once.
+ *
+ * The whole app assumes `apiConfig.baseUrl` carries `/api/v1`: the hand-written auth
+ * paths (`apiClient.post('/auth/login')`) rely on the base supplying the prefix, the
+ * generated clients send `/api/v1/...` (de-duped by `ApiClient#normalizeUrl`), and the
+ * WS/SAML consumers `.replace('/api/v1', '')` to recover the bare origin. If
+ * `NEXT_PUBLIC_API_URL` is set WITHOUT the suffix (e.g. the bare Railway origin), then
+ * `/auth/login` resolves to `<origin>/auth/login` — NOT the CSRF-exempt
+ * `/api/v1/auth/login` — and the backend rejects it with 403 "CSRF token validation
+ * failed". Normalising here makes the runtime value match that universal assumption
+ * regardless of how the deploy env is set. Idempotent (won't double the suffix).
+ */
+export function withApiV1Prefix(url: string): string {
+  const trimmed = url.replace(/\/+$/, '');
+  return trimmed.endsWith('/api/v1') ? trimmed : `${trimmed}/api/v1`;
+}
+
+const apiBaseUrl = withApiV1Prefix(env.NEXT_PUBLIC_API_URL);
+
+/**
  * API configuration derived from environment
  */
 export const apiConfig = {
-  baseUrl: env.NEXT_PUBLIC_API_URL,
-  wsUrl: env.NEXT_PUBLIC_API_URL.replace('/api/v1', '').replace('http', 'ws'),
+  baseUrl: apiBaseUrl,
+  wsUrl: apiBaseUrl.replace('/api/v1', '').replace('http', 'ws'),
 } as const;
 
 export default env;
