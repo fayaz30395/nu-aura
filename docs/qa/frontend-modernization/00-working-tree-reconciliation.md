@@ -79,3 +79,36 @@ unchanged. This is the single owner of elevation tokens and the anchor for the S
 3. Open dependency: **no verified employee session yet** (app was down). Baseline (Step 3) and all
    per-screen Success-Criteria gates are blocked until a low-privilege employee login is confirmed
    (local dev → backend, or live deployment). Reported, not worked around.
+
+---
+
+## Addendum (2026-06-22, later) — SI-2 + employee session resolved
+
+Two updates land after the original reconciliation above:
+
+### New file in scope: `app/employees/_components/ProfileSheet.tsx` (SI-2)
+| File | Status | Change-class | Recommendation | Evidence |
+|------|--------|--------------|----------------|----------|
+| `app/employees/_components/ProfileSheet.tsx` | mod | EXTRACTION | Keep / Fold-into-plan | drawer header → `<ProfileHero variant="compact" headingLevel="h2">` |
+
+**RBAC HARD-CHECK — PASS.** The bespoke drawer `<header>` (avatar + name + designation + status +
+badges + action row) was replaced by `<ProfileHero variant="compact">`. The name-tint gradient is
+preserved verbatim as the `topBand` slot. The action cluster (Message / Edit / More) is moved into the
+`actions` slot **byte-identical** — same `window.nuToast` calls, same `onEdit()` / `onViewFull`
+handlers, same `onEdit ? … : null` / `onViewFull ? … : null` conditionals (caller-controlled, not a
+permission gate). `EmployeeAvatar` import retained (still used at `ProfileSheet.tsx:171` for managerName).
+No query/data/gating change. Confidence: **High**.
+
+### `next-env.d.ts` — auto-generated, EXCLUDE from commits
+Next.js 16 regenerated the routes-types path (`.next/types` → `.next/dev/types`). Not a program change;
+will be left unstaged.
+
+### Employee session — RESOLVED (program precondition met)
+A reproducible low-privilege employee session is now verified: **`arun@nulogic.io` / `Welcome@123`**
+(roles `["EMPLOYEE"]`) on the HTTPS live FE. Step 3 baseline + per-screen runtime gates are **unblocked**.
+Full details: [`auth-inventory.md`](./auth-inventory.md) · program brief: [`PROGRAM.md`](./PROGRAM.md).
+
+### Static gates on the full working tree (SI-1 + SI-2 + migrated pages)
+`npx tsc --noEmit` clean · `ProfileHero.test.tsx` 9/9 · RBAC spine (usePermissions ×2, PermissionGate,
+AuthGuard) 147/147 · eslint `--max-warnings=0` clean on all touched files. Runtime gates
+(network-parity, axe, screenshot-diff) pending the browser-MCP baseline pass.
