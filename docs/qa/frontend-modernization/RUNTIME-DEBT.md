@@ -8,9 +8,31 @@
 > deferred and tracked here until the browser session is available.
 
 ## Why runtime is currently unreachable
-- **Claude Chrome extension not connected** this session (`tabs_context_mcp` → "extension not connected").
-- Local BE down + local HTTP can't hold `Secure` cookies → no local auth path.
-- Live FE confirmed up (`/auth/login` → 200); demo creds were ENABLED as of Green-Flag Run-6.
+**UPDATE 2026-06-23 (Chrome connected, login attempted):** The Chrome extension is now connected, but
+the **live demo login is BROKEN** — verification is still unreachable, for a new reason:
+
+- Demo quick-login (`Arun K · EMPLOYEE`, the canonical demo employee) → backend returns **403**.
+  Network shows exactly ONE backend call: `POST https://nu-aura-backend-production.up.railway.app/auth/login`
+  → **403**, with **no preceding CSRF-token GET**. Console: `[ApiClient] Error: POST /auth/login 403`.
+  UI banner: **"Authentication Failed — CSRF token validation failed."** Reproduced across a fresh hard
+  reload + multiple attempts → systematic, not a race.
+- **Root cause (frontend/deployment, P4 — outside this presentation program's scope, and unfixable from
+  the browser):** the demo-login flow POSTs without establishing the CSRF double-submit cookie/header
+  first (cross-origin Vercel FE → Railway BE; the `XSRF-TOKEN` is never fetched/sent). This blocks the
+  EMPLOYEE session entirely. Cannot work around it: entering passwords is prohibited; bypassing CSRF is
+  off-limits; logging in as another role (e.g. the `Fayaz M · SUPER ADMIN` demo) violates the AUTH
+  BINDING + the PROD-session hazard.
+- **Compounding:** Vercel deploys are CLI-only (not git-auto) — the live FE is very likely STALE and does
+  NOT yet include this session's commits (B2/C/E/D5/F1). So even if login worked, baselines would reflect
+  an OLD frontend, not the modernized screens.
+
+**To unblock runtime verification, the owner must:** (1) fix the live demo-login CSRF (fetch/attach the
+CSRF token before `POST /auth/login`, or correct the cross-origin cookie config) so the EMPLOYEE demo
+session is reachable; and (2) deploy this branch (HEAD `0fc4ff23`) to Vercel so the live FE reflects the
+changes. Until both hold, all runtime gates below remain open debt and MUST NOT be claimed as passed.
+
+### Prior-session reason (historical)
+- Claude Chrome extension was not connected; local BE down + local HTTP can't hold `Secure` cookies.
 
 ## How to clear an entry
 Connect the Claude Chrome extension, log in to https://hrms-frontend-vert.vercel.app as
