@@ -376,3 +376,10 @@ This is the highest-impact UI RBAC defect of the run: a real admin role (HR_ADMI
 | ID | Sev | Finding | Disposition |
 |----|-----|---------|-------------|
 | R5-UI-4 | LOW/product | `/admin/roles` (Role Management) calls `GET /permissions` (needs `PERMISSION:VIEW`) to populate the assignable-permission list. HR_ADMIN holds `ROLE:MANAGE` but not `PERMISSION:VIEW` → 403 → the page bails to `/me/dashboard` instead of degrading. | **Product decision (not auto-fixed):** either grant HR_ADMIN `PERMISSION:VIEW` (if HR_ADMIN should edit role↔permission mappings) OR make the Role Management page render gracefully when `/permissions` 403s (show roles, hide the permission editor). Changing the permission model needs owner input. |
+
+### R5-UI-3 correction — gate tightened (no over-grant), commit d2f55191
+
+Self-review of the e86f4531 gate caught an **over-grant**: it included `REPORT:VIEW` and `PAYROLL:VIEW_ALL`, which operational roles (MANAGER/TEAM_LEAD/RECRUITMENT_ADMIN) and FINANCE/PAYROLL admins hold — so it would have wrongly admitted them to the admin console (an RBAC *loosening*, worse than the original lock-out). Tightened to org-admin-console perms only (ROLE/PERMISSION/USER:MANAGE, AUDIT:VIEW, SETTINGS:UPDATE) + explicit TENANT_ADMIN/HR_MANAGER. **DB-verified grant set is now exactly {SUPER_ADMIN, TENANT_ADMIN, HR_MANAGER, HR_ADMIN}; all operational + payroll/finance roles denied** (they use their dedicated non-admin UIs). tsc clean; Vercel deploy in progress.
+
+### Run-5 testing-environment note
+Chrome extension disconnected mid-run (environmental). Remaining live UI click-through for HR_MANAGER / TEAM_LEAD / PAYROLL_ADMIN / EMPLOYEE is pending a browser reconnect; their RBAC is already verified at the API/DB level (matrix 10/10 + gate analysis). `DEMO_CREDENTIALS_ENABLED=true` remains on for testing — revert to false before GO.
