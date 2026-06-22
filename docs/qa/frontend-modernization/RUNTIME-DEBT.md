@@ -28,6 +28,7 @@ endpoints/query-keys, record CWV. Tick the row.
 | **B2** | `employees/directory` (table row) | identity cell → `ProfileIdentity` | PASS | baseline · axe · network-parity |
 | **C** | `employees/directory` (grid card, detail modal, table, search, empty) | C2 photo-forward avatars · C3 table scroll · C4 responsive search · C5 EmptyState | PASS | baseline · axe · network-parity (avatar size deltas to eyeball) |
 | **E** | `me/dashboard`, `dashboard`, `me/leaves`, `me/payslips`, `me/profile` | 375px divider + grid-cols `sm:` fixes | PASS | screenshot @375/640/768 |
+| **D5** | `leave/my-leaves` | DIY empty → `EmptyState` (loading spinner left untouched = deferred D3) | PASS | screenshot empty state |
 
 ## Deferred scopes (documented trade-offs)
 
@@ -40,16 +41,27 @@ is **impossible without a runtime/browser session**. Decomposing it blind would 
 query-behavior or role-visibility drift (a CRITICAL per the severity rubric). **Deferred to a session
 with browser access.** Discovery scope captured by the read-only workflow (F-agent result).
 
-### Epic D — State hygiene (DEFERRED — premise unverified)
-The discovery agent's core premise (skeleton presets `SkeletonDashboard`/`SkeletonTable`/
-`SkeletonEmployeeCard` live in `@/components/ui/Skeleton`) **did not survive first source check** —
-`grep 'export (function|const) Skeleton' components/ui/Skeleton.tsx` returned nothing, so the proposed
-`import {SkeletonX} from '@/components/ui/Skeleton'` swaps (D1) are not trustworthy as-scoped.
-Additionally **D3** (remove inline page-level spinners) is behaviorally nuanced — removing feedback
-shown during client refetch would be a behavioral change, not presentation — and **D4** (merge
-`Skeleton.tsx` + `Loading.tsx`) touches **20+ importers** (broad blast radius, unsafe without runtime
-verification). **Deferred pending an export-map verification pass**; only then can the safe D1 subset
-proceed. Do NOT apply the agent's D1 swaps verbatim.
+### Epic D — State hygiene (export map VERIFIED; D5 partial done; D1/D3/D4 DEFERRED)
+Export-map verification (the deferred check) is **done**:
+- `components/ui/Skeleton.tsx` **does** export `SkeletonDashboard`, `SkeletonEmployeeCard`,
+  `SkeletonForm`, `SkeletonTable`, `SkeletonStatCard`, etc. (defined without inline `export`, exported
+  via the block at `Skeleton.tsx:329` — the earlier `grep export.*Skeleton` missed them). The agent's
+  preset premise was therefore **correct**.
+- `components/ui/Loading.tsx` **also** exports `Skeleton`, `SkeletonTable`, `SkeletonStatCard`,
+  `SkeletonChart`, `SkeletonCard` → genuine **duplicate symbols** across the two files (D4 is real).
+- **~22 employee `loading.tsx` files import Mantine `Skeleton`** (`@mantine/core`). Mantine's API is
+  `height`/`width`/`radius` **props**; the canonical `Skeleton` is **`className`-only**. So D1 is **not
+  an import swap** — it's a geometry-sensitive prop→className rewrite per file (or a full-body replace
+  with a preset whose geometry must match the page). **Unsafe to do blind across 22 files** under the
+  0-visual-regression budget; these are transient loading flashes (low value). **Deferred for screenshots.**
+- **D3** (remove inline page-level spinners, e.g. `leave/my-leaves:166-174`) is behaviorally nuanced
+  (refetch feedback) → **deferred**, treat as potential BEHAVIORAL.
+- **D4** (merge `Skeleton.tsx`+`Loading.tsx` duplicates) touches 20+ importers → **deferred** (broad).
+
+**D5 — partial DONE:** `leave/my-leaves` DIY empty → `EmptyState` (committed). Other candidates
+**verified and rejected**: `leave/calendar:218` is an **error** state (not empty); `leave/page.tsx`
+empties are tiny inline messages (full EmptyState would over-weight); `leave/approvals` is an
+operator/approver screen (out of employee-facing scope). Net safe D5 surface = 1 file.
 
 ## B2 deferrals (NOT done — documented trade-offs)
 - **`me/profile` hero** — already photo-forward (next/image 128px avatar + status dot) and uses a

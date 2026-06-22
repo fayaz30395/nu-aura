@@ -16,6 +16,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {LeaveRequest, LeaveRequestStatus} from '@/lib/types/hrms/leave';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {formatDate} from '@/lib/utils/format/date';
 
 export default function MyLeavesPage() {
@@ -173,22 +174,13 @@ export default function MyLeavesPage() {
               </div>
             </div>
           ) : requests.length === 0 ? (
-            <div className="text-center py-12 px-4">
-              <div className="flex justify-center mb-4">
-                <div
-                  className="w-16 h-16 rounded-full bg-[var(--bg-surface)] dark:bg-[var(--bg-secondary)] flex items-center justify-center">
-                  <CalendarOff className="w-8 h-8 text-[var(--text-muted)]"/>
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">No leave requests found</h3>
-              <p className="text-body-secondary mb-6">Get started by applying for your first leave</p>
-              <button
-                onClick={() => router.push('/leave/apply')}
-                className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              >
-                Apply for Leave
-              </button>
-            </div>
+            <EmptyState
+              icon={<CalendarOff className="h-12 w-12"/>}
+              title="No leave requests found"
+              description="Get started by applying for your first leave"
+              actionLabel="Apply for Leave"
+              onAction={() => router.push('/leave/apply')}
+            />
           ) : (
             <>
               <div className="overflow-x-auto">
