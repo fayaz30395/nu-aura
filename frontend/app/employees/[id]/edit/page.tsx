@@ -15,6 +15,7 @@ import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection'
 import {CustomFieldValueRequest, EntityType} from '@/lib/types/core/custom-fields';
 import {customFieldsApi} from '@/lib/api/custom-fields';
 import {AppLayout} from '@/components/layout';
+import {ProfileHero} from '@/components/ui/ProfileHero';
 import {AlertCircle, Clock} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {createLogger} from '@/lib/utils/logger';
@@ -411,20 +412,15 @@ export default function EditEmployeePage() {
             </div>
           )}
 
-          {/* Employee Header */}
-          <div className="card-aura p-6 mb-6">
-            <div className="flex items-center space-x-4">
-              <div
-                className="flex-shrink-0 h-16 w-16 bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
-              <span className="text-xl font-medium text-accent-700 dark:text-accent-400">
-                {employee?.firstName.charAt(0)}{employee?.lastName?.charAt(0) || ''}
-              </span>
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-[var(--text-primary)]">{employee?.fullName}</h2>
-                <p className="text-body-secondary">{employee?.employeeCode}</p>
-              </div>
-            </div>
+          {/* Employee Header (unified) */}
+          <div className="mb-6">
+            <ProfileHero
+              name={employee?.fullName ?? ''}
+              photoUrl={employee?.profilePhotoUrl}
+              subtitle={employee?.designation}
+              meta={employee?.employeeCode ? <span>{employee.employeeCode}</span> : undefined}
+              avatarSize="lg"
+            />
           </div>
 
           {/* Form */}

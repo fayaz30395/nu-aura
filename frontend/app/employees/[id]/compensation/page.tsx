@@ -3,11 +3,11 @@
 import {FormEvent, useEffect, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
-import {ArrowRight, Award, Briefcase, Calendar, ChevronLeft, DollarSign, Plus, TrendingDown, TrendingUp,} from 'lucide-react';
+import {ArrowRight, Award, Briefcase, Calendar, DollarSign, Plus, TrendingDown, TrendingUp,} from 'lucide-react';
 import {Skeleton} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
-import {EmptyState} from '@/components/ui';
+import {EmptyState, ProfileHero} from '@/components/ui';
 import {useEmployee} from '@/lib/hooks/queries/useEmployees';
 import {useCreateRevision, useEmployeeRevisionHistory} from '@/lib/hooks/queries/useCompensation';
 import type {SalaryRevision} from '@/lib/types/hrms/compensation';
@@ -341,36 +341,26 @@ export default function EmployeeCompensationPage() {
         initial="hidden"
         animate="visible"
       >
-        {/* Back navigation */}
-        <button
-          onClick={() => router.push(`/employees/${employeeId}`)}
-          className="flex items-center gap-1 text-body-muted hover:text-[var(--text-primary)] transition-colors mb-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2 rounded-md"
-          aria-label="Back to employee profile"
-        >
-          <ChevronLeft size={16}/>
-          Back to Profile
-        </button>
-
-        {/* Page header */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-page-title text-[var(--text-primary)]">
-              Compensation History
-            </h1>
-            {employee && (
-              <p className="text-body-muted mt-1">
-                {employee.firstName} {employee.lastName} &middot; {employee.employeeCode}
-              </p>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsRevisionModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white hover:bg-accent-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2"
-          >
-            <Plus size={16}/>
-            New Revision
-          </button>
+        {/* Profile hero (unified) */}
+        <div className="mb-8">
+          <ProfileHero
+            name={employee ? `${employee.firstName} ${employee.lastName}` : ''}
+            photoUrl={employee?.profilePhotoUrl}
+            subtitle="Compensation History"
+            meta={employee?.employeeCode ? <span>{employee.employeeCode}</span> : undefined}
+            onBack={() => router.push(`/employees/${employeeId}`)}
+            backLabel="Back to Profile"
+            actions={
+              <button
+                type="button"
+                onClick={() => setIsRevisionModalOpen(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-accent-700 px-4 py-2 text-sm font-medium text-white hover:bg-accent-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-700 focus-visible:ring-offset-2"
+              >
+                <Plus size={16}/>
+                New Revision
+              </button>
+            }
+          />
         </div>
 
         {isLoading ? (

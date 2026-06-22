@@ -7,7 +7,6 @@ import {
   useVerifySkill,
   getGetEmployeeSkillsQueryKey,
 } from '@/lib/generated/api/employee-skills/employee-skills';
-import Image from 'next/image';
 import {notFound, useParams, useRouter, useSearchParams} from 'next/navigation';
 import {
   AlertTriangle,
@@ -46,6 +45,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Card, CardContent} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {ProfileHero} from '@/components/ui/ProfileHero';
 import {Asset} from '@/lib/types/hrms/asset';
 import {Skeleton} from '@mantine/core';
 import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
@@ -378,21 +378,53 @@ export default function EmployeeDetailPage() {
   return (
     <AppLayout activeMenuItem="employees">
       <PageTransition className="page-shell-centered">
-        {/* ── HERO BANNER ──────────────────────────────────────────── */}
-        <div
-          className="relative bg-gradient-to-r from-surface-900 via-accent-950 to-surface-900 border-b border-[var(--border-main)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {/* Back + Actions row */}
-            <div className="row-between mb-6">
-              <button
-                onClick={() => router.push('/employees')}
-                aria-label="Back to employees list"
-                className="flex items-center gap-1 text-surface-400 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
+        {/* ── PROFILE HERO (unified) ─────────────────────────────────── */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+          <ProfileHero
+            name={employee.fullName}
+            photoUrl={employee.profilePhotoUrl}
+            subtitle={employee.designation || '-'}
+            onBack={() => router.push('/employees')}
+            backLabel="Employees"
+            status={
+              <span
+                className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeColor(employee.status)}`}
               >
-                <ChevronLeft className="h-4 w-4"/>
-                <span className="text-sm">Employees</span>
-              </button>
-              <div className="flex gap-4">
+                {formatEnumValue(employee.status)}
+              </span>
+            }
+            meta={
+              <>
+                <a
+                  href={`mailto:${employee.workEmail}`}
+                  className="inline-flex items-center gap-1.5 hover:text-[var(--text-primary)]"
+                >
+                  <Mail className="h-3.5 w-3.5"/>
+                  {employee.workEmail}
+                </a>
+                {employee.phoneNumber && (
+                  <a
+                    href={`tel:${employee.phoneNumber}`}
+                    className="inline-flex items-center gap-1.5 hover:text-[var(--text-primary)]"
+                  >
+                    <Phone className="h-3.5 w-3.5"/>
+                    {employee.phoneNumber}
+                  </a>
+                )}
+                {(employee.city || employee.state || employee.country) && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5"/>
+                    {[employee.city, employee.state, employee.country].filter(Boolean).join(', ')}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1.5">
+                  <IdCard className="h-3.5 w-3.5"/>
+                  {employee.employeeCode}
+                </span>
+              </>
+            }
+            actions={
+              <>
                 <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
                   <button
                     type="button"
@@ -412,77 +444,9 @@ export default function EmployeeDetailPage() {
                     Delete
                   </button>
                 </PermissionGate>
-              </div>
-            </div>
-
-            {/* Avatar + Name + Badge */}
-            <div className="flex items-center gap-6">
-              {employee.profilePhotoUrl ? (
-                <Image
-                  src={employee.profilePhotoUrl}
-                  alt={employee.fullName}
-                  width={80}
-                  height={80}
-                  unoptimized
-                  className="h-20 w-20 rounded-full object-cover border-2 border-accent-500/30"
-                />
-              ) : (
-                <AvatarInitials name={employee.fullName} size="xl"/>
-              )}
-              <div>
-                <div className="flex items-center gap-4">
-                  <h1 className="text-2xl font-bold text-white">{employee.fullName}</h1>
-                  <span
-                    className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeColor(employee.status)}`}
-                  >
-                    {formatEnumValue(employee.status)}
-                  </span>
-                </div>
-                <p className="text-surface-300 text-sm mt-1">{employee.designation || '-'}</p>
-                <p className="text-surface-400 text-xs mt-0.5">{employee.employeeCode}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── QUICK INFO BAR ───────────────────────────────────────── */}
-        <div className="bg-[var(--bg-card)]/50 border-b border-[var(--border-main)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap items-center gap-6 py-4">
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-[var(--text-muted)]"/>
-                <a
-                  href={`mailto:${employee.workEmail}`}
-                  className="text-accent-700 dark:text-accent-400 hover:underline"
-                >
-                  {employee.workEmail}
-                </a>
-              </div>
-              {employee.phoneNumber && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Phone className="h-4 w-4 text-[var(--text-muted)]"/>
-                  <a
-                    href={`tel:${employee.phoneNumber}`}
-                    className="text-[var(--text-primary)] hover:underline"
-                  >
-                    {employee.phoneNumber}
-                  </a>
-                </div>
-              )}
-              {(employee.city || employee.state || employee.country) && (
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-[var(--text-muted)]"/>
-                  <span className="text-[var(--text-primary)]">
-                    {[employee.city, employee.state, employee.country].filter(Boolean).join(', ')}
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center gap-2 text-sm">
-                <IdCard className="h-4 w-4 text-[var(--text-muted)]"/>
-                <span className="text-[var(--text-primary)]">{employee.employeeCode}</span>
-              </div>
-            </div>
-          </div>
+              </>
+            }
+          />
         </div>
 
         {/* ── ORG INFO BAR ─────────────────────────────────────────── */}

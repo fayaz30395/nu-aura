@@ -28,6 +28,19 @@ export type {TextareaProps} from './Textarea';
 export {Badge, badgeVariants} from './Badge';
 export type {BadgeProps} from './Badge';
 
+// Avatar Component (shared, photo-forward — supersedes file-local avatar helpers)
+export {Avatar} from './Avatar';
+export type {AvatarProps, AvatarSize} from './Avatar';
+
+// ProfileHero Component (unified employee identity hero)
+export {ProfileHero, ProfileIdentity} from './ProfileHero';
+export type {
+  ProfileHeroProps,
+  ProfileHeroVariant,
+  ProfileHeroHeadingLevel,
+  ProfileIdentityProps,
+} from './ProfileHero';
+
 // StatCard Component (legacy — prefer `<Stat>` for new code)
 export {StatCard} from './StatCard';
 export type {StatCardProps} from './StatCard';

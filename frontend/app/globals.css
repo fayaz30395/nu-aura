@@ -350,6 +350,64 @@
   }
 
   /* ════════════════════════════════════════════════════════════════
+     STUDIO SLATE — ELEVATION LAYER (opt-in, employee-facing screens)
+     ════════════════════════════════════════════════════════════════
+     A SECOND visual altitude layered ON TOP of Studio Slate. A screen
+     opts in by rendering inside `[data-altitude="elevated"]` (set by
+     AppLayout via the `altitude` prop). These are a NEW `--elv-*`
+     namespace — they do NOT remap any existing token, so they are inert
+     and produce zero visual change until a component consumes them.
+     Operator/admin screens never set the attribute and stay dense/flat.
+     Accent (#2952A3) is unchanged. Warm-neutral surface shift; soft
+     warm-tinted shadows; generous radius. See
+     docs/qa/frontend-modernization/04-elevation-token-proposal.md
+     ──────────────────────────────────────────────────────────────── */
+  [data-altitude="elevated"] {
+    /* Surfaces — warm-neutral, low saturation (light) */
+    --elv-surface-app: #faf8f5;
+    --elv-surface-flat: #ffffff;
+    --elv-surface-highlight: #f4efe9;
+
+    /* Radius — generous vs dense 10–12px operator scale */
+    --elv-r-sm: 8px;
+    --elv-r-md: 12px;
+    --elv-r-lg: 16px;
+    --elv-r-xl: 24px;
+
+    /* Shadows — soft, tinted to warm bg hue; never neon/glow */
+    --elv-shadow-subtle: 0 1px 2px rgba(40, 30, 20, 0.04), 0 1px 3px rgba(40, 30, 20, 0.06);
+    --elv-shadow-medium: 0 2px 8px rgba(40, 30, 20, 0.06), 0 8px 24px rgba(40, 30, 20, 0.08);
+    --elv-shadow-strong: 0 8px 32px rgba(40, 30, 20, 0.1);
+
+    /* Spacing — calmer vertical rhythm */
+    --elv-space-section: clamp(2rem, 4vw, 3.5rem);
+    --elv-space-card: clamp(1.25rem, 2vw, 1.75rem);
+    --elv-space-hero: clamp(1.5rem, 3vw, 2.5rem);
+
+    /* Interaction — designed, tactile (consumed via transform/box-shadow) */
+    --elv-lift: -2px;
+    --elv-press: -1px;
+    --elv-focus-ring: 0 0 0 3px color-mix(in oklab, var(--accent) 35%, transparent);
+
+    /* Identity — photo-forward avatar scale */
+    --elv-avatar-sm: 32px;
+    --elv-avatar-md: 48px;
+    --elv-avatar-lg: 72px;
+    --elv-avatar-xl: 112px;
+  }
+
+  /* Dark warm-charcoal surfaces (attribute lives on <main>, `.dark` on <html>). */
+  .dark [data-altitude="elevated"],
+  :root[data-theme="dark"] [data-altitude="elevated"] {
+    --elv-surface-app: #14110e;
+    --elv-surface-flat: #1c1813;
+    --elv-surface-highlight: #221d17;
+    --elv-shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.36);
+    --elv-shadow-medium: 0 2px 8px rgba(0, 0, 0, 0.36), 0 8px 24px rgba(0, 0, 0, 0.44);
+    --elv-shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ════════════════════════════════════════════════════════════════
      AURA DARK THEME — class-driven (single source of truth)
      ════════════════════════════════════════════════════════════════
      Dark tokens are carried ONLY by `.dark` / `:root[data-theme="dark"]`,

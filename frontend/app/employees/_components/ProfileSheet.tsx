@@ -5,6 +5,7 @@ import {Download, FileText, MoreHorizontal, MessageSquare, Pencil, X, UserPlus, 
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {ProfileHero} from '@/components/ui/ProfileHero';
 import {Tabs} from '@/components/ui/Tabs';
 import {EMPLOYEE_LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
 import type {Employee} from '@/lib/types/hrms/employee';
@@ -89,42 +90,54 @@ export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileShe
         </button>
 
         <div className="flex-1 overflow-y-auto">
-          {/* header — name-tinted gradient */}
-          <header
-            className="border-b border-[var(--border)] px-7 pb-5 pt-7"
-            style={{
-              background: `linear-gradient(160deg, color-mix(in srgb, ${tint} 16%, var(--surface)), var(--surface) 70%)`,
-            }}
-          >
-            <EmployeeAvatar name={employee.fullName} size={68} src={employee.profilePhotoUrl} />
-            <h2 className="mt-4 mb-1 font-[family-name:var(--font-display)] text-[22px] font-bold tracking-[-0.02em] text-[var(--text-1)]">
-              {employee.fullName}
-            </h2>
-            <div className="mb-3 text-[13.5px] text-[var(--text-3)]">
-              {employee.designation ?? '—'}
-              {employee.departmentName ? ` · ${employee.departmentName}` : ''}
-            </div>
-            <div className="flex items-center gap-2">
-              <StatusBadge status={employee.status} domain={EMPLOYEE_LIFECYCLE_STATUS} />
-              <Badge variant="default">{typeLabel}</Badge>
-              <span className="num ml-auto text-xs text-[var(--text-3)]">{employee.employeeCode}</span>
-            </div>
-            <div className="mt-[18px] flex gap-2">
-              <Button variant="primary" size="sm" leftIcon={<MessageSquare size={15} aria-hidden />} onClick={() => window.nuToast?.('Message', { msg: `New message to ${employee.fullName}.`, type:'info' })}>
-                Message
-              </Button>
-              {onEdit ? (
-                <Button variant="ghost" size="sm" leftIcon={<Pencil size={15} aria-hidden />} onClick={() => { window.nuToast?.('Edit profile', { msg: `Editing ${employee.fullName}'s profile.`, type:'info' }); onEdit(); }}>
-                  Edit
-                </Button>
-              ) : null}
-              {onViewFull ? (
-                <Button variant="ghost" size="icon-sm" aria-label="More" onClick={onViewFull}>
-                  <MoreHorizontal size={16} aria-hidden />
-                </Button>
-              ) : null}
-            </div>
-          </header>
+          {/* header — unified ProfileHero (compact, h2). Name-tint preserved as the cover band. */}
+          <div className="px-5 pb-3 pt-5">
+            <ProfileHero
+              variant="compact"
+              headingLevel="h2"
+              name={employee.fullName}
+              photoUrl={employee.profilePhotoUrl}
+              subtitle={
+                <>
+                  {employee.designation ?? '—'}
+                  {employee.departmentName ? ` · ${employee.departmentName}` : ''}
+                </>
+              }
+              status={
+                <>
+                  <StatusBadge status={employee.status} domain={EMPLOYEE_LIFECYCLE_STATUS} />
+                  <Badge variant="default">{typeLabel}</Badge>
+                </>
+              }
+              meta={<span className="num">{employee.employeeCode}</span>}
+              topBand={
+                <div
+                  className="h-14"
+                  style={{
+                    background: `linear-gradient(160deg, color-mix(in srgb, ${tint} 22%, var(--surface)), var(--surface) 78%)`,
+                  }}
+                  aria-hidden
+                />
+              }
+              actions={
+                <>
+                  <Button variant="primary" size="sm" leftIcon={<MessageSquare size={15} aria-hidden />} onClick={() => window.nuToast?.('Message', { msg: `New message to ${employee.fullName}.`, type:'info' })}>
+                    Message
+                  </Button>
+                  {onEdit ? (
+                    <Button variant="ghost" size="sm" leftIcon={<Pencil size={15} aria-hidden />} onClick={() => { window.nuToast?.('Edit profile', { msg: `Editing ${employee.fullName}'s profile.`, type:'info' }); onEdit(); }}>
+                      Edit
+                    </Button>
+                  ) : null}
+                  {onViewFull ? (
+                    <Button variant="ghost" size="icon-sm" aria-label="More" onClick={onViewFull}>
+                      <MoreHorizontal size={16} aria-hidden />
+                    </Button>
+                  ) : null}
+                </>
+              }
+            />
+          </div>
 
           {/* tabs */}
           <div className="px-7">

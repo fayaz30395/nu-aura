@@ -58,6 +58,13 @@ export interface AppLayoutProps {
   onSidebarCollapsedChange?: (collapsed: boolean) => void;
   activeMenuItem?: string;
   onMenuItemClick?: (item: SidebarItem) => void;
+  /**
+   * Opt into the Studio Slate Elevation Layer (employee-facing screens only).
+   * Sets `data-altitude="elevated"` on <main>, scoping the `--elv-*` tokens.
+   * Omit on operator/admin screens — they stay dense/flat. Inert until a
+   * descendant component consumes the `--elv-*` vars.
+   */
+  altitude?: 'elevated';
 }
 
 // Role priority for display — higher-priority roles appear first
@@ -116,6 +123,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                                                onSidebarCollapsedChange,
                                                activeMenuItem,
                                                onMenuItemClick,
+                                               altitude,
                                              }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -587,6 +595,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
         <main
           id="main-content"
           tabIndex={-1}
+          data-altitude={altitude}
           className="flex-1 overflow-y-auto overflow-x-hidden transition-colors duration-300 bg-transparent focus:outline-none"
         >
           {/* Auth is evaluated once by the AuthGuard in app/providers.tsx,
