@@ -29,17 +29,25 @@ endpoints/query-keys, record CWV. Tick the row.
 | **C** | `employees/directory` (grid card, detail modal, table, search, empty) | C2 photo-forward avatars · C3 table scroll · C4 responsive search · C5 EmptyState | PASS | baseline · axe · network-parity (avatar size deltas to eyeball) |
 | **E** | `me/dashboard`, `dashboard`, `me/leaves`, `me/payslips`, `me/profile` | 375px divider + grid-cols `sm:` fixes | PASS | screenshot @375/640/768 |
 | **D5** | `leave/my-leaves` | DIY empty → `EmptyState` (loading spinner left untouched = deferred D3) | PASS | screenshot empty state |
+| **F1** | `dashboard` (operator) | extract `LiveGreeting` — kill page-wide 1-sec re-render | PASS | confirmatory screenshot (visual parity guaranteed by char-identical JSX) |
 
 ## Deferred scopes (documented trade-offs)
 
-### Epic F — Dashboard decomposition (DEFERRED — needs runtime)
+### Epic F — Dashboard decomposition (F1 DONE; F2–F5 DEFERRED — need runtime)
 F is the highest-risk **operator** screen: strict query-safety (no query-key/cache/poll/invalidation
-drift), 3 role-based `Array.push` widget-visibility predicates that must be preserved verbatim, and a
-`LiveGreeting` 1-sec re-render to extract. Its own rollback rule requires **section-by-section parity
-verification (visual + role-matrix)** before the original `page.tsx` is replaced — that verification
-is **impossible without a runtime/browser session**. Decomposing it blind would risk silent
-query-behavior or role-visibility drift (a CRITICAL per the severity rubric). **Deferred to a session
-with browser access.** Discovery scope captured by the read-only workflow (F-agent result).
+drift), 3 role-based `Array.push` widget-visibility predicates that must be preserved verbatim.
+
+- **F1 — DONE** (committed): extracted `<LiveGreeting/>` (`dashboard/_components/LiveGreeting.tsx`).
+  `currentTime` was verified confined to the greeting (refs only at old 127/561/563), so the moved JSX
+  + logic are char-identical → **visual parity guaranteed by construction**; only the re-render scope
+  changed (per-second tick now re-renders the ~10-line greeting, not the 1500-line page). No widget,
+  predicate, query, mutation, or RBAC gate touched. Confirmatory screenshot still owed (low risk).
+- **F2** (split into 6 section files), **F3** (memoize widgets/handlers), **F4** (preserve the 3 role
+  predicates + add RBAC test — needs the F2 extraction to be testable), **F5** (wrap Google `fetch` in
+  `useQuery` = BEHAVIORAL/query change) — **DEFERRED.** These move the `dashboardWidgets` array and
+  role predicates; their own rollback rule requires **section-by-section parity verification (visual +
+  role-matrix)**, impossible without a browser. Doing them blind risks CRITICAL query/role drift.
+  Resume when the Chrome extension is connected. Discovery scope: read-only workflow F-agent result.
 
 ### Epic D — State hygiene (export map VERIFIED; D5 partial done; D1/D3/D4 DEFERRED)
 Export-map verification (the deferred check) is **done**:

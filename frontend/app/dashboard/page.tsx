@@ -67,6 +67,7 @@ import {safeWindowOpen} from '@/lib/utils/url';
 import {formatDateShort} from '@/lib/utils/format/date';
 import {format} from 'date-fns';
 import {MOTION_EASE} from '@/lib/animation';
+import {LiveGreeting} from './_components/LiveGreeting';
 
 const log = createLogger('DashboardPage');
 
@@ -124,7 +125,6 @@ export default function DashboardPage() {
   const {user, isAuthenticated, hasHydrated} = useAuth();
   const {hasPermission, isReady: permissionsReady} = usePermissions();
   const [clockError, setClockError] = useState<string | null>(null);
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
   // Aura headcount-trend range selector (3M / 6M / 12M). Presentation-only —
   // it just slices the real `headcount.trend` series returned by analytics.
   const [headcountRange, setHeadcountRange] = useState<'3m' | '6m' | '12m'>('12m');
@@ -143,13 +143,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     document.title = 'Dashboard | NU-AURA';
-  }, []);
-
-  useEffect(() => {
-    // Initialize on client only to prevent SSR hydration mismatch
-    setCurrentTime(new Date());
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -557,10 +550,7 @@ export default function DashboardPage() {
 
   const firstName = user?.firstName || user?.fullName?.split(' ')[0] || 'there';
 
-  // ── Aura greeting + KPI derivations (presentation-only over real analytics) ──
-  const greetHour = currentTime?.getHours() ?? 9;
-  const greeting = greetHour < 12 ? 'Good morning' : greetHour < 18 ? 'Good afternoon' : 'Good evening';
-  const greetingDate = currentTime ? format(currentTime, 'EEEE, MMMM d') : '';
+  // ── Aura KPI derivations (presentation-only over real analytics) ──
 
   // Headcount AreaChart series — slice the real trend by the selected range.
   const headcountTrend = safeAnalytics.headcount.trend ?? [];
@@ -953,14 +943,7 @@ export default function DashboardPage() {
           variants={{visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
           className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
         >
-          <div className="min-w-0 space-y-1.5">
-            <h1 className="text-aura-title text-[var(--text-1)]">
-              {greeting}, {firstName}
-            </h1>
-            <p className="text-sm text-[var(--text-3)]">
-              {greetingDate ? `${greetingDate} · ` : ''}Here&apos;s what&apos;s moving across your workspace today.
-            </p>
-          </div>
+          <LiveGreeting firstName={firstName} />
           <div className="flex shrink-0 items-center gap-2.5 self-start">
             <Button variant="ghost" leftIcon={<Download className="h-4 w-4"/>}>
               Export
