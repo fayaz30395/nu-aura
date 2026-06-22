@@ -23,12 +23,13 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
+import {Avatar} from '@/components/ui/Avatar';
 import {ProfileIdentity} from '@/components/ui/ProfileHero';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal} from '@/components/ui/Modal';
 import {apiClient} from '@/lib/api/client';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
-import {getInitials} from '@/lib/utils';
 import {formatDate} from '@/lib/utils/format/date';
 
 interface Employee {
@@ -288,7 +289,7 @@ export default function TeamDirectory() {
         >
           <Card className="bg-[var(--bg-card)]">
             <CardContent className="p-6">
-              <div className="flex gap-4 mb-4">
+              <div className="flex flex-col sm:flex-row gap-4 mb-4">
                 <div className="flex-1 relative">
                   <Search
                     className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5"/>
@@ -496,16 +497,12 @@ export default function TeamDirectory() {
                       {/* Card Header with gradient */}
                       <div className={`h-20 ${getRandomColor(employee.fullName)} relative`}>
                         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-                          <div
-                            className="w-16 h-16 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
-                            <div
-                              className={`w-full h-full rounded-full ${getRandomColor(
-                                employee.fullName
-                              )} flex items-center justify-center text-white text-lg font-semibold`}
-                            >
-                              {getInitials(employee.fullName)}
-                            </div>
-                          </div>
+                          <Avatar
+                            name={employee.fullName}
+                            src={employee.profileImageUrl}
+                            size="lg"
+                            ring
+                          />
                         </div>
                       </div>
 
@@ -567,6 +564,7 @@ export default function TeamDirectory() {
             ) : (
               <motion.div initial={{opacity: 0}} animate={{opacity: 1}}>
                 <Card className="bg-[var(--bg-card)] overflow-hidden">
+                  <div className="overflow-x-auto">
                   <table className="table-aura">
                     <thead className="skeuo-table-header">
                     <tr>
@@ -663,6 +661,7 @@ export default function TeamDirectory() {
                     ))}
                     </tbody>
                   </table>
+                  </div>
                 </Card>
               </motion.div>
             )}
@@ -714,15 +713,11 @@ export default function TeamDirectory() {
 
             {/* Empty State */}
             {employees.length === 0 && !isPending && (
-              <div className="text-center py-12">
-                <Users className="w-16 h-16 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
-                <h3 className="text-lg font-medium text-[var(--text-primary)] mb-2">
-                  No employees found
-                </h3>
-                <p className="text-[var(--text-muted)]">
-                  Try adjusting your search or filters
-                </p>
-              </div>
+              <EmptyState
+                icon={<Users className="h-12 w-12"/>}
+                title="No employees found"
+                description="Try adjusting your search or filters."
+              />
             )}
           </>
         )}
@@ -745,15 +740,12 @@ export default function TeamDirectory() {
                   <X className="w-5 h-5 text-white"/>
                 </button>
                 <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
-                  <div className="w-24 h-24 rounded-full bg-[var(--bg-card)] p-1 shadow-[var(--shadow-dropdown)]">
-                    <div
-                      className={`w-full h-full rounded-full ${getRandomColor(
-                        selectedEmployee.fullName
-                      )} flex items-center justify-center text-white text-xl font-bold`}
-                    >
-                      {getInitials(selectedEmployee.fullName)}
-                    </div>
-                  </div>
+                  <Avatar
+                    name={selectedEmployee.fullName}
+                    src={selectedEmployee.profileImageUrl}
+                    size="xl"
+                    ring
+                  />
                 </div>
               </div>
 
