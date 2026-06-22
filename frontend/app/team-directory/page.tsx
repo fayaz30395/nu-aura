@@ -5,6 +5,7 @@ import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {Card, CardContent} from '@/components/ui/Card';
+import {Avatar} from '@/components/ui/Avatar';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -45,12 +46,11 @@ function EmployeeCard({employee, viewMode, onClick}: {
           <CardContent className="p-4">
             <div className="flex items-center gap-4">
               {/* Avatar */}
-              <div className="flex-shrink-0">
-                <div
-                  className="h-12 w-12 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center font-semibold">
-                  {employee.firstName?.[0]}{employee.lastName?.[0]}
-                </div>
-              </div>
+              <Avatar
+                name={`${employee.firstName ?? ''} ${employee.lastName ?? ''}`.trim()}
+                src={employee.profilePhotoUrl}
+                size="md"
+              />
 
               {/* Info */}
               <div className="flex-1 min-w-0">
@@ -98,10 +98,11 @@ function EmployeeCard({employee, viewMode, onClick}: {
         <CardContent className="p-4 flex flex-col h-full">
           {/* Avatar */}
           <div className="flex justify-center mb-4">
-            <div
-              className="h-20 w-20 rounded-xl bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center text-2xl font-semibold">
-              {employee.firstName?.[0]}{employee.lastName?.[0]}
-            </div>
+            <Avatar
+              name={`${employee.firstName ?? ''} ${employee.lastName ?? ''}`.trim()}
+              src={employee.profilePhotoUrl}
+              size="lg"
+            />
           </div>
 
           {/* Name & Designation */}

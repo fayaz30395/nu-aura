@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
+import {ProfileIdentity} from '@/components/ui/ProfileHero';
 import {Modal} from '@/components/ui/Modal';
 import {apiClient} from '@/lib/api/client';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -602,23 +603,12 @@ export default function TeamDirectory() {
                         className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer transition-colors"
                       >
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-4">
-                            <div
-                              className={`w-10 h-10 rounded-full ${getRandomColor(
-                                employee.fullName
-                              )} flex items-center justify-center text-white font-medium`}
-                            >
-                              {getInitials(employee.fullName)}
-                            </div>
-                            <div>
-                              <p className="font-medium text-[var(--text-primary)]">
-                                {employee.fullName}
-                              </p>
-                              <p className="text-body-muted">
-                                {employee.employeeCode}
-                              </p>
-                            </div>
-                          </div>
+                          <ProfileIdentity
+                            name={employee.fullName}
+                            photoUrl={employee.profileImageUrl}
+                            secondary={employee.employeeCode}
+                            size="sm"
+                          />
                         </td>
                         <td className="px-6 py-4">
                           <p className="text-[var(--text-primary)]">
