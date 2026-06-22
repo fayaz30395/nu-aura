@@ -58,6 +58,12 @@ export default function AdminLayoutInner({
   // HR_ADMIN now exists (top HR role, holds ROLE:MANAGE/AUDIT:VIEW/USER:MANAGE) and
   // PAYROLL_ADMIN/FINANCE_ADMIN hold PAYROLL:VIEW_ALL — all were silently redirected
   // to /me/dashboard before the AuthGuard could grant their permitted pages.
+  // Gate ONLY on org-admin-console permissions. Deliberately excludes broad perms
+  // like REPORT:VIEW and PAYROLL:VIEW_ALL — those are held by operational roles
+  // (MANAGER/TEAM_LEAD/RECRUITMENT_ADMIN, and FINANCE/PAYROLL admins who use the
+  // dedicated /payroll UI), so including them would WRONGLY admit them to the admin
+  // console (an RBAC loosening). This set grants exactly {SUPER_ADMIN, TENANT_ADMIN,
+  // HR_MANAGER, HR_ADMIN} on the current catalog — the intended org/HR-admin tier.
   const hasAdminAccess = useMemo(
     () =>
       isSuperAdmin ||
@@ -67,9 +73,7 @@ export default function AdminLayoutInner({
       hasPermission(Permissions.PERMISSION_MANAGE) ||
       hasPermission(Permissions.USER_MANAGE) ||
       hasPermission(Permissions.AUDIT_VIEW) ||
-      hasPermission(Permissions.SETTINGS_UPDATE) ||
-      hasPermission(Permissions.PAYROLL_VIEW_ALL) ||
-      hasPermission(Permissions.REPORT_VIEW),
+      hasPermission(Permissions.SETTINGS_UPDATE),
     [isSuperAdmin, roles, hasPermission]
   );
   const {data: unreadCount} = useUnreadNotificationCount(isReady && hasAdminAccess);
