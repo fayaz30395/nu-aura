@@ -428,3 +428,14 @@ Chrome extension disconnected mid-run (environmental). Remaining live UI click-t
 | R6-PROFILE-DASH (LOW) | Freshly-seeded admin demo accounts (finance@, and the pre-existing V291 tenant.admin@ pattern) show a graceful "No employee profile linked" on /me/dashboard — minimal seed lacks dept/manager. Non-crashing fallback; real employees have full profiles. Not a blocker. |
 
 **Updated defect tally (Run-6):** 2 fixed (R6-UI-DELETE-COPY MEDIUM, R6-DEMO-FINANCE MEDIUM); 2 LOW non-blockers (R6-WELLNESS-500 employee-less 500, R6-PROFILE-DASH); 1 INFO (R6-AUTHME-PERMS under-report). Zero CRITICAL/HIGH found. RBAC strong. R4-OUTBOX confirmed not regressed.
+
+### RUN-6 leave lifecycle (visual, Chrome) — UI-03 CLOSED
+| Step | Result |
+|---|---|
+| Arun (EMPLOYEE) /leave/apply — Casual Leave Jul-01, 1 day | 🟢 submitted → PENDING (DB confirmed) |
+| Manager Suresh (arun's manager_id) Approvals queue | 🟢 request appeared ("Leave Approval: Arun T - Casual Leave", step=Manager Approval) |
+| Suresh approve (confirm modal + optional comment) | 🟢 status → APPROVED |
+| **UI-03 notification delivery** | 🟢 **RESOLVED** — 2 in-app notifications delivered to Arun, visible in bell ("approved by Suresh M", "Casual Leave for Jul 01 2026 approved"). Prior HIGH (Run-4/5 "in progress") now CLOSED on live. |
+| R6-NOTIF-COPY (trivial LOW) | Notification body has doubled word: "Your Leave Request request has been approved". Cosmetic. |
+
+Test data (leave + 2 notifications) cleaned up post-verification.

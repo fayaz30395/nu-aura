@@ -27,11 +27,12 @@ fixed. No fabricated greens.
 | **SEC-3b** — public one-click demo logins are LIVE (`fayaz.m@nulogic.io` / `Welcome@123` → SUPER_ADMIN, 200) | CRITICAL (for prod) | Disable demo credentials before prod cutover. Env flip alone is a no-op (neutralization migrations already ran once); needs a fresh neutralization migration **or** a direct DB scramble of demo `password_hash`. Intentionally LEFT ON for this test window per the run spec. |
 | **SEC-4** — Groq API key appears in git history | HIGH | Rotate at console.groq.com + scrub history (BFG/filter-repo). Not code-fixable. |
 
-## 2. PRODUCTION READINESS SCORE — 93 / 100
+## 2. PRODUCTION READINESS SCORE — 94 / 100
 
 (Run-5 = 92. +2 for a full **live, real-browser** per-role RBAC + page-render + CRUD sweep — the breadth Run-5
-explicitly skipped — and for 2 defects found, fixed, deployed, and re-verified live. −7 held for the two open
-owner gates (SEC-3b, SEC-4) and 3 minor non-blockers logged below.)
+explicitly skipped — and for 2 defects found, fixed, deployed, and re-verified live; **+1 for closing prior HIGH
+UI-03** (leave-approval notification) end-to-end on live; −1 net for 3 minor non-blockers. −6 held for the two
+open owner gates (SEC-3b, SEC-4).)
 
 | Dimension | Score | Notes |
 |-----------|-------|-------|
@@ -51,6 +52,7 @@ owner gates (SEC-3b, SEC-4) and 3 minor non-blockers logged below.)
 | RBAC UI admin-shell gate (4 roles) | 4 | 4 | 0 | 🟢 |
 | Page render (employees, payroll, recruitment, reviews, fluence, expenses, assets, audit, dashboard) | 9 | 9 | 0 | 🟢 |
 | Employee CRUD lifecycle (create → list → soft-delete) | 3 | 3 | 0 | 🟢 |
+| Leave lifecycle (apply → manager-approve → notify, UI-03) | 4 | 4 | 0 | 🟢 prior HIGH closed |
 | Form validation (12-char password, cross-tab required fields) | 2 | 2 | 0 | 🟢 |
 | R4-OUTBOX regression (audited create/delete emit outbox, no 500) | 2 | 2 | 0 | 🟢 |
 | Demo Finance card (was broken) | 1 | 1 | 0 | 🟢 fixed |
@@ -78,7 +80,7 @@ baseline grants — see ISSUE_BOARD Run-6.)
 |---|---|---|
 | Employee create → appears in roster → soft-delete (terminate) | 🟢 PASS | Created EMPQA601/QaCreateSix (count 19→20); soft-delete set status=TERMINATED + user INACTIVE; record retained (by design); cleaned up post-test |
 | Audited-mutation → transactional outbox | 🟢 PASS | create + delete both emitted audit→outbox events, 2xx, no RLS 500 → **R4-OUTBOX (prior CRITICAL) confirmed resolved on live** |
-| Leave apply→approve→notify (UI-03) | ⚠️ not re-run | Infra (outbox/notification persistence) confirmed healthy via CRUD; the specific leave-approval→in-app-notification path was not re-driven this run — recommend a dedicated pass |
+| Leave apply→approve→notify (UI-03) | 🟢 PASS | Arun (EMPLOYEE) applied Casual Leave Jul-01 → PENDING; manager **Suresh** saw it in his Approvals queue → approved (confirm modal) → status **APPROVED**; **2 in-app notifications delivered to Arun** and visible in his bell ("approved by Suresh M", "Casual Leave for Jul 01 2026 approved"). **Closes prior HIGH UI-03.** (Trivial: notification body has a doubled word "Leave Request request" — cosmetic LOW.) |
 
 ## 6. DEFECTS FIXED (root cause → fix → deploy → live re-test)
 
@@ -121,7 +123,8 @@ RBAC matrices: `/tmp/gf/rbac_results.json`, `/tmp/gf/rbac2.json`. Full triage in
 ## 10. METRICS
 
 - Roles exercised: 10/10 (API), 6/10 visually in-browser (SUPER_ADMIN, EMPLOYEE, HR_ADMIN, MANAGER, RECRUITMENT_ADMIN, FINANCE_ADMIN)
-- Defects found: 2 MEDIUM (both fixed+deployed+verified live), 2 LOW, 1 INFO. CRITICAL/HIGH code defects: **0**.
+- Defects found: 2 MEDIUM (both fixed+deployed+verified live), 2 LOW, 1 INFO. CRITICAL/HIGH code defects: **0**. Prior HIGH **UI-03 closed** with live evidence.
+- Lifecycles passed live: employee CRUD (create→soft-delete) + leave (apply→manager-approve→in-app-notify).
 - Deploys: 2 frontend (Vercel, both smoke-green) + 1 live DB seed (V312). tsc: clean. Backend build: not rebuilt (already current).
 - Smoke gates: 2/2 PASS.
 
