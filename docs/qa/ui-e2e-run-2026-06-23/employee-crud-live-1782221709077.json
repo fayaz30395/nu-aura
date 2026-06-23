@@ -1,0 +1,33 @@
+{
+  "timestamp": 1782221709077,
+  "base": "https://hrms-frontend-vert.vercel.app",
+  "employeeCode": "AUTO-EDT-21709077",
+  "create": {
+    "ok": false,
+    "status": 0,
+    "id": null
+  },
+  "edit": {
+    "ok": false,
+    "status": 0,
+    "route": "",
+    "newNameFound": false,
+    "employeeResponses": [],
+    "putRequest": null,
+    "putResponseStatus": null,
+    "persistedAfterReload": false
+  },
+  "delete": {
+    "ok": false,
+    "status": 0,
+    "id": null,
+    "notFoundAfterDelete": false,
+    "note": null
+  },
+  "notes": [
+    "login-success=https://hrms-frontend-vert.vercel.app/auth/login"
+  ],
+  "errors": [
+    "Error: locator.click: Timeout 20000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Add Employee' })\u001b[22m\n"
+  ]
+}

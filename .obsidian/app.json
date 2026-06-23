@@ -1,21 +1,4 @@
 {
-  "userIgnoreFilters": [
-    "node_modules",
-    "frontend",
-    "backend",
-    "build",
-    "target",
-    "infra",
-    "modules",
-    "scripts",
-    "tools",
-    "test-results",
-    "qa-reports",
-    "design-import",
-    "design-import-2",
-    "docs-v2",
-    ".github",
-    ".claude",
-    ".claude-flow"
-  ]
+  "userIgnoreFilters": null,
+  "promptDelete": false
 }

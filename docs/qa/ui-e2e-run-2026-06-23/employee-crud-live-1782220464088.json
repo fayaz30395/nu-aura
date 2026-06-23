@@ -1,0 +1,22 @@
+{
+  "timestamp": 1782220464088,
+  "base": "https://hrms-frontend-vert.vercel.app",
+  "employeeCode": "AUTO-CREATE-464343",
+  "create": {
+    "ok": true,
+    "status": 201,
+    "responseBody": "{\"id\":\"5d6effc1-861f-49ed-8b1d-d5a50326ed20\",\"userId\":\"8902da38-0843-422f-9abf-8a50cb65514d\",\"employeeCode\":\"AUTO-CREATE-464343\",\"firstName\":\"Auto\",\"middleName\":null,\"lastName\":\"Flow4343\",\"fullName\":\"Auto Flow4343\",\"workEmail\":\"auto-20464343@example.com\",\"personalEmail\":null,\"phoneNumber\":null,\"emergencyContactNumber\":null,\"dateOfBirth\":null,\"gender\":null,\"address\":null,\"city\":null,\"state\":null,\"postalCode\":null,\"country\":null,\"joiningDate\":\"2026-06-23\",\"confirmationDate\":null,\"exitDate\":null,\"departmentId\":\"48000000-de00-0000-0000-000000000001\",\"departmentName\":null,\"officeLocationId\":null,\"locationName\":null,\"designation\":\"QA Engineer\",\"level\":null,\"jobRole\":null,\"managerId\":null,\"managerName\":null,\"dottedLineManager1Id\":null,\"dottedLineManager1Name\":null,\"dottedLineManager2Id\":null,\"dottedLineManager2Name\":null,\"teamId\":null,\"employmentType\":\"FULL_TIME\",\"status\":\"ACTIVE\",\"bankAccountNumber\":null,\"bankName\":null,\"bankIfscCode\":null,\"taxId\":null,\"profilePhotoUrl\":null,\"createdAt\":\"2026-06-23T18:44:31.031321055\",\"updatedAt\":\"2026-06-23T18:44:31.031321055\",\"subordinates\":null}",
+    "id": "5d6effc1-861f-49ed-8b1d-d5a50326ed20"
+  },
+  "edit": {
+    "ok": true,
+    "status": 0,
+    "newNameFound": false
+  },
+  "delete": {
+    "ok": false
+  },
+  "errors": [
+    "locator.click: Timeout 12000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: /^Delete$/ })\u001b[22m\n"
+  ]
+}

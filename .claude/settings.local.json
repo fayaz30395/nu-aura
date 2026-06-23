@@ -42,7 +42,10 @@
       "Bash(git check-ignore *)",
       "Bash(git config *)",
       "Bash(git commit -m 'chore\\(docs\\): track project-wide Obsidian vault in git; retire docs/ vault *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(xargs -n1 basename)",
+      "Bash(find src *)",
+      "Bash(find src/components -maxdepth 1 -type d)"
     ]
   },
   "enableAllProjectMcpServers": true,

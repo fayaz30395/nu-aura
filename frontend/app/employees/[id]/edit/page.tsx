@@ -343,6 +343,14 @@ export default function EditEmployeePage() {
     );
   }
 
+  const submitEmployee = () => {
+    if (typeof window !== 'undefined') {
+      const win = window as typeof window & {__employeeEditSubmitCalled?: number};
+      win.__employeeEditSubmitCalled = (win.__employeeEditSubmitCalled || 0) + 1;
+    }
+    void handleSubmit(onSubmit)();
+  };
+
   return (
     <AppLayout
       activeMenuItem="employees"
@@ -487,7 +495,10 @@ export default function EditEmployeePage() {
               </nav>
             </div>
 
-            <form className="p-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <form className="p-6 space-y-6" onSubmit={(event) => {
+              event.preventDefault();
+              submitEmployee();
+            }}>
               {/* Basic Info Tab */}
               {currentTab === 'basic' && (
                 <div className="space-y-4">
@@ -1247,7 +1258,8 @@ export default function EditEmployeePage() {
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={submitEmployee}
                   disabled={isSubmitting}
                   className="flex-1 btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >

@@ -1,0 +1,18 @@
+{
+  "timestamp": 1782220397247,
+  "base": "https://hrms-frontend-vert.vercel.app",
+  "employeeCode": "AUTO-CREATE-397513",
+  "create": {
+    "ok": false,
+    "status": 400
+  },
+  "edit": {
+    "ok": false
+  },
+  "delete": {
+    "ok": false
+  },
+  "errors": [
+    "Create employee API failed with 400"
+  ]
+}

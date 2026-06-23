@@ -1,0 +1,70 @@
+{
+  "gotPut": false,
+  "errors": [
+    "TimeoutError: page.waitForResponse: Timeout 20000ms exceeded while waiting for event \"response\""
+  ],
+  "finalUrl": null,
+  "requestCount": 0,
+  "firstNameAfterSubmit": null,
+  "requestLog": [
+    {
+      "method": "GET",
+      "url": "/api/v1/notifications/unread/count",
+      "body": null
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/workflow/inbox/count",
+      "body": null
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/employees/5d6effc1-861f-49ed-8b1d-d5a50326ed20",
+      "body": null
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/employees/managers",
+      "body": null
+    },
+    {
+      "method": "GET",
+      "url": "/api/v1/departments/active",
+      "body": null
+    }
+  ],
+  "consoleLogs": [
+    {
+      "type": "console",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+    },
+    {
+      "type": "console",
+      "text": "[HMR] connected"
+    },
+    {
+      "type": "console",
+      "text": "[ErrorHandler] Global error handlers initialized"
+    },
+    {
+      "type": "console",
+      "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "type": "console",
+      "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "type": "console",
+      "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "type": "console",
+      "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+    },
+    {
+      "type": "console",
+      "text": "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+    }
+  ]
+}
