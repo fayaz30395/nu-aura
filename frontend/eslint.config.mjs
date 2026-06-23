@@ -1,6 +1,19 @@
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 import nextTypescript from 'eslint-config-next/typescript';
 
+// Flat-config plugin namespaces do NOT cascade across config objects: an object
+// that references `react-hooks/x`, `@typescript-eslint/x`, `jsx-a11y/x` or
+// `import/x` must register that plugin in its OWN `plugins` map, or ESLint
+// crashes on startup ("could not find plugin ...") — which silently disabled the
+// entire FE lint gate. Reuse the exact instances eslint-config-next already
+// resolved (incl. its nested react-hooks) so we never re-resolve or duplicate.
+const nextPlugins = Object.assign(
+  {},
+  ...[...nextCoreWebVitals, ...nextTypescript]
+    .filter((o) => o && o.plugins)
+    .map((o) => o.plugins),
+);
+
 // NOTE: The 8px-grid spacing restrictions (p-3 / px-3 / py-3 / gap-3 /
 // space-y-3 / space-x-3 / m-3 = 12px) were intentionally removed. NU-AURA
 // ships a deliberate COMPACT, desktop-first design system (36px buttons,
@@ -125,6 +138,7 @@ const config = [
       'playwright/**',
       'test-results/**',
       '.next/**',
+      '.vercel/**',
       'node_modules/**',
       'coverage/**',
       'out/**',
@@ -137,6 +151,7 @@ const config = [
     ],
   },
   {
+    plugins: nextPlugins,
     rules: baseRules,
   },
   {

@@ -166,7 +166,6 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
     register,
     handleSubmit,
     reset,
-    watch,
     setValue,
     formState: {errors, isSubmitting},
   } = useForm<CreatePIPFormData>({
@@ -181,8 +180,6 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
       checkInFrequency: 'WEEKLY',
     },
   });
-
-  const endDate = watch('endDate');
 
   const createMutation = useMutation({
     mutationFn: (data: CreatePIPFormData) => createPIP(data as CreatePIPRequest),

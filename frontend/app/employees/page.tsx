@@ -16,8 +16,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
-  FolderInput,
-  Mail,
   MoreHorizontal,
   Search,
   SlidersHorizontal,

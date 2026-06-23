@@ -14,7 +14,6 @@ import {
   useDeletePost,
   useDeleteWallComment,
   usePinPost,
-  useRemoveVote,
   useRemoveWallReaction,
   useVote,
   useWallComments,
@@ -293,7 +292,6 @@ function WallFeed() {
   const deletePost = useDeletePost();
   const pinPost = usePinPost();
   const vote = useVote();
-  const removeVote = useRemoveVote();
 
   const posts = data?.content ?? [];
   const totalPages = data?.totalPages ?? 0;
