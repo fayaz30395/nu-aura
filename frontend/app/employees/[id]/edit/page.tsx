@@ -359,12 +359,40 @@ export default function EditEmployeePage() {
     );
   }
 
-  const submitEmployee = () => {
+  const onSubmitInvalid = (errors: Record<string, unknown>) => {
+    const collectErrorPaths = (errorBag: Record<string, unknown>, prefix = ''): string[] => {
+      const keys: string[] = [];
+      for (const [field, value] of Object.entries(errorBag)) {
+        const path = prefix ? `${prefix}.${field}` : field;
+        if (!value || typeof value !== 'object') {
+          keys.push(path);
+          continue;
+        }
+        const errorEntry = value as Record<string, unknown>;
+        if (Object.prototype.hasOwnProperty.call(errorEntry, 'message') || Object.prototype.hasOwnProperty.call(errorEntry, 'type')) {
+          keys.push(path);
+          continue;
+        }
+        const nested = collectErrorPaths(errorEntry, path);
+        if (nested.length > 0) {
+          keys.push(...nested);
+        }
+      }
+      return keys;
+    };
+
     if (typeof window !== 'undefined') {
-      const win = window as typeof window & {__employeeEditSubmitCalled?: number};
-      win.__employeeEditSubmitCalled = (win.__employeeEditSubmitCalled || 0) + 1;
+      const win = window as typeof window & {
+        __employeeEditValidationFailed?: number;
+        __employeeEditLastValidationErrors?: string[];
+      };
+      win.__employeeEditValidationFailed = (win.__employeeEditValidationFailed || 0) + 1;
+      win.__employeeEditLastValidationErrors = collectErrorPaths(errors);
     }
-    void handleSubmit(onSubmit)();
+  };
+
+  const submitEmployee = () => {
+    void handleSubmit(onSubmit, onSubmitInvalid)();
   };
 
   return (
@@ -511,10 +539,14 @@ export default function EditEmployeePage() {
               </nav>
             </div>
 
-            <form className="p-6 space-y-6" onSubmit={(event) => {
-              event.preventDefault();
-              submitEmployee();
-            }}>
+            <form
+              className="p-6 space-y-6"
+              noValidate
+              onSubmit={(event) => {
+                event.preventDefault();
+                submitEmployee();
+              }}
+            >
               {/* Basic Info Tab */}
               {currentTab === 'basic' && (
                 <div className="space-y-4">

@@ -2,9 +2,9 @@ import { chromium } from '@playwright/test';
 
 const BASE = 'https://hrms-frontend-vert.vercel.app';
 const SCREENS = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-23/SCREENS';
-const marker = `ZZ QA Test ${new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 12)}`;
+const marker = `ZZ QA Test ${new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 12)}-${Math.floor(Math.random() * 900000 + 100000)}`;
 const email = `${marker.toLowerCase().replace(/\s+/g, '-')}.auto@example.com`;
-const code = `ZZ-${Math.floor(Math.random() * 900000 + 100000)}`;
+const code = `ZZ-${Math.floor(Math.random() * 900000 + 100000)}${Math.floor(Math.random() * 9)}`;
 const editedName = `${marker} Edited`;
 
 async function shot(page, name) {
@@ -33,15 +33,29 @@ async function goEmployees(page) {
 
 function attachEmployeeApiLog(page) {
   const events = [];
+  page.on('request', (req) => {
+    const url = req.url();
+    if (!url.includes('/api/v1/employees')) return;
+    const method = req.method();
+    if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) return;
+    events.push({
+      type: 'request',
+      method,
+      url,
+      body: req.postData() || '',
+    });
+  });
   page.on('response', async (res) => {
     const url = res.url();
     if (!url.includes('/api/v1/employees')) return;
     const method = res.request().method();
     if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) return;
     events.push({
+      type: 'response',
       method,
       status: res.status(),
       url,
+      body: await res.text().catch(() => ''),
     });
   });
   return events;
@@ -143,6 +157,10 @@ async function submitCreate(page) {
     throw new Error('create request not sent');
   });
   console.log('CREATE_STATUS', resp.status(), resp.url());
+  if (resp.status() >= 400) {
+    const body = await resp.text().catch(() => '');
+    throw new Error(`create failed with status ${resp.status()} body=${body}`);
+  }
   await page.waitForTimeout(2500);
 }
 
@@ -157,10 +175,68 @@ async function openProfile(page, row) {
 async function openEditFromProfile(page, dialog) {
   await dialog.locator('button:has-text("Edit")').click();
   await page.waitForURL(/\/employees\/[^/]+\/edit$/, { timeout: 25000 });
+  await page.locator('#employee-edit-first-name').waitFor({ state: 'visible', timeout: 30000 });
+  await page.waitForFunction(
+    () => {
+      const firstName = document.querySelector('#employee-edit-first-name')?.value || '';
+      const lastName = document.querySelector('#employee-edit-last-name')?.value || '';
+      const statusEl = document.querySelector('#employee-edit-status');
+      return firstName.length > 0 && lastName.length > 0 && !!statusEl?.value;
+    },
+    {timeout: 30000}
+  );
+}
+
+async function dumpEditFormState(page, label) {
+  const snapshot = await page.evaluate((labelArg) => {
+    const fields = [
+      'employee-edit-code',
+      'employee-edit-first-name',
+      'employee-edit-middle-name',
+      'employee-edit-last-name',
+      'employee-edit-status',
+      'employee-edit-employment-type',
+      'employee-edit-department',
+      'employee-edit-designation',
+    ];
+    const values = fields.map((id) => {
+      const node = document.getElementById(id);
+      if (!node) {
+        return {id, found: false};
+      }
+      return {
+        id,
+        value: node.value,
+        required: node.required,
+        ariaInvalid: node.getAttribute('aria-invalid'),
+        name: node.getAttribute('name'),
+      };
+    });
+    const form = document.querySelector('form');
+    return {
+      label: labelArg,
+      formCheckValidity: form ? form.checkValidity() : null,
+      fields: values,
+    };
+  }, label);
+  console.log('EDIT_FORM_STATE', JSON.stringify(snapshot));
 }
 
 async function saveProfileEdits(page) {
   const save = page.getByRole('button', { name: /Save Changes/i });
+  const onSubmitCalledBefore = await page.evaluate(() => {
+    const win = window;
+    return {
+      submitCalled: win.__employeeEditSubmitCalled || 0,
+      onSubmitCalled: win.__employeeEditOnSubmitCalled || 0,
+      onSubmitError: win.__employeeEditOnSubmitError || 0,
+      updateStarted: win.__employeeEditUpdateStarted || 0,
+      updateDone: win.__employeeEditUpdateDone || 0,
+    };
+  });
+  console.log('EDIT_DEBUG_BEFORE', JSON.stringify(onSubmitCalledBefore));
+  const isDisabled = await save.isDisabled().catch(() => null);
+  console.log('EDIT_SAVE_DISABLED', isDisabled);
   const savePromise = page.waitForResponse(
     (res) => res.url().includes('/api/v1/employees') && ['PUT', 'PATCH'].includes(res.request().method()),
     {timeout: 30000}
@@ -168,10 +244,30 @@ async function saveProfileEdits(page) {
   await save.click();
   const resp = await savePromise.catch(async () => {
     const err = await page.locator('p.text-danger-500, p.text-danger-400, [role=\"alert\"]').allTextContents();
+    const invalid = await page.locator('[aria-invalid=\"true\"]').allTextContents();
+    const fieldErrors = await page.locator('p[id*=\"-error\"]').allTextContents();
+    const bodyText = (await page.locator('body').innerText()).slice(0, 3000);
     const url = page.url();
-    throw new Error(`edit request not observed; url=${url}; errors=${err.join(' | ')}`);
+    const debug = await page.evaluate(() => {
+      const win = window;
+      return {
+        submitCalled: win.__employeeEditSubmitCalled || 0,
+        onSubmitCalled: win.__employeeEditOnSubmitCalled || 0,
+        onSubmitError: win.__employeeEditOnSubmitError || 0,
+        updateStarted: win.__employeeEditUpdateStarted || 0,
+        updateDone: win.__employeeEditUpdateDone || 0,
+      };
+    });
+    console.log('EDIT_DEBUG_AFTER', JSON.stringify(debug));
+    console.log('EDIT_FIELD_ERRORS', fieldErrors.join(' | '));
+    console.log('EDIT_BODY_TEXT', bodyText);
+    throw new Error(`edit request not observed; url=${url}; errors=${err.join(' | ')}; invalid=${invalid.join(' | ')}`);
   });
   console.log('EDIT_STATUS', resp.status(), resp.url());
+  if (resp.status() >= 400) {
+    const body = await resp.text().catch(() => '');
+    throw new Error(`edit failed with status ${resp.status()} body=${body}`);
+  }
   await page.waitForTimeout(2500);
 }
 
@@ -188,9 +284,17 @@ async function run() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({ viewport: { width: 1440, height: 1100 } });
   const logs = attachEmployeeApiLog(page);
+  page.on('console', (message) => {
+    const type = message.type();
+    console.log('BROWSER_LOG', type, message.text());
+  });
+  page.on('pageerror', (error) => {
+    console.log('PAGE_ERROR', error.message);
+  });
 
   try {
     await login(page);
+    console.log('LOGIN_OK', page.url());
     await goEmployees(page);
     await shot(page, `HR_ADMIN__employees__before-create__${marker}`);
 
@@ -210,7 +314,9 @@ async function run() {
 
     const dialog = await openProfile(page, createRow);
     await openEditFromProfile(page, dialog);
+    await dumpEditFormState(page, 'before-save');
     await page.fill('#employee-edit-first-name', editedName);
+    await dumpEditFormState(page, 'after-edit');
     await saveProfileEdits(page);
 
     await goEmployees(page);
@@ -267,6 +373,10 @@ async function run() {
       ],
       apiCalls: logs,
     };
+  } catch (err) {
+    const apiCalls = logs.filter((event) => event.type === 'request' || event.type === 'response');
+    console.error(JSON.stringify({ok: false, error: err.message, apiCalls}, null, 2));
+    throw err;
   } finally {
     await page.close();
     await browser.close();
