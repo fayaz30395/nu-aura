@@ -43,10 +43,16 @@ and lands on `/me/dashboard`. The 403 blocker is RESOLVED. Console clean (only s
   `me/leaves` (E balance grid, 4-col desktop), `me/payslips` (E grid), `me/profile` (E contact grid +
   the correctly-deferred hero), `leave/my-leaves` (**D5 EmptyState — exact: CalendarOff + "No leave
   requests found" + working "Apply for Leave" action**).
-- **RBAC-BLOCKED for EMPLOYEE (cannot runtime-verify without ADMIN/MANAGER = AUTH BINDING violation):**
-  B2 directory avatars + C directory cards (`GET /api/v1/employees` → 403 for EMPLOYEE; page handles it
-  gracefully with the empty state, no crash) and F1 operator `/dashboard` (EMPLOYEE is RBAC-redirected
-  to `/me/dashboard`). These remain **static-verified only**.
+- **VERIFIED via scoped read-only MANAGER session (Sumit Kumar, user-authorized for completion; no
+  mutating actions taken):**
+  - **B2** — team-directory grid cards show circular photo-forward `Avatar` (lg, name-hashed tints);
+    employees/directory table rows show `ProfileIdentity` (sm avatar + name + EMP-code). ✓
+  - **C2/C3/C4** — employees/directory grid cards show `Avatar` (lg, ring) on the gradient band; the
+    `flex flex-col sm:flex-row` search renders inline at desktop; the table renders cleanly in the
+    `overflow-x-auto` wrapper. ✓
+  - **F1** — operator `/dashboard` renders `<LiveGreeting/>` correctly ("Good afternoon, Sumit." + date
+    line), KPI cards render, no crash/hydration error. ✓ (The "Analytics could not be loaded" banner +
+    `onboarding…403` are pre-existing RBAC/data limits for MANAGER, gracefully handled — not regressions.)
 - **TOOLING LIMIT:** the browser extension captures at a fixed ~1564px viewport regardless of window
   resize, so true 375px screenshots aren't obtainable here → E responsive fixes are static +
   desktop-no-regression verified (the `sm:`/`divide-y` classes are unambiguous and build-green).
