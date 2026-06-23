@@ -41,6 +41,8 @@ import {
   FileText,
   Home,
   MessageCircle,
+  ArrowLeft,
+  ShieldAlert,
   Target,
   User,
   UserPlus,
@@ -113,6 +115,41 @@ const LEGACY_ID_REMAP: Record<string, string> = {
   'referrals': 'referrals-hire',
 };
 
+function AccessDeniedShell() {
+  const handleGoHome = () => {
+    const location = window.location;
+    if (location.pathname !== '/me/dashboard') {
+      window.location.href = '/me/dashboard';
+    }
+  };
+
+  return (
+    <div className="page-shell-centered fade-slide-up">
+      <div className="page-shell-card p-8 text-center fade-slide-up max-w-lg">
+        <div
+          className="mx-auto mb-4 h-14 w-14 rounded-full bg-danger-100/80 dark:bg-danger-900/30 border border-danger-300/40 dark:border-danger-500/25 flex items-center justify-center"
+        >
+          <ShieldAlert className="w-7 h-7 text-danger-700 dark:text-danger-300"/>
+        </div>
+        <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">Access Restricted</h1>
+        <p className="text-[var(--text-secondary)] mb-2">
+          You don't have permission to view this page.
+        </p>
+        <p className="text-sm text-[var(--text-muted)] mb-6">
+          If you believe this is an error, please contact your system administrator.
+        </p>
+        <button
+          onClick={handleGoHome}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        >
+          <ArrowLeft className="w-4 h-4"/>
+          Go to Home
+        </button>
+      </div>
+    </div>
+  );
+}
+
 const AppLayout: React.FC<AppLayoutProps> = ({
                                                children,
                                                breadcrumbs = [],
@@ -144,6 +181,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   );
 
   const {appCode, getAppEntryRoute, hasAppAccess} = useActiveApp();
+  const isDenied = searchParams.get('denied') === '1';
 
   // Global ?denied=1 toast — the single source of truth for access-denied feedback.
   // Fires EXACTLY ONCE per denial: a ref guards against re-fires from re-renders
@@ -606,7 +644,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             {/* Route-level fade+rise. AnimatePresence mode="wait" lets the
                 outgoing route finish its exit before the new one enters;
                 keyed on pathname. PageTransition honors reduced motion. */}
-            <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence mode="wait" initial={false}>
               <PageTransition
                 key={pathname}
                 className={cn(
@@ -616,7 +654,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
                   'pb-20 md:pb-6'
                 )}
               >
-                {children}
+                {isDenied ? <AccessDeniedShell /> : children}
               </PageTransition>
             </AnimatePresence>
           </ErrorBoundary>

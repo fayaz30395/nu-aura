@@ -3,9 +3,10 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {Controller, useForm} from 'react-hook-form';
+import {useQueryClient} from '@tanstack/react-query';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {useCreateEmployee, useDeleteEmployee, useEmployees, useManagers} from '@/lib/hooks/queries/useEmployees';
+import {employeeKeys, useCreateEmployee, useDeleteEmployee, useEmployees, useManagers} from '@/lib/hooks/queries/useEmployees';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {CreateEmployeeRequest, Employee} from '@/lib/types/hrms/employee';
 import {AppLayout} from '@/components/layout';
@@ -112,9 +113,9 @@ export default function EmployeesPage() {
   const canCreate = hasPermission(Permissions.EMPLOYEE_CREATE);
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  // Status is filtered via the Aura department chips + search; the query still
-  // accepts a status param (kept for the fetching contract — no status control in this design).
-  const statusFilter = '';
+  // Keep list output scoped to active employees to match the UX contract for
+  // write-path checks and avoid showing soft-deleted rows in the directory.
+  const statusFilter = 'ACTIVE';
   const [currentTab, setCurrentTab] = useState('basic'); // basic, personal, employment, bank
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [employeeToDelete, setEmployeeToDelete] = useState<Employee | null>(null);
@@ -127,6 +128,7 @@ export default function EmployeesPage() {
   const [openEmployee, setOpenEmployee] = useState<Employee | null>(null);
   const [sortBy, setSortBy] = useState<SortKey>('createdAt');
   const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC'>('DESC');
+  const [deletedEmployeeIds, setDeletedEmployeeIds] = useState<Set<string>>(new Set());
 
   // React Query - fetch employees, managers, and departments
   const {data: employeeResponse, isLoading: employeesLoading, error: employeesError} = useEmployees(
@@ -140,6 +142,7 @@ export default function EmployeesPage() {
   const totalPages = employeeResponse?.totalPages ?? 1;
   const totalElements = employeeResponse?.totalElements ?? 0;
   const loading = employeesLoading || managersLoading || departmentsLoading;
+  const queryClient = useQueryClient();
 
   // Department chips: client-side refinement over the currently-loaded page.
   // Counts reflect the loaded page (server-side dept filtering is not part of the
@@ -170,9 +173,33 @@ export default function EmployeesPage() {
   }, [employees]);
 
   const visibleEmployees = useMemo(
-    () => (deptFilter === 'All' ? employees : employees.filter((e) => e.departmentName === deptFilter)),
-    [employees, deptFilter],
+    () => {
+      const activeEmployees = employees.filter((employee) => employee.status !== 'TERMINATED');
+      const notDeleted = activeEmployees.filter((employee) => !deletedEmployeeIds.has(employee.id));
+      return (deptFilter === 'All'
+        ? notDeleted
+        : notDeleted.filter((e) => e.departmentName === deptFilter));
+    },
+    [employees, deptFilter, deletedEmployeeIds],
   );
+
+  useEffect(() => {
+    if (deletedEmployeeIds.size === 0) return;
+    setDeletedEmployeeIds((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+
+      for (const deletedId of prev) {
+        const stillPresent = employees.some((employee) => employee.id === deletedId);
+        if (!stillPresent) {
+          next.delete(deletedId);
+          changed = true;
+        }
+      }
+
+      return changed ? next : prev;
+    });
+  }, [employees, deletedEmployeeIds]);
 
   const allVisibleSelected = visibleEmployees.length > 0 && visibleEmployees.every((e) => selected.has(e.id));
   const someVisibleSelected = visibleEmployees.some((e) => selected.has(e.id));
@@ -370,6 +397,12 @@ export default function EmployeesPage() {
 
     try {
       await deleteEmployeeMutation.mutateAsync(employeeToDelete.id);
+      setDeletedEmployeeIds((prev) => {
+        const next = new Set(prev);
+        next.add(employeeToDelete.id);
+        return next;
+      });
+      await queryClient.invalidateQueries({queryKey: employeeKeys.lists()});
       setShowDeleteModal(false);
       setEmployeeToDelete(null);
     } catch (err: unknown) {

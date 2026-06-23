@@ -355,12 +355,6 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.RECOGNITION_VIEW, Permissions.RECOGNITION_CREATE],
   },
 
-  // Wall / Social
-  {
-    path: '/wall',
-    anyPermission: [Permissions.WALL_VIEW, Permissions.WALL_POST],
-  },
-
   // Offboarding
   {
     path: '/offboarding/exit/fnf',

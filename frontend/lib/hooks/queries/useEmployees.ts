@@ -1,6 +1,6 @@
 'use client';
 
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient, type QueryKey} from '@tanstack/react-query';
 import {employeeService} from '@/lib/services/hrms/employee.service';
 import {CreateEmployeeRequest, Employee, UpdateEmployeeRequest} from '@/lib/types/hrms/employee';
 
@@ -186,8 +186,52 @@ export function useUpdateMyProfile() {
 export function useDeleteEmployee() {
   const queryClient = useQueryClient();
 
+  type EmployeeListData = {
+    content?: Employee[];
+    totalElements?: number;
+    size?: number;
+  };
+
   return useMutation({
     mutationFn: (id: string) => employeeService.deleteEmployee(id),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({queryKey: employeeKeys.lists()});
+
+      const previousLists: Array<[QueryKey, EmployeeListData | undefined]> =
+        queryClient.getQueriesData<EmployeeListData>({queryKey: employeeKeys.lists()});
+
+      for (const [queryKey, cachedData] of previousLists) {
+        if (!cachedData?.content) {
+          if (cachedData !== undefined) {
+            queryClient.setQueryData(queryKey, cachedData);
+          }
+          continue;
+        }
+
+        const nextContent = cachedData.content.filter((employee) => employee.id !== id);
+        const totalElements = Math.max(
+          0,
+          (cachedData.totalElements || 0) - (nextContent.length < cachedData.content.length ? 1 : 0),
+        );
+
+        queryClient.setQueryData<EmployeeListData>(queryKey, {
+          ...cachedData,
+          content: nextContent,
+          totalElements,
+        });
+      }
+
+      return {previousLists};
+    },
+    onError: (_error, _id, context) => {
+      if (context?.previousLists) {
+        context.previousLists.forEach(([key, data]) => {
+          if (data !== undefined) {
+            queryClient.setQueryData(key, data);
+          }
+        });
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: employeeKeys.lists()});
     },

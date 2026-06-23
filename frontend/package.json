@@ -23,6 +23,8 @@
     "test:e2e:production": "playwright test --config playwright.production.config.ts",
     "test:e2e:report": "playwright show-report",
     "test:e2e:autonomous": "bash ../scripts/qa/qa-orchestrator/run.sh",
+    "test:e2e:autonomous:employee-edit": "PLAYWRIGHT_BASE_URL=${PLAYWRIGHT_BASE_URL:-https://hrms-frontend-vert.vercel.app} playwright test --config playwright.production.config.ts e2e/employee-edit-autonomous.production.spec.ts --project=production-chromium",
+    "test:e2e:autonomous:rbac-live": "PLAYWRIGHT_BASE_URL=${PLAYWRIGHT_BASE_URL:-https://hrms-frontend-vert.vercel.app} playwright test --config playwright.production.config.ts e2e/greenflag-live-ui.production.spec.ts --project=production-chromium",
     "api:generate": "orval --config ./orval.config.ts"
   },
   "dependencies": {
