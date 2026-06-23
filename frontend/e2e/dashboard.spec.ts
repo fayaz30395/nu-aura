@@ -46,11 +46,12 @@ test.describe('Dashboard', () => {
     test('should show check-in button when not checked in', async ({page}) => {
       await dashboardPage.waitForAttendanceWidget();
 
-      // Either check-in or check-out should be visible
+      // Either check-in, check-out, or the completed state should be present.
       const checkInVisible = await dashboardPage.isCheckInButtonVisible();
       const checkOutVisible = await dashboardPage.isCheckOutButtonVisible();
+      const completed = await dashboardPage.isAttendanceCompleted();
 
-      expect(checkInVisible || checkOutVisible).toBe(true);
+      expect(checkInVisible || checkOutVisible || completed).toBe(true);
     });
 
     test('should perform check-in from dashboard', async ({page}) => {
@@ -141,9 +142,10 @@ test.describe('Dashboard', () => {
         await page.waitForTimeout(2000);
       }
 
-      // Verify check-in button is visible
-      const checkInVisible = await dashboardPage.isCheckInButtonVisible();
-      expect(checkInVisible).toBe(true);
+      // After clock-out the widget is in a clocked-out state — either the
+      // check-in button returns or the day shows "Attendance Completed"
+      // (single cycle per day).
+      expect(await dashboardPage.isCheckedOut()).toBe(true);
     });
   });
 
@@ -171,11 +173,11 @@ test.describe('Dashboard', () => {
         await dashboardPage.checkOut();
         await page.waitForTimeout(2000);
 
-        // Verify checked out
-        expect(await dashboardPage.isCheckInButtonVisible()).toBe(true);
+        // Verify clocked out (check-in returns, or the day shows completed).
+        expect(await dashboardPage.isCheckedOut()).toBe(true);
       }
 
-      // Second check-in (the "Check In Again" scenario)
+      // Second check-in (only if the app allows re-clock-in same day).
       if (await dashboardPage.isCheckInButtonVisible()) {
         await dashboardPage.checkIn();
         await page.waitForTimeout(2000);
@@ -208,9 +210,8 @@ test.describe('Dashboard', () => {
         }
       }
 
-      // Should end with check-in button visible
-      const finalState = await dashboardPage.isCheckInButtonVisible();
-      expect(finalState).toBe(true);
+      // Should end clocked out — check-in button back, or "Attendance Completed".
+      expect(await dashboardPage.isCheckedOut()).toBe(true);
     });
   });
 
@@ -287,16 +288,15 @@ test.describe('Dashboard', () => {
         await page.waitForTimeout(2000);
       }
 
-      // Verify checked out
-      expect(await dashboardPage.isCheckInButtonVisible()).toBe(true);
+      // Verify clocked out (check-in available, or day completed).
+      expect(await dashboardPage.isCheckedOut()).toBe(true);
 
       // Refresh page
       await page.reload();
       await dashboardPage.waitForAttendanceWidget();
 
-      // Verify still shows check-in option
-      const showsCheckIn = await dashboardPage.isCheckInButtonVisible();
-      expect(showsCheckIn).toBe(true);
+      // The clocked-out / completed state must persist across the refresh.
+      expect(await dashboardPage.isCheckedOut()).toBe(true);
     });
   });
 });
@@ -433,8 +433,9 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
   test('dashboard quick actions are functional', async ({page}) => {
     await page.waitForTimeout(1000);
 
-    // Look for quick action buttons/cards
-    const quickActions = page.locator('text=/apply.*leave|new.*request|check.*in|quick.*action/i');
+    // Look for clickable quick-action links/buttons. (Excludes the attendance
+    // "Clock In" button, which is not a navigational quick action.)
+    const quickActions = page.locator('a, button').filter({hasText: /apply.*leave|new.*request|quick.*action|raise.*request/i});
     const count = await quickActions.count();
 
     if (count > 0) {

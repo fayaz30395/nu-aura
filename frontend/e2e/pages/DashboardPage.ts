@@ -36,13 +36,19 @@ export class DashboardPage extends BasePage {
     super(page);
 
     // Attendance Widget
+    // TimeClockWidget renders "Clock In" / "Clock Out" buttons (aria-label
+    // "Clock in"/"Clock out"), or an "Attendance Completed" state with no button.
     this.attendanceWidget = page.locator('[data-testid="attendance-widget"]').or(
-      page.locator('text=/Check In|Check Out|Working/i').locator('..')
+      page.locator('text=/Clock In|Clock Out|Working|Attendance Completed/i').first().locator('..')
     );
-    this.checkInButton = page.locator('button:has-text("Check In")');
-    this.checkOutButton = page.locator('button:has-text("Check Out")');
+    this.checkInButton = page.locator('button[aria-label="Clock in"]').or(
+      page.locator('button:has-text("Clock In")')
+    );
+    this.checkOutButton = page.locator('button[aria-label="Clock out"]').or(
+      page.locator('button:has-text("Clock Out")')
+    );
     this.attendanceStatus = page.locator('[data-testid="attendance-status"]').or(
-      page.locator('text=/Checked In|Not Checked In|Working/i')
+      page.locator('text=/Checked In|Not Checked In|Working|Attendance Completed/i').first()
     );
     this.currentTime = page.locator('[data-testid="current-time"]').or(
       page.locator('text=/\\d{1,2}:\\d{2}:\\d{2}/').first()
@@ -127,12 +133,20 @@ export class DashboardPage extends BasePage {
   }
 
   /**
-   * Check if user is currently checked out
+   * Check if the day's attendance is completed (clocked out for the day —
+   * the widget shows "Attendance Completed" with no clock button).
+   */
+  async isAttendanceCompleted(): Promise<boolean> {
+    return await this.page.locator('text=/Attendance Completed/i').first().isVisible().catch(() => false);
+  }
+
+  /**
+   * Check if user is currently checked out (can clock in again, or the day is
+   * already completed).
    */
   async isCheckedOut(): Promise<boolean> {
     const checkInVisible = await this.checkInButton.isVisible();
-    const checkOutVisible = await this.checkOutButton.isVisible();
-    return checkInVisible && !checkOutVisible;
+    return checkInVisible || (await this.isAttendanceCompleted());
   }
 
   /**
