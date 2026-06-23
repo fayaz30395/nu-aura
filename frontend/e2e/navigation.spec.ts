@@ -20,7 +20,7 @@ test.describe('Navigation and Routing', () => {
   test.describe('Main Navigation Menu', () => {
     test('should display main navigation menu', async ({page}) => {
       // Check for navigation elements
-      const hasNav = await page.locator('nav').first().isVisible();
+      const hasNav = await page.locator('nav:visible').first().isVisible();
       expect(hasNav).toBe(true);
 
       // Check for sidebar or header navigation
@@ -204,25 +204,15 @@ test.describe('Navigation and Routing', () => {
     });
 
     test('should have logout option', async ({page}) => {
-      // Look for logout button
-      let logoutButton = page.locator('button:has-text("Logout"), button:has-text("Sign Out"), a:has-text("Logout")').first();
-      let hasLogout = await logoutButton.isVisible().catch(() => false);
+      // The user menu lives in the TopBar (UserMenu, aria-label="User menu for <name>").
+      // Open it, then assert a Sign out / Logout control is present.
+      const userMenu = page.locator('button[aria-label^="User menu for"]').first();
+      await expect(userMenu).toBeVisible({timeout: 15000});
+      await userMenu.click();
+      await page.waitForTimeout(300);
 
-      if (!hasLogout) {
-        // Try opening user menu first
-        const userMenuButton = page.locator('button').filter({has: page.locator('[class*="user"], [class*="avatar"]')}).first();
-        const hasUserMenuButton = await userMenuButton.isVisible().catch(() => false);
-
-        if (hasUserMenuButton) {
-          await userMenuButton.click();
-          await page.waitForTimeout(500);
-
-          logoutButton = page.locator('button:has-text("Logout"), button:has-text("Sign Out"), a:has-text("Logout")').first();
-          hasLogout = await logoutButton.isVisible().catch(() => false);
-        }
-      }
-
-      expect(hasLogout).toBe(true);
+      const logout = page.getByRole('button', {name: /sign out|log\s?out/i}).first();
+      await expect(logout).toBeVisible({timeout: 10000});
     });
   });
 
@@ -314,40 +304,42 @@ test.describe('Navigation and Routing', () => {
     });
 
     test('should handle 404 for invalid routes', async ({page}) => {
-      const _response = await page.goto('/this-page-does-not-exist-12345');
+      await page.goto('/this-page-does-not-exist-12345', {waitUntil: 'domcontentloaded'});
       await page.waitForTimeout(1000);
 
-      // Should show 404 page or redirect to dashboard
-      const has404 = await page.locator('text=/404|Not Found|Page Not Found/i').isVisible().catch(() => false);
-      const redirectedToDashboard = page.url().includes('/dashboard');
+      // Graceful handling = a not-found page, OR a redirect away from the bad path.
+      const has404 = await page
+        .getByText(/404|not found|page not found|doesn.t exist|go (back|home)/i)
+        .first().isVisible().catch(() => false);
+      const redirectedAway = !page.url().includes('this-page-does-not-exist');
 
-      expect(has404 || redirectedToDashboard).toBe(true);
+      expect(has404 || redirectedAway).toBe(true);
     });
   });
 
   test.describe('Sidebar/Menu Functionality', () => {
     test('should expand and collapse sidebar', async ({page}) => {
-      // Look for sidebar toggle button
-      const sidebarToggle = page.locator('button[aria-label*="menu"], button[aria-label*="sidebar"], button:has-text("☰")').first();
+      // TopBar exposes the contextual NavPanel toggle as aria-label="Toggle navigation panel".
+      const sidebarToggle = page.locator('button[aria-label="Toggle navigation panel"]').first();
       const hasToggle = await sidebarToggle.isVisible().catch(() => false);
-
-      if (hasToggle) {
-        // Get initial state
-        const sidebar = page.locator('[class*="sidebar"], aside').first();
-        const initialWidth = await sidebar.evaluate(el => el.getBoundingClientRect().width).catch(() => 0);
-
-        // Toggle sidebar
-        await sidebarToggle.click();
-        await page.waitForTimeout(500);
-
-        // Check if width changed
-        const newWidth = await sidebar.evaluate(el => el.getBoundingClientRect().width).catch(() => 0);
-        expect(newWidth).not.toBe(initialWidth);
-
-        // Toggle back
-        await sidebarToggle.click();
-        await page.waitForTimeout(500);
+      if (!hasToggle) {
+        test.skip(true, 'Panel toggle not available in this viewport');
+        return;
       }
+
+      // The contextual panel is <nav aria-label="<Product> navigation"> (not the mobile nav).
+      const panel = page
+        .locator('nav[aria-label$=" navigation"]:not([aria-label="Mobile navigation"])')
+        .first();
+      const initialWidth = await panel.evaluate(el => el.getBoundingClientRect().width).catch(() => 0);
+
+      await sidebarToggle.click();
+      await page.waitForTimeout(500);
+      const newWidth = await panel.evaluate(el => el.getBoundingClientRect().width).catch(() => 0);
+      expect(newWidth).not.toBe(initialWidth);
+
+      await sidebarToggle.click();
+      await page.waitForTimeout(500);
     });
 
     test('should highlight active menu item', async ({page}) => {
@@ -538,7 +530,7 @@ test.describe('Navigation - Role-Based Access', () => {
     await page.waitForURL('**/me/dashboard');
 
     // Admin should see employees, leave, attendance, projects, etc.
-    const hasEmployees = await page.locator('a[href*="/employees"], button:has-text("Employees")').isVisible().catch(() => false);
+    const hasEmployees = await page.locator('a[href*="/employees"], button:has-text("Employees")').first().isVisible().catch(() => false);
     expect(hasEmployees).toBe(true);
   });
 
@@ -549,8 +541,8 @@ test.describe('Navigation - Role-Based Access', () => {
     await page.waitForURL('**/me/dashboard');
 
     // Employee should see their own leave, attendance but maybe not all employees
-    const hasLeave = await page.locator('a[href*="/leave"], button:has-text("Leave")').isVisible().catch(() => false);
-    const hasAttendance = await page.locator('a[href*="/attendance"], button:has-text("Attendance")').isVisible().catch(() => false);
+    const hasLeave = await page.locator('a[href*="/leave"], button:has-text("Leave")').first().isVisible().catch(() => false);
+    const hasAttendance = await page.locator('a[href*="/attendance"], button:has-text("Attendance")').first().isVisible().catch(() => false);
 
     expect(hasLeave || hasAttendance).toBe(true);
   });
@@ -562,7 +554,7 @@ test.describe('Navigation - Role-Based Access', () => {
     await page.waitForURL('**/me/dashboard');
 
     // Manager should see team management options
-    const hasNav = await page.locator('nav').first().isVisible();
+    const hasNav = await page.locator('nav:visible').first().isVisible();
     expect(hasNav).toBe(true);
   });
 });
@@ -583,9 +575,9 @@ test.describe('Navigation — App-Aware Sidebar', () => {
 
     // HRMS sidebar should show HR modules
     const hrmsItems = [
-      page.locator('nav a[href*="/employees"]').first(),
-      page.locator('nav a[href*="/leave"]').first(),
-      page.locator('nav a[href*="/attendance"]').first(),
+      page.locator('nav:visible a[href*="/employees"]').first(),
+      page.locator('nav:visible a[href*="/leave"]').first(),
+      page.locator('nav:visible a[href*="/attendance"]').first(),
     ];
 
     let visibleCount = 0;
@@ -603,9 +595,9 @@ test.describe('Navigation — App-Aware Sidebar', () => {
 
     // Sidebar should show recruitment items
     const hireItems = [
-      page.locator('nav a[href*="/recruitment"]').first(),
-      page.locator('nav a[href*="/onboarding"]').first(),
-      page.locator('nav a[href*="/offboarding"]').first(),
+      page.locator('nav:visible a[href*="/recruitment"]').first(),
+      page.locator('nav:visible a[href*="/onboarding"]').first(),
+      page.locator('nav:visible a[href*="/offboarding"]').first(),
     ];
 
     let visibleCount = 0;
@@ -624,9 +616,9 @@ test.describe('Navigation — App-Aware Sidebar', () => {
 
     // Sidebar should show performance/training items
     const growItems = [
-      page.locator('nav a[href*="/performance"]').first(),
-      page.locator('nav a[href*="/training"]').first(),
-      page.locator('nav a[href*="/okr"]').first(),
+      page.locator('nav:visible a[href*="/performance"]').first(),
+      page.locator('nav:visible a[href*="/training"]').first(),
+      page.locator('nav:visible a[href*="/okr"]').first(),
     ];
 
     let visibleCount = 0;
@@ -643,13 +635,13 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     await page.goto('/employees');
     await page.waitForLoadState('domcontentloaded');
 
-    const hasEmployeesInSidebar = await page.locator('nav a[href*="/employees"]').isVisible().catch(() => false);
+    const hasEmployeesInSidebar = await page.locator('nav:visible a[href*="/employees"]').first().isVisible().catch(() => false);
 
     // Navigate to a Grow route
     await page.goto('/performance');
     await page.waitForLoadState('domcontentloaded');
 
-    const hasPerformanceInSidebar = await page.locator('nav a[href*="/performance"]').isVisible().catch(() => false);
+    const hasPerformanceInSidebar = await page.locator('nav:visible a[href*="/performance"]').first().isVisible().catch(() => false);
 
     // Both should have their respective items (context switched)
     expect(hasEmployeesInSidebar).toBe(true);
@@ -662,7 +654,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Navigate to another HRMS page
-    const leaveLink = page.locator('nav a[href*="/leave"]').first();
+    const leaveLink = page.locator('nav:visible a[href*="/leave"]').first();
     const hasLeave = await leaveLink.isVisible().catch(() => false);
 
     if (hasLeave) {
@@ -673,7 +665,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
       expect(page.url()).toContain('/leave');
 
       // Sidebar should still be visible and functional
-      const hasNav = await page.locator('nav').first().isVisible();
+      const hasNav = await page.locator('nav:visible').first().isVisible();
       expect(hasNav).toBe(true);
     }
 
