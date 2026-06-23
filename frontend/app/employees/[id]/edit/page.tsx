@@ -36,14 +36,14 @@ const updateEmployeeFormSchema = z.object({
   phoneNumber: z.string().optional().or(z.literal('')),
   emergencyContactNumber: z.string().optional().or(z.literal('')),
   dateOfBirth: z.string().optional().or(z.literal('')),
-  gender: z.enum(['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY']).optional(),
+  gender: z.enum(['MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY']).optional().nullable(),
   address: z.string().optional().or(z.literal('')),
   city: z.string().optional().or(z.literal('')),
   state: z.string().optional().or(z.literal('')),
   postalCode: z.string().optional().or(z.literal('')),
   country: z.string().optional().or(z.literal('')),
   designation: z.string().min(1, 'Please enter a designation (e.g., Senior Engineer)'),
-  level: z.enum(['ENTRY', 'MID', 'SENIOR', 'LEAD', 'MANAGER', 'SENIOR_MANAGER', 'DIRECTOR', 'VP', 'SVP', 'CXO']).optional(),
+  level: z.enum(['ENTRY', 'MID', 'SENIOR', 'LEAD', 'MANAGER', 'SENIOR_MANAGER', 'DIRECTOR', 'VP', 'SVP', 'CXO']).optional().nullable(),
   jobRole: z.enum([
     'SOFTWARE_ENGINEER', 'FRONTEND_DEVELOPER', 'BACKEND_DEVELOPER', 'FULLSTACK_DEVELOPER', 'DEVOPS_ENGINEER',
     'QA_ENGINEER', 'DATA_ENGINEER', 'MOBILE_DEVELOPER', 'SYSTEM_ARCHITECT', 'TECH_LEAD', 'ENGINEERING_MANAGER',
@@ -58,13 +58,13 @@ const updateEmployeeFormSchema = z.object({
     'ADMIN_ASSISTANT', 'OFFICE_MANAGER', 'CUSTOMER_SUPPORT', 'TECH_SUPPORT',
     'LEGAL_COUNSEL', 'COMPLIANCE_OFFICER',
     'CONSULTANT', 'INTERN', 'OTHER'
-  ]).optional(),
+  ]).optional().nullable(),
   departmentId: z.string().optional().or(z.literal('')),
-  employmentType: z.enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN', 'CONSULTANT']).optional(),
+  employmentType: z.enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN', 'CONSULTANT']).optional().nullable(),
   managerId: z.string().optional().or(z.literal('')),
   dottedLineManager1Id: z.string().optional().or(z.literal('')),
   dottedLineManager2Id: z.string().optional().or(z.literal('')),
-  status: z.enum(['ACTIVE', 'ON_LEAVE', 'ON_NOTICE', 'TERMINATED', 'RESIGNED']).optional(),
+  status: z.enum(['ACTIVE', 'ON_LEAVE', 'ON_NOTICE', 'TERMINATED', 'RESIGNED']).optional().nullable(),
   confirmationDate: z.string().optional().or(z.literal('')),
   bankAccountNumber: z.string().optional().or(z.literal('')),
   bankName: z.string().optional().or(z.literal('')),
@@ -177,10 +177,6 @@ export default function EditEmployeePage() {
   };
 
   const onSubmit = async (formData: UpdateEmployeeFormData) => {
-    if (typeof window !== 'undefined') {
-      const win = window as typeof window & {__employeeEditOnSubmitCalled?: number};
-      win.__employeeEditOnSubmitCalled = (win.__employeeEditOnSubmitCalled || 0) + 1;
-    }
     try {
       setError(null);
       setChangeRequestCreated(false);
@@ -199,11 +195,11 @@ export default function EditEmployeePage() {
         if (formData.designation !== employee.designation) {
           changeRequest.newDesignation = formData.designation;
         }
-        if (formData.level !== employee.level) {
-          changeRequest.newLevel = formData.level;
+        if (formData.level && formData.level !== employee.level) {
+          changeRequest.newLevel = formData.level || undefined;
         }
-        if (formData.jobRole !== employee.jobRole) {
-          changeRequest.newJobRole = formData.jobRole;
+        if (formData.jobRole && formData.jobRole !== employee.jobRole) {
+          changeRequest.newJobRole = formData.jobRole || undefined;
         }
         if (formData.departmentId !== employee.departmentId) {
           changeRequest.newDepartmentId = formData.departmentId;
@@ -212,10 +208,10 @@ export default function EditEmployeePage() {
           changeRequest.newManagerId = formData.managerId || undefined;
         }
         if (formData.employmentType !== employee.employmentType) {
-          changeRequest.newEmploymentType = formData.employmentType;
+          changeRequest.newEmploymentType = formData.employmentType || undefined;
         }
         if (formData.status !== employee.status) {
-          changeRequest.newEmployeeStatus = formData.status;
+          changeRequest.newEmployeeStatus = formData.status || undefined;
         }
         if (formData.confirmationDate !== (employee.confirmationDate || '')) {
           changeRequest.newConfirmationDate = formData.confirmationDate || undefined;
@@ -235,7 +231,7 @@ export default function EditEmployeePage() {
         phoneNumber: formData.phoneNumber || undefined,
         emergencyContactNumber: formData.emergencyContactNumber || undefined,
         dateOfBirth: formData.dateOfBirth || undefined,
-        gender: formData.gender,
+        gender: formData.gender || undefined,
         address: formData.address || undefined,
         city: formData.city || undefined,
         state: formData.state || undefined,
@@ -252,25 +248,17 @@ export default function EditEmployeePage() {
         // (i.e., they haven't changed from original values)
         ...(employmentChanges ? {} : {
           designation: formData.designation,
-          level: formData.level,
-          jobRole: formData.jobRole,
+          level: formData.level || undefined,
+          jobRole: formData.jobRole || undefined,
           departmentId: formData.departmentId,
           managerId: formData.managerId || undefined,
-          employmentType: formData.employmentType,
-          status: formData.status,
+          employmentType: formData.employmentType || undefined,
+          status: formData.status || undefined,
           confirmationDate: formData.confirmationDate || undefined,
         }),
       };
 
-      if (typeof window !== 'undefined') {
-        const win = window as typeof window & {__employeeEditUpdateStarted?: number};
-        win.__employeeEditUpdateStarted = (win.__employeeEditUpdateStarted || 0) + 1;
-      }
       await employeeService.updateEmployee(employeeId, submitData);
-      if (typeof window !== 'undefined') {
-        const win = window as typeof window & {__employeeEditUpdateDone?: number};
-        win.__employeeEditUpdateDone = (win.__employeeEditUpdateDone || 0) + 1;
-      }
       await Promise.all([
         queryClient.invalidateQueries({queryKey: employeeKeys.detail(employeeId)}),
         queryClient.invalidateQueries({queryKey: employeeKeys.lists()}),
@@ -294,10 +282,6 @@ export default function EditEmployeePage() {
         router.push(`/employees/${employeeId}`);
       }
     } catch (err: unknown) {
-      if (typeof window !== 'undefined') {
-        const win = window as typeof window & {__employeeEditOnSubmitError?: number};
-        win.__employeeEditOnSubmitError = (win.__employeeEditOnSubmitError || 0) + 1;
-      }
       const message = (err as {
         response?: { data?: { message?: string } }
       })?.response?.data?.message || 'Failed to update employee';
@@ -359,36 +343,16 @@ export default function EditEmployeePage() {
     );
   }
 
-  const onSubmitInvalid = (errors: Record<string, unknown>) => {
-    const collectErrorPaths = (errorBag: Record<string, unknown>, prefix = ''): string[] => {
-      const keys: string[] = [];
-      for (const [field, value] of Object.entries(errorBag)) {
-        const path = prefix ? `${prefix}.${field}` : field;
-        if (!value || typeof value !== 'object') {
-          keys.push(path);
-          continue;
-        }
-        const errorEntry = value as Record<string, unknown>;
-        if (Object.prototype.hasOwnProperty.call(errorEntry, 'message') || Object.prototype.hasOwnProperty.call(errorEntry, 'type')) {
-          keys.push(path);
-          continue;
-        }
-        const nested = collectErrorPaths(errorEntry, path);
-        if (nested.length > 0) {
-          keys.push(...nested);
-        }
-      }
-      return keys;
-    };
-
-    if (typeof window !== 'undefined') {
-      const win = window as typeof window & {
-        __employeeEditValidationFailed?: number;
-        __employeeEditLastValidationErrors?: string[];
-      };
-      win.__employeeEditValidationFailed = (win.__employeeEditValidationFailed || 0) + 1;
-      win.__employeeEditLastValidationErrors = collectErrorPaths(errors);
-    }
+  // Surface validation failures to the user instead of failing silently.
+  // Inline field errors are already rendered; this ensures the click produces
+  // visible feedback even when the invalid field is on another tab.
+  const onSubmitInvalid = () => {
+    setError('Please review the highlighted fields and try again.');
+    notifications.show({
+      title: 'Check the form',
+      message: 'Some fields need attention before saving.',
+      color: 'red',
+    });
   };
 
   const submitEmployee = () => {
