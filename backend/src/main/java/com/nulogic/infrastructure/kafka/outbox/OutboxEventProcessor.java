@@ -8,6 +8,7 @@ import com.nulogic.infrastructure.kafka.events.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,12 @@ public class OutboxEventProcessor {
 
     private static final int MAX_RETRIES = 5;
 
+    // Self-reference (lazy to avoid a circular bean dependency) so pollAndProcess
+    // invokes processOneEvent THROUGH the Spring proxy. Without this, the
+    // self-invocation would bypass the proxy and silently drop the
+    // @Transactional(REQUIRES_NEW) — meaning the SKIP LOCKED row lock would not be
+    // held across dispatch, defeating the multi-pod safety guarantee.
+    private final OutboxEventProcessor self;
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
     private final NotificationEventConsumer notificationEventConsumer;
@@ -61,6 +68,7 @@ public class OutboxEventProcessor {
     );
 
     public OutboxEventProcessor(
+            @Lazy OutboxEventProcessor self,
             OutboxEventRepository outboxEventRepository,
             ObjectMapper objectMapper,
             NotificationEventConsumer notificationEventConsumer,
@@ -69,6 +77,7 @@ public class OutboxEventProcessor {
             EmployeeLifecycleConsumer employeeLifecycleConsumer,
             PayrollProcessingConsumer payrollProcessingConsumer,
             Optional<FluenceSearchConsumer> fluenceSearchConsumer) {
+        this.self = self;
         this.outboxEventRepository = outboxEventRepository;
         this.objectMapper = objectMapper;
         this.notificationEventConsumer = notificationEventConsumer;
@@ -85,14 +94,23 @@ public class OutboxEventProcessor {
         if (pending.isEmpty()) {
             return;
         }
-        log.debug("Outbox: processing {} pending events", pending.size());
+        log.debug("Outbox: processing {} candidate events", pending.size());
         for (OutboxEvent outboxEvent : pending) {
-            processOneEvent(outboxEvent);
+            // Go through the proxy (self) so REQUIRES_NEW + the row lock apply.
+            self.processOneEvent(outboxEvent.getId());
         }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void processOneEvent(OutboxEvent outboxEvent) {
+    public void processOneEvent(UUID outboxEventId) {
+        // Re-fetch under FOR UPDATE SKIP LOCKED: if another poller instance already
+        // holds this row (or already moved it out of PENDING), skip it so the event
+        // is dispatched exactly once across all pods.
+        Optional<OutboxEvent> locked = outboxEventRepository.lockPendingById(outboxEventId);
+        if (locked.isEmpty()) {
+            return;
+        }
+        OutboxEvent outboxEvent = locked.get();
         UUID tenantId = outboxEvent.getTenantId();
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);

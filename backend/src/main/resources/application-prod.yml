@@ -3,6 +3,17 @@ spring:
     activate:
       on-profile: prod
 
+  autoconfigure:
+    # MED-1 hygiene: Kafka is NOT the event path in production. EventPublisher
+    # writes every event to the transactional outbox and OutboxEventProcessor
+    # dispatches them in-process — there is no Kafka producer. Excluding
+    # KafkaAutoConfiguration prevents @KafkaListener containers from starting and
+    # endlessly retrying a connection to a non-existent broker (and removes the
+    # redundant double-delivery path). Re-introduce only when a real Kafka
+    # producer path is deliberately wired and a broker is provisioned.
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+
   # Wave-10 P2-6: production gets a longer per-phase shutdown budget (45s vs
   # 30s default in application.yml). Real prod traffic carries longer-running
   # uploads/exports/STOMP sessions; the extra 15s avoids forcibly killing
@@ -222,6 +233,21 @@ app:
     # only for a dedicated worker/cron process or an explicitly accepted single
     # scheduler deployment.
     enabled: ${APP_SCHEDULING_ENABLED:false}
+
+  outbox:
+    # Transactional outbox is the live event path in production (it runs via its
+    # own @EnableScheduling config, independent of app.scheduling.enabled above).
+    enabled: ${APP_OUTBOX_ENABLED:true}
+    poll-interval-ms: ${APP_OUTBOX_POLL_INTERVAL_MS:5000}
+
+  kafka:
+    # Disabled by default: EventPublisher writes only to the outbox (no Kafka
+    # producer exists), so the @KafkaListener consumers have nothing to consume.
+    # Enabling Kafka without also wiring a producer adds broker-connection noise
+    # and a redundant delivery path (deduped only by Redis SETNX). Flip to true —
+    # and set APP_OUTBOX_ENABLED=false plus remove the KafkaAutoConfiguration
+    # exclusion above — only when a real Kafka producer path is introduced.
+    enabled: ${APP_KAFKA_ENABLED:false}
 
   cookie:
     # CRITICAL: Always use secure cookies (HTTPS only) in production
