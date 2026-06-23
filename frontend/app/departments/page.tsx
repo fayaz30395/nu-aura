@@ -106,7 +106,7 @@ export default function DepartmentsPage() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.DEPARTMENT_VIEW)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
 

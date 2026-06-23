@@ -111,7 +111,7 @@ export default function ManagerDashboardPage() {
       return;
     }
     if (!hasPermission(Permissions.EMPLOYEE_VIEW_TEAM)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
       return;
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);

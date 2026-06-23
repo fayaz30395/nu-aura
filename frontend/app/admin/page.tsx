@@ -97,7 +97,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     if (authChecked && !isAdmin) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [authChecked, isAdmin, router]);
 

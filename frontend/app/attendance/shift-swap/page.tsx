@@ -109,7 +109,7 @@ export default function ShiftSwapPage() {
       return;
     }
     if (!hasShiftSwapAccess) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [hasHydrated, isReady, isAuthenticated, hasShiftSwapAccess, router]);
 

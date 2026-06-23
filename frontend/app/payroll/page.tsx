@@ -94,7 +94,7 @@ export default function PayrollPage() {
   const hasAccess = hasPermission(Permissions.PAYROLL_VIEW);
 
   useEffect(() => {
-    if (permReady && !hasAccess) router.replace('/dashboard');
+    if (permReady && !hasAccess) router.replace('/me/dashboard?denied=1');
   }, [permReady, hasAccess, router]);
 
   useEffect(() => {

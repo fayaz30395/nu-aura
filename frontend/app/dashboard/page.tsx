@@ -111,7 +111,7 @@ export default function DashboardPage() {
     // Guard: only users with DASHBOARD_VIEW permission can access this HR overview.
     // Regular employees should use /me/dashboard instead.
     if (!hasPermission(Permissions.DASHBOARD_VIEW)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
       return;
     }
     loadGoogleNotifications();

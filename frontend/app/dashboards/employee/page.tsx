@@ -44,7 +44,7 @@ export default function EmployeeDashboardPage() {
   React.useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.DASHBOARD_EMPLOYEE)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
 

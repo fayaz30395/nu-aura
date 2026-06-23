@@ -111,7 +111,7 @@ export default function FnFPage() {
       return;
     }
     if (!hasAnyPermission(Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasAnyPermission]);
 

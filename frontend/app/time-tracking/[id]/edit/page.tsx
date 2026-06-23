@@ -60,7 +60,7 @@ export default function EditTimeEntryPage() {
 
   useEffect(() => {
     if (permissionsReady && !hasAccess) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permissionsReady, hasAccess, router]);
 

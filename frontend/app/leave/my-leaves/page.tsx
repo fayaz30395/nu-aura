@@ -29,7 +29,7 @@ export default function MyLeavesPage() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.LEAVE_VIEW_SELF)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
   const [filterStatus, setFilterStatus] = useState<LeaveRequestStatus | ''>('');

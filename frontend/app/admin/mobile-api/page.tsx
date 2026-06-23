@@ -55,7 +55,7 @@ export default function MobileApiPage() {
       return;
     }
     if (!hasAnyRole(...ADMIN_ACCESS_ROLES)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [hasHydrated, isReady, isAuthenticated, router, hasAnyRole]);
 

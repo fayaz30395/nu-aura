@@ -136,7 +136,7 @@ export default function TeamDirectory() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasAnyPermission(Permissions.EMPLOYEE_VIEW_ALL, Permissions.EMPLOYEE_VIEW_TEAM)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasAnyPermission, router]);
   const [showFilters, setShowFilters] = useState(false);

@@ -26,7 +26,7 @@ export default function AllocationsPage() {
 
   useEffect(() => {
     if (permissionsReady && !hasAccess) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
       return;
     }
     if (permissionsReady && hasAccess) {

@@ -87,7 +87,7 @@ export default function CompensationPage() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.COMPENSATION_VIEW)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
 

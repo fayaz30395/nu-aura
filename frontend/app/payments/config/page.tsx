@@ -71,7 +71,7 @@ export default function PaymentConfigPage() {
 
   useEffect(() => {
     if (!PAYMENTS_ENABLED) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard');
     }
   }, [router]);
 
@@ -79,7 +79,7 @@ export default function PaymentConfigPage() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.PAYMENT_CONFIG)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
 

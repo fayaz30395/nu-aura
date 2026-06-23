@@ -60,7 +60,7 @@ export default function OvertimePage() {
       return;
     }
     if (!hasAnyPermission(Permissions.OVERTIME_VIEW, Permissions.OVERTIME_REQUEST, Permissions.ATTENDANCE_MARK)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasAnyPermission]);
   const [myPage, setMyPage] = useState(0);

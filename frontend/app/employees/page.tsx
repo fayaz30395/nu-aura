@@ -249,7 +249,7 @@ export default function EmployeesPage() {
         Permissions.EMPLOYEE_VIEW_TEAM
       )
     ) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasAnyPermission, router]);
 

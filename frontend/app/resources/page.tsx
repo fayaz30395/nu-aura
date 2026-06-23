@@ -37,7 +37,7 @@ export default function ResourcesPage() {
   const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
 
   useEffect(() => {
-    if (permissionsReady && !hasAccess) router.replace('/me/dashboard');
+    if (permissionsReady && !hasAccess) router.replace('/me/dashboard?denied=1');
   }, [permissionsReady, hasAccess, router]);
 
   const [showCreateModal, setShowCreateModal] = useState(false);

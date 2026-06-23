@@ -30,7 +30,7 @@ export default function LoanDetailPage() {
   useEffect(() => {
     if (!permissionsReady) return;
     if (!hasPermission(Permissions.LOAN_VIEW)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permissionsReady, hasPermission, router]);
 

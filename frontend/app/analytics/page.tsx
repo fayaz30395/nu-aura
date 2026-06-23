@@ -95,7 +95,7 @@ export default function AnalyticsPage() {
   const canViewAnalytics = hasAnyPermission(Permissions.REPORT_VIEW, Permissions.ANALYTICS_VIEW);
   React.useEffect(() => {
     if (!permReady) return;
-    if (!canViewAnalytics) router.replace('/dashboard');
+    if (!canViewAnalytics) router.replace('/me/dashboard?denied=1');
   }, [permReady, canViewAnalytics, router]);
 
   if (!permReady || !canViewAnalytics) return null;

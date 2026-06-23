@@ -574,7 +574,7 @@ export default function PredictiveAnalyticsPage() {
   React.useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.REPORT_VIEW)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
 

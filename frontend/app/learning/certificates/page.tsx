@@ -39,7 +39,7 @@ export default function CertificateGalleryPage() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.LMS_CERTIFICATE_VIEW)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
   const [dateFilter, setDateFilter] = useState('ALL');

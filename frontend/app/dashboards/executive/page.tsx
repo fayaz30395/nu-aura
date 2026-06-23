@@ -78,7 +78,7 @@ export default function ExecutiveDashboardPage() {
     }
     // DEF-35: Gate on DASHBOARD:EXECUTIVE permission before rendering
     if (!hasPermission(Permissions.DASHBOARD_EXECUTIVE)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
       return;
     }
     setLastUpdated(new Date());

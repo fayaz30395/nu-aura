@@ -81,7 +81,7 @@ export default function AdminLayoutInner({
   // Redirect unauthorized users after hydration
   useEffect(() => {
     if (isReady && !hasAdminAccess) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [isReady, hasAdminAccess, router]);
 

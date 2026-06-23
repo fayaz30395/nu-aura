@@ -177,7 +177,7 @@ function MailContent() {
       return;
     }
     if (!hasAccess) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
       return;
     }
 

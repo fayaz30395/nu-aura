@@ -77,7 +77,7 @@ export default function ExpenseDetailPage() {
   useEffect(() => {
     if (!permissionsReady) return;
     if (!hasPermission(Permissions.EXPENSE_VIEW)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permissionsReady, hasPermission, router]);
 

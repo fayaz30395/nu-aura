@@ -86,7 +86,7 @@ export default function CompOffPage() {
 
   useEffect(() => {
     if (isReady && !hasAccess) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [isReady, hasAccess, router]);
 

@@ -169,7 +169,7 @@ export default function MyAttendancePage() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.ATTENDANCE_VIEW_SELF)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
 

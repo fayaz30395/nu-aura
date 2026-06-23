@@ -25,7 +25,7 @@ export default function TaxOverviewPage() {
       return;
     }
     if (!hasPermission(Permissions.STATUTORY_VIEW)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 

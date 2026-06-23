@@ -17,7 +17,7 @@ export default function ExecutiveRedirectPage() {
   useEffect(() => {
     if (!isReady) return;
     if (!hasAccess) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     } else {
       router.replace('/dashboards/executive');
     }

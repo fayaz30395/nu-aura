@@ -131,7 +131,7 @@ export default function NewTravelRequestPage() {
       return;
     }
     if (!hasAccess) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [isAuthenticated, hasHydrated, isReady, hasAccess, router]);
 

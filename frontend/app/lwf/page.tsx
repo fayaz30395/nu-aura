@@ -130,7 +130,7 @@ export default function LWFPage() {
       return;
     }
     if (!hasPermission(Permissions.STATUTORY_VIEW)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 

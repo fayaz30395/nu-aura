@@ -49,7 +49,7 @@ export default function PayrollRunsPage() {
   useEffect(() => {
     if (!permReady) return;
     if (!canAccessPayrollRuns) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, canAccessPayrollRuns, router]);
 

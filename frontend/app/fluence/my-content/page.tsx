@@ -24,7 +24,7 @@ export default function MyContentPage() {
   useEffect(() => {
     if (!permReady) return;
     if (!hasPermission(Permissions.KNOWLEDGE_WIKI_READ)) {
-      router.replace('/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permReady, hasPermission, router]);
 

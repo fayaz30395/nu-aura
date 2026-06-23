@@ -47,7 +47,7 @@ export default function FluencePage() {
   );
 
   useEffect(() => {
-    if (permissionsReady && !hasAccess) router.replace('/me/dashboard');
+    if (permissionsReady && !hasAccess) router.replace('/me/dashboard?denied=1');
   }, [permissionsReady, hasAccess, router]);
 
   const {data: spacesData, isLoading: spacesLoading} = useWikiSpaces(0, 6, hasAccess);

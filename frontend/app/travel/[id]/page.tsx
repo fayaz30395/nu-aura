@@ -70,7 +70,7 @@ export default function TravelRequestDetailsPage() {
   useEffect(() => {
     if (!permissionsReady) return;
     if (!hasPermission(Permissions.TRAVEL_VIEW)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [permissionsReady, hasPermission, router]);
 

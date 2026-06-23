@@ -84,7 +84,7 @@ export default function TeamAttendancePage() {
       return;
     }
     if (!hasPermission(Permissions.ATTENDANCE_VIEW_TEAM) && !hasPermission(Permissions.ATTENDANCE_VIEW_ALL)) {
-      router.replace('/me/dashboard');
+      router.replace('/me/dashboard?denied=1');
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 
