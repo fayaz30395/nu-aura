@@ -38,6 +38,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {DashboardModals} from './_components/DashboardModals';
+import {DashboardSkeleton} from './_components/DashboardSkeleton';
 import type {GoogleNotification} from './_types';
 import {formatRelativeTime} from './_utils';
 import {Card} from '@/components/ui/Card';
@@ -50,7 +51,6 @@ const DashboardGrid = dynamic(
   () => import('@/components/ui/DashboardGrid').then(m => m.DashboardGrid),
   {ssr: false, loading: () => <SkeletonChart/>}
 );
-import {Skeleton} from '@/components/ui/Skeleton';
 import {SkeletonChart} from '@/components/ui/Loading';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {getGoogleToken} from '@/lib/utils/googleToken';
@@ -426,33 +426,7 @@ export default function DashboardPage() {
 
   // Show loading state while hydrating or loading analytics
   if (!hasHydrated || isLoading) {
-    return (
-      <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
-        <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
-          {/* Header skeleton */}
-          <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
-            <div className="space-y-2 max-w-2xl">
-              <Skeleton className="h-3 w-32 rounded-aura-xs"/>
-              <Skeleton className="h-9 w-3/4 rounded-aura-sm"/>
-              <Skeleton className="h-4 w-1/2 rounded-aura-xs"/>
-            </div>
-            <Skeleton className="h-10 w-32 rounded-aura-sm self-start sm:self-end"/>
-          </div>
-
-          {/* Stats skeleton — borderly, no cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--border-subtle)]">
-            {Array.from({length: 4}).map((_, i) => (
-              <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
-                <Skeleton className="h-3 w-24 rounded-aura-xs"/>
-                <Skeleton className="mt-3 h-9 w-20 rounded-aura-xs"/>
-              </div>
-            ))}
-          </div>
-
-          <SkeletonChart height="h-80"/>
-        </div>
-      </AppLayout>
-    );
+    return <DashboardSkeleton/>;
   }
 
   // Graceful degradation: if analytics fails, show dashboard with fallback data
