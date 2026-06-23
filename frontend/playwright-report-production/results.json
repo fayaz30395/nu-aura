@@ -104,7 +104,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 32830,
+                  "duration": 18608,
                   "errors": [],
                   "stdout": [
                     {
@@ -185,98 +185,98 @@
                   "steps": [
                     {
                       "title": "login as SUPER_ADMIN",
-                      "duration": 4364
+                      "duration": 4779
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 971
+                      "duration": 713
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 600
+                      "duration": 495
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 746
+                      "duration": 618
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 463
+                      "duration": 533
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 767
+                      "duration": 429
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 2100
+                      "duration": 558
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 1628
+                      "duration": 509
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 1461
+                      "duration": 566
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 1475
+                      "duration": 508
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 1205
+                      "duration": 460
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 2023
+                      "duration": 590
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 1403
+                      "duration": 436
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 974
+                      "duration": 548
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 929
+                      "duration": 471
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 1178
+                      "duration": 446
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 1104
+                      "duration": 505
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 1199
+                      "duration": 449
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 1106
+                      "duration": 887
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 971
+                      "duration": 486
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 795
+                      "duration": 468
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 831
+                      "duration": 446
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 720
+                      "duration": 456
                     }
                   ],
-                  "startTime": "2026-06-23T21:21:32.874Z",
+                  "startTime": "2026-06-23T21:28:26.131Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -307,7 +307,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 18028,
+                  "duration": 17196,
                   "errors": [],
                   "stdout": [
                     {
@@ -388,98 +388,98 @@
                   "steps": [
                     {
                       "title": "login as SUPER_ADMIN",
-                      "duration": 3616
+                      "duration": 2922
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 631
+                      "duration": 1042
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 498
+                      "duration": 726
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 494
+                      "duration": 493
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 468
+                      "duration": 877
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 487
+                      "duration": 689
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 506
+                      "duration": 466
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 456
+                      "duration": 427
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 513
+                      "duration": 463
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 468
+                      "duration": 436
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 458
+                      "duration": 450
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 667
+                      "duration": 455
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 597
+                      "duration": 503
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 488
+                      "duration": 474
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 574
+                      "duration": 502
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 686
+                      "duration": 506
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 517
+                      "duration": 649
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 476
+                      "duration": 443
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 495
+                      "duration": 469
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 719
+                      "duration": 444
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 509
+                      "duration": 534
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 511
+                      "duration": 470
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 747
+                      "duration": 444
                     }
                   ],
-                  "startTime": "2026-06-23T21:22:06.211Z",
+                  "startTime": "2026-06-23T21:28:45.258Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -510,7 +510,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 17353,
+                  "duration": 15536,
                   "errors": [],
                   "stdout": [
                     {
@@ -591,98 +591,98 @@
                   "steps": [
                     {
                       "title": "login as TENANT_ADMIN",
-                      "duration": 3028
+                      "duration": 3712
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 701
+                      "duration": 724
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 467
+                      "duration": 459
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 483
+                      "duration": 392
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 538
+                      "duration": 548
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 473
+                      "duration": 500
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 462
+                      "duration": 483
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 540
+                      "duration": 395
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 442
+                      "duration": 407
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 490
+                      "duration": 427
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 616
+                      "duration": 422
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 489
+                      "duration": 566
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 570
+                      "duration": 455
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 499
+                      "duration": 427
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 531
+                      "duration": 420
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 738
+                      "duration": 402
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 722
+                      "duration": 463
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 477
+                      "duration": 414
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 470
+                      "duration": 416
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 440
+                      "duration": 383
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 509
+                      "duration": 445
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 468
+                      "duration": 473
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 497
+                      "duration": 630
                     }
                   ],
-                  "startTime": "2026-06-23T21:22:24.257Z",
+                  "startTime": "2026-06-23T21:29:02.465Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -713,7 +713,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 19083,
+                  "duration": 17582,
                   "errors": [],
                   "stdout": [
                     {
@@ -756,7 +756,7 @@
                       "text": "[greenflag] MANAGER /settings: OK\n"
                     },
                     {
-                      "text": "[greenflag] MANAGER /fluence: OK\n"
+                      "text": "[greenflag] MANAGER /fluence: FAIL\n"
                     },
                     {
                       "text": "[greenflag] MANAGER /announcements: OK\n"
@@ -786,7 +786,7 @@
                       "text": "[greenflag] MANAGER /settings/security: OK\n"
                     },
                     {
-                      "text": "___GFLAG___ {\"role\":\"MANAGER\",\"email\":\"sumit@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
+                      "text": "___GFLAG___ {\"role\":\"MANAGER\",\"email\":\"sumit@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
@@ -794,98 +794,98 @@
                   "steps": [
                     {
                       "title": "login as MANAGER",
-                      "duration": 2973
+                      "duration": 4393
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 694
+                      "duration": 588
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 652
+                      "duration": 460
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 415
+                      "duration": 409
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 472
+                      "duration": 530
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 698
+                      "duration": 503
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 472
+                      "duration": 565
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 607
+                      "duration": 501
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 547
+                      "duration": 460
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 708
+                      "duration": 734
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 555
+                      "duration": 625
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 544
+                      "duration": 403
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 474
+                      "duration": 437
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 508
+                      "duration": 388
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 741
+                      "duration": 419
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 535
+                      "duration": 410
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 667
+                      "duration": 676
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 601
+                      "duration": 708
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 753
+                      "duration": 542
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 584
+                      "duration": 514
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 675
+                      "duration": 518
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 602
+                      "duration": 604
                     },
                     {
                       "title": "probe /settings/security",
                       "duration": 463
                     }
                   ],
-                  "startTime": "2026-06-23T21:22:41.638Z",
+                  "startTime": "2026-06-23T21:29:18.013Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -900,7 +900,7 @@
         },
         {
           "title": "green-flag smoke — TEAM_LEAD (mani@nulogic.io)",
-          "ok": false,
+          "ok": true,
           "tags": [
             "nulogic.io)"
           ],
@@ -915,28 +915,9 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 16917,
-                  "error": {
-                    "message": "Error: TEAM_LEAD has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
-                    "stack": "Error: TEAM_LEAD has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7",
-                    "location": {
-                      "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                      "column": 7,
-                      "line": 299
-                    },
-                    "snippet": "  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                        "column": 7,
-                        "line": 299
-                      },
-                      "message": "Error: TEAM_LEAD has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 19153,
+                  "errors": [],
                   "stdout": [
                     {
                       "text": "[greenflag] TEAM_LEAD (mani@nulogic.io) login: OK\n"
@@ -1016,124 +997,103 @@
                   "steps": [
                     {
                       "title": "login as TEAM_LEAD",
-                      "duration": 3887
+                      "duration": 3568
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 811
+                      "duration": 781
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 471
+                      "duration": 621
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 455
+                      "duration": 523
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 633
+                      "duration": 654
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 534
+                      "duration": 471
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 850
+                      "duration": 461
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 503
+                      "duration": 590
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 512
+                      "duration": 762
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 474
+                      "duration": 429
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 534
+                      "duration": 422
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 491
+                      "duration": 426
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 714
+                      "duration": 475
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 454
+                      "duration": 466
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 599
+                      "duration": 681
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 534
+                      "duration": 539
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 687
+                      "duration": 642
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 614
+                      "duration": 693
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 615
+                      "duration": 554
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 549
+                      "duration": 563
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 662
+                      "duration": 552
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 524
+                      "duration": 683
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 502
+                      "duration": 492
                     }
                   ],
-                  "startTime": "2026-06-23T21:23:00.757Z",
+                  "startTime": "2026-06-23T21:29:35.604Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-8887d--TEAM-LEAD-mani-nulogic-io--production-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-8887d--TEAM-LEAD-mani-nulogic-io--production-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-8887d--TEAM-LEAD-mani-nulogic-io--production-chromium/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                    "column": 7,
-                    "line": 299
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b9964562569c5fc90185-8bec25c756ad0bf5e5f8",
@@ -1156,10 +1116,10 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 1,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 17253,
+                  "duration": 18130,
                   "errors": [],
                   "stdout": [
                     {
@@ -1240,98 +1200,98 @@
                   "steps": [
                     {
                       "title": "login as TEAM_LEAD",
-                      "duration": 2975
+                      "duration": 3952
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 851
+                      "duration": 780
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 593
+                      "duration": 457
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 452
+                      "duration": 745
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 601
+                      "duration": 585
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 475
+                      "duration": 491
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 464
+                      "duration": 454
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 548
+                      "duration": 549
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 471
+                      "duration": 527
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 469
+                      "duration": 452
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 407
+                      "duration": 615
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 459
-                    },
-                    {
-                      "title": "probe /settings",
-                      "duration": 477
-                    },
-                    {
-                      "title": "probe /fluence",
-                      "duration": 488
-                    },
-                    {
-                      "title": "probe /announcements",
                       "duration": 473
                     },
                     {
+                      "title": "probe /settings",
+                      "duration": 451
+                    },
+                    {
+                      "title": "probe /fluence",
+                      "duration": 794
+                    },
+                    {
+                      "title": "probe /announcements",
+                      "duration": 819
+                    },
+                    {
                       "title": "probe /assets",
-                      "duration": 440
+                      "duration": 463
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 595
+                      "duration": 752
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 492
+                      "duration": 595
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 729
+                      "duration": 522
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 578
+                      "duration": 558
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 537
+                      "duration": 570
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 739
+                      "duration": 673
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 623
+                      "duration": 513
                     }
                   ],
-                  "startTime": "2026-06-23T21:23:26.766Z",
+                  "startTime": "2026-06-23T21:29:54.769Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1346,7 +1306,7 @@
         },
         {
           "title": "green-flag smoke — EMPLOYEE (saran@nulogic.io)",
-          "ok": false,
+          "ok": true,
           "tags": [
             "nulogic.io)"
           ],
@@ -1359,30 +1319,11 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 1,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 13941,
-                  "error": {
-                    "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
-                    "stack": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7",
-                    "location": {
-                      "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                      "column": 7,
-                      "line": 299
-                    },
-                    "snippet": "  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                        "column": 7,
-                        "line": 299
-                      },
-                      "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 15541,
+                  "errors": [],
                   "stdout": [
                     {
                       "text": "[greenflag] EMPLOYEE (saran@nulogic.io) login: OK\n"
@@ -1462,11 +1403,11 @@
                   "steps": [
                     {
                       "title": "login as EMPLOYEE",
-                      "duration": 2640
+                      "duration": 3180
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 647
+                      "duration": 590
                     },
                     {
                       "title": "probe /me/dashboard",
@@ -1474,112 +1415,91 @@
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 432
+                      "duration": 437
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 650
+                      "duration": 494
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 493
+                      "duration": 629
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 474
+                      "duration": 458
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 463
+                      "duration": 439
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 481
+                      "duration": 457
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 465
+                      "duration": 663
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 485
+                      "duration": 751
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 488
+                      "duration": 451
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 381
+                      "duration": 440
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 414
+                      "duration": 412
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 454
+                      "duration": 427
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 462
+                      "duration": 454
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 646
+                      "duration": 486
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 525
+                      "duration": 414
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 656
+                      "duration": 401
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 464
+                      "duration": 422
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 548
+                      "duration": 447
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 503
+                      "duration": 518
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 488
+                      "duration": 538
                     }
                   ],
-                  "startTime": "2026-06-23T21:23:44.469Z",
+                  "startTime": "2026-06-23T21:30:12.914Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-dd7cd--EMPLOYEE-saran-nulogic-io--production-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-dd7cd--EMPLOYEE-saran-nulogic-io--production-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-dd7cd--EMPLOYEE-saran-nulogic-io--production-chromium/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                    "column": 7,
-                    "line": 299
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b9964562569c5fc90185-b764cde1c7ba4939b414",
@@ -1589,7 +1509,7 @@
         },
         {
           "title": "green-flag smoke — EMPLOYEE (raj@nulogic.io)",
-          "ok": false,
+          "ok": true,
           "tags": [
             "nulogic.io)"
           ],
@@ -1602,30 +1522,11 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 2,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 15146,
-                  "error": {
-                    "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
-                    "stack": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7",
-                    "location": {
-                      "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                      "column": 7,
-                      "line": 299
-                    },
-                    "snippet": "  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                        "column": 7,
-                        "line": 299
-                      },
-                      "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 15635,
+                  "errors": [],
                   "stdout": [
                     {
                       "text": "[greenflag] EMPLOYEE (raj@nulogic.io) login: OK\n"
@@ -1705,31 +1606,31 @@
                   "steps": [
                     {
                       "title": "login as EMPLOYEE",
-                      "duration": 3107
+                      "duration": 3441
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 672
+                      "duration": 817
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 522
+                      "duration": 514
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 477
+                      "duration": 855
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 665
+                      "duration": 620
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 621
+                      "duration": 540
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 546
+                      "duration": 481
                     },
                     {
                       "title": "probe /payroll",
@@ -1737,92 +1638,71 @@
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 468
+                      "duration": 478
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 470
+                      "duration": 626
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 671
+                      "duration": 415
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 439
+                      "duration": 625
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 573
+                      "duration": 450
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 495
+                      "duration": 409
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 518
+                      "duration": 410
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 453
+                      "duration": 446
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 600
+                      "duration": 470
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 463
+                      "duration": 384
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 457
+                      "duration": 524
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 570
+                      "duration": 381
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 689
+                      "duration": 416
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 435
+                      "duration": 407
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 449
+                      "duration": 460
                     }
                   ],
-                  "startTime": "2026-06-23T21:24:04.768Z",
+                  "startTime": "2026-06-23T21:30:28.462Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-65e7d--—-EMPLOYEE-raj-nulogic-io--production-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-65e7d--—-EMPLOYEE-raj-nulogic-io--production-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-65e7d--—-EMPLOYEE-raj-nulogic-io--production-chromium/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                    "column": 7,
-                    "line": 299
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b9964562569c5fc90185-94cbaeefe7b4a09480b8",
@@ -1845,10 +1725,10 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 3,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 16797,
+                  "duration": 17505,
                   "errors": [],
                   "stdout": [
                     {
@@ -1891,7 +1771,7 @@
                       "text": "[greenflag] EMPLOYEE /settings: OK\n"
                     },
                     {
-                      "text": "[greenflag] EMPLOYEE /fluence: OK\n"
+                      "text": "[greenflag] EMPLOYEE /fluence: FAIL\n"
                     },
                     {
                       "text": "[greenflag] EMPLOYEE /announcements: OK\n"
@@ -1921,7 +1801,7 @@
                       "text": "[greenflag] EMPLOYEE /settings/security: OK\n"
                     },
                     {
-                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"anshuman@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
+                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"anshuman@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
@@ -1929,98 +1809,98 @@
                   "steps": [
                     {
                       "title": "login as EMPLOYEE",
-                      "duration": 2936
+                      "duration": 2655
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 774
+                      "duration": 688
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 454
+                      "duration": 470
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 400
+                      "duration": 397
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 437
+                      "duration": 405
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 433
+                      "duration": 449
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 435
+                      "duration": 553
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 687
+                      "duration": 680
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 528
+                      "duration": 435
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 458
+                      "duration": 431
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 433
+                      "duration": 398
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 479
+                      "duration": 624
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 472
+                      "duration": 778
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 538
+                      "duration": 548
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 564
+                      "duration": 554
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 564
+                      "duration": 688
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 634
+                      "duration": 808
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 776
+                      "duration": 855
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 755
+                      "duration": 659
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 531
+                      "duration": 558
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 509
+                      "duration": 535
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 539
+                      "duration": 777
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 467
+                      "duration": 451
                     }
                   ],
-                  "startTime": "2026-06-23T21:24:28.013Z",
+                  "startTime": "2026-06-23T21:30:44.106Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2035,7 +1915,7 @@
         },
         {
           "title": "green-flag smoke — HR_MANAGER (jagadeesh@nulogic.io)",
-          "ok": false,
+          "ok": true,
           "tags": [
             "nulogic.io)"
           ],
@@ -2048,30 +1928,11 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 3,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 18121,
-                  "error": {
-                    "message": "Error: HR_MANAGER has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
-                    "stack": "Error: HR_MANAGER has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7",
-                    "location": {
-                      "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                      "column": 7,
-                      "line": 299
-                    },
-                    "snippet": "  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                        "column": 7,
-                        "line": 299
-                      },
-                      "message": "Error: HR_MANAGER has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 45269,
+                  "errors": [],
                   "stdout": [
                     {
                       "text": "[greenflag] HR_MANAGER (jagadeesh@nulogic.io) login: OK\n"
@@ -2086,13 +1947,13 @@
                       "text": "[greenflag] HR_MANAGER /dashboard: OK\n"
                     },
                     {
-                      "text": "[greenflag] HR_MANAGER /employees: OK\n"
+                      "text": "[greenflag] HR_MANAGER /employees: FAIL consoleErrors=1\n"
                     },
                     {
-                      "text": "[greenflag] HR_MANAGER /attendance: OK\n"
+                      "text": "[greenflag] HR_MANAGER /attendance: FAIL\n"
                     },
                     {
-                      "text": "[greenflag] HR_MANAGER /leave: OK\n"
+                      "text": "[greenflag] HR_MANAGER /leave: FAIL\n"
                     },
                     {
                       "text": "[greenflag] HR_MANAGER /payroll: OK\n"
@@ -2113,7 +1974,7 @@
                       "text": "[greenflag] HR_MANAGER /settings: OK\n"
                     },
                     {
-                      "text": "[greenflag] HR_MANAGER /fluence: FAIL\n"
+                      "text": "[greenflag] HR_MANAGER /fluence: OK\n"
                     },
                     {
                       "text": "[greenflag] HR_MANAGER /announcements: OK\n"
@@ -2143,7 +2004,7 @@
                       "text": "[greenflag] HR_MANAGER /settings/security: OK\n"
                     },
                     {
-                      "text": "___GFLAG___ {\"role\":\"HR_MANAGER\",\"email\":\"jagadeesh@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
+                      "text": "___GFLAG___ {\"role\":\"HR_MANAGER\",\"email\":\"jagadeesh@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":false,\"status\":0,\"consoleErrors\":1,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: net::ERR_TIMED_OUT at https://hrms-frontend-vert.vercel.app/employees\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/employees\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\",\"console: Failed to load resource: net::ERR_TIMED_OUT\"]},{\"path\":\"/attendance\",\"ok\":false,\"status\":0,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: Navigation to \\\"https://hrms-frontend-vert.vercel.app/attendance\\\" is interrupted by another navigation to \\\"chrome-error://chromewebdata/\\\"\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/attendance\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\"]},{\"path\":\"/leave\",\"ok\":false,\"status\":0,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: Navigation to \\\"https://hrms-frontend-vert.vercel.app/leave\\\" is interrupted by another navigation to \\\"https://hrms-frontend-vert.vercel.app/attendance\\\"\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/leave\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\"]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
@@ -2151,124 +2012,103 @@
                   "steps": [
                     {
                       "title": "login as HR_MANAGER",
-                      "duration": 2916
+                      "duration": 2847
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 659
+                      "duration": 683
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 625
+                      "duration": 619
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 428
+                      "duration": 382
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 531
+                      "duration": 18129
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 675
+                      "duration": 412
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 441
+                      "duration": 582
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 419
+                      "duration": 671
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 512
+                      "duration": 711
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 460
+                      "duration": 630
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 620
+                      "duration": 532
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 472
+                      "duration": 579
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 456
+                      "duration": 666
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 670
+                      "duration": 482
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 871
+                      "duration": 498
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 796
+                      "duration": 680
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 1002
+                      "duration": 719
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 1357
+                      "duration": 11369
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 1133
+                      "duration": 481
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 1073
+                      "duration": 490
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 520
+                      "duration": 664
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 563
+                      "duration": 424
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 634
+                      "duration": 529
                     }
                   ],
-                  "startTime": "2026-06-23T21:24:45.233Z",
+                  "startTime": "2026-06-23T21:31:01.631Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-1b3f5-NAGER-jagadeesh-nulogic-io--production-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-1b3f5-NAGER-jagadeesh-nulogic-io--production-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-1b3f5-NAGER-jagadeesh-nulogic-io--production-chromium/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                    "column": 7,
-                    "line": 299
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b9964562569c5fc90185-b57e73d9df6e7089ad7c",
@@ -2278,7 +2118,7 @@
         },
         {
           "title": "green-flag smoke — RECRUITMENT_ADMIN (suresh@nulogic.io)",
-          "ok": false,
+          "ok": true,
           "tags": [
             "nulogic.io)"
           ],
@@ -2291,30 +2131,11 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 55341,
-                  "error": {
-                    "message": "Error: RECRUITMENT_ADMIN has 6 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m6\u001b[39m",
-                    "stack": "Error: RECRUITMENT_ADMIN has 6 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m6\u001b[39m\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7",
-                    "location": {
-                      "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                      "column": 7,
-                      "line": 299
-                    },
-                    "snippet": "  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                        "column": 7,
-                        "line": 299
-                      },
-                      "message": "Error: RECRUITMENT_ADMIN has 6 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m6\u001b[39m\n\n  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 17272,
+                  "errors": [],
                   "stdout": [
                     {
                       "text": "[greenflag] RECRUITMENT_ADMIN (suresh@nulogic.io) login: OK\n"
@@ -2359,19 +2180,19 @@
                       "text": "[greenflag] RECRUITMENT_ADMIN /fluence: FAIL\n"
                     },
                     {
-                      "text": "[greenflag] RECRUITMENT_ADMIN /announcements: FAIL\n"
+                      "text": "[greenflag] RECRUITMENT_ADMIN /announcements: OK\n"
                     },
                     {
-                      "text": "[greenflag] RECRUITMENT_ADMIN /assets: FAIL\n"
+                      "text": "[greenflag] RECRUITMENT_ADMIN /assets: OK\n"
                     },
                     {
-                      "text": "[greenflag] RECRUITMENT_ADMIN /org-chart: FAIL\n"
+                      "text": "[greenflag] RECRUITMENT_ADMIN /org-chart: OK\n"
                     },
                     {
-                      "text": "[greenflag] RECRUITMENT_ADMIN /admin: FAIL\n"
+                      "text": "[greenflag] RECRUITMENT_ADMIN /admin: OK\n"
                     },
                     {
-                      "text": "[greenflag] RECRUITMENT_ADMIN /admin/roles: FAIL\n"
+                      "text": "[greenflag] RECRUITMENT_ADMIN /admin/roles: OK\n"
                     },
                     {
                       "text": "[greenflag] RECRUITMENT_ADMIN /admin/permissions: OK\n"
@@ -2386,7 +2207,7 @@
                       "text": "[greenflag] RECRUITMENT_ADMIN /settings/security: OK\n"
                     },
                     {
-                      "text": "___GFLAG___ {\"role\":\"RECRUITMENT_ADMIN\",\"email\":\"suresh@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":0,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: Timeout 30000ms exceeded.\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/fluence\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\"]},{\"path\":\"/announcements\",\"ok\":false,\"status\":0,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: net::ERR_TIMED_OUT at https://hrms-frontend-vert.vercel.app/announcements\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/announcements\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\"]},{\"path\":\"/assets\",\"ok\":false,\"status\":0,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: Navigation to \\\"https://hrms-frontend-vert.vercel.app/assets\\\" is interrupted by another navigation to \\\"chrome-error://chromewebdata/\\\"\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/assets\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\"]},{\"path\":\"/org-chart\",\"ok\":false,\"status\":0,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: Navigation to \\\"https://hrms-frontend-vert.vercel.app/org-chart\\\" is interrupted by another navigation to \\\"https://hrms-frontend-vert.vercel.app/assets\\\"\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/org-chart\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\"]},{\"path\":\"/admin\",\"ok\":false,\"status\":0,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: Navigation to \\\"https://hrms-frontend-vert.vercel.app/admin\\\" is interrupted by another navigation to \\\"https://hrms-frontend-vert.vercel.app/admin/org-hierarchy\\\"\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/admin\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\"]},{\"path\":\"/admin/roles\",\"ok\":false,\"status\":0,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[\"navigation error: page.goto: Navigation to \\\"https://hrms-frontend-vert.vercel.app/admin/roles\\\" is interrupted by another navigation to \\\"https://hrms-frontend-vert.vercel.app/admin\\\"\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://hrms-frontend-vert.vercel.app/admin/roles\\\", waiting until \\\"domcontentloaded\\\"\\u001b[22m\\n\"]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
+                      "text": "___GFLAG___ {\"role\":\"RECRUITMENT_ADMIN\",\"email\":\"suresh@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
@@ -2394,124 +2215,103 @@
                   "steps": [
                     {
                       "title": "login as RECRUITMENT_ADMIN",
-                      "duration": 5180
+                      "duration": 2798
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 736
+                      "duration": 650
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 621
+                      "duration": 629
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 421
+                      "duration": 460
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 782
+                      "duration": 634
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 536
+                      "duration": 820
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 740
-                    },
-                    {
-                      "title": "probe /payroll",
-                      "duration": 502
-                    },
-                    {
-                      "title": "probe /expenses",
-                      "duration": 485
-                    },
-                    {
-                      "title": "probe /performance",
-                      "duration": 1407
-                    },
-                    {
-                      "title": "probe /recruitment",
-                      "duration": 679
-                    },
-                    {
-                      "title": "probe /reports",
-                      "duration": 1217
-                    },
-                    {
-                      "title": "probe /settings",
-                      "duration": 479
-                    },
-                    {
-                      "title": "probe /fluence",
-                      "duration": 30008
-                    },
-                    {
-                      "title": "probe /announcements",
-                      "duration": 7219
-                    },
-                    {
-                      "title": "probe /assets",
-                      "duration": 457
-                    },
-                    {
-                      "title": "probe /org-chart",
                       "duration": 449
                     },
                     {
-                      "title": "probe /admin",
-                      "duration": 345
+                      "title": "probe /payroll",
+                      "duration": 516
                     },
                     {
-                      "title": "probe /admin/roles",
-                      "duration": 471
+                      "title": "probe /expenses",
+                      "duration": 439
                     },
                     {
-                      "title": "probe /admin/permissions",
-                      "duration": 602
+                      "title": "probe /performance",
+                      "duration": 533
                     },
                     {
-                      "title": "probe /payroll/runs",
-                      "duration": 668
+                      "title": "probe /recruitment",
+                      "duration": 524
                     },
                     {
-                      "title": "probe /recruitment/candidates",
+                      "title": "probe /reports",
                       "duration": 487
                     },
                     {
+                      "title": "probe /settings",
+                      "duration": 630
+                    },
+                    {
+                      "title": "probe /fluence",
+                      "duration": 602
+                    },
+                    {
+                      "title": "probe /announcements",
+                      "duration": 542
+                    },
+                    {
+                      "title": "probe /assets",
+                      "duration": 444
+                    },
+                    {
+                      "title": "probe /org-chart",
+                      "duration": 741
+                    },
+                    {
+                      "title": "probe /admin",
+                      "duration": 413
+                    },
+                    {
+                      "title": "probe /admin/roles",
+                      "duration": 727
+                    },
+                    {
+                      "title": "probe /admin/permissions",
+                      "duration": 634
+                    },
+                    {
+                      "title": "probe /payroll/runs",
+                      "duration": 657
+                    },
+                    {
+                      "title": "probe /recruitment/candidates",
+                      "duration": 609
+                    },
+                    {
                       "title": "probe /settings/security",
-                      "duration": 523
+                      "duration": 647
                     }
                   ],
-                  "startTime": "2026-06-23T21:25:15.994Z",
+                  "startTime": "2026-06-23T21:31:46.924Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-c648e-NT-ADMIN-suresh-nulogic-io--production-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-c648e-NT-ADMIN-suresh-nulogic-io--production-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-c648e-NT-ADMIN-suresh-nulogic-io--production-chromium/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                    "column": 7,
-                    "line": 299
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b9964562569c5fc90185-4c9069d6f5ef9f7b3693",
@@ -2534,10 +2334,10 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 5,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 17393,
+                  "duration": 16232,
                   "errors": [],
                   "stdout": [
                     {
@@ -2580,7 +2380,7 @@
                       "text": "[greenflag] TEAM_LEAD /settings: OK\n"
                     },
                     {
-                      "text": "[greenflag] TEAM_LEAD /fluence: OK\n"
+                      "text": "[greenflag] TEAM_LEAD /fluence: FAIL\n"
                     },
                     {
                       "text": "[greenflag] TEAM_LEAD /announcements: OK\n"
@@ -2610,7 +2410,7 @@
                       "text": "[greenflag] TEAM_LEAD /settings/security: OK\n"
                     },
                     {
-                      "text": "___GFLAG___ {\"role\":\"TEAM_LEAD\",\"email\":\"dhanush@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
+                      "text": "___GFLAG___ {\"role\":\"TEAM_LEAD\",\"email\":\"dhanush@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
@@ -2618,98 +2418,98 @@
                   "steps": [
                     {
                       "title": "login as TEAM_LEAD",
-                      "duration": 3763
+                      "duration": 3525
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 725
+                      "duration": 672
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 449
+                      "duration": 589
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 432
+                      "duration": 477
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 457
+                      "duration": 476
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 474
+                      "duration": 555
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 462
+                      "duration": 539
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 1072
+                      "duration": 504
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 445
+                      "duration": 433
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 450
+                      "duration": 412
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 424
+                      "duration": 719
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 443
+                      "duration": 419
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 471
+                      "duration": 405
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 450
+                      "duration": 409
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 567
+                      "duration": 409
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 679
+                      "duration": 419
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 568
+                      "duration": 664
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 544
+                      "duration": 546
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 527
+                      "duration": 531
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 545
+                      "duration": 522
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 497
+                      "duration": 483
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 487
+                      "duration": 685
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 527
+                      "duration": 497
                     }
                   ],
-                  "startTime": "2026-06-23T21:26:14.665Z",
+                  "startTime": "2026-06-23T21:32:04.205Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2737,10 +2537,10 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 5,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 17799,
+                  "duration": 20325,
                   "errors": [],
                   "stdout": [
                     {
@@ -2821,98 +2621,98 @@
                   "steps": [
                     {
                       "title": "login as EMPLOYEE",
-                      "duration": 3934
+                      "duration": 3177
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 592
+                      "duration": 612
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 432
+                      "duration": 437
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 392
+                      "duration": 433
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 368
+                      "duration": 592
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 466
+                      "duration": 442
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 579
+                      "duration": 449
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 749
+                      "duration": 537
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 443
+                      "duration": 514
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 430
+                      "duration": 436
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 434
+                      "duration": 382
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 426
+                      "duration": 412
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 541
+                      "duration": 427
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 552
+                      "duration": 437
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 521
+                      "duration": 539
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 385
+                      "duration": 607
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 790
+                      "duration": 852
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 483
+                      "duration": 702
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 530
+                      "duration": 557
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 567
+                      "duration": 723
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 620
+                      "duration": 663
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 1148
+                      "duration": 814
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 805
+                      "duration": 763
                     }
                   ],
-                  "startTime": "2026-06-23T21:26:32.321Z",
+                  "startTime": "2026-06-23T21:32:20.445Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2927,7 +2727,7 @@
         },
         {
           "title": "green-flag smoke — EMPLOYEE (bharath@nulogic.io)",
-          "ok": false,
+          "ok": true,
           "tags": [
             "nulogic.io)"
           ],
@@ -2940,30 +2740,11 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 5,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 17542,
-                  "error": {
-                    "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
-                    "stack": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7",
-                    "location": {
-                      "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                      "column": 7,
-                      "line": 299
-                    },
-                    "snippet": "  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                        "column": 7,
-                        "line": 299
-                      },
-                      "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 17604,
+                  "errors": [],
                   "stdout": [
                     {
                       "text": "[greenflag] EMPLOYEE (bharath@nulogic.io) login: OK\n"
@@ -3005,7 +2786,7 @@
                       "text": "[greenflag] EMPLOYEE /settings: OK\n"
                     },
                     {
-                      "text": "[greenflag] EMPLOYEE /fluence: FAIL\n"
+                      "text": "[greenflag] EMPLOYEE /fluence: OK\n"
                     },
                     {
                       "text": "[greenflag] EMPLOYEE /announcements: OK\n"
@@ -3035,7 +2816,7 @@
                       "text": "[greenflag] EMPLOYEE /settings/security: OK\n"
                     },
                     {
-                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"bharath@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
+                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"bharath@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
@@ -3043,124 +2824,103 @@
                   "steps": [
                     {
                       "title": "login as EMPLOYEE",
-                      "duration": 4290
+                      "duration": 3002
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 692
+                      "duration": 597
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 505
+                      "duration": 511
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 383
+                      "duration": 516
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 458
+                      "duration": 807
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 444
+                      "duration": 471
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 561
+                      "duration": 485
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 695
+                      "duration": 501
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 512
+                      "duration": 459
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 650
+                      "duration": 410
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 625
+                      "duration": 372
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 524
+                      "duration": 391
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 488
+                      "duration": 597
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 486
+                      "duration": 513
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 453
+                      "duration": 494
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 478
+                      "duration": 477
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 914
+                      "duration": 1252
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 720
+                      "duration": 733
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 607
+                      "duration": 684
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 736
+                      "duration": 714
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 1167
+                      "duration": 623
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 527
+                      "duration": 538
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 427
+                      "duration": 481
                     }
                   ],
-                  "startTime": "2026-06-23T21:26:50.132Z",
+                  "startTime": "2026-06-23T21:32:40.811Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-6e994-MPLOYEE-bharath-nulogic-io--production-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-6e994-MPLOYEE-bharath-nulogic-io--production-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-6e994-MPLOYEE-bharath-nulogic-io--production-chromium/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                    "column": 7,
-                    "line": 299
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b9964562569c5fc90185-88fe212daac04fa49ca2",
@@ -3170,7 +2930,7 @@
         },
         {
           "title": "green-flag smoke — EMPLOYEE (chitra@nulogic.io)",
-          "ok": false,
+          "ok": true,
           "tags": [
             "nulogic.io)"
           ],
@@ -3183,30 +2943,11 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 6,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 22289,
-                  "error": {
-                    "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
-                    "stack": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7",
-                    "location": {
-                      "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                      "column": 7,
-                      "line": 299
-                    },
-                    "snippet": "  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                        "column": 7,
-                        "line": 299
-                      },
-                      "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 17024,
+                  "errors": [],
                   "stdout": [
                     {
                       "text": "[greenflag] EMPLOYEE (chitra@nulogic.io) login: OK\n"
@@ -3248,7 +2989,7 @@
                       "text": "[greenflag] EMPLOYEE /settings: OK\n"
                     },
                     {
-                      "text": "[greenflag] EMPLOYEE /fluence: FAIL\n"
+                      "text": "[greenflag] EMPLOYEE /fluence: OK\n"
                     },
                     {
                       "text": "[greenflag] EMPLOYEE /announcements: OK\n"
@@ -3278,7 +3019,7 @@
                       "text": "[greenflag] EMPLOYEE /settings/security: OK\n"
                     },
                     {
-                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"chitra@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
+                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"chitra@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
@@ -3286,124 +3027,103 @@
                   "steps": [
                     {
                       "title": "login as EMPLOYEE",
-                      "duration": 3084
+                      "duration": 3924
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 909
+                      "duration": 800
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 909
+                      "duration": 556
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 691
+                      "duration": 478
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 761
+                      "duration": 451
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 920
+                      "duration": 506
                     },
                     {
                       "title": "probe /leave",
-                      "duration": 657
+                      "duration": 416
                     },
                     {
                       "title": "probe /payroll",
-                      "duration": 839
+                      "duration": 542
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 829
+                      "duration": 437
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 502
+                      "duration": 508
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 446
+                      "duration": 445
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 747
+                      "duration": 617
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 766
+                      "duration": 530
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 457
+                      "duration": 488
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 1251
+                      "duration": 480
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 694
+                      "duration": 432
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 1010
+                      "duration": 694
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 593
+                      "duration": 650
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 1708
+                      "duration": 547
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 723
+                      "duration": 683
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 1138
+                      "duration": 776
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 1585
+                      "duration": 665
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 769
+                      "duration": 433
                     }
                   ],
-                  "startTime": "2026-06-23T21:27:11.354Z",
+                  "startTime": "2026-06-23T21:32:58.428Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-96d5d-EMPLOYEE-chitra-nulogic-io--production-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-96d5d-EMPLOYEE-chitra-nulogic-io--production-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-96d5d-EMPLOYEE-chitra-nulogic-io--production-chromium/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                    "column": 7,
-                    "line": 299
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b9964562569c5fc90185-95d6f4807a9b212b6cb9",
@@ -3413,7 +3133,7 @@
         },
         {
           "title": "green-flag smoke — EMPLOYEE (deepak@nulogic.io)",
-          "ok": false,
+          "ok": true,
           "tags": [
             "nulogic.io)"
           ],
@@ -3426,30 +3146,11 @@
               "projectName": "production-chromium",
               "results": [
                 {
-                  "workerIndex": 7,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 17890,
-                  "error": {
-                    "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
-                    "stack": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7",
-                    "location": {
-                      "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                      "column": 7,
-                      "line": 299
-                    },
-                    "snippet": "  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                        "column": 7,
-                        "line": 299
-                      },
-                      "message": "Error: EMPLOYEE has 1 critical route failures\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n  297 |       criticalRouteFailures.length,\n  298 |       `${roleConfig.role} has ${criticalRouteFailures.length} critical route failures`,\n> 299 |     ).toBe(0);\n      |       ^\n  300 |\n  301 |     await context.close();\n  302 |   });\n    at /Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts:299:7"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 18318,
+                  "errors": [],
                   "stdout": [
                     {
                       "text": "[greenflag] EMPLOYEE (deepak@nulogic.io) login: OK\n"
@@ -3491,7 +3192,7 @@
                       "text": "[greenflag] EMPLOYEE /settings: OK\n"
                     },
                     {
-                      "text": "[greenflag] EMPLOYEE /fluence: FAIL\n"
+                      "text": "[greenflag] EMPLOYEE /fluence: OK\n"
                     },
                     {
                       "text": "[greenflag] EMPLOYEE /announcements: OK\n"
@@ -3521,7 +3222,7 @@
                       "text": "[greenflag] EMPLOYEE /settings/security: OK\n"
                     },
                     {
-                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"deepak@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":false,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
+                      "text": "___GFLAG___ {\"role\":\"EMPLOYEE\",\"email\":\"deepak@nulogic.io\",\"loginOk\":true,\"skipped\":false,\"routes\":[{\"path\":\"/me/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/dashboard\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/employees\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/attendance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/leave\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/payroll\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/expenses\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/performance\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/recruitment\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/reports\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/settings\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/fluence\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/announcements\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/assets\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]},{\"path\":\"/org-chart\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/roles\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/admin/permissions\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/payroll/runs\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/recruitment/candidates\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":true,\"errorSamples\":[]},{\"path\":\"/settings/security\",\"ok\":true,\"status\":200,\"consoleErrors\":0,\"api5xx\":0,\"redirectedToLogin\":false,\"denied\":false,\"errorSamples\":[]}]}\n"
                     }
                   ],
                   "stderr": [],
@@ -3529,124 +3230,103 @@
                   "steps": [
                     {
                       "title": "login as EMPLOYEE",
-                      "duration": 4420
+                      "duration": 3659
                     },
                     {
                       "title": "screenshot /me/dashboard",
-                      "duration": 997
+                      "duration": 686
                     },
                     {
                       "title": "probe /me/dashboard",
-                      "duration": 503
+                      "duration": 635
                     },
                     {
                       "title": "probe /dashboard",
-                      "duration": 431
+                      "duration": 386
                     },
                     {
                       "title": "probe /employees",
-                      "duration": 416
+                      "duration": 407
                     },
                     {
                       "title": "probe /attendance",
-                      "duration": 486
-                    },
-                    {
-                      "title": "probe /leave",
                       "duration": 453
                     },
                     {
+                      "title": "probe /leave",
+                      "duration": 460
+                    },
+                    {
                       "title": "probe /payroll",
-                      "duration": 538
+                      "duration": 705
                     },
                     {
                       "title": "probe /expenses",
-                      "duration": 537
+                      "duration": 425
                     },
                     {
                       "title": "probe /performance",
-                      "duration": 568
+                      "duration": 438
                     },
                     {
                       "title": "probe /recruitment",
-                      "duration": 430
+                      "duration": 516
                     },
                     {
                       "title": "probe /reports",
-                      "duration": 491
+                      "duration": 721
                     },
                     {
                       "title": "probe /settings",
-                      "duration": 586
+                      "duration": 530
                     },
                     {
                       "title": "probe /fluence",
-                      "duration": 493
+                      "duration": 467
                     },
                     {
                       "title": "probe /announcements",
-                      "duration": 513
+                      "duration": 551
                     },
                     {
                       "title": "probe /assets",
-                      "duration": 540
+                      "duration": 443
                     },
                     {
                       "title": "probe /org-chart",
-                      "duration": 854
+                      "duration": 743
                     },
                     {
                       "title": "probe /admin",
-                      "duration": 724
+                      "duration": 681
                     },
                     {
                       "title": "probe /admin/roles",
-                      "duration": 740
+                      "duration": 667
                     },
                     {
                       "title": "probe /admin/permissions",
-                      "duration": 985
+                      "duration": 804
                     },
                     {
                       "title": "probe /payroll/runs",
-                      "duration": 715
+                      "duration": 792
                     },
                     {
                       "title": "probe /recruitment/candidates",
-                      "duration": 630
+                      "duration": 722
                     },
                     {
                       "title": "probe /settings/security",
-                      "duration": 486
+                      "duration": 588
                     }
                   ],
-                  "startTime": "2026-06-23T21:27:48.818Z",
+                  "startTime": "2026-06-23T21:33:15.459Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-4f491-EMPLOYEE-deepak-nulogic-io--production-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-4f491-EMPLOYEE-deepak-nulogic-io--production-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/test-results/greenflag-live-ui.producti-4f491-EMPLOYEE-deepak-nulogic-io--production-chromium/trace.zip"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/frontend/e2e/greenflag-live-ui.production.spec.ts",
-                    "column": 7,
-                    "line": 299
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "b9964562569c5fc90185-b13fffa01b8202d23bb6",
@@ -3659,11 +3339,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-06-23T21:21:30.332Z",
-    "duration": 403899.27099999995,
-    "expected": 8,
+    "startTime": "2026-06-23T21:28:24.624Z",
+    "duration": 310602.174,
+    "expected": 16,
     "skipped": 0,
-    "unexpected": 8,
+    "unexpected": 0,
     "flaky": 0
   }
 }

@@ -107,7 +107,7 @@ type CreateEmployeeFormData = z.infer<typeof createEmployeeFormSchema>;
 
 export default function EmployeesPage() {
   const router = useRouter();
-  const {hasPermission, hasAnyPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isReady: permReady} = usePermissions();
 
   // ALL hooks must be called unconditionally before any returns (React rules)
   const canCreate = hasPermission(Permissions.EMPLOYEE_CREATE);
@@ -266,20 +266,6 @@ export default function EmployeesPage() {
   });
 
   // Permission check + redirect — AFTER all hooks
-  useEffect(() => {
-    if (!permReady) return;
-    if (
-      !hasAnyPermission(
-        Permissions.EMPLOYEE_READ,
-        Permissions.EMPLOYEE_VIEW_ALL,
-        Permissions.EMPLOYEE_VIEW_DEPARTMENT,
-        Permissions.EMPLOYEE_VIEW_TEAM
-      )
-    ) {
-      router.replace('/me/dashboard?denied=1');
-    }
-  }, [permReady, hasAnyPermission, router]);
-
   useEffect(() => {
     document.title = 'Employees | NU-AURA';
   }, []);

@@ -125,16 +125,16 @@ function AccessDeniedShell() {
 
   return (
     <div className="page-shell-centered fade-slide-up">
-      <div className="page-shell-card p-8 text-center fade-slide-up max-w-lg">
-        <div
-          className="mx-auto mb-4 h-14 w-14 rounded-full bg-danger-100/80 dark:bg-danger-900/30 border border-danger-300/40 dark:border-danger-500/25 flex items-center justify-center"
-        >
-          <ShieldAlert className="w-7 h-7 text-danger-700 dark:text-danger-300"/>
-        </div>
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">Access Restricted</h1>
-        <p className="text-[var(--text-secondary)] mb-2">
-          You don't have permission to view this page.
-        </p>
+        <div className="page-shell-card p-8 text-center fade-slide-up max-w-lg">
+          <div
+            className="mx-auto mb-4 h-14 w-14 rounded-full bg-danger-100/80 dark:bg-danger-900/30 border border-danger-300/40 dark:border-danger-500/25 flex items-center justify-center"
+          >
+            <ShieldAlert className="w-7 h-7 text-danger-700 dark:text-danger-300"/>
+          </div>
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">Access Restricted</h1>
+          <p className="text-[var(--text-secondary)] mb-2">
+          You don&apos;t have permission to view this page.
+          </p>
         <p className="text-sm text-[var(--text-muted)] mb-6">
           If you believe this is an error, please contact your system administrator.
         </p>

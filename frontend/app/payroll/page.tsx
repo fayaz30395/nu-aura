@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useEffect} from 'react';
-import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {
   AlertCircle,
@@ -89,21 +88,15 @@ const PAYROLL_RUN_STATUS: Record<string, StatusMeta> = {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function PayrollPage() {
-  const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
-  const hasAccess = hasPermission(Permissions.PAYROLL_VIEW);
-
-  useEffect(() => {
-    if (permReady && !hasAccess) router.replace('/me/dashboard?denied=1');
-  }, [permReady, hasAccess, router]);
+  const {isReady: permReady} = usePermissions();
 
   useEffect(() => {
     document.title = 'Payroll | NU-AURA';
   }, []);
 
-  const {data: runsPage, isLoading, error} = usePayrollRuns(0, 10, undefined, permReady && hasAccess);
+  const {data: runsPage, isLoading, error} = usePayrollRuns(0, 10, undefined, permReady);
 
-  if (!permReady || !hasAccess) return null;
+  if (!permReady) return null;
 
   const runs: PayrollRun[] = runsPage?.content ?? [];
   const latest = runs[0];
