@@ -1,7 +1,10 @@
 'use client';
 
 import {ReactNode} from 'react';
+import {useRouter} from 'next/navigation';
+import {ShieldAlert, ArrowLeft} from 'lucide-react';
 import {usePermissions} from '@/lib/hooks/usePermissions';
+import {AppLayout} from '@/components/layout/AppLayout';
 
 interface PermissionGateProps {
   /** Children to render if permission check passes */
@@ -64,17 +67,40 @@ interface PermissionGateProps {
  *   </PermissionGate>
  */
 export function PageDeniedFallback({
-                                     message = 'You do not have access to this page.',
+                                     message = "You don't have permission to view this page.",
                                    }: { message?: string }): ReactNode {
+  const router = useRouter();
+  // F-005: render the access-denied state INSIDE the app shell (sidebar/header) with a
+  // "Go to Home" escape, mirroring AuthGuard's "Access Restricted" page. Previously this
+  // was a bare card with no chrome, leaving denied users stuck with no way to navigate away.
+  // Safe to render AppLayout here: every PermissionGate that uses this fallback is the outer
+  // wrapper with AppLayout inside the gated child, so on deny no second AppLayout mounts.
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="mx-auto mt-8 flex max-w-xl flex-col gap-2 rounded-lg border border-[var(--status-warning-border)] bg-[var(--status-warning-bg)] px-6 py-5 text-sm text-[var(--status-warning-text)]"
-    >
-      <span className="font-semibold">Access denied</span>
-      {message}
-    </div>
+    <AppLayout>
+      <div className="page-shell-centered fade-slide-up">
+        <div className="page-shell-card p-8 text-center fade-slide-up max-w-lg">
+          <div
+            className="mx-auto mb-4 h-14 w-14 rounded-full bg-danger-100/80 dark:bg-danger-900/30 border border-danger-300/40 dark:border-danger-500/25 flex items-center justify-center"
+          >
+            <ShieldAlert className="w-7 h-7 text-danger-700 dark:text-danger-300"/>
+          </div>
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">Access Restricted</h1>
+          <p role="status" aria-live="polite" className="text-[var(--text-secondary)] mb-2">
+            {message}
+          </p>
+          <p className="text-sm text-[var(--text-muted)] mb-6">
+            If you believe this is an error, please contact your system administrator.
+          </p>
+          <button
+            onClick={() => router.replace('/me/dashboard')}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+          >
+            <ArrowLeft className="w-4 h-4"/>
+            Go to Home
+          </button>
+        </div>
+      </div>
+    </AppLayout>
   );
 }
 

@@ -73,6 +73,25 @@ export const MODULE_MAP: Record<string, string> = {
   CUSTOM: 'Custom',
 };
 
+function normalizeRequesterName(execution: WorkflowExecutionResponse): string | undefined {
+  const rawName = execution.requesterName?.trim();
+  if (rawName && !/^user\s+\d+$/i.test(rawName)) {
+    return rawName;
+  }
+
+  const title = execution.title?.trim();
+  if (!title) return rawName;
+
+  // Titles from workflow engine include "Entity: Name - Subject" for
+  // approvals. Extract the middle segment when id fallback is sent.
+  const match = title.match(/:\s*(.+?)\s*-\s*/);
+  if (match?.[1]) {
+    return match[1].trim();
+  }
+
+  return rawName;
+}
+
 export function mapExecutionToInboxItem(execution: WorkflowExecutionResponse): ApprovalInboxItem {
   const moduleLabel = MODULE_MAP[execution.entityType] ?? execution.entityType;
 
@@ -83,7 +102,7 @@ export function mapExecutionToInboxItem(execution: WorkflowExecutionResponse): A
     module: moduleLabel,
     title: execution.title ?? execution.workflowName ?? execution.entityType,
     referenceNumber: execution.referenceNumber,
-    requesterName: execution.requesterName,
+    requesterName: normalizeRequesterName(execution),
     status: execution.status,
     currentStepName: execution.currentStepName,
     currentAssigneeName: execution.currentAssigneeName,

@@ -522,7 +522,10 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
   {
     path: '/dashboard',
-    permission: Permissions.DASHBOARD_VIEW,
+    allPermissions: [
+      Permissions.DASHBOARD_VIEW,
+      Permissions.ANALYTICS_VIEW,
+    ],
   },
 
   // Profile - accessible to all authenticated users

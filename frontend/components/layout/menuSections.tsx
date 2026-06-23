@@ -199,7 +199,10 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'Dashboard',
           icon: icon.dashboard,
           href: '/dashboard',
-          requiredPermission: Permissions.DASHBOARD_VIEW
+          // F-002: the HR-overview dashboard's primary widget calls /analytics/dashboard
+          // (requires ANALYTICS:VIEW). Gate the nav entry on the same permission so roles
+          // without it (EMPLOYEE/MANAGER) don't see an entry whose content 403s.
+          requiredPermission: Permissions.ANALYTICS_VIEW
         },
         {
           id: 'executive-dashboard',
