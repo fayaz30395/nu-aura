@@ -42,7 +42,7 @@ const updateEmployeeFormSchema = z.object({
   state: z.string().optional().or(z.literal('')),
   postalCode: z.string().optional().or(z.literal('')),
   country: z.string().optional().or(z.literal('')),
-  designation: z.string().min(1, 'Please enter a designation (e.g., Senior Engineer)'),
+  designation: z.string().optional().or(z.literal('')),
   level: z.enum(['ENTRY', 'MID', 'SENIOR', 'LEAD', 'MANAGER', 'SENIOR_MANAGER', 'DIRECTOR', 'VP', 'SVP', 'CXO']).optional().nullable(),
   jobRole: z.enum([
     'SOFTWARE_ENGINEER', 'FRONTEND_DEVELOPER', 'BACKEND_DEVELOPER', 'FULLSTACK_DEVELOPER', 'DEVOPS_ENGINEER',
@@ -132,7 +132,7 @@ export default function EditEmployeePage() {
         state: employee.state || '',
         postalCode: employee.postalCode || '',
         country: employee.country || '',
-        designation: employee.designation,
+        designation: employee.designation || '',
         level: employee.level,
         jobRole: employee.jobRole,
         departmentId: employee.departmentId,
@@ -193,7 +193,7 @@ export default function EditEmployeePage() {
 
         // Only include fields that have changed
         if (formData.designation !== employee.designation) {
-          changeRequest.newDesignation = formData.designation;
+          changeRequest.newDesignation = formData.designation || undefined;
         }
         if (formData.level && formData.level !== employee.level) {
           changeRequest.newLevel = formData.level || undefined;
@@ -247,7 +247,7 @@ export default function EditEmployeePage() {
         // Employment fields: only include if NO change request was created
         // (i.e., they haven't changed from original values)
         ...(employmentChanges ? {} : {
-          designation: formData.designation,
+          designation: formData.designation || undefined,
           level: formData.level || undefined,
           jobRole: formData.jobRole || undefined,
           departmentId: formData.departmentId,
