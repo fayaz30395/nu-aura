@@ -149,8 +149,10 @@ test.describe('NU-Hire Smoke Tests @smoke', () => {
     await navigateTo(page, '/recruitment');
     await page.waitForTimeout(500);
 
-    const found = await page.getByRole('navigation', {name: /main navigation/i})
-      .getByText(/recruitment|onboarding/i)
+    // The contextual sidebar (NavPanel) is <nav aria-label="<Product> navigation">;
+    // match recruitment/onboarding links directly rather than a fixed nav name.
+    const found = await page
+      .locator('nav a[href*="/recruitment"], nav a[href*="/onboarding"]')
       .count();
 
     expect(found).toBeGreaterThan(0);
@@ -315,42 +317,19 @@ test.describe('App Switcher Integration @smoke @critical', () => {
     await page.waitForTimeout(500);
   });
 
-  test('App switcher button is visible in the header @smoke @critical', async ({page}) => {
-    const switcherBtn = page.getByRole('button', {name: /switch application/i});
-    const hasBtn = await switcherBtn.isVisible({timeout: 5000}).catch(() => false);
-
-    if (!hasBtn) {
-      // Fallback: header button with LayoutGrid icon
-      const headerBtn = page.locator('header button svg').first();
-      const hasFallback = await headerBtn.isVisible({timeout: 5000}).catch(() => false);
-      expect(hasFallback).toBe(true);
-    } else {
-      await expect(switcherBtn).toBeVisible();
-    }
+  test('Product rail is visible @smoke @critical', async ({page}) => {
+    // The app switcher is the persistent ProductRail (nav aria-label="Product navigation").
+    const rail = page.locator('aside[aria-label="Product navigation"]');
+    await expect(rail).toBeVisible({timeout: 15000});
   });
 
-  test('App switcher shows all 4 sub-apps @smoke @critical', async ({page}) => {
-    const switcherBtn = page.getByRole('button', {name: /switch application/i});
-    const hasBtn = await switcherBtn.isVisible({timeout: 5000}).catch(() => false);
+  test('Product rail shows all 4 sub-apps @smoke @critical', async ({page}) => {
+    const rail = page.locator('aside[aria-label="Product navigation"]');
+    await expect(rail).toBeVisible({timeout: 15000});
 
-    if (hasBtn) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
-
-      const apps = ['NU-HRMS', 'NU-Hire', 'NU-Grow', 'NU-Fluence'];
-      let visibleApps = 0;
-
-      for (const appName of apps) {
-        const appEl = page.locator(`text=${appName}`).first();
-        if (await appEl.isVisible({timeout: 3000}).catch(() => false)) {
-          visibleApps++;
-        }
-      }
-
-      expect(visibleApps).toBe(4);
+    for (const appName of ['NU-HRMS', 'NU-Hire', 'NU-Grow', 'NU-Fluence']) {
+      await expect(rail.getByRole('button', {name: appName, exact: true})).toBeVisible();
     }
-
-    expect(hasBtn).toBe(true);
   });
 
   test('Navigating HRMS → Hire → Grow preserves authentication @smoke @critical', async ({page}) => {
@@ -371,25 +350,12 @@ test.describe('App Switcher Integration @smoke @critical', () => {
     expect(page.url()).not.toContain('/auth/login');
   });
 
-  test('Active sub-app indicator updates in switcher @smoke', async ({page}) => {
-    // Navigate to a Hire route
-    await navigateTo(page, '/recruitment');
-    await page.waitForTimeout(500);
-
-    const switcherBtn = page.getByRole('button', {name: /switch application/i});
-    const hasBtn = await switcherBtn.isVisible({timeout: 5000}).catch(() => false);
-
-    if (hasBtn) {
-      await switcherBtn.click();
-      await page.waitForTimeout(400);
-
-      // NU-Hire should be indicated as active
-      const activeIndicator = page.locator('[class*="active"], [aria-current="page"], svg[class*="check"]').first();
-      const dropdownOpen = await page.locator('[class*="dropdown"], [class*="popover"], [class*="glass"]').first().isVisible({timeout: 3000}).catch(() => false);
-
-      expect(dropdownOpen).toBe(true);
-    }
-
-    expect(hasBtn).toBe(true);
+  test('Active sub-app indicator updates in the rail @smoke', async ({page}) => {
+    // On an HRMS route, NU-HRMS is the active product (aria-current="true").
+    await navigateTo(page, '/employees');
+    const rail = page.locator('aside[aria-label="Product navigation"]');
+    await expect(rail).toBeVisible({timeout: 15000});
+    await expect(rail.getByRole('button', {name: 'NU-HRMS', exact: true}))
+      .toHaveAttribute('aria-current', 'true');
   });
 });
