@@ -279,12 +279,18 @@ class FluenceService {
     sortDirection: 'ASC' | 'DESC' = 'DESC'
   ): Promise<Page<DocumentTemplate>> {
     const params: Record<string, unknown> = {page, size, sortBy, sortDirection};
+    const empty = {content: [], totalElements: 0, totalPages: 0, size, number: page} as Page<DocumentTemplate>;
     if (categoryId) {
       params.categoryId = categoryId;
     }
-    const response = await apiClient.get<Page<DocumentTemplate>>('/knowledge/templates', {
+    const response = await apiClient.getPermissive<Page<DocumentTemplate>>('/knowledge/templates', {
       params,
     });
+
+    if (response.status === 403 || response.status === 404) {
+      return empty;
+    }
+
     return response.data;
   }
 

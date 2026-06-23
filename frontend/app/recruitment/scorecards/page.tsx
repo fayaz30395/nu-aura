@@ -3,6 +3,7 @@
 import React, {useState} from 'react';
 import {Check, ClipboardList, Edit2, Plus, Star, Trash2, X} from 'lucide-react';
 import {useQueryClient} from '@tanstack/react-query';
+import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -10,7 +11,7 @@ import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
+import {usePermissions} from '@/lib/hooks/usePermissions';
 import {
   getListTemplates1QueryKey,
   useCreateTemplate,
@@ -19,8 +20,6 @@ import {
   useUpdateTemplate,
 } from '@/lib/generated/api/scorecard-controller/scorecard-controller';
 import type {ScorecardTemplateResponse, CriterionRequest, CriterionResponse} from '@/lib/generated/api/model';
-
-const ADMIN_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN];
 
 type CriterionForm = {name: string; category: string; weight: string};
 
@@ -244,18 +243,34 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
 }
 
 export default function ScorecardsPage() {
+  const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyRole, isReady} = usePermissions();
+  const {hasAnyPermission, isReady} = usePermissions();
   const [panelTemplate, setPanelTemplate] = useState<ScorecardTemplateResponse | null | 'new'>(null);
 
-  const isAdmin = isReady && hasAnyRole(...ADMIN_ROLES);
-  const enabled = isAuthenticated && hasHydrated;
+  const canViewScorecards = hasAnyPermission('SCORECARD:VIEW');
+  const canLoadPage = isReady && canViewScorecards;
 
-  const {data: templates, isLoading} = useListTemplates1({query: {enabled}});
+  const {data: templates, isLoading} = useListTemplates1({query: {enabled: canLoadPage && isAuthenticated && hasHydrated}});
   const list: ScorecardTemplateResponse[] = Array.isArray(templates) ? templates : ((templates as unknown) as {content?: ScorecardTemplateResponse[]})?.content ?? [];
 
-  if (hasHydrated && isAuthenticated && isReady && !hasAnyRole(Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.RECRUITER)) {
-    return null;
+  if (isReady && !canLoadPage) {
+    return (
+      <AppLayout>
+        <div className="mx-auto w-full max-w-3xl px-6 py-16 text-center space-y-4">
+          <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wide">
+            Access Restricted
+          </p>
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Scorecards unavailable</h1>
+          <p className="text-sm text-[var(--text-secondary)]">
+            You do not have permission to view interview scorecard templates.
+          </p>
+          <Button variant="outline" onClick={() => router.push('/recruitment')}>
+            Back to recruitment
+          </Button>
+        </div>
+      </AppLayout>
+    );
   }
 
   return (
@@ -266,7 +281,7 @@ export default function ScorecardsPage() {
             <h1 className="page-title">Interview Scorecards</h1>
             <p className="page-subtitle">Manage scorecard templates used to evaluate candidates consistently.</p>
           </div>
-          {isAdmin && (
+          {canLoadPage && (
             <Button size="sm" onClick={() => setPanelTemplate('new')} className="flex items-center gap-1.5">
               <Plus className="w-3.5 h-3.5"/>
               New Template
@@ -283,7 +298,7 @@ export default function ScorecardsPage() {
             <CardContent className="py-16 text-center">
               <ClipboardList className="w-8 h-8 text-[var(--text-muted)] mx-auto mb-2"/>
               <p className="text-sm text-[var(--text-muted)]">No scorecard templates yet</p>
-              {isAdmin && (
+              {canLoadPage && (
                 <Button size="sm" variant="outline" onClick={() => setPanelTemplate('new')} className="mt-4">
                   Create First Template
                 </Button>
