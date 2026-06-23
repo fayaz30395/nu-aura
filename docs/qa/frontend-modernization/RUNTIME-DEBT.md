@@ -53,6 +53,10 @@ and lands on `/me/dashboard`. The 403 blocker is RESOLVED. Console clean (only s
   - **F1** — operator `/dashboard` renders `<LiveGreeting/>` correctly ("Good afternoon, Sumit." + date
     line), KPI cards render, no crash/hydration error. ✓ (The "Analytics could not be loaded" banner +
     `onboarding…403` are pre-existing RBAC/data limits for MANAGER, gracefully handled — not regressions.)
+  - **F2** (modals extraction, `page.tsx` 1481→1174) — **deployed + verified**: operator `/dashboard`
+    renders byte-identically post-extraction (LiveGreeting, KPI, charts, widget grid all present); no new
+    console errors. F3/F4/F5 + the further widgets/render-section split (to reach <500) deliberately NOT
+    pursued — high regression risk on the critical operator screen for internal-only value.
 - **TOOLING LIMIT:** the browser extension captures at a fixed ~1564px viewport regardless of window
   resize, so true 375px screenshots aren't obtainable here → E responsive fixes are static +
   desktop-no-regression verified (the `sm:`/`divide-y` classes are unambiguous and build-green).
