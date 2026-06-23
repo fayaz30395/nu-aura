@@ -167,6 +167,72 @@ Owner: **agent** · **ALL ITEMS RESOLVED 2026-06-17** — 12 real N+1s fixed + c
 
 ---
 
+## 10. Not Done / Needs Improvement — grill-me verdict (2026-06-23)
+
+Measured against **PRODUCT.md vision** at the **code-complete + deployable bar where a
+real write-path must work (facades don't count) and design-language unity counts as done**.
+Verdict: **breadth achieved, depth + design-unity partial.** Surface area of the platform
+(4 sub-apps, 289 pages, 180 controllers, 331 tables, RBAC spine) is built and a *subset* of
+core write-paths is live-proven. Not done: every flow proven correct + one consistent design
+language. Detail below; ✅ items resolved this session.
+
+### 10.1 Write-path proof (Arc A) — biggest real gap
+
+- [x] **FE lint gate repaired** (`1d996195`) — was a silent no-op (ESLint crashed on unregistered
+  plugins + scanned `.vercel/` output). Now green `--max-warnings=0`; **0 design-system drift**
+  (the "82 drift warnings" figure in old reports was stale/wrong). — Owner: agent
+- [ ] **E2E write-path specs are tautological** — specs exist for payroll/recruitment/admin/expense
+  but assert render-only with escape hatches, e.g. `e2e/payroll-run.spec.ts:73`
+  `expect(hasCreate || true).toBe(true)` (can never fail). They prove a page renders and a button
+  exists, never click create→process→approve. This is the "facades, not production-correct"
+  finding at the test layer. **Fix:** upgrade ~12 domain specs to real click-through assertions
+  (remove `|| true`), run against live demo backend. — Sev: HIGH — Owner: **agent** (needs live session)
+- [ ] **~650 mutating endpoints across ~12 domains unproven end-to-end.** Live-verified: auth,
+  leave apply→approve→notify, asset lifecycle, employee CRUD, attendance clock-in. UNVERIFIED
+  (priority order): **HIGH** — recruitment (job/candidate/interview/offer/e-sign), payroll (run→
+  process→approve→lock), admin/RBAC writes, attendance regularization + comp-off; **MED** —
+  expense, performance (cycle/OKR/360), compensation, loan, training/LMS, leave encash/carry-fwd;
+  **LOW** — fluence (wiki/blog/wall), wellness, org units, webhooks, exit/offboarding. — Owner: **agent** (after live session)
+
+### 10.2 Design-language unity (Arc B / PRODUCT.md principle #5)
+
+- [x] **Icon-gradient / side-stripe / gradient-text / brand-color drift = 0** (confirmed once the
+  lint gate actually runs). The design-system `no-restricted-syntax` rules are clean.
+- [ ] **Deferred modernization epics need a browser session** (visual + role-matrix verification):
+  - **Dashboard cluster** (operator): F5 wrap Google `fetch` in `useQuery` (behavioral, unblocks
+    rest) → F2 split `dashboard/page.tsx` into 6 sections → F3 memoize widgets → F4 preserve 3
+    role predicates + RBAC test. — Owner: **agent** (browser-gated)
+  - **Skeleton/loading cluster**: D4 merge duplicate exports (CONFIRMED real — both
+    `components/ui/Skeleton.tsx` (11 exports) and `Loading.tsx` (5 overlapping) export
+    `Skeleton`/`SkeletonCard`/`SkeletonStatCard`/`SkeletonTable`; touches 20+ importers) → D1
+    Mantine→canonical Skeleton across ~22 `loading.tsx` → D3 remove inline spinners. — Owner: **agent**
+- [ ] **Second drift checker** (`scripts/check-styling-drift.mjs`) reports **28** findings
+  (raw-input ×9, raw-textarea ×8, raw-select ×8, inline-style ×3) — separate from ESLint, report-only.
+  Top offenders: `surveys/pulse`, `preboarding/portal`, `projects/psa/timesheets`. — Owner: **agent**
+- [ ] Design-system convergence + accent reconciliation (`#2952A3` vs `#2563EB`) — see §5 (still open).
+
+### 10.3 Functional gaps vs the plan
+
+- [ ] **NU-Fluence LinkedIn posts is a STUB** — `/api/v1/linkedin-posts` returns empty results.
+  Either wire it or remove the surface. — Sev: LOW — Owner: **agent/user-decision**
+
+### 10.4 Test depth & correctness assurance (needs improvement)
+
+- [ ] **Backend line coverage ~0.19** (org standard 0.80); FE ~60%. Breadth high, depth low. — Owner: **agent**
+- [ ] **FINANCE_ADMIN boundary untested** — no seeded FINANCE_ADMIN fixture (V312 seeds the user; no test). — Owner: **agent**
+- [ ] **NOBYPASSRLS live proof missing** — RLS tenant isolation static-proven locally; no live-prod proof. — Owner: **agent** (needs live)
+- [ ] **God-components** — `dashboard/page.tsx` and peers are oversized (the F2 split targets this). — Owner: **agent**
+
+### 10.5 Operational / infra (mostly config — gate real-user launch, not build)
+
+- [ ] **Demo creds live in prod** — see §1 SEC-3b (the one true launch blocker; env flip, code fail-closed).
+- [ ] **Deployed build lags HEAD (RT-01)** — `/admin/users` 404s live though it exists in code; Vercel
+  deploys are CLI-only (not git-auto) → redeploy HEAD before any live verification. — Owner: **user/agent**
+- [ ] **Railway Kafka ephemeral** (staging only) — durable Kafka/outbox needed for prod scale. — Owner: **user**
+- [ ] **CI needs `NEXT_PUBLIC_API_URL` injected**; confirm CI green on a frozen SHA (see §1/§2). — Owner: **agent**
+
+---
+
 ## Done this engagement (for reference)
 - ✅ Theme dark-mode override bug fixed (Light now applies over a dark OS).
 - ✅ Brand-color leaks purged (donut/attendance/notification-dots/workflow-chip/Loading) → semantic/accent tokens.
