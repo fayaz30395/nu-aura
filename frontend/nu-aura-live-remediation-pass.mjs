@@ -21,28 +21,24 @@ async function screenshot(page, name) {
 
 async function fillLogin(page, email, password) {
   await page.goto(`${BASE}/auth/login`, { waitUntil: 'domcontentloaded' });
+  const emailInput = page.locator('#login-email');
+  const passwordInput = page.locator('#login-password');
+  const emailButton = page.locator(
+    'button:has-text(\"Email and password\"), button:has-text(\"Sign in with Email\"), button:has-text(\"Sign in with email\")'
+  ).first();
 
-  const emailInput = page.locator('input[type="email"]');
-  const passwordInput = page.locator('input[type="password"]');
-
-  if (await emailInput.first().isVisible({ timeout: 30000 })) {
-    await emailInput.first().fill(email);
-    await passwordInput.first().fill(password);
-    const submit = page.getByRole('button', { name: /sign in|log in|login/i }).first();
-    await submit.click();
-  } else {
-    const emailButton = page.locator('button:has-text("Email and password"), button:has-text("Sign in with Email"), button:has-text("Sign in with email")').first();
-    if (await emailButton.isVisible({ timeout: 15000 })) {
+  await emailInput.waitFor({timeout: 15000, state: 'visible'}).catch(async () => {
+    if (await emailButton.isVisible().catch(() => false)) {
       await emailButton.click();
-      await emailInput.first().waitFor({ timeout: 15000 });
-      await emailInput.first().fill(email);
-      await passwordInput.first().fill(password);
-      const submit = page.getByRole('button', { name: /sign in|continue|login|log in/i }).first();
-      await submit.click();
-    } else {
-      throw new Error('No login path detected');
+      return emailInput.waitFor({timeout: 15000, state: 'visible'});
     }
-  }
+    return Promise.reject(new Error('No login path detected'));
+  });
+
+  await emailInput.fill(email);
+  await passwordInput.fill(password);
+  const submit = page.getByRole('button', {name: /sign in|continue|login|log in/i}).first();
+  await submit.click();
 
   await page.waitForURL(/\/me\/dashboard/, { timeout: 90000 });
   await page.waitForTimeout(2000);

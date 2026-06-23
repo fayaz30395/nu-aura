@@ -139,7 +139,19 @@ a surgical edit (deny line → `?denied=1`, escape button untouched).
 
 Gated: `tsc --noEmit` clean + `next build` green (Next's app-dir eslint passed; the only
 repo-wide `eslint .` failure is the other session's untracked scratch `playwright-edit-check.mjs`,
-outside Next's lint dirs — not committed). Deployed + push pending.
+outside Next's lint dirs — not committed). Deployed (`dpl_6iznuFMfk…`, via `--archive=tgz` to
+bypass the free-tier per-file upload limit hit by this+the parallel session's many deploys) +
+**pushed** to both forks.
+
+**Verified live end-to-end:**
+- arun@ (EMPLOYEE) → `/reports` (route-gated in `routes.ts`) → AuthGuard "Access Restricted" page + "Go to Home". ✓
+- arun@ → `/fluence/search` (page-gated, NOT in routes.ts) → redirects to `/me/dashboard` with `?denied=1` stripped = "Access Denied" toast fired. ✓
+- Toast handler itself independently validated (direct `/me/dashboard?denied=1` → param stripped).
+
+Both deny mechanisms now give visible feedback + an escape — no silent bounces. **Nuance:** pages in
+`routes.ts` are caught by AuthGuard's Access-Restricted page first, so their page-level `?denied=1`
+redirect is belt-and-suspenders; the page redirect is the live mechanism for non-routes.ts pages
+(fluence/*, etc.). All 73 changes are consistent + correct either way.
 
 **Remaining (out of scope per operator):** HR_ADMIN knowledge access + `finance@` profile
 = backend RBAC-seed migrations (operator deferred). Residual deny-style split: AuthGuard
