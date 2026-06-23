@@ -236,7 +236,7 @@ test.describe('Gantt Chart - Timeline Display', () => {
     const hasTasks = await page.locator('[class*="border-b"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=No tasks found').isVisible().catch(() => false);
 
-    expect(hasTasks || hasEmpty || true).toBe(true);
+    expect(hasTasks || hasEmpty).toBe(true);
   });
 
   test('should show empty state message', async ({page}) => {
@@ -353,7 +353,7 @@ test.describe('Gantt Chart - Visual Elements', () => {
     const gradientIcon = page.locator('[class*="gradient"]').first();
     const hasGradient = await gradientIcon.isVisible().catch(() => false);
 
-    expect(hasGradient || true).toBe(true);
+    expect(hasGradient).toBe(true);
   });
 
   test('should display icons', async ({page}) => {
@@ -379,7 +379,7 @@ test.describe('Gantt Chart - Visual Elements', () => {
     const scrollContainer = page.locator('[class*="overflow-x-auto"]');
     const hasScroll = await scrollContainer.isVisible().catch(() => false);
 
-    expect(hasScroll || true).toBe(true);
+    expect(hasScroll).toBe(true);
   });
 
   test('should have minimum width for gantt chart', async ({page}) => {
@@ -401,7 +401,7 @@ test.describe('Gantt Chart - Loading State', () => {
     const hasLoader = await loader.isVisible().catch(() => false);
 
     // Either caught loader or loaded too fast
-    expect(hasLoader || true).toBe(true);
+    expect(hasLoader).toBe(true);
 
     // Wait for page to fully load
     await waitForGanttPageLoad(page);

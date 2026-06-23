@@ -99,7 +99,7 @@ test.describe('Asset Flow — Maintenance Request', () => {
     const hasBtn = await maintenanceBtn.isVisible({timeout: 5000}).catch(() => false);
 
     // Accept button or any page content (maintenance may not be available)
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 
   test('should open maintenance form when clicking request button', async ({page}) => {
@@ -115,7 +115,7 @@ test.describe('Asset Flow — Maintenance Request', () => {
       await page.waitForTimeout(1000);
 
       const hasModal = await page.locator('[role="dialog"], [class*="modal"], form').first().isVisible().catch(() => false);
-      expect(hasModal || true).toBe(true);
+      expect(hasModal).toBe(true);
     }
   });
 });

@@ -39,7 +39,7 @@ test.describe('Loans Page', () => {
       .first();
     const hasBtn = await applyBtn.isVisible().catch(() => false);
     // Button may be role-gated; just verify page loaded cleanly
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 
   test('should load without crashing', async ({page}) => {
@@ -81,7 +81,7 @@ test.describe('Loans - My Loans Tab', () => {
       }
     }
     // Either has status badges or no loans exist
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 });
 
@@ -270,7 +270,7 @@ test.describe('Loans - Manager Approval', () => {
     const hasReject = await rejectBtn.isVisible().catch(() => false);
 
     // Either has action buttons or no pending loans
-    expect(hasApprove || hasReject || true).toBe(true);
+    expect(hasApprove || hasReject).toBe(true);
   });
 });
 
@@ -359,7 +359,7 @@ test.describe('Loans - Status Transitions', () => {
 
     const hasApproved = await page.locator('text=/APPROVED|ACTIVE|DISBURSED/i').first().isVisible().catch(() => false);
     // Either has approved loans or none exist
-    expect(hasApproved || true).toBe(true);
+    expect(hasApproved).toBe(true);
   });
 
   test('should show loan detail view', async ({page}) => {
@@ -390,7 +390,7 @@ test.describe('Loans - Status Transitions', () => {
       .catch(() => false);
 
     // May or may not be visible depending on data
-    expect(hasRepayment || true).toBe(true);
+    expect(hasRepayment).toBe(true);
   });
 });
 

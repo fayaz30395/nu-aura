@@ -94,7 +94,7 @@ test.describe('File Upload Roundtrip — Drive @regression @critical', () => {
 
     // sample.pdf should appear in the list (or at least not crash the page)
     const fileVisible = await page.locator('text=/sample\\.pdf/i').first().isVisible({timeout: 3000}).catch(() => false);
-    expect(fileVisible || true).toBe(true);
+    expect(fileVisible).toBe(true);
     await expect(page.locator('text=/something went wrong|upload failed/i')).not.toBeVisible();
   });
 
@@ -126,7 +126,7 @@ test.describe('File Upload Roundtrip — Drive @regression @critical', () => {
     // File chip / attached label should mention the filename
     const fileChip = page.locator('text=/sample\\.pdf|sample-pdf/i').first();
     const attached = await fileChip.isVisible({timeout: 3000}).catch(() => false);
-    expect(attached || true).toBe(true);
+    expect(attached).toBe(true);
 
     await expect(page.locator('text=/something went wrong|upload failed|file too large/i')).not.toBeVisible();
   });

@@ -652,8 +652,8 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     const hasPerformanceInSidebar = await page.locator('nav a[href*="/performance"]').isVisible().catch(() => false);
 
     // Both should have their respective items (context switched)
-    expect(hasEmployeesInSidebar || true).toBe(true);
-    expect(hasPerformanceInSidebar || true).toBe(true);
+    expect(hasEmployeesInSidebar).toBe(true);
+    expect(hasPerformanceInSidebar).toBe(true);
   });
 
   test('sidebar maintains scroll position within same app', async ({page}) => {
@@ -677,6 +677,6 @@ test.describe('Navigation — App-Aware Sidebar', () => {
       expect(hasNav).toBe(true);
     }
 
-    expect(hasLeave || true).toBe(true);
+    expect(hasLeave).toBe(true);
   });
 });

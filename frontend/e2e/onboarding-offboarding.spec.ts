@@ -62,7 +62,7 @@ test.describe('Onboarding Page', () => {
     const hasBtn = await initiateBtn.isVisible().catch(() => false);
 
     // Button visibility depends on user role; verify page is stable
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 });
 
@@ -194,7 +194,7 @@ test.describe('Onboarding - Department Head Approval', () => {
     const hasReject = await rejectBtn.isVisible().catch(() => false);
 
     // Either has actions or no pending items
-    expect(hasApprove || hasReject || true).toBe(true);
+    expect(hasApprove || hasReject).toBe(true);
   });
 });
 
@@ -221,7 +221,7 @@ test.describe('Onboarding - Checklist & Tasks', () => {
         .isVisible()
         .catch(() => false);
 
-      expect(hasChecklist || true).toBe(true);
+      expect(hasChecklist).toBe(true);
     }
   });
 
@@ -241,7 +241,7 @@ test.describe('Onboarding - Checklist & Tasks', () => {
     const hasHeading = await page.getByRole('heading').first().isVisible().catch(() => false);
 
     // Either templates page loads or redirects
-    expect(hasTemplates || hasHeading || true).toBe(true);
+    expect(hasTemplates || hasHeading).toBe(true);
   });
 
   test('should show status indicators for checklist items', async ({page}) => {
@@ -259,7 +259,7 @@ test.describe('Onboarding - Checklist & Tasks', () => {
       .catch(() => false);
 
     // Might not have data; just verify page stability
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
     await expect(
       page.locator('text=/something went wrong|unhandled error/i')
     ).not.toBeVisible();
@@ -330,7 +330,7 @@ test.describe('Offboarding - HR Initiates', () => {
         .catch(() => false);
       const navigated = page.url().includes('/offboarding/') && page.url() !== '/offboarding';
 
-      expect(hasModal || navigated || true).toBe(true);
+      expect(hasModal || navigated).toBe(true);
     }
   });
 
@@ -360,7 +360,7 @@ test.describe('Offboarding - HR Initiates', () => {
         .isVisible()
         .catch(() => false);
 
-      expect(hasEmployeeField || true).toBe(true);
+      expect(hasEmployeeField).toBe(true);
     }
   });
 });
@@ -387,7 +387,7 @@ test.describe('Offboarding - Checklist Generation', () => {
         .isVisible()
         .catch(() => false);
 
-      expect(hasChecklist || true).toBe(true);
+      expect(hasChecklist).toBe(true);
     }
   });
 
@@ -404,7 +404,7 @@ test.describe('Offboarding - Checklist Generation', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasStages || true).toBe(true);
+    expect(hasStages).toBe(true);
   });
 
   test('should navigate to exit process detail page', async ({page}) => {

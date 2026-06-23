@@ -56,7 +56,7 @@ test.describe('Notifications — Bell Icon & Dropdown', () => {
       expect(hasDropdown).toBe(true);
     }
 
-    expect(hasBell || true).toBe(true);
+    expect(hasBell).toBe(true);
   });
 
   test('notification dropdown shows items or empty state', async ({page}) => {
@@ -77,7 +77,7 @@ test.describe('Notifications — Bell Icon & Dropdown', () => {
       expect(hasItems || hasEmpty || hasContent).toBe(true);
     }
 
-    expect(hasBell || true).toBe(true);
+    expect(hasBell).toBe(true);
   });
 
   test('notification badge shows unread count', async ({page}) => {
@@ -91,11 +91,11 @@ test.describe('Notifications — Bell Icon & Dropdown', () => {
       const text = await badge.textContent().catch(() => '');
       // Badge should contain a number
       const isNumeric = /^\d+$/.test(text.trim());
-      expect(isNumeric || true).toBe(true);
+      expect(isNumeric).toBe(true);
     }
 
     // Badge may not be present if no unread notifications
-    expect(hasBadge || true).toBe(true);
+    expect(hasBadge).toBe(true);
   });
 });
 
@@ -179,10 +179,10 @@ test.describe('Notifications — Leave Approval Workflow', () => {
       const hasLeaveNotif = await leaveNotif.isVisible().catch(() => false);
 
       // Notification may or may not be present depending on Kafka/async delivery
-      expect(hasLeaveNotif || true).toBe(true);
+      expect(hasLeaveNotif).toBe(true);
     }
 
-    expect(hasBell || true).toBe(true);
+    expect(hasBell).toBe(true);
   });
 
   test('manager clicks notification and navigates to approval page', async ({page}) => {
@@ -214,7 +214,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
         // Should navigate to an approval or leave page
         const url = page.url();
         const navigatedToApproval = url.includes('/leave') || url.includes('/approval') || url.includes('/pending');
-        expect(navigatedToApproval || true).toBe(true);
+        expect(navigatedToApproval).toBe(true);
       }
 
       // Also check the "View All" link
@@ -228,11 +228,11 @@ test.describe('Notifications — Leave Approval Workflow', () => {
         // Should navigate to a notifications page
         const hasNotifPage = page.url().includes('/notification');
         const hasHeading = await page.locator('h1, h2').first().isVisible().catch(() => false);
-        expect(hasNotifPage || hasHeading || true).toBe(true);
+        expect(hasNotifPage || hasHeading).toBe(true);
       }
     }
 
-    expect(hasBell || true).toBe(true);
+    expect(hasBell).toBe(true);
   });
 
   test('manager approves leave and employee gets approval notification', async ({page}) => {
@@ -264,7 +264,7 @@ test.describe('Notifications — Leave Approval Workflow', () => {
 
       // Should show success
       const hasSuccess = await page.locator('text=/approved|success/i').first().isVisible().catch(() => false);
-      expect(hasSuccess || true).toBe(true);
+      expect(hasSuccess).toBe(true);
     }
 
     // Step 2: Login as employee and check for approval notification
@@ -287,10 +287,10 @@ test.describe('Notifications — Leave Approval Workflow', () => {
       const hasApprovalNotif = await approvalNotif.isVisible().catch(() => false);
 
       // Notification delivery is async; test validates the UI flow
-      expect(hasApprovalNotif || true).toBe(true);
+      expect(hasApprovalNotif).toBe(true);
     }
 
-    expect(hasBell || hasApprove || true).toBe(true);
+    expect(hasBell || hasApprove).toBe(true);
   });
 });
 
@@ -330,9 +330,9 @@ test.describe('Notifications — Mark as Read', () => {
         }
       }
 
-      expect(hasMarkAll || true).toBe(true);
+      expect(hasMarkAll).toBe(true);
     }
 
-    expect(hasBell || true).toBe(true);
+    expect(hasBell).toBe(true);
   });
 });

@@ -36,7 +36,7 @@ test.describe('RBAC — Manager CAN Approve Team Leave @rbac', () => {
     const hasTeamRequests = await page.locator('table tbody tr, [class*="request"], [class*="approval-item"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no pending|all approved|no requests/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasTeamRequests || hasEmptyState || true).toBe(true);
+    expect(hasTeamRequests || hasEmptyState).toBe(true);
   });
 
   test('Manager can click approve on pending leave @rbac @critical', async ({page}) => {
@@ -50,7 +50,7 @@ test.describe('RBAC — Manager CAN Approve Team Leave @rbac', () => {
       const approveBtn = pendingRow.locator('button').filter({hasText: /approve/i}).first();
       const hasApprove = await approveBtn.isVisible({timeout: 3000}).catch(() => false);
 
-      expect(hasApprove || true).toBe(true);
+      expect(hasApprove).toBe(true);
 
       if (hasApprove) {
         await approveBtn.click();
@@ -65,7 +65,7 @@ test.describe('RBAC — Manager CAN Approve Team Leave @rbac', () => {
       }
     }
 
-    expect(hasPending || true).toBe(true);
+    expect(hasPending).toBe(true);
   });
 });
 
@@ -111,7 +111,7 @@ test.describe('RBAC — Manager CANNOT Access Payroll Admin @rbac', () => {
     const hasAccessDenied = await page.locator('text=/access denied|unauthorized|permission|forbidden/i').first().isVisible({timeout: 5000}).catch(() => false);
     const redirectedAway = !page.url().includes('/payroll/runs');
 
-    expect(hasAccessDenied || redirectedAway || true).toBe(true);
+    expect(hasAccessDenied || redirectedAway).toBe(true);
   });
 
   test('Manager blocked from salary structure config @rbac @critical', async ({page}) => {
@@ -121,7 +121,7 @@ test.describe('RBAC — Manager CANNOT Access Payroll Admin @rbac', () => {
     const hasAccessDenied = await page.locator('text=/access denied|unauthorized|permission|forbidden/i').first().isVisible({timeout: 5000}).catch(() => false);
     const redirectedAway = !page.url().includes('/payroll/salary-structures');
 
-    expect(hasAccessDenied || redirectedAway || true).toBe(true);
+    expect(hasAccessDenied || redirectedAway).toBe(true);
   });
 
   test('Payroll config links absent from manager sidebar @rbac', async ({page}) => {
@@ -147,7 +147,7 @@ test.describe('RBAC — Manager CANNOT Access Recruitment Admin @rbac', () => {
     const hasAccessDenied = await page.locator('text=/access denied|unauthorized|permission|forbidden/i').first().isVisible({timeout: 5000}).catch(() => false);
     const redirectedAway = !page.url().includes('/recruitment/candidates');
 
-    expect(hasAccessDenied || redirectedAway || true).toBe(true);
+    expect(hasAccessDenied || redirectedAway).toBe(true);
   });
 
   test('Manager cannot create job postings @rbac @critical', async ({page}) => {
@@ -163,10 +163,10 @@ test.describe('RBAC — Manager CANNOT Access Recruitment Admin @rbac', () => {
       const hasCreate = await createBtn.isVisible({timeout: 3000}).catch(() => false);
       const isEnabled = hasCreate && await createBtn.isEnabled({timeout: 2000}).catch(() => false);
 
-      expect(!isEnabled || true).toBe(true);
+      expect(!isEnabled).toBe(true);
     }
 
-    expect(hasAccessDenied || redirectedAway || true).toBe(true);
+    expect(hasAccessDenied || redirectedAway).toBe(true);
   });
 });
 
@@ -182,7 +182,7 @@ test.describe('RBAC — Manager CANNOT Access System Admin @rbac', () => {
     const hasAccessDenied = await page.locator('text=/access denied|unauthorized|permission|forbidden/i').first().isVisible({timeout: 5000}).catch(() => false);
     const redirectedAway = !page.url().includes('/admin/roles');
 
-    expect(hasAccessDenied || redirectedAway || true).toBe(true);
+    expect(hasAccessDenied || redirectedAway).toBe(true);
   });
 
   test('Admin menu absent from manager sidebar @rbac @critical', async ({page}) => {
@@ -214,6 +214,6 @@ test.describe('RBAC — Team Lead Boundaries @rbac', () => {
     const hasAccessDenied = await page.locator('text=/access denied|unauthorized|permission|forbidden/i').first().isVisible({timeout: 5000}).catch(() => false);
     const redirectedAway = !page.url().includes('/payroll/runs');
 
-    expect(hasAccessDenied || redirectedAway || true).toBe(true);
+    expect(hasAccessDenied || redirectedAway).toBe(true);
   });
 });

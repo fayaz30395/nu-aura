@@ -147,7 +147,7 @@ test.describe('Fluence Dashboard — /fluence/dashboard', () => {
     const hasRecent = await recentSection.isVisible({timeout: 5000}).catch(() => false);
 
     // Either shows content or empty state — both are acceptable
-    expect(hasRecent || true).toBe(true);
+    expect(hasRecent).toBe(true);
   });
 });
 
@@ -172,7 +172,7 @@ test.describe('Wiki List — /fluence/wiki', () => {
   test('shows Spaces sidebar panel @regression', async ({page}) => {
     const spacesPanel = page.locator('text=/Spaces/i').first();
     const hasSpaces = await spacesPanel.isVisible({timeout: 5000}).catch(() => false);
-    expect(hasSpaces || true).toBe(true);
+    expect(hasSpaces).toBe(true);
   });
 
   test('shows "New Page" button for admin @regression', async ({page}) => {
@@ -218,7 +218,7 @@ test.describe('Wiki List — /fluence/wiki', () => {
     const hasBtn = await createSpaceBtn.isVisible({timeout: 3000}).catch(() => false);
 
     // May not appear until spaces panel loads; gracefully accept
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 
   test('employee can view the wiki list page @rbac', async ({page}) => {
@@ -245,7 +245,7 @@ test.describe('Wiki List — /fluence/wiki', () => {
       const hasEmptyFiltered = await emptyFiltered.isVisible({timeout: 3000}).catch(() => false);
 
       // Either shows empty state or has no result cards — both acceptable
-      expect(hasEmptyFiltered || true).toBe(true);
+      expect(hasEmptyFiltered).toBe(true);
       await searchInput.clear();
     }
   });
@@ -269,7 +269,7 @@ test.describe('Wiki Create — /fluence/wiki/new', () => {
     const titleArea = page.locator('textarea[placeholder="Untitled"]').first();
     const hasTitleArea = await titleArea.isVisible({timeout: 8000}).catch(() => false);
 
-    expect(hasTitleArea || true).toBe(true);
+    expect(hasTitleArea).toBe(true);
 
     if (hasTitleArea) {
       await titleArea.fill(`${runId} Test Wiki`);
@@ -282,7 +282,7 @@ test.describe('Wiki Create — /fluence/wiki/new', () => {
     const editor = page.locator('[contenteditable="true"], .ProseMirror, [class*="tiptap"]').first();
     const hasEditor = await editor.isVisible({timeout: 10000}).catch(() => false);
 
-    expect(hasEditor || true).toBe(true);
+    expect(hasEditor).toBe(true);
   });
 
   test('top action bar shows Draft indicator and Publish button @regression', async ({page}) => {
@@ -307,7 +307,7 @@ test.describe('Wiki Create — /fluence/wiki/new', () => {
       const drawer = page.locator('text=/Page Settings/i').first();
       const hasDrawer = await drawer.isVisible({timeout: 5000}).catch(() => false);
 
-      expect(hasDrawer || true).toBe(true);
+      expect(hasDrawer).toBe(true);
 
       // Close drawer
       const closeOrEdit = page.locator('button').filter({hasText: /Continue Editing|Close/i}).first();
@@ -331,7 +331,7 @@ test.describe('Wiki Create — /fluence/wiki/new', () => {
       const hasOrg = await orgOption.isVisible({timeout: 5000}).catch(() => false);
       const hasPrivate = await privateOption.isVisible({timeout: 5000}).catch(() => false);
 
-      expect(hasOrg || hasPrivate || true).toBe(true);
+      expect(hasOrg || hasPrivate).toBe(true);
 
       await page.keyboard.press('Escape');
     }
@@ -341,7 +341,7 @@ test.describe('Wiki Create — /fluence/wiki/new', () => {
     const saveDraftBtn = page.locator('button').filter({hasText: /Save Draft/i}).first();
     const hasSaveDraft = await saveDraftBtn.isVisible({timeout: 8000}).catch(() => false);
 
-    expect(hasSaveDraft || true).toBe(true);
+    expect(hasSaveDraft).toBe(true);
   });
 
   test('back button navigates away from /fluence/wiki/new @regression', async ({page}) => {
@@ -386,7 +386,7 @@ test.describe('Wiki Article View — /fluence/wiki/[slug]', () => {
 
     const url = page.url();
     const hasHandled = url.includes('/fluence') || url.includes('/not-found') || url.includes('/404');
-    expect(hasHandled || true).toBe(true);
+    expect(hasHandled).toBe(true);
   });
 
   test('navigating from wiki list to article shows content @regression', async ({page}) => {
@@ -468,7 +468,7 @@ test.describe('Wiki Article Edit — /fluence/wiki/[slug]/edit', () => {
         const titleInput = page.locator('input[placeholder*="Enter page title"], textarea').first();
         const hasTitleInput = await titleInput.isVisible({timeout: 5000}).catch(() => false);
 
-        expect(hasTitleInput || true).toBe(true);
+        expect(hasTitleInput).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -495,7 +495,7 @@ test.describe('Wiki Article Edit — /fluence/wiki/[slug]/edit', () => {
 
         const visibilityLabel = page.locator('label').filter({hasText: /Visibility/i}).first();
         const hasVis = await visibilityLabel.isVisible({timeout: 5000}).catch(() => false);
-        expect(hasVis || true).toBe(true);
+        expect(hasVis).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -509,7 +509,7 @@ test.describe('Wiki Article Edit — /fluence/wiki/[slug]/edit', () => {
     const url = page.url();
     // Should redirect to dashboard or wiki list
     const redirected = !url.includes('/edit') || url.includes('/dashboard');
-    expect(redirected || true).toBe(true);
+    expect(redirected).toBe(true);
     await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();
   });
 
@@ -575,7 +575,7 @@ test.describe('Blog List — /fluence/blogs', () => {
     const allPostsPill = page.locator('button').filter({hasText: /All Posts/i}).first();
     const hasAll = await allPostsPill.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasAll || true).toBe(true);
+    expect(hasAll).toBe(true);
   });
 
   test('"New Post" button is visible for admin @regression', async ({page}) => {
@@ -602,7 +602,7 @@ test.describe('Blog List — /fluence/blogs', () => {
     // Should show "No posts match" or empty filtered state
     const emptyMsg = page.locator('text=/No posts match|no results/i').first();
     const hasEmpty = await emptyMsg.isVisible({timeout: 3000}).catch(() => false);
-    expect(hasEmpty || true).toBe(true);
+    expect(hasEmpty).toBe(true);
 
     await searchInput.clear();
   });
@@ -667,19 +667,19 @@ test.describe('Blog Create — /fluence/blogs/new', () => {
   test('Excerpt textarea is present @regression', async ({page}) => {
     const excerptArea = page.locator('textarea[placeholder*="brief excerpt"]').first();
     const hasExcerpt = await excerptArea.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasExcerpt || true).toBe(true);
+    expect(hasExcerpt).toBe(true);
   });
 
   test('Visibility dropdown is rendered with options @regression', async ({page}) => {
     const visLabel = page.locator('label').filter({hasText: /Visibility/i}).first();
     const hasVis = await visLabel.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasVis || true).toBe(true);
+    expect(hasVis).toBe(true);
   });
 
   test('Tiptap content editor loads @regression', async ({page}) => {
     const editor = page.locator('[contenteditable="true"], .ProseMirror').first();
     const hasEditor = await editor.isVisible({timeout: 10000}).catch(() => false);
-    expect(hasEditor || true).toBe(true);
+    expect(hasEditor).toBe(true);
   });
 
   test('Cancel button navigates away from /fluence/blogs/new @regression', async ({page}) => {
@@ -698,7 +698,7 @@ test.describe('Blog Create — /fluence/blogs/new', () => {
   test('"Create Post" button is visible (permission-gated) @regression', async ({page}) => {
     const createBtn = page.locator('button').filter({hasText: /Create Post/i}).first();
     const hasCreate = await createBtn.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('back button is present and navigates away @regression', async ({page}) => {
@@ -725,7 +725,7 @@ test.describe('Blog Create — /fluence/blogs/new', () => {
       // At minimum the title error should show
       const error = page.locator('text=/Title is required|required/i').first();
       const hasError = await error.isVisible({timeout: 3000}).catch(() => false);
-      expect(hasError || true).toBe(true);
+      expect(hasError).toBe(true);
     }
   });
 });
@@ -763,7 +763,7 @@ test.describe('Templates — /fluence/templates', () => {
 
       const noMatch = page.locator('text=/No templates match/i').first();
       const hasNoMatch = await noMatch.isVisible({timeout: 3000}).catch(() => false);
-      expect(hasNoMatch || true).toBe(true);
+      expect(hasNoMatch).toBe(true);
 
       await searchInput.clear();
     } else {
@@ -784,7 +784,7 @@ test.describe('Templates — /fluence/templates', () => {
     const createBtn = page.locator('button').filter({hasText: /Create Template/i}).first();
     const hasCreate = await createBtn.isVisible({timeout: 8000}).catch(() => false);
     // Might be behind KNOWLEDGE_TEMPLATE_CREATE permission
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('template card shows Use and View buttons @regression', async ({page}) => {
@@ -797,7 +797,7 @@ test.describe('Templates — /fluence/templates', () => {
     const hasView = await viewBtn.isVisible({timeout: 3000}).catch(() => false);
 
     // Only visible if templates exist
-    expect(hasUse || hasView || true).toBe(true);
+    expect(hasUse || hasView).toBe(true);
   });
 
   test('employee can access templates page @rbac', async ({page}) => {
@@ -819,7 +819,7 @@ test.describe('Templates — /fluence/templates', () => {
       // Tags are span elements with text content
       const tags = page.locator('span').filter({hasText: /\w+/});
       const hasTags = await tags.first().isVisible({timeout: 3000}).catch(() => false);
-      expect(hasTags || true).toBe(true);
+      expect(hasTags).toBe(true);
     } else {
       expect(true).toBe(true);
     }

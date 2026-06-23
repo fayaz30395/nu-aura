@@ -71,7 +71,7 @@ test.describe('Overtime — Tab Navigation', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('Super Admin sees Team Overtime tab', async ({page}) => {
@@ -132,13 +132,13 @@ test.describe('Overtime — Request Form', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasError || true).toBe(true);
+    expect(hasError).toBe(true);
   });
 
   test('Notes field is optional text area', async ({page}) => {
     const notesField = page.locator('textarea, input[name="notes"]').first();
     const hasNotes = await notesField.isVisible().catch(() => false);
-    expect(hasNotes || true).toBe(true);
+    expect(hasNotes).toBe(true);
   });
 });
 
@@ -151,12 +151,12 @@ test.describe('Overtime — Status Labels', () => {
 
   test('approved overtime records show Approved badge', async ({page}) => {
     const hasApproved = await page.locator('text=Approved').first().isVisible().catch(() => false);
-    expect(hasApproved || true).toBe(true);
+    expect(hasApproved).toBe(true);
   });
 
   test('pending overtime records show Pending badge', async ({page}) => {
     const hasPending = await page.locator('text=Pending').first().isVisible().catch(() => false);
-    expect(hasPending || true).toBe(true);
+    expect(hasPending).toBe(true);
   });
 });
 
@@ -170,7 +170,7 @@ test.describe('Overtime — Team Approval (Manager)', () => {
   test('Manager can see Team Overtime tab', async ({page}) => {
     const teamTab = page.locator('button:has-text("Team Overtime"), [role="tab"]:has-text("Team Overtime")');
     const hasTeamTab = await teamTab.isVisible().catch(() => false);
-    expect(hasTeamTab || true).toBe(true);
+    expect(hasTeamTab).toBe(true);
   });
 
   test('Team Overtime tab shows pending records or empty state', async ({page}) => {
@@ -184,7 +184,7 @@ test.describe('Overtime — Team Approval (Manager)', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 });
 

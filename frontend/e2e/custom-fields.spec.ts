@@ -34,7 +34,7 @@ test.describe('Custom Fields — Admin', () => {
       const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
       const hasEmpty = await page.locator('text=/no.*field|empty|no.*custom/i').first().isVisible().catch(() => false);
 
-      expect(hasTable || hasCards || hasEmpty || true).toBe(true);
+      expect(hasTable || hasCards || hasEmpty).toBe(true);
     });
 
     test('shows entity type filter or tabs', async ({page}) => {
@@ -44,7 +44,7 @@ test.describe('Custom Fields — Admin', () => {
       const hasTab = await page.locator('button:has-text("EMPLOYEE"), button:has-text("Employee"), select').first().isVisible().catch(() => false);
       const hasSelect = await page.locator('select, [role="combobox"]').first().isVisible().catch(() => false);
 
-      expect(hasTab || hasSelect || true).toBe(true);
+      expect(hasTab || hasSelect).toBe(true);
     });
 
     test('add/create custom field button is present', async ({page}) => {
@@ -59,7 +59,7 @@ test.describe('Custom Fields — Admin', () => {
         await expect(addBtn).toBeEnabled();
       }
 
-      expect(hasBtn || true).toBe(true);
+      expect(hasBtn).toBe(true);
     });
   });
 
@@ -87,7 +87,7 @@ test.describe('Custom Fields — Admin', () => {
         expect(hasModal || hasDrawer || hasForm).toBe(true);
       }
 
-      expect(hasBtn || true).toBe(true);
+      expect(hasBtn).toBe(true);
     });
 
     test('create form has field name and type inputs', async ({page}) => {
@@ -105,7 +105,7 @@ test.describe('Custom Fields — Admin', () => {
         const hasCodeInput = await page.locator('input[name*="code" i], input[placeholder*="code" i], input[name*="fieldCode" i]').first().isVisible().catch(() => false);
         const hasTypeSelect = await page.locator('select[name*="type" i], [role="combobox"]').first().isVisible().catch(() => false);
 
-        expect(hasNameInput || hasCodeInput || hasTypeSelect || true).toBe(true);
+        expect(hasNameInput || hasCodeInput || hasTypeSelect).toBe(true);
       }
     });
 
@@ -128,7 +128,7 @@ test.describe('Custom Fields — Admin', () => {
 
           // Dialog/drawer should be gone
           const dialogGone = !(await page.locator('[role="dialog"]').first().isVisible().catch(() => false));
-          expect(dialogGone || true).toBe(true);
+          expect(dialogGone).toBe(true);
         }
       }
     });
@@ -150,10 +150,10 @@ test.describe('Custom Fields — Admin', () => {
         await page.waitForTimeout(500);
 
         const hasForm = await page.locator('[role="dialog"], form').first().isVisible().catch(() => false);
-        expect(hasForm || true).toBe(true);
+        expect(hasForm).toBe(true);
       }
 
-      expect(hasEdit || true).toBe(true);
+      expect(hasEdit).toBe(true);
     });
 
     test('toggle active/inactive state for a custom field', async ({page}) => {
@@ -170,7 +170,7 @@ test.describe('Custom Fields — Admin', () => {
         expect(true).toBe(true);
       }
 
-      expect(hasToggle || true).toBe(true);
+      expect(hasToggle).toBe(true);
     });
   });
 
@@ -190,7 +190,7 @@ test.describe('Custom Fields — Admin', () => {
       const hasAccessDenied = await page.locator('text=/access denied|not authorized|forbidden|permission/i').first().isVisible().catch(() => false);
       const isOnLogin = page.url().includes('/auth/login');
 
-      expect(isRedirected || hasAccessDenied || isOnLogin || true).toBe(true);
+      expect(isRedirected || hasAccessDenied || isOnLogin).toBe(true);
     });
   });
 });

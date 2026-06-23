@@ -50,7 +50,7 @@ test.describe('Assets Page', () => {
     }
 
     // Page should have either tabs or a list view
-    expect(hasAnyTab || true).toBe(true);
+    expect(hasAnyTab).toBe(true);
   });
 
   test('should display create/request asset button', async ({page}) => {
@@ -60,7 +60,7 @@ test.describe('Assets Page', () => {
     const hasBtn = await requestBtn.isVisible({timeout: 5000}).catch(() => false);
 
     // Button should be present for employees
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 
   test('should display asset categories or types', async ({page}) => {
@@ -76,7 +76,7 @@ test.describe('Assets Page', () => {
     }
 
     // Categories might be in a dropdown, not visible until form opens
-    expect(foundCategory || true).toBe(true);
+    expect(foundCategory).toBe(true);
   });
 
   test('should show status badges on assets', async ({page}) => {
@@ -91,7 +91,7 @@ test.describe('Assets Page', () => {
       }
     }
 
-    expect(foundStatus || true).toBe(true);
+    expect(foundStatus).toBe(true);
   });
 
   test('should be responsive at mobile viewport', async ({page}) => {
@@ -132,7 +132,7 @@ test.describe('Assets - Create Request', () => {
       // Or navigated to a new page
       const isOnNewPage = page.url().includes('/new') || page.url().includes('/request');
 
-      expect(formVisible || isOnNewPage || true).toBe(true);
+      expect(formVisible || isOnNewPage).toBe(true);
     }
   });
 
@@ -160,7 +160,7 @@ test.describe('Assets - Create Request', () => {
         .isVisible({timeout: 3000})
         .catch(() => false);
 
-      expect(hasCategory || hasDescription || true).toBe(true);
+      expect(hasCategory || hasDescription).toBe(true);
     }
   });
 
@@ -237,7 +237,7 @@ test.describe('Assets - View Details', () => {
           }
         }
 
-        expect(foundField || true).toBe(true);
+        expect(foundField).toBe(true);
       }
     }
   });
@@ -255,14 +255,14 @@ test.describe('Assets - Filters and Search', () => {
       .first();
     const hasSearch = await searchInput.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 
   test('should display status filter', async ({page}) => {
     const statusFilter = page.locator('select, [role="combobox"]').first();
     const hasFilter = await statusFilter.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasFilter || true).toBe(true);
+    expect(hasFilter).toBe(true);
   });
 
   test('should have proper table or card layout', async ({page}) => {

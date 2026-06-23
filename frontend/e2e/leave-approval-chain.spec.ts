@@ -168,7 +168,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
         const pendingBadge = table.locator('text=/PENDING|SUBMITTED|pending|submitted/i').first();
         const hasPending = await pendingBadge.isVisible({timeout: 5000}).catch(() => false);
         // Soft assertion — there may be no pending items if prior tests didn't seed one
-        expect(hasPending || true).toBe(true);
+        expect(hasPending).toBe(true);
       }
     }
 
@@ -220,7 +220,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
           'text=/approved|success/i, [class*="toast"], [class*="notification"]'
         ).first();
         const hasSuccess = await successIndicator.isVisible({timeout: 8000}).catch(() => false);
-        expect(hasSuccess || true).toBe(true);
+        expect(hasSuccess).toBe(true);
       }
     } else if (leaveId) {
       // API seeding succeeded but the row isn't visible (pagination/filter state)
@@ -272,7 +272,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
     ).first();
     const hasBalance = await balanceSection.isVisible({timeout: 8000}).catch(() => false);
 
-    expect(hasBalance || true).toBe(true); // balance section is present if leave types are configured
+    expect(hasBalance).toBe(true); // balance section is present if leave types are configured
     await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
   });
 
@@ -296,7 +296,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
       // A notification dropdown or panel should appear
       const notifPanel = page.locator('[class*="notification-panel"], [class*="notif"], [role="menu"]').first();
       const hasPanelOpened = await notifPanel.isVisible({timeout: 5000}).catch(() => false);
-      expect(hasPanelOpened || true).toBe(true);
+      expect(hasPanelOpened).toBe(true);
     }
 
     // Alternatively navigate to dedicated notifications page
@@ -357,7 +357,7 @@ test.describe('Leave Approval Chain @regression @critical', () => {
       // If seeding succeeded, we can look for the rejected badge
       const rejectedBadge = page.locator('text=/REJECTED|rejected/i').first();
       const hasRejected = await rejectedBadge.isVisible({timeout: 8000}).catch(() => false);
-      expect(hasRejected || true).toBe(true);
+      expect(hasRejected).toBe(true);
     }
 
     await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();

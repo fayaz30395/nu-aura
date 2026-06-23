@@ -27,7 +27,7 @@ test.describe('Recruitment — Jobs List', () => {
     const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*job|no.*posting|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasTable || hasCards || hasEmpty || true).toBe(true);
+    expect(hasTable || hasCards || hasEmpty).toBe(true);
   });
 
   test('should display create job button', async ({page}) => {
@@ -36,7 +36,7 @@ test.describe('Recruitment — Jobs List', () => {
     ).first();
     const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('should not show error on recruitment page load', async ({page}) => {

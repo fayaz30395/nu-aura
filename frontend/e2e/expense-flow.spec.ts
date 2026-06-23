@@ -48,7 +48,7 @@ test.describe('Expense Flow — Create Claim', () => {
     ).first();
     const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('should open create claim form and display fields', async ({page}) => {
@@ -112,7 +112,7 @@ test.describe('Expense Flow — Claims List', () => {
     const hasClaims = await page.locator('table, [class*="table"], [class*="card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*claim|no.*expense/i').first().isVisible().catch(() => false);
 
-    expect(hasClaims || hasEmpty || true).toBe(true);
+    expect(hasClaims || hasEmpty).toBe(true);
   });
 
   test('should show claim status badges if claims exist', async ({page}) => {
@@ -129,6 +129,6 @@ test.describe('Expense Flow — Claims List', () => {
     }
 
     // Either has status badges or no claims
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 });

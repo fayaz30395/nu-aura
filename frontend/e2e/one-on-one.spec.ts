@@ -44,7 +44,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
       .first()
       .isVisible({timeout: 10000})
       .catch(() => false);
-    expect(hasStat || hasHeading || true).toBe(true);
+    expect(hasStat || hasHeading).toBe(true);
   });
 
   test('page shows correct heading area', async ({page}) => {
@@ -56,7 +56,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
       .first()
       .isVisible({timeout: 10000})
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('tab navigation — Upcoming, All Meetings, and Manager tabs are visible', async ({page}) => {
@@ -71,7 +71,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
       .getByRole('button', {name: /all/i})
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasUpcoming || hasAll || true).toBe(true);
+    expect(hasUpcoming || hasAll).toBe(true);
   });
 
   test('status filter dropdown is rendered', async ({page}) => {
@@ -83,7 +83,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
       .first()
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasFilter || true).toBe(true);
+    expect(hasFilter).toBe(true);
   });
 
   test('page shows meetings list or empty state', async ({page}) => {
@@ -99,7 +99,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
       .getByText(/no meetings|no upcoming/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasMeetings || hasEmpty || true).toBe(true);
+    expect(hasMeetings || hasEmpty).toBe(true);
   });
 
   test('page does not show crash error', async ({page}) => {
@@ -122,7 +122,7 @@ test.describe('1-on-1 — Page Load & Dashboard', () => {
       .first()
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasSkeleton || hasContent || true).toBe(true);
+    expect(hasSkeleton || hasContent).toBe(true);
   });
 });
 
@@ -162,7 +162,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
       const cancelledBadge = page.getByText(/cancelled/i);
       const hasCancelled = await cancelledBadge.isVisible({timeout: 2000}).catch(() => false);
       // Filtering should remove CANCELLED meetings from view
-      expect(!hasCancelled || true).toBe(true);
+      expect(!hasCancelled).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -192,7 +192,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
       .nth(1)
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasMeetingCard || true).toBe(true);
+    expect(hasMeetingCard).toBe(true);
   });
 
   test('clicking a meeting card enters detail view', async ({page}) => {
@@ -213,7 +213,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
         .getByText(/back to meetings/i)
         .isVisible({timeout: 5000})
         .catch(() => false);
-      expect(hasBack || true).toBe(true);
+      expect(hasBack).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -227,7 +227,7 @@ test.describe('1-on-1 — Meetings List: Filtering & Tabs', () => {
       .first()
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 
   test('Upcoming tab only shows future meetings', async ({page}) => {
@@ -264,7 +264,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
       .isVisible({timeout: 10000})
       .catch(() => false);
     // Button may be behind PermissionGate — visible only with MEETING_SCHEDULE permission
-    expect(hasScheduleBtn || true).toBe(true);
+    expect(hasScheduleBtn).toBe(true);
   });
 
   test('clicking Schedule opens the schedule view with a form', async ({page}) => {
@@ -286,7 +286,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
         .first()
         .isVisible({timeout: 5000})
         .catch(() => false);
-      expect(hasForm || true).toBe(true);
+      expect(hasForm).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -312,7 +312,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
         .first()
         .isVisible({timeout: 5000})
         .catch(() => false);
-      expect(hasTitle || hasDate || true).toBe(true);
+      expect(hasTitle || hasDate).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -342,7 +342,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
           .first()
           .isVisible({timeout: 3000})
           .catch(() => false);
-        expect(hasError || true).toBe(true);
+        expect(hasError).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -373,7 +373,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
           .first()
           .isVisible({timeout: 3000})
           .catch(() => false);
-        expect(hasPattern || true).toBe(true);
+        expect(hasPattern).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -404,7 +404,7 @@ test.describe('1-on-1 — Schedule Meeting (Manager)', () => {
           .first()
           .isVisible({timeout: 5000})
           .catch(() => false);
-        expect(hasListView || true).toBe(true);
+        expect(hasListView).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -437,7 +437,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
         .first()
         .isVisible({timeout: 8000})
         .catch(() => false);
-      expect(hasTitle || true).toBe(true);
+      expect(hasTitle).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -489,7 +489,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
         .getByRole('button', {name: /actions/i})
         .isVisible({timeout: 5000})
         .catch(() => false);
-      expect(hasAgenda || hasActions || true).toBe(true);
+      expect(hasAgenda || hasActions).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -515,7 +515,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
           .getByRole('button', {name: /add agenda|add item/i})
           .first();
         const hasAdd = await addAgendaBtn.isVisible({timeout: 5000}).catch(() => false);
-        expect(hasAdd || true).toBe(true);
+        expect(hasAdd).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -566,7 +566,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
           .first()
           .isVisible({timeout: 5000})
           .catch(() => false);
-        expect(hasTextarea || true).toBe(true);
+        expect(hasTextarea).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -594,7 +594,7 @@ test.describe('1-on-1 — Meeting Detail View', () => {
           .first()
           .isVisible({timeout: 5000})
           .catch(() => false);
-        expect(hasFeedbackForm || true).toBe(true);
+        expect(hasFeedbackForm).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -696,7 +696,7 @@ test.describe('1-on-1 — RBAC Boundaries', () => {
       .first()
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasPending || true).toBe(true);
+    expect(hasPending).toBe(true);
   });
 
   test('overdue action items section appears on dashboard', async ({page}) => {
@@ -709,7 +709,7 @@ test.describe('1-on-1 — RBAC Boundaries', () => {
       .first()
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasOverdue || true).toBe(true);
+    expect(hasOverdue).toBe(true);
   });
 });
 
@@ -743,7 +743,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
           .first()
           .isVisible({timeout: 3000})
           .catch(() => false);
-        expect(hasModal || true).toBe(true);
+        expect(hasModal).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -771,7 +771,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
           .first()
           .isVisible({timeout: 3000})
           .catch(() => false);
-        expect(hasDateInput || true).toBe(true);
+        expect(hasDateInput).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -799,7 +799,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
           .first()
           .isVisible({timeout: 3000})
           .catch(() => false);
-        expect(hasSummaryInput || true).toBe(true);
+        expect(hasSummaryInput).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -842,7 +842,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
               .first()
               .isVisible({timeout: 3000})
               .catch(() => false);
-            expect(hasError || true).toBe(true);
+            expect(hasError).toBe(true);
           }
         }
       }
@@ -880,7 +880,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
             .first()
             .isVisible({timeout: 3000})
             .catch(() => false);
-          expect(hasForm || true).toBe(true);
+          expect(hasForm).toBe(true);
         }
       }
     }
@@ -903,7 +903,7 @@ test.describe('1-on-1 — Meeting Action Modals', () => {
         .first()
         .isVisible({timeout: 5000})
         .catch(() => false);
-      expect(hasMeetingType || true).toBe(true);
+      expect(hasMeetingType).toBe(true);
     }
     expect(true).toBe(true);
   });

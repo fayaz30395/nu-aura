@@ -445,7 +445,7 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
       // Should navigate or open a modal (not stay on same page idle)
       const hasModal = await page.locator('[role="dialog"]').first().isVisible().catch(() => false);
       const urlChanged = !page.url().endsWith('/dashboard');
-      expect(hasModal || urlChanged || true).toBe(true);
+      expect(hasModal || urlChanged).toBe(true);
     }
 
     expect(count >= 0).toBe(true);
@@ -460,6 +460,6 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
     const hasChartContainer = await page.locator('[class*="chart"], [class*="Chart"]').first().isVisible().catch(() => false);
 
     // Dashboard should have at least one chart element
-    expect(hasSvgChart || hasCanvas || hasChartContainer || true).toBe(true);
+    expect(hasSvgChart || hasCanvas || hasChartContainer).toBe(true);
   });
 });

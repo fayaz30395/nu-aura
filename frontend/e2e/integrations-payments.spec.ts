@@ -360,7 +360,7 @@ test.describe('/compliance — Compliance Dashboard', () => {
     const hasChecklists = await page.locator('text=/Open Checklists/i').first().isVisible().catch(() => false);
     const hasAlerts = await page.locator('text=/Active Alerts/i').first().isVisible().catch(() => false);
     // At least one stat card should be visible after data loads
-    expect(hasPolicies || hasChecklists || hasAlerts || true).toBe(true);
+    expect(hasPolicies || hasChecklists || hasAlerts).toBe(true);
   });
 
   test('Policies tab is displayed and accessible', async ({page}) => {
@@ -389,7 +389,7 @@ test.describe('/compliance — Compliance Dashboard', () => {
       await page.waitForTimeout(1000);
       const hasItems = await page.locator('[class*="Paper"], [class*="card"]').first().isVisible().catch(() => false);
       const hasEmpty = await page.locator('text=/No active checklists/i').first().isVisible().catch(() => false);
-      expect(hasItems || hasEmpty || true).toBe(true);
+      expect(hasItems || hasEmpty).toBe(true);
     }
   });
 
@@ -412,7 +412,7 @@ test.describe('/compliance — Compliance Dashboard', () => {
     await page.waitForTimeout(1500);
     const hasTable = await page.locator('th:has-text("Policy")').isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/No active policies/i').isVisible().catch(() => false);
-    expect(hasTable || hasEmpty || true).toBe(true);
+    expect(hasTable || hasEmpty).toBe(true);
   });
 
   test('HR Manager can also view compliance page', async ({page}) => {
@@ -464,7 +464,7 @@ test.describe('/statutory-filings — Statutory Filing Reports', () => {
     const hasESI = await page.locator('text=/ESI/i').first().isVisible().catch(() => false);
     const hasForm16 = await page.locator('text=/Form 16/i').first().isVisible().catch(() => false);
     const hasLoading = await page.locator('[class*="Loader"]').first().isVisible().catch(() => false);
-    expect(hasPF || hasESI || hasForm16 || hasLoading || true).toBe(true);
+    expect(hasPF || hasESI || hasForm16 || hasLoading).toBe(true);
   });
 
   test('clicking Generate Filing opens modal with filing type selector', async ({page}) => {
@@ -511,7 +511,7 @@ test.describe('/statutory-filings — Statutory Filing Reports', () => {
 
     const hasFilter = await page.locator('text=/Filter by type/i').first().isVisible().catch(() => false);
     const hasRefresh = await page.locator('button:has-text("Refresh")').isVisible().catch(() => false);
-    expect(hasFilter || hasRefresh || true).toBe(true);
+    expect(hasFilter || hasRefresh).toBe(true);
   });
 
   test('Filing History shows history table or empty state alert', async ({page}) => {
@@ -521,7 +521,7 @@ test.describe('/statutory-filings — Statutory Filing Reports', () => {
 
     const hasTable = await page.locator('th:has-text("Type")').isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/No filing runs found/i').isVisible().catch(() => false);
-    expect(hasTable || hasEmpty || true).toBe(true);
+    expect(hasTable || hasEmpty).toBe(true);
   });
 
   test('filing type cards display frequency info', async ({page}) => {
@@ -529,7 +529,7 @@ test.describe('/statutory-filings — Statutory Filing Reports', () => {
     // Cards should show MONTHLY, QUARTERLY, ANNUAL frequency labels
     const hasFrequency = await page.locator('text=/Monthly|Quarterly|Annual|MONTHLY|QUARTERLY|ANNUAL/i').first().isVisible().catch(() => false);
     const hasLoading = await page.locator('[class*="Loader"]').first().isVisible().catch(() => false);
-    expect(hasFrequency || hasLoading || true).toBe(true);
+    expect(hasFrequency || hasLoading).toBe(true);
   });
 
   test('HR Manager can access statutory filings', async ({page}) => {

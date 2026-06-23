@@ -99,7 +99,7 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
       }
     }
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('Manager can access performance reviews page and see pending reviews', async ({page}) => {
@@ -128,10 +128,10 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
       // Should show review items or empty state
       const hasContent = await page.locator('[class*="card"], table tbody tr').first().isVisible().catch(() => false);
       const hasEmpty = await page.locator('text=/no.*review|no.*pending/i').first().isVisible().catch(() => false);
-      expect(hasContent || hasEmpty || true).toBe(true);
+      expect(hasContent || hasEmpty).toBe(true);
     }
 
-    expect(hasReviews || true).toBe(true);
+    expect(hasReviews).toBe(true);
   });
 
   test('Manager submits a review — form loads and can be filled', async ({page}) => {
@@ -153,15 +153,15 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
 
       // Should open a form or navigate to review page
       const hasForm = await page.locator('form, [role="dialog"], textarea').first().isVisible().catch(() => false);
-      expect(hasForm || true).toBe(true);
+      expect(hasForm).toBe(true);
 
       // Look for rating or score inputs
       const hasRating = await page.locator('[class*="rating"], input[type="range"], input[type="number"]').first().isVisible().catch(() => false);
       const hasTextarea = await page.locator('textarea').first().isVisible().catch(() => false);
-      expect(hasRating || hasTextarea || true).toBe(true);
+      expect(hasRating || hasTextarea).toBe(true);
     }
 
-    expect(hasReviewBtn || true).toBe(true);
+    expect(hasReviewBtn).toBe(true);
   });
 
   test('Employee can view their performance reviews', async ({page}) => {
@@ -190,9 +190,9 @@ test.describe('Review Cycle Flow — HR creates cycle, Manager submits review, E
       // Should show review results or empty state
       const hasContent = await page.locator('[class*="card"], table, [class*="review"]').first().isVisible().catch(() => false);
       const hasEmpty = await page.locator('text=/no.*review|not.*available/i').first().isVisible().catch(() => false);
-      expect(hasContent || hasEmpty || true).toBe(true);
+      expect(hasContent || hasEmpty).toBe(true);
     }
 
-    expect(hasMyReviews || true).toBe(true);
+    expect(hasMyReviews).toBe(true);
   });
 });

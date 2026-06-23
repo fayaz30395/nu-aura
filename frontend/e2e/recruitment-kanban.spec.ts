@@ -94,7 +94,7 @@ test.describe('Recruitment — Offer Approval Flow', () => {
       }
     }
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('recruitment admin can add a candidate to a job', async ({page}) => {
@@ -122,13 +122,13 @@ test.describe('Recruitment — Offer Approval Flow', () => {
 
         // Form or modal should appear
         const hasForm = await page.locator('[role="dialog"], form').first().isVisible().catch(() => false);
-        expect(hasForm || true).toBe(true);
+        expect(hasForm).toBe(true);
       }
 
-      expect(hasAddCandidate || true).toBe(true);
+      expect(hasAddCandidate).toBe(true);
     }
 
-    expect(hasJob || true).toBe(true);
+    expect(hasJob).toBe(true);
   });
 
   test('kanban board shows offer stage column', async ({page}) => {
@@ -151,11 +151,11 @@ test.describe('Recruitment — Offer Approval Flow', () => {
         // Verify offer stage exists in the kanban
         const offerStage = page.locator('text=/offer/i').first();
         const hasOffer = await offerStage.isVisible().catch(() => false);
-        expect(hasOffer || true).toBe(true);
+        expect(hasOffer).toBe(true);
       }
     }
 
-    expect(hasJob || true).toBe(true);
+    expect(hasJob).toBe(true);
   });
 
   test('moving candidate to offer stage triggers approval workflow', async ({page}) => {
@@ -193,14 +193,14 @@ test.describe('Recruitment — Offer Approval Flow', () => {
 
             // Should show confirmation or workflow trigger
             const hasConfirmation = await page.locator('text=/confirm|approval|offer/i').first().isVisible().catch(() => false);
-            expect(hasConfirmation || true).toBe(true);
+            expect(hasConfirmation).toBe(true);
           }
         }
       }
     }
 
     // This test validates the flow exists; data availability may vary
-    expect(hasJob || true).toBe(true);
+    expect(hasJob).toBe(true);
   });
 
   test('HR Manager can view pending offer approvals', async ({page}) => {
@@ -223,9 +223,9 @@ test.describe('Recruitment — Offer Approval Flow', () => {
       // Should show approval items or empty state
       const hasContent = await page.locator('[class*="card"], table tbody tr').first().isVisible().catch(() => false);
       const hasEmpty = await page.locator('text=/no.*pending|no.*approval/i').first().isVisible().catch(() => false);
-      expect(hasContent || hasEmpty || true).toBe(true);
+      expect(hasContent || hasEmpty).toBe(true);
     }
 
-    expect(hasApprovals || true).toBe(true);
+    expect(hasApprovals).toBe(true);
   });
 });

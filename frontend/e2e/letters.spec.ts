@@ -30,13 +30,13 @@ test.describe('Letters — Page Load', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('should display search input', async ({page}) => {
     const searchInput = page.locator('input[placeholder*="Search" i]').first();
     const hasSearch = await searchInput.isVisible().catch(() => false);
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 
   test('should have no critical console errors', async ({page}) => {
@@ -117,7 +117,7 @@ test.describe('Letters — Generate Letter Modal', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasDate || true).toBe(true);
+    expect(hasDate).toBe(true);
   });
 });
 
@@ -131,7 +131,7 @@ test.describe('Letters — Offer Letter Flow', () => {
   test('Generate Offer Letter button is visible', async ({page}) => {
     const offerBtn = page.locator('button:has-text("Offer Letter"), button:has-text("Generate Offer")').first();
     const hasBtn = await offerBtn.isVisible().catch(() => false);
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 
   test('Offer letter modal has CTC and designation fields', async ({page}) => {
@@ -167,13 +167,13 @@ test.describe('Letters — Letter Status & Actions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 
   test('letter actions menu is accessible', async ({page}) => {
     const menuBtn = page.locator('button[aria-label*="menu" i], button[title*="action" i]').first();
     const hasMenu = await menuBtn.isVisible().catch(() => false);
-    expect(hasMenu || true).toBe(true);
+    expect(hasMenu).toBe(true);
   });
 });
 
@@ -217,13 +217,13 @@ test.describe('Letter Templates — Page Load', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('should display search input', async ({page}) => {
     const searchInput = page.locator('input[placeholder*="Search" i]').first();
     const hasSearch = await searchInput.isVisible().catch(() => false);
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 
   test('should display Create Template button', async ({page}) => {
@@ -231,7 +231,7 @@ test.describe('Letter Templates — Page Load', () => {
       .locator('button:has-text("Create Template"), button:has-text("Add Template"), button:has-text("New Template")')
       .first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 });
 
@@ -264,7 +264,7 @@ test.describe('Letter Templates — Create Template', () => {
     await page.waitForTimeout(500);
     const nameField = page.locator('input[name="name"], input[placeholder*="template name" i]').first();
     const hasName = await nameField.isVisible().catch(() => false);
-    expect(hasName || true).toBe(true);
+    expect(hasName).toBe(true);
   });
 
   test('Template Code field validates uppercase alphanumeric', async ({page}) => {
@@ -286,7 +286,7 @@ test.describe('Letter Templates — Create Template', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasError || true).toBe(true);
+    expect(hasError).toBe(true);
   });
 
   test('Category dropdown has letter category options', async ({page}) => {
@@ -326,13 +326,13 @@ test.describe('Letter Templates — Template Actions', () => {
   test('Clone button duplicates a template', async ({page}) => {
     const cloneBtn = page.locator('button[aria-label*="clone" i], button:has-text("Clone")').first();
     const hasClone = await cloneBtn.isVisible().catch(() => false);
-    expect(hasClone || true).toBe(true);
+    expect(hasClone).toBe(true);
   });
 
   test('Preview button is available on template cards', async ({page}) => {
     const previewBtn = page.locator('button[aria-label*="preview" i], button:has-text("Preview")').first();
     const hasPreview = await previewBtn.isVisible().catch(() => false);
-    expect(hasPreview || true).toBe(true);
+    expect(hasPreview).toBe(true);
   });
 });
 

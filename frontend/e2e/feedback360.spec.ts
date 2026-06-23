@@ -25,7 +25,7 @@ test.describe('360 Feedback Page', () => {
     const hasCycles = await page.locator('[class*="card"], [class*="Card"], table').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*feedback|no.*cycle|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasCycles || hasEmpty || true).toBe(true);
+    expect(hasCycles || hasEmpty).toBe(true);
   });
 
   test('should show create or request feedback button', async ({page}) => {
@@ -34,7 +34,7 @@ test.describe('360 Feedback Page', () => {
     const actionBtn = page.locator('button:has-text("Create"), button:has-text("Request"), button:has-text("New"), button:has-text("Start")').first();
     const hasAction = await actionBtn.isVisible().catch(() => false);
 
-    expect(hasAction || true).toBe(true);
+    expect(hasAction).toBe(true);
   });
 
   test('/feedback360 redirect works', async ({page}) => {

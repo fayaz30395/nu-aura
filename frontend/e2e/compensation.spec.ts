@@ -78,7 +78,7 @@ test.describe('Compensation — Review Cycles', () => {
       .isVisible()
       .catch(() => false);
     // May not have cycles seeded; empty state is also valid
-    expect(hasType || true).toBe(true);
+    expect(hasType).toBe(true);
   });
 
   test('should display cycle status badges', async ({page}) => {
@@ -88,7 +88,7 @@ test.describe('Compensation — Review Cycles', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 });
 
@@ -107,7 +107,7 @@ test.describe('Compensation — Salary Revisions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasRevision || true).toBe(true);
+    expect(hasRevision).toBe(true);
   });
 
   test('should display revision status labels when available', async ({page}) => {
@@ -116,7 +116,7 @@ test.describe('Compensation — Salary Revisions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 
   test('Approve button triggers action for pending revisions', async ({page}) => {
@@ -132,7 +132,7 @@ test.describe('Compensation — Salary Revisions', () => {
     // After approval the button should disappear or show success
     const stillVisible = await approveBtn.isVisible().catch(() => false);
     // Either gone or a confirmation appeared
-    expect(!stillVisible || true).toBe(true);
+    expect(!stillVisible).toBe(true);
   });
 
   test('Reject button triggers action for pending revisions', async ({page}) => {
@@ -150,7 +150,7 @@ test.describe('Compensation — Salary Revisions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasModal || true).toBe(true);
+    expect(hasModal).toBe(true);
   });
 });
 
@@ -164,7 +164,7 @@ test.describe('Compensation — Search & Filter', () => {
   test('should have a search input field', async ({page}) => {
     const searchInput = page.locator('input[placeholder*="search" i], input[placeholder*="Search" i]').first();
     const hasSearch = await searchInput.isVisible().catch(() => false);
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 
   test('filter controls are accessible', async ({page}) => {
@@ -173,7 +173,7 @@ test.describe('Compensation — Search & Filter', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasFilter || true).toBe(true);
+    expect(hasFilter).toBe(true);
   });
 });
 

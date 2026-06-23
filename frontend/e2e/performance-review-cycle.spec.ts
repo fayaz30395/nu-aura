@@ -34,7 +34,7 @@ test.describe('Performance Review Cycle — Full Flow', () => {
     const hasCycles = await page.locator('table tbody tr, [class*="cycle-card"], [class*="review-cycle"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no review|create.*cycle|get started/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasCycles || hasEmptyState || true).toBe(true);
+    expect(hasCycles || hasEmptyState).toBe(true);
   });
 
   test('Admin can create a new review cycle @critical', async ({page}) => {
@@ -63,10 +63,10 @@ test.describe('Performance Review Cycle — Full Flow', () => {
         }
       }
 
-      expect(hasModal || hasForm || true).toBe(true);
+      expect(hasModal || hasForm).toBe(true);
     }
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('Goals page loads for Manager @smoke', async ({page}) => {
@@ -78,7 +78,7 @@ test.describe('Performance Review Cycle — Full Flow', () => {
     const hasGoals = await page.locator('[class*="goal"], table tbody tr, [class*="card"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no goals|add goal|create.*goal/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasGoals || hasEmptyState || true).toBe(true);
+    expect(hasGoals || hasEmptyState).toBe(true);
   });
 
   test('Manager can set team goals @critical', async ({page}) => {
@@ -107,7 +107,7 @@ test.describe('Performance Review Cycle — Full Flow', () => {
       }
     }
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('Employee can view their own performance goals @critical', async ({page}) => {
@@ -133,7 +133,7 @@ test.describe('Performance Review Cycle — Full Flow', () => {
       await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();
     }
 
-    expect(hasSelf || true).toBe(true);
+    expect(hasSelf).toBe(true);
   });
 
   test('OKR page loads and shows key results @smoke', async ({page}) => {
@@ -145,7 +145,7 @@ test.describe('Performance Review Cycle — Full Flow', () => {
     const hasOKRs = await page.locator('[class*="okr"], [class*="objective"], [class*="key-result"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no okr|create objective|add okr/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasOKRs || hasEmptyState || true).toBe(true);
+    expect(hasOKRs || hasEmptyState).toBe(true);
   });
 
   test('360 Feedback page renders @smoke', async ({page}) => {
@@ -188,6 +188,6 @@ test.describe('Performance Review Cycle — Full Flow', () => {
     const hasReviews = await page.locator('table tbody tr, [class*="review-item"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no reviews|no pending|all done/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasReviews || hasEmptyState || true).toBe(true);
+    expect(hasReviews || hasEmptyState).toBe(true);
   });
 });

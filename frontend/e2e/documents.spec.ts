@@ -34,7 +34,7 @@ test.describe('Document Management', () => {
       const hasDocs = await page.locator('table tbody tr, [class*="card"], [class*="document"]').first().isVisible().catch(() => false);
       const hasEmpty = await page.locator('text=/no.*document|no.*letter|empty/i').first().isVisible().catch(() => false);
 
-      expect(hasDocs || hasEmpty || true).toBe(true);
+      expect(hasDocs || hasEmpty).toBe(true);
     });
 
     test('shows generate or download button for documents', async ({page}) => {
@@ -45,7 +45,7 @@ test.describe('Document Management', () => {
       ).first();
       const hasAction = await actionBtn.isVisible().catch(() => false);
 
-      expect(hasAction || true).toBe(true);
+      expect(hasAction).toBe(true);
     });
 
     test('search or filter controls are present', async ({page}) => {
@@ -60,7 +60,7 @@ test.describe('Document Management', () => {
         await expect(page.locator('body')).not.toContainText('Uncaught');
       }
 
-      expect(hasSearch || true).toBe(true);
+      expect(hasSearch).toBe(true);
     });
   });
 
@@ -82,7 +82,7 @@ test.describe('Document Management', () => {
       const hasTable = await page.locator('table').first().isVisible().catch(() => false);
       const hasEmpty = await page.locator('text=/empty|no files|no documents/i').first().isVisible().catch(() => false);
 
-      expect(hasFiles || hasTable || hasEmpty || true).toBe(true);
+      expect(hasFiles || hasTable || hasEmpty).toBe(true);
     });
 
     test('upload button is present', async ({page}) => {
@@ -91,7 +91,7 @@ test.describe('Document Management', () => {
       const uploadBtn = page.locator('button:has-text("Upload")').first();
       const hasUpload = await uploadBtn.isVisible().catch(() => false);
 
-      expect(hasUpload || true).toBe(true);
+      expect(hasUpload).toBe(true);
     });
   });
 

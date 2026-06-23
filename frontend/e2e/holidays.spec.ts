@@ -25,7 +25,7 @@ test.describe('Holidays Page', () => {
     const hasHolidays = await page.locator('table, [class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*holiday|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasHolidays || hasEmpty || true).toBe(true);
+    expect(hasHolidays || hasEmpty).toBe(true);
   });
 
   test('should show add holiday button for admin', async ({page}) => {
@@ -34,7 +34,7 @@ test.describe('Holidays Page', () => {
     const addBtn = page.locator('button:has-text("Add"), button:has-text("Create"), button:has-text("New")').first();
     const hasAdd = await addBtn.isVisible().catch(() => false);
 
-    expect(hasAdd || true).toBe(true);
+    expect(hasAdd).toBe(true);
   });
 
   test('should display year navigation', async ({page}) => {
@@ -43,6 +43,6 @@ test.describe('Holidays Page', () => {
     const hasYear = await page.locator('text=/202[4-9]/').first().isVisible().catch(() => false);
     const hasNav = await page.locator('button svg').first().isVisible().catch(() => false);
 
-    expect(hasYear || hasNav || true).toBe(true);
+    expect(hasYear || hasNav).toBe(true);
   });
 });

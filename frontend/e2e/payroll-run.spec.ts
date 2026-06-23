@@ -70,7 +70,7 @@ test.describe('Payroll Runs', () => {
     const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
     // Button may or may not be visible depending on state
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 });
 
@@ -96,6 +96,6 @@ test.describe('Salary Structures', () => {
     const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*structure|no.*data|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasTable || hasCards || hasEmpty || true).toBe(true);
+    expect(hasTable || hasCards || hasEmpty).toBe(true);
   });
 });

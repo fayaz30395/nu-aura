@@ -49,7 +49,7 @@ test.describe('Training - My Trainings Tab', () => {
     const hasTrainings = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*training|not.*enrolled/i').first().isVisible().catch(() => false);
 
-    expect(hasTrainings || hasEmpty || true).toBe(true);
+    expect(hasTrainings || hasEmpty).toBe(true);
   });
 
   test('should show progress for enrolled courses', async ({page}) => {
@@ -60,7 +60,7 @@ test.describe('Training - My Trainings Tab', () => {
     const hasPercentage = await page.locator('text=/%/').first().isVisible().catch(() => false);
 
     // Either has progress or no enrollments
-    expect(hasProgress || hasPercentage || true).toBe(true);
+    expect(hasProgress || hasPercentage).toBe(true);
   });
 
   test('should show continue button for in-progress courses', async ({page}) => {
@@ -70,7 +70,7 @@ test.describe('Training - My Trainings Tab', () => {
     const hasButton = await continueBtn.isVisible().catch(() => false);
 
     // Either has continue button or no in-progress courses
-    expect(hasButton || true).toBe(true);
+    expect(hasButton).toBe(true);
   });
 
   test('should show certificate download for completed courses', async ({page}) => {
@@ -80,7 +80,7 @@ test.describe('Training - My Trainings Tab', () => {
     const hasButton = await certBtn.isVisible().catch(() => false);
 
     // Either has certificate button or no completed courses
-    expect(hasButton || true).toBe(true);
+    expect(hasButton).toBe(true);
   });
 });
 
@@ -104,7 +104,7 @@ test.describe('Training - Course Catalog Tab', () => {
     const hasCourses = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*course|no.*program/i').first().isVisible().catch(() => false);
 
-    expect(hasCourses || hasEmpty || true).toBe(true);
+    expect(hasCourses || hasEmpty).toBe(true);
   });
 
   test('should show enroll button on courses', async ({page}) => {
@@ -114,7 +114,7 @@ test.describe('Training - Course Catalog Tab', () => {
     const hasButton = await enrollBtn.isVisible().catch(() => false);
 
     // Either has enroll button or no courses
-    expect(hasButton || true).toBe(true);
+    expect(hasButton).toBe(true);
   });
 
   test('should display course details', async ({page}) => {
@@ -126,7 +126,7 @@ test.describe('Training - Course Catalog Tab', () => {
     const hasCategory = await page.locator('text=/category|type/i').first().isVisible().catch(() => false);
 
     // Either has details or no courses
-    expect(hasDuration || hasLevel || hasCategory || true).toBe(true);
+    expect(hasDuration || hasLevel || hasCategory).toBe(true);
   });
 
   test('should filter courses by search', async ({page}) => {
@@ -141,7 +141,7 @@ test.describe('Training - Course Catalog Tab', () => {
       await page.waitForTimeout(500);
     }
 
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 });
 
@@ -167,7 +167,7 @@ test.describe('Training - Enrollment Flow', () => {
       const hasSuccess = await page.locator('text=/success|enrolled/i').first().isVisible().catch(() => false);
       const hasError = await page.locator('text=/already.*enrolled|error/i').first().isVisible().catch(() => false);
 
-      expect(hasSuccess || hasError || true).toBe(true);
+      expect(hasSuccess || hasError).toBe(true);
     }
   });
 
@@ -179,7 +179,7 @@ test.describe('Training - Enrollment Flow', () => {
     const hasEnrolled = await enrolledIndicator.isVisible().catch(() => false);
 
     // Either shows enrolled status or allows enrollment
-    expect(hasEnrolled || true).toBe(true);
+    expect(hasEnrolled).toBe(true);
   });
 });
 
@@ -197,7 +197,7 @@ test.describe('Training - Manage Programs Tab (Admin)', () => {
     const hasTab = await manageTab.isVisible().catch(() => false);
 
     // Tab may or may not be visible depending on user role
-    expect(hasTab || true).toBe(true);
+    expect(hasTab).toBe(true);
   });
 
   test('should show create program button for admin', async ({page}) => {
@@ -215,7 +215,7 @@ test.describe('Training - Manage Programs Tab (Admin)', () => {
       const createBtn = page.locator('button:has-text("Create"), button:has-text("Add"), button:has-text("New")').first();
       const hasCreate = await createBtn.isVisible().catch(() => false);
 
-      expect(hasCreate || true).toBe(true);
+      expect(hasCreate).toBe(true);
     }
   });
 
@@ -233,7 +233,7 @@ test.describe('Training - Manage Programs Tab (Admin)', () => {
       const hasTable = await page.locator('table, [class*="table"]').first().isVisible().catch(() => false);
       const hasList = await page.locator('[class*="list"], [class*="card"]').first().isVisible().catch(() => false);
 
-      expect(hasTable || hasList || true).toBe(true);
+      expect(hasTable || hasList).toBe(true);
     }
   });
 });
@@ -266,7 +266,7 @@ test.describe('Training - Progress Tracking', () => {
     const hasNotStarted = await page.locator('text=/not.?started|0%/i').first().isVisible().catch(() => false);
 
     // Either has status indicators or no enrollments
-    expect(hasCompleted || hasInProgress || hasNotStarted || true).toBe(true);
+    expect(hasCompleted || hasInProgress || hasNotStarted).toBe(true);
   });
 
   test('should display enrollment date', async ({page}) => {
@@ -276,7 +276,7 @@ test.describe('Training - Progress Tracking', () => {
     const hasDate = await page.locator('text=/enrolled.*on|started|date/i').first().isVisible().catch(() => false);
 
     // Either has dates or no enrollments
-    expect(hasDate || true).toBe(true);
+    expect(hasDate).toBe(true);
   });
 });
 
@@ -360,10 +360,10 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
         : false;
       const hasEmpty = await page.locator('text=/no.*training|not.*enrolled/i').first().isVisible().catch(() => false);
 
-      expect(hasContent || hasCourseName || hasEmpty || true).toBe(true);
+      expect(hasContent || hasCourseName || hasEmpty).toBe(true);
     }
 
-    expect(hasEnroll || true).toBe(true);
+    expect(hasEnroll).toBe(true);
   });
 
   test('progress tracking updates when continuing a course', async ({page}) => {
@@ -380,7 +380,7 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
 
       // Should navigate to course content or module view
       const hasContent = await page.locator('video, iframe, [class*="lesson"], [class*="module"], h2, h3').first().isVisible().catch(() => false);
-      expect(hasContent || true).toBe(true);
+      expect(hasContent).toBe(true);
 
       // Navigate back to training page
       await page.goto('/training');
@@ -390,10 +390,10 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
 
       // Progress bar should be visible for the course
       const hasProgress = await page.locator('[class*="progress"], [role="progressbar"]').first().isVisible().catch(() => false);
-      expect(hasProgress || true).toBe(true);
+      expect(hasProgress).toBe(true);
     }
 
-    expect(hasContinue || true).toBe(true);
+    expect(hasContinue).toBe(true);
   });
 
   test('completed course shows certificate option and 100% progress', async ({page}) => {
@@ -408,11 +408,11 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
       // Verify certificate download option
       const certBtn = page.locator('button:has-text("Certificate"), button:has-text("Download"), a:has-text("Certificate")').first();
       const hasCert = await certBtn.isVisible().catch(() => false);
-      expect(hasCert || true).toBe(true);
+      expect(hasCert).toBe(true);
     }
 
     // Test passes regardless — data-dependent
-    expect(hasCompleted || true).toBe(true);
+    expect(hasCompleted).toBe(true);
   });
 
   test('admin can create a training program with modules', async ({page}) => {
@@ -449,11 +449,11 @@ test.describe('Training - Full Enrollment + Completion Flow', () => {
           // Look for "Add Module" button
           const addModuleBtn = page.locator('button:has-text("Add Module"), button:has-text("Add Lesson")').first();
           const hasAddModule = await addModuleBtn.isVisible().catch(() => false);
-          expect(hasAddModule || true).toBe(true);
+          expect(hasAddModule).toBe(true);
         }
       }
     }
 
-    expect(hasManage || true).toBe(true);
+    expect(hasManage).toBe(true);
   });
 });

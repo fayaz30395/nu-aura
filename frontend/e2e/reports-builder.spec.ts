@@ -117,11 +117,11 @@ test.describe('Reports Builder', () => {
         const hasResults = await page.locator('text=/result|record|row/i').first().isVisible().catch(() => false);
         const hasEmpty = await page.locator('text=/no.*data|no.*result|empty/i').first().isVisible().catch(() => false);
 
-        expect(hasTable || hasResults || hasEmpty || true).toBe(true);
+        expect(hasTable || hasResults || hasEmpty).toBe(true);
       }
     }
 
-    expect(hasModule || true).toBe(true);
+    expect(hasModule).toBe(true);
   });
 
   test('report can be exported as PDF or Excel', async ({page}) => {
@@ -137,6 +137,6 @@ test.describe('Reports Builder', () => {
       await expect(exportBtn).toBeEnabled();
     }
 
-    expect(hasExport || true).toBe(true);
+    expect(hasExport).toBe(true);
   });
 });

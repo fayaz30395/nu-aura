@@ -173,7 +173,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
     const hasSchedule = await scheduleBtn.isVisible({timeout: 5000}).catch(() => false);
 
     // Verify page renders correctly whether or not interviews exist
-    expect(hasSchedule || true).toBe(true);
+    expect(hasSchedule).toBe(true);
     await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
   });
 
@@ -213,7 +213,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
 
     // Should show either a list/table or empty state
     const hasContent = await page.locator('table, [class*="card"], [class*="list-item"], text=/no.*onboard/i').first().isVisible({timeout: 5000}).catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   // ── Step 6: Verify Employee Record Created in NU-HRMS ──────────────────
@@ -232,7 +232,7 @@ test.describe('Hire-to-Onboard — Full Lifecycle @regression @critical', () => 
     const hasCards = await page.locator('[class*="employee-card"], [class*="EmployeeCard"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no.*employee|empty/i').first().isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasTable || hasCards || hasEmptyState || true).toBe(true);
+    expect(hasTable || hasCards || hasEmptyState).toBe(true);
     await expect(page.locator('text=/Something went wrong|Error loading/i')).not.toBeVisible();
   });
 

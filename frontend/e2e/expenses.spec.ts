@@ -25,7 +25,7 @@ test.describe('Expenses Page', () => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('should display stats or summary cards', async ({page}) => {
@@ -58,7 +58,7 @@ test.describe('Expenses - My Claims Tab', () => {
     const hasClaims = await page.locator('table, [class*="table"], [class*="card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*claim|no.*expense/i').first().isVisible().catch(() => false);
 
-    expect(hasClaims || hasEmpty || true).toBe(true);
+    expect(hasClaims || hasEmpty).toBe(true);
   });
 
   test('should show claim status badges', async ({page}) => {
@@ -77,7 +77,7 @@ test.describe('Expenses - My Claims Tab', () => {
     }
 
     // Either has status badges or no claims
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 
   test('should display claim amounts', async ({page}) => {
@@ -87,7 +87,7 @@ test.describe('Expenses - My Claims Tab', () => {
     const hasAmount = await page.locator('text=/[$₹€£]|USD|INR|EUR/').first().isVisible().catch(() => false);
 
     // Either has amounts or no claims
-    expect(hasAmount || true).toBe(true);
+    expect(hasAmount).toBe(true);
   });
 });
 
@@ -107,7 +107,7 @@ test.describe('Expenses - Pending Approval Tab', () => {
 
       // Should show pending claims or empty
       const hasClaims = await page.locator('table, [class*="card"]').first().isVisible().catch(() => false);
-      expect(hasClaims || true).toBe(true);
+      expect(hasClaims).toBe(true);
     }
   });
 
@@ -126,7 +126,7 @@ test.describe('Expenses - Pending Approval Tab', () => {
       const hasReject = await rejectBtn.isVisible().catch(() => false);
 
       // Either has action buttons or no pending claims
-      expect(hasApprove || hasReject || true).toBe(true);
+      expect(hasApprove || hasReject).toBe(true);
     }
   });
 });
@@ -142,7 +142,7 @@ test.describe('Expenses - All Claims Tab (Admin)', () => {
     const hasTab = await allTab.isVisible().catch(() => false);
 
     // Tab may or may not be visible based on user role
-    expect(hasTab || true).toBe(true);
+    expect(hasTab).toBe(true);
   });
 
   test('should show all employee claims for admin', async ({page}) => {
@@ -155,7 +155,7 @@ test.describe('Expenses - All Claims Tab (Admin)', () => {
 
       // Should show claims from multiple employees or empty
       const hasClaims = await page.locator('table, [class*="card"]').first().isVisible().catch(() => false);
-      expect(hasClaims || true).toBe(true);
+      expect(hasClaims).toBe(true);
     }
   });
 });
@@ -178,7 +178,7 @@ test.describe('Expenses - Create Claim', () => {
       const modal = page.locator('[role="dialog"], .modal, [class*="modal"], form').first();
       const hasModal = await modal.isVisible().catch(() => false);
 
-      expect(hasModal || true).toBe(true);
+      expect(hasModal).toBe(true);
     }
   });
 
@@ -195,7 +195,7 @@ test.describe('Expenses - Create Claim', () => {
       const hasAmount = await page.locator('input[type="number"], input[name*="amount"]').first().isVisible().catch(() => false);
       const hasDescription = await page.locator('textarea, input[name*="description"]').first().isVisible().catch(() => false);
 
-      expect(hasCategory || hasAmount || hasDescription || true).toBe(true);
+      expect(hasCategory || hasAmount || hasDescription).toBe(true);
     }
   });
 
@@ -218,7 +218,7 @@ test.describe('Expenses - Create Claim', () => {
         }
       }
 
-      expect(hasCategory || true).toBe(true);
+      expect(hasCategory).toBe(true);
     }
   });
 
@@ -265,7 +265,7 @@ test.describe('Expenses - Claim Actions', () => {
     const hasSubmit = await submitBtn.isVisible().catch(() => false);
 
     // Either has submit button or no draft claims
-    expect(hasSubmit || true).toBe(true);
+    expect(hasSubmit).toBe(true);
   });
 
   test('should show delete button for draft claims', async ({page}) => {
@@ -276,7 +276,7 @@ test.describe('Expenses - Claim Actions', () => {
     const hasDelete = await deleteBtn.isVisible().catch(() => false);
 
     // Either has delete button or no draft claims
-    expect(hasDelete || true).toBe(true);
+    expect(hasDelete).toBe(true);
   });
 
   test('should show view details option', async ({page}) => {
@@ -287,7 +287,7 @@ test.describe('Expenses - Claim Actions', () => {
     const hasView = await viewBtn.isVisible().catch(() => false);
 
     // Either has view button or no claims
-    expect(hasView || true).toBe(true);
+    expect(hasView).toBe(true);
   });
 });
 
@@ -304,7 +304,7 @@ test.describe('Expenses - Filters and Search', () => {
     const statusFilter = page.locator('select, [role="combobox"]').first();
     const hasFilter = await statusFilter.isVisible().catch(() => false);
 
-    expect(hasFilter || true).toBe(true);
+    expect(hasFilter).toBe(true);
   });
 
   test('should display date filter', async ({page}) => {
@@ -314,7 +314,7 @@ test.describe('Expenses - Filters and Search', () => {
     const dateFilter = page.locator('input[type="date"], [class*="date"]').first();
     const hasDateFilter = await dateFilter.isVisible().catch(() => false);
 
-    expect(hasDateFilter || true).toBe(true);
+    expect(hasDateFilter).toBe(true);
   });
 
   test('should display search input', async ({page}) => {
@@ -324,7 +324,7 @@ test.describe('Expenses - Filters and Search', () => {
     const searchInput = page.locator('input[type="search"], input[placeholder*="search" i]').first();
     const hasSearch = await searchInput.isVisible().catch(() => false);
 
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 });
 
@@ -376,7 +376,7 @@ test.describe('Expenses - Receipt Upload', () => {
       const hasUpload = await fileInput.isVisible().catch(() => false) ||
         await uploadBtn.isVisible().catch(() => false);
 
-      expect(hasUpload || true).toBe(true);
+      expect(hasUpload).toBe(true);
     }
   });
 });

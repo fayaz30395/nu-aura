@@ -126,7 +126,7 @@ test.describe('Timesheets - Log Daily Hours', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasProjectSelector || hasProjectRows || true).toBe(true);
+    expect(hasProjectSelector || hasProjectRows).toBe(true);
   });
 
   test('should add a new time entry row', async ({page}) => {
@@ -207,7 +207,7 @@ test.describe('Timesheets - Submit Weekly Timesheet', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasTotal || hasHourValues || true).toBe(true);
+    expect(hasTotal || hasHourValues).toBe(true);
   });
 });
 
@@ -258,7 +258,7 @@ test.describe('Timesheets - PM Approval', () => {
     const hasReject = await rejectBtn.isVisible().catch(() => false);
 
     // Either has actions or no pending timesheets
-    expect(hasApprove || hasReject || true).toBe(true);
+    expect(hasApprove || hasReject).toBe(true);
   });
 
   test('should approve a timesheet and reflect in dashboard', async ({page}) => {
@@ -323,7 +323,7 @@ test.describe('Timesheets - Status Tracking', () => {
       }
     }
 
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 
   test('should show timesheet history', async ({page}) => {
@@ -336,7 +336,7 @@ test.describe('Timesheets - Status Tracking', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasHistory || true).toBe(true);
+    expect(hasHistory).toBe(true);
   });
 });
 

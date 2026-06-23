@@ -79,7 +79,7 @@ test.describe('Probation — Tabs', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('History tab shows confirmed probations or empty state', async ({page}) => {
@@ -93,7 +93,7 @@ test.describe('Probation — Tabs', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('Evaluate tab shows evaluation form or select prompt', async ({page}) => {
@@ -107,7 +107,7 @@ test.describe('Probation — Tabs', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 });
 
@@ -120,12 +120,12 @@ test.describe('Probation — Status Badges', () => {
 
   test('Active status badge is displayed in blue/accent', async ({page}) => {
     const hasActive = await page.locator('text=Active').first().isVisible().catch(() => false);
-    expect(hasActive || true).toBe(true);
+    expect(hasActive).toBe(true);
   });
 
   test('Extended status badge renders when applicable', async ({page}) => {
     const hasExtended = await page.locator('text=Extended').first().isVisible().catch(() => false);
-    expect(hasExtended || true).toBe(true);
+    expect(hasExtended).toBe(true);
   });
 
   test('Confirmed status badge renders on history tab', async ({page}) => {
@@ -135,7 +135,7 @@ test.describe('Probation — Status Badges', () => {
       .click();
     await page.waitForTimeout(1000);
     const hasConfirmed = await page.locator('text=Confirmed').first().isVisible().catch(() => false);
-    expect(hasConfirmed || true).toBe(true);
+    expect(hasConfirmed).toBe(true);
   });
 });
 
@@ -161,7 +161,7 @@ test.describe('Probation — Evaluation Form', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasRating || true).toBe(true);
+    expect(hasRating).toBe(true);
   });
 
   test('Recommendation dropdown has expected options', async ({page}) => {
@@ -189,7 +189,7 @@ test.describe('Probation — Confirm Employee Action', () => {
   test('Confirm button is visible for active probation records', async ({page}) => {
     const confirmBtn = page.locator('button:has-text("Confirm")').first();
     const hasConfirm = await confirmBtn.isVisible().catch(() => false);
-    expect(hasConfirm || true).toBe(true);
+    expect(hasConfirm).toBe(true);
   });
 });
 

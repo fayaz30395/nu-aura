@@ -25,7 +25,7 @@ test.describe('OKR Page', () => {
     const hasObjectives = await page.locator('[class*="card"], [class*="Card"], table').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*objective|no.*okr|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasObjectives || hasEmpty || true).toBe(true);
+    expect(hasObjectives || hasEmpty).toBe(true);
   });
 
   test('should show create objective button', async ({page}) => {
@@ -34,7 +34,7 @@ test.describe('OKR Page', () => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('/okr redirect works', async ({page}) => {

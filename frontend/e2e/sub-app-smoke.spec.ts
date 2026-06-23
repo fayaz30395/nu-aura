@@ -73,7 +73,7 @@ test.describe('NU-HRMS Smoke Tests @smoke', () => {
       }
     }
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('HRMS sidebar shows correct module sections @smoke', async ({page}) => {
@@ -176,7 +176,7 @@ test.describe('NU-Hire Smoke Tests @smoke', () => {
       }
     }
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('Recruitment pipeline page renders @smoke', async ({page}) => {
@@ -250,7 +250,7 @@ test.describe('NU-Grow Smoke Tests @smoke', () => {
       }
     }
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('OKR module renders @smoke', async ({page}) => {
@@ -323,7 +323,7 @@ test.describe('App Switcher Integration @smoke @critical', () => {
       // Fallback: header button with LayoutGrid icon
       const headerBtn = page.locator('header button svg').first();
       const hasFallback = await headerBtn.isVisible({timeout: 5000}).catch(() => false);
-      expect(hasFallback || true).toBe(true);
+      expect(hasFallback).toBe(true);
     } else {
       await expect(switcherBtn).toBeVisible();
     }
@@ -350,7 +350,7 @@ test.describe('App Switcher Integration @smoke @critical', () => {
       expect(visibleApps).toBe(4);
     }
 
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 
   test('Navigating HRMS → Hire → Grow preserves authentication @smoke @critical', async ({page}) => {
@@ -387,9 +387,9 @@ test.describe('App Switcher Integration @smoke @critical', () => {
       const activeIndicator = page.locator('[class*="active"], [aria-current="page"], svg[class*="check"]').first();
       const dropdownOpen = await page.locator('[class*="dropdown"], [class*="popover"], [class*="glass"]').first().isVisible({timeout: 3000}).catch(() => false);
 
-      expect(dropdownOpen || true).toBe(true);
+      expect(dropdownOpen).toBe(true);
     }
 
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 });

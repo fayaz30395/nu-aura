@@ -36,7 +36,7 @@ test.describe('Announcements Page', () => {
     const hasAnnouncements = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*announcement|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasAnnouncements || hasEmpty || true).toBe(true);
+    expect(hasAnnouncements || hasEmpty).toBe(true);
   });
 
   test('should show create announcement button for admin', async ({page}) => {
@@ -45,7 +45,7 @@ test.describe('Announcements Page', () => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add"), button:has-text("Post")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('should display search or filter controls', async ({page}) => {
@@ -60,6 +60,6 @@ test.describe('Announcements Page', () => {
       await expect(page.locator('body')).not.toContainText('Uncaught');
     }
 
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 });

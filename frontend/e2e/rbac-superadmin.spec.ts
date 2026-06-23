@@ -111,7 +111,7 @@ test.describe('SuperAdmin — Cross-Tenant Data Visibility @rbac', () => {
     await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 30000});
 
     const hasEmployees = await page.locator('table tbody tr, [class*="employee"]').first().isVisible({timeout: 8000}).catch(() => false);
-    expect(hasEmployees || true).toBe(true);
+    expect(hasEmployees).toBe(true);
   });
 
   test('SuperAdmin sees no access-denied messages on any module @rbac @critical', async ({page}) => {
@@ -136,7 +136,7 @@ test.describe('SuperAdmin — Cross-Tenant Data Visibility @rbac', () => {
       timeout: 30000,
     }).then(() => true).catch(() => false);
 
-    expect(isAccessible || hasContent || true).toBe(true);
+    expect(isAccessible || hasContent).toBe(true);
   });
 
   test('SuperAdmin can access audit logs across all tenants @rbac @smoke', async ({page}) => {
@@ -189,7 +189,7 @@ test.describe('SuperAdmin — Role Management @rbac', () => {
       await page.waitForTimeout(500);
 
       const hasDialog = await page.locator('[role="dialog"], [class*="modal"], [class*="drawer"]').first().isVisible({timeout: 5000}).catch(() => false);
-      expect(hasDialog || true).toBe(true);
+      expect(hasDialog).toBe(true);
 
       const cancelBtn = page.locator('button').filter({hasText: /cancel|close/i}).first();
       if (await cancelBtn.isVisible().catch(() => false)) {
@@ -197,7 +197,7 @@ test.describe('SuperAdmin — Role Management @rbac', () => {
       }
     }
 
-    expect(hasEdit || true).toBe(true);
+    expect(hasEdit).toBe(true);
   });
 
   test('SuperAdmin can view permissions matrix @rbac @critical', async ({page}) => {
@@ -207,7 +207,7 @@ test.describe('SuperAdmin — Role Management @rbac', () => {
     await expect(page.locator('h1, h2').first()).toBeVisible({timeout: 30000});
 
     const hasPermissionsContent = await page.locator('[class*="permission"], [class*="badge"], table').first().isVisible({timeout: 5000}).catch(() => false);
-    expect(hasPermissionsContent || true).toBe(true);
+    expect(hasPermissionsContent).toBe(true);
   });
 });
 

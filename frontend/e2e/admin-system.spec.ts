@@ -486,7 +486,7 @@ test.describe('/biometric-devices — Biometric Device Management', () => {
     const hasDevices = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/No devices|empty/i').first().isVisible().catch(() => false);
     const hasTable = await page.locator('table').first().isVisible().catch(() => false);
-    expect(hasDevices || hasEmpty || hasTable || true).toBe(true);
+    expect(hasDevices || hasEmpty || hasTable).toBe(true);
   });
 
   test('switching to Pending Punches tab does not error', async ({page}) => {
@@ -542,7 +542,7 @@ test.describe('/import-export — Data Import & Export', () => {
     await page.waitForTimeout(1000);
     const importTab = page.locator('button:has-text("Import"), [role="tab"]:has-text("Import")').first();
     const hasImport = await importTab.isVisible().catch(() => false);
-    expect(hasImport || true).toBe(true);
+    expect(hasImport).toBe(true);
   });
 
   test('import tab shows employee and department data type options', async ({page}) => {
@@ -550,13 +550,13 @@ test.describe('/import-export — Data Import & Export', () => {
     // Import section should list importable entities
     const hasEmployees = await page.locator('text=/Employees/i').first().isVisible().catch(() => false);
     const hasDepartments = await page.locator('text=/Departments/i').first().isVisible().catch(() => false);
-    expect(hasEmployees || hasDepartments || true).toBe(true);
+    expect(hasEmployees || hasDepartments).toBe(true);
   });
 
   test('file drop zone is visible in import mode', async ({page}) => {
     await page.waitForTimeout(1000);
     const hasDropzone = await page.locator('text=/drag.*drop|drop.*here|upload/i').first().isVisible().catch(() => false);
-    expect(hasDropzone || true).toBe(true);
+    expect(hasDropzone).toBe(true);
   });
 
   test('export section shows EXCEL and CSV format options', async ({page}) => {
@@ -568,7 +568,7 @@ test.describe('/import-export — Data Import & Export', () => {
       await page.waitForTimeout(500);
       const hasExcel = await page.locator('text=/Excel|EXCEL/i').first().isVisible().catch(() => false);
       const hasCsv = await page.locator('text=/CSV/i').first().isVisible().catch(() => false);
-      expect(hasExcel || hasCsv || true).toBe(true);
+      expect(hasExcel || hasCsv).toBe(true);
     }
   });
 
@@ -576,7 +576,7 @@ test.describe('/import-export — Data Import & Export', () => {
     await page.waitForTimeout(1000);
     const kekaTab = page.locator('button:has-text("Keka"), [role="tab"]:has-text("Keka")').first();
     const hasKeka = await kekaTab.isVisible().catch(() => false);
-    expect(hasKeka || true).toBe(true);
+    expect(hasKeka).toBe(true);
   });
 
   test('History tab shows import history section', async ({page}) => {

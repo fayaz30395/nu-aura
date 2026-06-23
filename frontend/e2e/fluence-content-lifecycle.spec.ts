@@ -42,7 +42,7 @@ test.describe('NU-Fluence Content Lifecycle', () => {
     const hasWikis = await page.locator('[class*="wiki"], table tbody tr, [class*="article"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no wiki|create.*wiki|coming soon|phase 2/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasWikis || hasEmptyState || true).toBe(true);
+    expect(hasWikis || hasEmptyState).toBe(true);
     await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();
   });
 
@@ -60,7 +60,7 @@ test.describe('NU-Fluence Content Lifecycle', () => {
       const hasEditor = await page.locator('[class*="editor"], [class*="tiptap"], [contenteditable], form').first().isVisible({timeout: 5000}).catch(() => false);
       const hasModal = await page.locator('[role="dialog"]').first().isVisible({timeout: 3000}).catch(() => false);
 
-      expect(hasEditor || hasModal || true).toBe(true);
+      expect(hasEditor || hasModal).toBe(true);
 
       const cancelBtn = page.locator('button').filter({hasText: /cancel|close|discard/i}).first();
       if (await cancelBtn.isVisible().catch(() => false)) {
@@ -70,7 +70,7 @@ test.describe('NU-Fluence Content Lifecycle', () => {
       }
     }
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('Wiki editor allows rich text input @regression', async ({page}) => {
@@ -84,10 +84,10 @@ test.describe('NU-Fluence Content Lifecycle', () => {
     if (hasEditor) {
       // Verify toolbar is present
       const hasToolbar = await page.locator('[class*="toolbar"], [class*="menu-bar"], [role="toolbar"]').first().isVisible({timeout: 3000}).catch(() => false);
-      expect(hasToolbar || true).toBe(true);
+      expect(hasToolbar).toBe(true);
     }
 
-    expect(hasEditor || hasRedirect || true).toBe(true);
+    expect(hasEditor || hasRedirect).toBe(true);
   });
 
   test('Blog list page loads @smoke', async ({page}) => {
@@ -99,7 +99,7 @@ test.describe('NU-Fluence Content Lifecycle', () => {
     const hasBlogs = await page.locator('[class*="blog"], [class*="post"], table tbody tr').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no blog|create.*post|coming soon/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasBlogs || hasEmptyState || true).toBe(true);
+    expect(hasBlogs || hasEmptyState).toBe(true);
     await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();
   });
 
@@ -112,7 +112,7 @@ test.describe('NU-Fluence Content Lifecycle', () => {
     const hasTemplates = await page.locator('[class*="template"], table tbody tr, [class*="card"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no templates|add template|coming soon/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasTemplates || hasEmptyState || true).toBe(true);
+    expect(hasTemplates || hasEmptyState).toBe(true);
     await expect(page.locator('text=/something went wrong/i').first()).not.toBeVisible();
   });
 
@@ -130,12 +130,12 @@ test.describe('NU-Fluence Content Lifecycle', () => {
 
       // Results panel or suggestions should appear
       const hasResults = await page.locator('[class*="result"], [class*="suggestion"], [role="listbox"]').first().isVisible({timeout: 3000}).catch(() => false);
-      expect(hasResults || true).toBe(true);
+      expect(hasResults).toBe(true);
 
       await searchInput.clear();
     }
 
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 
   test('Version history panel is accessible on wiki article @regression', async ({page}) => {
@@ -160,11 +160,11 @@ test.describe('NU-Fluence Content Lifecycle', () => {
         await page.waitForTimeout(500);
 
         const hasVersionPanel = await page.locator('[class*="version"], [class*="history"], [role="dialog"]').first().isVisible({timeout: 3000}).catch(() => false);
-        expect(hasVersionPanel || true).toBe(true);
+        expect(hasVersionPanel).toBe(true);
       }
     }
 
-    expect(hasArticle || true).toBe(true);
+    expect(hasArticle).toBe(true);
   });
 
   test('Fluence navigation appears in sidebar when on knowledge routes @smoke', async ({page}) => {
@@ -191,6 +191,6 @@ test.describe('NU-Fluence Content Lifecycle', () => {
 
     // Either no create button, or it's there but behavior is restricted
     // (Depends on RBAC config — accept either way)
-    expect(!isEnabled || true).toBe(true);
+    expect(!isEnabled).toBe(true);
   });
 });

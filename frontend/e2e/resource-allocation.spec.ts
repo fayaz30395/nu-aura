@@ -157,7 +157,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
       .catch(() => false);
 
     // Percentage display or summary cards
-    expect(hasPercentage || hasNumericValue || true).toBe(true);
+    expect(hasPercentage || hasNumericValue).toBe(true);
   });
 
   test('should show allocation per employee', async ({page}) => {
@@ -174,7 +174,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasEmployeeNames || true).toBe(true);
+    expect(hasEmployeeNames).toBe(true);
   });
 
   test('should show allocation per project', async ({page}) => {
@@ -191,7 +191,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasProjectNames || true).toBe(true);
+    expect(hasProjectNames).toBe(true);
   });
 
   test('should display capacity utilization chart or bar', async ({page}) => {
@@ -210,7 +210,7 @@ test.describe('Resource Allocation - View Allocation Summary', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasSvgChart || hasCanvas || hasProgressBar || true).toBe(true);
+    expect(hasSvgChart || hasCanvas || hasProgressBar).toBe(true);
   });
 });
 
@@ -273,7 +273,7 @@ test.describe('Resource Allocation - Over-Allocation Detection', () => {
           .isVisible()
           .catch(() => false);
 
-        expect(hasWarning || hasValidationError || hasPostSubmitWarning || true).toBe(true);
+        expect(hasWarning || hasValidationError || hasPostSubmitWarning).toBe(true);
       }
     }
   });
@@ -298,7 +298,7 @@ test.describe('Resource Allocation - Over-Allocation Detection', () => {
       .catch(() => false);
 
     // Might not have over-allocated employees
-    expect(hasOverAllocation || hasWarningIcon || true).toBe(true);
+    expect(hasOverAllocation || hasWarningIcon).toBe(true);
   });
 });
 
@@ -343,7 +343,7 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
     const hasReject = await rejectBtn.isVisible().catch(() => false);
 
     // Either has actions or no pending requests
-    expect(hasApprove || hasReject || true).toBe(true);
+    expect(hasApprove || hasReject).toBe(true);
   });
 
   test('should approve allocation and verify updated status', async ({page}) => {
@@ -374,7 +374,7 @@ test.describe('Resource Allocation - Manager Approval for Over-Allocation', () =
         .isVisible()
         .catch(() => false);
 
-      expect(hasApproved || true).toBe(true);
+      expect(hasApproved).toBe(true);
     }
 
     // Verify updated summary
@@ -463,7 +463,7 @@ test.describe('Resource Allocation - Resource Pool', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasCapacity || hasEmployeeList || true).toBe(true);
+    expect(hasCapacity || hasEmployeeList).toBe(true);
   });
 
   test('should load capacity timeline page', async ({page}) => {

@@ -115,10 +115,10 @@ test.describe('LMS — Enrollment + Completion Flow', () => {
       // Should show success or redirect
       const hasSuccess = await page.locator('text=/enrolled|success/i').first().isVisible().catch(() => false);
       const hasAlready = await page.locator('text=/already.*enrolled/i').first().isVisible().catch(() => false);
-      expect(hasSuccess || hasAlready || true).toBe(true);
+      expect(hasSuccess || hasAlready).toBe(true);
     }
 
-    expect(hasEnroll || true).toBe(true);
+    expect(hasEnroll).toBe(true);
   });
 
   test('enrolled course appears in my learning page', async ({page}) => {
@@ -142,7 +142,7 @@ test.describe('LMS — Enrollment + Completion Flow', () => {
     const hasProgress = await page.locator('[class*="progress"], [role="progressbar"], text=/%/').first().isVisible().catch(() => false);
 
     // Progress bars may or may not be present depending on enrollment data
-    expect(hasProgress || true).toBe(true);
+    expect(hasProgress).toBe(true);
   });
 
   test('completed courses show completion badge or certificate', async ({page}) => {
@@ -155,9 +155,9 @@ test.describe('LMS — Enrollment + Completion Flow', () => {
     if (hasCompleted) {
       const certBtn = page.locator('button:has-text("Certificate"), a:has-text("Certificate"), button:has-text("Download")').first();
       const hasCert = await certBtn.isVisible().catch(() => false);
-      expect(hasCert || true).toBe(true);
+      expect(hasCert).toBe(true);
     }
 
-    expect(hasCompleted || true).toBe(true);
+    expect(hasCompleted).toBe(true);
   });
 });

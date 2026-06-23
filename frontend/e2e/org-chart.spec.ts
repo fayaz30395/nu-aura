@@ -58,7 +58,7 @@ test.describe('Org Chart Page', () => {
       .catch(() => false);
 
     // Might show different root depending on data scope
-    expect(hasRootNode || true).toBe(true);
+    expect(hasRootNode).toBe(true);
   });
 
   test('should display department labels or groupings', async ({page}) => {
@@ -70,7 +70,7 @@ test.describe('Org Chart Page', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasDeptLabels || true).toBe(true);
+    expect(hasDeptLabels).toBe(true);
   });
 });
 
@@ -135,7 +135,7 @@ test.describe('Org Chart - Employee Node Interaction', () => {
         .catch(() => false);
 
       // Either shows tooltip or details are always visible — no crash
-      expect(hasTooltip || hasExpandedInfo || true).toBe(true);
+      expect(hasTooltip || hasExpandedInfo).toBe(true);
     }
   });
 
@@ -270,7 +270,7 @@ test.describe('Org Chart - View Controls', () => {
     const hasZoomOut = await zoomOut.isVisible().catch(() => false);
 
     // Zoom controls may or may not exist
-    expect(hasZoomIn || hasZoomOut || true).toBe(true);
+    expect(hasZoomIn || hasZoomOut).toBe(true);
   });
 
   test('should show department filter if available', async ({page}) => {
@@ -311,7 +311,7 @@ test.describe('Org Chart - Visual Elements', () => {
       .catch(() => false);
 
     // Connectors may be rendered differently
-    expect(hasSvgPaths || hasCssConnectors || true).toBe(true);
+    expect(hasSvgPaths || hasCssConnectors).toBe(true);
   });
 
   test('should display avatars or initials on nodes', async ({page}) => {
@@ -326,7 +326,7 @@ test.describe('Org Chart - Visual Elements', () => {
       .isVisible()
       .catch(() => false);
 
-    expect(hasAvatars || hasInitials || true).toBe(true);
+    expect(hasAvatars || hasInitials).toBe(true);
   });
 
   test('should be responsive', async ({page}) => {

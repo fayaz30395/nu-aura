@@ -24,7 +24,7 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
     await page.waitForTimeout(1000);
     const hasWeek = await page.locator('button[aria-label*="week" i], button:has-text("Week")').first().isVisible().catch(() => false);
     const hasList = await page.locator('button[aria-label*="list" i], button:has-text("List")').first().isVisible().catch(() => false);
-    expect(hasWeek || hasList || true).toBe(true);
+    expect(hasWeek || hasList).toBe(true);
   });
 
   test('should display navigation to Shift Definitions', async ({page}) => {
@@ -34,7 +34,7 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasLink || true).toBe(true);
+    expect(hasLink).toBe(true);
   });
 
   test('should display navigation to Shift Swaps', async ({page}) => {
@@ -44,7 +44,7 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasLink || true).toBe(true);
+    expect(hasLink).toBe(true);
   });
 
   test('week view shows day columns', async ({page}) => {
@@ -54,7 +54,7 @@ test.describe('Shifts — Dashboard (Team Schedule)', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasDays || true).toBe(true);
+    expect(hasDays).toBe(true);
   });
 
   test('prev/next week navigation buttons work', async ({page}) => {
@@ -105,7 +105,7 @@ test.describe('Shifts — Definitions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('Add Shift button opens creation form', async ({page}) => {
@@ -122,7 +122,7 @@ test.describe('Shifts — Definitions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasForm || true).toBe(true);
+    expect(hasForm).toBe(true);
   });
 
   test('shift creation form has required time fields', async ({page}) => {
@@ -138,7 +138,7 @@ test.describe('Shifts — Definitions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasStartTime || true).toBe(true);
+    expect(hasStartTime).toBe(true);
   });
 
   test('shift type dropdown has Fixed, Rotating, Flexible options', async ({page}) => {
@@ -169,7 +169,7 @@ test.describe('Shifts — Definitions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasNight || true).toBe(true);
+    expect(hasNight).toBe(true);
   });
 
   test('shift cards display time and type info', async ({page}) => {
@@ -179,7 +179,7 @@ test.describe('Shifts — Definitions', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasTime || true).toBe(true);
+    expect(hasTime).toBe(true);
   });
 });
 
@@ -202,7 +202,7 @@ test.describe('Shifts — Patterns', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('Add Pattern button is visible', async ({page}) => {
@@ -210,7 +210,7 @@ test.describe('Shifts — Patterns', () => {
       .locator('button:has-text("Add Pattern"), button:has-text("New Pattern"), button:has-text("Create Pattern")')
       .first();
     const hasAdd = await addBtn.isVisible().catch(() => false);
-    expect(hasAdd || true).toBe(true);
+    expect(hasAdd).toBe(true);
   });
 
   test('Pattern form has rotation type dropdown', async ({page}) => {
@@ -238,7 +238,7 @@ test.describe('Shifts — Patterns', () => {
     await page.waitForTimeout(500);
     const cycleDays = page.locator('input[name="cycleDays"]').first();
     const hasCycle = await cycleDays.isVisible().catch(() => false);
-    expect(hasCycle || true).toBe(true);
+    expect(hasCycle).toBe(true);
   });
 });
 
@@ -261,7 +261,7 @@ test.describe('Shifts — My Schedule', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasDays || true).toBe(true);
+    expect(hasDays).toBe(true);
   });
 
   test('prev/next month navigation works', async ({page}) => {
@@ -313,7 +313,7 @@ test.describe('Shifts — Swaps', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 
   test('Manager sees Pending Approval tab for swaps', async ({page}) => {
@@ -325,7 +325,7 @@ test.describe('Shifts — Swaps', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasPending || true).toBe(true);
+    expect(hasPending).toBe(true);
   });
 });
 

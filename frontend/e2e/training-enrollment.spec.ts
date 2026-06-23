@@ -73,10 +73,10 @@ test.describe('Training — Enrollment Flow', () => {
       if (hasCards) {
         // Duration, level, or category should appear somewhere on cards
         const hasMeta = await page.locator('text=/hour|min|beginner|intermediate|advanced|category/i').first().isVisible().catch(() => false);
-        expect(hasMeta || true).toBe(true);
+        expect(hasMeta).toBe(true);
       }
 
-      expect(hasCards || true).toBe(true);
+      expect(hasCards).toBe(true);
     });
 
     test('enroll button triggers an enroll action or shows confirmation', async ({page}) => {
@@ -94,10 +94,10 @@ test.describe('Training — Enrollment Flow', () => {
         const hasDialog = await page.locator('[role="dialog"]').first().isVisible().catch(() => false);
         const hasAlready = await page.locator('text=/already.*enrolled|already.*enrolled/i').first().isVisible().catch(() => false);
 
-        expect(hasSuccess || hasDialog || hasAlready || true).toBe(true);
+        expect(hasSuccess || hasDialog || hasAlready).toBe(true);
       }
 
-      expect(hasEnroll || true).toBe(true);
+      expect(hasEnroll).toBe(true);
     });
 
     test('view details action opens program details', async ({page}) => {
@@ -112,10 +112,10 @@ test.describe('Training — Enrollment Flow', () => {
 
         // Could open a drawer, modal, or navigate to a detail page
         const hasDetail = await page.locator('[role="dialog"], [class*="detail"], h2').first().isVisible().catch(() => false);
-        expect(hasDetail || true).toBe(true);
+        expect(hasDetail).toBe(true);
       }
 
-      expect(hasView || true).toBe(true);
+      expect(hasView).toBe(true);
     });
   });
 
@@ -133,7 +133,7 @@ test.describe('Training — Enrollment Flow', () => {
       const hasContent = await page.locator('[class*="card"], table tbody tr').first().isVisible().catch(() => false);
       const hasEmpty = await page.locator('text=/no.*training|not.*enrolled|empty/i').first().isVisible().catch(() => false);
 
-      expect(hasContent || hasEmpty || true).toBe(true);
+      expect(hasContent || hasEmpty).toBe(true);
     });
 
     test('continue button is present for in-progress courses', async ({page}) => {
@@ -143,7 +143,7 @@ test.describe('Training — Enrollment Flow', () => {
       const hasBtn = await continueBtn.isVisible().catch(() => false);
 
       // Button may or may not be present depending on enrolled courses in seed data
-      expect(hasBtn || true).toBe(true);
+      expect(hasBtn).toBe(true);
     });
 
     test('completed courses show certificate download option', async ({page}) => {
@@ -154,7 +154,7 @@ test.describe('Training — Enrollment Flow', () => {
       ).first();
       const hasBtn = await certBtn.isVisible().catch(() => false);
 
-      expect(hasBtn || true).toBe(true);
+      expect(hasBtn).toBe(true);
     });
   });
 
@@ -171,7 +171,7 @@ test.describe('Training — Enrollment Flow', () => {
       const manageTab = page.locator('text=Manage Programs, text=Manage').first();
       const hasTab = await manageTab.isVisible().catch(() => false);
 
-      expect(hasTab || true).toBe(true);
+      expect(hasTab).toBe(true);
     });
 
     test('clicking manage programs shows program list and create button', async ({page}) => {
@@ -188,10 +188,10 @@ test.describe('Training — Enrollment Flow', () => {
         const createBtn = page.locator('button:has-text("Create"), button:has-text("Add"), button:has-text("New Program")').first();
         const hasCreate = await createBtn.isVisible().catch(() => false);
 
-        expect(hasCreate || true).toBe(true);
+        expect(hasCreate).toBe(true);
       }
 
-      expect(hasTab || true).toBe(true);
+      expect(hasTab).toBe(true);
     });
 
     test('create program modal opens with form fields', async ({page}) => {
@@ -215,7 +215,7 @@ test.describe('Training — Enrollment Flow', () => {
           const hasModal = await page.locator('[role="dialog"]').first().isVisible().catch(() => false);
           const hasForm = await page.locator('form').first().isVisible().catch(() => false);
 
-          expect(hasModal || hasForm || true).toBe(true);
+          expect(hasModal || hasForm).toBe(true);
         }
       }
     });

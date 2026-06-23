@@ -74,7 +74,7 @@ test.describe('Wiki Edit Lock — concurrent editors @regression', () => {
       const hasWarning = await lockWarning.isVisible({timeout: 5000}).catch(() => false);
 
       // Soft assert: the warning should appear; otherwise the page should at least not crash
-      expect(hasWarning || true).toBe(true);
+      expect(hasWarning).toBe(true);
       await expect(pageB.locator('text=/something went wrong/i')).not.toBeVisible();
     } finally {
       await ctxA.close();
@@ -109,7 +109,7 @@ test.describe('Wiki Edit Lock — concurrent editors @regression', () => {
       // Editor must still be alive (no expiry, no crash, title input still editable)
       const titleInput = pageA.locator('input[placeholder*="title" i], textarea, [contenteditable]').first();
       const stillEditable = await titleInput.isVisible({timeout: 3000}).catch(() => false);
-      expect(stillEditable || true).toBe(true);
+      expect(stillEditable).toBe(true);
       await expect(pageA.locator('text=/something went wrong/i')).not.toBeVisible();
     } finally {
       await ctxA.close();

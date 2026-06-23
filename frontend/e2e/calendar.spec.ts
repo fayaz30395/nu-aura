@@ -29,7 +29,7 @@ test.describe('Calendar Page', () => {
     const hasPrev = await page.locator('button[aria-label*="prev" i], button[aria-label*="back" i]').first().isVisible().catch(() => false);
     const hasChevron = await page.locator('button svg').first().isVisible().catch(() => false);
 
-    expect(hasPrev || hasChevron || true).toBe(true);
+    expect(hasPrev || hasChevron).toBe(true);
   });
 
   test('should show create event button', async ({page}) => {
@@ -38,7 +38,7 @@ test.describe('Calendar Page', () => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('should display events or empty state', async ({page}) => {
@@ -47,6 +47,6 @@ test.describe('Calendar Page', () => {
     const hasEvents = await page.locator('[class*="event"], [class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*event|no.*meeting|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasEvents || hasEmpty || true).toBe(true);
+    expect(hasEvents || hasEmpty).toBe(true);
   });
 });

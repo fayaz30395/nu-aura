@@ -40,7 +40,7 @@ test.describe('Admin Role Management', () => {
       const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
       const hasRoleItem = await page.locator('[class*="role"]').first().isVisible().catch(() => false);
 
-      expect(hasTable || hasCards || hasRoleItem || true).toBe(true);
+      expect(hasTable || hasCards || hasRoleItem).toBe(true);
     });
 
     test('should display a create role button for admin', async ({page}) => {
@@ -56,7 +56,7 @@ test.describe('Admin Role Management', () => {
         await expect(createBtn).toBeEnabled();
       }
 
-      expect(hasCreate || true).toBe(true);
+      expect(hasCreate).toBe(true);
     });
 
     test('create role modal opens with form fields', async ({page}) => {
@@ -92,7 +92,7 @@ test.describe('Admin Role Management', () => {
         await expect(page.locator('body')).not.toContainText('Unexpected error');
       }
 
-      expect(hasSearch || true).toBe(true);
+      expect(hasSearch).toBe(true);
     });
   });
 
@@ -114,7 +114,7 @@ test.describe('Admin Role Management', () => {
       // Accept either content or an access-restricted message
       const hasAccessDenied = await page.locator('text=/access|permission|denied|restricted/i').first().isVisible().catch(() => false);
 
-      expect(hasContent || hasAccessDenied || true).toBe(true);
+      expect(hasContent || hasAccessDenied).toBe(true);
     });
 
     test('can expand a role to view its permissions', async ({page}) => {
@@ -130,10 +130,10 @@ test.describe('Admin Role Management', () => {
 
         // Expanded section should show permission badges/items
         const hasPermissions = await page.locator('[class*="badge"], [class*="chip"], [class*="tag"], [class*="permission"]').first().isVisible().catch(() => false);
-        expect(hasPermissions || true).toBe(true);
+        expect(hasPermissions).toBe(true);
       }
 
-      expect(hasTrigger || true).toBe(true);
+      expect(hasTrigger).toBe(true);
     });
 
     test('create role button opens a form', async ({page}) => {
@@ -153,7 +153,7 @@ test.describe('Admin Role Management', () => {
         expect(hasDialog || hasDrawer || hasInlineForm).toBe(true);
       }
 
-      expect(hasCreate || true).toBe(true);
+      expect(hasCreate).toBe(true);
     });
   });
 
@@ -213,7 +213,7 @@ test.describe('Role-Based Access — Employee vs SuperAdmin', () => {
       'button:has-text("Create"), button:has-text("Add Role"), button:has-text("New Role")'
     ).first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('SuperAdmin can access permissions page', async ({page}) => {
@@ -249,7 +249,7 @@ test.describe('Permission Change — SuperAdmin updates role, Employee sees upda
       expect(hasCheckbox || hasSwitch || hasDialog || hasForm).toBe(true);
     }
 
-    expect(hasEdit || true).toBe(true);
+    expect(hasEdit).toBe(true);
   });
 
   test('SuperAdmin can view all roles with permission counts', async ({page}) => {
@@ -271,7 +271,7 @@ test.describe('Permission Change — SuperAdmin updates role, Employee sees upda
     // At least one role should be visible (may use display names instead of codes)
     const hasAnyRole = foundRoles > 0;
     const hasContent = await page.locator('[class*="card"], table, [class*="list"]').first().isVisible().catch(() => false);
-    expect(hasAnyRole || hasContent || true).toBe(true);
+    expect(hasAnyRole || hasContent).toBe(true);
   });
 
   test('employee sidebar updates when navigating after permission change', async ({page}) => {

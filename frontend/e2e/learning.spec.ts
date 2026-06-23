@@ -35,7 +35,7 @@ test.describe('Learning Dashboard (/learning)', () => {
       .first()
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(statsLoaded || skeletonVisible || true).toBe(true);
+    expect(statsLoaded || skeletonVisible).toBe(true);
   });
 
   test('tab navigation between Course Catalog, My Courses, and Certificates', async ({page}) => {
@@ -60,7 +60,7 @@ test.describe('Learning Dashboard (/learning)', () => {
       .getByText(/no courses available/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasCards || hasEmpty || true).toBe(true);
+    expect(hasCards || hasEmpty).toBe(true);
   });
 
   test('My Courses tab shows enrollments or empty state', async ({page}) => {
@@ -77,7 +77,7 @@ test.describe('Learning Dashboard (/learning)', () => {
       .getByText(/haven.*t enrolled|browse the catalog/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasEnrollments || hasEmpty || true).toBe(true);
+    expect(hasEnrollments || hasEmpty).toBe(true);
   });
 
   test('Certificates tab shows certificates or empty state', async ({page}) => {
@@ -94,7 +94,7 @@ test.describe('Learning Dashboard (/learning)', () => {
       .getByText(/no certificates earned/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasCerts || hasEmpty || true).toBe(true);
+    expect(hasCerts || hasEmpty).toBe(true);
   });
 
   test('progress bar renders for enrolled courses in My Courses tab', async ({page}) => {
@@ -108,7 +108,7 @@ test.describe('Learning Dashboard (/learning)', () => {
       .isVisible({timeout: 8000})
       .catch(() => false);
     // Progress bars only appear if user has enrollments
-    expect(hasProgressBar || true).toBe(true);
+    expect(hasProgressBar).toBe(true);
   });
 
   test('Enroll Now button is visible on course cards in Catalog tab', async ({page}) => {
@@ -122,7 +122,7 @@ test.describe('Learning Dashboard (/learning)', () => {
       .isVisible({timeout: 8000})
       .catch(() => false);
     // Enroll button only appears if courses exist AND user has LMS_ENROLL permission
-    expect(hasEnrollBtn || true).toBe(true);
+    expect(hasEnrollBtn).toBe(true);
   });
 
   test('difficulty badges show correct labels on course cards', async ({page}) => {
@@ -135,7 +135,7 @@ test.describe('Learning Dashboard (/learning)', () => {
       .first()
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasDifficultyBadge || true).toBe(true);
+    expect(hasDifficultyBadge).toBe(true);
   });
 
   test('page does not crash with error state visible', async ({page}) => {
@@ -183,7 +183,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
       .first()
       .isVisible({timeout: 10000})
       .catch(() => false);
-    expect(hasError || true).toBe(true);
+    expect(hasError).toBe(true);
   });
 
   test('Back to Learning link navigates to /learning', async ({page}) => {
@@ -247,7 +247,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
           .getByText(/course curriculum/i)
           .isVisible({timeout: 8000})
           .catch(() => false);
-        expect(curriculumHeading || true).toBe(true);
+        expect(curriculumHeading).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -264,7 +264,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
       .first()
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasEnrollBtn || true).toBe(true);
+    expect(hasEnrollBtn).toBe(true);
   });
 
   test('progress section shows for enrolled course', async ({page}) => {
@@ -278,7 +278,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
       .first()
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasProgress || true).toBe(true);
+    expect(hasProgress).toBe(true);
   });
 
   test('module accordion can be toggled in curriculum', async ({page}) => {
@@ -327,7 +327,7 @@ test.describe('Course Detail (/learning/courses/[id])', () => {
           .getByRole('button', {name: /download certificate/i})
           .isVisible({timeout: 5000})
           .catch(() => false);
-        expect(downloadBtn || true).toBe(true);
+        expect(downloadBtn).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -378,7 +378,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
 
     // If player loads (user has permission), check for navigation controls
     const hasClose = await page.locator('a[href="/learning"], button:has(svg)').first().isVisible({timeout: 5000}).catch(() => false);
-    expect(hasClose || true).toBe(true);
+    expect(hasClose).toBe(true);
   });
 
   test('course sidebar shows content list grouped by module', async ({page}) => {
@@ -401,7 +401,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
             .getByText(/course content/i)
             .isVisible({timeout: 8000})
             .catch(() => false);
-          expect(hasCourseSidebar || true).toBe(true);
+          expect(hasCourseSidebar).toBe(true);
         }
       }
     }
@@ -428,7 +428,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
             .first()
             .isVisible({timeout: 8000})
             .catch(() => false);
-          expect(hasMarkComplete || true).toBe(true);
+          expect(hasMarkComplete).toBe(true);
         }
       }
     }
@@ -444,7 +444,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
       .first()
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasProgressBar || true).toBe(true);
+    expect(hasProgressBar).toBe(true);
   });
 
   test('previous and next navigation buttons are rendered', async ({page}) => {
@@ -472,7 +472,7 @@ test.describe('Course Player (/learning/courses/[id]/play)', () => {
             .first()
             .isVisible({timeout: 5000})
             .catch(() => false);
-          expect(hasPrev || hasNext || true).toBe(true);
+          expect(hasPrev || hasNext).toBe(true);
         }
       }
     }
@@ -537,7 +537,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
               .first()
               .isVisible({timeout: 8000})
               .catch(() => false);
-            expect(hasInstructions || true).toBe(true);
+            expect(hasInstructions).toBe(true);
           }
         }
       }
@@ -553,7 +553,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
       .first()
       .isVisible({timeout: 10000})
       .catch(() => false);
-    expect(hasError || true).toBe(true);
+    expect(hasError).toBe(true);
   });
 
   test('Start Quiz button triggers quiz state transition', async ({page}) => {
@@ -572,7 +572,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
         .isVisible({timeout: 2000})
         .catch(() => false);
       // On success, the intro is gone; on failure (API error), it stays
-      expect(!stillOnIntro || true).toBe(true);
+      expect(!stillOnIntro).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -592,7 +592,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
         .getByText(/questions.*answered|answered.*questions/i)
         .isVisible({timeout: 5000})
         .catch(() => false);
-      expect(hasNav || true).toBe(true);
+      expect(hasNav).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -614,7 +614,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
         .isVisible({timeout: 5000})
         .catch(() => false);
       // Timer only shows if quiz has a timeLimit — so it's optional
-      expect(hasTimer || true).toBe(true);
+      expect(hasTimer).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -636,7 +636,7 @@ test.describe('Quiz Page (/learning/courses/[id]/quiz/[quizId])', () => {
       if (hasSubmit) {
         // Should be disabled when not all answered
         const isDisabled = await submitBtn.isDisabled().catch(() => true);
-        expect(isDisabled || true).toBe(true);
+        expect(isDisabled).toBe(true);
       }
     }
     expect(true).toBe(true);
@@ -747,7 +747,7 @@ test.describe('Learning Paths (/learning/paths)', () => {
       .getByText(/no matching learning paths|no learning paths available/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasResults || hasEmpty || true).toBe(true);
+    expect(hasResults || hasEmpty).toBe(true);
   });
 
   test('clear filters button resets search and difficulty', async ({page}) => {
@@ -781,7 +781,7 @@ test.describe('Learning Paths (/learning/paths)', () => {
       .getByText(/no learning paths available/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasCards || hasEmpty || true).toBe(true);
+    expect(hasCards || hasEmpty).toBe(true);
   });
 
   test('Enroll Now button triggers enrollment mutation', async ({page}) => {
@@ -809,7 +809,7 @@ test.describe('Learning Paths (/learning/paths)', () => {
       .first()
       .isVisible({timeout: 8000})
       .catch(() => false);
-    expect(hasProgress || true).toBe(true);
+    expect(hasProgress).toBe(true);
   });
 
   test('user without LMS permission is redirected away', async ({page}) => {
@@ -854,7 +854,7 @@ test.describe('Certificates (/learning/certificates)', () => {
       .getByText(/no certificates earned/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasSummary || hasEmpty || true).toBe(true);
+    expect(hasSummary || hasEmpty).toBe(true);
   });
 
   test('search input accepts certificate name or number', async ({page}) => {
@@ -900,7 +900,7 @@ test.describe('Certificates (/learning/certificates)', () => {
       .getByText(/no certificates earned/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasBadge || hasEmpty || true).toBe(true);
+    expect(hasBadge || hasEmpty).toBe(true);
   });
 
   test('Download, Print, and Share buttons are visible on certificate cards', async ({page}) => {
@@ -916,7 +916,7 @@ test.describe('Certificates (/learning/certificates)', () => {
       .getByText(/no certificates earned/i)
       .isVisible({timeout: 5000})
       .catch(() => false);
-    expect(hasDownload || hasEmpty || true).toBe(true);
+    expect(hasDownload || hasEmpty).toBe(true);
   });
 
   test('copy certificate number button copies to clipboard', async ({page}) => {
@@ -935,7 +935,7 @@ test.describe('Certificates (/learning/certificates)', () => {
         .first()
         .isVisible({timeout: 2000})
         .catch(() => false);
-      expect(hasCheck || true).toBe(true);
+      expect(hasCheck).toBe(true);
     }
     expect(true).toBe(true);
   });

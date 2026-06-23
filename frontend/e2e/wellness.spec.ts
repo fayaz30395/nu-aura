@@ -34,7 +34,7 @@ test.describe('Wellness Page', () => {
     const hasLeaderboard = await page.locator('text=/leaderboard|ranking|top/i').first().isVisible().catch(() => false);
     const hasActivity = await page.locator('text=/activity|challenge|goal/i').first().isVisible().catch(() => false);
 
-    expect(hasLeaderboard || hasActivity || true).toBe(true);
+    expect(hasLeaderboard || hasActivity).toBe(true);
   });
 
   test('should show action button if present', async ({page}) => {
@@ -43,6 +43,6 @@ test.describe('Wellness Page', () => {
     const actionBtn = page.locator('button:has-text("Log"), button:has-text("Add"), button:has-text("Create"), button:has-text("Join")').first();
     const hasAction = await actionBtn.isVisible().catch(() => false);
 
-    expect(hasAction || true).toBe(true);
+    expect(hasAction).toBe(true);
   });
 });

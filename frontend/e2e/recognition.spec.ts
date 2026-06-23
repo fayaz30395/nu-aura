@@ -35,7 +35,7 @@ test.describe('Recognition Page', () => {
     const actionBtn = page.locator('button:has-text("Give"), button:has-text("Recognize"), button:has-text("Send"), button:has-text("Create")').first();
     const hasAction = await actionBtn.isVisible().catch(() => false);
 
-    expect(hasAction || true).toBe(true);
+    expect(hasAction).toBe(true);
   });
 
   test('should display tabs or sections for received/given', async ({page}) => {
@@ -43,6 +43,6 @@ test.describe('Recognition Page', () => {
 
     const hasReceived = await page.locator('text=/received|given|wall|feed/i').first().isVisible().catch(() => false);
 
-    expect(hasReceived || true).toBe(true);
+    expect(hasReceived).toBe(true);
   });
 });

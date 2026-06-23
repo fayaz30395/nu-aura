@@ -40,7 +40,7 @@ test.describe('Fluence Drive — /fluence/drive', () => {
   test('subtitle describes file management @regression', async ({page}) => {
     const subtitle = page.locator('text=/Upload, manage, and share files/i').first();
     const hasSubtitle = await subtitle.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasSubtitle || true).toBe(true);
+    expect(hasSubtitle).toBe(true);
   });
 
   test('shows file category tabs (All Files, Documents, Images, Spreadsheets) @regression', async ({page}) => {
@@ -76,7 +76,7 @@ test.describe('Fluence Drive — /fluence/drive', () => {
   test('search input is present in the drive @regression', async ({page}) => {
     const searchInput = page.locator('input[placeholder*="Search files"]').first();
     const hasSearch = await searchInput.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
 
     if (hasSearch) {
       await searchInput.fill('test');
@@ -93,7 +93,7 @@ test.describe('Fluence Drive — /fluence/drive', () => {
     const hasUpload = await uploadZone.isVisible({timeout: 5000}).catch(() => false);
 
     // Upload area is permission-gated (DOCUMENT_UPLOAD) — gracefully accept either
-    expect(hasUpload || true).toBe(true);
+    expect(hasUpload).toBe(true);
   });
 
   test('shows file list or empty "Getting Started" state @smoke', async ({page}) => {
@@ -102,7 +102,7 @@ test.describe('Fluence Drive — /fluence/drive', () => {
     const hasList = await page.locator('[class*="file"], tr, [class*="list"]').first().isVisible({timeout: 3000}).catch(() => false);
     const hasEmpty = await page.locator('text=/Getting Started|Upload files to your Drive/i').first().isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasList || hasEmpty || true).toBe(true);
+    expect(hasList || hasEmpty).toBe(true);
   });
 
   test('employee can access the drive page @rbac', async ({page}) => {
@@ -161,7 +161,7 @@ test.describe('Activity Wall — /fluence/wall', () => {
   test('shows "Live" badge next to heading @regression', async ({page}) => {
     const liveBadge = page.locator('text=/^Live$/i').first();
     const hasLive = await liveBadge.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasLive || true).toBe(true);
+    expect(hasLive).toBe(true);
   });
 
   test('PostComposer (text area or button) is visible for posting @regression', async ({page}) => {
@@ -175,7 +175,7 @@ test.describe('Activity Wall — /fluence/wall', () => {
     const hasBtn = await composerBtn.isVisible({timeout: 5000}).catch(() => false);
 
     // PostComposer is rendered as a component — either element is acceptable
-    expect(hasComposer || hasBtn || true).toBe(true);
+    expect(hasComposer || hasBtn).toBe(true);
   });
 
   test('Trending Content sidebar is visible @regression', async ({page}) => {
@@ -183,7 +183,7 @@ test.describe('Activity Wall — /fluence/wall', () => {
 
     const trending = page.locator('text=/Trending Content/i').first();
     const hasTrending = await trending.isVisible({timeout: 5000}).catch(() => false);
-    expect(hasTrending || true).toBe(true);
+    expect(hasTrending).toBe(true);
   });
 
   test('shows activity feed items or empty state @smoke', async ({page}) => {
@@ -192,7 +192,7 @@ test.describe('Activity Wall — /fluence/wall', () => {
     const hasActivity = await page.locator('[class*="activity"], [class*="feed"], [class*="post"]').first().isVisible({timeout: 3000}).catch(() => false);
     const hasEmpty = await page.locator('text=/No trending content|Start creating/i').first().isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasActivity || hasEmpty || true).toBe(true);
+    expect(hasActivity || hasEmpty).toBe(true);
   });
 
   test('employee can access the wall page @rbac', async ({page}) => {
@@ -223,13 +223,13 @@ test.describe('Activity Wall — /fluence/wall', () => {
     const hasPoll = await pollBtn.isVisible({timeout: 5000}).catch(() => false);
     const hasPraise = await praiseBtn.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasPoll || hasPraise || true).toBe(true);
+    expect(hasPoll || hasPraise).toBe(true);
   });
 
   test('"See what is happening" subtitle is present @regression', async ({page}) => {
     const subtitle = page.locator('text=/See what is happening/i').first();
     const hasSubtitle = await subtitle.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasSubtitle || true).toBe(true);
+    expect(hasSubtitle).toBe(true);
   });
 });
 
@@ -254,7 +254,7 @@ test.describe('My Content — /fluence/my-content', () => {
   test('shows subtitle about viewing own content @regression', async ({page}) => {
     const subtitle = page.locator('text=/View and manage all your pages/i').first();
     const hasSubtitle = await subtitle.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasSubtitle || true).toBe(true);
+    expect(hasSubtitle).toBe(true);
   });
 
   test('shows Wiki Pages, Blog Posts, Favorites tabs @regression', async ({page}) => {
@@ -276,7 +276,7 @@ test.describe('My Content — /fluence/my-content', () => {
 
     const wikiStatCard = page.locator('text=/Wiki Pages/i').first();
     const hasWikiStat = await wikiStatCard.isVisible({timeout: 5000}).catch(() => false);
-    expect(hasWikiStat || true).toBe(true);
+    expect(hasWikiStat).toBe(true);
   });
 
   test('clicking Blog Posts tab switches content @regression', async ({page}) => {
@@ -309,7 +309,7 @@ test.describe('My Content — /fluence/my-content', () => {
       const hasItems = await page.locator('button, [class*="card"]').first().isVisible({timeout: 3000}).catch(() => false);
       const hasEmpty = await page.locator('text=/No favorites yet|Star pages/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-      expect(hasItems || hasEmpty || true).toBe(true);
+      expect(hasItems || hasEmpty).toBe(true);
     }
     expect(true).toBe(true);
   });
@@ -356,7 +356,7 @@ test.describe('My Content — /fluence/my-content', () => {
     const hasItems = await page.locator('button[class*="card"], [class*="ContentCard"]').first().isVisible({timeout: 3000}).catch(() => false);
     const hasEmpty = await page.locator('text=/No wiki pages yet/i').first().isVisible({timeout: 3000}).catch(() => false);
 
-    expect(hasItems || hasEmpty || true).toBe(true);
+    expect(hasItems || hasEmpty).toBe(true);
   });
 
   test('employee can access my-content page @rbac', async ({page}) => {
@@ -416,7 +416,7 @@ test.describe('Fluence Search — /fluence/search', () => {
     // Should still show "Start searching" or a minimum character hint
     const hint = page.locator('text=/Start searching|at least 2 characters/i').first();
     const hasHint = await hint.isVisible({timeout: 3000}).catch(() => false);
-    expect(hasHint || true).toBe(true);
+    expect(hasHint).toBe(true);
   });
 
   test('typing 2+ characters triggers search and shows results or no-results @regression', async ({page}) => {
@@ -458,7 +458,7 @@ test.describe('Fluence Search — /fluence/search', () => {
       // Visibility filter section should expand
       const visLabel = page.locator('label, text=/Visibility/i').first();
       const hasVis = await visLabel.isVisible({timeout: 3000}).catch(() => false);
-      expect(hasVis || true).toBe(true);
+      expect(hasVis).toBe(true);
 
       // Close panel
       await filtersBtn.click();
@@ -494,7 +494,7 @@ test.describe('Fluence Search — /fluence/search', () => {
 
     const saveBtn = page.locator('button').filter({hasText: /^Save$/i}).first();
     const hasSave = await saveBtn.isVisible({timeout: 3000}).catch(() => false);
-    expect(hasSave || true).toBe(true);
+    expect(hasSave).toBe(true);
 
     if (hasSave) {
       await saveBtn.click();
@@ -503,7 +503,7 @@ test.describe('Fluence Search — /fluence/search', () => {
       // Should now show "Saved" with a checkmark
       const savedBtn = page.locator('button').filter({hasText: /Saved/i}).first();
       const hasSaved = await savedBtn.isVisible({timeout: 3000}).catch(() => false);
-      expect(hasSaved || true).toBe(true);
+      expect(hasSaved).toBe(true);
     }
   });
 
@@ -548,7 +548,7 @@ test.describe('Fluence Analytics — /fluence/analytics', () => {
   test('shows subtitle about tracking content performance @regression', async ({page}) => {
     const subtitle = page.locator('text=/Track content performance/i').first();
     const hasSubtitle = await subtitle.isVisible({timeout: 8000}).catch(() => false);
-    expect(hasSubtitle || true).toBe(true);
+    expect(hasSubtitle).toBe(true);
   });
 
   test('KPI cards (Total Views, Total Likes, Total Comments, Active Content) render @regression', async ({page}) => {
@@ -572,7 +572,7 @@ test.describe('Fluence Analytics — /fluence/analytics', () => {
 
     const trendCard = page.locator('text=/Activity Trend/i').first();
     const hasChart = await trendCard.isVisible({timeout: 5000}).catch(() => false);
-    expect(hasChart || true).toBe(true);
+    expect(hasChart).toBe(true);
   });
 
   test('Content Distribution chart section is visible @regression', async ({page}) => {
@@ -580,7 +580,7 @@ test.describe('Fluence Analytics — /fluence/analytics', () => {
 
     const distCard = page.locator('text=/Distribution/i').first();
     const hasDist = await distCard.isVisible({timeout: 5000}).catch(() => false);
-    expect(hasDist || true).toBe(true);
+    expect(hasDist).toBe(true);
   });
 
   test('Top Content table renders without error @regression', async ({page}) => {
@@ -588,7 +588,7 @@ test.describe('Fluence Analytics — /fluence/analytics', () => {
 
     const topContent = page.locator('text=/Top Content/i').first();
     const hasTopContent = await topContent.isVisible({timeout: 5000}).catch(() => false);
-    expect(hasTopContent || true).toBe(true);
+    expect(hasTopContent).toBe(true);
   });
 
   test('Recent Activity section renders without error @regression', async ({page}) => {
@@ -596,7 +596,7 @@ test.describe('Fluence Analytics — /fluence/analytics', () => {
 
     const recentActivity = page.locator('text=/Recent Activity/i').first();
     const hasRecent = await recentActivity.isVisible({timeout: 5000}).catch(() => false);
-    expect(hasRecent || true).toBe(true);
+    expect(hasRecent).toBe(true);
   });
 
   test('Top Content table shows "No content yet" or actual content rows @smoke', async ({page}) => {
@@ -605,7 +605,7 @@ test.describe('Fluence Analytics — /fluence/analytics', () => {
     const hasRows = await page.locator('table tbody tr').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmpty = await page.locator('text=/No content yet/i').first().isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasRows || hasEmpty || true).toBe(true);
+    expect(hasRows || hasEmpty).toBe(true);
   });
 
   test('employee with KNOWLEDGE_VIEW permission can access analytics @rbac', async ({page}) => {
@@ -654,7 +654,7 @@ test.describe('Fluence Analytics — /fluence/analytics', () => {
       // Should navigate to /fluence/wiki/:id or /fluence/blogs/:id
       const url = page.url();
       const navigated = url.includes('/fluence/wiki/') || url.includes('/fluence/blogs/');
-      expect(navigated || true).toBe(true);
+      expect(navigated).toBe(true);
     } else {
       expect(true).toBe(true);
     }

@@ -158,7 +158,7 @@ test.describe('Allocations Summary', () => {
       .isVisible()
       .catch(() => false);
     const hasTable = await page.locator('table').first().isVisible().catch(() => false);
-    expect(hasOverCap || hasTable || true).toBe(true);
+    expect(hasOverCap || hasTable).toBe(true);
   });
 
   test('should display pagination controls when total elements exceed page size', async ({page}) => {
@@ -169,7 +169,7 @@ test.describe('Allocations Summary', () => {
       .isVisible()
       .catch(() => false);
     // Pagination only appears with data; valid either way
-    expect(hasPagination || true).toBe(true);
+    expect(hasPagination).toBe(true);
   });
 
   test('MANAGER scope — should only see TEAM and SELF scope buttons enabled', async ({page}) => {
@@ -257,7 +257,7 @@ test.describe('Time Tracking', () => {
         .first()
         .isVisible()
         .catch(() => false);
-      expect(hasPagination || true).toBe(true);
+      expect(hasPagination).toBe(true);
     }
   });
 
@@ -269,7 +269,7 @@ test.describe('Time Tracking', () => {
       .isVisible()
       .catch(() => false);
     // Banner only shows when drafts exist — valid either way
-    expect(hasDraftBanner || true).toBe(true);
+    expect(hasDraftBanner).toBe(true);
   });
 
   test('should render Weekly View quick-action card', async ({page}) => {
@@ -391,7 +391,7 @@ test.describe('Time Tracking - Create Entry', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasError || true).toBe(true);
+    expect(hasError).toBe(true);
   });
 
   test('should submit form with valid data as draft and redirect to /time-tracking', async ({page}) => {
@@ -786,7 +786,7 @@ test.describe('Resources - Availability', () => {
       const card = page.locator(`text=${label}`).first();
       const isVisible = await card.isVisible({timeout: 5000}).catch(() => false);
       // Stats only appear when API returns data — valid either way
-      expect(isVisible || true).toBe(true);
+      expect(isVisible).toBe(true);
     }
   });
 
@@ -822,7 +822,7 @@ test.describe('Resources - Availability', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasCalendar || hasEmptyState || true).toBe(true);
+    expect(hasCalendar || hasEmptyState).toBe(true);
   });
 
   test('should redirect EMPLOYEE to dashboard (no RESOURCE_VIEW permission)', async ({page}) => {
@@ -863,7 +863,7 @@ test.describe('Resources - Pool', () => {
     for (const label of statLabels) {
       const card = page.locator(`text=${label}`).first();
       const isVisible = await card.isVisible({timeout: 8000}).catch(() => false);
-      expect(isVisible || true).toBe(true);
+      expect(isVisible).toBe(true);
     }
   });
 
@@ -943,7 +943,7 @@ test.describe('Resources - Pool', () => {
         .first()
         .isVisible()
         .catch(() => false);
-      expect(hasBar || true).toBe(true);
+      expect(hasBar).toBe(true);
     }
   });
 
@@ -981,7 +981,7 @@ test.describe('Resources - Pool', () => {
         .first()
         .isVisible()
         .catch(() => false);
-      expect(hasLegend || true).toBe(true);
+      expect(hasLegend).toBe(true);
     }
   });
 

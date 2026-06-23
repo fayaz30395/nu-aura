@@ -219,10 +219,10 @@ test.describe('Analytics - Data-Driven Validation', () => {
       const hasSvg = await chartContainer.locator('svg, .recharts-wrapper').first().isVisible().catch(() => false);
       const hasCanvas = await chartContainer.locator('canvas').first().isVisible().catch(() => false);
 
-      expect(hasSvg || hasCanvas || true).toBe(true);
+      expect(hasSvg || hasCanvas).toBe(true);
     }
 
-    expect(hasDept || true).toBe(true);
+    expect(hasDept).toBe(true);
   });
 
   test('attendance trend chart renders with data points', async ({page}) => {
@@ -236,9 +236,9 @@ test.describe('Analytics - Data-Driven Validation', () => {
       const chartParent = trendSection.locator('..').locator('..');
       const hasLine = await chartParent.locator('.recharts-line, .recharts-bar, svg path').first().isVisible().catch(() => false);
 
-      expect(hasLine || true).toBe(true);
+      expect(hasLine).toBe(true);
     }
 
-    expect(hasTrend || true).toBe(true);
+    expect(hasTrend).toBe(true);
   });
 });

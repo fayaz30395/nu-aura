@@ -86,11 +86,11 @@ test.describe('App Switcher — Waffle Grid', () => {
         const navigatedToHire = url.includes('/recruitment') || url.includes('/hire');
         const sidebarShowsHire = await page.locator('text=/recruitment|candidate|job/i').first().isVisible().catch(() => false);
 
-        expect(navigatedToHire || sidebarShowsHire || true).toBe(true);
+        expect(navigatedToHire || sidebarShowsHire).toBe(true);
       }
     }
 
-    expect(hasSwitcher || true).toBe(true);
+    expect(hasSwitcher).toBe(true);
   });
 
   test('can navigate to NU-Grow via app switcher', async ({page}) => {
@@ -111,11 +111,11 @@ test.describe('App Switcher — Waffle Grid', () => {
         const navigatedToGrow = url.includes('/performance') || url.includes('/grow');
         const sidebarShowsGrow = await page.locator('text=/performance|okr|review/i').first().isVisible().catch(() => false);
 
-        expect(navigatedToGrow || sidebarShowsGrow || true).toBe(true);
+        expect(navigatedToGrow || sidebarShowsGrow).toBe(true);
       }
     }
 
-    expect(hasSwitcher || true).toBe(true);
+    expect(hasSwitcher).toBe(true);
   });
 
   test('pressing Escape closes the app switcher dropdown', async ({page}) => {
@@ -146,10 +146,10 @@ test.describe('App Switcher — Waffle Grid', () => {
       const dropdownVisible = await menu.isVisible().catch(() => false);
 
       // Either shows a lock/coming-soon or just shows the dropdown (access varies by seed data)
-      expect(hasLock || hasComingSoon || dropdownVisible || true).toBe(true);
+      expect(hasLock || hasComingSoon || dropdownVisible).toBe(true);
     }
 
-    expect(hasSwitcher || true).toBe(true);
+    expect(hasSwitcher).toBe(true);
   });
 });
 
@@ -168,7 +168,7 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
 
     // Verify HRMS sidebar items are present
     const hasEmployeesLink = await page.locator('nav a[href*="/employees"]').isVisible().catch(() => false);
-    expect(hasEmployeesLink || true).toBe(true);
+    expect(hasEmployeesLink).toBe(true);
 
     // Switch to NU-Hire via app switcher
     const switcherBtn = page.getByRole('button', {name: /switch application/i});
@@ -189,16 +189,16 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
         const hasOnboarding = await page.locator('nav a[href*="/onboarding"], nav text=/onboarding/i').first().isVisible().catch(() => false);
 
         // At least one Hire-related sidebar item should be visible
-        expect(hasRecruitment || hasOnboarding || true).toBe(true);
+        expect(hasRecruitment || hasOnboarding).toBe(true);
 
         // HRMS-only items should not be prominent (e.g., Payroll)
         const url = page.url();
         const isOnHireRoute = url.includes('/recruitment') || url.includes('/hire') || url.includes('/onboarding');
-        expect(isOnHireRoute || true).toBe(true);
+        expect(isOnHireRoute).toBe(true);
       }
     }
 
-    expect(hasSwitcher || true).toBe(true);
+    expect(hasSwitcher).toBe(true);
   });
 
   test('Hire to Grow: sidebar updates to show performance items', async ({page}) => {
@@ -225,15 +225,15 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
         const hasTraining = await page.locator('nav a[href*="/training"], nav text=/training|learning/i').first().isVisible().catch(() => false);
         const hasOKR = await page.locator('nav a[href*="/okr"], nav text=/okr|goal/i').first().isVisible().catch(() => false);
 
-        expect(hasPerformance || hasTraining || hasOKR || true).toBe(true);
+        expect(hasPerformance || hasTraining || hasOKR).toBe(true);
 
         const url = page.url();
         const isOnGrowRoute = url.includes('/performance') || url.includes('/grow') || url.includes('/training');
-        expect(isOnGrowRoute || true).toBe(true);
+        expect(isOnGrowRoute).toBe(true);
       }
     }
 
-    expect(hasSwitcher || true).toBe(true);
+    expect(hasSwitcher).toBe(true);
   });
 
   test('Grow back to HRMS: sidebar reverts to HR management items', async ({page}) => {
@@ -260,11 +260,11 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
         const hasLeave = await page.locator('nav a[href*="/leave"], nav text=/leave/i').first().isVisible().catch(() => false);
         const hasAttendance = await page.locator('nav a[href*="/attendance"], nav text=/attendance/i').first().isVisible().catch(() => false);
 
-        expect(hasEmployees || hasLeave || hasAttendance || true).toBe(true);
+        expect(hasEmployees || hasLeave || hasAttendance).toBe(true);
       }
     }
 
-    expect(hasSwitcher || true).toBe(true);
+    expect(hasSwitcher).toBe(true);
   });
 
   test('full round-trip: HRMS -> Hire -> Grow -> HRMS preserves auth', async ({page}) => {
@@ -311,6 +311,6 @@ test.describe('App Switcher — Cross-App Navigation Flow', () => {
       expect(page.url()).not.toContain('/auth/login');
     }
 
-    expect(hasSwitcher || true).toBe(true);
+    expect(hasSwitcher).toBe(true);
   });
 });

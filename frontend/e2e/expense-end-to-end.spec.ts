@@ -137,7 +137,7 @@ test.describe.serial('Expense End-to-End — happy path @regression @critical', 
     const hasReimbursed = await reimbursed.isVisible({timeout: 5000}).catch(() => false);
 
     // Either the badge is visible OR the page rendered without crash (env-dependent)
-    expect(hasReimbursed || true).toBe(true);
+    expect(hasReimbursed).toBe(true);
     await expect(page.locator('text=/something went wrong/i')).not.toBeVisible();
   });
 });

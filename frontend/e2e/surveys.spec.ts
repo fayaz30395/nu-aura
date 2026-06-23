@@ -25,7 +25,7 @@ test.describe('Surveys Page', () => {
     const hasSurveys = await page.locator('[class*="card"], [class*="Card"], table').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*survey|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasSurveys || hasEmpty || true).toBe(true);
+    expect(hasSurveys || hasEmpty).toBe(true);
   });
 
   test('should show create survey button for admin', async ({page}) => {
@@ -34,7 +34,7 @@ test.describe('Surveys Page', () => {
     const createBtn = page.locator('button:has-text("Create"), button:has-text("New"), button:has-text("Add")').first();
     const hasCreate = await createBtn.isVisible().catch(() => false);
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 
   test('should display survey status indicators', async ({page}) => {
@@ -42,6 +42,6 @@ test.describe('Surveys Page', () => {
 
     const hasStatus = await page.locator('text=/active|draft|closed|completed/i').first().isVisible().catch(() => false);
 
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 });

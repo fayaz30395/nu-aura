@@ -42,7 +42,7 @@ test.describe('Tax — Overview Page', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasTable || hasEmpty || true).toBe(true);
+    expect(hasTable || hasEmpty).toBe(true);
   });
 
   test('should display Navigate to Declarations button or link', async ({page}) => {
@@ -52,7 +52,7 @@ test.describe('Tax — Overview Page', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasLink || true).toBe(true);
+    expect(hasLink).toBe(true);
   });
 
   test('Refresh button triggers data reload', async ({page}) => {
@@ -104,7 +104,7 @@ test.describe('Tax Declarations — Page Load', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasTable || hasEmpty || true).toBe(true);
+    expect(hasTable || hasEmpty).toBe(true);
   });
 
   test('should display New Declaration button', async ({page}) => {
@@ -112,7 +112,7 @@ test.describe('Tax Declarations — Page Load', () => {
       .locator('button:has-text("New Declaration"), button:has-text("Add Declaration"), [aria-label*="plus" i]')
       .first();
     const hasAdd = await addBtn.isVisible().catch(() => false);
-    expect(hasAdd || true).toBe(true);
+    expect(hasAdd).toBe(true);
   });
 });
 
@@ -148,7 +148,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasYear || true).toBe(true);
+    expect(hasYear).toBe(true);
   });
 
   test('Tax Regime selector has OLD_REGIME and NEW_REGIME options', async ({page}) => {
@@ -162,7 +162,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
     // Mantine Select component
     const regimeInput = page.locator('[placeholder*="regime" i], [data-testid*="regime"], .mantine-Select-input').first();
     const hasRegime = await regimeInput.isVisible().catch(() => false);
-    expect(hasRegime || true).toBe(true);
+    expect(hasRegime).toBe(true);
   });
 
   test('Section 80C numeric input is present', async ({page}) => {
@@ -178,7 +178,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(has80C || true).toBe(true);
+    expect(has80C).toBe(true);
   });
 
   test('HRA Exemption numeric field is present', async ({page}) => {
@@ -194,7 +194,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasHra || true).toBe(true);
+    expect(hasHra).toBe(true);
   });
 
   test('declaration status badges are visible in list', async ({page}) => {
@@ -204,7 +204,7 @@ test.describe('Tax Declarations — Create Declaration', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasStatus || true).toBe(true);
+    expect(hasStatus).toBe(true);
   });
 });
 
@@ -246,7 +246,7 @@ test.describe('LWF — Page Load', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasConfig || true).toBe(true);
+    expect(hasConfig).toBe(true);
   });
 
   test('should display Deductions tab or section', async ({page}) => {
@@ -256,7 +256,7 @@ test.describe('LWF — Page Load', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasDeductions || true).toBe(true);
+    expect(hasDeductions).toBe(true);
   });
 
   test('should have no critical console errors', async ({page}) => {
@@ -291,7 +291,7 @@ test.describe('LWF — Configurations', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasTable || hasEmpty || true).toBe(true);
+    expect(hasTable || hasEmpty).toBe(true);
   });
 
   test('Add Configuration button is visible', async ({page}) => {
@@ -299,7 +299,7 @@ test.describe('LWF — Configurations', () => {
       .locator('button:has-text("Add"), button:has-text("Configure"), button:has-text("New Config")')
       .first();
     const hasAdd = await addBtn.isVisible().catch(() => false);
-    expect(hasAdd || true).toBe(true);
+    expect(hasAdd).toBe(true);
   });
 
   test('Create Config form has State field', async ({page}) => {
@@ -315,7 +315,7 @@ test.describe('LWF — Configurations', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasState || true).toBe(true);
+    expect(hasState).toBe(true);
   });
 
   test('Frequency dropdown has Monthly, Half-Yearly, Yearly options', async ({page}) => {
@@ -345,7 +345,7 @@ test.describe('LWF — Configurations', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasEmpContrib || true).toBe(true);
+    expect(hasEmpContrib).toBe(true);
   });
 });
 
@@ -369,7 +369,7 @@ test.describe('LWF — Deductions Report', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('Month/Year filter is available for deductions report', async ({page}) => {
@@ -385,7 +385,7 @@ test.describe('LWF — Deductions Report', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasFilter || true).toBe(true);
+    expect(hasFilter).toBe(true);
   });
 });
 
@@ -473,7 +473,7 @@ test.describe('Restricted Holidays — Browse & Select', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 
   test('My Selections tab shows employee selections or empty state', async ({page}) => {
@@ -484,7 +484,7 @@ test.describe('Restricted Holidays — Browse & Select', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasContent || true).toBe(true);
+    expect(hasContent).toBe(true);
   });
 });
 
@@ -500,7 +500,7 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
       .locator('button:has-text("Manage"), [role="tab"]:has-text("Manage")')
       .first();
     const hasManage = await manageTab.isVisible().catch(() => false);
-    expect(hasManage || true).toBe(true);
+    expect(hasManage).toBe(true);
   });
 
   test('Policy tab is visible for Admin', async ({page}) => {
@@ -508,7 +508,7 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
       .locator('button:has-text("Policy"), [role="tab"]:has-text("Policy")')
       .first();
     const hasPolicy = await policyTab.isVisible().catch(() => false);
-    expect(hasPolicy || true).toBe(true);
+    expect(hasPolicy).toBe(true);
   });
 
   test('Add Holiday button opens creation form', async ({page}) => {
@@ -552,7 +552,7 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasName || true).toBe(true);
+    expect(hasName).toBe(true);
   });
 
   test('Policy tab shows maxSelectionsPerYear field', async ({page}) => {
@@ -568,7 +568,7 @@ test.describe('Restricted Holidays — Admin: Manage & Policy', () => {
       .first()
       .isVisible()
       .catch(() => false);
-    expect(hasMaxSel || true).toBe(true);
+    expect(hasMaxSel).toBe(true);
   });
 });
 

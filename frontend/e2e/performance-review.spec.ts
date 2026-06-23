@@ -93,7 +93,7 @@ test.describe('Performance — Goals', () => {
     const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*goal|no.*okr|empty/i').first().isVisible().catch(() => false);
 
-    expect(hasTable || hasCards || hasEmpty || true).toBe(true);
+    expect(hasTable || hasCards || hasEmpty).toBe(true);
   });
 
   test('should display create goal button', async ({page}) => {
@@ -105,6 +105,6 @@ test.describe('Performance — Goals', () => {
     ).first();
     const hasCreate = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasCreate || true).toBe(true);
+    expect(hasCreate).toBe(true);
   });
 });

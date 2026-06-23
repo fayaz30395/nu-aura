@@ -44,7 +44,7 @@ test.describe('Travel Page', () => {
     ).first();
     const hasBtn = await createBtn.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasBtn || true).toBe(true);
+    expect(hasBtn).toBe(true);
   });
 
   test('should display navigation tabs if available', async ({page}) => {
@@ -62,7 +62,7 @@ test.describe('Travel Page', () => {
       }
     }
 
-    expect(hasAnyTab || true).toBe(true);
+    expect(hasAnyTab).toBe(true);
   });
 
   test('should display status badges on travel requests', async ({page}) => {
@@ -77,7 +77,7 @@ test.describe('Travel Page', () => {
       }
     }
 
-    expect(foundStatus || true).toBe(true);
+    expect(foundStatus).toBe(true);
   });
 
   test('should show icons and visual elements', async ({page}) => {
@@ -118,7 +118,7 @@ test.describe('Travel - Create Request', () => {
 
       const isOnNewPage = page.url().includes('/new') || page.url().includes('/create');
 
-      expect(formVisible || isOnNewPage || true).toBe(true);
+      expect(formVisible || isOnNewPage).toBe(true);
     }
   });
 
@@ -150,7 +150,7 @@ test.describe('Travel - Create Request', () => {
         }
       }
 
-      expect(foundField || true).toBe(true);
+      expect(foundField).toBe(true);
     }
   });
 
@@ -194,14 +194,14 @@ test.describe('Travel - Filters and Search', () => {
       .first();
     const hasSearch = await searchInput.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 
   test('should display status filter', async ({page}) => {
     const statusFilter = page.locator('select, [role="combobox"]').first();
     const hasFilter = await statusFilter.isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasFilter || true).toBe(true);
+    expect(hasFilter).toBe(true);
   });
 
   test('should have proper table or card layout', async ({page}) => {

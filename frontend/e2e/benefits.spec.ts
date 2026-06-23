@@ -62,7 +62,7 @@ test.describe('Benefits - Benefit Plans Tab', () => {
     const hasEnroll = await enrollButton.isVisible().catch(() => false);
 
     // Either has enroll button or no plans available
-    expect(hasEnroll || true).toBe(true);
+    expect(hasEnroll).toBe(true);
   });
 
   test('should open enrollment modal on enroll click', async ({page}) => {
@@ -80,7 +80,7 @@ test.describe('Benefits - Benefit Plans Tab', () => {
       const hasModal = await modal.first().isVisible().catch(() => false);
 
       // Either has modal or button triggered some action
-      expect(hasModal || true).toBe(true);
+      expect(hasModal).toBe(true);
     }
   });
 
@@ -92,7 +92,7 @@ test.describe('Benefits - Benefit Plans Tab', () => {
     const hasCoverage = await page.locator('text=/coverage|Coverage/').first().isVisible().catch(() => false);
 
     // Either has plan details or empty state
-    expect(hasPremium || hasCoverage || true).toBe(true);
+    expect(hasPremium || hasCoverage).toBe(true);
   });
 });
 
@@ -117,7 +117,7 @@ test.describe('Benefits - My Enrollments Tab', () => {
     const hasEnrollments = await page.locator('[class*="card"], [class*="Card"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*enrollment|not.*enrolled/i').first().isVisible().catch(() => false);
 
-    expect(hasEnrollments || hasEmpty || true).toBe(true);
+    expect(hasEnrollments || hasEmpty).toBe(true);
   });
 
   test('should show terminate option for active enrollments', async ({page}) => {
@@ -128,7 +128,7 @@ test.describe('Benefits - My Enrollments Tab', () => {
     const hasTerminate = await terminateBtn.isVisible().catch(() => false);
 
     // Either has terminate button or no enrollments
-    expect(hasTerminate || true).toBe(true);
+    expect(hasTerminate).toBe(true);
   });
 });
 
@@ -149,7 +149,7 @@ test.describe('Benefits - Claims Tab', () => {
     const submitBtn = page.locator('button:has-text("Submit Claim")').first();
     const hasSubmit = await submitBtn.isVisible().catch(() => false);
 
-    expect(hasSubmit || true).toBe(true);
+    expect(hasSubmit).toBe(true);
   });
 
   test('should open claim modal on submit click', async ({page}) => {
@@ -165,7 +165,7 @@ test.describe('Benefits - Claims Tab', () => {
       const hasModal = await modal.first().isVisible().catch(() => false);
 
       // Either has modal or button triggered some action
-      expect(hasModal || true).toBe(true);
+      expect(hasModal).toBe(true);
     }
   });
 
@@ -176,7 +176,7 @@ test.describe('Benefits - Claims Tab', () => {
     const hasClaims = await page.locator('table, [class*="table"]').first().isVisible().catch(() => false);
     const hasEmpty = await page.locator('text=/no.*claim/i').first().isVisible().catch(() => false);
 
-    expect(hasClaims || hasEmpty || true).toBe(true);
+    expect(hasClaims || hasEmpty).toBe(true);
   });
 });
 
@@ -274,6 +274,6 @@ test.describe('Benefits - Flex Credits', () => {
     const hasUseCredits = await useCreditsBtn.isVisible().catch(() => false);
 
     // Either has button or flex credits not available
-    expect(hasUseCredits || true).toBe(true);
+    expect(hasUseCredits).toBe(true);
   });
 });

@@ -69,7 +69,7 @@ test.describe('Payroll End-to-End — Salary Structure Setup @regression @critic
     const hasCards = await page.locator('[class*="card"], [class*="Card"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmptyState = await page.locator('text=/no.*structure|empty|create.*first/i').first().isVisible({timeout: 5000}).catch(() => false);
 
-    expect(hasTable || hasCards || hasEmptyState || true).toBe(true);
+    expect(hasTable || hasCards || hasEmptyState).toBe(true);
     await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
   });
 
@@ -199,7 +199,7 @@ test.describe('Payroll End-to-End — Payslip Generation and Viewing @regression
     const hasTable = await page.locator('table').isVisible({timeout: 8000}).catch(() => false);
     const hasCards = await page.locator('[class*="card"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmpty = await page.locator('text=/no.*payslip|empty/i').first().isVisible({timeout: 5000}).catch(() => false);
-    expect(hasTable || hasCards || hasEmpty || true).toBe(true);
+    expect(hasTable || hasCards || hasEmpty).toBe(true);
 
     await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
   });
@@ -222,7 +222,7 @@ test.describe('Payroll End-to-End — Payslip Generation and Viewing @regression
       await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
     }
 
-    expect(hasSearch || true).toBe(true);
+    expect(hasSearch).toBe(true);
   });
 
   test('PAY-10: employee can view their own payslip from My Space', async ({page}) => {
@@ -264,7 +264,7 @@ test.describe('Payroll End-to-End — Payslip Generation and Viewing @regression
     const hasDownload = await downloadLink.isVisible({timeout: 8000}).catch(() => false);
 
     // Soft assertion — payslips may not be generated if no payroll run completed
-    expect(hasDownload || true).toBe(true);
+    expect(hasDownload).toBe(true);
     await expect(page.locator('text=/Something went wrong/i')).not.toBeVisible();
   });
 
