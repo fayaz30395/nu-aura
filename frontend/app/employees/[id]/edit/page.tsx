@@ -481,7 +481,13 @@ export default function EditEmployeePage() {
               </nav>
             </div>
 
-            <form className="p-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="p-6 space-y-6"
+              onSubmit={(event) => {
+                event.preventDefault();
+                void handleSubmit(onSubmit)();
+              }}
+            >
               {/* Basic Info Tab */}
               {currentTab === 'basic' && (
                 <div className="space-y-4">
@@ -1241,7 +1247,8 @@ export default function EditEmployeePage() {
                   Cancel
                 </button>
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={() => void handleSubmit(onSubmit)()}
                   disabled={isSubmitting}
                   className="flex-1 btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
