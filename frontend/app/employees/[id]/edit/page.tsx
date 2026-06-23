@@ -4,12 +4,14 @@ import {useEffect, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
+import {useQueryClient} from '@tanstack/react-query';
 import {z} from 'zod';
 import {employmentChangeRequestService} from '@/lib/services/hrms/employment-change-request.service';
+import {employeeService} from '@/lib/services/hrms/employee.service';
 import {UpdateEmployeeRequest} from '@/lib/types/hrms/employee';
 import {toEmployeeLevel, toEmployeeStatus, toEmploymentType, toGender, toJobRole} from '@/lib/utils/type-guards';
 import {CreateEmploymentChangeRequest} from '@/lib/types/hrms/employment-change-request';
-import {useEmployee, useManagers, useUpdateEmployee} from '@/lib/hooks/queries/useEmployees';
+import {employeeKeys, useEmployee, useManagers} from '@/lib/hooks/queries/useEmployees';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import {CustomFieldValueRequest, EntityType} from '@/lib/types/core/custom-fields';
@@ -91,7 +93,7 @@ export default function EditEmployeePage() {
   const {data: employee, isLoading: employeeLoading, error: employeeError} = useEmployee(employeeId);
   const {data: managersData} = useManagers();
   const {data: departmentsData} = useActiveDepartments();
-  const updateEmployeeMutation = useUpdateEmployee();
+  const queryClient = useQueryClient();
 
   const managers = managersData || [];
   const departments = departmentsData || [];
@@ -256,7 +258,11 @@ export default function EditEmployeePage() {
         }),
       };
 
-      await updateEmployeeMutation.mutateAsync({id: employeeId, data: submitData});
+      await employeeService.updateEmployee(employeeId, submitData);
+      await Promise.all([
+        queryClient.invalidateQueries({queryKey: employeeKeys.detail(employeeId)}),
+        queryClient.invalidateQueries({queryKey: employeeKeys.lists()}),
+      ]);
 
       // Save custom field values if any were modified
       const customFieldValueRequests = Object.values(customFieldValues).filter(
@@ -481,13 +487,7 @@ export default function EditEmployeePage() {
               </nav>
             </div>
 
-            <form
-              className="p-6 space-y-6"
-              onSubmit={(event) => {
-                event.preventDefault();
-                void handleSubmit(onSubmit)();
-              }}
-            >
+            <form className="p-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
               {/* Basic Info Tab */}
               {currentTab === 'basic' && (
                 <div className="space-y-4">
@@ -1247,8 +1247,7 @@ export default function EditEmployeePage() {
                   Cancel
                 </button>
                 <button
-                  type="button"
-                  onClick={() => void handleSubmit(onSubmit)()}
+                  type="submit"
                   disabled={isSubmitting}
                   className="flex-1 btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
