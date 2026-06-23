@@ -1,6 +1,6 @@
 'use client';
 
-import {BookOpen, Briefcase, CheckCircle2, TrendingUp, Users} from 'lucide-react';
+import {BookOpen, Briefcase, TrendingUp, Users} from 'lucide-react';
 import {type ReactNode} from 'react';
 import './brand-panel.css';
 
@@ -35,8 +35,6 @@ const ACCESS_STEPS = [
   {title: 'Open the right workspace', detail: 'HRMS, Hire, Grow, and Fluence stay grouped.'},
   {title: 'Continue the task', detail: 'Navigation and permissions adapt after login.'},
 ];
-
-const ACCESS_BADGES = ['Role-aware navigation', 'One workspace identity', 'Desktop and mobile ready'];
 
 interface BrandPanelProps {
   /** Headline rendered in the brand panel. Defaults to the login headline. */
@@ -121,18 +119,7 @@ export function BrandPanel({headline, lede, showHighlights = false}: BrandPanelP
             ))}
           </div>
 
-          {showHighlights ? (
-            <div className="aura-brand__assurance">
-              {ACCESS_BADGES.map((badge) => (
-                <span className="aura-brand__badge" key={badge}>
-                  <CheckCircle2 size={13} aria-hidden="true"/>
-                  {badge}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <div className="aura-brand__tagline">Infinite Innovation</div>
-          )}
+          <div className="aura-brand__tagline">Infinite Innovation</div>
         </div>
       </div>
     </section>
