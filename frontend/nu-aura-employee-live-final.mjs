@@ -160,7 +160,18 @@ async function openEditFromProfile(page, dialog) {
 }
 
 async function saveProfileEdits(page) {
-  await page.getByRole('button', { name: /Save Changes/i }).click();
+  const save = page.getByRole('button', { name: /Save Changes/i });
+  const savePromise = page.waitForResponse(
+    (res) => res.url().includes('/api/v1/employees') && ['PUT', 'PATCH'].includes(res.request().method()),
+    {timeout: 30000}
+  );
+  await save.click();
+  const resp = await savePromise.catch(async () => {
+    const err = await page.locator('p.text-danger-500, p.text-danger-400, [role=\"alert\"]').allTextContents();
+    const url = page.url();
+    throw new Error(`edit request not observed; url=${url}; errors=${err.join(' | ')}`);
+  });
+  console.log('EDIT_STATUS', resp.status(), resp.url());
   await page.waitForTimeout(2500);
 }
 
@@ -207,10 +218,23 @@ async function run() {
 
     const editedRow = await findRow(page, editedName);
     if (!editedRow) {
+      const fallback = await findRow(page, email);
+      if (!fallback) {
+        throw new Error('Edited row not visible in list after save');
+      }
+      const rowText = await fallback.innerText().catch(() => '');
+      console.log('EDIT_ROW_TEXT', rowText);
+      if (!normalize(rowText).includes(normalize(editedName))) {
+        throw new Error(`Employee row present by email but first name not updated. Row text: ${rowText}`);
+      }
+    }
+
+    const finalRow = (await findRow(page, editedName)) || (await findRow(page, email));
+    if (!finalRow) {
       throw new Error('Edited row not visible in list after save');
     }
 
-    await deleteFromRow(page, editedRow);
+    await deleteFromRow(page, finalRow);
     await goEmployees(page);
     await shot(page, `HR_ADMIN__employees__after-delete__${marker}`);
 

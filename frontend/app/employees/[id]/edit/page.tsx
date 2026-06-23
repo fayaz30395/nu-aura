@@ -177,6 +177,10 @@ export default function EditEmployeePage() {
   };
 
   const onSubmit = async (formData: UpdateEmployeeFormData) => {
+    if (typeof window !== 'undefined') {
+      const win = window as typeof window & {__employeeEditOnSubmitCalled?: number};
+      win.__employeeEditOnSubmitCalled = (win.__employeeEditOnSubmitCalled || 0) + 1;
+    }
     try {
       setError(null);
       setChangeRequestCreated(false);
@@ -258,7 +262,15 @@ export default function EditEmployeePage() {
         }),
       };
 
+      if (typeof window !== 'undefined') {
+        const win = window as typeof window & {__employeeEditUpdateStarted?: number};
+        win.__employeeEditUpdateStarted = (win.__employeeEditUpdateStarted || 0) + 1;
+      }
       await employeeService.updateEmployee(employeeId, submitData);
+      if (typeof window !== 'undefined') {
+        const win = window as typeof window & {__employeeEditUpdateDone?: number};
+        win.__employeeEditUpdateDone = (win.__employeeEditUpdateDone || 0) + 1;
+      }
       await Promise.all([
         queryClient.invalidateQueries({queryKey: employeeKeys.detail(employeeId)}),
         queryClient.invalidateQueries({queryKey: employeeKeys.lists()}),
@@ -282,6 +294,10 @@ export default function EditEmployeePage() {
         router.push(`/employees/${employeeId}`);
       }
     } catch (err: unknown) {
+      if (typeof window !== 'undefined') {
+        const win = window as typeof window & {__employeeEditOnSubmitError?: number};
+        win.__employeeEditOnSubmitError = (win.__employeeEditOnSubmitError || 0) + 1;
+      }
       const message = (err as {
         response?: { data?: { message?: string } }
       })?.response?.data?.message || 'Failed to update employee';
