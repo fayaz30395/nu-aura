@@ -196,7 +196,7 @@ test.describe('Payroll End-to-End — Payslip Generation and Viewing @regression
     const heading = page.locator('h1, h2').first();
     await expect(heading).toBeVisible({timeout: 10000});
 
-    const hasTable = await page.locator('table').isVisible({timeout: 8000}).catch(() => false);
+    const hasTable = await page.locator('table').first().isVisible({timeout: 8000}).catch(() => false);
     const hasCards = await page.locator('[class*="card"]').first().isVisible({timeout: 5000}).catch(() => false);
     const hasEmpty = await page.locator('text=/no.*payslip|empty/i').first().isVisible({timeout: 5000}).catch(() => false);
     expect(hasTable || hasCards || hasEmpty).toBe(true);

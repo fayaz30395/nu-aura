@@ -188,7 +188,7 @@ test.describe('Analytics - Data-Driven Validation', () => {
     await waitForAnalyticsData(page);
 
     // Capture initial state
-    const initialContent = await page.locator('main').textContent().catch(() => '');
+    const initialContent = await page.locator('main').first().textContent().catch(() => '');
 
     // Switch time range
     const sevenDaysBtn = page.getByRole('button', {name: '7 days'});

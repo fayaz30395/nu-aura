@@ -36,7 +36,7 @@ test.describe('Tax — Overview Page', () => {
 
   test('should display declarations table or empty state', async ({page}) => {
     await page.waitForTimeout(2000);
-    const hasTable = await page.locator('table').isVisible().catch(() => false);
+    const hasTable = await page.locator('table').first().isVisible().catch(() => false);
     const hasEmpty = await page
       .locator('text=/No declarations|empty/i')
       .first()
@@ -98,7 +98,7 @@ test.describe('Tax Declarations — Page Load', () => {
 
   test('should display declarations table or empty state', async ({page}) => {
     await page.waitForTimeout(2000);
-    const hasTable = await page.locator('table').isVisible().catch(() => false);
+    const hasTable = await page.locator('table').first().isVisible().catch(() => false);
     const hasEmpty = await page
       .locator('text=/No declarations|empty/i')
       .first()
@@ -285,7 +285,7 @@ test.describe('LWF — Configurations', () => {
   });
 
   test('configuration table or empty state is displayed', async ({page}) => {
-    const hasTable = await page.locator('table').isVisible().catch(() => false);
+    const hasTable = await page.locator('table').first().isVisible().catch(() => false);
     const hasEmpty = await page
       .locator('text=/No.*config|empty|Add.*LWF/i')
       .first()

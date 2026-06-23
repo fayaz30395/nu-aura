@@ -20,12 +20,12 @@ test.describe('Navigation and Routing', () => {
   test.describe('Main Navigation Menu', () => {
     test('should display main navigation menu', async ({page}) => {
       // Check for navigation elements
-      const hasNav = await page.locator('nav').isVisible();
+      const hasNav = await page.locator('nav').first().isVisible();
       expect(hasNav).toBe(true);
 
       // Check for sidebar or header navigation
       const hasSidebar = await page.locator('[class*="sidebar"]').isVisible().catch(() => false);
-      const hasHeader = await page.locator('header').isVisible().catch(() => false);
+      const hasHeader = await page.locator('header').first().isVisible().catch(() => false);
 
       expect(hasSidebar || hasHeader).toBe(true);
     });
@@ -562,7 +562,7 @@ test.describe('Navigation - Role-Based Access', () => {
     await page.waitForURL('**/me/dashboard');
 
     // Manager should see team management options
-    const hasNav = await page.locator('nav').isVisible();
+    const hasNav = await page.locator('nav').first().isVisible();
     expect(hasNav).toBe(true);
   });
 });
@@ -673,7 +673,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
       expect(page.url()).toContain('/leave');
 
       // Sidebar should still be visible and functional
-      const hasNav = await page.locator('nav').isVisible();
+      const hasNav = await page.locator('nav').first().isVisible();
       expect(hasNav).toBe(true);
     }
 

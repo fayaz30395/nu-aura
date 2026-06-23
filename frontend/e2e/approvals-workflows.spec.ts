@@ -372,7 +372,7 @@ test.describe('Approvals — RBAC', () => {
       denied: () => denied.isVisible(),
       redirected: async () => page.url().includes('/employees') && !page.url().includes('change-requests'),
       redirecting: () => page.locator('text=/Redirecting to employees/i').first().isVisible(),
-      guarded: () => page.locator('main').isVisible(),
+      guarded: () => page.locator('main').first().isVisible(),
     });
 
     expect(outcome).not.toBe('heading');
