@@ -16,7 +16,7 @@ EMPLOYEE (arun@), EMPLOYEE (anshuman@), HR_ADMIN (saran@), FINANCE_ADMIN (raj@/f
 | TENANT_ADMIN tenant.admin@ | /me/dashboard ✓ | /dashboard analytics 200 ✓, /admin/holidays ✓ | /admin root→Access Restricted (expected); /fluence/wall→Access denied with app shell (F-005 fixed) | no escalation ✓ | PASS | TENANT_ADMIN__dashboard__analytics-200__1440.png |
 | admin@ | BLOCKED — not a seeded account ("Bad credentials") | — | — | — | BLOCKED | (login alert) |
 | HR_ADMIN saran@ | /me/dashboard ✓ | /employees 20 rows ✓ | (sub-routes ok) | no escalation ✓ | PASS | HR_ADMIN__employees__data-20rows__1440.png |
-| FINANCE_ADMIN finance@ | /me/dashboard "No profile linked" (F-007) | /payroll ✓ empty state | (employee denied /payroll; FA allowed ✓) | no escalation ✓ | PASS (F-007) | FINANCE_ADMIN__payroll__empty__1440.png |
+| FINANCE_ADMIN finance@ | /me/dashboard "No profile linked" (F-007 — **closed 2026-06-24 V312**, now returns employeeId → renders) | /payroll ✓ empty state | (employee denied /payroll; FA allowed ✓) | no escalation ✓ | PASS (F-007 FIXED ✓) | FINANCE_ADMIN__payroll__empty__1440.png |
 | TEAM_LEAD mani@ | /me/dashboard ✓ "Good afternoon, Mani." | (28 nav links, landing clean) | TODO deny-tests | no escalation ✓ | PASS | TEAM_LEAD__me-dashboard__loaded__1440.png |
 | HR_MANAGER jagadeesh@ | /me/dashboard ✓ "Good afternoon, Jagadeesh." | /employees 20 rows ✓ | (HR role, sub-routes ok) | no escalation ✓ | PASS | HR_MANAGER__me-dashboard__loaded__1440.png |
 
@@ -36,7 +36,7 @@ EMPLOYEE (arun@), EMPLOYEE (anshuman@), HR_ADMIN (saran@), FINANCE_ADMIN (raj@/f
 | NU-HRMS | me/* (profile,payslips,attendance,leaves,documents,skills,assets), employees, departments, announcements, approvals, shifts, leave, assets, contracts, expenses, loans, travel, time-tracking, calendar, payroll | TODO |
 | NU-Hire | recruitment, jobs, candidates, agencies, scorecards, onboarding, career, e-sign | TODO |
 | NU-Grow | reviews, OKRs, 360, LMS, training, surveys, wellness | TODO |
-| NU-Fluence | wiki, blogs, templates, search, AI chat, wall | PARTIAL PASS — **HR_ADMIN HAS Fluence perm**: /fluence/wiki ✓ (Wiki Pages), /fluence/blogs ✓ (empty state). /fluence/wall = gated even for HR_ADMIN (needs higher perm; fixed shell + app chrome, but still deny expected). templates/search/AI-chat still TODO. EMP/MGR/TENANT_ADMIN lack Fluence perm (app switcher disabled). |
+| NU-Fluence | wiki, blogs, templates, search, AI chat, wall | PARTIAL PASS — **HR_ADMIN HAS Fluence perm**: /fluence/wiki ✓ (Wiki Pages), /fluence/blogs ✓ (empty state). /fluence/wall = gated even for HR_ADMIN (needs higher perm; fixed shell + app chrome, but still deny expected). **templates/search now CLOSED for HR_ADMIN (2026-06-24): V313 grants `saran@` knowledge reads (221 perms incl. KNOWLEDGE:SEARCH/WIKI_READ/BLOG_READ/TEMPLATE_*)** → /fluence/templates loads data + /fluence/search guard (FE fix e15ff25d) passes; API-level verified (browser reconfirm deferred, prod owner-session). AI-chat still TODO. EMP/MGR/TENANT_ADMIN lack Fluence perm (app switcher disabled). |
 
 ## Phase 3 — Responsive + a11y
 Breakpoints 320/768/1024/1440 — **BLOCKED (tooling)**: ruflo browser MCP viewport fixed at 1280px, no resize. Desktop (~1280px) surfaces verified clean throughout. a11y: employees template inline scan CLEAN (1 h1, 0 missing alt, 0 unnamed controls/inputs/links) — UC-A11Y-001 PASS.

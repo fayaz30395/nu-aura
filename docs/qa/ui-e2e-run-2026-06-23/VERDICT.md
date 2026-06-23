@@ -6,27 +6,34 @@
 
 ---
 
-## Readiness Score: **67 / 100** — CONDITIONAL-GO
+## Readiness Score: **68 / 100** — CONDITIONAL-GO
 
-Open CRITICAL findings: **0**. Open HIGH findings: **1** (F-012). Open MEDIUM findings: **0**. Open LOW findings: **3** (F-001, F-004, F-007).
+> **Update 2026-06-24:** backend deployed (Railway `nu-aura-backend`, env `production`, deploy
+> `3d1cb11a-55ee-4292-8fba-e576ba33450e`; Flyway v311 → **v313**, applied V312 + V313). **F-007 CLOSED**
+> via **V312** (verified live: `finance@nulogic.io` login now returns a non-null `employeeId`). The
+> deferred **HR_ADMIN knowledge-permission** residual is also CLOSED via **V313** (verified live:
+> `saran@nulogic.io` now holds 221 perms incl. `KNOWLEDGE:SEARCH`/`KNOWLEDGE:WIKI_READ`/`KNOWLEDGE:BLOG_READ`).
+> See FINALIZATION.md "UPDATE 4". Score nudged 67 → 68 (one LOW cleared).
+
+Open CRITICAL findings: **0**. Open HIGH findings: **1** (F-012). Open MEDIUM findings: **0**. Open LOW findings: **2** (F-001, F-004). ~~F-007~~ closed 2026-06-24 (V312).
 
 Current blockers are:
 1. Employee CRUD edit step blocked: save on `/employees/{id}/edit` does not persist in UI/backend (F-012)
-2. 3 LOW polish items (F-001, F-004, F-007)
+2. 2 LOW polish items (F-001, F-004)
 
 ## Score arithmetic (runbook formula)
 ```text
 Start                                                100
 Strictest cap: HIGH open -> 70
 Deduct open MEDIUM findings (0 × 5)                    0
-Deduct open LOW findings (3 × 1)                      -3
+Deduct open LOW findings (2 × 1)                      -2   (F-007 closed 2026-06-24 via V312)
 No deduction for open HIGH in formula (cap applied above)
-Fixed+verified findings (F-002, F-003, F-005, F-006, F-008, F-009, F-010): 0
+Fixed+verified findings (F-002, F-003, F-005, F-006, F-007, F-008, F-009, F-010): 0
 -----------------------------------------------------------
-Final                                                67
+Final                                                68
 ```
 
-To reach 100: fix F-012, then resolve the 3 LOW issues.
+To reach 100: fix F-012, then resolve the 2 remaining LOW issues (F-001, F-004).
 
 ---
 
@@ -35,6 +42,9 @@ To reach 100: fix F-012, then resolve the 3 LOW issues.
 - Railway BE: `/actuator/health` → **{"status":"UP"}** ✓
 - Demo logins: **working** (5 roles logged in live this run) ✓
 - Alias: `https://hrms-frontend-vert.vercel.app` → `dpl_3Xo9YrYdaGTHh4E6kaeoUiNxQeGv` (aliased)
+- **Backend redeploy 2026-06-24:** Railway `nu-aura-backend` (env `production`, deploy
+  `3d1cb11a-55ee-4292-8fba-e576ba33450e`) — build SUCCESS, booted ~02:18 UTC, `/actuator/health` UP;
+  Flyway v311 → **v313** (V312 + V313 applied, outOfOrder). ✓
 
 ---
 
@@ -68,7 +78,7 @@ Matrix and use-case records:
 | F-006 | LOW | approvals | Approval requester name now resolves readable names from title-based IDs. |
 | F-001 | LOW | me/dashboard | Greeting subtitle hardcoded copy still mismatched for an Engineering employee. |
 | F-004 | LOW | deny UX | Inconsistent deny render patterns still present across a few routes; needs one canonical deny UX. |
-| F-007 | LOW | finance/me | `finance@` demo account still lacks linked employee profile; `/me/dashboard` shows seed-side limitation. |
+| F-007 | ~~LOW~~ **FIXED ✓** | finance/me | `finance@` lacked a linked employee profile → **V312** (Railway deploy `3d1cb11a…`, 2026-06-24) seeds it. Verified live: `finance@nulogic.io` login now returns `employeeId: 550e8400-e29b-41d4-a716-446655440058` → `/me/dashboard` renders the personal dashboard. |
 
 Full evidence per finding (screenshot, URL, repro, expected vs actual) remains in [FINDINGS.md](FINDINGS.md).
 
@@ -88,8 +98,8 @@ Full evidence per finding (screenshot, URL, repro, expected vs actual) remains i
 ## Next actions
 
 1. Run viewport-capable responsive checks (320/768/1024/1440) on a browser that allows resizing and re-run a11y automation.
-2. Complete employee CRUD write-path with disposable demo record.
-3. Resolve remaining LOW polish items: greeting copy, deny-UX consistency, finance seed-profile gap.
+2. Complete employee CRUD write-path with disposable demo record (and fix F-012 edit-form persistence).
+3. Resolve remaining LOW polish items: greeting copy (F-001), deny-UX consistency (F-004). ~~Finance seed-profile gap (F-007)~~ closed 2026-06-24 via V312.
 
 ---
 

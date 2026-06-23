@@ -30,7 +30,7 @@ Local gates (run by this session): `tsc --noEmit` clean · `eslint --max-warning
 | F-006 | LOW | `useApprovals.ts normalizeRequesterName` — extract real name from title when API sends "User <id>" | 01559b9d | deployed + code-verified; needs a pending approval to reconfirm |
 | F-001 | LOW | **Reclassified — NOT a code bug.** me/dashboard subtitle is `dashboard.designation · department` from backend; "HR Executive · Recruitment" is arun@'s seeded data (demo-seed observation, like F-007) | — | n/a |
 | F-004 | LOW | Partially addressed by F-005 (wall + 7 pages now consistent w/ AuthGuard). Remaining: `/payroll` & `/employees` redirect patterns still differ — left as housekeeping | (partial) | — |
-| F-007 | LOW | `finance@` has no linked employee profile — demo-seed gap (backend data), not FE | — | open (data) |
+| F-007 | LOW | `finance@` has no linked employee profile — demo-seed gap (backend data), not FE | V312 (backend) | ✅ **CLOSED — DEPLOYED + VERIFIED LIVE 2026-06-24** — Railway `nu-aura-backend` (env `production`, deploy `3d1cb11a-55ee-4292-8fba-e576ba33450e`) applied **V312** (seed demo finance admin user). API-level reconfirm via `POST /api/v1/auth/login`: `finance@nulogic.io` now returns `employeeId: 550e8400-e29b-41d4-a716-446655440058` (was `null`) → `me/dashboard`'s `!user?.employeeId` gate (`app/me/dashboard/page.tsx:178`) no longer trips, so the personal dashboard renders instead of "No employee profile linked". |
 
 ---
 
@@ -113,7 +113,7 @@ Read-only sweep as HR_ADMIN (`saran@`) over the least-covered areas, looking for
 - **F-010 — RETRACTED (false alarm).** Re-verified by navigating directly to `/performance/revolution`: it's a real, richly-rendered page ("Performance Revolution" — OKR Alignment Galaxy, 360° Competency Radar, Recognition Pulse) with **no** redirect/permission guard in code. My earlier "Revolution → /performance" was an inconclusive ref-click that didn't navigate (I was already on /performance). The nav item is correct — no defect.
 - **F-011 — UPGRADED to real MEDIUM bug, then FIXED.** `/fluence/search` silently redirected HR_ADMIN to `/me/dashboard`. Root cause (verified): the guard checked the `KNOWLEDGE:VIEW`/`WIKI:VIEW`/`BLOG:VIEW` permission family, which **no migration grants to any role**; roles instead hold the granular `KNOWLEDGE:WIKI_READ`/`KNOWLEDGE:BLOG_READ` perms (HR_ADMIN via `RoleHierarchy.java:176/183`). So users who can browse the (ungated) `/fluence/wiki` + `/fluence/blogs` were bounced from searching that same content. **Fixed** in commit `e15ff25d` — broadened the guard to accept the granular read perms (safe: only widens to existing read-perm holders; backend search API still enforces). Gated (tsc/eslint/build green), deployed (`dpl_AYMzhDjn…`), pushed to both forks, and **LIVE-VERIFIED**: `tenant.admin@` (holds the granular reads) now lands on the real `/fluence/search` UI (All/Wiki/Blog/Template tabs) instead of being redirected. Before the fix the dead `*:VIEW` guard bounced *every* role.
 
-  **Residual (backend, not FE):** HR_ADMIN `saran@` still can't search — its DB-seeded perms lack knowledge reads entirely (it only reached `/fluence/templates` as a degraded-403 empty state; `/fluence/wiki` is ungated). Whether HR_ADMIN should have knowledge access is a backend RBAC-seed decision, separate from the (now-fixed) FE guard.
+  **Residual (backend, not FE) — ✅ CLOSED 2026-06-24 via V313.** Previously HR_ADMIN `saran@` couldn't search — its DB-seeded perms lacked knowledge reads entirely (it only reached `/fluence/templates` as a degraded-403 empty state; `/fluence/wiki` is ungated). The backend RBAC-seed decision was made: **V313** (grant HR_ADMIN knowledge permissions) was applied live on Railway (`nu-aura-backend`, env `production`, deploy `3d1cb11a-55ee-4292-8fba-e576ba33450e`; schema now at **v313**). API-level reconfirm: `saran@nulogic.io` (EMPLOYEE+HR_ADMIN) now has **221 permissions** including `KNOWLEDGE:SEARCH`, `KNOWLEDGE:TEMPLATE_READ/CREATE/UPDATE/DELETE`, `KNOWLEDGE:WIKI_READ`, `KNOWLEDGE:BLOG_READ`, plus full BLOG/WIKI perms. So `/fluence/search` (FE guard fixed in `e15ff25d`) now passes for HR_ADMIN and `/fluence/templates` loads data instead of the degraded empty state. The FE guard fix + the backend grant together fully close knowledge access for HR_ADMIN.
 
   Also on `main`+forks+deployed: `764f0d9c` "make employee edit form submit reliably" — the **parallel session's** commit (employees/[id]/edit submit handler, 11 lines, gated), carried in by my deploy/push.
 
@@ -153,9 +153,53 @@ Both deny mechanisms now give visible feedback + an escape — no silent bounces
 redirect is belt-and-suspenders; the page redirect is the live mechanism for non-routes.ts pages
 (fluence/*, etc.). All 73 changes are consistent + correct either way.
 
-**Remaining (out of scope per operator):** HR_ADMIN knowledge access + `finance@` profile
-= backend RBAC-seed migrations (operator deferred). Residual deny-style split: AuthGuard
+**Backend RBAC-seed residuals — ✅ NOW CLOSED 2026-06-24** (previously "out of scope per
+operator", deferred to backend migrations; the backend was subsequently deployed): HR_ADMIN
+knowledge access (**V313**) + `finance@` employee profile (**V312**) both applied live on Railway
+(`nu-aura-backend`, env `production`, deploy `3d1cb11a-55ee-4292-8fba-e576ba33450e`; schema
+v311 → v313, outOfOrder mode). API-level verified — see "UPDATE 4 — Backend deploy" below.
+Residual deny-style split: AuthGuard
 (shell-less) vs PageDeniedFallback (shell-preserving) — both have escapes; full visual
 unification would be a separate design pass.
 
 **Verdict:** the coverage sweep surfaced **one real MEDIUM bug (F-011) — now fixed + deploying**; F-010 was a false alarm (retracted). All other sampled pages render cleanly (consistently high build quality). The original 8 findings + F-011 are all fixed.
+
+---
+
+## UPDATE 4 — Backend deploy: V312 + V313 applied live (F-007 + HR_ADMIN knowledge CLOSED)
+
+The two deferred **backend RBAC-seed migrations** that were the last residuals on this run were
+deployed and verified live on **2026-06-24**.
+
+**Deployment (authoritative facts):**
+- **Railway** project `nu-aura`, service `nu-aura-backend`, environment `production`, deployment id
+  `3d1cb11a-55ee-4292-8fba-e576ba33450e`.
+- Built from the **repo ROOT** (the Dockerfile build context copies `infra/` + root `pom.xml` +
+  `backend/src`; deploying from `backend/` would break the build).
+- Build **SUCCESS**; container booted **2026-06-24 ~02:18 UTC**; `/actuator/health` = `{"status":"UP"}`.
+- **Flyway:** validated 303 migrations; schema was at **v311** → applied **V312** (seed demo finance
+  admin user) then **V313** (grant HR_ADMIN knowledge permissions) → schema now at **v313**
+  (`outOfOrder` mode active — expected).
+
+**API-level verification** (authoritative source the FE route-guards consume — done deliberately at
+the permission level, **not** via browser, because the local default Chrome holds a live prod
+SUPER_ADMIN session that must not be driven). All via `POST /api/v1/auth/login` on
+`https://nu-aura-backend-production.up.railway.app`:
+
+- **V312 / F-007 — CLOSED.** `finance@nulogic.io` (FINANCE_ADMIN) login now returns
+  `employeeId: 550e8400-e29b-41d4-a716-446655440058` (was `null`). The `/me/dashboard`
+  "No employee profile linked" state is gated on `!user?.employeeId`
+  (`app/me/dashboard/page.tsx:178`) → now renders the personal dashboard.
+- **V313 / HR_ADMIN knowledge (closes the UPDATE-2/UPDATE-3 backend residual) — CLOSED.**
+  `saran@nulogic.io` (roles EMPLOYEE + HR_ADMIN) now has **221 permissions** including
+  `KNOWLEDGE:SEARCH`, `KNOWLEDGE:TEMPLATE_READ/CREATE/UPDATE/DELETE`, `KNOWLEDGE:WIKI_READ`,
+  `KNOWLEDGE:BLOG_READ`, plus full BLOG/WIKI perms. The `/fluence/search` guard
+  (`app/fluence/search/page.tsx:96-110`, `hasAnyPermission(… KNOWLEDGE_WIKI_READ,
+  KNOWLEDGE_BLOG_READ)` else `router.replace('/me/dashboard?denied=1')`) now passes → the search
+  UI renders instead of redirecting. `/fluence/templates` (gated on `KNOWLEDGE:TEMPLATE_READ`) now
+  loads data instead of the degraded "No templates" empty state.
+
+**Net:** the two backend RBAC-seed residuals that capped this run's "remaining work" are deployed +
+live-verified. Combined with the FE `/fluence/search` guard fix (`e15ff25d`), HR_ADMIN knowledge
+access is end-to-end functional, and `finance@`'s My-Space dashboard renders. No remaining backend
+residuals from this run's findings.
