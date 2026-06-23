@@ -299,7 +299,9 @@ test.describe('NU-Fluence Smoke Tests @smoke', () => {
   });
 
   test('Fluence CRUD — Wiki creation UI is accessible @smoke', async ({page}) => {
-    await navigateTo(page, '/knowledge/wiki');
+    // Real wiki route is /fluence/wiki (the old /knowledge/wiki 404s, which used
+    // to false-pass because the 404 page also renders <main>).
+    await navigateTo(page, '/fluence/wiki');
     await page.waitForTimeout(1000);
 
     const hasContent = await page.locator('h1, h2, main, [class*="wiki"]').first().isVisible({timeout: 8000}).catch(() => false);
