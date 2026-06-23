@@ -2,7 +2,6 @@
 
 import React, {useEffect, useState} from 'react';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {
@@ -18,7 +17,6 @@ import {
   Coffee,
   CreditCard,
   Download,
-  ExternalLink,
   FileText,
   Fingerprint,
   Gift,
@@ -27,21 +25,21 @@ import {
   LogIn,
   LogOut,
   Mail,
-  MapPin,
   Palmtree,
   RefreshCw,
   UserCheck,
   UserPlus,
   Users,
-  Users as UsersIcon,
   UserX,
   Video,
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
-import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {Button} from '@/components/ui/Button';
+import {DashboardModals} from './_components/DashboardModals';
+import type {GoogleNotification} from './_types';
+import {formatRelativeTime} from './_utils';
 import {Card} from '@/components/ui/Card';
 import {Stat} from '@/components/ui/Stat';
 import {Segmented} from '@/components/ui/Segmented';
@@ -60,12 +58,9 @@ import {useDashboardAnalytics} from '@/lib/hooks/queries/useAnalytics';
 import {useAttendanceByDateRange, useCheckIn, useCheckOut, useMyTimeEntries,} from '@/lib/hooks/queries/useAttendance';
 import {useOnboardingProcessesByStatus} from '@/lib/hooks/queries/useOnboarding';
 import {getLocalDateString, getLocalDateTimeString} from '@/lib/utils/dateUtils';
-import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
-import {safeWindowOpen} from '@/lib/utils/url';
 import {formatDateShort} from '@/lib/utils/format/date';
-import {format} from 'date-fns';
 import {MOTION_EASE} from '@/lib/animation';
 import {LiveGreeting} from './_components/LiveGreeting';
 
@@ -81,44 +76,6 @@ interface EmailHeader {
   value: string;
 }
 
-interface GoogleNotification {
-  id: string;
-  type: 'email' | 'drive' | 'calendar';
-  title: string;
-  subtitle: string;
-  timestamp: Date;
-  link?: string;
-  isUnread?: boolean;
-  hasVideo?: boolean;
-  // Full event data for calendar events
-  calendarEvent?: {
-    id: string;
-    summary: string;
-    description?: string;
-    start: { dateTime?: string; date?: string };
-    end: { dateTime?: string; date?: string };
-    location?: string;
-    hangoutLink?: string;
-    htmlLink?: string;
-    attendees?: { email: string; displayName?: string; responseStatus?: string }[];
-    organizer?: { email: string; displayName?: string };
-  };
-  // Full email data
-  emailData?: {
-    id: string;
-    threadId: string;
-    from: string;
-    subject: string;
-    snippet?: string;
-  };
-  // Full drive file data
-  driveFile?: {
-    id: string;
-    name: string;
-    mimeType: string;
-    webViewLink?: string;
-  };
-}
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -393,20 +350,6 @@ export default function DashboardPage() {
   };
 
 
-  const formatRelativeTime = (date: Date) => {
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return formatDateShort(date);
-  };
-
   const getNotificationIcon = (type: 'email' | 'drive' | 'calendar') => {
     switch (type) {
       case 'email':
@@ -479,29 +422,6 @@ export default function DashboardPage() {
     } else if (notification.type === 'calendar') {
       setSelectedEvent(notification);
     }
-  };
-
-  const getPreviewUrl = (file: { id: string; mimeType: string }): string | null => {
-    const mimeType = file.mimeType;
-    if (mimeType === 'application/vnd.google-apps.document') {
-      return `https://docs.google.com/document/d/${file.id}/preview`;
-    }
-    if (mimeType === 'application/vnd.google-apps.spreadsheet') {
-      return `https://docs.google.com/spreadsheets/d/${file.id}/preview`;
-    }
-    if (mimeType === 'application/vnd.google-apps.presentation') {
-      return `https://docs.google.com/presentation/d/${file.id}/preview`;
-    }
-    if (mimeType === 'application/pdf') {
-      return `https://drive.google.com/file/d/${file.id}/preview`;
-    }
-    if (mimeType?.startsWith('image/')) {
-      return `https://drive.google.com/uc?id=${file.id}`;
-    }
-    if (mimeType?.startsWith('video/')) {
-      return `https://drive.google.com/file/d/${file.id}/preview`;
-    }
-    return `https://drive.google.com/file/d/${file.id}/preview`;
   };
 
   // Show loading state while hydrating or loading analytics
@@ -1234,248 +1154,21 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Calendar Event Modal */}
-      {selectedEvent && selectedEvent.calendarEvent && (
-        <Modal isOpen={!!(selectedEvent && selectedEvent.calendarEvent)} onClose={() => setSelectedEvent(null)} size="md">
-          <ModalHeader onClose={() => setSelectedEvent(null)}>Event Details</ModalHeader>
-          <ModalBody className="space-y-4">
-              <div>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)]">
-                  {selectedEvent.calendarEvent.summary}
-                </h3>
-                {selectedEvent.calendarEvent.organizer && (
-                  <p className="text-body-secondary mt-1">
-                    Organized
-                    by {selectedEvent.calendarEvent.organizer.displayName || selectedEvent.calendarEvent.organizer.email}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-4 text-[var(--text-secondary)]">
-                <Clock className="h-5 w-5 flex-shrink-0"/>
-                <div>
-                  <p className="font-medium">
-                    {selectedEvent.calendarEvent.start.dateTime
-                      ? format(new Date(selectedEvent.calendarEvent.start.dateTime), 'EEEE, MMMM d')
-                      : format(new Date(selectedEvent.calendarEvent.start.date!), 'EEEE, MMMM d')}
-                  </p>
-                  {selectedEvent.calendarEvent.start.dateTime && (
-                    <p className="text-sm">
-                      {new Date(selectedEvent.calendarEvent.start.dateTime).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                      {selectedEvent.calendarEvent.end?.dateTime && (
-                        <>
-                          {' - '}
-                          {new Date(selectedEvent.calendarEvent.end.dateTime).toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </>
-                      )}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {selectedEvent.calendarEvent.location && (
-                <div className="flex items-center gap-4 text-[var(--text-secondary)]">
-                  <MapPin className="h-5 w-5 flex-shrink-0"/>
-                  <p>{selectedEvent.calendarEvent.location}</p>
-                </div>
-              )}
-
-              {selectedEvent.calendarEvent.hangoutLink && (
-                <div className="flex items-center gap-4 text-[var(--accent-primary)]">
-                  <Video className="h-5 w-5 flex-shrink-0"/>
-                  <a
-                    href={selectedEvent.calendarEvent.hangoutLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    Google Meet video call
-                  </a>
-                </div>
-              )}
-
-              {selectedEvent.calendarEvent.attendees && selectedEvent.calendarEvent.attendees.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-[var(--text-secondary)]">
-                    <UsersIcon className="h-5 w-5 flex-shrink-0"/>
-                    <span className="font-medium">{selectedEvent.calendarEvent.attendees.length} Attendees</span>
-                  </div>
-                  <div className="ml-7 space-y-1">
-                    {selectedEvent.calendarEvent.attendees.slice(0, 5).map((attendee, idx) => (
-                      <p key={idx} className="text-body-secondary">
-                        {attendee.displayName || attendee.email}
-                        {attendee.responseStatus && (
-                          <span className={`ml-2 text-xs ${
-                            attendee.responseStatus === 'accepted' ? 'text-[var(--status-success-text)]' :
-                              attendee.responseStatus === 'declined' ? 'text-[var(--status-danger-text)]' :
-                                'text-[var(--status-warning-text)]'
-                          }`}>
-                            ({attendee.responseStatus})
-                          </span>
-                        )}
-                      </p>
-                    ))}
-                    {selectedEvent.calendarEvent.attendees.length > 5 && (
-                      <p className="text-body-muted">
-                        +{selectedEvent.calendarEvent.attendees.length - 5} more
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {selectedEvent.calendarEvent.description && (
-                <div className="pt-4 border-t border-[var(--border-main)]">
-                  <p className="text-body-secondary whitespace-pre-wrap">
-                    {selectedEvent.calendarEvent.description}
-                  </p>
-                </div>
-              )}
-          </ModalBody>
-          <ModalFooter className="gap-4">
-            {selectedEvent.calendarEvent.hangoutLink && (
-              <Button
-                variant="primary"
-                className="flex-1"
-                leftIcon={<Video className="h-4 w-4"/>}
-                onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.hangoutLink, '_blank')}
-              >
-                Join Meeting
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              className={selectedEvent.calendarEvent.hangoutLink ? '' : 'flex-1'}
-              leftIcon={<ExternalLink className="h-4 w-4"/>}
-              onClick={() => safeWindowOpen(selectedEvent.calendarEvent!.htmlLink, '_blank')}
-            >
-              Open in Calendar
-            </Button>
-          </ModalFooter>
-        </Modal>
-      )}
-
-      {/* Email Preview Modal */}
-      {selectedEmail && (
-        <Modal
-          isOpen={!!selectedEmail}
-          onClose={() => {
-            setSelectedEmail(null);
-            setEmailContent('');
-          }}
-          size="lg"
-        >
-          <ModalHeader
-            onClose={() => {
-              setSelectedEmail(null);
-              setEmailContent('');
-            }}
-          >
-            {selectedEmail.title}
-          </ModalHeader>
-          <ModalBody className="space-y-4">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-aura-lg flex items-center justify-center bg-[var(--err-bg)] text-[var(--err-fg)]">
-                <Mail className="h-5 w-5"/>
-              </div>
-              <div>
-                <p className="font-medium text-[var(--text-primary)]">
-                  {selectedEmail.emailData?.from?.split('<')[0]?.trim() || 'Unknown Sender'}
-                </p>
-                <p className="text-body-secondary">
-                  {formatRelativeTime(selectedEmail.timestamp)}
-                </p>
-              </div>
-            </div>
-
-            <div className="border-t border-[var(--border-main)] pt-4">
-              {emailLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-6 w-6 animate-spin text-[var(--accent-primary)]"/>
-                </div>
-              ) : (
-                <div
-                  className="prose prose-sm dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{__html: sanitizeEmailHtml(emailContent)}}
-                />
-              )}
-            </div>
-          </ModalBody>
-          <ModalFooter className="gap-4">
-            <Button
-              variant="primary"
-              className="flex-1"
-              leftIcon={<ExternalLink className="h-4 w-4"/>}
-              onClick={() => router.push('/nu-mail')}
-            >
-              Open in NU-Mail
-            </Button>
-          </ModalFooter>
-        </Modal>
-      )}
-
-      {/* Drive File Preview Modal */}
-      {selectedFile && selectedFile.driveFile && (
-        <Modal isOpen={!!(selectedFile && selectedFile.driveFile)} onClose={() => setSelectedFile(null)} size="xl">
-          <ModalHeader onClose={() => setSelectedFile(null)}>
-            <div className="flex items-center gap-4 min-w-0">
-              <div className="w-10 h-10 rounded-aura-lg flex items-center justify-center flex-shrink-0 bg-[var(--warn-bg)] text-[var(--warn-fg)]">
-                <HardDrive className="h-5 w-5"/>
-              </div>
-              <div className="min-w-0">
-                <h2 className="text-xl font-semibold text-[var(--text-primary)] truncate">
-                  {selectedFile.driveFile.name}
-                </h2>
-                <p className="text-body-secondary">{selectedFile.subtitle}</p>
-              </div>
-            </div>
-          </ModalHeader>
-          <ModalBody className="p-0">
-            <div className="relative h-[60vh] bg-[var(--bg-elevated)]">
-              {selectedFile.driveFile.mimeType?.startsWith('image/') ? (
-                <Image
-                  src={`https://drive.google.com/uc?id=${selectedFile.driveFile.id}`}
-                  alt={selectedFile.driveFile.name}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 80vw"
-                  className="object-contain"
-                />
-              ) : (
-                <iframe
-                  src={getPreviewUrl(selectedFile.driveFile) || ''}
-                  className="w-full h-full border-0"
-                  title={selectedFile.driveFile.name}
-                />
-              )}
-            </div>
-          </ModalBody>
-          <ModalFooter className="gap-4">
-            <Button
-              variant="primary"
-              className="flex-1"
-              leftIcon={<ExternalLink className="h-4 w-4"/>}
-              onClick={() => router.push('/nu-drive')}
-            >
-              Open in NU-Drive
-            </Button>
-            {selectedFile.driveFile.webViewLink && (
-              <Button
-                variant="outline"
-                leftIcon={<ExternalLink className="h-4 w-4"/>}
-                onClick={() => safeWindowOpen(selectedFile.driveFile!.webViewLink, '_blank')}
-              >
-                Open in Drive
-              </Button>
-            )}
-          </ModalFooter>
-        </Modal>
-      )}
+      <DashboardModals
+        selectedEvent={selectedEvent}
+        selectedEmail={selectedEmail}
+        selectedFile={selectedFile}
+        emailContent={emailContent}
+        emailLoading={emailLoading}
+        onCloseEvent={() => setSelectedEvent(null)}
+        onCloseEmail={() => {
+          setSelectedEmail(null);
+          setEmailContent('');
+        }}
+        onCloseFile={() => setSelectedFile(null)}
+        onOpenMail={() => router.push('/nu-mail')}
+        onOpenDrive={() => router.push('/nu-drive')}
+      />
     </AppLayout>
   );
 }
