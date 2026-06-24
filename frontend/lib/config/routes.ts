@@ -164,7 +164,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
   {
     path: '/admin',
-    hrOnly: true,
+    adminOnly: true,
   },
 
   // Import / Export Hub
