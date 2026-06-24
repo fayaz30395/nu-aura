@@ -41,7 +41,14 @@ jobs:
     name: E2E (Playwright, isolated)
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'e2e')
-    timeout-minutes: 75
+    timeout-minutes: 50
+    strategy:
+      fail-fast: false
+      matrix:
+        # 4 parallel shards so the full functional suite completes within the
+        # job timeout (one job can't run all 107 specs in time). Each shard boots
+        # its own isolated stack and runs its quarter via Playwright --shard.
+        shard: [1, 2, 3, 4]
 
     services:
       postgres:
@@ -207,9 +214,10 @@ jobs:
         # job rather than gating this functional run.
         run: |
           SPECS=$(ls e2e/*.spec.ts | grep -vE "production|tmp-debug")
-          echo "Running $(echo "$SPECS" | wc -l) functional specs"
+          echo "Shard ${{ matrix.shard }}/4 of $(echo "$SPECS" | wc -l) functional specs"
           npx playwright test --config=playwright.live.config.ts \
             --project=setup --project=chromium --workers=4 --retries=2 \
+            --shard=${{ matrix.shard }}/4 \
             --grep-invert "Visual Regression|snapshot" \
             $SPECS
 
@@ -217,7 +225,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-shard-${{ matrix.shard }}
           path: |
             frontend/playwright-report/
             frontend/test-results/
