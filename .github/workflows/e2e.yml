@@ -136,7 +136,10 @@ jobs:
           NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
           BACKEND_ORIGIN: http://localhost:8080
           # Loopback + http are intentional for the isolated CI stack.
+          # NEXT_PUBLIC_ variant is baked into the client bundle so the in-app
+          # env validator (lib/config/env.ts) also allows loopback at runtime.
           ALLOW_INSECURE_RELEASE_API_URL: 'true'
+          NEXT_PUBLIC_ALLOW_INSECURE_API_URL: 'true'
           # Generate the API client from the committed snapshot (the prebuild
           # step does this) rather than fetching /v3/api-docs from the backend.
           API_DOCS_URL: ./openapi-snapshot.json

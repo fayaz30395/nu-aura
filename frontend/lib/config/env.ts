@@ -81,7 +81,11 @@ const envSchema = z.object({
 }).superRefine((env, ctx) => {
   // Escape hatch for local/CI production smoke tests against an isolated stack
   // (mirrors scripts/validate-release-env.mjs). Never set this in a real deploy.
-  const allowInsecureApiUrl = process.env.ALLOW_INSECURE_RELEASE_API_URL === 'true';
+  // NEXT_PUBLIC_ variant is required because this validator also runs in the
+  // browser bundle, where non-public env vars are stripped to undefined.
+  const allowInsecureApiUrl =
+    process.env.ALLOW_INSECURE_RELEASE_API_URL === 'true' ||
+    process.env.NEXT_PUBLIC_ALLOW_INSECURE_API_URL === 'true';
   if (env.NODE_ENV === 'production' && !allowInsecureApiUrl && isLoopbackApiUrl(env.NEXT_PUBLIC_API_URL)) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
