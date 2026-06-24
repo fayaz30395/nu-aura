@@ -1,0 +1,21 @@
+SCREENSHOT VERIFICATION RECORD
+Issue: F-RBAC-003
+Route: /admin/roles
+Role: HR_MANAGER (Jagadeesh N)
+URL at capture: https://hrms-frontend-vert.vercel.app/me/dashboard (redirected from /admin/roles)
+Page title at capture: My Dashboard
+Timestamp: 2026-06-24T12:26:11Z
+Result: PASS
+
+Evidence:
+- Navigated directly to https://hrms-frontend-vert.vercel.app/admin/roles as HR_MANAGER
+- Frontend RBAC guard intercepted immediately
+- Redirected to /me/dashboard (correct destination per fix description)
+- Two "Access Denied - You do not have permission to access that page." toasts shown (correct UX)
+- Final URL: https://hrms-frontend-vert.vercel.app/me/dashboard (no ?denied=1 param — auto-stripped)
+- NO 403 API errors in console (old bug: /roles and /permissions APIs were called and returned 403x6)
+- The /admin/roles page shell never loaded for HR_MANAGER
+
+Root cause verified fixed:
+  BEFORE: HR_MANAGER in ADMIN_ACCESS_ROLES array; page shell loaded, then 6x API 403 errors (GET /roles, GET /permissions)
+  AFTER:  HR_MANAGER removed from ADMIN_ACCESS_ROLES; redirected before page renders; zero API calls made

@@ -1,0 +1,22 @@
+SCREENSHOT VERIFICATION RECORD
+Issue: F-PERM-002
+Route: /me/dashboard
+Role: HR_MANAGER (Jagadeesh N)
+URL at capture: https://hrms-frontend-vert.vercel.app/me/dashboard
+Page title at capture: My Dashboard
+Timestamp: 2026-06-24T12:26:11Z
+Result: PASS
+
+Evidence:
+- Page loaded successfully with "Good evening, Jagadeesh." heading
+- Role badge "HR MANAGER" visible in top-right corner
+- Self-service data shown: Attendance This Month, Days Present, Pending Actions, Team on Leave Today
+- Clock In widget present and functional
+- Leave Balance section visible
+- Quick Access panel showing "All caught up. No pending actions."
+- NO 403 errors in console
+- NO error toasts from dashboard API calls
+
+Root cause verified fixed:
+  BEFORE: SelfServiceController.getDashboard() returned 403 for HR_MANAGER (EMPLOYEE_VIEW_SELF missing)
+  AFTER:  HR_MANAGER has EMPLOYEE_VIEW_SELF permission; dashboard loads fully

@@ -1,0 +1,59 @@
+{
+  "sub_app": "NU-Hire",
+  "account_used": "suresh@nulogic.io",
+  "routes_tested": [
+    {
+      "route": "/careers (unauthenticated)",
+      "status": "PASS",
+      "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS/HIRE__careers__unauthenticated__1440.png",
+      "notes": "title=\"Careers | NU-AURA | NU-AURA\""
+    },
+    {
+      "route": "/recruitment",
+      "status": "PASS",
+      "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS/HIRE__recruitment__loaded__1440.png",
+      "notes": "title=\"Talent Acquisition | NU-AURA\""
+    },
+    {
+      "route": "/recruitment/agencies",
+      "status": "PASS",
+      "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS/HIRE__recruitment__agencies__loaded__1440.png",
+      "notes": "title=\"Agencies\""
+    },
+    {
+      "route": "/onboarding",
+      "status": "PASS",
+      "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS/HIRE__onboarding__loaded__1440.png",
+      "notes": "title=\"Onboarding | NU-AURA\""
+    },
+    {
+      "route": "/onboarding/new",
+      "status": "PASS",
+      "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS/HIRE__onboarding__new__loaded__1440.png",
+      "notes": "title=\"Onboarding | NU-AURA\""
+    },
+    {
+      "route": "/onboarding/templates",
+      "status": "PASS",
+      "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS/HIRE__onboarding__templates__loaded__1440.png",
+      "notes": "title=\"Onboarding Templates\""
+    },
+    {
+      "route": "/offboarding",
+      "status": "PASS",
+      "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS/HIRE__offboarding__loaded__1440.png",
+      "notes": "title=\"My Dashboard\""
+    },
+    {
+      "route": "/careers",
+      "status": "PASS",
+      "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS/HIRE__careers__loaded__1440.png",
+      "notes": "title=\"Careers | NU-AURA | NU-AURA\""
+    }
+  ],
+  "total_tested": 8,
+  "pass_count": 8,
+  "fail_count": 0,
+  "screenshots_taken": 9,
+  "critical_issues": []
+}

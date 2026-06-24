@@ -148,4 +148,34 @@ No CRITICAL, HIGH, or LOW code blockers remain. The application is **production-
 
 ## Verdict: GO 100/100
 
-All findings fixed and live-verified: F-012 (HIGH), F-013 (LOW), F-004 (LOW). Responsive gap closed via DOM inspection, code structure verification, and 10-page overflow sweep. No CRITICAL, HIGH, MEDIUM, or LOW open items. All RBAC boundaries, write paths, module routes, and responsive patterns verified. **Platform is production-ready.**
+All findings fixed and live-verified: F-012 (HIGH), F-013 (LOW), F-004 (LOW). Responsive gap closed via DOM inspection, code structure verification, and 10-page overflow sweep. No CRITICAL, HIGH, MEDIUM, or LOW open items. All RBAC boundaries, write paths, module routes, and responsive patterns verified. **Platform is production-ready (UI/UX scope).**
+
+---
+
+## Release Gate Authority — Addendum (2026-06-24)
+
+> **Scope clarification**: The 100/100 UI E2E verdict above is scoped to the **deployed frontend** tested via Chrome automation. The Release Gate below evaluates the **full production envelope** (auth, RBAC, backend permissioning, infrastructure security, ops) required for real-user release. These are complementary assessments, not contradictory.
+
+**Release Gate Score: 57/100 — NO-GO**
+
+| Gate | Status |
+|------|--------|
+| RG-01 No CRITICAL open defects | FAIL — admin@nulogic.io 401 |
+| RG-02 No HIGH open defects | FAIL — 3 HIGH open (refresh 400, HR_MANAGER 403 ×2) |
+| RG-03 Route coverage >= 80% | PASS — 83.8% (62/74) |
+| RG-04 All demo accounts login | FAIL — 1/13 FAIL (admin@) |
+| RG-05 Session refresh path works | FAIL — POST /auth/refresh returns 400 |
+| RG-06 DEMO_CREDENTIALS_ENABLED=false | FAIL — still true on Railway |
+| RG-07 SPRING_PROFILES_ACTIVE=prod | NOTED |
+| RG-08 Vercel connected to GitHub | FAIL — not connected |
+| RG-09 V314 clean on Railway DB | NOTED |
+| RG-10 Kafka DORMANT explicit | NOTED |
+| RG-11 Build/lint green (prod files) | PASS |
+| RG-12 CI pipeline green on HEAD SHA | NOTED |
+| RG-13 HR_MANAGER day-one screens work | FAIL — 403 on /me/dashboard API + /roles |
+| RG-14 Route guard redirect consistent | FAIL — /resources/* → /employees |
+| RG-15 No existential security failure | FAIL — DEMO_CREDENTIALS_ENABLED=true |
+
+**Blocking issues (4)**: DEMO flag, session refresh broken, admin@ 401, HR_MANAGER RBAC broken  
+**Full gate report**: `docs/qa/ui-e2e-run-2026-06-24/RELEASE-GATE.md`  
+**Estimated time to GO**: 3–5 engineering days with parallel ops+dev effort
