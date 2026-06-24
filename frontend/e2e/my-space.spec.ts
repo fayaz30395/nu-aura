@@ -463,7 +463,9 @@ test.describe('MY SPACE - My Leaves', () => {
 
     test('apply leave page should contain date inputs', async ({page}) => {
       await page.goto('/leave/apply');
-      await expect(page.locator('input[name="startDate"]')).toBeVisible({timeout: 10000});
+      // Mantine DateInput renders the <input> with the id; the form `name` lives
+      // on the react-hook-form Controller, not the DOM node.
+      await expect(page.locator('#leave-start-date')).toBeVisible({timeout: 10000});
     });
 
     test('apply leave page should contain reason textarea', async ({page}) => {
