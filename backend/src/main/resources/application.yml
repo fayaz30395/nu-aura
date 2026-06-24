@@ -109,7 +109,13 @@ spring:
     ignore-missing-migrations: true
     ignore-ignored-migrations: true
     validate-on-migrate: true
-    repair-on-migrate: false  # Reverted after V113/V115 checksums repaired
+    # V312 was corrected (fk_employees_user broke fresh demo-enabled provisioning —
+    # it hard-coded a finance@ user id that V286 had already seeded under a
+    # different id). Already-migrated DBs (e.g. live render) have V312 recorded
+    # with the old checksum; repair-on-migrate auto-aligns the checksum on the
+    # next migrate (data unchanged — V312 won't re-run). Safe to revert to false
+    # once every live DB has migrated past this. prod overrides this to false.
+    repair-on-migrate: true
     clean-disabled: true
     mixed: true
     placeholders:
