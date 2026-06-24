@@ -81,7 +81,6 @@ export * from './useLearning';
 export * from './useMfa';
 export * from './useNotifications';
 export * from './useOkr';
-export * from './usePerformance';
 export * from './usePredictiveAnalytics';
 export * from './useRecognition';
 export * from './useSurveys';

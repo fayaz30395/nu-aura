@@ -81,7 +81,6 @@ export * from './queries/useOneOnOne';
 export * from './queries/useOvertime';
 export * from './queries/usePayments';
 export * from './queries/usePayroll';
-export * from './queries/usePerformance';
 export * from './queries/usePip';
 export * from './queries/usePreboarding';
 export * from './queries/usePredictiveAnalytics';
