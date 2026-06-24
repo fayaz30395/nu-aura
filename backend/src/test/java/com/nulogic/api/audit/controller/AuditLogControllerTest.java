@@ -155,8 +155,9 @@ class AuditLogControllerTest {
         @Test
         @DisplayName("getAuditStatistics should require AUDIT_VIEW permission")
         void getAuditStatistics_shouldRequireAuditViewPermission() throws NoSuchMethodException {
+            // Params were changed from LocalDateTime to String (flexible date parsing — GF Run-5 fix)
             Method method = AuditLogController.class.getMethod("getAuditStatistics",
-                    LocalDateTime.class, LocalDateTime.class);
+                    String.class, String.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();

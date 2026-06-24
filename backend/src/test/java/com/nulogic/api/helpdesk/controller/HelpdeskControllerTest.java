@@ -8,8 +8,11 @@ import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.security.TenantFilter;
 import com.nulogic.domain.helpdesk.Ticket;
+import com.nulogic.domain.user.RoleScope;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,6 +31,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -73,6 +78,13 @@ class HelpdeskControllerTest {
         assigneeId = UUID.randomUUID();
         categoryId = UUID.randomUUID();
 
+        // Set up a helpdesk-agent user so that inline scope guards (enforceTicketOwnershipCheck,
+        // enforceHelpdeskViewScope, requireHelpdeskAgentScope) pass in unit tests.
+        SecurityContext.setCurrentUser(
+                UUID.randomUUID(), employeeId, Set.of("SYSTEM_ADMIN"),
+                Map.of(Permission.HELPDESK_TICKET_MANAGE, RoleScope.ALL));
+        TenantContext.setCurrentTenant(UUID.randomUUID());
+
         ticketResponse = TicketResponse.builder()
                 .id(ticketId)
                 .ticketNumber("TKT-2024-001")
@@ -83,6 +95,12 @@ class HelpdeskControllerTest {
                 .priority(Ticket.TicketPriority.HIGH)
                 .status(Ticket.TicketStatus.OPEN)
                 .build();
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContext.clear();
+        TenantContext.clear();
     }
 
     // ===================== Ticket CRUD Tests =====================

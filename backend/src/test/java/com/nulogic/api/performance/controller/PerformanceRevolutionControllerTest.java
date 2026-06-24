@@ -6,6 +6,8 @@ import com.nulogic.application.performance.service.PerformanceRevolutionService;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.security.TenantFilter;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
@@ -134,7 +136,10 @@ class PerformanceRevolutionControllerTest {
             when(performanceRevolutionService.getPerformanceSpider(employeeId, tenantId))
                     .thenReturn(spiderResponse);
 
-            try (MockedStatic<TenantContext> tc = mockStatic(TenantContext.class)) {
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class);
+                 MockedStatic<TenantContext> tc = mockStatic(TenantContext.class)) {
+                // HR_MANAGER bypass in the IDOR guard (isHRManager → true)
+                sc.when(SecurityContext::isHRManager).thenReturn(true);
                 tc.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
 
                 mockMvc.perform(get("/api/v1/performance/revolution/spider/{employeeId}", employeeId))
@@ -156,7 +161,9 @@ class PerformanceRevolutionControllerTest {
             when(performanceRevolutionService.getPerformanceSpider(employeeId, tenantId))
                     .thenReturn(spiderResponse);
 
-            try (MockedStatic<TenantContext> tc = mockStatic(TenantContext.class)) {
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class);
+                 MockedStatic<TenantContext> tc = mockStatic(TenantContext.class)) {
+                sc.when(SecurityContext::isHRManager).thenReturn(true);
                 tc.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
 
                 mockMvc.perform(get("/api/v1/performance/revolution/spider/{employeeId}", employeeId))

@@ -110,23 +110,23 @@ class RoleControllerTest {
     class PermissionAnnotationTests {
 
         @Test
-        @DisplayName("getAllRoles should require ROLE_MANAGE permission")
+        @DisplayName("getAllRoles should require ROLE_READ permission (V315: read-only list downgraded from ROLE_MANAGE)")
         void getAllRoles_shouldRequireRoleManagePermission() throws NoSuchMethodException {
             Method method = RoleController.class.getMethod("getAllRoles", Pageable.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_READ);
         }
 
         @Test
-        @DisplayName("getRoleById should require ROLE_MANAGE permission")
+        @DisplayName("getRoleById should require ROLE_READ permission (V315: read-only lookup downgraded from ROLE_MANAGE)")
         void getRoleById_shouldRequireRoleManagePermission() throws NoSuchMethodException {
             Method method = RoleController.class.getMethod("getRoleById", UUID.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
 
             assertThat(annotation).isNotNull();
-            assertThat(annotation.value()[0]).contains(Permission.ROLE_MANAGE);
+            assertThat(annotation.value()[0]).contains(Permission.ROLE_READ);
         }
 
         @Test
