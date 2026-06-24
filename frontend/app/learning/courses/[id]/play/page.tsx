@@ -60,7 +60,6 @@ export default function CoursePlayerPage() {
   const hasAccess = hasAnyPermission(
     Permissions.TRAINING_VIEW,
     Permissions.LMS_COURSE_VIEW,
-    Permissions.TRAINING_MANAGE,
   );
 
   useEffect(() => {

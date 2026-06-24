@@ -256,7 +256,7 @@ export function ManageProgramsTab({
                         <Edit className="h-4 w-4"/>
                       </Button>
                     </PermissionGate>
-                    <PermissionGate permission={Permissions.TRAINING_MANAGE}>
+                    <PermissionGate permission={Permissions.TRAINING_CREATE}>
                       <Button
                         size="sm"
                         variant="outline"
