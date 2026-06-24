@@ -263,10 +263,22 @@ export class DashboardPage extends BasePage {
    * Check if attendance widget is fully loaded
    */
   async isAttendanceWidgetLoaded(): Promise<boolean> {
-    // Either check-in or check-out button should be visible
+    // The widget is loaded if it shows a clock control OR the completed state.
     const checkIn = await this.checkInButton.isVisible();
     const checkOut = await this.checkOutButton.isVisible();
-    return checkIn || checkOut;
+    return checkIn || checkOut || (await this.isAttendanceCompleted());
+  }
+
+  /**
+   * Read the current attendance widget state WITHOUT mutating it.
+   * 'in' = clocked in (Clock Out shown), 'out' = clocked out / can clock in
+   * (Clock In shown), 'completed' = day finished, 'unknown' = none detected.
+   */
+  async getAttendanceState(): Promise<'in' | 'out' | 'completed' | 'unknown'> {
+    if (await this.checkOutButton.isVisible().catch(() => false)) return 'in';
+    if (await this.checkInButton.isVisible().catch(() => false)) return 'out';
+    if (await this.isAttendanceCompleted()) return 'completed';
+    return 'unknown';
   }
 
   /**
