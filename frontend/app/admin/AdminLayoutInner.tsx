@@ -137,7 +137,7 @@ export default function AdminLayoutInner({
       id: 'dashboard',
       label: 'Dashboard',
       icon: <LayoutDashboard className="h-5 w-5"/>,
-      href: '/admin',
+      href: isSuperAdmin ? '/admin' : '/admin/employees',
       requiredPermission: Permissions.DASHBOARD_VIEW,
     },
     {

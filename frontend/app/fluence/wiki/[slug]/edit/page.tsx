@@ -47,9 +47,7 @@ export default function EditWikiPage() {
   const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
-    Permissions.WIKI_MANAGE,
     Permissions.KNOWLEDGE_WIKI_UPDATE,
-    Permissions.KNOWLEDGE_MANAGE,
   );
 
   useEffect(() => {

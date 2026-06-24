@@ -49,7 +49,7 @@ const ENTRY_TYPES: { value: EntryType; label: string }[] = [
 export default function NewTimeEntryPage() {
   const router = useRouter();
   const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
-  const hasAccess = hasAnyPermission(Permissions.TIMESHEET_CREATE, Permissions.TIME_TRACKING_CREATE, Permissions.TIME_TRACKING_MANAGE);
+  const hasAccess = hasAnyPermission(Permissions.TIME_TRACKING_CREATE, Permissions.TIME_TRACKING_MANAGE);
 
   useEffect(() => {
     if (permissionsReady && !hasAccess) {

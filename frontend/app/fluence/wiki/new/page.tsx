@@ -65,9 +65,7 @@ export default function CreateWikiPage() {
   const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
-    Permissions.WIKI_CREATE,
     Permissions.KNOWLEDGE_WIKI_CREATE,
-    Permissions.KNOWLEDGE_MANAGE,
   );
 
   useEffect(() => {

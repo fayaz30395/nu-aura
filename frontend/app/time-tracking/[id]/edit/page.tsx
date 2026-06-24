@@ -53,7 +53,6 @@ export default function EditTimeEntryPage() {
   const entryId = params.id as string;
   const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(
-    Permissions.TIMESHEET_CREATE,
     Permissions.TIME_TRACKING_CREATE,
     Permissions.TIME_TRACKING_MANAGE
   );

@@ -36,7 +36,7 @@ const log = createLogger('TimeTrackingListPage');
 export default function TimeTrackingPage() {
   const router = useRouter();
   const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
-  const hasAccess = hasAnyPermission(Permissions.TIMESHEET_VIEW, Permissions.TIME_TRACKING_VIEW, Permissions.TIME_TRACKING_MANAGE);
+  const hasAccess = hasAnyPermission(Permissions.TIME_TRACKING_VIEW, Permissions.TIME_TRACKING_MANAGE);
 
   useEffect(() => {
     if (permissionsReady && !hasAccess) {
