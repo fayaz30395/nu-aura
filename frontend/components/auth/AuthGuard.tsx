@@ -110,7 +110,7 @@ export function AuthGuard({
         restoreAttemptedRef.current = true;
         isRestoringRef.current = true;
         setIsRestoringSession(true);
-        restoreSession().then((restored) => {
+        void restoreSession().then((restored) => {
           isRestoringRef.current = false;
           setIsRestoringSession(false);
           if (!restored) {
@@ -135,6 +135,10 @@ export function AuthGuard({
             setIsAuthorized(false);
           }
           // If restored, the isAuthenticated state change will re-trigger this effect
+        }).catch(() => {
+          isRestoringRef.current = false;
+          setIsRestoringSession(false);
+          window.location.href = `/auth/login?returnUrl=${encodeURIComponent(pathname)}`;
         });
       } else if (restoreAttemptedRef.current && !isRestoringRef.current) {
         // Restore was already attempted and failed — redirect to login
