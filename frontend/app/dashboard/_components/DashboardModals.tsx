@@ -9,6 +9,7 @@ import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
 import {safeWindowOpen} from '@/lib/utils/url';
 import type {GoogleNotification} from '../_types';
 import {formatRelativeTime, getPreviewUrl} from '../_utils';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 interface DashboardModalsProps {
   selectedEvent: GoogleNotification | null;
@@ -99,7 +100,7 @@ export function DashboardModals({
               <div className="flex items-center gap-4 text-[var(--accent-primary)]">
                 <Video className="h-5 w-5 flex-shrink-0"/>
                 <a
-                  href={selectedEvent.calendarEvent.hangoutLink}
+                  href={safeUrl(selectedEvent.calendarEvent.hangoutLink)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:underline"

@@ -39,6 +39,7 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {createLogger} from '@/lib/utils/logger';
 import {useDebounce} from '@/lib/hooks/useDebounce';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 const logger = createLogger('LinkedInPosts');
 
@@ -271,7 +272,7 @@ export default function LinkedInPostsPage() {
                           )}
                         </div>
                         <a
-                          href={post.postUrl}
+                          href={safeUrl(post.postUrl)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-1.5 text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"

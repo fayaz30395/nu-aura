@@ -23,6 +23,7 @@ import {SPOTLIGHT_API_AVAILABLE} from '@/lib/services/platform/spotlight.service
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 const logger = createLogger('CompanySpotlight');
 
@@ -271,7 +272,7 @@ export default function CompanySpotlightPage() {
                             )}
                             {spotlight.ctaUrl && (
                               <a
-                                href={spotlight.ctaUrl}
+                                href={safeUrl(spotlight.ctaUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 flex items-center gap-1"

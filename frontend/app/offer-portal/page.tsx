@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import {formatCurrency} from '@/lib/utils';
 import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 const acceptOfferSchema = z.object({
   confirmedJoiningDate: z.string().min(1, 'Please confirm your joining date'),
@@ -330,7 +331,7 @@ function OfferPortalPage() {
                 </div>
                 {offer.offerLetterUrl && (
                   <a
-                    href={offer.offerLetterUrl}
+                    href={safeUrl(offer.offerLetterUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:brightness-110 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"

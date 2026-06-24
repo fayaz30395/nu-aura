@@ -70,6 +70,7 @@ import type {
   OneOnOneMeetingResponse,
   RecurrencePattern,
 } from '@/lib/types/hrms/meeting';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────
 
@@ -567,7 +568,7 @@ export default function OneOnOnePage() {
                       )}
                       {meeting.meetingLink && (
                         <a
-                          href={meeting.meetingLink}
+                          href={safeUrl(meeting.meetingLink)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:underline"

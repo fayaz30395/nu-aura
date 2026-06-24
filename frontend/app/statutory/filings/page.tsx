@@ -58,6 +58,7 @@ import {
 } from '@/lib/hooks/queries/useStatutoryFiling';
 import type {FilingRunResponse, FilingStatus, FilingType, FilingTypeInfo,} from '@/lib/types/hrms/statutory-filing';
 import {formatDateTime} from '@/lib/utils/format/date';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -282,7 +283,7 @@ export default function StatutoryFilingsPage() {
                               size="sm"
                               aria-label={`Open ${ft.portalName}`}
                               component="a"
-                              href={ft.portalUrl}
+                              href={safeUrl(ft.portalUrl)}
                               target="_blank"
                               rel="noopener noreferrer"
                             >

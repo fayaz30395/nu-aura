@@ -4,6 +4,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useParams} from 'next/navigation';
 import {AlertCircle, CheckCircle, ExternalLink, FileText, Loader2, PenLine, Type, XCircle,} from 'lucide-react';
 import {useDeclineDocument, useSignatureInfo, useSignDocument,} from '@/lib/hooks/queries/useEsignPublic';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 type Step = 'verify' | 'sign' | 'success' | 'declined' | 'already_processed';
 type SignatureMethod = 'DRAWN' | 'TYPED';
@@ -437,7 +438,7 @@ export default function SignPage() {
           {docInfo?.documentUrl && (
             <div className="mt-4 pt-4 border-t border-[var(--border-subtle)]">
               <a
-                href={docInfo.documentUrl}
+                href={safeUrl(docInfo.documentUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm text-accent-600 hover:text-accent-700 font-medium"

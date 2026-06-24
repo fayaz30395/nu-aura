@@ -31,6 +31,7 @@ import {
 import type {Candidate} from '@/lib/types/hire/recruitment';
 import {formatDate, formatDateTime} from '@/lib/utils/format/date';
 import type {ApprovalStatus, SignatureStatus} from '@/lib/types/hire/esignature';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 // ==================== Zod Schema ====================
 
@@ -139,7 +140,7 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
         </div>
         {req.documentUrl && (
           <a
-            href={req.documentUrl}
+            href={safeUrl(req.documentUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-xs text-accent-600 hover:text-accent-700 cursor-pointer"
