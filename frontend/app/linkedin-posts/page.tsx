@@ -272,7 +272,7 @@ export default function LinkedInPostsPage() {
                         </div>
                         <a
                           href={post.postUrl}
-                          target="_blank"
+                          target="_blank" rel="noopener noreferrer"
                           rel="noopener noreferrer"
                           className="p-1.5 text-[var(--text-muted)] hover:text-accent-600 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors"
                           title="View on LinkedIn"

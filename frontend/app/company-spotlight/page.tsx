@@ -272,7 +272,7 @@ export default function CompanySpotlightPage() {
                             {spotlight.ctaUrl && (
                               <a
                                 href={spotlight.ctaUrl}
-                                target="_blank"
+                                target="_blank" rel="noopener noreferrer"
                                 rel="noopener noreferrer"
                                 className="text-accent-600 hover:text-accent-700 dark:text-accent-400 dark:hover:text-accent-300 flex items-center gap-1"
                               >

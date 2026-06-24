@@ -226,7 +226,7 @@ export default function JobBoardsPage() {
                             <StatusIcon className={`w-4 h-4 ${sc.color}`}/>
                             <span className="font-medium text-[var(--text-primary)]">{posting.status}</span>
                             {posting.externalUrl && (
-                              <a href={safeUrl(posting.externalUrl)} target="_blank" rel="noopener noreferrer"
+                              <a href={safeUrl(posting.externalUrl)} target="_blank" rel="noopener noreferrer" rel="noopener noreferrer"
                                  className="text-accent-500 hover:underline">
                                 <ExternalLink className="w-3.5 h-3.5"/>
                               </a>

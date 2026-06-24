@@ -60,6 +60,7 @@ import {
   Scale,
   Send,
   Settings,
+  Sparkles,
   Share2,
   Shield,
   Sliders,
@@ -135,6 +136,7 @@ const icon = {
   share2: <Share2 className="h-5 w-5"/>,
   timer: <Timer className="h-5 w-5"/>,
   arrowUpDown: <ArrowUpDown className="h-5 w-5"/>,
+  sparkles: <Sparkles className="h-5 w-5"/>,
 } as const;
 
 // Small icons for child items (4x4)
@@ -953,6 +955,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           icon: icon.barChart3,
           href: '/fluence/analytics',
           requiredPermission: Permissions.KNOWLEDGE_VIEW
+        },
+        {
+          id: 'fluence-ai-chat',
+          label: 'AI Chat',
+          icon: icon.sparkles,
+          href: '/fluence/ai-chat',
+          requiredPermission: Permissions.KNOWLEDGE_SEARCH
         },
       ],
     },

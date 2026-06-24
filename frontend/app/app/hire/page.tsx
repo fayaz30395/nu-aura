@@ -17,9 +17,9 @@ export default function HireEntryPage() {
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated || !user) {
-      restoreSession().then((restored) => {
+      void restoreSession().then((restored) => {
         if (!restored) router.replace('/auth/login');
-      });
+      }).catch(() => router.replace('/auth/login'));
       return;
     }
     // DEF-40: Check app-level RBAC before redirecting

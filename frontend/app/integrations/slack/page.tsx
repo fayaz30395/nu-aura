@@ -208,7 +208,7 @@ export default function SlackIntegrationPage() {
                 className="flex-shrink-0 w-6 h-6 rounded-full bg-accent-100 text-accent-700 flex items-center justify-center text-xs font-bold">1</span>
               <span>
                 Create a Slack App at{' '}
-                <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer"
+                <a href="https://api.slack.com/apps" target="_blank" rel="noopener noreferrer" rel="noopener noreferrer"
                    className="text-accent-700 hover:underline inline-flex items-center gap-1">
                   api.slack.com/apps <ExternalLink className="h-3 w-3"/>
                 </a>

@@ -921,7 +921,7 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
                 {item.linkedinPostUrl && (
                   <a
                     href={item.linkedinPostUrl}
-                    target="_blank"
+                    target="_blank" rel="noopener noreferrer"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-0.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)]  ml-auto"
                   >

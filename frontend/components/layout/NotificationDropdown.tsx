@@ -690,7 +690,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
               {selectedEvent.calendarEvent.hangoutLink && (
                 <div className="flex items-start gap-2">
                   <Video className="h-5 w-5 text-accent-500 mt-0.5"/>
-                  <a href={selectedEvent.calendarEvent.hangoutLink} target="_blank" rel="noopener noreferrer"
+                  <a href={selectedEvent.calendarEvent.hangoutLink} target="_blank" rel="noopener noreferrer" rel="noopener noreferrer"
                      className="text-sm text-accent-600 hover:text-accent-700 dark:text-accent-400 hover:underline">
                     Join Google Meet
                   </a>

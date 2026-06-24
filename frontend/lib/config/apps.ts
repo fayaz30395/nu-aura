@@ -137,6 +137,7 @@ export const PLATFORM_APPS: Record<AppCode, NuApp> = {
       '/fluence/wall',
       '/fluence/dashboard',
       '/fluence/analytics',
+      '/fluence/ai-chat',
     ],
     available: true,
     order: 4,

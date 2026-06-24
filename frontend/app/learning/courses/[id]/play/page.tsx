@@ -255,7 +255,7 @@ export default function CoursePlayerPage() {
                   <span className="text-sm font-medium text-[var(--text-primary)]">{activeContent.title}</span>
                   <a
                     href={safeUrl(activeContent.documentUrl)}
-                    target="_blank"
+                    target="_blank" rel="noopener noreferrer"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 text-xs text-accent-600 hover:text-accent-800"
                   >
@@ -327,7 +327,7 @@ export default function CoursePlayerPage() {
               <p className="text-[var(--text-secondary)]">External resource</p>
               <a
                 href={activeContent.videoUrl || '#'}
-                target="_blank"
+                target="_blank" rel="noopener noreferrer"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-accent-600 text-white rounded-md text-sm font-medium hover:bg-accent-700"
               >

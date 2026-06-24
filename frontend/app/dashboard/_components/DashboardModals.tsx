@@ -100,7 +100,7 @@ export function DashboardModals({
                 <Video className="h-5 w-5 flex-shrink-0"/>
                 <a
                   href={selectedEvent.calendarEvent.hangoutLink}
-                  target="_blank"
+                  target="_blank" rel="noopener noreferrer"
                   rel="noopener noreferrer"
                   className="hover:underline"
                 >

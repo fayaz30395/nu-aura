@@ -283,7 +283,7 @@ export default function StatutoryFilingsPage() {
                               aria-label={`Open ${ft.portalName}`}
                               component="a"
                               href={ft.portalUrl}
-                              target="_blank"
+                              target="_blank" rel="noopener noreferrer"
                               rel="noopener noreferrer"
                             >
                               <IconExternalLink size={14}/>

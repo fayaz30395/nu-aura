@@ -102,7 +102,7 @@ export default function ForgotPasswordPage() {
                       </p>
                       <a
                         href="https://myaccount.google.com/security"
-                        target="_blank"
+                        target="_blank" rel="noopener noreferrer"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 mb-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-primary)] font-medium hover:bg-[var(--bg-card-hover)] transition-colors"
                       >

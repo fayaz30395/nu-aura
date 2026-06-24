@@ -477,6 +477,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
       '/fluence/analytics': 'fluence-analytics',
       '/fluence/search': 'fluence-search',
       '/fluence/drive': 'fluence-drive',
+      '/fluence/ai-chat': 'fluence-ai-chat',
       '/fluence/templates': 'fluence-templates',
       '/fluence/my-content': 'fluence-my-content',
       '/fluence/blogs': 'fluence-blogs',

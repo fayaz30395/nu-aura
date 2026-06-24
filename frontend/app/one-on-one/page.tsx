@@ -568,7 +568,7 @@ export default function OneOnOnePage() {
                       {meeting.meetingLink && (
                         <a
                           href={meeting.meetingLink}
-                          target="_blank"
+                          target="_blank" rel="noopener noreferrer"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-accent-700 dark:text-accent-400 hover:underline"
                         >
