@@ -13,13 +13,10 @@ test.describe('Dashboard', () => {
   let dashboardPage: DashboardPage;
 
   test.beforeEach(async ({page}) => {
+    // Authenticated via the shared storageState (auth.setup); no per-test UI login.
     loginPage = new LoginPage(page);
     dashboardPage = new DashboardPage(page);
-
-    // Login and navigate to dashboard
-    await loginPage.navigate();
-    await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
+    await page.goto('/me/dashboard', {waitUntil: 'commit'});
   });
 
   test.describe('Dashboard Page Load', () => {
