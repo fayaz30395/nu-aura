@@ -151,7 +151,7 @@ test.describe('Navigation and Routing', () => {
   test.describe('User Profile Menu', () => {
     test('should display user profile menu', async ({page}) => {
       // Look for user menu/avatar
-      const userMenu = page.locator('[class*="user"], [class*="profile"], [class*="avatar"]').first();
+      const userMenu = page.locator('button[aria-label^="User menu for"]').first();
       const hasUserMenu = await userMenu.isVisible().catch(() => false);
 
       expect(hasUserMenu).toBe(true);
@@ -159,16 +159,16 @@ test.describe('Navigation and Routing', () => {
 
     test('should open user dropdown menu', async ({page}) => {
       // Click on user menu
-      const userMenuButton = page.locator('button').filter({has: page.locator('[class*="user"], [class*="avatar"]')}).first();
+      const userMenuButton = page.locator('button[aria-label^="User menu for"]').first();
       const hasUserMenuButton = await userMenuButton.isVisible().catch(() => false);
 
       if (hasUserMenuButton) {
         await userMenuButton.click();
         await page.waitForTimeout(500);
 
-        // Check if dropdown appeared
-        const dropdown = page.locator('[role="menu"], [class*="dropdown"]');
-        const hasDropdown = await dropdown.isVisible().catch(() => false);
+        // The opened UserMenu shows item controls (Sign out / Settings / Profile).
+        const item = page.getByRole('button', {name: /sign out|settings|profile|log\s?out/i}).first();
+        const hasDropdown = await item.isVisible().catch(() => false);
         expect(hasDropdown).toBe(true);
       }
     });
@@ -180,7 +180,7 @@ test.describe('Navigation and Routing', () => {
 
       if (!hasProfileLink) {
         // Try opening user menu first
-        const userMenuButton = page.locator('button').filter({has: page.locator('[class*="user"], [class*="avatar"]')}).first();
+        const userMenuButton = page.locator('button[aria-label^="User menu for"]').first();
         const hasUserMenuButton = await userMenuButton.isVisible().catch(() => false);
 
         if (hasUserMenuButton) {
