@@ -31,6 +31,7 @@ import {useJobOpenings, useUpdateJobOpening} from '@/lib/hooks/queries/useRecrui
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useUnsavedChanges} from '@/lib/hooks';
 import {safeStorage} from '@/lib/utils/safeStorage';
+import {safeUrl} from '@/lib/utils/safeUrl';
 import type {CreateJobOpeningRequest, JobOpening, JobStatus} from '@/lib/types/hire/recruitment';
 
 // ==================== Career Page Content Schema ====================
@@ -451,7 +452,7 @@ export default function CareerPageCMS() {
           <div className="flex items-center gap-2">
             {careerUrl ? (
               <a
-                href={careerUrl}
+                href={safeUrl(careerUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-4 py-2 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"
