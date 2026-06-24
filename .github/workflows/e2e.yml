@@ -161,6 +161,19 @@ jobs:
           done
           echo "Frontend did not start"; tail -80 ../frontend.log; exit 1
 
+      - name: Warm up the stack
+        # Prime the JVM/JIT + DB query + SSR paths so the first real test requests
+        # aren't cold (cold-start latency was the main source of flaky timeouts).
+        run: |
+          for i in 1 2 3 4 5; do
+            curl -s -o /dev/null "http://localhost:3000/" || true
+            curl -s -o /dev/null "http://localhost:3000/auth/login" || true
+            curl -s -o /dev/null -X POST "http://localhost:3000/api/v1/auth/login" \
+              -H 'Content-Type: application/json' \
+              -d '{"email":"fayaz.m@nulogic.io","password":"Welcome@123"}' || true
+          done
+          echo "warmup complete"
+
       - name: Install Playwright browsers
         working-directory: ./frontend
         run: npx playwright install --with-deps chromium

@@ -14,7 +14,7 @@ test.describe('Navigation and Routing', () => {
     loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/me/dashboard');
+    await page.waitForURL('**/me/dashboard', {waitUntil: 'commit'});
   });
 
   test.describe('Main Navigation Menu', () => {
@@ -384,7 +384,9 @@ test.describe('Navigation and Routing', () => {
       await page.reload();
       await page.waitForTimeout(1000);
 
-      const mobileMenuButton = page.locator('button[aria-label*="menu"], button:has-text("☰")').first();
+      // aria-label="Open navigation" is the actual mobile toggle (md:hidden, so a
+      // no-op on desktop); avoid matching the "User menu for <name>" button.
+      const mobileMenuButton = page.locator('button[aria-label="Open navigation"]').first();
       const hasButton = await mobileMenuButton.isVisible().catch(() => false);
 
       if (hasButton) {
@@ -392,8 +394,7 @@ test.describe('Navigation and Routing', () => {
         await page.waitForTimeout(500);
 
         // Menu should appear
-        const nav = page.locator('nav, [role="navigation"]');
-        const isNavVisible = await nav.isVisible().catch(() => false);
+        const isNavVisible = await page.locator('nav:visible, [role="navigation"]:visible').first().isVisible().catch(() => false);
         expect(isNavVisible).toBe(true);
       }
     });
@@ -403,7 +404,9 @@ test.describe('Navigation and Routing', () => {
       await page.waitForTimeout(1000);
 
       // Open mobile menu if needed
-      const mobileMenuButton = page.locator('button[aria-label*="menu"], button:has-text("☰")').first();
+      // aria-label="Open navigation" is the actual mobile toggle (md:hidden, so a
+      // no-op on desktop); avoid matching the "User menu for <name>" button.
+      const mobileMenuButton = page.locator('button[aria-label="Open navigation"]').first();
       const hasButton = await mobileMenuButton.isVisible().catch(() => false);
 
       if (hasButton) {
@@ -457,7 +460,7 @@ test.describe('Navigation and Routing', () => {
         await page.waitForTimeout(500);
 
         const urlHasMyAttendance = page.url().includes('my-attendance');
-        const contentHasMyAttendance = await page.locator('text=/My Attendance/i').isVisible().catch(() => false);
+        const contentHasMyAttendance = await page.locator('text=/My Attendance/i').first().isVisible().catch(() => false);
 
         expect(urlHasMyAttendance || contentHasMyAttendance).toBe(true);
       }
@@ -527,7 +530,7 @@ test.describe('Navigation - Role-Based Access', () => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/me/dashboard');
+    await page.waitForURL('**/me/dashboard', {waitUntil: 'commit'});
 
     // Admin should see employees, leave, attendance, projects, etc.
     const hasEmployees = await page.locator('a[href*="/employees"], button:has-text("Employees")').first().isVisible().catch(() => false);
@@ -538,7 +541,7 @@ test.describe('Navigation - Role-Based Access', () => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.employee.email, testUsers.employee.password);
-    await page.waitForURL('**/me/dashboard');
+    await page.waitForURL('**/me/dashboard', {waitUntil: 'commit'});
 
     // Employee should see their own leave, attendance but maybe not all employees
     const hasLeave = await page.locator('a[href*="/leave"], button:has-text("Leave")').first().isVisible().catch(() => false);
@@ -551,7 +554,7 @@ test.describe('Navigation - Role-Based Access', () => {
     const loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.manager.email, testUsers.manager.password);
-    await page.waitForURL('**/me/dashboard');
+    await page.waitForURL('**/me/dashboard', {waitUntil: 'commit'});
 
     // Manager should see team management options
     const hasNav = await page.locator('nav:visible').first().isVisible();
@@ -566,7 +569,7 @@ test.describe('Navigation — App-Aware Sidebar', () => {
     loginPage = new LoginPage(page);
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/me/dashboard');
+    await page.waitForURL('**/me/dashboard', {waitUntil: 'commit'});
   });
 
   test('HRMS routes show HR-specific sidebar items', async ({page}) => {
