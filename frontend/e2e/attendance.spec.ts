@@ -243,6 +243,7 @@ test.describe('Attendance Management', () => {
           .or(attendancePage.attendanceTable.first())
           .or(attendancePage.dateRangeFilter)
           .or(page.locator('main, [role="main"]').first())
+          .first()
       ).toBeVisible({timeout: 20000});
     });
   });
