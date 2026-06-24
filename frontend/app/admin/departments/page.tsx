@@ -200,7 +200,7 @@ export default function DepartmentsPage() {
   return (
     <AdminPageContent className="page-shell">
       <PermissionGate
-        permission={Permissions.EMPLOYEE_READ}
+        anyOf={[Permissions.EMPLOYEE_READ, Permissions.EMPLOYEE_VIEW_ALL, Permissions.DEPARTMENT_MANAGE]}
         fallback={<p className="text-danger-600 p-6">You do not have permission to view departments.</p>}
       >
         <PageTransition>
