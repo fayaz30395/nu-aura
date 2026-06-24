@@ -41,6 +41,12 @@
         <springdoc.version>2.8.0</springdoc.version>
         <lombok.version>1.18.46</lombok.version>
         <shedlock.version>7.7.0</shedlock.version>
+        <jacoco.instruction.coveredratio.minimum>0.00</jacoco.instruction.coveredratio.minimum>
+        <jacoco.branch.coveredratio.minimum>0.00</jacoco.branch.coveredratio.minimum>
+        <jacoco.line.coveredratio.minimum>0.10</jacoco.line.coveredratio.minimum>
+        <jacoco.complexity.coveredratio.minimum>0.00</jacoco.complexity.coveredratio.minimum>
+        <jacoco.method.coveredratio.minimum>0.00</jacoco.method.coveredratio.minimum>
+        <jacoco.class.coveredratio.minimum>0.00</jacoco.class.coveredratio.minimum>
         <!-- Override Spring Boot BOM (1.20.6): 1.21.x ships a docker-java that
              negotiates Docker API >= 1.44, required by Docker 25+/colima 29.x.
              1.20.6's client advertised API 1.32 and was rejected by the daemon. -->
@@ -504,16 +510,40 @@
                                         <limit>
                                             <!--
                                               Ratchet floor — raise as test debt is paid down toward
-                                              backlog target of 0.80 (T3-15). Current line coverage
-                                              is ~0.19 (cached JaCoCo report 2026-05-20); floor set
-                                              5 points below current rounded down to nearest 0.05
-                                              so `mvn verify` actually enforces something today
-                                              without blocking every PR. Bump in 0.05 increments
-                                              as coverage rises.
+                                              backlog target of 0.80 (T3-15). The default floor
+                                              stays deliberately low so `mvn verify` enforces
+                                              a real baseline today without blocking every PR.
+                                              Bump in 0.05 increments as coverage rises; use
+                                              -Pcoverage-100 for the opt-in full-strict gate.
                                             -->
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.10</minimum>
+                                            <minimum>${jacoco.line.coveredratio.minimum}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.instruction.coveredratio.minimum}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.branch.coveredratio.minimum}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>COMPLEXITY</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.complexity.coveredratio.minimum}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>METHOD</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.method.coveredratio.minimum}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>CLASS</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco.class.coveredratio.minimum}</minimum>
                                         </limit>
                                     </limits>
                                 </rule>
@@ -524,4 +554,29 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>coverage-100</id>
+            <properties>
+                <jacoco.instruction.coveredratio.minimum>1.00</jacoco.instruction.coveredratio.minimum>
+                <jacoco.branch.coveredratio.minimum>1.00</jacoco.branch.coveredratio.minimum>
+                <jacoco.line.coveredratio.minimum>1.00</jacoco.line.coveredratio.minimum>
+                <jacoco.complexity.coveredratio.minimum>1.00</jacoco.complexity.coveredratio.minimum>
+                <jacoco.method.coveredratio.minimum>1.00</jacoco.method.coveredratio.minimum>
+                <jacoco.class.coveredratio.minimum>1.00</jacoco.class.coveredratio.minimum>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <configuration combine.self="override">
+                            <excludes combine.self="override" />
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

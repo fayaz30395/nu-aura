@@ -28,7 +28,7 @@ public class PiiMaskingConverter extends ClassicConverter {
 
     // Phone (E.164 + Indian +91 patterns)
     private static final Pattern PHONE_PATTERN = Pattern.compile(
-            "(\\+?\\d{1,3}[-.\\s]?)?\\(?\\d{3,4}\\)?[-.\\s]?\\d{3,4}[-.\\s]?\\d{4,6}");
+            "(\\+?\\d{1,3}[-.\\s]?)?(?:\\d{5}[-.\\s]?\\d{5}|\\(?\\d{3,5}\\)?[-.\\s]?\\d{3,5}[-.\\s]?\\d{4,6})");
 
     // Indian PAN: 5 letters + 4 digits + 1 letter
     private static final Pattern PAN_PATTERN = Pattern.compile(

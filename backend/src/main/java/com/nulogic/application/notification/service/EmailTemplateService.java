@@ -27,7 +27,7 @@ public class EmailTemplateService {
                 <style>
                     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
                     .container { max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-                    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px 20px; text-align: center; }
+                    .header { background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); color: white; padding: 30px 20px; text-align: center; }
                     .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
                     .content { padding: 30px 20px; }
                     .content h2 { color: #667eea; margin-top: 0; font-size: 20px; }
@@ -165,7 +165,7 @@ public class EmailTemplateService {
                 """
                         <h2>🎉 Happy Birthday, %s! 🎂</h2>
                         <p>The entire team wishes you a wonderful birthday filled with joy and happiness!</p>
-                        <div class="info-box" style="background: linear-gradient(135deg, #FFE5E5 0%, #FFF0F0 100%); border-left-color: #FF6B9D;">
+                        <div class="info-box" style="background: linear-gradient(135deg, #FFE5E5 0%%, #FFF0F0 100%%); border-left-color: #FF6B9D;">
                             <p style="font-size: 16px; margin: 0;">May this year bring you success, good health, and lots of memorable moments! 🎊</p>
                         </div>
                         <p>Wishing you all the best,<br>Team HRMS</p>
@@ -179,7 +179,7 @@ public class EmailTemplateService {
                         <h2>🎊 Congratulations on Your Work Anniversary!</h2>
                         <p>Dear %s,</p>
                         <p>Today marks %s years of your valuable contribution to our organization!</p>
-                        <div class="info-box" style="background: linear-gradient(135deg, #E5F4FF 0%, #F0F9FF 100%); border-left-color: #4A90E2;">
+                        <div class="info-box" style="background: linear-gradient(135deg, #E5F4FF 0%%, #F0F9FF 100%%); border-left-color: #4A90E2;">
                             <p style="font-size: 16px; margin: 0;">Thank you for your dedication, hard work, and commitment. You are an integral part of our success! 🌟</p>
                         </div>
                         <p>Here's to many more years of growth and achievements together!</p>
