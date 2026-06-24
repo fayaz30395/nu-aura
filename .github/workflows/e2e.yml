@@ -104,6 +104,11 @@ jobs:
           SPRING_REDIS_PORT: '6379'
           FLYWAY_ENABLED: 'true'
           APP_ELASTICSEARCH_ENABLED: 'false'
+          # No Kafka broker / Elasticsearch in CI: exclude their autoconfig so the
+          # @KafkaListener consumers don't demand a listener-container factory and
+          # ES repos don't try to connect (mirrors the render profile, but on the
+          # default profile so COOKIE_SECURE=false is honoured).
+          SPRING_AUTOCONFIGURE_EXCLUDE: 'org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration,org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration'
           APP_CORS_ALLOWED_ORIGINS: 'http://localhost:3000'
           SERVER_PORT: '8080'
         run: |
