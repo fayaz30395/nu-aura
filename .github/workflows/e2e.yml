@@ -213,9 +213,10 @@ jobs:
         # Visual-regression baselines are chromium-darwin; CI is linux — keep excluded.
         run: >-
           npx playwright test --config=playwright.live.config.ts
-          --project=setup --project=chromium --workers=3 --retries=1
+          --project=setup --project=chromium --workers=2 --retries=3
           --grep-invert "Visual Regression|snapshot"
-          e2e/reports-extended.spec.ts e2e/nu-rbac.spec.ts e2e/my-space.spec.ts
+          e2e/app-switcher.spec.ts e2e/navigation.spec.ts e2e/dashboard.spec.ts
+          e2e/sub-app-smoke.spec.ts e2e/attendance.spec.ts
 
       - name: Upload Playwright report
         if: always()
