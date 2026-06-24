@@ -487,7 +487,7 @@ test.describe('Navigation and Routing', () => {
       // Login
       await loginPage.navigate();
       await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-      await page.waitForTimeout(1500);
+      await page.waitForURL('**/dashboard', {timeout: 15000});
 
       // Should be on dashboard
       expect(page.url()).toContain('/dashboard');
@@ -634,17 +634,19 @@ test.describe('Navigation — App-Aware Sidebar', () => {
   });
 
   test('sidebar switches context when navigating between app routes', async ({page}) => {
-    // Start on HRMS
+    // Scope to NavPanel (aria-label) to avoid breadcrumb/TopBar nav elements.
+    // Wait for auth+permissions to hydrate so gated nav items appear.
     await page.goto('/employees');
-    await page.waitForLoadState('domcontentloaded');
+    const hrmsNav = page.locator('nav[aria-label="NU-HRMS navigation"]');
+    await hrmsNav.locator('a[href*="/employees"]').first().waitFor({state: 'visible', timeout: 15000});
+    const hasEmployeesInSidebar = await hrmsNav.locator('a[href*="/employees"]').first().isVisible().catch(() => false);
 
-    const hasEmployeesInSidebar = await page.locator('nav:visible a[href*="/employees"]').first().isVisible().catch(() => false);
-
-    // Navigate to a Grow route
+    // Navigate to GROW — wait for GROW nav to hydrate (REVIEW_VIEW-gated items
+    // only appear once the permission context has loaded from the API)
     await page.goto('/performance');
-    await page.waitForLoadState('domcontentloaded');
-
-    const hasPerformanceInSidebar = await page.locator('nav:visible a[href*="/performance"]').first().isVisible().catch(() => false);
+    const growNav = page.locator('nav[aria-label="NU-Grow navigation"]');
+    await growNav.locator('a[href*="/performance"]').first().waitFor({state: 'visible', timeout: 15000});
+    const hasPerformanceInSidebar = await growNav.locator('a[href*="/performance"]').first().isVisible().catch(() => false);
 
     // Both should have their respective items (context switched)
     expect(hasEmployeesInSidebar).toBe(true);
@@ -652,24 +654,26 @@ test.describe('Navigation — App-Aware Sidebar', () => {
   });
 
   test('sidebar maintains scroll position within same app', async ({page}) => {
-    // Navigate to a page within HRMS
+    // Navigate to a page within HRMS — wait for HRMS NavPanel to hydrate
     await page.goto('/employees');
-    await page.waitForLoadState('domcontentloaded');
+    const hrmsNav = page.locator('nav[aria-label="NU-HRMS navigation"]');
+    await hrmsNav.locator('a[href*="/employees"]').first().waitFor({state: 'visible', timeout: 15000});
 
-    // Navigate to another HRMS page
-    const leaveLink = page.locator('nav:visible a[href*="/leave"]').first();
+    // Navigate to another HRMS page via the NavPanel leave link
+    const leaveLink = hrmsNav.locator('a[href*="/leave"]').first();
     const hasLeave = await leaveLink.isVisible().catch(() => false);
 
     if (hasLeave) {
       await leaveLink.click();
-      await page.waitForTimeout(1000);
+      // Client-side navigation — wait for URL to change to any leave-related route
+      await page.waitForURL('**/*leave*', {timeout: 10000});
 
-      // Page should be on leave
-      expect(page.url()).toContain('/leave');
+      // Page should be on a leave-related route (could be /leave or /me/leaves)
+      expect(page.url()).toMatch(/\/leave/);
 
-      // Sidebar should still be visible and functional
-      const hasNav = await page.locator('nav:visible').first().isVisible();
-      expect(hasNav).toBe(true);
+      // The destination page also renders AppLayout, so the HRMS nav re-appears.
+      // Wait for it to attach (Next.js App Router hydrates async after URL change).
+      await hrmsNav.waitFor({state: 'attached', timeout: 10000});
     }
 
     expect(hasLeave).toBe(true);
