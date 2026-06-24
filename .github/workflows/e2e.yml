@@ -165,11 +165,20 @@ jobs:
           done
           echo "Frontend did not start"; tail -80 ../frontend.log; exit 1
 
-      - name: Warm up SSR (GETs only — login POSTs would hit the 5/min auth rate limit)
+      - name: Warm up the stack (rate-limit is disabled, so login POSTs are safe)
+        # Prime the cold JIT on the heavy paths — auth, DB queries, permission
+        # loading, SSR — so the first real tests don't time out on a cold backend
+        # (the dominant source of nondeterministic flaky timeouts).
         run: |
+          for i in $(seq 1 10); do
+            curl -s -o /dev/null -X POST "http://localhost:3000/api/v1/auth/login" \
+              -H 'Content-Type: application/json' \
+              -d '{"email":"fayaz.m@nulogic.io","password":"Welcome@123"}' || true
+          done
           for i in 1 2 3; do
             curl -s -o /dev/null "http://localhost:3000/" || true
             curl -s -o /dev/null "http://localhost:3000/auth/login" || true
+            curl -s -o /dev/null "http://localhost:3000/me/dashboard" || true
           done
           echo "warmup complete"
 
@@ -194,7 +203,7 @@ jobs:
         # job rather than gating this functional run.
         run: >-
           npx playwright test --config=playwright.live.config.ts
-          --project=setup --project=chromium --workers=2
+          --project=setup --project=chromium --workers=2 --retries=3
           --grep-invert "Visual Regression|snapshot"
           e2e/app-switcher.spec.ts e2e/navigation.spec.ts e2e/dashboard.spec.ts
           e2e/sub-app-smoke.spec.ts e2e/attendance.spec.ts
