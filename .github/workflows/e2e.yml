@@ -104,6 +104,10 @@ jobs:
           SPRING_REDIS_PORT: '6379'
           FLYWAY_ENABLED: 'true'
           APP_ELASTICSEARCH_ENABLED: 'false'
+          # The suite does many legitimate UI logins (per-test beforeEach); the
+          # 5/min auth rate limit would 429 them and cascade waitForURL timeouts.
+          # Safe to disable on the isolated throwaway stack.
+          RATE_LIMIT_ENABLED: 'false'
           # No Kafka broker / Elasticsearch in CI: exclude their autoconfig so the
           # @KafkaListener consumers don't demand a listener-container factory and
           # ES repos don't try to connect (mirrors the render profile, but on the
