@@ -4,13 +4,19 @@ import {QueryClientProvider} from '@tanstack/react-query';
 import {GoogleOAuthProvider} from '@react-oauth/google';
 import {MotionConfig} from 'framer-motion';
 import {useEffect, useState} from 'react';
+import dynamic from 'next/dynamic';
 import {Notifications} from '@mantine/notifications';
 import {DarkModeProvider, MantineThemeProvider} from '@/components/layout';
 import {ErrorBoundary} from '@/components/ui/ErrorBoundary';
 import {ToastProvider} from '@/components/ui/Toast';
 import {ToastProvider as NotificationsToastProvider} from '@/components/notifications/ToastProvider';
-import {WebSocketProvider} from '@/lib/contexts/WebSocketContext';
 import {AuthGuard} from '@/components/auth/AuthGuard';
+
+// ponytail: dynamic import keeps STOMP+SockJS (~120kb) out of the login-page bundle
+const WebSocketProvider = dynamic(
+  () => import('@/lib/contexts/WebSocketContext').then(m => m.WebSocketProvider),
+  {ssr: false, loading: () => null},
+);
 import {useTokenRefresh} from '@/lib/hooks/useTokenRefresh';
 import {useSessionTimeout} from '@/lib/hooks/useSessionTimeout';
 import {useAuth} from '@/lib/hooks/useAuth';

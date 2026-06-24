@@ -97,6 +97,7 @@ export interface UpdateWikiPageRequest {
 
 export interface CreateWikiSpaceRequest {
   name: string;
+  slug?: string;
   description?: string;
   icon?: string;
   color?: string;

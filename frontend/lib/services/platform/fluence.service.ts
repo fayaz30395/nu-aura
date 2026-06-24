@@ -161,7 +161,8 @@ class FluenceService {
   }
 
   async createWikiSpace(data: CreateWikiSpaceRequest): Promise<WikiSpace> {
-    const response = await apiClient.post<WikiSpace>('/knowledge/wiki/spaces', data);
+    const slug = data.slug ?? data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now().toString().slice(-6);
+    const response = await apiClient.post<WikiSpace>('/knowledge/wiki/spaces', {...data, slug});
     return response.data;
   }
 
