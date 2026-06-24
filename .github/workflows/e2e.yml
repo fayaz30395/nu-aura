@@ -177,9 +177,13 @@ jobs:
         # attendance suite (safe to mutate here — the DB is throwaway) + any
         # @critical-tagged smoke. The full 2886-test suite is too long for one
         # job; expand via sharding later if needed.
+        # Exclude visual-regression tests: baselines are committed per-platform
+        # (chromium-darwin) and CI is linux, so they need their own linux-baseline
+        # job rather than gating this functional run.
         run: >-
           npx playwright test --config=playwright.live.config.ts
           --project=setup --project=chromium --workers=2
+          --grep-invert "Visual Regression|snapshot"
           e2e/app-switcher.spec.ts e2e/navigation.spec.ts e2e/dashboard.spec.ts
           e2e/sub-app-smoke.spec.ts e2e/attendance.spec.ts
 
