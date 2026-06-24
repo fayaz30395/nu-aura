@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { chromium } from '@playwright/test';
 
 const BASE = 'https://hrms-frontend-vert.vercel.app';

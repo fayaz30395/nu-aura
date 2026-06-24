@@ -73,8 +73,11 @@ management:
         enabled: false
 
 app:
-  kafka:
-    enabled: false   # prevents KafkaAdmin timeout + satisfies KafkaOutboxMutualExclusionGuard
+  # Setting outbox.enabled=false satisfies KafkaOutboxMutualExclusionGuard (kafka.enabled defaults
+  # to true via matchIfMissing — keeping all KafkaListenerContainerFactory beans available).
+  # The OutboxEventProcessor bean is conditional on this property, so it's also skipped in tests.
+  outbox:
+    enabled: false
   scheduling:
     enabled: false
 
