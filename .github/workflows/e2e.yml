@@ -41,7 +41,7 @@ jobs:
     name: E2E (Playwright, isolated)
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'e2e')
-    timeout-minutes: 60
+    timeout-minutes: 75
 
     services:
       postgres:
@@ -205,12 +205,13 @@ jobs:
         # Exclude visual-regression tests: baselines are committed per-platform
         # (chromium-darwin) and CI is linux, so they need their own linux-baseline
         # job rather than gating this functional run.
-        run: >-
-          npx playwright test --config=playwright.live.config.ts
-          --project=setup --project=chromium --workers=2 --retries=3
-          --grep-invert "Visual Regression|snapshot"
-          e2e/app-switcher.spec.ts e2e/navigation.spec.ts e2e/dashboard.spec.ts
-          e2e/sub-app-smoke.spec.ts e2e/attendance.spec.ts
+        run: |
+          SPECS=$(ls e2e/*.spec.ts | grep -vE "production|tmp-debug")
+          echo "Running $(echo "$SPECS" | wc -l) functional specs"
+          npx playwright test --config=playwright.live.config.ts \
+            --project=setup --project=chromium --workers=4 --retries=2 \
+            --grep-invert "Visual Regression|snapshot" \
+            $SPECS
 
       - name: Upload Playwright report
         if: always()
