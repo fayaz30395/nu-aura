@@ -8,9 +8,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 const BASE_URL = 'https://hrms-frontend-vert.vercel.app';
-const SCREENS_DIR = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS';
+const SCREENS_DIR = process.env.QA_SCREENS_DIR
+  ?? path.resolve(process.cwd(), 'docs/qa/ui-e2e-run-2026-06-24/iter-1/SCREENS');
 const LOGIN_TIMEOUT = 90_000;
-const DEMO_PASSWORD = 'Welcome@123';
+const DEMO_PASSWORD = process.env.E2E_DEMO_PASSWORD ?? 'Welcome@123';
 
 const HIRE_ROUTES = [
   { route: '/recruitment', slug: 'recruitment' },

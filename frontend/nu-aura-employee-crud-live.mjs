@@ -1,11 +1,17 @@
 /* eslint-disable no-console */
 import {chromium} from '@playwright/test';
+import {fileURLToPath} from 'url';
+import {dirname, resolve} from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const BASE = 'https://hrms-frontend-vert.vercel.app';
-const SCREENS = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-23/SCREENS';
+const SCREENS = process.env.QA_SCREENS_DIR
+  || resolve(__dirname, '../docs/qa/ui-e2e-run-2026-06-23/SCREENS');
 const CREDENTIALS = {
-  email: 'saran@nulogic.io',
-  password: 'Welcome@123',
+  email: process.env.E2E_DEMO_EMAIL || 'saran@nulogic.io',
+  password: process.env.E2E_DEMO_PASSWORD || 'Welcome@123',
 };
 
 const ts = new Date();
@@ -80,7 +86,7 @@ async function fillEmployeeCreateForm(page) {
   await page.fill('#emp-work-email', employeeEmail);
   await page.fill('#emp-first-name', markerBase);
   await page.fill('#emp-last-name', 'Auto');
-  await page.fill('#emp-password', 'Welcome@123');
+  await page.fill('#emp-password', process.env.E2E_DEMO_PASSWORD || 'Welcome@123');
 
   await page.locator('button:has-text("Employment")').click();
   await page.waitForTimeout(500);

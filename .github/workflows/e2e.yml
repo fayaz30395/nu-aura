@@ -205,11 +205,12 @@ jobs:
         # Exclude visual-regression tests: baselines are committed per-platform
         # (chromium-darwin) and CI is linux, so they need their own linux-baseline
         # job rather than gating this functional run.
-        # Blocking gate: the verified-green core clusters + the stateful attendance
-        # suite (safe to mutate against the throwaway DB), excluding platform-
-        # specific visual snapshots. The full 107-spec functional suite has a large
-        # redesign-staleness tail (~200 failing tests) and is run separately
-        # (sharded, non-blocking) rather than gating PRs until that is rehabbed.
+        # NARROWED GATE (2026-06-24): 3 verified-green spec clusters only.
+        # The full 107-spec functional suite has ~200 failing tests from
+        # redesign staleness and is not yet safe to gate PRs on.
+        # TODO: restore full gate once e2e staleness is rehabbed.
+        #   Track: https://github.com/fayaz30395/nu-aura/issues — "Restore full 107-spec E2E gate"
+        # Visual-regression baselines are chromium-darwin; CI is linux — keep excluded.
         run: >-
           npx playwright test --config=playwright.live.config.ts
           --project=setup --project=chromium --workers=3 --retries=1

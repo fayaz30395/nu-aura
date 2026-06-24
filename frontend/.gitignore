@@ -16,3 +16,9 @@ test-results/
 
 # Orval-generated OpenAPI client (T3-12) — regenerate via `npm run api:generate`
 lib/generated/
+
+# One-shot QA diagnostic scripts — local only, not part of the test suite
+login-branch.mjs
+login-check-step.mjs
+login-dump.mjs
+login-probe.mjs

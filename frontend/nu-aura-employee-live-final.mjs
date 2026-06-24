@@ -1,8 +1,14 @@
 /* eslint-disable no-console */
 import { chromium } from '@playwright/test';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const BASE = 'https://hrms-frontend-vert.vercel.app';
-const SCREENS = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/ui-e2e-run-2026-06-23/SCREENS';
+const SCREENS = process.env.QA_SCREENS_DIR
+  || resolve(__dirname, '../docs/qa/ui-e2e-run-2026-06-23/SCREENS');
 const marker = `ZZ QA Test ${new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 12)}-${Math.floor(Math.random() * 900000 + 100000)}`;
 const email = `${marker.toLowerCase().replace(/\s+/g, '-')}.auto@example.com`;
 const code = `ZZ-${Math.floor(Math.random() * 900000 + 100000)}${Math.floor(Math.random() * 9)}`;
@@ -21,8 +27,8 @@ function normalize(text) {
 async function login(page) {
   await page.goto(`${BASE}/auth/login`, { waitUntil: 'domcontentloaded' });
   await page.locator('#login-email').waitFor({ state: 'visible', timeout: 30000 });
-  await page.fill('#login-email', 'saran@nulogic.io');
-  await page.fill('#login-password', 'Welcome@123');
+  await page.fill('#login-email', process.env.E2E_DEMO_EMAIL || 'saran@nulogic.io');
+  await page.fill('#login-password', process.env.E2E_DEMO_PASSWORD || 'Welcome@123');
   await page.getByRole('button', { name: /sign in/i }).click();
   await page.waitForURL(/\/me\/dashboard/, { timeout: 90000 });
 }
@@ -111,7 +117,7 @@ async function fillCreate(page) {
   await page.fill('#emp-first-name', marker);
   await page.fill('#emp-last-name', 'Auto');
   await page.fill('#emp-work-email', email);
-  await page.fill('#emp-password', 'Welcome@1234!');
+  await page.fill('#emp-password', process.env.E2E_NEW_EMPLOYEE_PASSWORD || 'Welcome@1234!');
 
   await page.locator('button:has-text("Employment")').click();
   await page.fill('#emp-designation', 'QA Automation Engineer');
