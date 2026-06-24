@@ -35,6 +35,7 @@ import {cn} from '@/lib/utils';
 import {logger} from '@/lib/utils/logger';
 import {FeedCommentItem} from './FeedCommentThread';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 // ─── Config (co-located with FeedCard, exported for CompanyFeed) ──────
 export const FEED_COLORS: Record<FeedItemType, { bg: string; border: string; icon: string; badge: string }> = {
@@ -920,7 +921,7 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
                 )}
                 {item.linkedinPostUrl && (
                   <a
-                    href={item.linkedinPostUrl}
+                    href={safeUrl(item.linkedinPostUrl)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-0.5 text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)]  ml-auto"

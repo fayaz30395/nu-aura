@@ -61,6 +61,7 @@ import {
   Video
 } from 'lucide-react';
 import {getGoogleToken, hasValidGoogleToken} from '@/lib/utils/googleToken';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 // ==================== Searchable Select Component ====================
 interface SearchableSelectOption {
@@ -818,7 +819,7 @@ function InterviewsPage() {
                         <div>{interview.interviewerName || '-'}</div>
                         {(interview.googleMeetLink || interview.meetingLink) && (
                           <a
-                            href={interview.googleMeetLink || interview.meetingLink}
+                            href={safeUrl(interview.googleMeetLink || interview.meetingLink)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 mt-1 text-xs text-accent-600 hover:underline"

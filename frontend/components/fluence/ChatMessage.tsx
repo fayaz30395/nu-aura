@@ -4,6 +4,7 @@ import React, {useMemo} from 'react';
 import Link from 'next/link';
 import {Bot, Loader2, User} from 'lucide-react';
 import {cn} from '@/lib/utils';
+import {safeUrl} from '@/lib/utils/safeUrl';
 import {ChatSourceCard} from './ChatSourceCard';
 import type {ChatMessage as ChatMessageType} from '@/lib/types/platform/fluence-chat';
 
@@ -34,7 +35,7 @@ function renderMessageContent(content: string): React.ReactNode[] {
     parts.push(
       <Link
         key={`link-${match.index}`}
-        href={linkUrl}
+        href={safeUrl(linkUrl)}
         className="text-[var(--accent)] hover:text-[var(--accent-hover)] underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 rounded"
       >
         {linkText}

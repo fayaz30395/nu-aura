@@ -6,6 +6,7 @@ import {ChevronLeft, ChevronRight} from 'lucide-react';
 import {useQuery} from '@tanstack/react-query';
 import {SPOTLIGHT_API_AVAILABLE, spotlightService} from '@/lib/services/platform/spotlight.service';
 import type {Spotlight} from '@/lib/types/platform/spotlight';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 function getDemoSpotlights(): Spotlight[] {
   return [
@@ -97,7 +98,7 @@ export function CompanySpotlight() {
           )}
           {current.ctaUrl && current.ctaLabel && (
             <a
-              href={current.ctaUrl}
+              href={safeUrl(current.ctaUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block mt-2 px-4 py-1.5 bg-white/15 hover:bg-white/25 text-white rounded-lg text-xs font-medium transition-colors"

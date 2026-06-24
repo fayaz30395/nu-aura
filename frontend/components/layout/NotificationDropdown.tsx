@@ -38,6 +38,7 @@ import {getGoogleToken} from '@/lib/utils/googleToken';
 import {Button} from '@/components/ui/Button';
 import {getNotificationRoute} from '@/lib/utils/notificationRoutes';
 import {sanitizeEmailHtml} from '@/lib/utils/sanitize';
+import {safeUrl} from '@/lib/utils/safeUrl';
 import {createLogger} from '@/lib/utils/logger';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {formatDate, formatDateShort} from '@/lib/utils/format/date';
@@ -690,7 +691,7 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
               {selectedEvent.calendarEvent.hangoutLink && (
                 <div className="flex items-start gap-2">
                   <Video className="h-5 w-5 text-accent-500 mt-0.5"/>
-                  <a href={selectedEvent.calendarEvent.hangoutLink} target="_blank" rel="noopener noreferrer"
+                  <a href={safeUrl(selectedEvent.calendarEvent.hangoutLink)} target="_blank" rel="noopener noreferrer"
                      className="text-sm text-accent-600 hover:text-accent-700 dark:text-accent-400 hover:underline">
                     Join Google Meet
                   </a>
