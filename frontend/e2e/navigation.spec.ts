@@ -19,15 +19,11 @@ test.describe('Navigation and Routing', () => {
 
   test.describe('Main Navigation Menu', () => {
     test('should display main navigation menu', async ({page}) => {
-      // Check for navigation elements
-      const hasNav = await page.locator('nav:visible').first().isVisible();
-      expect(hasNav).toBe(true);
-
-      // Check for sidebar or header navigation
-      const hasSidebar = await page.locator('[class*="sidebar"]').isVisible().catch(() => false);
-      const hasHeader = await page.locator('header').first().isVisible().catch(() => false);
-
-      expect(hasSidebar || hasHeader).toBe(true);
+      // Aura shell: ProductRail (aside) + NavPanel (nav) + TopBar (header).
+      // Auto-wait so a still-rendering commit-navigation doesn't flake.
+      await expect(
+        page.locator('aside[aria-label="Product navigation"], nav, header').first()
+      ).toBeVisible({timeout: 15000});
     });
 
     test('should navigate to Dashboard', async ({page}) => {
@@ -531,8 +527,8 @@ test.describe('Navigation - Role-Based Access', () => {
     await page.waitForURL('**/me/dashboard', {waitUntil: 'commit'});
 
     // Admin should see employees, leave, attendance, projects, etc.
-    const hasEmployees = await page.locator('a[href*="/employees"], button:has-text("Employees")').first().isVisible().catch(() => false);
-    expect(hasEmployees).toBe(true);
+    await expect(page.locator('a[href*="/employees"], button:has-text("Employees")').first())
+      .toBeVisible({timeout: 15000});
   });
 
   test('employee should have limited menu access', async ({page}) => {
