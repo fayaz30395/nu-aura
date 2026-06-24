@@ -1,0 +1,168 @@
+name: E2E (isolated stack)
+
+# Runs the Playwright e2e suite against a fully isolated, seeded stack:
+# ephemeral Postgres (Flyway-migrated with demo seed) + Redis + the Spring Boot
+# backend + the Next.js frontend, all on localhost. Unlike the live-smoke runs,
+# attendance/transition tests can mutate state safely here because the DB is
+# throwaway and per-run.
+#
+# Triggered manually or on PRs labelled "e2e" (a full stack boot is heavy, so we
+# don't run it on every push).
+#
+# NOTE: first run will likely need env tweaks — boot/seed/cookie wiring is
+# captured here from the render/base Spring profiles but has not yet been
+# validated by an actual Actions run.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [ labeled, synchronize ]
+
+env:
+  JAVA_VERSION: '21'
+  NODE_VERSION: '20'
+  # Plain-HTTP localhost: disable Secure cookies + the __Host- prefix (both
+  # require HTTPS) so the auth cookie is actually stored by the test browser.
+  COOKIE_SECURE: 'false'
+  COOKIE_USE_HOST_PREFIX: 'false'
+  # Seed + keep the demo accounts (Welcome@123) so loginAs works against the
+  # throwaway DB. SAFE here: the DB is ephemeral and never exposed.
+  DEMO_CREDENTIALS_ENABLED: 'true'
+  # Outbox-only event path (no Kafka broker in CI).
+  APP_KAFKA_ENABLED: 'false'
+  APP_OUTBOX_ENABLED: 'true'
+  # Test-only secrets (must be present for boot; not real).
+  JWT_SECRET: 'ci-e2e-jwt-secret-please-change-32bytes-minimum-aaaaaa'
+  APP_SECURITY_ENCRYPTION_KEY: 'dGVzdC1lbmNyeXB0aW9uLWtleS0zMi1ieXRlcy14eCE='
+  ENCRYPTION_KEY: 'dGVzdC1lbmNyeXB0aW9uLWtleS0zMi1ieXRlcy14eCE='
+
+jobs:
+  e2e:
+    name: E2E (Playwright, isolated)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'e2e')
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: hrms
+          POSTGRES_PASSWORD: hrms
+          POSTGRES_DB: hrms
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U hrms"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install internal modules from infra/mvn-local-deps/
+        run: |
+          mvn install:install-file -Dfile=infra/mvn-local-deps/nulogic-platform-1.0.0.pom -DgroupId=com.nulogic -DartifactId=nulogic-platform -Dversion=1.0.0 -Dpackaging=pom
+          mvn install:install-file -Dfile=infra/mvn-local-deps/common-module-1.0.0.jar -DpomFile=infra/mvn-local-deps/common-module-1.0.0.pom
+          mvn install:install-file -Dfile=infra/mvn-local-deps/pm-module-1.0.0.jar -DpomFile=infra/mvn-local-deps/pm-module-1.0.0.pom
+
+      - name: Build backend jar
+        working-directory: ./backend
+        run: mvn -B clean package -DskipTests
+
+      - name: Start backend (Flyway migrates + seeds the throwaway DB)
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/hrms
+          SPRING_DATASOURCE_USERNAME: hrms
+          SPRING_DATASOURCE_PASSWORD: hrms
+          SPRING_REDIS_HOST: localhost
+          SPRING_REDIS_PORT: '6379'
+          FLYWAY_ENABLED: 'true'
+          APP_ELASTICSEARCH_ENABLED: 'false'
+          APP_CORS_ALLOWED_ORIGINS: 'http://localhost:3000'
+          SERVER_PORT: '8080'
+        run: |
+          JAR=$(ls backend/target/*.jar | grep -v -- '-sources\|-javadoc' | head -1)
+          echo "Booting $JAR"
+          nohup java -jar "$JAR" > backend.log 2>&1 &
+          echo "Waiting for backend health..."
+          for i in $(seq 1 60); do
+            if curl -fsS http://localhost:8080/actuator/health | grep -q '"status":"UP"'; then
+              echo "Backend UP"; exit 0
+            fi
+            sleep 5
+          done
+          echo "Backend did not become healthy"; tail -100 backend.log; exit 1
+
+      - name: Install frontend deps
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: ./frontend
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+        run: |
+          npm run api:generate
+          npm run build
+
+      - name: Start frontend
+        working-directory: ./frontend
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+        run: |
+          nohup npm run start > ../frontend.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://localhost:3000 >/dev/null 2>&1; then echo "Frontend UP"; exit 0; fi
+            sleep 3
+          done
+          echo "Frontend did not start"; tail -80 ../frontend.log; exit 1
+
+      - name: Install Playwright browsers
+        working-directory: ./frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright e2e (isolated stack)
+        working-directory: ./frontend
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+          E2E_AUTH_PAGE_TIMEOUT_MS: '120000'
+        run: npx playwright test --config=playwright.live.config.ts --project=setup --project=chromium
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+            backend.log
+            frontend.log
+          retention-days: 7
