@@ -395,7 +395,7 @@ export default function CandidateDetailPage() {
                     <p className="text-caption mb-1">Resume</p>
                     <a
                       href={safeUrl(candidate.resumeUrl)}
-                      target="_blank" rel="noopener noreferrer"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-sm text-accent-700 dark:text-accent-400 hover:underline"
                     >

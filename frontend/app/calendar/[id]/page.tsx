@@ -201,7 +201,7 @@ export default function EventDetailPage() {
                 <p className="text-body-muted">Meeting Link</p>
                 <a
                   href={event.meetingLink}
-                  target="_blank" rel="noopener noreferrer"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-accent-700 dark:text-accent-400 font-medium hover:underline flex items-center gap-1 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >

@@ -341,7 +341,7 @@ export default function SettingsPage() {
                         >
                           <a
                             href="https://myaccount.google.com/security"
-                            target="_blank" rel="noopener noreferrer"
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             Manage Google Account

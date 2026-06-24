@@ -743,7 +743,7 @@ export default function LettersPage() {
                                 {letter.status === LetterStatus.ISSUED && letter.pdfUrl ? (
                                   <a
                                     href={safeUrl(letter.pdfUrl)}
-                                    target="_blank" rel="noopener noreferrer"
+                                    target="_blank"
                                     rel="noopener noreferrer"
                                     className="w-full px-4 py-2 text-left text-body-secondary hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] flex items-center gap-2"
                                     onClick={(e) => {
@@ -1167,7 +1167,7 @@ export default function LettersPage() {
               <Button asChild>
                 <a
                   href={safeUrl(selectedLetter.pdfUrl)}
-                  target="_blank" rel="noopener noreferrer"
+                  target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => {
                     if (!selectedLetter.pdfUrl) {

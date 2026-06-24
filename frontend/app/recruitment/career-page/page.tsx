@@ -452,7 +452,7 @@ export default function CareerPageCMS() {
             {careerUrl ? (
               <a
                 href={careerUrl}
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-4 py-2 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"
               >
@@ -462,7 +462,7 @@ export default function CareerPageCMS() {
             ) : (
               <a
                 href="/careers"
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-4 py-2 text-sm border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors cursor-pointer"
               >

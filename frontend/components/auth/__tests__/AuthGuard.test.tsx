@@ -3,6 +3,7 @@
  * Run with: npx vitest run components/auth/__tests__/AuthGuard.test.tsx
  */
 
+import type {ReactElement} from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {AuthGuard} from '../AuthGuard';
@@ -64,10 +65,16 @@ vi.mock('@/lib/config/routes', () => ({
   isPublicRoute: vi.fn(),
 }));
 
+vi.mock('@/components/auth/PermissionGate', () => ({
+  PageDeniedFallback: () => <div>Access Restricted</div>,
+}));
+
 const mockUseAuth = useAuth as ReturnType<typeof vi.fn>;
 const mockUsePermissions = usePermissions as ReturnType<typeof vi.fn>;
 const mockFindRouteConfig = findRouteConfig as ReturnType<typeof vi.fn>;
 const mockIsPublicRoute = isPublicRoute as ReturnType<typeof vi.fn>;
+
+const renderAuthGuard = (ui: ReactElement) => render(ui);
 
 describe('AuthGuard', () => {
   beforeEach(() => {
@@ -100,7 +107,7 @@ describe('AuthGuard', () => {
         isReady: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Protected Content</div>
         </AuthGuard>
@@ -129,7 +136,7 @@ describe('AuthGuard', () => {
         isReady: false,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Protected Content</div>
         </AuthGuard>
@@ -156,7 +163,7 @@ describe('AuthGuard', () => {
         isReady: false,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard loadingComponent={<div>Custom Loading...</div>}>
           <div>Protected Content</div>
         </AuthGuard>
@@ -187,7 +194,7 @@ describe('AuthGuard', () => {
         isReady: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Public Content</div>
         </AuthGuard>
@@ -220,7 +227,7 @@ describe('AuthGuard', () => {
         isReady: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Protected Content</div>
         </AuthGuard>
@@ -251,7 +258,7 @@ describe('AuthGuard', () => {
         isReady: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Protected Content</div>
         </AuthGuard>
@@ -282,7 +289,7 @@ describe('AuthGuard', () => {
         isReady: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard accessDeniedComponent={<div>Custom Access Denied</div>}>
           <div>Protected Content</div>
         </AuthGuard>
@@ -319,7 +326,7 @@ describe('AuthGuard', () => {
         permission: Permissions.EMPLOYEE_VIEW_ALL,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Protected Content</div>
         </AuthGuard>
@@ -377,7 +384,7 @@ describe('AuthGuard', () => {
         isReady: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Admin Content</div>
         </AuthGuard>
@@ -413,7 +420,7 @@ describe('AuthGuard', () => {
         adminOnly: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Admin Content</div>
         </AuthGuard>
@@ -452,7 +459,7 @@ describe('AuthGuard', () => {
         permission: 'SYSTEM:ADMIN',
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>HR Content</div>
         </AuthGuard>
@@ -488,7 +495,7 @@ describe('AuthGuard', () => {
         hrOnly: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>HR Content</div>
         </AuthGuard>
@@ -527,7 +534,7 @@ describe('AuthGuard', () => {
         permission: 'SYSTEM:ADMIN',
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Manager Content</div>
         </AuthGuard>
@@ -563,7 +570,7 @@ describe('AuthGuard', () => {
         managerOnly: true,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Manager Content</div>
         </AuthGuard>
@@ -600,7 +607,7 @@ describe('AuthGuard', () => {
         permission: Permissions.PAYROLL_PROCESS,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Payroll Content</div>
         </AuthGuard>
@@ -635,7 +642,7 @@ describe('AuthGuard', () => {
         permission: Permissions.EMPLOYEE_CREATE,
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Employee Management</div>
         </AuthGuard>
@@ -672,7 +679,7 @@ describe('AuthGuard', () => {
         anyPermission: [Permissions.LEAVE_APPROVE, Permissions.LEAVE_MANAGE],
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Leave Management</div>
         </AuthGuard>
@@ -707,7 +714,7 @@ describe('AuthGuard', () => {
         anyPermission: [Permissions.LEAVE_APPROVE, Permissions.LEAVE_MANAGE],
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Leave Management</div>
         </AuthGuard>
@@ -744,7 +751,7 @@ describe('AuthGuard', () => {
         allPermissions: [Permissions.EMPLOYEE_VIEW_ALL, Permissions.LEAVE_APPROVE],
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>HR Dashboard</div>
         </AuthGuard>
@@ -779,7 +786,7 @@ describe('AuthGuard', () => {
         allPermissions: [Permissions.EMPLOYEE_VIEW_ALL, Permissions.LEAVE_APPROVE],
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>HR Dashboard</div>
         </AuthGuard>
@@ -816,7 +823,7 @@ describe('AuthGuard', () => {
         anyRole: [Roles.HR_ADMIN, Roles.HR_MANAGER],
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>HR Section</div>
         </AuthGuard>
@@ -852,7 +859,7 @@ describe('AuthGuard', () => {
         permission: 'SYSTEM:ADMIN',
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>HR Section</div>
         </AuthGuard>
@@ -889,7 +896,7 @@ describe('AuthGuard', () => {
         allRoles: [Roles.HR_ADMIN, Roles.MANAGER],
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Multi-role Section</div>
         </AuthGuard>
@@ -925,7 +932,7 @@ describe('AuthGuard', () => {
         permission: 'SYSTEM:ADMIN',
       });
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>Multi-role Section</div>
         </AuthGuard>
@@ -959,7 +966,7 @@ describe('AuthGuard', () => {
 
       mockFindRouteConfig.mockReturnValue(null);
 
-      render(
+      renderAuthGuard(
         <AuthGuard>
           <div>General Content</div>
         </AuthGuard>

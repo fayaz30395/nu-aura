@@ -609,7 +609,7 @@ export default function AnnouncementsPage() {
                   <div className="mt-6 p-4 bg-[var(--bg-secondary)]/50 rounded-lg">
                     <a
                       href={safeUrl(selectedAnnouncement.attachmentUrl)}
-                      target="_blank" rel="noopener noreferrer"
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-accent-700 hover:text-accent-800 font-medium flex items-center gap-2"
                     >

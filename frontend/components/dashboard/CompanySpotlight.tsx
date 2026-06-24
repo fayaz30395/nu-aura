@@ -98,7 +98,7 @@ export function CompanySpotlight() {
           {current.ctaUrl && current.ctaLabel && (
             <a
               href={current.ctaUrl}
-              target="_blank" rel="noopener noreferrer"
+              target="_blank"
               rel="noopener noreferrer"
               className="inline-block mt-2 px-4 py-1.5 bg-white/15 hover:bg-white/25 text-white rounded-lg text-xs font-medium transition-colors"
             >

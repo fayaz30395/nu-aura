@@ -819,7 +819,7 @@ function InterviewsPage() {
                         {(interview.googleMeetLink || interview.meetingLink) && (
                           <a
                             href={interview.googleMeetLink || interview.meetingLink}
-                            target="_blank" rel="noopener noreferrer"
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-1 mt-1 text-xs text-accent-600 hover:underline"
                           >

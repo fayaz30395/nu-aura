@@ -140,7 +140,7 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
         {req.documentUrl && (
           <a
             href={req.documentUrl}
-            target="_blank" rel="noopener noreferrer"
+            target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-xs text-accent-600 hover:text-accent-700 cursor-pointer"
           >

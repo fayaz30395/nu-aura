@@ -161,7 +161,7 @@ function ScormLauncher({
             <span className="text-xs font-medium text-[var(--text-secondary)]">{title}</span>
             <a
               href={safeUrl(url)}
-              target="_blank" rel="noopener noreferrer"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-accent-600 hover:underline flex items-center gap-1"
             >
@@ -250,7 +250,7 @@ function ContentViewer({
         <div className="space-y-4">
           <a
             href={safeUrl(content.documentUrl)}
-            target="_blank" rel="noopener noreferrer"
+            target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-accent-600 hover:underline text-sm"
           >
@@ -276,7 +276,7 @@ function ContentViewer({
         <div className="space-y-4">
           <a
             href={safeUrl(content.documentUrl)}
-            target="_blank" rel="noopener noreferrer"
+            target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-accent-600 hover:underline text-sm"
           >
