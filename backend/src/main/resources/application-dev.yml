@@ -49,10 +49,17 @@ spring:
       password: ${DEV_REDIS_PASSWORD:${SPRING_REDIS_PASSWORD:}}
 
   mail:
-    host: smtp.gmail.com
-    port: 587
+    # ponytail: default to local Mailpit for dev — no credentials needed; override with MAIL_HOST=smtp.gmail.com for real SMTP
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
     username: ${MAIL_USERNAME:}
     password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:false}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS:false}
 
   jpa:
     # Flyway manages schema — skip Hibernate's slow remote introspection
