@@ -537,11 +537,11 @@ test.describe('Navigation - Role-Based Access', () => {
     await loginPage.login(testUsers.employee.email, testUsers.employee.password);
     await page.waitForURL('**/me/dashboard', {waitUntil: 'commit'});
 
-    // Employee should see their own leave, attendance but maybe not all employees
-    const hasLeave = await page.locator('a[href*="/leave"], button:has-text("Leave")').first().isVisible().catch(() => false);
-    const hasAttendance = await page.locator('a[href*="/attendance"], button:has-text("Attendance")').first().isVisible().catch(() => false);
-
-    expect(hasLeave || hasAttendance).toBe(true);
+    // Employee should see their own leave / attendance nav. Auto-wait for the
+    // shell to render after the commit-navigation (bare isVisible raced it).
+    await expect(
+      page.locator('a[href*="/leave"], a[href*="/attendance"]').first()
+    ).toBeVisible({timeout: 15000});
   });
 
   test('manager should see team-related menu items', async ({page}) => {

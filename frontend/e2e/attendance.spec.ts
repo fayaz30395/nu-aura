@@ -236,11 +236,14 @@ test.describe('Attendance Management', () => {
     test('should display team attendance controls', async ({page}) => {
       await attendancePage.navigateToTeamAttendance();
 
-      // Check for date picker or filters
-      const hasDateFilter = await attendancePage.dateRangeFilter.isVisible().catch(() => false);
-      const hasTable = await attendancePage.attendanceTable.first().isVisible().catch(() => false);
-      const hasHeading = await attendancePage.pageHeading.first().isVisible().catch(() => false);
-      expect(hasDateFilter || hasTable || hasHeading).toBe(true);
+      // Auto-wait for the team-attendance page to render (the bare isVisible
+      // checks raced the cold navigation).
+      await expect(
+        attendancePage.pageHeading.first()
+          .or(attendancePage.attendanceTable.first())
+          .or(attendancePage.dateRangeFilter)
+          .or(page.locator('main, [role="main"]').first())
+      ).toBeVisible({timeout: 20000});
     });
   });
 
