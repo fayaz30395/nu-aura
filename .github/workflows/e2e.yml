@@ -131,7 +131,12 @@ jobs:
       - name: Build frontend
         working-directory: ./frontend
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+          # Same-origin API: the browser hits the frontend's own /api/v1, which
+          # Next.js rewrites to BACKEND_ORIGIN — keeps the auth cookie same-origin.
+          NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
+          BACKEND_ORIGIN: http://localhost:8080
+          # Loopback + http are intentional for the isolated CI stack.
+          ALLOW_INSECURE_RELEASE_API_URL: 'true'
           # Generate the API client from the committed snapshot (the prebuild
           # step does this) rather than fetching /v3/api-docs from the backend.
           API_DOCS_URL: ./openapi-snapshot.json
@@ -140,7 +145,9 @@ jobs:
       - name: Start frontend
         working-directory: ./frontend
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+          NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
+          # Required at runtime for next.config rewrites (/api/v1 -> backend).
+          BACKEND_ORIGIN: http://localhost:8080
         run: |
           nohup npm run start > ../frontend.log 2>&1 &
           for i in $(seq 1 40); do
@@ -157,7 +164,9 @@ jobs:
         working-directory: ./frontend
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
-          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+          # The auth helper posts to NEXT_PUBLIC_API_URL; same-origin proxy keeps
+          # the Set-Cookie on localhost:3000 so the test browser stores it.
+          NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
           E2E_AUTH_PAGE_TIMEOUT_MS: '120000'
         run: npx playwright test --config=playwright.live.config.ts --project=setup --project=chromium
 

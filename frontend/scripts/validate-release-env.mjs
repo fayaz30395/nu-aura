@@ -47,8 +47,8 @@ try {
 
 const parsedApiUrl = new URL(apiUrl);
 
-if (isLoopbackUrl(apiUrl)) {
-  fail('NEXT_PUBLIC_API_URL must point to the deployed API, not localhost or loopback.');
+if (isLoopbackUrl(apiUrl) && !allowInsecureApiUrl) {
+  fail('NEXT_PUBLIC_API_URL must point to the deployed API, not localhost or loopback. Set ALLOW_INSECURE_RELEASE_API_URL=true only for local/CI production smoke tests.');
 }
 
 if (isPlaceholderUrl(apiUrl)) {
