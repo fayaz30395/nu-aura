@@ -1407,14 +1407,14 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'System Admin',
           icon: icon.settings,
           href: '/admin',
-          requiredPermission: Permissions.SETTINGS_VIEW,
+          requiredPermission: Permissions.SYSTEM_ADMIN,
           children: [
             {
               id: 'admin-overview',
               label: 'Overview',
               href: '/admin',
               icon: sm.dashboard,
-              requiredPermission: Permissions.SETTINGS_VIEW
+              requiredPermission: Permissions.SYSTEM_ADMIN
             },
             {
               id: 'admin-roles',
@@ -1435,7 +1435,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               label: 'System Settings',
               href: '/admin/system',
               icon: sm.settings,
-              requiredPermission: Permissions.SETTINGS_VIEW
+              requiredPermission: Permissions.SYSTEM_ADMIN
             },
             {
               id: 'admin-audit',
