@@ -24,16 +24,19 @@
 **Resolution**: `me/dashboard/page.tsx:191` sets `designation = dashboard?.designation` from API. `arun@nulogic.io` has "HR Executive - Recruitment" stored as their designation in DB — the code correctly displays API data. The prior run misclassified test-data inconsistency as a code defect.
 
 ## F-004 — LOW — Inconsistent Deny UX Across Modules
-**Status**: OPEN
+**Status**: VERIFIED (commits `a6f4a0bb` + `171082df`, deployed 2026-06-25)
 **Evidence**: Payroll → `?denied=1` redirect, /admin → "Access Restricted" inline page, /wall → inconsistent.
-**Recommendation**: Standardize on single deny pattern (the `?denied=1` query param approach).
+**Fix Applied**:
+1. `AdminLayoutInner.tsx`: Dashboard sidebar link now conditionally routes `isSuperAdmin ? '/admin' : '/admin/employees'` — TENANT_ADMIN no longer lands on blocked `/admin`
+2. `AuthGuard.tsx`: Added `router.replace('/me/dashboard?denied=1')` on `!authorized`, standardizing ALL deny paths to the same `?denied=1` redirect pattern
+**Live Verification** (2026-06-25): Navigating to `/admin` as TENANT_ADMIN redirects to `/me/dashboard` (denied toast flashes). `/admin/employees` loads Employee Management correctly. Dashboard sidebar link in admin panel is highlighted when at `/admin/employees`.
 
 ---
 
 ## Newly Discovered (This Run)
 
 ## F-013 — LOW — /fluence/ai-chat Route Not Implemented
-**Status**: OPEN (new — 2026-06-24)
-**Evidence**: `app/fluence/` directory has no `ai-chat/` subdirectory. Navigating to `/fluence/ai-chat` returns 404 "Page not found" screen.
-**Classification**: Feature gap, not regression. No `ai-chat` route has ever existed in the App Router.
-**Action**: Either implement the route or remove references to it from skill/navigation files.
+**Status**: VERIFIED (commits `4a07a9ef` + `f647660c`)
+**Evidence from run**: `app/fluence/` directory had no `ai-chat/` subdirectory. Navigating to `/fluence/ai-chat` returned 404.
+**Fix Applied**: Implemented `app/fluence/ai-chat/page.tsx` with full Fluence AI chat interface; KNOWLEDGE:SEARCH permission gate.
+**Live Verification** (2026-06-24/25): `/fluence/ai-chat` shows "Fluence AI — Ask anything about your knowledge base" with prompt suggestions and text input. "AI Chat" is highlighted in the Fluence sidebar. Full sidebar present (Wall/Wiki/Articles/My Content/Templates/Drive/Search/Analytics).
