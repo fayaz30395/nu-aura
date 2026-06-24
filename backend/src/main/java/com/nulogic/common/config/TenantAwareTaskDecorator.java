@@ -37,7 +37,7 @@ import java.util.UUID;
  * <p><strong>Virtual-thread note (T4-17):</strong> If {@code spring.threads.virtual.enabled=true},
  * ALSO ensure all {@code CompletableFuture.*Async(...)} calls pass {@code taskExecutor}
  * explicitly — the virtual-thread ForkJoinPool does NOT run through this decorator.
- * See {@link ContextPropagationConfig} for the structured-context propagation harness.</p>
+ * Async paths outside taskExecutor (e.g. ForkJoinPool) must handle context manually.</p>
  */
 public class TenantAwareTaskDecorator implements TaskDecorator {
 

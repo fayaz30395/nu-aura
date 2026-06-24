@@ -45,7 +45,8 @@
       "Bash(git push *)",
       "Bash(xargs -n1 basename)",
       "Bash(find src *)",
-      "Bash(find src/components -maxdepth 1 -type d)"
+      "Bash(find src/components -maxdepth 1 -type d)",
+      "Bash(awk '{print $NF}')"
     ]
   },
   "enableAllProjectMcpServers": true,

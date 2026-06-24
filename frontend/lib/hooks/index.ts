@@ -8,23 +8,17 @@
 
 // ── Platform / infrastructure hooks ──────────────────────────────────────────
 export * from './useActiveApp';
-export * from './useAnimation';
 export * from './useAuth';
-export * from './useAuthStatus';
 export * from './useBiometric';
 export * from './useCompetency';
 export * from './useDebounce';
 export * from './useFeatureFlag';
 export * from './useFluenceChat';
-export * from './useOrgChart';
 export * from './usePermissions';
-export * from './usePreloadData';
 export * from './useSamlConfig';
 export * from './useSessionTimeout';
 export * from './useTokenRefresh';
 export * from './useUnsavedChanges';
-export * from './useUnsavedChangesWarning';
-export * from './useAriaAnnounce';
 // useUnifiedNotifications is re-exported from './useNotifications' — the query-level
 // useNotifications comes from './queries/useNotifications' to avoid name collision.
 export {useUnifiedNotifications} from './useNotifications';
