@@ -118,6 +118,32 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     path: '/admin/org-hierarchy',
     anyPermission: [Permissions.SYSTEM_ADMIN, Permissions.DEPARTMENT_MANAGE],
   },
+  // Tenant-admin-accessible admin pages: explicit permission gates so TENANT_ADMIN
+  // is not blocked by the /admin/* adminOnly catch-all (which requires SUPER_ADMIN).
+  {
+    path: '/admin/employees',
+    anyPermission: [Permissions.EMPLOYEE_CREATE, Permissions.EMPLOYEE_UPDATE, Permissions.EMPLOYEE_VIEW_ALL],
+  },
+  {
+    path: '/admin/payroll',
+    anyPermission: [Permissions.PAYROLL_VIEW, Permissions.PAYROLL_VIEW_ALL, Permissions.PAYROLL_PROCESS, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/reports',
+    anyPermission: [Permissions.REPORT_VIEW, Permissions.ANALYTICS_VIEW, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/departments',
+    anyPermission: [Permissions.DEPARTMENT_MANAGE, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/import-keka',
+    anyPermission: [Permissions.MIGRATION_IMPORT, Permissions.SYSTEM_ADMIN],
+  },
+  {
+    path: '/admin/profile',
+    hrOnly: true,
+  },
   // FRONT-02: explicit SYSTEM_ADMIN gates for super-admin-only sub-pages
   // (without these, /admin/* catch-all only checks adminOnly, allowing HR_MANAGER access)
   {
