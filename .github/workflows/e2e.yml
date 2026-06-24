@@ -148,6 +148,8 @@ jobs:
           NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
           # Required at runtime for next.config rewrites (/api/v1 -> backend).
           BACKEND_ORIGIN: http://localhost:8080
+          # next start runs NODE_ENV=production -> env.ts re-validates; allow loopback.
+          ALLOW_INSECURE_RELEASE_API_URL: 'true'
         run: |
           nohup npm run start > ../frontend.log 2>&1 &
           for i in $(seq 1 40); do
