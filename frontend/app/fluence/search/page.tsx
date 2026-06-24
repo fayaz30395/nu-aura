@@ -94,13 +94,6 @@ export default function SearchPage() {
   const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
-    Permissions.KNOWLEDGE_VIEW,
-    Permissions.WIKI_VIEW,
-    Permissions.BLOG_VIEW,
-    // F-011: roles actually hold the granular read perms (e.g. HR_ADMIN has
-    // KNOWLEDGE:WIKI_READ + KNOWLEDGE:BLOG_READ via RoleHierarchy), not the *:VIEW family
-    // (which no migration grants). Without these, users who can browse /fluence/wiki and
-    // /fluence/blogs get silently bounced from searching that same content.
     Permissions.KNOWLEDGE_WIKI_READ,
     Permissions.KNOWLEDGE_BLOG_READ,
   );
