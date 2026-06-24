@@ -316,7 +316,7 @@ function InlineRoleEditor({employee, onClose}: { employee: Employee; onClose: ()
 // Main Page
 // ──────────────────────────────────────────────
 export default function AdminEmployeesPage() {
-  const {hasPermission, hasAnyPermission, isAdmin, isReady} = usePermissions();
+  const {hasAnyPermission, isAdmin, isReady} = usePermissions();
   useEffect(() => {
     document.title = 'Admin · Employees | NU-AURA';
   }, []);

@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 /**
  * NU-Hire QA Run — Standalone Playwright script using UI form login
  * Tests all NU-Hire routes as suresh@nulogic.io (RECRUITMENT_ADMIN)
  */
-import { chromium, type BrowserContext, type Page } from '@playwright/test';
+import { chromium, type BrowserContext, type Page, type ConsoleMessage } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -51,7 +52,7 @@ async function testRoute(page: Page, routePath: string, screenshotPath: string):
   url: string;
 }> {
   const routeConsoleErrors: string[] = [];
-  const handler = (msg: any) => {
+  const handler = (msg: ConsoleMessage) => {
     if (msg.type() === 'error') routeConsoleErrors.push(msg.text().substring(0, 150));
   };
   page.on('console', handler);
@@ -105,12 +106,12 @@ async function testRoute(page: Page, routePath: string, screenshotPath: string):
 
     page.off('console', handler);
     return { status, notes, url: finalUrl };
-  } catch (e: any) {
+  } catch (e: unknown) {
     try { await page.screenshot({ path: screenshotPath, fullPage: false }); } catch {}
     page.off('console', handler);
     return {
       status: 'ERROR',
-      notes: `Navigation error: ${(e.message || '').substring(0, 100)}`,
+      notes: `Navigation error: ${(e instanceof Error ? e.message : '').substring(0, 100)}`,
       url: page.url(),
     };
   }
@@ -170,7 +171,7 @@ async function main() {
   });
   console.log(`Displayed role text: ${displayedRole}`);
 
-  const results: any[] = [
+  const results: { route: string; status: string; screenshot: string; notes: string }[] = [
     {
       route: '/careers (unauthenticated)',
       status: careersUnauthResult.status,
