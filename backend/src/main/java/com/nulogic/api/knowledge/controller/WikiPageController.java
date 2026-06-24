@@ -3,12 +3,14 @@ package com.nulogic.api.knowledge.controller;
 import com.nulogic.api.knowledge.dto.*;
 import com.nulogic.application.knowledge.service.WikiExportService;
 import com.nulogic.application.knowledge.service.WikiPageService;
+import com.nulogic.application.knowledge.service.WikiSpaceService;
 import com.nulogic.common.api.ApiResponses;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.WikiPage;
+import com.nulogic.domain.knowledge.WikiSpace;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 public class WikiPageController {
 
     private final WikiPageService wikiPageService;
+    private final WikiSpaceService wikiSpaceService;
     private final WikiExportService wikiExportService;
 
     /**
@@ -93,11 +96,15 @@ public class WikiPageController {
     @ApiResponses.Created
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_CREATE)
     public ResponseEntity<WikiPageDto> createPage(@Valid @RequestBody CreateWikiPageRequest request) {
+        WikiSpace space = request.getSpaceId() != null
+                ? wikiSpaceService.getSpaceById(request.getSpaceId())
+                : null;
         WikiPage page = WikiPage.builder()
                 .title(request.getTitle())
                 .slug(request.getSlug())
                 .excerpt(request.getExcerpt())
                 .content(request.getContent())
+                .space(space)
                 .visibility(WikiPage.VisibilityLevel.valueOf(request.getVisibility()))
                 .status(WikiPage.PageStatus.valueOf(request.getStatus()))
                 .build();
