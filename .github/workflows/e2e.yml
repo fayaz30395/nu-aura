@@ -132,9 +132,10 @@ jobs:
         working-directory: ./frontend
         env:
           NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
-        run: |
-          npm run api:generate
-          npm run build
+          # Generate the API client from the committed snapshot (the prebuild
+          # step does this) rather than fetching /v3/api-docs from the backend.
+          API_DOCS_URL: ./openapi-snapshot.json
+        run: npm run build
 
       - name: Start frontend
         working-directory: ./frontend
