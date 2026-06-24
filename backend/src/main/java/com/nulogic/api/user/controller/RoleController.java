@@ -28,7 +28,7 @@ public class RoleController {
     private final RoleManagementService roleManagementService;
 
     @GetMapping
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(ROLE_READ)
     public ResponseEntity<Page<RoleResponse>> getAllRoles(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<RoleResponse> roles = roleManagementService.getAllRoles(pageable);
@@ -36,7 +36,7 @@ public class RoleController {
     }
 
     @GetMapping("/{id}")
-    @RequiresPermission(ROLE_MANAGE)
+    @RequiresPermission(ROLE_READ)
     public ResponseEntity<RoleResponse> getRoleById(@PathVariable UUID id) {
         RoleResponse role = roleManagementService.getRoleById(id);
         return ResponseEntity.ok(role);
