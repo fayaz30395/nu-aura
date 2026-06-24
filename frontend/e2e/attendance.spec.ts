@@ -236,14 +236,10 @@ test.describe('Attendance Management', () => {
     test('should display team attendance controls', async ({page}) => {
       await attendancePage.navigateToTeamAttendance();
 
-      // Auto-wait for the team-attendance page to render (the bare isVisible
-      // checks raced the cold navigation).
+      // The team-attendance page renders an <h1>Team Attendance</h1>; assert it
+      // directly (auto-waits for the cold navigation to render).
       await expect(
-        attendancePage.pageHeading.first()
-          .or(attendancePage.attendanceTable.first())
-          .or(attendancePage.dateRangeFilter)
-          .or(page.locator('main, [role="main"]').first())
-          .first()
+        page.getByRole('heading', {name: /Team Attendance/i})
       ).toBeVisible({timeout: 20000});
     });
   });
