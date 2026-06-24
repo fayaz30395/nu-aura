@@ -479,7 +479,7 @@ function WallPageContent() {
 
 export default function WallPage() {
   return (
-    <PermissionGate anyOf={[Permissions.KNOWLEDGE_VIEW, Permissions.WALL_FLUENCE_VIEW]}
+    <PermissionGate anyOf={[Permissions.WALL_VIEW, Permissions.KNOWLEDGE_WIKI_READ]}
                     fallback={<PageDeniedFallback/>}>
       <WallPageContent/>
     </PermissionGate>

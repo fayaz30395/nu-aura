@@ -420,9 +420,7 @@ export default function WikiPageDetailPage() {
   const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
-    Permissions.WIKI_VIEW,
     Permissions.KNOWLEDGE_WIKI_READ,
-    Permissions.KNOWLEDGE_VIEW,
   );
 
   useEffect(() => {

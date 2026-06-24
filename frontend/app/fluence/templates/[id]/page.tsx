@@ -50,7 +50,6 @@ export default function TemplateDetailPage() {
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_TEMPLATE_READ,
-    Permissions.KNOWLEDGE_VIEW,
   );
 
   useEffect(() => {

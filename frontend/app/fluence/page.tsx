@@ -41,9 +41,9 @@ export default function FluencePage() {
   const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
-    Permissions.KNOWLEDGE_VIEW,
-    Permissions.WIKI_VIEW,
-    Permissions.BLOG_VIEW,
+    Permissions.KNOWLEDGE_WIKI_READ,
+    Permissions.KNOWLEDGE_BLOG_READ,
+    Permissions.WALL_VIEW,
   );
 
   useEffect(() => {

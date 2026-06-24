@@ -908,53 +908,60 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
       label: 'NU-Fluence',
       items: [
         {
+          id: 'fluence-wall',
+          label: 'Wall',
+          icon: icon.activity,
+          href: '/fluence/wall',
+          requiredPermission: Permissions.WALL_VIEW
+        },
+        {
           id: 'fluence-wiki',
           label: 'Wiki',
           icon: icon.bookOpen,
           href: '/fluence/wiki',
-          requiredPermission: Permissions.WIKI_VIEW
+          requiredPermission: Permissions.KNOWLEDGE_WIKI_READ
         },
         {
           id: 'fluence-blogs',
           label: 'Articles',
           icon: icon.newspaper,
           href: '/fluence/blogs',
-          requiredPermission: Permissions.BLOG_VIEW
+          requiredPermission: Permissions.KNOWLEDGE_BLOG_READ
         },
         {
           id: 'fluence-my-content',
           label: 'My Content',
           icon: icon.user,
           href: '/fluence/my-content',
-          requiredPermission: Permissions.KNOWLEDGE_VIEW
+          requiredPermission: Permissions.KNOWLEDGE_WIKI_READ
         },
         {
           id: 'fluence-templates',
           label: 'Templates',
           icon: icon.fileStack,
           href: '/fluence/templates',
-          requiredPermission: Permissions.KNOWLEDGE_VIEW
+          requiredPermission: Permissions.KNOWLEDGE_TEMPLATE_READ
         },
         {
           id: 'fluence-drive',
           label: 'Drive',
           icon: icon.hardDrive,
           href: '/fluence/drive',
-          requiredPermission: Permissions.KNOWLEDGE_VIEW
+          requiredPermission: Permissions.KNOWLEDGE_WIKI_READ
         },
         {
           id: 'fluence-search',
           label: 'Search',
           icon: icon.target,
           href: '/fluence/search',
-          requiredPermission: Permissions.KNOWLEDGE_VIEW
+          requiredPermission: Permissions.KNOWLEDGE_WIKI_READ
         },
         {
           id: 'fluence-analytics',
           label: 'Analytics',
           icon: icon.barChart3,
           href: '/fluence/analytics',
-          requiredPermission: Permissions.KNOWLEDGE_VIEW
+          requiredPermission: Permissions.KNOWLEDGE_WIKI_READ
         },
         {
           id: 'fluence-ai-chat',

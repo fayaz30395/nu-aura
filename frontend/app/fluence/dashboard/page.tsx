@@ -341,7 +341,7 @@ function FluenceDashboardPageContent() {
 export default function FluenceDashboardPage() {
   return (
     <PermissionGate
-      anyOf={[Permissions.KNOWLEDGE_VIEW, Permissions.WIKI_VIEW, Permissions.BLOG_VIEW]}
+      anyOf={[Permissions.KNOWLEDGE_WIKI_READ, Permissions.KNOWLEDGE_BLOG_READ]}
       fallback={<PageDeniedFallback/>}
     >
       <FluenceDashboardPageContent/>

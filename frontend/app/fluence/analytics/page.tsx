@@ -444,7 +444,7 @@ function FluenceAnalyticsPageContent() {
 
 export default function FluenceAnalyticsPage() {
   return (
-    <PermissionGate permission={Permissions.KNOWLEDGE_VIEW} fallback={<PageDeniedFallback/>}>
+    <PermissionGate permission={Permissions.KNOWLEDGE_WIKI_READ} fallback={<PageDeniedFallback/>}>
       <FluenceAnalyticsPageContent/>
     </PermissionGate>
   );
