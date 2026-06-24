@@ -106,7 +106,11 @@ jobs:
           APP_ELASTICSEARCH_ENABLED: 'false'
           # The suite does many legitimate UI logins (per-test beforeEach); the
           # 5/min auth rate limit would 429 them and cascade waitForURL timeouts.
-          # Safe to disable on the isolated throwaway stack.
+          # Disable on the isolated throwaway stack. APP_RATE_LIMIT_ENABLED is the
+          # canonical relaxed-binding env that sets app.rate-limit.enabled directly
+          # (RateLimitingFilter @Value reads that); RATE_LIMIT_ENABLED is only the
+          # YAML placeholder, which alone did not take effect.
+          APP_RATE_LIMIT_ENABLED: 'false'
           RATE_LIMIT_ENABLED: 'false'
           # No Kafka broker / Elasticsearch in CI: exclude their autoconfig so the
           # @KafkaListener consumers don't demand a listener-container factory and
