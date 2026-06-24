@@ -326,7 +326,7 @@ export default function CoursePlayerPage() {
               <ExternalLink className="h-12 w-12 text-[var(--text-muted)]"/>
               <p className="text-[var(--text-secondary)]">External resource</p>
               <a
-                href={activeContent.videoUrl || '#'}
+                href={safeUrl(activeContent.videoUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-accent-600 text-white rounded-md text-sm font-medium hover:bg-accent-700"

@@ -46,6 +46,7 @@ import {
 import {useRotateSecret} from '@/lib/generated/api/webhook-admin/webhook-admin';
 import type {WebhookRequest, WebhookResponse, WebhookDeliveryResponse} from '@/lib/generated/api/model';
 import {WebhookResponseEventsItem, WebhookResponseStatus, WebhookDeliveryResponseStatus} from '@/lib/generated/api/model';
+import {safeUrl} from '@/lib/utils/safeUrl';
 
 const ADMIN_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN];
 
@@ -449,7 +450,7 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
                 </span>
               )}
             </div>
-            <a href={webhook.url} target="_blank" rel="noopener noreferrer"
+            <a href={safeUrl(webhook.url)} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-1 mt-0.5 text-xs text-[var(--text-muted)] hover:text-accent-600 transition-colors truncate max-w-sm">
               <ExternalLink className="w-3 h-3 shrink-0"/>
               <span className="truncate">{webhook.url}</span>
