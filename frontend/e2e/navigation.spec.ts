@@ -150,11 +150,9 @@ test.describe('Navigation and Routing', () => {
 
   test.describe('User Profile Menu', () => {
     test('should display user profile menu', async ({page}) => {
-      // Look for user menu/avatar
-      const userMenu = page.locator('button[aria-label^="User menu for"]').first();
-      const hasUserMenu = await userMenu.isVisible().catch(() => false);
-
-      expect(hasUserMenu).toBe(true);
+      // Auto-wait: after a commit-navigation the TopBar may still be rendering.
+      await expect(page.locator('button[aria-label^="User menu for"]').first())
+        .toBeVisible({timeout: 15000});
     });
 
     test('should open user dropdown menu', async ({page}) => {

@@ -488,9 +488,10 @@ test.describe('Attendance - Cross-Page Consistency', () => {
     // dashboard loads with the attendance widget present (a valid clock state or
     // the completed state) — auto-waiting for the cold backend.
     await page.goto('/me/dashboard', {waitUntil: 'commit'});
-    const widget = page.locator(
-      'button[aria-label="Clock in"], button[aria-label="Clock out"], text=/Attendance Completed|Working/i'
-    ).first();
+    const widget = page
+      .getByRole('button', {name: /clock (in|out)/i})
+      .or(page.getByText(/Attendance Completed|Working/i))
+      .first();
     await expect(widget).toBeVisible({timeout: 30000});
   });
 });
