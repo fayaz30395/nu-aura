@@ -40,7 +40,7 @@ import {
   useMyObjectives,
   useUpdateKeyResultProgress,
   useUpdateObjective,
-} from '@/lib/hooks/queries/usePerformance';
+} from '@/lib/hooks/queries/useOkr';
 import type {KeyResult, KeyResultRequest, Objective, ObjectiveRequest} from '@/lib/services/grow/okr.service';
 
 const OBJECTIVE_LEVELS = ['COMPANY', 'DEPARTMENT', 'TEAM', 'INDIVIDUAL'] as const;

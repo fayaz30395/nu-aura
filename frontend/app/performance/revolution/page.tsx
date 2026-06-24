@@ -11,7 +11,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
-import {useOKRGraph, usePerformanceSpider} from '@/lib/hooks/queries/usePerformance';
+import {useOKRGraph, usePerformanceSpider} from '@/lib/hooks/queries/useOkr';
 
 const PerformanceSpiderChart = dynamic(
   () => import('./PerformanceSpiderChart'),

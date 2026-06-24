@@ -26,7 +26,8 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
-import {useAllReviews, useDeleteCompetency, usePerformanceAllCycles,} from '@/lib/hooks/queries/usePerformance';
+import {useAllReviews, useDeleteCompetency} from '@/lib/hooks/queries/useReviews';
+import {usePerformanceAllCycles} from '@/lib/hooks/queries/useReviewCycles';
 import {useAddCompetency, useReviewCompetencies,} from '@/lib/hooks/useCompetency';
 import type {CompetencyCategory, ReviewCompetency} from '@/lib/types/grow/performance';
 

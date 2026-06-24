@@ -3,7 +3,8 @@ import {AppLayout} from '@/components/layout';
 
 import {useEffect, useMemo, useState} from 'react';
 import {AlertTriangle, BarChart3, Download, Info, RefreshCw, Search, Target, TrendingUp, Users,} from 'lucide-react';
-import {useAllReviews, usePerformanceAllCycles, useUpdateReview} from '@/lib/hooks/queries/usePerformance';
+import {useAllReviews, useUpdateReview} from '@/lib/hooks/queries/useReviews';
+import {usePerformanceAllCycles} from '@/lib/hooks/queries/useReviewCycles';
 import {useUpdateCalibrationRating} from '@/lib/generated/api/review-cycle-controller/review-cycle-controller';
 import {notifications} from '@mantine/notifications';
 import type {ReviewRequest} from '@/lib/types/grow/performance';

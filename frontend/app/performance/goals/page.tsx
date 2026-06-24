@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {EmptyState} from '@/components/ui/EmptyState';
-import {useCreateGoal, useDeleteGoal, useEmployeeGoals, useUpdateGoal,} from '@/lib/hooks/queries/usePerformance';
+import {useCreateGoal, useDeleteGoal, useEmployeeGoals, useUpdateGoal} from '@/lib/hooks/queries/useGoals';
 import {Goal, GoalRequest, GoalStatus, GoalType} from '@/lib/types/grow/performance';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {createLogger} from '@/lib/utils/logger';

@@ -2,7 +2,7 @@
 
 import React, {ReactNode, useCallback, useEffect, useId, useRef} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
-import {modalVariants, overlayVariants} from '@/lib/animations/variants';
+import {modalVariants, overlayVariants} from '@/lib/animation';
 import {useReducedMotionSafe} from '@/lib/animation';
 import {X} from 'lucide-react';
 import {cn} from '@/lib/utils';

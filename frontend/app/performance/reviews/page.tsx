@@ -33,7 +33,7 @@ import {
   useEmployeeReviews,
   useSubmitSelfAssessment,
   useUpdateReview,
-} from '@/lib/hooks/queries/usePerformance';
+} from '@/lib/hooks/queries/useReviews';
 import {PerformanceReview, ReviewRequest, ReviewStatus, ReviewType} from '@/lib/types/grow/performance';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {createLogger} from '@/lib/utils/logger';

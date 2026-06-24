@@ -37,7 +37,7 @@ import {
   useMyPending360Reviews,
   useShareFeedback360Summary,
   useSubmitFeedback360Response,
-} from '@/lib/hooks/queries/usePerformance';
+} from '@/lib/hooks/queries/useFeedback360';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {createLogger} from '@/lib/utils/logger';

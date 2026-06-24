@@ -2,7 +2,7 @@
 
 import {createContext, ReactNode, useCallback, useContext, useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
-import {toastVariants} from '@/lib/animations/variants';
+import {toastVariants} from '@/lib/animation';
 import {useReducedMotionSafe} from '@/lib/animation';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';

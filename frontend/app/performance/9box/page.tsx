@@ -3,7 +3,8 @@ import {AppLayout} from '@/components/layout';
 
 import {useEffect, useMemo, useState} from 'react';
 import {Download, Grid3x3, Info, RefreshCw, Search, Shield, Target, TrendingUp, Users,} from 'lucide-react';
-import {useAllReviews, usePerformanceAllCycles} from '@/lib/hooks/queries/usePerformance';
+import {useAllReviews} from '@/lib/hooks/queries/useReviews';
+import {usePerformanceAllCycles} from '@/lib/hooks/queries/useReviewCycles';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {PageTransition} from '@/components/motion';
 import {PermissionGate} from '@/components/auth/PermissionGate';

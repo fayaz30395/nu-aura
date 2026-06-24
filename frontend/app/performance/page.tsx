@@ -29,12 +29,10 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Button} from '@/components/ui/Button';
 import {MOTION_DURATION, MOTION_EASE, MOTION_RISE_DISTANCE, MOTION_STAGGER, useReducedMotionSafe} from '@/lib/animation';
-import {
-  useAllGoals,
-  useMyPending360Reviews,
-  useOkrDashboardSummary,
-  usePerformanceActiveCycles,
-} from '@/lib/hooks/queries/usePerformance';
+import {useAllGoals} from '@/lib/hooks/queries/useGoals';
+import {useMyPending360Reviews} from '@/lib/hooks/queries/useFeedback360';
+import {useOkrDashboardSummary} from '@/lib/hooks/queries/useOkr';
+import {usePerformanceActiveCycles} from '@/lib/hooks/queries/useReviewCycles';
 
 const EASE = MOTION_EASE.outExpo;
 

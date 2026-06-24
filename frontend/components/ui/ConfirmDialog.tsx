@@ -2,7 +2,7 @@
 
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
-import {modalVariants, overlayVariants} from '@/lib/animations/variants';
+import {modalVariants, overlayVariants} from '@/lib/animation';
 import {useReducedMotionSafe} from '@/lib/animation';
 
 /**

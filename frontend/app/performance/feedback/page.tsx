@@ -12,7 +12,7 @@ import {
   useGivenFeedback,
   useReceivedFeedback,
   useUpdateFeedback
-} from '@/lib/hooks/queries/usePerformance';
+} from '@/lib/hooks/queries/useFeedback';
 import {Feedback, FeedbackRequest, FeedbackType} from '@/lib/types/grow/performance';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';

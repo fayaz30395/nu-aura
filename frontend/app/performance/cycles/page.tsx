@@ -22,7 +22,7 @@ import {
   useDeletePerformanceCycle,
   usePerformanceAllCycles,
   useUpdatePerformanceCycle,
-} from '@/lib/hooks/queries/usePerformance';
+} from '@/lib/hooks/queries/useReviewCycles';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {useActiveOfficeLocations} from '@/lib/hooks/queries/useOfficeLocations';
 import {PermissionGate} from '@/components/auth/PermissionGate';
