@@ -214,6 +214,7 @@ const config = [
       '*.config.js',
       '*.config.cjs',
       '*.config.mjs',
+      '*.mjs',
       'scripts/**/*',
     ],
     rules: {
