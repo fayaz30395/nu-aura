@@ -168,6 +168,18 @@ for (const [role, ucs] of byRole.entries()) {
           await page.goto(uc.route, {waitUntil: 'domcontentloaded', timeout: 20000});
           await page.waitForLoadState('domcontentloaded', {timeout: 8000}).catch(() => {
           });
+          // AuthGuard enforces permissions client-side (useEffect -> router.replace
+          // to '/me/dashboard?denied=1'), so a denied route only redirects AFTER
+          // hydration. Wait for that settle before sampling the URL, otherwise we
+          // read the pre-redirect path and misreport a working guard as a failure.
+          if (uc.expect === 'redirect') {
+            const tgt = (uc.redirect_target || '/me/dashboard').replace(/^\//, '');
+            await page.waitForURL(`**/${tgt}**`, {timeout: 10000}).catch(() => undefined);
+          } else {
+            // Give the guard a beat to fire an (unexpected) redirect so render
+            // cases that wrongly bounce are still caught.
+            await page.waitForTimeout(1500);
+          }
           observedUrl = new URL(page.url()).pathname;
           if (uc.expect === 'render') {
             if (observedUrl !== uc.route && !observedUrl.startsWith(uc.route)) {
