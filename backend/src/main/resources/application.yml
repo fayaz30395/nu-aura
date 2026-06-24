@@ -8,6 +8,10 @@ spring:
   # Override via SPRING_JACKSON_TIME_ZONE for non-IN tenants.
   jackson:
     time-zone: ${SPRING_JACKSON_TIME_ZONE:Asia/Kolkata}
+    deserialization:
+      fail-on-unknown-properties: false
+    serialization:
+      write-dates-as-timestamps: false
 
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}

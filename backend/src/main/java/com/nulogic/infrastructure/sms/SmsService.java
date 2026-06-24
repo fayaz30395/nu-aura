@@ -1,73 +1,64 @@
 package com.nulogic.infrastructure.sms;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-/**
- * Interface for SMS operations
- * Provides abstraction for different SMS provider implementations
- */
-public interface SmsService {
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class SmsService {
 
-    /**
-     * Send a simple SMS message
-     *
-     * @param phoneNumber Recipient phone number in E.164 format (e.g., +1234567890)
-     * @param message     Message content
-     * @return Message ID from the SMS provider
-     */
-    String sendSms(String phoneNumber, String message);
+    private final SmsTemplate smsTemplate;
 
-    /**
-     * Send an SMS using a predefined template
-     *
-     * @param phoneNumber Recipient phone number in E.164 format
-     * @param templateId  Template identifier
-     * @param variables   Map of variable names to values for template replacement
-     * @return Message ID from the SMS provider
-     */
-    String sendTemplatedSms(String phoneNumber, String templateId, Map<String, String> variables);
+    @Value("${hrms.sms.enabled:false}")
+    private boolean enabled;
 
-    /**
-     * Send bulk SMS to multiple recipients
-     *
-     * @param phoneNumbers Array of recipient phone numbers
-     * @param message      Message content
-     * @return Map of phone numbers to message IDs
-     */
-    Map<String, String> sendBulkSms(String[] phoneNumbers, String message);
+    @Transactional
+    public String sendSms(String phoneNumber, String message) {
+        String messageId = "SMS_" + UUID.randomUUID().toString().substring(0, 8);
+        log.info("[MOCK SMS] Sending to {}: {} (ID: {})", phoneNumber, message, messageId);
+        return messageId;
+    }
 
-    /**
-     * Check the delivery status of a sent message
-     *
-     * @param messageId Message ID returned from sendSms
-     * @return Delivery status (SENT, DELIVERED, FAILED, etc.)
-     */
-    SmsStatus getMessageStatus(String messageId);
+    @Transactional
+    public String sendTemplatedSms(String phoneNumber, String templateId, Map<String, String> variables) {
+        String message = smsTemplate.renderTemplate(templateId, variables);
+        return sendSms(phoneNumber, message);
+    }
 
-    /**
-     * Validate if the SMS service is properly configured and operational
-     *
-     * @return true if service is configured and can send messages
-     */
-    boolean isConfigured();
+    @Transactional
+    public Map<String, String> sendBulkSms(String[] phoneNumbers, String message) {
+        Map<String, String> results = new HashMap<>();
+        for (String phoneNumber : phoneNumbers) {
+            results.put(phoneNumber, sendSms(phoneNumber, message));
+        }
+        return results;
+    }
 
-    /**
-     * Test the SMS service by sending a test message
-     *
-     * @param phoneNumber Test recipient phone number
-     * @return true if test message sent successfully
-     */
-    boolean testConnection(String phoneNumber);
+    @Transactional(readOnly = true)
+    public SmsStatus getMessageStatus(String messageId) {
+        log.info("[MOCK SMS] Getting status for message: {}", messageId);
+        return SmsStatus.DELIVERED;
+    }
 
-    /**
-     * SMS delivery status enumeration
-     */
-    enum SmsStatus {
-        QUEUED,
-        SENT,
-        DELIVERED,
-        FAILED,
-        UNDELIVERED,
-        UNKNOWN
+    public boolean isConfigured() {
+        return enabled;
+    }
+
+    public boolean testConnection(String phoneNumber) {
+        log.info("[MOCK SMS] Testing connection with phone: {}", phoneNumber);
+        sendSms(phoneNumber, "Test message from HRMS system");
+        return true;
+    }
+
+    public enum SmsStatus {
+        QUEUED, SENT, DELIVERED, FAILED, UNDELIVERED, UNKNOWN
     }
 }

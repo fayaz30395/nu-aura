@@ -16,11 +16,6 @@ const nextConfig = {
     optimizePackageImports: [
       'lucide-react',
       '@tabler/icons-react',
-      '@radix-ui/react-dialog',
-      '@radix-ui/react-dropdown-menu',
-      '@radix-ui/react-select',
-      '@radix-ui/react-tabs',
-      '@radix-ui/react-tooltip',
       '@tanstack/react-query',
       '@tanstack/react-table',
       'date-fns',
@@ -171,11 +166,6 @@ const nextConfig = {
       },
     ];
   },
-
-  // Keep the App Router chunk graph under Next.js control. Custom splitChunks
-  // cache groups caused CSS assets to land in rootMainFiles under Next 16,
-  // which made production pages emit CSS as <script> tags and fail smoke tests.
-  webpack: (config) => config,
 
   // Next.js 16 enables Turbopack as the default bundler for `next build`.
   // If `webpack` is configured without a `turbopack` counterpart the build

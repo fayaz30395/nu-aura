@@ -12,7 +12,6 @@ export * from './useAuth';
 export * from './useBiometric';
 export * from './useCompetency';
 export * from './useDebounce';
-export * from './useFeatureFlag';
 export * from './useFluenceChat';
 export * from './usePermissions';
 export * from './useSamlConfig';

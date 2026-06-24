@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {useFeatureFlag} from '@/lib/hooks/useFeatureFlag';
+import {useFeatureFlag} from '@/lib/hooks/queries/useFeatureFlags';
 
 interface FeatureGateProps {
   /** The feature key to check (e.g., "enable_projects") */
