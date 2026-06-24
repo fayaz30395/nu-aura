@@ -37,8 +37,12 @@ import {createLogger} from '@/lib/utils/logger';
 
 const log = createLogger('RolesPage');
 
-// H-4: HR_MANAGER excluded — they get 403 on admin API calls. M-3: HR_ADMIN does not exist in backend.
-const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_MANAGER];
+// Only SUPER_ADMIN and TENANT_ADMIN hold ROLE_MANAGE — the permission required
+// by GET /roles and all mutation endpoints. HR_MANAGER does NOT have ROLE_MANAGE
+// and would get 403 on every API call in this page (6 console errors observed in
+// QA). HR_ADMIN is handled at the AdminLayoutInner level (holds ROLE_MANAGE via
+// getHRAdminPermissions), so this page gate is intentionally narrow.
+const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN];
 
 const createRoleFormSchema = z.object({
   code: z.string().min(1, 'Code is required').max(50),

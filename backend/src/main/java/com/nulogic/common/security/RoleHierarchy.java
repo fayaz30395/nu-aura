@@ -294,6 +294,10 @@ public final class RoleHierarchy {
                 Permission.EMPLOYEE_VIEW_ALL,
                 Permission.EMPLOYEE_CREATE,
                 Permission.EMPLOYEE_UPDATE,
+                // HR_MANAGER holds an employee record and must be able to access
+                // their own self-service dashboard (GET /self-service/dashboard).
+                // Without EMPLOYEE_VIEW_SELF the endpoint returns 403 on page load.
+                Permission.EMPLOYEE_VIEW_SELF,
                 Permission.LEAVE_APPROVE,
                 Permission.LEAVE_VIEW_ALL,
                 Permission.LEAVE_MANAGE,
