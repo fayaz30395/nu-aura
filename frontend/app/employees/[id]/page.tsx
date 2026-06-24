@@ -748,7 +748,7 @@ export default function EmployeeDetailPage() {
               </SectionCard>
 
               {/* Banking & Tax */}
-              <PermissionGate permission={Permissions.EMPLOYEE_BANK_READ} fallback={null}>
+              <PermissionGate anyOf={[Permissions.PAYROLL_VIEW, Permissions.PAYROLL_VIEW_SELF, Permissions.PAYROLL_VIEW_ALL]} fallback={null}>
                 <SectionCard title="Banking & Tax">
                   <div className="grid grid-cols-1 gap-4">
                     <InfoField label="Bank Name" value={employee.bankName}/>
