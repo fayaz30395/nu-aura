@@ -109,7 +109,7 @@ export default function TaxOverviewPage() {
               <Title order={2} className="text-aura-title">Tax Management</Title>
               <Text c="var(--text-3)" className="">Overview of tax declarations and compliance</Text>
             </div>
-          <PermissionGate permission={Permissions.TAX_VIEW}>
+          <PermissionGate permission={Permissions.STATUTORY_VIEW}>
             <Button
               onClick={() => router.push('/tax/declarations')}
               rightSection={<ChevronRight className="h-4 w-4"/>}

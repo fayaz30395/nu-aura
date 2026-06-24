@@ -34,7 +34,7 @@ const EASE = MOTION_EASE.outExpo;
 export default function ResourcesPage() {
   const router = useRouter();
   const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
-  const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
+  const hasAccess = hasAnyPermission(Permissions.ALLOCATION_VIEW, Permissions.ALLOCATION_MANAGE);
 
   useEffect(() => {
     if (permissionsReady && !hasAccess) router.replace('/me/dashboard?denied=1');

@@ -146,7 +146,7 @@ function CapacityRow({emp}: { emp: EmployeeWorkload }) {
 export default function CapacityTimelinePage() {
   const router = useRouter();
   const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
-  const hasAccess = hasAnyPermission(Permissions.RESOURCE_VIEW, Permissions.RESOURCE_MANAGE);
+  const hasAccess = hasAnyPermission(Permissions.ALLOCATION_VIEW, Permissions.ALLOCATION_MANAGE);
 
   useEffect(() => {
     if (permissionsReady && !hasAccess) {

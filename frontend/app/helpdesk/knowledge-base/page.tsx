@@ -448,7 +448,7 @@ export default function KnowledgeBasePage() {
             </p>
           </div>
           {isAdmin && (
-            <PermissionGate permission={Permissions.HELPDESK_KB_CREATE}>
+            <PermissionGate permission={Permissions.HELPDESK_CATEGORY_MANAGE}>
               <Button
                 onClick={() => setShowCreateModal(true)}
                 variant="primary"
@@ -673,7 +673,7 @@ export default function KnowledgeBasePage() {
                 }}>
                   Cancel
                 </Button>
-                <PermissionGate permission={Permissions.HELPDESK_KB_CREATE}>
+                <PermissionGate permission={Permissions.HELPDESK_CATEGORY_MANAGE}>
                   <Button
                     type="submit"
                     variant="primary"

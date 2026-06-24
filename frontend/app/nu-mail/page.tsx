@@ -3,7 +3,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
 import {Card} from '@/components/ui/Card';
 import {Skeleton} from '@mantine/core';
@@ -50,9 +50,10 @@ const GMAIL_SCOPES = [
 function MailContent() {
   const router = useRouter();
   const {user, isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {isReady} = usePermissions();
 
-  const hasAccess = hasAnyPermission(Permissions.EMAIL_VIEW, Permissions.EMAIL_SEND);
+  // NU-Mail is a personal Gmail integration available to all authenticated users
+  const hasAccess = isAuthenticated;
   const [isLoading, setIsLoading] = useState(true);
   const [emails, setEmails] = useState<EmailMessage[]>([]);
   const [labels, setLabels] = useState<EmailLabel[]>([]);
