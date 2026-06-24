@@ -11,18 +11,19 @@ import {ErrorBoundary} from '@/components/ui/ErrorBoundary';
 import {ToastProvider} from '@/components/ui/Toast';
 import {ToastProvider as NotificationsToastProvider} from '@/components/notifications/ToastProvider';
 import {AuthGuard} from '@/components/auth/AuthGuard';
-
-// ponytail: dynamic import keeps STOMP+SockJS (~120kb) out of the login-page bundle
-const WebSocketProvider = dynamic(
-  () => import('@/lib/contexts/WebSocketContext').then(m => m.WebSocketProvider),
-  {ssr: false, loading: () => null},
-);
 import {useTokenRefresh} from '@/lib/hooks/useTokenRefresh';
 import {useSessionTimeout} from '@/lib/hooks/useSessionTimeout';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {env} from '@/lib/config';
 import {initGlobalErrorHandlers} from '@/lib/utils/error-handler';
 import {getQueryClient} from '@/lib/queryClient';
+
+// ponytail: dynamic import keeps STOMP+SockJS (~120kb) out of the login-page bundle
+// loading: null — WebSocketProvider has no visible UI output, no fallback needed
+const WebSocketProvider = dynamic(
+  () => import('@/lib/contexts/WebSocketContext').then(m => m.WebSocketProvider),
+  {ssr: false, loading: () => null},
+);
 
 // Import Mantine core styles
 import '@mantine/core/styles.css';
