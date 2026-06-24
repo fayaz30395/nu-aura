@@ -166,7 +166,7 @@ const SUGGESTIONS = [
 export default function FluenceAiChatPage() {
   return (
     <PermissionGate
-      permission={Permissions.KNOWLEDGE_VIEW}
+      permission={Permissions.KNOWLEDGE_SEARCH}
       fallback={<PageDeniedFallback/>}
     >
       <AiChatContent/>
