@@ -441,7 +441,7 @@ test.describe('Navigation and Routing', () => {
 
         // URL might change or content updates
         const urlHasMyLeaves = page.url().includes('my-leaves');
-        const contentHasMyLeaves = await page.locator('text=/My Leaves|My Leave Requests/i').isVisible().catch(() => false);
+        const contentHasMyLeaves = await page.locator('text=/My Leaves|My Leave Requests/i').first().isVisible().catch(() => false);
 
         expect(urlHasMyLeaves || contentHasMyLeaves).toBe(true);
       }
@@ -556,9 +556,9 @@ test.describe('Navigation - Role-Based Access', () => {
     await loginPage.login(testUsers.manager.email, testUsers.manager.password);
     await page.waitForURL('**/me/dashboard', {waitUntil: 'commit'});
 
-    // Manager should see team management options
-    const hasNav = await page.locator('nav:visible').first().isVisible();
-    expect(hasNav).toBe(true);
+    // Manager should see team management options. Auto-wait: after a
+    // waitUntil:'commit' navigation the shell may still be rendering.
+    await expect(page.locator('nav:visible').first()).toBeVisible({timeout: 15000});
   });
 });
 

@@ -163,7 +163,7 @@ test.describe('Dashboard - Employee Role', () => {
     // Login as employee
     await loginPage.navigate();
     await loginPage.login(testUsers.employee.email, testUsers.employee.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/dashboard', {waitUntil: 'commit'});
   });
 
   test('should display attendance widget for employee', async ({page}) => {
@@ -192,7 +192,7 @@ test.describe('Dashboard - Visual Regression', () => {
 
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/dashboard', {waitUntil: 'commit'});
   });
 
   test('should match dashboard snapshot', async ({page}) => {
@@ -215,7 +215,7 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
 
     await loginPage.navigate();
     await loginPage.login(testUsers.admin.email, testUsers.admin.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/dashboard', {waitUntil: 'commit'});
     await dashboardPage.waitForAttendanceWidget();
   });
 
@@ -243,7 +243,7 @@ test.describe('Dashboard - Data-Driven Widget Validation', () => {
     const loginPage2 = new LoginPage(page);
     await loginPage2.navigate();
     await loginPage2.login(testUsers.employee.email, testUsers.employee.password);
-    await page.waitForURL('**/dashboard');
+    await page.waitForURL('**/dashboard', {waitUntil: 'commit'});
     await page.waitForTimeout(1500);
 
     const employeeHeadings = await page.locator('h2, h3, h4').allTextContents();

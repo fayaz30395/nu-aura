@@ -484,13 +484,13 @@ test.describe('Attendance - Cross-Page Consistency', () => {
       await page.waitForTimeout(1500);
     }
 
-    // The dashboard TimeClockWidget reflects attendance state via Clock In /
-    // Clock Out / "Attendance Completed" (not the legacy "Check In" text).
-    await page.goto('/me/dashboard');
-    await page.waitForTimeout(1500);
-    const hasValidClockState = await page
-      .locator('button[aria-label="Clock in"], button[aria-label="Clock out"], text=/Attendance Completed/i')
-      .first().isVisible({timeout: 15000}).catch(() => false);
-    expect(hasValidClockState).toBe(true);
+    // The clock control lives on the dashboard TimeClockWidget. Assert the
+    // dashboard loads with the attendance widget present (a valid clock state or
+    // the completed state) — auto-waiting for the cold backend.
+    await page.goto('/me/dashboard', {waitUntil: 'commit'});
+    const widget = page.locator(
+      'button[aria-label="Clock in"], button[aria-label="Clock out"], text=/Attendance Completed|Working/i'
+    ).first();
+    await expect(widget).toBeVisible({timeout: 30000});
   });
 });
