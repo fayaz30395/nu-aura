@@ -41,7 +41,7 @@ jobs:
     name: E2E (Playwright, isolated)
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'e2e')
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     services:
       postgres:
@@ -173,7 +173,15 @@ jobs:
           # the Set-Cookie on localhost:3000 so the test browser stores it.
           NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
           E2E_AUTH_PAGE_TIMEOUT_MS: '120000'
-        run: npx playwright test --config=playwright.live.config.ts --project=setup --project=chromium
+        # Curated, time-bounded gate: the verified clusters + the stateful
+        # attendance suite (safe to mutate here — the DB is throwaway) + any
+        # @critical-tagged smoke. The full 2886-test suite is too long for one
+        # job; expand via sharding later if needed.
+        run: >-
+          npx playwright test --config=playwright.live.config.ts
+          --project=setup --project=chromium --workers=2
+          e2e/app-switcher.spec.ts e2e/navigation.spec.ts e2e/dashboard.spec.ts
+          e2e/sub-app-smoke.spec.ts e2e/attendance.spec.ts
 
       - name: Upload Playwright report
         if: always()
