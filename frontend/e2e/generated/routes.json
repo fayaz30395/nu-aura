@@ -12,6 +12,14 @@
     "module": "admin"
   },
   {
+    "path": "/admin/audit",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/budget",
+    "module": "admin"
+  },
+  {
     "path": "/admin/custom-fields",
     "module": "admin"
   },
@@ -41,6 +49,10 @@
   },
   {
     "path": "/admin/integrations",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/integrations/webhooks",
     "module": "admin"
   },
   {
@@ -93,6 +105,10 @@
   },
   {
     "path": "/admin/system",
+    "module": "admin"
+  },
+  {
+    "path": "/admin/users",
     "module": "admin"
   },
   {
@@ -168,6 +184,26 @@
     "module": "attendance"
   },
   {
+    "path": "/auth/change-password",
+    "module": "auth"
+  },
+  {
+    "path": "/auth/forgot-password",
+    "module": "auth"
+  },
+  {
+    "path": "/auth/login",
+    "module": "auth"
+  },
+  {
+    "path": "/auth/logout",
+    "module": "auth"
+  },
+  {
+    "path": "/auth/signup",
+    "module": "auth"
+  },
+  {
     "path": "/benefits",
     "module": "benefits"
   },
@@ -236,6 +272,10 @@
     "module": "departments"
   },
   {
+    "path": "/documents",
+    "module": "documents"
+  },
+  {
     "path": "/employees",
     "module": "employees"
   },
@@ -288,7 +328,15 @@
     "module": "fluence"
   },
   {
+    "path": "/fluence/ai-chat",
+    "module": "fluence"
+  },
+  {
     "path": "/fluence/analytics",
+    "module": "fluence"
+  },
+  {
+    "path": "/fluence/articles",
     "module": "fluence"
   },
   {
@@ -364,12 +412,20 @@
     "module": "import-export"
   },
   {
+    "path": "/inbox",
+    "module": "inbox"
+  },
+  {
     "path": "/integrations",
     "module": "integrations"
   },
   {
     "path": "/integrations/slack",
     "module": "integrations"
+  },
+  {
+    "path": "/knowledge",
+    "module": "knowledge"
   },
   {
     "path": "/learning",
@@ -389,6 +445,10 @@
   },
   {
     "path": "/leave",
+    "module": "leave"
+  },
+  {
+    "path": "/leave/admin",
     "module": "leave"
   },
   {
@@ -416,11 +476,15 @@
     "module": "leave"
   },
   {
-    "path": "/letter-templates",
-    "module": "letter-templates"
+    "path": "/leave/team",
+    "module": "leave"
   },
   {
     "path": "/letters",
+    "module": "letters"
+  },
+  {
+    "path": "/letters/templates",
     "module": "letters"
   },
   {
@@ -438,6 +502,10 @@
   {
     "path": "/lwf",
     "module": "lwf"
+  },
+  {
+    "path": "/me/assets",
+    "module": "me"
   },
   {
     "path": "/me/attendance",
@@ -462,6 +530,14 @@
   {
     "path": "/me/profile",
     "module": "me"
+  },
+  {
+    "path": "/me/skills",
+    "module": "me"
+  },
+  {
+    "path": "/notifications",
+    "module": "notifications"
   },
   {
     "path": "/nu-calendar",
@@ -514,14 +590,6 @@
   {
     "path": "/one-on-one",
     "module": "one-on-one"
-  },
-  {
-    "path": "/org-chart",
-    "module": "org-chart"
-  },
-  {
-    "path": "/organization-chart",
-    "module": "organization-chart"
   },
   {
     "path": "/overtime",
@@ -640,6 +708,10 @@
     "module": "pricing"
   },
   {
+    "path": "/privacy",
+    "module": "privacy"
+  },
+  {
     "path": "/probation",
     "module": "probation"
   },
@@ -653,6 +725,18 @@
   },
   {
     "path": "/projects/gantt",
+    "module": "projects"
+  },
+  {
+    "path": "/projects/psa",
+    "module": "projects"
+  },
+  {
+    "path": "/projects/psa/invoices",
+    "module": "projects"
+  },
+  {
+    "path": "/projects/psa/timesheets",
     "module": "projects"
   },
   {
@@ -692,7 +776,15 @@
     "module": "recruitment"
   },
   {
+    "path": "/recruitment/kanban",
+    "module": "recruitment"
+  },
+  {
     "path": "/recruitment/pipeline",
+    "module": "recruitment"
+  },
+  {
+    "path": "/recruitment/scorecards",
     "module": "recruitment"
   },
   {
@@ -780,11 +872,23 @@
     "module": "settings"
   },
   {
+    "path": "/settings/privacy",
+    "module": "settings"
+  },
+  {
     "path": "/settings/profile",
     "module": "settings"
   },
   {
+    "path": "/settings/rbac",
+    "module": "settings"
+  },
+  {
     "path": "/settings/security",
+    "module": "settings"
+  },
+  {
+    "path": "/settings/security/api-keys",
     "module": "settings"
   },
   {
@@ -816,12 +920,20 @@
     "module": "statutory"
   },
   {
-    "path": "/statutory-filings",
-    "module": "statutory-filings"
+    "path": "/statutory/filings",
+    "module": "statutory"
   },
   {
     "path": "/surveys",
     "module": "surveys"
+  },
+  {
+    "path": "/surveys/pulse",
+    "module": "surveys"
+  },
+  {
+    "path": "/tasks",
+    "module": "tasks"
   },
   {
     "path": "/tax",
@@ -834,6 +946,10 @@
   {
     "path": "/team-directory",
     "module": "team-directory"
+  },
+  {
+    "path": "/terms",
+    "module": "terms"
   },
   {
     "path": "/time-tracking",
@@ -861,6 +977,10 @@
   },
   {
     "path": "/travel",
+    "module": "travel"
+  },
+  {
+    "path": "/travel/expenses",
     "module": "travel"
   },
   {
