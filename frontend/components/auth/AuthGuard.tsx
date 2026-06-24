@@ -197,6 +197,7 @@ export function AuthGuard({
 
     if (!authorized) {
       logger.warn(`[AuthGuard] Access denied to ${pathname}`);
+      router.replace('/me/dashboard?denied=1');
     }
 
     return () => {
