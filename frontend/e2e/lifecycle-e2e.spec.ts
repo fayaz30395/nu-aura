@@ -531,6 +531,7 @@ test.describe.serial('S1 — Hire-to-Retire @lifecycle', () => {
     if (!uiLogout) {
       // App uses a user-menu dropdown — find and open it
       const menuTriggers = [
+        'button[aria-label^="User menu for"]',
         '[data-testid="user-avatar"]',
         '[data-testid="user-menu"]',
         'button[class*="avatar"]',
