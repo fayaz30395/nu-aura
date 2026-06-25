@@ -41,6 +41,7 @@ NU-AURA bundles **four sub-apps** on **one shared platform**:
 - **DBA** → [[Schema]] · [[ERD]] · [[Migrations]].
 - **DevOps / SRE** → [[Deployment]] · [[CI-CD]] · [[Local-Setup]] · [[Production-Support]] · [[Incident-Response]].
 - **QA** → [[QA-Strategy]] · [[Test-Coverage]].
+- **Product / delivery** → [[Product-Delivery-Index]] · [[Application-Map]] · [[Product-Requirements-Document]] · [[Work-Breakdown-Structure]] · [[User-Manual]].
 - **AI agents** → [[System-Flows]] · [[Module-Relationships]] · [[Data-Flows]] and the repo-root `AGENTS.md`.
 
 ## Full map of content
@@ -96,6 +97,15 @@ Every note in the vault, grouped by numbered section.
 ### 12 — Knowledge Graph
 - [[Module-Relationships]] · [[Data-Flows]] · [[System-Flows]]
 - [[Feature-Traceability]] — **end-to-end map**: per feature, route → page → controller → service → tables → permission
+- [[Graphify-Code-Graph]] — local code graph snapshot and source-navigation workflow
+
+### 13 — Product & Delivery
+- [[Product-Delivery-Index]] — stakeholder-facing hub for product and delivery docs
+- [[Application-Map]] — clear product/app map with graph diagrams and source snapshot
+- [[Product-Requirements-Document]] — PRD with personas, scope, requirements, acceptance gates
+- [[Work-Breakdown-Structure]] — WBS for pilot packaging, hardening, QA, and operations
+- [[Product-Architecture]] — architecture narrative for product and technical stakeholders
+- [[User-Manual]] — role-oriented usage guide for pilot users and support
 
 ### Meta
 - [[Documentation-Coverage-Report]] — what the vault covers, metrics it was built from, discrepancies, and gaps

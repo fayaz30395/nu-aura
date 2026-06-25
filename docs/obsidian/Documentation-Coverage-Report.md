@@ -1,12 +1,12 @@
 ---
 title: Documentation Coverage Report
 tags: [meta, coverage, report]
-generated: 2026-06-18
+generated: 2026-06-25
 ---
 
 # Documentation Coverage Report — NU-AURA Obsidian Vault
 
-Generated 2026-06-16 by full-codebase discovery (parallel section authors, each verifying against source); last updated 2026-06-18 (pass 5 — section reconciliation, all 12 numbered sections re-verified). This report records what the vault covers, the metrics it was built from, and every gap or discrepancy found so the next pass is targeted.
+Generated 2026-06-16 by full-codebase discovery (parallel section authors, each verifying against source); last updated 2026-06-25 (pass 6 — product/delivery layer plus graphify rebuild). This report records what the vault covers, the metrics it was built from, and every gap or discrepancy found so the next pass is targeted.
 
 **Merge note (2026-06-16):** the former flat docs (`docs/architecture/`, `docs/reference/`, `docs/apps/`, `docs/patterns/`, `docs/setup/`) have been folded into this vault — architecture/API/database/patterns/setup content now lives inside the numbered sections below, and the flat copies are retired. Notably, the migrations reference is now [[Migrations]], the code-patterns reference is now [[Code-Patterns]], and local-setup is now [[Local-Setup]]. The vault is the single canonical knowledge base; GitHub readers enter via [docs/README.md](../README.md).
 
@@ -43,6 +43,16 @@ Generated 2026-06-16 by full-codebase discovery (parallel section authors, each 
 > [[Readiness-Session-2026-06-18]] + [[Ruflo-Autopilot-Hazard]]). [[00-Home]] and
 > [[docs/README.md]] reconciled to match — all missing sections now reachable from both
 > map files.
+>
+> **Pass 6 (2026-06-25, product/delivery layer):** added stakeholder-facing section
+> [[Product-Delivery-Index]] with [[Application-Map]], [[Product-Requirements-Document]],
+> [[Work-Breakdown-Structure]], [[Product-Architecture]], and [[User-Manual]]. Added
+> [[Graphify-Code-Graph]] after rebuilding `graphify-out/` from the current checkout:
+> **58,943 nodes / 142,248 edges**, built from commit `da01fd4c`. Fresh count sweep for this
+> product layer found **290** frontend pages, raw **184** `@RestController` files, **70**
+> backend application contexts, **305** Flyway migration files, highest **V316**. These fresh
+> counts are a product-doc snapshot; the older exhaustive leaf catalogs still need a full
+> reconciliation pass before release quotation.
 
 ## 1. Coverage summary
 
@@ -60,9 +70,10 @@ Generated 2026-06-16 by full-codebase discovery (parallel section authors, each 
 | Testing | [[QA-Strategy]] [[Test-Coverage]] [[Test-Catalog]] [[Readiness-Session-2026-06-18]] | ✅ Complete | High — [[Test-Catalog]] enumerates all suites (310 BE files / 74 integration / 90 Vitest / 117 Playwright; 4,076 BE green in CI); [[Readiness-Session-2026-06-18]] records 92/100 CONDITIONAL-GO verdict (2026-06-18) |
 | Runbooks | [[Production-Support]] [[Incident-Response]] [[Ruflo-Autopilot-Hazard]] | ⚠️ Templated | Medium — no `docs/runbooks/` on disk; procedural detail is templated; [[Ruflo-Autopilot-Hazard]] is evidence-grounded (root cause diagnosed) |
 | Decisions | [[ADR-001]]…[[ADR-005]] | ✅ Complete | High — reverse-engineered from code |
-| Knowledge graph | [[Module-Relationships]] [[Data-Flows]] [[System-Flows]] [[Feature-Traceability]] | ✅ Complete | High — flows traced to classes; [[Feature-Traceability]] adds the full vertical-slice matrix |
+| Knowledge graph | [[Module-Relationships]] [[Data-Flows]] [[System-Flows]] [[Feature-Traceability]] [[Graphify-Code-Graph]] | ✅ Complete | High — flows traced to classes; [[Feature-Traceability]] adds the full vertical-slice matrix; [[Graphify-Code-Graph]] documents the local code graph |
+| Product & delivery | [[Product-Delivery-Index]] [[Application-Map]] [[Product-Requirements-Document]] [[Work-Breakdown-Structure]] [[Product-Architecture]] [[User-Manual]] | ✅ Added | Medium-high — stakeholder-facing docs grounded in existing source/vault evidence; not a live user-training signoff |
 
-**57 notes** across 13 sections (plus [[00-Home]] and this report). **0 unresolved wikilinks**, **0 unbalanced Mermaid fences** (validated). Mermaid diagrams across architecture, C4, ERD, sequence, and flow types. Recent additions: [[Migrations]], [[Code-Patterns]], [[Local-Setup]] (merge round), [[Scheduled-Jobs]] (pass-2 re-verification), [[Permission-Ownership]] (per-permission/role→sub-app ownership map), [[Readiness-Session-2026-06-18]] and [[Ruflo-Autopilot-Hazard]] (pass-5 additions).
+**64 notes** across 14 numbered sections (plus [[00-Home]] and this report). Link and fence validation should be re-run after every docs pass. Mermaid diagrams span architecture, C4, ERD, sequence, flow, product, and delivery views. Recent additions: [[Graphify-Code-Graph]] and the [[Product-Delivery-Index]] section.
 
 ## 2. Verified metrics (point-in-time, 2026-06-18)
 
@@ -89,6 +100,16 @@ Generated 2026-06-16 by full-codebase discovery (parallel section authors, each 
 | Backend test files | 310 (`*Test*.java`); 74 extend `AbstractPostgresIntegrationTest` | `find` |
 | Backend tests in CI (most recent) | 4,076 green | CI run |
 | Frontend test files | 90 Vitest + 117 Playwright specs; 2,419 Vitest green | `find` |
+
+### Fresh product-layer sweep (2026-06-25)
+
+| Metric | Value | Source |
+|--------|-------|--------|
+| Frontend `page.tsx` | 290 | `find frontend/app -name page.tsx` |
+| Raw `@RestController` files | 184 | `rg -l "@RestController" backend/src/main/java/com/nulogic` |
+| Backend application top-level contexts | 70 | `find backend/src/main/java/com/nulogic/application -maxdepth 1 -mindepth 1 -type d` |
+| Flyway migrations | 305 files; highest V316 | `find backend/src/main/resources/db/migration -name 'V*.sql'` |
+| Graphify code graph | 58,943 nodes / 142,248 edges | `graphify update .` |
 
 ## 3. Discrepancies found (worth reconciling)
 
@@ -124,10 +145,14 @@ These are real inconsistencies the discovery surfaced between docs/memory and co
 - **Generated API client layer** (`frontend/lib/generated/api/*`) is gitignored — documented from `orval.config.ts` + snapshot, not read directly. See [[Routes]] / [[APIs]].
 - **RBAC matrix reflects default grants** from `RoleHierarchy`, not live tenant `role_permissions` (admins can diverge per tenant). See [[RBAC-Matrix]].
 - **Live RLS proof** (NOBYPASSRLS `nu_app_rls` role) is CI-only; local guard is static-source only. See [[Migrations]] / [[Code-Patterns]].
+- **Product docs are stakeholder-level.** [[Product-Requirements-Document]], [[Work-Breakdown-Structure]],
+  [[Product-Architecture]], and [[User-Manual]] are grounded in the vault and current source
+  snapshot, but they are not signed-off customer training material or a Jira import.
 
 ## 5. Validation performed
 
-- ✅ All 57 notes present in the prescribed 13-section structure (plus Home + this report); link integrity re-checked 2026-06-18 after pass-5 (all 12 sections re-audited; [[Readiness-Session-2026-06-18]] and [[Ruflo-Autopilot-Hazard]] added; [[00-Home]] and [docs/README.md](../README.md) updated to reflect all missing sections).
+- ✅ All 64 notes present in the numbered vault structure (plus Home + this report). Link integrity was re-checked 2026-06-18 after pass-5; pass-6 validation is recorded below.
+- ✅ Pass 6 added 7 notes: [[Graphify-Code-Graph]], [[Product-Delivery-Index]], [[Application-Map]], [[Product-Requirements-Document]], [[Work-Breakdown-Structure]], [[Product-Architecture]], [[User-Manual]].
 - ✅ Tests executed 2026-06-17: **FE Vitest 2,419/2,419 pass** (90 files); **BE test sources compile** (`mvn test-compile`, JDK 23, `-Djacoco.skip=true`); FE ESLint **0 errors** (82 design-system spacing warnings remain). **Not run locally:** BE full suite incl. 74 Testcontainers integration tests (Docker/colima down — CI authoritative, prior run 4,055 green) and Playwright (low local signal).
 - ✅ Wikilink integrity: every `[[NoteBasename]]` resolves to an existing note (0 broken), including [[Permission-Ownership]], [[Readiness-Session-2026-06-18]], [[Ruflo-Autopilot-Hazard]], and the three merged-in notes [[Migrations]], [[Code-Patterns]], [[Local-Setup]].
 - ✅ Mermaid fence balance: all code fences even (0 malformed blocks).
@@ -137,6 +162,6 @@ These are real inconsistencies the discovery surfaced between docs/memory and co
 
 ## 6. Estimated coverage
 
-All 12 prescribed sections + Home are authored and cross-linked; the former flat reference/architecture/patterns/setup content is now merged in, so the vault is self-contained. All major modules and platform concerns are represented and verified against code. **Structural & module coverage ≈ 100%, and (as of pass 5) leaf-level coverage is exhaustive at method and column granularity**: every route (**286**), controller (**180** live), endpoint (**1,711**), table (**331** distinct), and test suite is enumerated, with per-column detail on 90 core tables + a complete **347-edge FK map**, all joined by [[Feature-Traceability]]. Remaining sampled depth is minimal (long-tail table columns, per-endpoint DTO schemas). Counts are point-in-time (2026-06-18) and will drift — re-measure before quoting in a release.
+All 13 original engineering sections plus the new product/delivery section are authored and cross-linked; the former flat reference/architecture/patterns/setup content remains merged into the vault. All major modules and platform concerns are represented and verified against code. **Structural & module coverage is broad, and (as of pass 5) leaf-level coverage is exhaustive at method and column granularity**: every audited route (**286**), controller (**180** live), endpoint (**1,711**), table (**331** distinct), and test suite is enumerated, with per-column detail on 90 core tables + a complete **347-edge FK map**, all joined by [[Feature-Traceability]]. Pass 6 adds stakeholder-facing product/delivery docs and a refreshed graphify snapshot. Counts are point-in-time and will drift — re-measure before quoting in a release.
 
 Related: [[00-Home]]

@@ -128,6 +128,20 @@ The four sub-applications plus the shared platform.
 | [Data Flows](./obsidian/12-Knowledge-Graph/Data-Flows.md) | Request lifecycle, login/refresh, outbox eventing, cache-aside, Drive upload |
 | [System Flows](./obsidian/12-Knowledge-Graph/System-Flows.md) | Hire→onboard, leave→payroll, review cycle, notification fan-out |
 | [Feature Traceability](./obsidian/12-Knowledge-Graph/Feature-Traceability.md) | End-to-end map: route → page → controller → service → tables → permission |
+| [Graphify Code Graph](./obsidian/12-Knowledge-Graph/Graphify-Code-Graph.md) | Local code graph snapshot and source-navigation workflow |
+
+## 13 — Product & Delivery
+
+Stakeholder-facing product and delivery documents built on top of the technical vault.
+
+| Document | What it covers |
+|----------|----------------|
+| [Product Delivery Index](./obsidian/13-Product-Delivery/Product-Delivery-Index.md) | Hub for product map, PRD, WBS, architecture, user manual, and graph references |
+| [Application Map](./obsidian/13-Product-Delivery/Application-Map.md) | Whole-product map with app/module boundaries, diagrams, and source snapshot |
+| [Product Requirements Document](./obsidian/13-Product-Delivery/Product-Requirements-Document.md) | Personas, goals, requirements, acceptance criteria, non-goals, risks |
+| [Work Breakdown Structure](./obsidian/13-Product-Delivery/Work-Breakdown-Structure.md) | Delivery work packages, dependencies, and exit criteria |
+| [Product Architecture](./obsidian/13-Product-Delivery/Product-Architecture.md) | Stakeholder architecture narrative and focused diagrams |
+| [User Manual](./obsidian/13-Product-Delivery/User-Manual.md) | Role-oriented usage guide for pilot users and support |
 
 ## Meta
 
