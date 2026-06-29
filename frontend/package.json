@@ -74,7 +74,7 @@
     "jwt-decode": "^4.0.0",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.561.0",
-    "next": "^16.2.7",
+    "next": "^16.2.9",
     "postcss": "8.5.10",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
@@ -94,7 +94,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
-    "@next/bundle-analyzer": "^16.2.7",
+    "@next/bundle-analyzer": "^16.2.9",
     "@playwright/test": "^1.60.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.4.0",
