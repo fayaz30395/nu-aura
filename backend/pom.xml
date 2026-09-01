@@ -236,7 +236,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
-            <version>1.10.0</version>
+            <version>1.14.1</version>
         </dependency>
 
         <!-- ShedLock for distributed job locking (prevents duplicate execution in multi-pod K8s) -->
