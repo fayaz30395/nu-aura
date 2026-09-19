@@ -220,9 +220,8 @@ public class DocuSignAuthService {
      * Handles both PKCS#8 format with and without the PEM header/footer:
      *
      * <pre>
-     * -----BEGIN PRIVATE KEY-----
+     * BEGIN/END "PRIVATE KEY" PEM markers wrapping the base64 body
      * (redacted - see runbook for actual key)
-     * -----END PRIVATE KEY-----
      * </pre>
      *
      * @param pemKey the private key in PEM format
