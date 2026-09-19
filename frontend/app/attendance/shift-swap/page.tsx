@@ -302,6 +302,7 @@ export default function ShiftSwapPage() {
                 size="compact"
               />
             ) : (
+              <div className="table-shell">
               <table className="w-full text-sm table-aura">
                 <thead>
                 <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
@@ -392,6 +393,7 @@ export default function ShiftSwapPage() {
                 ))}
                 </tbody>
               </table>
+              </div>
             )}
 
             {activeTab === 'my' && (myRequestsData?.totalElements ?? 0) > 0 && (
