@@ -84,7 +84,7 @@ export const compactTheme = {
 
   // ── Table (consistent, sticky-ready) ───────────────
   table: {
-    header: 'px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] h-11',
+    header: 'px-4 py-2 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)] h-11',
     headerSticky: 'sticky top-0 z-10 bg-[var(--bg-card)]',
     cell: 'px-4 py-2 text-sm',
     row: 'h-11 hover:bg-[var(--bg-card-hover)] transition-colors duration-100',
