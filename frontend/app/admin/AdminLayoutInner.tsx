@@ -21,7 +21,6 @@ import {
   ShieldAlert,
   Server,
   Shield,
-  Smartphone,
   Umbrella,
   Upload,
   Users,
@@ -122,13 +121,6 @@ export default function AdminLayoutInner({
           label: 'Implicit Roles',
           icon: <UserCog className="h-5 w-5"/>,
           href: '/admin/implicit-roles',
-          requiredPermission: Permissions.SYSTEM_ADMIN,
-        },
-        {
-          id: 'mobile-api',
-          label: 'Mobile API',
-          icon: <Smartphone className="h-5 w-5"/>,
-          href: '/admin/mobile-api',
           requiredPermission: Permissions.SYSTEM_ADMIN,
         },
       ]

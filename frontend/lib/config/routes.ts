@@ -154,10 +154,6 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.SYSTEM_ADMIN],
   },
   {
-    path: '/admin/mobile-api',
-    anyPermission: [Permissions.SYSTEM_ADMIN],
-  },
-  {
     path: '/admin/*',
     adminOnly: true,
   },

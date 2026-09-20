@@ -67,7 +67,6 @@ export * from './useCareers';
 export * from './useConnectors';
 export * from './useEsignPublic';
 export * from './useKekaImport';
-export * from './useMobileApi';
 export * from './useOnboarding';
 export * from './usePreboarding';
 export * from './usePublicOffer';

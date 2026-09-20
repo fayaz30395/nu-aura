@@ -70,7 +70,6 @@ export * from './queries/useLoans';
 export * from './queries/useLWF';
 export * from './queries/useLearning';
 export * from './queries/useMfa';
-export * from './queries/useMobileApi';
 export * from './queries/useNotifications';
 export * from './queries/useOfficeLocations';
 export * from './queries/useOkr';

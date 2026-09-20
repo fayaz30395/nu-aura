@@ -9,7 +9,6 @@ export * from './home.service';
 export * from './importExport.service';
 export * from './integration.service';
 export * from './keka-import.service';
-export * from './mobile-api.service';
 export * from './payment.service';
 export * from './predictive-analytics.service';
 export * from './report.service';
