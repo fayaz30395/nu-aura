@@ -119,10 +119,11 @@ export const MfaVerification: React.FC<MfaVerificationProps> = ({mfaToken, onSuc
 
           {/* Code Input */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-surface-700 dark:text-surface-300">
+            <label htmlFor="mfa-code" className="block text-sm font-medium text-surface-700 dark:text-surface-300">
               {useBackupCode ? 'Backup Code' : 'Authenticator Code'}
             </label>
             <input
+              id="mfa-code"
               ref={inputRef}
               type="text"
               inputMode="numeric"

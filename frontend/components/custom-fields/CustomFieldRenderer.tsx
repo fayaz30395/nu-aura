@@ -25,6 +25,7 @@ export default function CustomFieldRenderer({
                                               className = '',
                                             }: CustomFieldRendererProps) {
   const currentValue = value?.value || definition.defaultValue || '';
+  const fieldId = `custom-field-${definition.id}`;
 
   const baseInputClass = `w-full px-4 py-2 border border-[var(--border-main)] dark:border-surface-600 bg-[var(--bg-surface)] text-[var(--text-primary)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500 disabled:bg-[var(--bg-surface)]  disabled:cursor-not-allowed ${className}`;
 
@@ -36,6 +37,7 @@ export default function CustomFieldRenderer({
       case 'URL':
         return (
           <input
+            id={fieldId}
             type={getInputType(definition.fieldType)}
             value={currentValue}
             onChange={(e) => onChange(e.target.value)}
@@ -49,6 +51,7 @@ export default function CustomFieldRenderer({
       case 'TEXTAREA':
         return (
           <textarea
+            id={fieldId}
             value={currentValue}
             onChange={(e) => onChange(e.target.value)}
             placeholder={definition.placeholder || ''}
@@ -64,6 +67,7 @@ export default function CustomFieldRenderer({
         return (
           <div className="relative">
             <input
+              id={fieldId}
               type="number"
               value={currentValue}
               onChange={(e) => onChange(e.target.value)}
@@ -99,6 +103,7 @@ export default function CustomFieldRenderer({
               <option value="GBP">GBP</option>
             </select>
             <input
+              id={fieldId}
               type="number"
               value={currentValue}
               onChange={(e) => onChange(e.target.value)}
@@ -114,6 +119,7 @@ export default function CustomFieldRenderer({
       case 'DATE':
         return (
           <input
+            id={fieldId}
             type="date"
             value={currentValue}
             onChange={(e) => onChange(e.target.value)}
@@ -126,6 +132,7 @@ export default function CustomFieldRenderer({
       case 'DATETIME':
         return (
           <input
+            id={fieldId}
             type="datetime-local"
             value={currentValue}
             onChange={(e) => onChange(e.target.value)}
@@ -206,6 +213,7 @@ export default function CustomFieldRenderer({
               </div>
             )}
             <input
+              id={fieldId}
               type="file"
               onChange={(e) => {
                 const file = e.target.files?.[0];
@@ -233,6 +241,7 @@ export default function CustomFieldRenderer({
       default:
         return (
           <input
+            id={fieldId}
             type="text"
             value={currentValue}
             onChange={(e) => onChange(e.target.value)}
@@ -246,7 +255,7 @@ export default function CustomFieldRenderer({
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+      <label htmlFor={fieldId} className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
         {definition.fieldName}
         {definition.isRequired && <span className="text-danger-500 ml-1">*</span>}
       </label>

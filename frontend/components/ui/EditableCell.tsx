@@ -298,6 +298,7 @@ function EditableCell<T = string | number>({
             <input
               ref={inputRef as React.Ref<HTMLInputElement>}
               type="date"
+              aria-label={placeholder || 'Date value'}
               value={
                 editValue instanceof Date
                   ? editValue.toISOString().split('T')[0]

@@ -678,6 +678,7 @@ export default function SignPage() {
               notified.
             </p>
             <textarea
+              aria-label="Reason for declining (optional)..."
               value={declineReason}
               onChange={(e) => setDeclineReason(e.target.value)}
               placeholder="Reason for declining (optional)..."

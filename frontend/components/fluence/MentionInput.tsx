@@ -230,6 +230,7 @@ export const MentionInput = forwardRef<MentionInputHandle, MentionInputProps>(
           value={value}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
+          aria-label={placeholder || 'Write a comment... Use @ to mention someone'}
           placeholder={placeholder || 'Write a comment... Use @ to mention someone'}
           disabled={disabled}
           rows={1}

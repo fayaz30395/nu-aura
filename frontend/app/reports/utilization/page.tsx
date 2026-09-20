@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useId, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
@@ -43,6 +43,8 @@ type DateRangeKey = 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth' | 'thisQ
 
 export default function UtilizationReportsPage() {
 
+  const customStartDateId = useId();
+  const customEndDateId = useId();
   const router = useRouter();
   const {hasPermission, isReady: permReady} = usePermissions();
 
@@ -300,14 +302,18 @@ export default function UtilizationReportsPage() {
 
             {selectedDateRange === 'custom' && (
               <>
+                <label htmlFor={customStartDateId} className="sr-only">Start date</label>
                 <input
+                  id={customStartDateId}
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
                   className="px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
                 />
                 <span className="text-[var(--text-muted)]">to</span>
+                <label htmlFor={customEndDateId} className="sr-only">End date</label>
                 <input
+                  id={customEndDateId}
                   type="date"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
@@ -538,6 +544,7 @@ export default function UtilizationReportsPage() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                     <input
                       type="text"
+                      aria-label="Search employees..."
                       placeholder="Search employees..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}

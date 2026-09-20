@@ -327,6 +327,7 @@ export default function ReportBuilderPage() {
                     </div>
                     <input
                       type="text"
+                      aria-label="Value"
                       placeholder="Value"
                       value={f.value}
                       onChange={e => updateFilter(i, 'value', e.target.value)}
@@ -369,6 +370,7 @@ export default function ReportBuilderPage() {
               <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4">Save Template</h2>
               <input
                 type="text"
+                aria-label="Template name"
                 placeholder="Template name"
                 value={templateName}
                 onChange={e => setTemplateName(e.target.value)}

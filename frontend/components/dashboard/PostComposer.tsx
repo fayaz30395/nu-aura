@@ -344,6 +344,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
                 </div>
                 <input
                   type="text"
+                  aria-label={`Option ${index + 1}`}
                   value={option}
                   onChange={(e) => updatePollOption(index, e.target.value)}
                   placeholder={`Option ${index + 1}`}
@@ -432,6 +433,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
                   <input
                     ref={recipientInputRef}
                     type="text"
+                    aria-label="Search by name..."
                     value={recipientSearch}
                     onChange={(e) => {
                       setRecipientSearch(e.target.value);

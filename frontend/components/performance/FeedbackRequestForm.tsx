@@ -174,6 +174,7 @@ export default function FeedbackRequestForm({
               </div>
               <input
                 type="text"
+                aria-label="Search employees by name or email..."
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search employees by name or email..."

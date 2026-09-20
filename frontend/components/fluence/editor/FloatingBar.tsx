@@ -187,6 +187,7 @@ export default function FloatingBar({editor}: FloatingBarProps) {
               <div className="flex items-center gap-1 px-1">
                 <input
                   type="url"
+                  aria-label="Paste link..."
                   value={linkUrl}
                   onChange={(e) => setLinkUrl(e.target.value)}
                   onKeyDown={(e) => {

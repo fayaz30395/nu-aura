@@ -367,6 +367,7 @@ export function TaskDetailsModal({
                 <div className="space-y-2">
                   <input
                     type="range"
+                    aria-label="Progress"
                     min="0"
                     max="100"
                     value={editProgress}

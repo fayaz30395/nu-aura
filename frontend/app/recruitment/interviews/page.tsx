@@ -706,6 +706,7 @@ function InterviewsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
                 <input
                   type="text"
+                  aria-label="Search interviews..."
                   placeholder="Search interviews..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -1100,10 +1101,11 @@ function InterviewsPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      <label htmlFor="meetingLink" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                         {createMeetToggle ? 'Meeting Link (auto-generated)' : 'Meeting Link'}
                       </label>
                       <input
+                        id="meetingLink"
                         type="url"
                         {...registerCreate('meetingLink')}
                         placeholder={createMeetToggle ? 'Will be auto-generated via Google Meet' : 'https://meet.google.com/...'}

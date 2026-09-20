@@ -293,6 +293,7 @@ export function CustomTargetPicker({targets, onChange, disabled = false}: Custom
               setShowDropdown(true);
             }}
             onFocus={() => setShowDropdown(true)}
+            aria-label={`Search ${getTargetTypeLabel(targetType).toLowerCase()}s...`}
             placeholder={`Search ${getTargetTypeLabel(targetType).toLowerCase()}s...`}
             disabled={disabled}
             className="w-full px-4 py-2 pl-9 text-sm border border-[var(--border-main)] dark:border-surface-600 rounded-md bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 dark:focus:ring-accent-400 disabled:opacity-50 disabled:cursor-not-allowed"

@@ -202,6 +202,7 @@ export function EmployeeSearchAutocomplete({
               onChange={(e) => setQuery(e.target.value)}
               onFocus={() => query && results.length > 0 && setIsOpen(true)}
               onKeyDown={handleKeyDown}
+              aria-label={placeholder}
               placeholder={placeholder}
               disabled={disabled}
               role="combobox"

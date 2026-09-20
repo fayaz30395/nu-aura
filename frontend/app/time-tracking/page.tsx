@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useId, useMemo, useState} from 'react';
 import {useQueryClient} from '@tanstack/react-query';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
@@ -34,6 +34,7 @@ import {formatDate} from '@/lib/utils/format/date';
 const log = createLogger('TimeTrackingListPage');
 
 export default function TimeTrackingPage() {
+  const selectAllId = useId();
   const router = useRouter();
   const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.TIME_TRACKING_VIEW, Permissions.TIME_TRACKING_MANAGE);
@@ -248,7 +249,9 @@ export default function TimeTrackingPage() {
                 <tr className="bg-[var(--bg-secondary)]/50">
                   <th
                     className="px-6 py-2 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
+                    <label htmlFor={selectAllId} className="sr-only">Select all draft entries</label>
                     <input
+                      id={selectAllId}
                       type="checkbox"
                       checked={
                         selectedEntries.length === draftEntries.length && draftEntries.length > 0
@@ -300,12 +303,16 @@ export default function TimeTrackingPage() {
                     >
                       <td className="px-6 py-4">
                         {isDraft && (
-                          <input
-                            type="checkbox"
-                            checked={selectedEntries.includes(entry.id)}
-                            onChange={() => handleSelectEntry(entry.id)}
-                            className="rounded border-[var(--border-main)]"
-                          />
+                          <>
+                            <label htmlFor={`select-entry-${entry.id}`} className="sr-only">Select entry</label>
+                            <input
+                              id={`select-entry-${entry.id}`}
+                              type="checkbox"
+                              checked={selectedEntries.includes(entry.id)}
+                              onChange={() => handleSelectEntry(entry.id)}
+                              className="rounded border-[var(--border-main)]"
+                            />
+                          </>
                         )}
                       </td>
                       <td className="px-6 py-4">

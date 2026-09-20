@@ -251,6 +251,7 @@ export function ScorecardForm({
                           {...field}
                           value={field.value ?? ''}
                           type="text"
+                          aria-label="Add notes..."
                           placeholder="Add notes..."
                           className="mt-1 w-full bg-transparent text-xs text-[var(--text-secondary)] placeholder:text-[var(--text-muted)] border-none p-0"
                         />

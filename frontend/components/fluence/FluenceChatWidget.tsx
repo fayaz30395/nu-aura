@@ -241,6 +241,7 @@ export const FluenceChatWidget: React.FC = () => {
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  aria-label="Ask a question..."
                   placeholder="Ask a question..."
                   disabled={isStreaming}
                   className={cn(

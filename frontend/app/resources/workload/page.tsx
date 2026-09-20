@@ -385,6 +385,7 @@ export default function WorkloadDashboardPage() {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]"/>
             <input
               type="text"
+              aria-label="Search employees..."
               placeholder="Search employees..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

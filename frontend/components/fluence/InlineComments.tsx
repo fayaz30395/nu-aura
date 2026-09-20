@@ -177,6 +177,7 @@ function CommentThread({
           <form onSubmit={form.handleSubmit(handleReply)} className="mt-2 flex gap-2">
             <input
               {...form.register('content')}
+              aria-label="Write a reply..."
               placeholder="Write a reply..."
               className="flex-1 px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
               autoFocus
@@ -381,6 +382,7 @@ export function InlineCommentsPanel({pageId, isOpen, onToggle}: InlineCommentsPa
                   <form onSubmit={form.handleSubmit(handleCreate)} className="space-y-2">
                     <textarea
                       {...form.register('content')}
+                      aria-label="Write your comment..."
                       placeholder="Write your comment..."
                       rows={3}
                       className="w-full px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg resize-none input-skeuo"

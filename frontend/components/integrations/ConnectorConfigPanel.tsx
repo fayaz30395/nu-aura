@@ -159,11 +159,12 @@ export function ConnectorConfigPanel({
       case 'textarea':
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+            <label htmlFor={field.name} className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
               {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <textarea
+              id={field.name}
               {...register(field.name as keyof FormData)}
               placeholder={field.placeholder}
               rows={4}
@@ -183,11 +184,12 @@ export function ConnectorConfigPanel({
       case 'password':
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+            <label htmlFor={field.name} className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
               {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <input
+              id={field.name}
               type="password"
               {...register(field.name as keyof FormData)}
               placeholder={field.placeholder}
@@ -207,11 +209,12 @@ export function ConnectorConfigPanel({
       case 'url':
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+            <label htmlFor={field.name} className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
               {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <input
+              id={field.name}
               type="url"
               {...register(field.name as keyof FormData)}
               placeholder={field.placeholder}
@@ -232,11 +235,12 @@ export function ConnectorConfigPanel({
       default:
         return (
           <div key={field.name}>
-            <label className="block text-sm font-medium text-[var(--text-1)] mb-2">
+            <label htmlFor={field.name} className="block text-sm font-medium text-[var(--text-1)] mb-2">
               {field.label}
               {field.required && <span className="text-[var(--err-fg)]">*</span>}
             </label>
             <input
+              id={field.name}
               type="text"
               {...register(field.name as keyof FormData)}
               placeholder={field.placeholder}

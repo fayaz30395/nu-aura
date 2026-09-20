@@ -176,6 +176,7 @@ export default function TravelPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="text"
+                aria-label="Search by destination, purpose..."
                 placeholder="Search by destination, purpose..."
                 value={searchTerm}
                 onChange={(e) => {

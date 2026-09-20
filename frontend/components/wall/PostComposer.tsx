@@ -212,6 +212,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
               <form onSubmit={postForm.handleSubmit(handlePostSubmit)} className="space-y-4 pt-4">
                 <div>
                   <textarea
+                    aria-label="Write something..."
                     placeholder="Write something..."
                     {...postForm.register('content')}
                     rows={4}
@@ -328,6 +329,7 @@ export function PostComposer({onSubmit, isSubmitting}: PostComposerProps): React
                         <span className="text-xs font-medium text-[var(--text-muted)] w-6">{index + 1}.</span>
                         <input
                           {...pollForm.register(`pollOptions.${index}.value`)}
+                          aria-label={`Option ${index + 1}`}
                           placeholder={`Option ${index + 1}`}
                           className={cn(
                             'input-aura flex-1',

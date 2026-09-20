@@ -828,6 +828,7 @@ export default function ApplicantPipelinePage() {
                   <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"/>
                   <input
                     type="text"
+                    aria-label="Search by candidate name..."
                     placeholder="Search by candidate name..."
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}

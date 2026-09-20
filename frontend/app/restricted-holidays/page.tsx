@@ -596,6 +596,7 @@ function ApprovalsTab({selections, isLoading, onApprove, onReject, isActing}: Ap
               <div className="flex items-center gap-2">
                 <input
                   type="text"
+                  aria-label="Reason for rejection..."
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
                   placeholder="Reason for rejection..."

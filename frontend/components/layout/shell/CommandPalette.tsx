@@ -168,6 +168,7 @@ export function CommandPalette({open, onClose, sections, extraItems = []}: Comma
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search people, actions, pages…"
             placeholder="Search people, actions, pages…"
             role="combobox"
             aria-expanded={flatOrder.length > 0}

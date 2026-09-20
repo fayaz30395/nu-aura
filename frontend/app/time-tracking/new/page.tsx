@@ -269,6 +269,7 @@ export default function NewTimeEntryPage() {
                 <input
                   type="number"
                   step="0.5"
+                  aria-label="Billable hours"
                   {...register('billableHours', {valueAsNumber: true})}
                   placeholder="Billable hours"
                   className="flex-1 px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-500"

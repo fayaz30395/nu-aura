@@ -242,6 +242,9 @@ export function CommentThread({
             value={newCommentContent}
             onChange={(e) => setNewCommentContent(e.target.value)}
             onKeyDown={handleKeyDown}
+            aria-label={
+              replyingTo ? `Reply to ${replyingTo.authorName}...` : 'Add a comment...'
+            }
             placeholder={
               replyingTo ? `Reply to ${replyingTo.authorName}...` : 'Add a comment...'
             }

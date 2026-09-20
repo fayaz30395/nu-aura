@@ -294,6 +294,7 @@ export default function WorkflowListPage() {
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-[var(--text-3)]"/>
               <input
                 type="text"
+                aria-label="Search workflows..."
                 placeholder="Search workflows..."
                 value={search}
                 onChange={(e) => {
