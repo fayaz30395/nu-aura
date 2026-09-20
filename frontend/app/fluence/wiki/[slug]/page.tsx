@@ -46,6 +46,7 @@ import {
   useLikeWikiPage,
   useRecordView,
   useRemoveFavorite,
+  usePageTree,
   useRestoreWikiPageRevision,
   useUnlikeWikiPage,
   useWikiPage,
@@ -58,6 +59,7 @@ import {PageTransition} from '@/components/motion';
 import {card, iconSize, layout, typography} from '@/lib/theme/design-system';
 import {TableOfContents} from '@/components/fluence/TableOfContents';
 import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
+import {WikiPageTree} from '@/components/fluence/WikiPageTree';
 import {WatchButton} from '@/components/fluence/WatchButton';
 import {InlineCommentsPanel} from '@/components/fluence/InlineComments';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -444,6 +446,7 @@ export default function WikiPageDetailPage() {
   const {data: commentsData} = useComments(pageId, 'WIKI', 0, 50, !!pageId && !!page);
   const {data: viewers} = useContentViewers(pageId, 'WIKI', showViewers && !!pageId);
   const {data: revisions} = useWikiPageRevisions(pageId, showHistory && !!pageId);
+  const {data: pageTree} = usePageTree(page?.spaceId || '', !!page?.spaceId);
 
   const likeMutation = useLikeWikiPage();
   const unlikeMutation = useUnlikeWikiPage();
@@ -925,6 +928,24 @@ export default function WikiPageDetailPage() {
             className="lg:col-span-1"
             aria-label="Page details"
           >
+            {/* Space Navigation */}
+            {pageTree && pageTree.length > 0 && (
+              <motion.div
+                variants={{
+                  hidden: {opacity: 0, y: 8},
+                  visible: {opacity: 1, y: 0, transition: {duration: 0.25}},
+                }}
+                initial="hidden"
+                animate="visible"
+                className={`${card.base} mb-6`}
+              >
+                <div className={card.paddingLarge}>
+                  <h2 className={`${typography.cardTitle} mb-4`}>Space Pages</h2>
+                  <WikiPageTree nodes={pageTree} spaceSlug={page.spaceId}/>
+                </div>
+              </motion.div>
+            )}
+
             {/* Stats Card */}
             <motion.div
               variants={{
