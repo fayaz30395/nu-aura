@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState} from 'react';
+import React, {useId, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -192,14 +192,15 @@ function DeliveryPanel({webhookId, onClose}: {webhookId: string; onClose: () => 
   const {data} = useGetDeliveries(webhookId, {pageable: {page: 0, size: 20}});
   const retryMutation = useRetryDelivery();
   const toast = useToast();
+  const titleId = useId();
   const deliveries: WebhookDeliveryResponse[] = (data as unknown as {content?: WebhookDeliveryResponse[]})?.content ?? [];
 
   return (
-    <div className="fixed inset-y-0 right-0 w-[480px] bg-[var(--bg-primary)] border-l border-[var(--border-main)] shadow-xl z-50 flex flex-col">
+    <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="fixed inset-y-0 right-0 w-[480px] bg-[var(--bg-primary)] border-l border-[var(--border-main)] shadow-xl z-50 flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2">
           <Activity className="w-4 h-4 text-[var(--text-muted)]"/>
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">Delivery History</h3>
+          <h3 id={titleId} className="text-sm font-semibold text-[var(--text-primary)]">Delivery History</h3>
         </div>
         <button type="button" aria-label="Close" onClick={onClose}
           className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors">
@@ -228,6 +229,7 @@ function DeliveryPanel({webhookId, onClose}: {webhookId: string; onClose: () => 
 function CreateWebhookPanel({onClose, onCreated}: {onClose: () => void; onCreated: () => void}) {
   const toast = useToast();
   const createMutation = useCreateWebhook();
+  const titleId = useId();
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({Employee: true});
 
   const {control, register, handleSubmit, formState: {errors, isSubmitting}} = useForm<WebhookFormData>({
@@ -259,11 +261,11 @@ function CreateWebhookPanel({onClose, onCreated}: {onClose: () => void; onCreate
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-[520px] bg-[var(--bg-primary)] border-l border-[var(--border-main)] shadow-xl z-50 flex flex-col">
+    <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="fixed inset-y-0 right-0 w-[520px] bg-[var(--bg-primary)] border-l border-[var(--border-main)] shadow-xl z-50 flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2">
           <Plus className="w-4 h-4 text-[var(--text-muted)]"/>
-          <h3 className="text-sm font-semibold text-[var(--text-primary)]">New Webhook</h3>
+          <h3 id={titleId} className="text-sm font-semibold text-[var(--text-primary)]">New Webhook</h3>
         </div>
         <button type="button" aria-label="Close" onClick={onClose}
           className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors">

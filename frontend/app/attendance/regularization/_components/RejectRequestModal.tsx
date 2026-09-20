@@ -1,5 +1,6 @@
 'use client';
 
+import {useId} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {ThumbsDown} from 'lucide-react';
 import {FieldErrors, UseFormHandleSubmit, UseFormRegister} from 'react-hook-form';
@@ -32,6 +33,7 @@ export function RejectRequestModal({
                                      onSubmit,
                                      handleSubmit,
                                    }: RejectRequestModalProps) {
+  const titleId = useId();
   return (
     <AnimatePresence>
       {open && (
@@ -51,11 +53,14 @@ export function RejectRequestModal({
             className="fixed inset-0 flex items-center justify-center p-4 z-50 pointer-events-none"
           >
             <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
               className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-[var(--shadow-elevated)] pointer-events-auto flex flex-col border-0">
               {/* Modal Header */}
               <div className="border-b border-[var(--border-main)] p-6">
                 <div className="row-between">
-                  <h2 className="text-card-title">Reject Regularization Request</h2>
+                  <h2 id={titleId} className="text-card-title">Reject Regularization Request</h2>
                   <motion.button
                     onClick={onClose}
                     aria-label="Close modal"

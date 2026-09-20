@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useId, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -64,6 +64,10 @@ export default function ReviewCyclesPage() {
   const loading = cyclesLoading;
   const departments = departmentsData;
   const locations = locationsData;
+  const formModalTitleId = useId();
+  const deleteModalTitleId = useId();
+  const activateModalTitleId = useId();
+  const resultModalTitleId = useId();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showActivateModal, setShowActivateModal] = useState(false);
@@ -415,9 +419,10 @@ export default function ReviewCyclesPage() {
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div
+              role="dialog" aria-modal="true" aria-labelledby={formModalTitleId}
               className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-xl font-bold mb-6">
+                <h2 id={formModalTitleId} className="text-xl font-bold mb-6">
                   {selectedCycle ? 'Edit Review Cycle' : 'Create Review Cycle'}
                 </h2>
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
@@ -628,8 +633,8 @@ export default function ReviewCyclesPage() {
 
         {showDeleteConfirm && selectedCycle && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
-              <h2 className="text-xl font-bold mb-4">Delete Review Cycle?</h2>
+            <div role="dialog" aria-modal="true" aria-labelledby={deleteModalTitleId} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
+              <h2 id={deleteModalTitleId} className="text-xl font-bold mb-4">Delete Review Cycle?</h2>
               <p className="text-[var(--text-secondary)] mb-6">
 	                This action cannot be undone. &quot;{selectedCycle.name ?? selectedCycle.cycleName}&quot; will be permanently deleted.
               </p>
@@ -661,6 +666,7 @@ export default function ReviewCyclesPage() {
         {showActivateModal && selectedCycle && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div
+              role="dialog" aria-modal="true" aria-labelledby={activateModalTitleId}
               className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center gap-4 mb-6">
@@ -668,7 +674,7 @@ export default function ReviewCyclesPage() {
                     <Play className="h-6 w-6 text-success-600 dark:text-success-400"/>
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold">Activate Review Cycle</h2>
+                    <h2 id={activateModalTitleId} className="text-xl font-bold">Activate Review Cycle</h2>
                     <p className="text-xs text-[var(--text-secondary)]">{selectedCycle.name}</p>
                   </div>
                 </div>
@@ -899,12 +905,12 @@ export default function ReviewCyclesPage() {
         {/* Activation Result Modal */}
         {showActivationResult && activationResult && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
+            <div role="dialog" aria-modal="true" aria-labelledby={resultModalTitleId} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
               <div className="flex flex-col items-center text-center">
                 <div className="p-4 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
                   <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400"/>
                 </div>
-                <h2 className="text-xl font-bold mb-2">Cycle Activated!</h2>
+                <h2 id={resultModalTitleId} className="text-xl font-bold mb-2">Cycle Activated!</h2>
                 <p className="text-[var(--text-secondary)] mb-6">
                   Review cycle has been successfully activated
                 </p>

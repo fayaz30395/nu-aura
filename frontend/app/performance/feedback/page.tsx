@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useId, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -45,6 +45,8 @@ export default function FeedbackPage() {
   const deleteMutation = useDeleteFeedback();
 
   // Local state
+  const formModalTitleId = useId();
+  const deleteModalTitleId = useId();
   const [showModal, setShowModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
@@ -311,9 +313,10 @@ export default function FeedbackPage() {
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div
+              role="dialog" aria-modal="true" aria-labelledby={formModalTitleId}
               className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <h2 className="text-xl font-bold mb-6">
+                <h2 id={formModalTitleId} className="text-xl font-bold mb-6">
                   {selectedFeedback ? 'Edit Feedback' : 'Give Feedback'}
                 </h2>
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
@@ -441,8 +444,8 @@ export default function FeedbackPage() {
 
         {showDeleteConfirm && selectedFeedback && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
-              <h2 className="text-xl font-bold mb-4">Delete Feedback</h2>
+            <div role="dialog" aria-modal="true" aria-labelledby={deleteModalTitleId} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
+              <h2 id={deleteModalTitleId} className="text-xl font-bold mb-4">Delete Feedback</h2>
               <p className="text-[var(--text-secondary)] mb-6">
                 Are you sure you want to delete this feedback? This action cannot be undone.
               </p>

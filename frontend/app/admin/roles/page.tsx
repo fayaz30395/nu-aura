@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useId, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -73,6 +73,9 @@ export default function RolesPage() {
   const rolesQuery = useRoles();
   const permissionsQuery = useQueryPermissions();
 
+  const createModalTitleId = useId();
+  const editModalTitleId = useId();
+  const permissionsModalTitleId = useId();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
@@ -459,8 +462,8 @@ export default function RolesPage() {
         {/* Create Role Modal */}
         {showCreateModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Create New Role</h2>
+            <div role="dialog" aria-modal="true" aria-labelledby={createModalTitleId} className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <h2 id={createModalTitleId} className="text-xl font-bold mb-4 text-[var(--text-primary)]">Create New Role</h2>
               <form onSubmit={createForm.handleSubmit(handleCreateRole)}>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   {/* Code Input */}
@@ -639,8 +642,8 @@ export default function RolesPage() {
         {/* Edit Role Modal */}
         {showEditModal && selectedRole && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Edit Role</h2>
+            <div role="dialog" aria-modal="true" aria-labelledby={editModalTitleId} className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+              <h2 id={editModalTitleId} className="text-xl font-bold mb-4 text-[var(--text-primary)]">Edit Role</h2>
               <form onSubmit={editForm.handleSubmit(handleUpdateRole)}>
                 <div className="mb-4">
                   <label htmlFor="edit-role-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
@@ -760,8 +763,8 @@ export default function RolesPage() {
         {/* Permissions Modal with Scope Selection */}
         {showPermissionsModal && selectedRole && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-5xl max-h-[85vh] overflow-y-auto">
-              <h2 className="text-xl font-bold mb-2 text-[var(--text-primary)]">
+            <div role="dialog" aria-modal="true" aria-labelledby={permissionsModalTitleId} className="bg-[var(--bg-card)] rounded-lg p-6 w-full max-w-5xl max-h-[85vh] overflow-y-auto">
+              <h2 id={permissionsModalTitleId} className="text-xl font-bold mb-2 text-[var(--text-primary)]">
                 Manage Permissions - {selectedRole.name}
               </h2>
               <p className="text-body-muted mb-4">

@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useId, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
@@ -26,6 +26,8 @@ export default function AdminLeaveRequestsPage() {
   const router = useRouter();
   const {user, isAuthenticated, hasHydrated} = useAuth();
   const {hasAnyRole, isReady} = usePermissions();
+  const approveModalTitleId = useId();
+  const rejectModalTitleId = useId();
 
   const [selectedStatus, setSelectedStatus] = useState<LeaveRequestStatus | 'ALL'>('PENDING');
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
@@ -269,8 +271,8 @@ export default function AdminLeaveRequestsPage() {
       {/* Approve Modal */}
       {showApproveModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Approve Leave Request</h3>
+          <div role="dialog" aria-modal="true" aria-labelledby={approveModalTitleId} className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
+            <h3 id={approveModalTitleId} className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Approve Leave Request</h3>
             <p className="text-body-secondary mb-4">
               Are you sure you want to approve this leave request for {selectedRequest.totalDays} days?
             </p>
@@ -314,8 +316,8 @@ export default function AdminLeaveRequestsPage() {
       {/* Reject Modal */}
       {showRejectModal && selectedRequest && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Reject Leave Request</h3>
+          <div role="dialog" aria-modal="true" aria-labelledby={rejectModalTitleId} className="bg-[var(--bg-card)] rounded-lg p-6 max-w-md w-full">
+            <h3 id={rejectModalTitleId} className="text-xl font-semibold mb-4 text-[var(--text-primary)]">Reject Leave Request</h3>
             <p className="text-body-secondary mb-4">
               Please provide a reason for rejecting this leave request.
             </p>

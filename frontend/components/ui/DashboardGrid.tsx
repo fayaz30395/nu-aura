@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useId, useState} from 'react';
 import {DragDropContext, Draggable, Droppable, type DropResult,} from '@hello-pangea/dnd';
 import {IconEye, IconEyeOff, IconGripVertical, IconSettings, IconX,} from '@tabler/icons-react';
 import {Button} from './Button';
@@ -52,6 +52,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
   const [widgetOrder, setWidgetOrder] = useState<string[]>([]);
   const [widgetVisibility, setWidgetVisibility] = useState<WidgetVisibility>({});
   const [showSettingsPanel, setShowSettingsPanel] = useState(false);
+  const settingsPanelTitleId = useId();
   const [isHydrated, setIsHydrated] = useState(false);
 
   const storageKeyOrder = `dashboard-${dashboardId}-order`;
@@ -291,10 +292,11 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({
 
       {showSettingsPanel && (
         <Card
+          role="dialog" aria-modal="true" aria-labelledby={settingsPanelTitleId}
           className="fixed right-4 top-4 z-50 w-80 max-h-[calc(100vh-2rem)] overflow-y-auto shadow-[var(--shadow-elevated)]">
           <CardHeader
             className="flex flex-row items-center justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
-            <CardTitle className="text-sm font-semibold">
+            <CardTitle id={settingsPanelTitleId} className="text-sm font-semibold">
               Widget Settings
             </CardTitle>
             <button

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, {useId} from 'react';
 import NextImage from 'next/image';
 import {Check, Copy, Download, Edit3, ExternalLink, FolderPlus, Loader2, Share2, X,} from 'lucide-react';
 import {Button} from '@/components/ui/Button';
@@ -261,16 +261,17 @@ export const FilePreviewModal = React.memo(function FilePreviewModal({
                                                                        onShare,
                                                                        onImgError,
                                                                      }: FilePreviewModalProps) {
+  const titleId = useId();
   if (!opened || !file) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex flex-col z-50">
+    <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="fixed inset-0 bg-black/80 flex flex-col z-50">
       {/* Preview Header */}
       <div className="row-between px-4 py-4 bg-[var(--bg-secondary)]/90 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-4">
           {getFileIcon(file.mimeType)}
           <div>
-            <h3 className="font-medium text-white truncate max-w-md">{file.name}</h3>
+            <h3 id={titleId} className="font-medium text-white truncate max-w-md">{file.name}</h3>
             {file.modifiedTime && (
               <p className="text-caption">
                 Modified {formatDate(file.modifiedTime)}

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, {useId} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {Check, Info, Send} from 'lucide-react';
 import {Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormRegister} from 'react-hook-form';
@@ -91,6 +91,7 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
                                                                            onQuickReason,
                                                                            handleSubmit,
                                                                          }: CreateRequestModalProps) {
+  const titleId = useId();
   return (
     <AnimatePresence>
       {open && (
@@ -110,11 +111,14 @@ export const CreateRequestModal = React.memo(function CreateRequestModal({
             className="fixed inset-0 flex items-center justify-center p-4 z-50 pointer-events-none"
           >
             <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
               className="card-aura rounded-lg max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-[var(--shadow-elevated)] pointer-events-auto flex flex-col border-0">
               {/* Modal Header */}
               <div className="border-b border-[var(--border-main)] p-6">
                 <div className="row-between mb-6">
-                  <h2 className="text-card-title">Request Attendance Regularization</h2>
+                  <h2 id={titleId} className="text-card-title">Request Attendance Regularization</h2>
                   <motion.button
                     onClick={onClose}
                     aria-label="Close modal"

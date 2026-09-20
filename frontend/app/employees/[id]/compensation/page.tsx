@@ -1,6 +1,6 @@
 'use client';
 
-import {FormEvent, useEffect, useState} from 'react';
+import {FormEvent, useEffect, useId, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {ArrowRight, Award, Briefcase, Calendar, DollarSign, Plus, TrendingDown, TrendingUp,} from 'lucide-react';
@@ -263,6 +263,7 @@ export default function EmployeeCompensationPage() {
   const params = useParams();
   const router = useRouter();
   const employeeId = params.id as string;
+  const revisionModalTitleId = useId();
   const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
 
   // RBAC-NEW-01: require COMPENSATION_VIEW (or MANAGE/VIEW_ALL) — redirect to
@@ -449,10 +450,11 @@ export default function EmployeeCompensationPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <form
             onSubmit={handleCreateRevision}
+            role="dialog" aria-modal="true" aria-labelledby={revisionModalTitleId}
             className="w-full max-w-lg rounded-lg bg-[var(--bg-card)] p-6 shadow-xl dark:bg-[var(--bg-secondary)]"
           >
             <div className="mb-5">
-              <h2 className="text-xl font-semibold text-[var(--text-primary)]">New Salary Revision</h2>
+              <h2 id={revisionModalTitleId} className="text-xl font-semibold text-[var(--text-primary)]">New Salary Revision</h2>
               {employee && (
                 <p className="text-body-muted mt-1">
                   {employee.firstName} {employee.lastName} &middot; {employee.employeeCode}
