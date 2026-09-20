@@ -38,4 +38,12 @@ public class CreateProjectRequest {
     private BigDecimal budget;
 
     private String currency;
+
+    private Project.BillingType billingType;
+
+    private Boolean isBillable;
+
+    private BigDecimal defaultBillingRate;
+
+    private UUID clientId;
 }

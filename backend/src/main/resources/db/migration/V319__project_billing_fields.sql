@@ -1,0 +1,5 @@
+ALTER TABLE projects
+    ADD COLUMN billing_type VARCHAR(20) NOT NULL DEFAULT 'NON_BILLABLE',
+    ADD COLUMN is_billable BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD COLUMN default_billing_rate NUMERIC(10, 2),
+    ADD COLUMN client_id UUID;

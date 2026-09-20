@@ -57,6 +57,10 @@ public class ProjectService {
                 .clientName(request.getClientName())
                 .budget(request.getBudget())
                 .currency(request.getCurrency() != null ? request.getCurrency() : "USD")
+                .billingType(request.getBillingType() != null ? request.getBillingType() : Project.BillingType.NON_BILLABLE)
+                .isBillable(request.getIsBillable() != null ? request.getIsBillable() : Boolean.FALSE)
+                .defaultBillingRate(request.getDefaultBillingRate())
+                .clientId(request.getClientId())
                 .build();
 
         project.setTenantId(tenantId);
@@ -95,6 +99,14 @@ public class ProjectService {
             project.setBudget(request.getBudget());
         if (request.getCurrency() != null)
             project.setCurrency(request.getCurrency());
+        if (request.getBillingType() != null)
+            project.setBillingType(request.getBillingType());
+        if (request.getIsBillable() != null)
+            project.setIsBillable(request.getIsBillable());
+        if (request.getDefaultBillingRate() != null)
+            project.setDefaultBillingRate(request.getDefaultBillingRate());
+        if (request.getClientId() != null)
+            project.setClientId(request.getClientId());
 
         project = projectRepository.save(project);
         return ProjectResponse.fromProject(project);

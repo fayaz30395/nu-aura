@@ -32,6 +32,10 @@ public class ProjectResponse {
     private String clientName;
     private BigDecimal budget;
     private String currency;
+    private Project.BillingType billingType;
+    private Boolean isBillable;
+    private BigDecimal defaultBillingRate;
+    private UUID clientId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<ProjectEmployeeResponse> teamMembers;
@@ -51,6 +55,10 @@ public class ProjectResponse {
                 .clientName(project.getClientName())
                 .budget(project.getBudget())
                 .currency(project.getCurrency())
+                .billingType(project.getBillingType())
+                .isBillable(project.getIsBillable())
+                .defaultBillingRate(project.getDefaultBillingRate())
+                .clientId(project.getClientId())
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
                 .build();
