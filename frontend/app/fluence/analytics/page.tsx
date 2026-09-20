@@ -13,7 +13,8 @@ import {Card, CardContent, CardHeader} from '@/components/ui/Card';
 import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
-import {formatDateShort, formatDateTime} from '@/lib/utils/format/date';
+import {formatDateShort} from '@/lib/utils/format/date';
+import ActivityFeed from '@/components/fluence/ActivityFeed';
 
 // S10-K: recharts (~180 KB gz) is lazy-loaded — chart subtree extracted into
 // FluenceAnalyticsCharts.tsx so it ships only when the Analytics route renders.
@@ -138,28 +139,6 @@ function FluenceAnalyticsPageContent() {
       .sort((a, b) => b.views - a.views)
       .slice(0, 10);
   }, [wikiData, blogData]);
-
-  // Recent activity
-  const recentActivities = useMemo(() => {
-    return (activityData?.content || []).slice(0, 10);
-  }, [activityData]);
-
-  const getActionColor = (action: string) => {
-    switch (action) {
-      case 'CREATED':
-        return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-300';
-      case 'UPDATED':
-        return 'bg-info-100 text-info-700 dark:bg-info-900/30 dark:text-info-300';
-      case 'PUBLISHED':
-        return 'bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300';
-      case 'COMMENTED':
-        return 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300';
-      case 'LIKED':
-        return 'bg-danger-100 text-danger-700 dark:bg-danger-900/30 dark:text-danger-300';
-      default:
-        return 'bg-surface-100 text-surface-700 dark:bg-surface-900/30 dark:text-surface-300';
-    }
-  };
 
   return (
     <AppLayout>
@@ -390,50 +369,7 @@ function FluenceAnalyticsPageContent() {
               </div>
             </CardHeader>
             <CardContent className="pt-4">
-              {activityLoading ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="h-12 bg-[var(--bg-secondary)] rounded-lg animate-pulse"
-                    />
-                  ))}
-                </div>
-              ) : recentActivities.length === 0 ? (
-                <p className={typography.bodySecondary}>No recent activities</p>
-              ) : (
-                <div className="space-y-4">
-                  {recentActivities.map((activity) => (
-                    <motion.div
-                      key={activity.id}
-                      className="flex items-center gap-4 p-4 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
-                      whileHover={{x: 4}}
-                    >
-                      <span
-                        className={`px-2.5 py-1 rounded text-xs font-medium whitespace-nowrap ${getActionColor(
-                          activity.action
-                        )}`}
-                      >
-                        {activity.action}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className={`${typography.bodySecondary} truncate`}>
-                          <span className="font-medium text-[var(--text-primary)]">
-                            {activity.actorName}
-                          </span>{' '}
-                          {activity.action.toLowerCase()} {activity.contentType.toLowerCase()}
-                        </p>
-                        <p className={`${typography.caption} truncate`}>
-                          {activity.contentTitle}
-                        </p>
-                      </div>
-                      <p className={typography.caption}>
-                        {formatDateTime(activity.createdAt)}
-                      </p>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
+              <ActivityFeed/>
             </CardContent>
           </Card>
         </motion.div>
