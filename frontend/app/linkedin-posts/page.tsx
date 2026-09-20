@@ -22,9 +22,7 @@ import {
   User,
   Zap,
 } from 'lucide-react';
-import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
-import {isAdmin} from '@/lib/utils';
 import {
   useAllLinkedInPosts,
   useCreateLinkedInPost,
@@ -51,9 +49,8 @@ function toLocalDateString(date: Date): string {
 }
 
 export default function LinkedInPostsPage() {
-  const {user} = useAuth();
-  const {hasPermission} = usePermissions();
-  const canManagePosts = hasPermission(Permissions.ANNOUNCEMENT_MANAGE) || isAdmin(user?.roles);
+  const {hasPermission, isAdmin} = usePermissions();
+  const canManagePosts = hasPermission(Permissions.ANNOUNCEMENT_MANAGE) || isAdmin;
   const toast = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);

@@ -47,28 +47,3 @@ export function formatDateTime(date: string | Date): string {
     minute: '2-digit',
   }).format(new Date(date))
 }
-
-// Role-based permission helpers
-export interface RoleWithPermissions {
-  code?: string;
-  name?: string;
-  permissions?: { code?: string; name?: string }[];
-}
-
-export function isAdmin(roles?: RoleWithPermissions[]): boolean {
-  if (!roles) return false;
-  return roles.some(r =>
-    r.code === 'SUPER_ADMIN' ||
-    r.code === 'ADMIN' ||
-    r.name === 'Super Admin' ||
-    r.name === 'Admin' ||
-    r.permissions?.some(p => p.code === 'SYSTEM:ADMIN')
-  );
-}
-
-export function hasPermission(roles?: RoleWithPermissions[], permissionCode?: string): boolean {
-  if (!roles || !permissionCode) return false;
-  return roles.some(r =>
-    r.permissions?.some(p => p.code === permissionCode)
-  );
-}

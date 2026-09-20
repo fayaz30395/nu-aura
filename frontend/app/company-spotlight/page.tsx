@@ -7,8 +7,7 @@ import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
 import {Calendar, Edit2, ExternalLink, Lightbulb, Loader2, Plus, Trash2,} from 'lucide-react';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
-import {useAuth} from '@/lib/hooks/useAuth';
-import {isAdmin} from '@/lib/utils';
+import {usePermissions} from '@/lib/hooks/usePermissions';
 import {CreateSpotlightRequest, Spotlight, UpdateSpotlightRequest} from '@/lib/types/platform/spotlight';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
@@ -70,7 +69,7 @@ const GRADIENT_PRESETS: Record<string, { name: string; value: string }> = {
 };
 
 export default function CompanySpotlightPage() {
-  const {user} = useAuth();
+  const {isAdmin} = usePermissions();
   const toast = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingSpotlight, setEditingSpotlight] = useState<Spotlight | null>(null);
@@ -122,7 +121,7 @@ export default function CompanySpotlightPage() {
   }
 
   // Only admins can access this page
-  if (!isAdmin(user?.roles)) {
+  if (!isAdmin) {
     return (
       <AppLayout>
         <div className="p-6">

@@ -22,8 +22,7 @@ import {CalendarEvent, GanttTask, PRIORITY_COLORS, STATUS_COLORS} from '@/lib/ty
 import {CATEGORICAL_DEFAULT, STATUS_FALLBACK_COLORS} from '@/lib/utils/categoricalPalette';
 import {CalendarGridView} from '@/components/projects/CalendarGridView';
 import {TaskDetailsModal} from '@/components/projects/TaskDetailsModal';
-import {useAuth} from '@/lib/hooks/useAuth';
-import {hasPermission} from '@/lib/utils';
+import {usePermissions} from '@/lib/hooks/usePermissions';
 import {toPriority} from '@/lib/utils/type-guards';
 import {useProjects} from '@/lib/hooks/queries/useProjects';
 import {useQuery} from '@tanstack/react-query';
@@ -93,13 +92,12 @@ const getPriorityFlagClass = (priority: string) => PRIORITY_FLAG_CLASS[priority]
 
 export default function ProjectCalendarPage() {
   const router = useRouter();
-  const {user} = useAuth();
+  const {hasPermission} = usePermissions();
 
   // Permission Check
   const canEditTasks = useMemo(() => {
-    if (!user?.roles) return false;
-    return hasPermission(user.roles, 'tasks:write') || hasPermission(user.roles, 'projects:write');
-  }, [user]);
+    return hasPermission('tasks:write') || hasPermission('projects:write');
+  }, [hasPermission]);
 
   // View State
   const [viewMode, setViewMode] = useState<ViewMode>('timeline');

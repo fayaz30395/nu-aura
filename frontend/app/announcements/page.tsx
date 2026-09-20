@@ -7,7 +7,7 @@ import {z} from 'zod';
 import {AnimatePresence} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
   AlertTriangle,
   Bell,
@@ -31,7 +31,6 @@ import {
   Wrench,
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {isAdmin} from '@/lib/utils';
 import {
   Announcement,
   AnnouncementCategory,
@@ -146,6 +145,7 @@ const priorityLabels: Record<AnnouncementPriority, string> = {
 
 export default function AnnouncementsPage() {
   const {user} = useAuth();
+  const {isAdmin} = usePermissions();
   useEffect(() => {
     document.title = 'Announcements | NU-AURA';
   }, []);
@@ -177,7 +177,7 @@ export default function AnnouncementsPage() {
   const canEditAnnouncement = (announcement: Announcement) => {
     if (!user) return false;
     // Admin can edit any announcement
-    if (isAdmin(user.roles)) return true;
+    if (isAdmin) return true;
     // Creator can edit their own announcement
     return announcement.publishedBy === user.id;
   };

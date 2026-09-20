@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 /**
  * Debounce a value - returns the debounced value after the specified delay
@@ -55,97 +55,6 @@ export function useDebouncedCallback<T extends (...args: unknown[]) => void>(
   }, []);
 
   return debouncedCallback;
-}
-
-/**
- * Hook that provides an AbortController for fetch requests
- * Automatically aborts on component unmount or when a new request is made
- */
-export function useAbortController(): {
-  getSignal: () => AbortSignal;
-  abort: () => void;
-} {
-  const abortControllerRef = useRef<AbortController | null>(null);
-
-  const abort = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
-    }
-  }, []);
-
-  const getSignal = useCallback(() => {
-    // Abort any previous request
-    abort();
-    // Create new controller
-    abortControllerRef.current = new AbortController();
-    return abortControllerRef.current.signal;
-  }, [abort]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      abort();
-    };
-  }, [abort]);
-
-  return useMemo(() => ({getSignal, abort}), [getSignal, abort]);
-}
-
-/**
- * Throttle a callback - limits execution to once per interval
- * Unlike debounce, throttle executes during the wait period
- * Useful for scroll, resize, and other high-frequency events
- *
- * @param callback - The function to throttle
- * @param limit - Minimum time between calls in milliseconds
- */
-export function useThrottledCallback<T extends (...args: unknown[]) => void>(
-  callback: T,
-  limit: number = 100
-): T {
-  const lastRunRef = useRef(0);
-  const callbackRef = useRef(callback);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  // The inner arrow function uses refs (callbackRef, timeoutRef, lastRunRef) which
-  // the exhaustive-deps rule cannot analyse. All external state is captured via refs,
-  // so [limit] is the only meaningful dependency here.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useCallback(
-    ((...args: Parameters<T>) => {
-      const now = Date.now();
-      const remaining = limit - (now - lastRunRef.current);
-
-      if (remaining <= 0) {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-          timeoutRef.current = null;
-        }
-        lastRunRef.current = now;
-        callbackRef.current(...args);
-      } else if (!timeoutRef.current) {
-        timeoutRef.current = setTimeout(() => {
-          lastRunRef.current = Date.now();
-          timeoutRef.current = null;
-          callbackRef.current(...args);
-        }, remaining);
-      }
-    }) as T,
-    [limit]
-  );
 }
 
 export default useDebounce;

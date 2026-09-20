@@ -23,7 +23,6 @@ Slices live here when state crosses routes and doesn't belong in React Query
 |------------------------|------------------------------------------------------|-------------------------------------------------------------------------|
 | `useUiStore`           | `sidebarCollapsed`, `adminSidebarCollapsed`          | User-app + admin shell sidebar collapse, mobile nav, command palette    |
 | `useThemeStore`        | `mode` (light / dark / system)                       | Theme preference (legacy key `nu-aura-theme`, raw-string for FOUC script) |
-| `useNotificationStore` | none                                                 | Notification panel open/close (forward-looking)                         |
 
 ## Adding a slice
 
