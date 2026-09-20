@@ -288,6 +288,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           requiredPermission: Permissions.ANNOUNCEMENT_VIEW
         },
         {
+          id: 'linkedin-posts',
+          label: 'LinkedIn Posts',
+          icon: sm.newspaper,
+          href: '/linkedin-posts',
+          requiredPermission: Permissions.ANNOUNCEMENT_VIEW
+        },
+        {
           id: 'approvals',
           label: 'Approvals',
           icon: icon.clipboardCheck,
@@ -340,6 +347,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               href: '/shifts/swaps',
               icon: sm.repeat,
               requiredPermission: Permissions.ATTENDANCE_VIEW_ALL
+            },
+            {
+              id: 'attendance-biometric-devices',
+              label: 'Biometric Devices',
+              href: '/biometric-devices',
+              icon: sm.shield,
+              requiredPermission: Permissions.ATTENDANCE_MANAGE
             },
           ],
         },
