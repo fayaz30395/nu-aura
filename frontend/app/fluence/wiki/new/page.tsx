@@ -262,6 +262,7 @@ export default function CreateWikiPage() {
             <textarea
               ref={setTitleRef}
               {...titleField}
+              aria-label="Page title"
               onChange={handleTitleInput}
               onKeyDown={handleTitleKeyDown}
               placeholder="Untitled"

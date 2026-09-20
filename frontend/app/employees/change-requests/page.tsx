@@ -490,6 +490,7 @@ export default function EmploymentChangeRequestsPage() {
             Please provide a reason for rejecting this change request.
           </p>
           <textarea
+            aria-label="Enter rejection reason..."
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
             placeholder="Enter rejection reason..."

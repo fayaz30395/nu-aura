@@ -355,6 +355,7 @@ export default function NewOnboardingPage() {
                 </CardHeader>
                 <CardContent className="p-8">
                                     <textarea
+                                      aria-label="Final notes for onboarding buddy or HR team"
                                       className="w-full px-6 py-4 rounded-3xl bg-[var(--bg-surface)] border-0 focus:ring-2 focus:ring-accent-500 outline-none text-[var(--text-primary)] font-medium"
                                       rows={4}
                                       placeholder="Specific instructions for the onboarding buddy or HR team..."

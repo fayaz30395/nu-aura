@@ -149,6 +149,7 @@ export function ParseResumeModal({
                     <input
                       ref={fileInputRef}
                       type="file"
+                      aria-label="Upload resume file"
                       accept=".pdf,.docx,.doc,.txt"
                       onChange={handleFileInputChange}
                       className="sr-only"

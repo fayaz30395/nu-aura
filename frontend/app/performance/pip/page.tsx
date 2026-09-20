@@ -557,6 +557,7 @@ function PIPDetailModal({
               <form onSubmit={handleCheckInSubmit(data => addCheckInMutation.mutate(data))}
                     className="space-y-4 border-t border-[var(--border-main)] pt-4">
                 <textarea
+                  aria-label="Employee progress notes..."
                   placeholder="Employee progress notes..."
                   rows={2}
                   {...registerCheckIn('progressNotes')}
@@ -566,6 +567,7 @@ function PIPDetailModal({
                   <p className="text-danger-500 text-sm">{checkInErrors.progressNotes.message}</p>
                 )}
                 <textarea
+                  aria-label="Manager comments..."
                   placeholder="Manager comments..."
                   rows={2}
                   {...registerCheckIn('managerComments')}
@@ -605,6 +607,7 @@ function PIPDetailModal({
                 <p className="text-danger-500 text-sm">{closeErrors.status.message}</p>
               )}
               <textarea
+                aria-label="Closing notes..."
                 placeholder="Closing notes..."
                 rows={2}
                 {...registerClose('notes')}
@@ -839,6 +842,7 @@ export default function PIPPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" size={16}/>
                 <input
                   type="text"
+                  aria-label="Search by employee name..."
                   placeholder="Search by employee name..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}

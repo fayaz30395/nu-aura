@@ -569,6 +569,7 @@ export default function NineBoxPage() {
                             <td className="px-4 py-2.5 text-center">
                               <input
                                 type="number"
+                                aria-label={`Potential score for ${p.employeeName}`}
                                 min={1}
                                 max={5}
                                 step={0.5}
@@ -609,6 +610,7 @@ export default function NineBoxPage() {
                       />
                       <input
                         type="text"
+                        aria-label="Search..."
                         placeholder="Search..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
@@ -674,6 +676,7 @@ export default function NineBoxPage() {
                             <td className="px-4 py-2.5 text-center">
                               <input
                                 type="number"
+                                aria-label={`Potential score for ${p.employeeName}`}
                                 min={1}
                                 max={5}
                                 step={0.5}

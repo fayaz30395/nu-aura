@@ -564,6 +564,7 @@ export default function BlogPostDetailPage() {
                 <input
                   id="comment-input"
                   type="text"
+                  aria-label="Share your thoughts..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   placeholder="Share your thoughts..."

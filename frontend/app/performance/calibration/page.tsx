@@ -547,6 +547,7 @@ export default function CalibrationPage() {
                       />
                       <input
                         type="text"
+                        aria-label="Search employee..."
                         placeholder="Search employee..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
@@ -683,6 +684,7 @@ export default function CalibrationPage() {
                               <td className="px-4 py-4 text-center">
                                 <input
                                   type="number"
+                                  aria-label={`Final rating for ${row.employeeName}`}
                                   min={1}
                                   max={5}
                                   step={0.5}

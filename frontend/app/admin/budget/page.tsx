@@ -385,6 +385,7 @@ export default function BudgetPlanningPage() {
                 Budgets
               </CardTitle>
               <select
+                aria-label="Filter by status"
                 value={statusFilter}
                 onChange={e => setStatusFilter(e.target.value)}
                 className="input-aura text-xs h-8 pr-6 py-0"

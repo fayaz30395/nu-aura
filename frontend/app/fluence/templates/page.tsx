@@ -91,6 +91,7 @@ export default function TemplatesPage() {
             className={`absolute left-4 top-1/2 transform -translate-y-1/2 ${iconSize.cardInline} text-[var(--text-muted)]`}/>
           <input
             type="text"
+            aria-label="Search templates by name or tags..."
             placeholder="Search templates by name or tags..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

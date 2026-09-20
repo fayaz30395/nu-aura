@@ -352,6 +352,7 @@ export default function AnnouncementsPage() {
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-4 h-4" aria-hidden="true"/>
                 <input
                   type="text"
+                  aria-label="Search announcements..."
                   placeholder="Search announcements..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}

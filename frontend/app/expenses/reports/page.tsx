@@ -87,14 +87,18 @@ export default function ExpenseReportsPage() {
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-surface-500"/>
+                <label htmlFor="expense-reports-start-date" className="sr-only">Start date</label>
                 <input
+                  id="expense-reports-start-date"
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   className="px-4 py-1.5 border border-surface-300 dark:border-surface-600 rounded-lg bg-[var(--bg-input)] text-sm text-surface-900 dark:text-surface-50 focus:outline-none focus:ring-2 focus:ring-accent-700"
                 />
                 <span className="text-surface-400">to</span>
+                <label htmlFor="expense-reports-end-date" className="sr-only">End date</label>
                 <input
+                  id="expense-reports-end-date"
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}

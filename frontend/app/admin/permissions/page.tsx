@@ -262,6 +262,7 @@ export default function PermissionsPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]"/>
           <input
             type="text"
+            aria-label={activeTab === 'roles' ? 'Search roles...' : 'Search users...'}
             placeholder={activeTab === 'roles' ? 'Search roles...' : 'Search users...'}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}

@@ -127,6 +127,7 @@ export default function BlogsPage() {
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[var(--text-muted)]"/>
             <input
               type="text"
+              aria-label="Search posts by title or content..."
               placeholder="Search posts by title or content..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

@@ -273,6 +273,7 @@ export default function CustomFieldsPage() {
           <div className="flex gap-4 items-center">
             <input
               type="text"
+              aria-label="Search fields..."
               placeholder="Search fields..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

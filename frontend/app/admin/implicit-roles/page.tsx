@@ -393,7 +393,9 @@ export default function ImplicitRolesPage() {
             <thead className="skeuo-table-header">
             <tr>
               <th className="px-4 py-2 text-left">
+                <label htmlFor="select-all-rules" className="sr-only">Select all rules</label>
                 <input
+                  id="select-all-rules"
                   type="checkbox"
                   checked={selectedRules.length === filteredRules.length && filteredRules.length > 0}
                   onChange={(e) => {
@@ -448,7 +450,9 @@ export default function ImplicitRolesPage() {
             {filteredRules.map((rule) => (
               <tr key={rule.id}>
                 <td className="px-4 py-4 whitespace-nowrap">
+                  <label htmlFor={`select-rule-${rule.id}`} className="sr-only">Select rule {rule.ruleName}</label>
                   <input
+                    id={`select-rule-${rule.id}`}
                     type="checkbox"
                     checked={selectedRules.includes(rule.id)}
                     onChange={() => toggleRuleSelection(rule.id)}

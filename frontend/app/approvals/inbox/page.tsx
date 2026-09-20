@@ -427,6 +427,7 @@ export default function ApprovalInboxPage() {
                 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-3)]"/>
               <input
                 type="text"
+                aria-label="Search by title, requester…"
                 placeholder="Search by title, requester…"
                 value={search}
                 onChange={(e) => {

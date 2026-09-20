@@ -558,6 +558,7 @@ export default function CareersClient({initialJobs}: CareersClientProps) {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[var(--text-muted)]"/>
               <input
                 type="text"
+                aria-label="Search job titles or keywords..."
                 placeholder="Search job titles or keywords..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

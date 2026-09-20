@@ -446,6 +446,7 @@ export default function KekaImportPage() {
                   <input
                     ref={fileInputRef}
                     type="file"
+                    aria-label="Upload employee import file"
                     accept=".csv,.xls,.xlsx"
                     onChange={handleFileInputChange}
                     className="hidden"

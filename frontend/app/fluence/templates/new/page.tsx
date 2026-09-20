@@ -242,6 +242,7 @@ export default function CreateTemplatePage() {
             <textarea
               ref={nameRegistration.ref}
               name={nameRegistration.name}
+              aria-label="Template name"
               onBlur={nameRegistration.onBlur}
               onChange={handleTitleInput}
               onKeyDown={handleTitleKeyDown}

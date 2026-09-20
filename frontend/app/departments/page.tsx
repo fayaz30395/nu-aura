@@ -337,6 +337,7 @@ export default function DepartmentsPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
               <input
                 type="text"
+                aria-label="Search departments by name, code, or type..."
                 placeholder="Search departments by name, code, or type..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

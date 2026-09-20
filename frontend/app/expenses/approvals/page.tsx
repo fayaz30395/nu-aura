@@ -124,6 +124,7 @@ export default function ExpenseApprovalsPage() {
                     <td className="px-4 py-4">
                       <input
                         type="checkbox"
+                        aria-label={`Select claim ${claim.id}`}
                         checked={selected.has(claim.id)}
                         onChange={() => toggleSelect(claim.id)}
                         className="rounded border-surface-300"

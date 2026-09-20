@@ -208,6 +208,7 @@ export default function AuditLogPage() {
               <div className="flex items-center gap-2">
                 <Filter className="w-3.5 h-3.5 text-[var(--text-muted)]"/>
                 <select
+                  aria-label="Filter by action"
                   value={actionFilter}
                   onChange={e => {setActionFilter(e.target.value); setPage(0);}}
                   className="input-aura text-xs h-8 pr-6 py-0"

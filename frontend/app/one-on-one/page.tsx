@@ -670,6 +670,7 @@ export default function OneOnOnePage() {
                             <div>
                               <input
                                 id="agenda-title"
+                                aria-label="What would you like to discuss?"
                                 {...agendaForm.register('title')}
                                 placeholder="What would you like to discuss?"
                                 aria-invalid={agendaForm.formState.errors.title ? 'true' : 'false'}
@@ -683,6 +684,7 @@ export default function OneOnOnePage() {
                               )}
                             </div>
                             <textarea
+                              aria-label="Additional details (optional)"
                               {...agendaForm.register('description')}
                               placeholder="Additional details (optional)"
                               rows={2}
@@ -839,6 +841,7 @@ export default function OneOnOnePage() {
                           <div className="space-y-4">
                             <input
                               id="action-title"
+                              aria-label="Action item title"
                               {...actionForm.register('title')}
                               placeholder="Action item title"
                               aria-invalid={actionForm.formState.errors.title ? 'true' : 'false'}
@@ -849,6 +852,7 @@ export default function OneOnOnePage() {
                               <p id="action-title-error" className="text-xs text-danger-500">{actionForm.formState.errors.title.message}</p>
                             )}
                             <textarea
+                              aria-label="Description (optional)"
                               {...actionForm.register('description')}
                               placeholder="Description (optional)"
                               rows={2}
@@ -857,6 +861,7 @@ export default function OneOnOnePage() {
                             <div className="grid grid-cols-2 gap-4">
                               <input
                                 id="action-assignee-id"
+                                aria-label="Assignee Employee ID"
                                 {...actionForm.register('assigneeId')}
                                 placeholder="Assignee Employee ID"
                                 aria-invalid={actionForm.formState.errors.assigneeId ? 'true' : 'false'}
@@ -879,7 +884,9 @@ export default function OneOnOnePage() {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                               <input
+                                id="action-due-date"
                                 type="date"
+                                aria-label="Due date"
                                 {...actionForm.register('dueDate')}
                                 className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
                               />
@@ -1158,6 +1165,7 @@ export default function OneOnOnePage() {
                 </ModalHeader>
                 <ModalBody>
                   <textarea
+                    aria-label="Reason for cancellation..."
                     value={cancelReason}
                     onChange={(e) => setCancelReason(e.target.value)}
                     placeholder="Reason for cancellation..."
@@ -1268,6 +1276,7 @@ export default function OneOnOnePage() {
                 </ModalHeader>
                 <ModalBody>
                   <textarea
+                    aria-label="Meeting summary (optional)..."
                     value={completeSummary}
                     onChange={(e) => setCompleteSummary(e.target.value)}
                     placeholder="Meeting summary (optional)..."

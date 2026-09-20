@@ -295,6 +295,7 @@ export default function TeamDirectory() {
                     className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-5 h-5"/>
                   <input
                     type="text"
+                    aria-label="Search by name, email, phone, or employee code..."
                     placeholder="Search by name, email, phone, or employee code..."
                     className="input-aura pl-12"
                     value={filters.searchTerm}

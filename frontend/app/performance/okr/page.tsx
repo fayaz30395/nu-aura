@@ -566,6 +566,7 @@ export default function OKRPage() {
                                       <div className="flex items-center gap-1">
                                         <input
                                           type="number"
+                                          aria-label={`Current value for ${kr.title}`}
                                           min={kr.startValue}
                                           max={kr.targetValue}
                                           value={kr.currentValue}

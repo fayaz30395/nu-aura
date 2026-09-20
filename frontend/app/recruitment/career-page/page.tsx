@@ -360,18 +360,20 @@ function CareerContentEditor() {
 
       {fields.map(({name, label, placeholder, rows = 3, Icon}) => (
         <div key={name}>
-          <label className="flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+          <label htmlFor={`career-page-${name}`} className="flex items-center gap-1.5 text-sm font-medium text-[var(--text-secondary)] mb-1.5">
             <Icon className="h-3.5 w-3.5 text-[var(--text-muted)]"/>
             {label}
           </label>
           {rows === 1 ? (
             <input
+              id={`career-page-${name}`}
               {...register(name)}
               placeholder={placeholder}
               className={inputCls}
             />
           ) : (
             <textarea
+              id={`career-page-${name}`}
               {...register(name)}
               rows={rows}
               placeholder={placeholder}

@@ -479,6 +479,7 @@ export default function QuizPage() {
                   {currentQuestion.questionType === 'FILL_IN_BLANK' && (
                     <input
                       type="text"
+                      aria-label="Type your answer here..."
                       value={answerValue}
                       onChange={e => handleAnswer(currentQuestion.id, e.target.value)}
                       placeholder="Type your answer here..."

@@ -413,6 +413,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                       <div className="flex-1">
                         <input
                           type="text"
+                          aria-label="Allowance name"
                           placeholder="Name"
                           {...formHook.register(`allowances.${idx}.name`)}
                           className="input-aura w-full px-4 py-2 rounded-lg text-sm"
@@ -422,6 +423,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                         <input
                           type="number"
                           step="0.01"
+                          aria-label="Allowance amount"
                           placeholder="Amount"
                           {...formHook.register(`allowances.${idx}.amount`, {valueAsNumber: true})}
                           className="input-aura w-full px-4 py-2 rounded-lg text-sm"
@@ -457,6 +459,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                       <div className="flex-1">
                         <input
                           type="text"
+                          aria-label="Deduction name"
                           placeholder="Name"
                           {...formHook.register(`deductions.${idx}.name`)}
                           className="input-aura w-full px-4 py-2 rounded-lg text-sm"
@@ -466,6 +469,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                         <input
                           type="number"
                           step="0.01"
+                          aria-label="Deduction amount"
                           placeholder="Amount"
                           {...formHook.register(`deductions.${idx}.amount`, {valueAsNumber: true})}
                           className="input-aura w-full px-4 py-2 rounded-lg text-sm"

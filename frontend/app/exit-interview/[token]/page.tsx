@@ -19,7 +19,7 @@ import {
   Textarea,
   Title,
 } from '@mantine/core';
-import {useState} from 'react';
+import {useId, useState} from 'react';
 import {notifications} from '@mantine/notifications';
 import {IconAlertCircle, IconCheck} from '@tabler/icons-react';
 
@@ -262,10 +262,12 @@ function TextInput({label, value, onChange}: {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }) {
+  const inputId = useId();
   return (
     <div>
-      <Text size="sm" fw={500} mb={4}>{label}</Text>
+      <Text component="label" htmlFor={inputId} size="sm" fw={500} mb={4}>{label}</Text>
       <input
+        id={inputId}
         type="text"
         value={value}
         onChange={onChange}

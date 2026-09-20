@@ -434,6 +434,7 @@ export default function WikiPage() {
                 />
                 <input
                   type="text"
+                  aria-label="Search pages..."
                   placeholder="Search pages..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
