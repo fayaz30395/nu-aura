@@ -2,6 +2,7 @@ package com.nulogic.api.knowledge.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.application.knowledge.service.SpacePermissionService;
+import com.nulogic.application.knowledge.service.WikiSpaceApprovalService;
 import com.nulogic.application.knowledge.service.WikiSpaceService;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.TenantFilter;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -59,6 +61,9 @@ class WikiSpaceControllerTest {
 
     @MockitoBean
     private WikiSpaceService wikiSpaceService;
+
+    @MockitoBean
+    private WikiSpaceApprovalService wikiSpaceApprovalService;
 
     @MockitoBean
     private SpacePermissionService spacePermissionService;
@@ -90,6 +95,8 @@ class WikiSpaceControllerTest {
         @DisplayName("Should create wiki space")
         void shouldCreateWikiSpace() throws Exception {
             when(wikiSpaceService.createSpace(any(WikiSpace.class))).thenReturn(mockSpace);
+            when(wikiSpaceApprovalService.configureApproval(eq(spaceId), anyBoolean(), any()))
+                    .thenReturn(mockSpace);
 
             Map<String, Object> request = Map.of(
                     "name", "Engineering Space",
@@ -158,6 +165,8 @@ class WikiSpaceControllerTest {
         @DisplayName("Should update wiki space")
         void shouldUpdateWikiSpace() throws Exception {
             when(wikiSpaceService.updateSpace(eq(spaceId), any(WikiSpace.class))).thenReturn(mockSpace);
+            when(wikiSpaceApprovalService.configureApproval(eq(spaceId), anyBoolean(), any()))
+                    .thenReturn(mockSpace);
 
             Map<String, Object> request = Map.of(
                     "name", "Updated Engineering Space",

@@ -2,6 +2,7 @@ package com.nulogic.api.knowledge.controller;
 
 import com.nulogic.api.knowledge.dto.*;
 import com.nulogic.application.knowledge.service.SpacePermissionService;
+import com.nulogic.application.knowledge.service.WikiSpaceApprovalService;
 import com.nulogic.application.knowledge.service.WikiSpaceService;
 import com.nulogic.common.api.ApiResponses;
 import com.nulogic.common.security.Permission;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class WikiSpaceController {
 
     private final WikiSpaceService wikiSpaceService;
+    private final WikiSpaceApprovalService wikiSpaceApprovalService;
     private final SpacePermissionService spacePermissionService;
 
     @PostMapping
@@ -44,11 +46,13 @@ public class WikiSpaceController {
                 .visibility(WikiSpace.VisibilityLevel.valueOf(request.getVisibility()))
                 .color(request.getColor())
                 .orderIndex(request.getOrderIndex())
-                .approvalEnabled(request.getApprovalEnabled() != null ? request.getApprovalEnabled() : false)
-                .approverEmployeeId(request.getApproverEmployeeId())
                 .build();
 
         WikiSpace created = wikiSpaceService.createSpace(space);
+        created = wikiSpaceApprovalService.configureApproval(
+                created.getId(),
+                Boolean.TRUE.equals(request.getApprovalEnabled()),
+                request.getApproverEmployeeId());
         return ResponseEntity.status(HttpStatus.CREATED).body(WikiSpaceDto.fromEntity(created));
     }
 
@@ -98,11 +102,13 @@ public class WikiSpaceController {
                 .visibility(WikiSpace.VisibilityLevel.valueOf(request.getVisibility()))
                 .color(request.getColor())
                 .orderIndex(request.getOrderIndex())
-                .approvalEnabled(request.getApprovalEnabled() != null ? request.getApprovalEnabled() : false)
-                .approverEmployeeId(request.getApproverEmployeeId())
                 .build();
 
         WikiSpace updated = wikiSpaceService.updateSpace(spaceId, spaceData);
+        updated = wikiSpaceApprovalService.configureApproval(
+                spaceId,
+                Boolean.TRUE.equals(request.getApprovalEnabled()),
+                request.getApproverEmployeeId());
         return ResponseEntity.ok(WikiSpaceDto.fromEntity(updated));
     }
 
