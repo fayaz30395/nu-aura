@@ -13,7 +13,9 @@ import {
   Group,
   Loader,
   Modal,
+  NumberInput,
   Paper,
+  Select,
   SimpleGrid,
   Stack,
   Table,
@@ -49,11 +51,16 @@ import {
   useAssetsByExitProcess,
   useClearancesByExitProcess,
   useExitProcess,
+  useMarkAssetAsLost,
+  useRecordAssetReturn,
   useSettlementByExitProcess,
   useUpdateClearance,
+  useVerifyAssetReturn,
+  useWaiveAssetRecovery,
 } from '@/lib/hooks/queries/useExit';
-import type {ExitClearance} from '@/lib/types/hrms/exit';
+import type {AssetRecovery, ExitClearance} from '@/lib/types/hrms/exit';
 import {
+  AssetCondition,
   ClearanceDepartment,
   ClearanceStatus,
   ExitStatus,
@@ -148,12 +155,26 @@ export default function SeparationDetailPage() {
   const [clearanceComment, setClearanceComment] = useState('');
   const [clearanceAction, setClearanceAction] = useState<ClearanceStatus | null>(null);
 
+  type AssetAction = 'RETURN' | 'LOST' | 'WAIVE' | 'VERIFY';
+  const [assetModalOpen, setAssetModalOpen] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState<AssetRecovery | null>(null);
+  const [assetAction, setAssetAction] = useState<AssetAction | null>(null);
+  const [returnCondition, setReturnCondition] = useState<AssetCondition | null>(null);
+  const [damageDescription, setDamageDescription] = useState('');
+  const [deductionAmount, setDeductionAmount] = useState<number | ''>('');
+  const [assetRemarks, setAssetRemarks] = useState('');
+  const [waiverReason, setWaiverReason] = useState('');
+
   const {data: exitProcess, isLoading, error} = useExitProcess(exitProcessId);
   const {data: clearances, isLoading: clearancesLoading} = useClearancesByExitProcess(exitProcessId);
   const {data: assets, isLoading: assetsLoading} = useAssetsByExitProcess(exitProcessId);
   const {data: settlement} = useSettlementByExitProcess(exitProcessId);
   const {data: allRecovered} = useAllAssetsRecovered(exitProcessId);
   const updateClearanceMutation = useUpdateClearance();
+  const recordAssetReturnMutation = useRecordAssetReturn();
+  const markAssetAsLostMutation = useMarkAssetAsLost();
+  const waiveAssetRecoveryMutation = useWaiveAssetRecovery();
+  const verifyAssetReturnMutation = useVerifyAssetReturn();
 
   if (isLoading) {
     return (
@@ -206,6 +227,64 @@ export default function SeparationDetailPage() {
       });
     }
   };
+
+  const openAssetModal = (asset: AssetRecovery, action: AssetAction) => {
+    setSelectedAsset(asset);
+    setAssetAction(action);
+    setReturnCondition(null);
+    setDamageDescription('');
+    setDeductionAmount('');
+    setAssetRemarks('');
+    setWaiverReason('');
+    setAssetModalOpen(true);
+  };
+
+  const submitAssetAction = async () => {
+    if (!selectedAsset || !assetAction) return;
+    try {
+      if (assetAction === 'RETURN') {
+        await recordAssetReturnMutation.mutateAsync({
+          id: selectedAsset.id,
+          data: {
+            actualReturnDate: toLocalDateString(new Date()),
+            conditionOnReturn: returnCondition ?? undefined,
+            damageDescription: damageDescription || undefined,
+            deductionAmount: deductionAmount === '' ? undefined : deductionAmount,
+            remarks: assetRemarks || undefined,
+          },
+        });
+      } else if (assetAction === 'LOST') {
+        await markAssetAsLostMutation.mutateAsync({
+          id: selectedAsset.id,
+          deductionAmount: deductionAmount === '' ? undefined : deductionAmount,
+          remarks: assetRemarks || undefined,
+        });
+      } else if (assetAction === 'WAIVE') {
+        await waiveAssetRecoveryMutation.mutateAsync({id: selectedAsset.id, waiverReason});
+      } else {
+        await verifyAssetReturnMutation.mutateAsync(selectedAsset.id);
+      }
+      notifications.show({
+        title: 'Success',
+        message: 'Asset recovery updated successfully',
+        color: 'green',
+        icon: <IconCheck size={16}/>,
+      });
+      setAssetModalOpen(false);
+    } catch {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to update asset recovery',
+        color: 'red',
+      });
+    }
+  };
+
+  const assetActionPending =
+    recordAssetReturnMutation.isPending ||
+    markAssetAsLostMutation.isPending ||
+    waiveAssetRecoveryMutation.isPending ||
+    verifyAssetReturnMutation.isPending;
 
   const statusSteps = [
     {status: ExitStatus.INITIATED, label: 'Initiated', icon: IconFileText},
@@ -550,6 +629,7 @@ export default function SeparationDetailPage() {
                         <Table.Th>Condition</Table.Th>
                         <Table.Th>Deduction</Table.Th>
                         <Table.Th>Return Date</Table.Th>
+                        <Table.Th>Actions</Table.Th>
                       </Table.Tr>
                     </Table.Thead>
                     <Table.Tbody>
@@ -580,6 +660,62 @@ export default function SeparationDetailPage() {
                           </Table.Td>
                           <Table.Td>
                             <Text size="sm">{asset.actualReturnDate ? formatDate(asset.actualReturnDate) : '-'}</Text>
+                          </Table.Td>
+                          <Table.Td>
+                            <PermissionGate permission={Permissions.EXIT_MANAGE}>
+                              <Group gap="xs">
+                                {asset.status === RecoveryStatus.PENDING && (
+                                  <>
+                                    <Tooltip label="Record Return">
+                                      <ActionIcon
+                                        size="sm"
+                                        color="green"
+                                        variant="light"
+                                        aria-label="Record asset return"
+                                        onClick={() => openAssetModal(asset, 'RETURN')}
+                                      >
+                                        <IconCheck size={14}/>
+                                      </ActionIcon>
+                                    </Tooltip>
+                                    <Tooltip label="Mark Lost">
+                                      <ActionIcon
+                                        size="sm"
+                                        color="red"
+                                        variant="light"
+                                        aria-label="Mark asset as lost"
+                                        onClick={() => openAssetModal(asset, 'LOST')}
+                                      >
+                                        <IconTrash size={14}/>
+                                      </ActionIcon>
+                                    </Tooltip>
+                                    <Tooltip label="Waive Recovery">
+                                      <ActionIcon
+                                        size="sm"
+                                        color="gray"
+                                        variant="light"
+                                        aria-label="Waive asset recovery"
+                                        onClick={() => openAssetModal(asset, 'WAIVE')}
+                                      >
+                                        <IconShieldCheck size={14}/>
+                                      </ActionIcon>
+                                    </Tooltip>
+                                  </>
+                                )}
+                                {(asset.status === RecoveryStatus.RETURNED || asset.status === RecoveryStatus.DAMAGED) && !asset.verifiedBy && (
+                                  <Tooltip label="Verify Return">
+                                    <ActionIcon
+                                      size="sm"
+                                      color="sky.7"
+                                      variant="light"
+                                      aria-label="Verify asset return"
+                                      onClick={() => openAssetModal(asset, 'VERIFY')}
+                                    >
+                                      <IconShieldCheck size={14}/>
+                                    </ActionIcon>
+                                  </Tooltip>
+                                )}
+                              </Group>
+                            </PermissionGate>
                           </Table.Td>
                         </Table.Tr>
                       ))}
@@ -749,6 +885,104 @@ export default function SeparationDetailPage() {
                 loading={updateClearanceMutation.isPending}
               >
                 {clearanceAction === ClearanceStatus.APPROVED ? 'Approve' : 'Reject'}
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
+
+        {/* Asset Recovery Action Modal */}
+        <Modal
+          opened={assetModalOpen}
+          onClose={() => setAssetModalOpen(false)}
+          title={
+            assetAction === 'RETURN' ? 'Record Asset Return'
+              : assetAction === 'LOST' ? 'Mark Asset as Lost'
+                : assetAction === 'WAIVE' ? 'Waive Asset Recovery'
+                  : 'Verify Asset Return'
+          }
+          centered
+        >
+          <Stack gap="md">
+            <Text size="sm" fw={500}>Asset: {selectedAsset?.assetName}</Text>
+
+            {assetAction === 'RETURN' && (
+              <>
+                <Select
+                  label="Condition on Return"
+                  placeholder="Select condition"
+                  data={Object.values(AssetCondition).map((c) => ({value: c, label: formatLabel(c)}))}
+                  value={returnCondition}
+                  onChange={(v) => setReturnCondition(v as AssetCondition | null)}
+                />
+                {(returnCondition === AssetCondition.DAMAGED || returnCondition === AssetCondition.NON_FUNCTIONAL) && (
+                  <>
+                    <Textarea
+                      label="Damage Description"
+                      value={damageDescription}
+                      onChange={(e) => setDamageDescription(e.currentTarget.value)}
+                      rows={2}
+                    />
+                    <NumberInput
+                      label="Deduction Amount"
+                      value={deductionAmount}
+                      onChange={(v) => setDeductionAmount(typeof v === 'number' ? v : '')}
+                      min={0}
+                    />
+                  </>
+                )}
+                <Textarea
+                  label="Remarks"
+                  value={assetRemarks}
+                  onChange={(e) => setAssetRemarks(e.currentTarget.value)}
+                  rows={2}
+                />
+              </>
+            )}
+
+            {assetAction === 'LOST' && (
+              <>
+                <NumberInput
+                  label="Deduction Amount"
+                  value={deductionAmount}
+                  onChange={(v) => setDeductionAmount(typeof v === 'number' ? v : '')}
+                  min={0}
+                />
+                <Textarea
+                  label="Remarks"
+                  value={assetRemarks}
+                  onChange={(e) => setAssetRemarks(e.currentTarget.value)}
+                  rows={2}
+                />
+              </>
+            )}
+
+            {assetAction === 'WAIVE' && (
+              <Textarea
+                label="Waiver Reason"
+                required
+                value={waiverReason}
+                onChange={(e) => setWaiverReason(e.currentTarget.value)}
+                rows={2}
+              />
+            )}
+
+            {assetAction === 'VERIFY' && (
+              <Text size="sm" c="dimmed">
+                Confirm that this asset return has been verified.
+              </Text>
+            )}
+
+            <Group justify="flex-end">
+              <Button variant="default" onClick={() => setAssetModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                color="sky.7"
+                onClick={submitAssetAction}
+                loading={assetActionPending}
+                disabled={assetAction === 'WAIVE' && !waiverReason}
+              >
+                Confirm
               </Button>
             </Group>
           </Stack>
