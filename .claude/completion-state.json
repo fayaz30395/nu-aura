@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T07:00:00Z",
-  "repositoryCommit": "d99c55b2",
+  "lastUpdated": "2026-09-20T07:30:00Z",
+  "repositoryCommit": "77936209",
   "passId": "pass-4",
   "scopeVersion": "keka-parity-v1",
   "items": {
@@ -686,6 +686,17 @@
       ],
       "lastVerifiedCommit": "83336b2f",
       "lastVerifiedAt": "2026-09-20T06:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "accessibility.session_new_pages_check": {
+      "status": "completed",
+      "summary": "Checked accessibility on 6 pages built this session. 1 real gap (360-feedback cycle-card icon buttons had title but no aria-label) fixed. Rest already compliant via shared Modal/ActionIcon/label conventions.",
+      "evidence": [
+        "commit 77936209"
+      ],
+      "lastVerifiedCommit": "77936209",
+      "lastVerifiedAt": "2026-09-20T07:30:00Z",
       "reported": true,
       "blocker": null
     }
