@@ -26,6 +26,7 @@ import {
   X,
 } from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {ColumnVisibilityToggle, loadColumnVisibility, type ToggleableColumn} from '@/components/ui/ColumnVisibilityToggle';
 import {Button} from '@/components/ui/Button';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonTable} from '@/components/ui/Skeleton';
@@ -105,6 +106,15 @@ const createEmployeeFormSchema = z.object({
 
 type CreateEmployeeFormData = z.infer<typeof createEmployeeFormSchema>;
 
+const EMPLOYEE_TABLE_COLUMNS: ToggleableColumn[] = [
+  {key: 'employee', label: 'Employee', locked: true},
+  {key: 'role', label: 'Role'},
+  {key: 'department', label: 'Department'},
+  {key: 'location', label: 'Location'},
+  {key: 'joined', label: 'Joined'},
+  {key: 'status', label: 'Status', locked: true},
+];
+
 export default function EmployeesPage() {
   const router = useRouter();
   const {hasPermission, isReady: permReady} = usePermissions();
@@ -129,6 +139,10 @@ export default function EmployeesPage() {
   const [sortBy, setSortBy] = useState<SortKey>('createdAt');
   const [sortDirection, setSortDirection] = useState<'ASC' | 'DESC'>('DESC');
   const [deletedEmployeeIds, setDeletedEmployeeIds] = useState<Set<string>>(new Set());
+
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
+    () => loadColumnVisibility('employees-directory', EMPLOYEE_TABLE_COLUMNS)
+  );
 
   // React Query - fetch employees, managers, and departments
   const {data: employeeResponse, isLoading: employeesLoading, error: employeesError} = useEmployees(
@@ -553,6 +567,12 @@ export default function EmployeesPage() {
                 >
                   Sort
                 </Button>
+                <ColumnVisibilityToggle
+                  columns={EMPLOYEE_TABLE_COLUMNS}
+                  visible={visibleColumns}
+                  onChange={setVisibleColumns}
+                  storageKey="employees-directory"
+                />
               </div>
             </div>
           )}
@@ -593,10 +613,10 @@ export default function EmployeesPage() {
                       />
                     </th>
                     <th>Employee</th>
-                    <th>Role</th>
-                    <th>Department</th>
-                    <th>Location</th>
-                    <th>Joined</th>
+                    {visibleColumns.has('role') && <th>Role</th>}
+                    {visibleColumns.has('department') && <th>Department</th>}
+                    {visibleColumns.has('location') && <th>Location</th>}
+                    {visibleColumns.has('joined') && <th>Joined</th>}
                     <th>Status</th>
                     <th className={listStyles.kebabCell} aria-label="Actions" />
                   </tr>
@@ -643,10 +663,14 @@ export default function EmployeesPage() {
                             </div>
                           </button>
                         </td>
-                        <td className="font-medium text-[var(--text-1)]">{employee.designation ?? '—'}</td>
-                        <td>{employee.departmentName ?? '—'}</td>
-                        <td>{location}</td>
-                        <td className="num text-[12.5px]">{joinedShort(employee.joiningDate)}</td>
+                        {visibleColumns.has('role') && (
+                          <td className="font-medium text-[var(--text-1)]">{employee.designation ?? '—'}</td>
+                        )}
+                        {visibleColumns.has('department') && <td>{employee.departmentName ?? '—'}</td>}
+                        {visibleColumns.has('location') && <td>{location}</td>}
+                        {visibleColumns.has('joined') && (
+                          <td className="num text-[12.5px]">{joinedShort(employee.joiningDate)}</td>
+                        )}
                         <td>
                           <StatusBadge status={employee.status} domain={EMPLOYEE_LIFECYCLE_STATUS} compact />
                         </td>
