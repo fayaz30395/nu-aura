@@ -85,6 +85,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     private final com.nulogic.common.util.TenantTimeService tenantTimeService;
     private final NotificationService notificationService;
     private final JdbcTemplate jdbcTemplate;
+    // ObjectProvider, not @Lazy self-injection, to avoid eager self-construction —
+    // same pattern as LeaveRequestService.batchApprove/batchReject.
+    // Routes batch-approve/reject calls back through the Spring proxy so each claim
+    // gets its own @Transactional boundary; one failure doesn't roll back the batch.
+    private final org.springframework.beans.factory.ObjectProvider<ExpenseClaimService> selfProvider;
 
     @org.springframework.beans.factory.annotation.Autowired
     public ExpenseClaimService(
@@ -99,7 +104,8 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             WebSocketNotificationService webSocketNotificationService,
             NotificationService notificationService,
             JdbcTemplate jdbcTemplate,
-            com.nulogic.common.util.TenantTimeService tenantTimeService) {
+            com.nulogic.common.util.TenantTimeService tenantTimeService,
+            org.springframework.beans.factory.ObjectProvider<ExpenseClaimService> selfProvider) {
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
         this.userRepository = userRepository;
@@ -112,6 +118,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         this.notificationService = notificationService;
         this.jdbcTemplate = jdbcTemplate;
         this.tenantTimeService = tenantTimeService;
+        this.selfProvider = selfProvider;
     }
 
     @Transactional
@@ -258,6 +265,66 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         }
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
+    }
+
+    /**
+     * Bulk approve from the admin expense-claims table's multi-select toolbar.
+     * Each claim is approved via its own call through the Spring proxy
+     * ({@link #selfProvider}) so it gets its own transaction — one failing
+     * claim (not found, wrong scope) does not roll back the others.
+     */
+    public com.nulogic.api.expense.dto.BatchExpenseActionResponse batchApprove(
+            com.nulogic.api.expense.dto.BatchExpenseActionRequest request) {
+        ExpenseClaimService self = selfProvider.getObject();
+        List<UUID> failed = new ArrayList<>();
+        int processed = 0;
+
+        for (UUID claimId : request.getClaimIds()) {
+            try {
+                self.approveExpenseClaim(claimId);
+                processed++;
+            } catch (Exception e) {
+                log.warn("Batch approve failed for expense claim {}: {}", claimId, e.getMessage());
+                failed.add(claimId);
+            }
+        }
+
+        log.info("Batch approve: {} processed, {} failed", processed, failed.size());
+
+        return com.nulogic.api.expense.dto.BatchExpenseActionResponse.builder()
+                .processedCount(processed)
+                .failedClaimIds(failed)
+                .build();
+    }
+
+    /**
+     * Bulk reject from the admin expense-claims table's multi-select toolbar.
+     * Each claim is rejected via its own call through the Spring proxy
+     * ({@link #selfProvider}) so it gets its own transaction — one failing
+     * claim does not roll back the others.
+     */
+    public com.nulogic.api.expense.dto.BatchExpenseActionResponse batchReject(
+            com.nulogic.api.expense.dto.BatchExpenseRejectRequest request) {
+        ExpenseClaimService self = selfProvider.getObject();
+        List<UUID> failed = new ArrayList<>();
+        int processed = 0;
+
+        for (UUID claimId : request.getClaimIds()) {
+            try {
+                self.rejectExpenseClaim(claimId, request.getReason());
+                processed++;
+            } catch (Exception e) {
+                log.warn("Batch reject failed for expense claim {}: {}", claimId, e.getMessage());
+                failed.add(claimId);
+            }
+        }
+
+        log.info("Batch reject: {} processed, {} failed", processed, failed.size());
+
+        return com.nulogic.api.expense.dto.BatchExpenseActionResponse.builder()
+                .processedCount(processed)
+                .failedClaimIds(failed)
+                .build();
     }
 
     @Transactional

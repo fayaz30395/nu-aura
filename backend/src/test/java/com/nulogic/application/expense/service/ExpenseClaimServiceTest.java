@@ -62,6 +62,8 @@ class ExpenseClaimServiceTest {
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @Mock
     private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    @Mock
+    private org.springframework.beans.factory.ObjectProvider<ExpenseClaimService> selfProvider;
     @InjectMocks
     private ExpenseClaimService expenseClaimService;
     private UUID tenantId;
@@ -375,6 +377,82 @@ class ExpenseClaimServiceTest {
 
             assertThat(result).isNotNull();
             verify(expenseClaimRepository).save(any(ExpenseClaim.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("Batch Approve/Reject Expense Claims Tests")
+    class BatchExpenseActionTests {
+
+        @Test
+        @DisplayName("Should approve every expense claim in the batch")
+        void shouldApproveEveryClaimInBatch() {
+            expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.SUBMITTED);
+
+            UUID secondClaimId = UUID.randomUUID();
+            ExpenseClaim second = ExpenseClaim.builder()
+                    .employeeId(employeeId)
+                    .claimNumber("EXP-202501-0002")
+                    .claimDate(LocalDate.of(2025, 1, 16))
+                    .category(ExpenseClaim.ExpenseCategory.MEALS)
+                    .amount(new BigDecimal("50.00"))
+                    .currency("USD")
+                    .status(ExpenseClaim.ExpenseStatus.SUBMITTED)
+                    .build();
+            second.setId(secondClaimId);
+            second.setTenantId(tenantId);
+
+            when(selfProvider.getObject()).thenReturn(expenseClaimService);
+            when(expenseClaimRepository.findByIdAndTenantId(claimId, tenantId))
+                    .thenReturn(Optional.of(expenseClaim));
+            when(expenseClaimRepository.findByIdAndTenantId(secondClaimId, tenantId))
+                    .thenReturn(Optional.of(second));
+            when(employeeRepository.findByIdAndTenantId(any(), any()))
+                    .thenReturn(Optional.of(employee));
+            when(expenseClaimRepository.save(any(ExpenseClaim.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            com.nulogic.api.expense.dto.BatchExpenseActionRequest request =
+                    new com.nulogic.api.expense.dto.BatchExpenseActionRequest();
+            request.setClaimIds(List.of(claimId, secondClaimId));
+
+            com.nulogic.api.expense.dto.BatchExpenseActionResponse response =
+                    expenseClaimService.batchApprove(request);
+
+            assertThat(response.getProcessedCount()).isEqualTo(2);
+            assertThat(response.getFailedClaimIds()).isEmpty();
+            assertThat(expenseClaim.getStatus()).isEqualTo(ExpenseClaim.ExpenseStatus.APPROVED);
+            assertThat(second.getStatus()).isEqualTo(ExpenseClaim.ExpenseStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("Should report a not-found expense claim as failed without blocking the rest of the batch")
+        void shouldReportRejectFailureWithoutBlockingRestOfBatch() {
+            expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.SUBMITTED);
+            UUID missingClaimId = UUID.randomUUID();
+            String rejectionReason = "Missing receipt";
+
+            when(selfProvider.getObject()).thenReturn(expenseClaimService);
+            when(expenseClaimRepository.findByIdAndTenantId(claimId, tenantId))
+                    .thenReturn(Optional.of(expenseClaim));
+            when(expenseClaimRepository.findByIdAndTenantId(missingClaimId, tenantId))
+                    .thenReturn(Optional.empty());
+            when(employeeRepository.findByIdAndTenantId(any(), any()))
+                    .thenReturn(Optional.of(employee));
+            when(expenseClaimRepository.save(any(ExpenseClaim.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            com.nulogic.api.expense.dto.BatchExpenseRejectRequest request =
+                    new com.nulogic.api.expense.dto.BatchExpenseRejectRequest();
+            request.setClaimIds(List.of(claimId, missingClaimId));
+            request.setReason(rejectionReason);
+
+            com.nulogic.api.expense.dto.BatchExpenseActionResponse response =
+                    expenseClaimService.batchReject(request);
+
+            assertThat(response.getProcessedCount()).isEqualTo(1);
+            assertThat(response.getFailedClaimIds()).containsExactly(missingClaimId);
+            assertThat(expenseClaim.getStatus()).isEqualTo(ExpenseClaim.ExpenseStatus.REJECTED);
         }
     }
 

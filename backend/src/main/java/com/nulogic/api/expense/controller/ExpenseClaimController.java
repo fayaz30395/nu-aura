@@ -149,6 +149,28 @@ public class ExpenseClaimController {
         return ResponseEntity.ok(expenseClaimService.rejectExpenseClaim(claimId, reason));
     }
 
+    @PostMapping("/batch-approve")
+    @RequiresPermission(Permission.EXPENSE_APPROVE)
+    @Operation(summary = "Bulk approve expense claims", description = "Approves multiple submitted expense claims in one call, from the admin table's multi-select toolbar")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Batch processed — see response body for per-claim outcome")
+    })
+    public ResponseEntity<com.nulogic.api.expense.dto.BatchExpenseActionResponse> batchApprove(
+            @Valid @RequestBody com.nulogic.api.expense.dto.BatchExpenseActionRequest request) {
+        return ResponseEntity.ok(expenseClaimService.batchApprove(request));
+    }
+
+    @PostMapping("/batch-reject")
+    @RequiresPermission(Permission.EXPENSE_APPROVE)
+    @Operation(summary = "Bulk reject expense claims", description = "Rejects multiple submitted expense claims with a shared reason in one call, from the admin table's multi-select toolbar")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Batch processed — see response body for per-claim outcome")
+    })
+    public ResponseEntity<com.nulogic.api.expense.dto.BatchExpenseActionResponse> batchReject(
+            @Valid @RequestBody com.nulogic.api.expense.dto.BatchExpenseRejectRequest request) {
+        return ResponseEntity.ok(expenseClaimService.batchReject(request));
+    }
+
     @PostMapping("/{claimId}/pay")
     @RequiresPermission(Permission.EXPENSE_MANAGE)
     @Operation(summary = "Mark claim as paid", description = "Records payment of an approved expense claim with a payment reference")
