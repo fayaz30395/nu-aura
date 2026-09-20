@@ -111,6 +111,18 @@ export default function BiometricDevicesPage() {
             </div>
           </div>
 
+          {/* Vendor adapter stub notice — ZKTeco/eSSL auto-sync adapters are not yet wired to
+              hardware (return empty results, disabled by default); devices can be registered
+              and punches reconciled manually via the API, but live vendor sync is not supported. */}
+          <div className="flex items-start gap-3 rounded-lg border border-warning-200 bg-warning-50 p-4 text-sm text-warning-800 dark:border-warning-800 dark:bg-warning-950/30 dark:text-warning-200">
+            <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0"/>
+            <p>
+              Automatic sync with ZKTeco and eSSL hardware is <strong>not yet supported</strong> —
+              those vendor adapters are stubs today. Devices can still be registered and punch
+              logs reconciled manually via the API.
+            </p>
+          </div>
+
           {/* Tab Navigation */}
           <div className="flex gap-1 rounded-lg bg-[var(--bg-card-hover)] p-1">
             {[
