@@ -484,6 +484,7 @@ export default function Feedback360Page() {
                               onClick={() => setActivateConfirm(cycle.id)}
                               className="p-2 text-success-600 hover:bg-success-50 rounded"
                               title="Activate"
+                              aria-label="Activate cycle"
                             >
                               <Play className="h-5 w-5"/>
                             </button>
@@ -493,6 +494,7 @@ export default function Feedback360Page() {
                               onClick={() => setDeleteConfirm(cycle.id)}
                               className="p-2 text-danger-600 hover:bg-danger-50 rounded"
                               title="Delete"
+                              aria-label="Delete cycle"
                             >
                               <Trash2 className="h-5 w-5"/>
                             </button>
@@ -517,6 +519,7 @@ export default function Feedback360Page() {
                             onClick={() => setCloseConfirm(cycle.id)}
                             className="p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-surface)] rounded"
                             title="Close"
+                            aria-label="Close cycle"
                           >
                             <Square className="h-5 w-5"/>
                           </button>
