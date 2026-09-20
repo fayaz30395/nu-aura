@@ -15,5 +15,7 @@ public interface ReviewCompetencyRepository extends JpaRepository<ReviewCompeten
 
     List<ReviewCompetency> findAllByTenantIdAndReviewId(UUID tenantId, UUID reviewId);
 
+    List<ReviewCompetency> findAllByTenantIdAndReviewIdIn(UUID tenantId, List<UUID> reviewIds);
+
     void deleteAllByReviewId(UUID reviewId);
 }
