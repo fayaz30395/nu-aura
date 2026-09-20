@@ -69,6 +69,13 @@ export interface Feedback360Summary {
   createdAt: string;
 }
 
+export interface NominationRequest {
+  cycleId: string;
+  subjectEmployeeId: string;
+  reviewerId: string;
+  reviewerType: 'SELF' | 'MANAGER' | 'PEER' | 'DIRECT_REPORT' | 'EXTERNAL';
+}
+
 export interface CycleRequest {
   name: string;
   description?: string;
@@ -124,6 +131,16 @@ class Feedback360Service {
 
   async deleteCycle(id: string): Promise<void> {
     await apiClient.delete(`/feedback360/cycles/${id}`);
+  }
+
+  async createRequest(data: NominationRequest): Promise<void> {
+    await apiClient.post(`/feedback360/cycles/${data.cycleId}/requests`, null, {
+      params: {
+        subjectEmployeeId: data.subjectEmployeeId,
+        reviewerId: data.reviewerId,
+        reviewerType: data.reviewerType,
+      },
+    });
   }
 
   async getMyPendingReviews(): Promise<Feedback360Request[]> {

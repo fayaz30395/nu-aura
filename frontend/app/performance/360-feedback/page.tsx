@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 import {
   CycleRequest,
   Feedback360Cycle,
@@ -32,6 +33,7 @@ import {
   useActiveFeedback360Cycles,
   useCloseFeedback360Cycle,
   useCreateFeedback360Cycle,
+  useCreateFeedback360Request,
   useDeleteFeedback360Cycle,
   useMyFeedback360Summaries,
   useMyPending360Reviews,
@@ -43,8 +45,11 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {createLogger} from '@/lib/utils/logger';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {formatDate} from '@/lib/utils/format/date';
 import {toLocalDateString} from '@/lib/utils/date';
+
+type ReviewerType = 'SELF' | 'MANAGER' | 'PEER' | 'DIRECT_REPORT' | 'EXTERNAL';
 
 const log = createLogger('FeedbackPage');
 
@@ -122,6 +127,7 @@ const RatingStars = ({rating, onChange}: { rating: number; onChange?: (r: number
 
 export default function Feedback360Page() {
   const [activeTab, setActiveTab] = useState<'cycles' | 'pending' | 'summaries'>('cycles');
+  const {user} = useAuth();
 
   // React Query hooks
   const {data: cyclesData, isLoading: cyclesLoading} = useActiveFeedback360Cycles();
@@ -135,6 +141,7 @@ export default function Feedback360Page() {
   const deleteCycleMutation = useDeleteFeedback360Cycle();
   const submitResponseMutation = useSubmitFeedback360Response();
   const shareSummaryMutation = useShareFeedback360Summary();
+  const createRequestMutation = useCreateFeedback360Request();
 
   const cycles = cyclesData || [];
   const pendingReviews = pendingData || [];
@@ -150,6 +157,9 @@ export default function Feedback360Page() {
   const [closeConfirm, setCloseConfirm] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [shareConfirm, setShareConfirm] = useState<string | null>(null);
+  const [nominateCycle, setNominateCycle] = useState<Feedback360Cycle | null>(null);
+  const [nominee, setNominee] = useState<{ id: string; name: string } | null>(null);
+  const [nominateReviewerType, setNominateReviewerType] = useState<ReviewerType>('PEER');
 
   const [cycleForm, setCycleForm] = useState<CycleRequest>({
     name: '',
@@ -230,6 +240,24 @@ export default function Feedback360Page() {
     } catch (err) {
       log.error('Error submitting response:', err);
       setError('Failed to submit response');
+    }
+  };
+
+  const handleNominateReviewer = async () => {
+    if (!nominateCycle || !nominee || !user?.employeeId) return;
+    try {
+      await createRequestMutation.mutateAsync({
+        cycleId: nominateCycle.id,
+        subjectEmployeeId: user.employeeId,
+        reviewerId: nominee.id,
+        reviewerType: nominateReviewerType,
+      });
+      setNominateCycle(null);
+      setNominee(null);
+      setNominateReviewerType('PEER');
+    } catch (err) {
+      log.error('Error nominating reviewer:', err);
+      setError('Failed to nominate reviewer');
     }
   };
 
@@ -470,6 +498,18 @@ export default function Feedback360Page() {
                             </button>
                           </PermissionGate>
                         </>
+                      )}
+                      {(cycle.status === 'ACTIVE' || cycle.status === 'NOMINATION' || cycle.status === 'IN_PROGRESS') && (
+                        <PermissionGate permission={Permissions.FEEDBACK_360_CREATE}>
+                          <button
+                            onClick={() => setNominateCycle(cycle)}
+                            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-accent-700 bg-accent-50 hover:bg-accent-100 rounded"
+                            title="Nominate a reviewer"
+                          >
+                            <Users className="h-4 w-4 mr-1"/>
+                            Nominate
+                          </button>
+                        </PermissionGate>
                       )}
                       {(cycle.status === 'ACTIVE' || cycle.status === 'IN_PROGRESS') && (
                         <PermissionGate permission={Permissions.FEEDBACK_360_MANAGE}>
@@ -1166,6 +1206,73 @@ export default function Feedback360Page() {
               </ModalFooter>
             </>
           )}
+        </Modal>
+
+        {/* Nominate Reviewer Modal */}
+        <Modal
+          isOpen={!!nominateCycle}
+          onClose={() => {
+            setNominateCycle(null);
+            setNominee(null);
+            setNominateReviewerType('PEER');
+          }}
+        >
+          <ModalHeader
+            onClose={() => {
+              setNominateCycle(null);
+              setNominee(null);
+              setNominateReviewerType('PEER');
+            }}
+          >
+            Nominate a Reviewer
+          </ModalHeader>
+          <ModalBody className="space-y-4">
+            <EmployeeSearchAutocomplete
+              label="Reviewer"
+              placeholder="Search for a colleague..."
+              value={nominee}
+              onChange={setNominee}
+              excludeIds={user?.employeeId ? [user.employeeId] : []}
+              required
+            />
+            <div>
+              <label htmlFor="nominate-reviewer-type" className="block text-sm font-medium text-[var(--text-primary)] mb-1">
+                Reviewer Type
+              </label>
+              <select
+                id="nominate-reviewer-type"
+                value={nominateReviewerType}
+                onChange={(e) => setNominateReviewerType(e.target.value as ReviewerType)}
+                className="w-full px-4 py-2 border border-[var(--border-strong)] rounded-md"
+              >
+                <option value="PEER">Peer</option>
+                <option value="MANAGER">Manager</option>
+                <option value="DIRECT_REPORT">Direct Report</option>
+                <option value="EXTERNAL">External</option>
+              </select>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => {
+                setNominateCycle(null);
+                setNominee(null);
+                setNominateReviewerType('PEER');
+              }}
+              className="px-4 py-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded-md hover:bg-[var(--bg-surface)]"
+            >
+              Cancel
+            </button>
+            <PermissionGate permission={Permissions.FEEDBACK_360_CREATE}>
+              <button
+                onClick={handleNominateReviewer}
+                disabled={!nominee || createRequestMutation.isPending}
+                className="px-4 py-2 text-sm font-medium text-white bg-accent-600 rounded-md hover:bg-accent-700 disabled:opacity-50"
+              >
+                Nominate
+              </button>
+            </PermissionGate>
+          </ModalFooter>
         </Modal>
 
         {/* Activate Cycle Confirmation */}

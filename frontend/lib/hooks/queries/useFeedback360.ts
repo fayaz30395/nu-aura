@@ -1,7 +1,7 @@
 'use client';
 
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import type {CycleRequest, FeedbackResponse} from '@/lib/services/grow/feedback360.service';
+import type {CycleRequest, FeedbackResponse, NominationRequest} from '@/lib/services/grow/feedback360.service';
 import {feedback360Service} from '@/lib/services/grow/feedback360.service';
 import {performanceKeys} from './performanceKeys';
 
@@ -69,6 +69,17 @@ export function useDeleteFeedback360Cycle() {
     mutationFn: (id: string) => feedback360Service.deleteCycle(id),
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: performanceKeys.feedback360Cycles()});
+    },
+  });
+}
+
+export function useCreateFeedback360Request() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: NominationRequest) => feedback360Service.createRequest(data),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({queryKey: performanceKeys.feedback360()});
+      queryClient.invalidateQueries({queryKey: [...performanceKeys.feedback360(), 'requests', variables.cycleId]});
     },
   });
 }
