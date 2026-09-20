@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -194,9 +193,13 @@ public class TenantFilter extends OncePerRequestFilter {
      * <p>After this runs, the next request for each tenant will re-validate against
      * the database and re-populate the cache. The cost is at most one extra DB query
      * per active tenant within the first request after a refresh.
+     *
+     * <p>No {@code @SchedulerLock}: {@code validTenantCache} is a per-instance local
+     * cache, not shared/distributed state, so every pod must refresh its own copy
+     * independently — a ShedLock here would leave deactivated tenants valid forever
+     * on every pod except the one holding the lock.</p>
      */
     @Scheduled(fixedRate = CACHE_REFRESH_INTERVAL_MS)
-    @SchedulerLock(name = "tenantCacheRefresh", lockAtLeastFor = "PT2M", lockAtMostFor = "PT10M")
     public void scheduledCacheRefresh() {
         int sizeBefore = validTenantCache.size();
         validTenantCache.clear();

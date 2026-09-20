@@ -117,6 +117,13 @@ public class OrphanFileCleanupScheduler {
                 String.class);
         paths.addAll(versionPaths);
 
+        // Paths from file_metadata table (employee document uploads) — without this,
+        // every real uploaded file is flagged as a false-positive orphan.
+        List<String> metadataPaths = jdbcTemplate.queryForList(
+                "SELECT storage_path FROM file_metadata WHERE storage_path IS NOT NULL",
+                String.class);
+        paths.addAll(metadataPaths);
+
         return paths;
     }
 }

@@ -229,9 +229,14 @@ public class RateLimitingFilter extends OncePerRequestFilter {
 
     /**
      * Periodically check if Redis is back online.
+     *
+     * <p>No {@code @SchedulerLock}: {@code redisAvailable} is a per-instance
+     * {@link AtomicBoolean}, not shared/distributed state, so every pod must run its
+     * own probe independently. ShedLock would let only one pod's flag ever flip back
+     * to {@code true} on recovery, leaving the rest stuck on local fallback forever
+     * — same reasoning as {@code TokenBlacklistService#redisHealthProbe}.</p>
      */
     @Scheduled(fixedRate = 30000) // Every 30 seconds
-    @SchedulerLock(name = "checkRedisHealth", lockAtLeastFor = "PT15S", lockAtMostFor = "PT2M")
     public void checkRedisHealth() {
         if (!useRedis || distributedRateLimiter == null) {
             return;
@@ -305,9 +310,11 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     /**
      * Scheduled cleanup job — removes stale entries every {@value #CLEANUP_INTERVAL_MS} ms
      * regardless of map size. This prevents gradual accumulation during long-running deployments.
+     *
+     * <p>No {@code @SchedulerLock}: {@code buckets} is a per-instance local fallback map, not
+     * shared/distributed state, so every pod must evict its own stale entries independently.</p>
      */
     @Scheduled(fixedRate = CLEANUP_INTERVAL_MS)
-    @SchedulerLock(name = "rateLimitBucketCleanup", lockAtLeastFor = "PT2M", lockAtMostFor = "PT10M")
     public void scheduledCleanup() {
         evictStaleBuckets();
     }

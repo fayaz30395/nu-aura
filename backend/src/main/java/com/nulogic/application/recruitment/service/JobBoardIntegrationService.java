@@ -171,6 +171,8 @@ public class JobBoardIntegrationService {
                         log.warn("Failed to sync stats for posting {}: {}", posting.getId(), e.getMessage());
                     }
                 }
+            } catch (Exception e) { // Intentional broad catch — one tenant failure must not stop the rest
+                log.error("Failed to sync application counts for tenant {}: {}", tenantId, e.getMessage(), e);
             } finally {
                 TenantContext.clear();
             }
@@ -199,6 +201,8 @@ public class JobBoardIntegrationService {
                 // managed entities — dirty-check flushes EXPIRED status at commit
                 expired.forEach(p -> p.setStatus(JobBoardPosting.PostingStatus.EXPIRED));
                 totalExpired += expired.size();
+            } catch (Exception e) { // Intentional broad catch — one tenant failure must not stop the rest
+                log.error("Failed to expire job board postings for tenant {}: {}", tenantId, e.getMessage(), e);
             } finally {
                 TenantContext.clear();
             }

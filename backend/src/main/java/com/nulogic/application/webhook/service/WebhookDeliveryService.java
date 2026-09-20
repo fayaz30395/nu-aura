@@ -445,9 +445,13 @@ public class WebhookDeliveryService {
         // via TenantTimeService — matches how rotateSecret stamps previousSecretExpiresAt.
         int totalCleared = 0;
         for (UUID tenantId : webhookRepository.findDistinctTenantIds()) {
-            int cleared = webhookRepository.clearExpiredPreviousSecrets(
-                    tenantId, tenantTimeService.now(tenantId));
-            totalCleared += cleared;
+            try {
+                int cleared = webhookRepository.clearExpiredPreviousSecrets(
+                        tenantId, tenantTimeService.now(tenantId));
+                totalCleared += cleared;
+            } catch (Exception e) { // Intentional broad catch — one tenant failure must not stop the rest
+                log.error("Failed to clear expired previous secrets for tenant {}: {}", tenantId, e.getMessage(), e);
+            }
         }
         if (totalCleared > 0) {
             log.info("Cleared {} expired previous_secret(s) on webhooks", totalCleared);
@@ -520,11 +524,15 @@ public class WebhookDeliveryService {
         // flushed in this transaction, so the tenant pivot below sees the reclaimed rows.
         LocalDateTime staleCutoff = LocalDateTime.now().minusMinutes(STALE_IN_FLIGHT_MINUTES);
         for (UUID tenantId : deliveryRepository.findDistinctTenantIdsWithStaleInFlight(staleCutoff)) {
-            int reclaimed = deliveryRepository.reclaimStaleInFlightDeliveries(
-                    tenantId, staleCutoff, tenantTimeService.now(tenantId));
-            if (reclaimed > 0) {
-                log.warn("Reclaimed {} webhook delivery(ies) stuck PENDING/DELIVERING > {}min for tenant {} (pod crash recovery)",
-                        reclaimed, STALE_IN_FLIGHT_MINUTES, tenantId);
+            try {
+                int reclaimed = deliveryRepository.reclaimStaleInFlightDeliveries(
+                        tenantId, staleCutoff, tenantTimeService.now(tenantId));
+                if (reclaimed > 0) {
+                    log.warn("Reclaimed {} webhook delivery(ies) stuck PENDING/DELIVERING > {}min for tenant {} (pod crash recovery)",
+                            reclaimed, STALE_IN_FLIGHT_MINUTES, tenantId);
+                }
+            } catch (Exception e) { // Intentional broad catch — one tenant failure must not stop the rest
+                log.error("Failed to reclaim stale in-flight webhook deliveries for tenant {}: {}", tenantId, e.getMessage(), e);
             }
         }
 
