@@ -208,7 +208,7 @@ export default function EmployeeDetailPage() {
   const [isUploadingDoc, setIsUploadingDoc] = useState(false);
   const [docUploadError, setDocUploadError] = useState<string | null>(null);
   const documentsQueryKey = ['employee-documents', employeeId];
-  const {data: documents = []} = useQuery({
+  const {data: documents = [], isLoading: isDocumentsLoading, isError: isDocumentsError} = useQuery({
     queryKey: documentsQueryKey,
     queryFn: () => employeeService.listDocuments(employeeId),
     enabled: currentTab === 'documents',
@@ -1008,7 +1008,21 @@ export default function EmployeeDetailPage() {
                 </div>
               </PermissionGate>
 
-              {documents.length === 0 ? (
+              {isDocumentsLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} height={72} radius="md"/>
+                  ))}
+                </div>
+              ) : isDocumentsError ? (
+                <div
+                  className="p-6 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
+                  <AlertTriangle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
+                  <p className="text-sm text-danger-600 dark:text-danger-400">
+                    Failed to load documents. Please try again.
+                  </p>
+                </div>
+              ) : documents.length === 0 ? (
                 <EmptyState
                   icon={<FileText className="w-full h-full"/>}
                   title="No documents uploaded yet"
