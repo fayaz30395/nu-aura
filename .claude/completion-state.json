@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T08:00:00Z",
-  "repositoryCommit": "33f18f11",
+  "lastUpdated": "2026-09-20T08:30:00Z",
+  "repositoryCommit": "eeba5366",
   "passId": "pass-5",
   "scopeVersion": "keka-parity-v1",
   "items": {
@@ -712,13 +712,13 @@
       "blocker": null
     },
     "reports.scheduled_report_fake_data": {
-      "status": "in_flight",
-      "summary": "HIGH SEVERITY: ScheduledReportExecutionJob builds hardcoded zero/empty placeholder data for ATTENDANCE/LEAVE/default report types (presentDays:0, records:[], balances:[], totalEmployees:0 etc) - ReportGenerationService just renders whatever is in the map, does not compute. Every scheduled attendance/leave/analytics report configured by a customer gets emailed with fabricated zero data regardless of real activity. Job infra itself is correct (ShedLock, per-tenant isolation) - only the data-building step is fake. Same bug class as the earlier spider-chart issue, bigger blast radius (recurring customer-facing emails).",
+      "status": "completed",
+      "summary": "Fixed - ATTENDANCE/LEAVE/default report types now compute real data via the same repository queries ReportService uses (AttendanceRecordRepository, LeaveBalanceRepository, LeaveRequestRepository) and AnalyticsService.getAnalyticsSummary() for the default/analytics branch. No pagination added for records/history lists, matching ReportService own unbounded behavior for date-ranged queries.",
       "evidence": [
-        "backend ScheduledReportExecutionJob.java:210-238"
+        "commit eeba5366"
       ],
-      "lastVerifiedCommit": "33f18f11",
-      "lastVerifiedAt": "2026-09-20T08:00:00Z",
+      "lastVerifiedCommit": "eeba5366",
+      "lastVerifiedAt": "2026-09-20T08:30:00Z",
       "reported": true,
       "blocker": null
     }
