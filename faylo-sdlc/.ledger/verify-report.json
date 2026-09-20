@@ -883,6 +883,34 @@
     ],
     "story": "US-2FZ1RXB6QNFD"
   },
+  "US-2FZ1XPPV5RPP": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ1XPPV5RPP"
+  },
+  "US-2FZ1XPWWEC3S": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ1XPWWEC3S"
+  },
   "US-2FZ3774CR9Z1": {
     "all_pass": true,
     "date": "2026-09-20",

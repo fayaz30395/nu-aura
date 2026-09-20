@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** postJob/pausePosting for unimplemented boards (SHINE, MONSTER) return/throw an unsupported-board error instead of falling through to the same success path used by implemented boards (NAUKRI/INDEED/LINKEDIN)
   - **Verify:** shell bash -c "cd backend && mvn -q -DskipTests compile"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)
