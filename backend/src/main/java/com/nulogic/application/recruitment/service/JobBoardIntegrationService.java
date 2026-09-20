@@ -98,7 +98,8 @@ public class JobBoardIntegrationService {
                     case NAUKRI -> postToNaukri(posting, job);
                     case INDEED -> postToIndeed(posting, job);
                     case LINKEDIN -> postToLinkedIn(posting, job);
-                    default -> log.warn("Board {} integration not yet implemented", board);
+                    default -> throw new UnsupportedOperationException(
+                            "Job board integration not yet implemented: " + board);
                 }
                 posting.setStatus(JobBoardPosting.PostingStatus.ACTIVE);
                 // Wave 13: tenant-local posted/synced timestamps — resolved via TenantTimeService.
@@ -131,7 +132,8 @@ public class JobBoardIntegrationService {
                 case NAUKRI -> pauseOnNaukri(posting);
                 case INDEED -> pauseOnIndeed(posting);
                 case LINKEDIN -> pauseOnLinkedIn(posting);
-                default -> log.warn("Pause not implemented for {}", posting.getBoardName());
+                default -> throw new UnsupportedOperationException(
+                        "Job board integration not yet implemented: " + posting.getBoardName());
             }
             posting.setStatus(JobBoardPosting.PostingStatus.PAUSED);
         } catch (Exception e) { // Intentional broad catch — external job board API integration
