@@ -61,6 +61,7 @@ export default function IntegrationsPage() {
       ],
       color: 'from-accent-500 to-accent-600',
       popular: true,
+      comingSoon: true,
     },
     {
       name: 'Microsoft Teams',
@@ -75,6 +76,7 @@ export default function IntegrationsPage() {
       ],
       color: 'from-accent-700 to-accent-800',
       popular: true,
+      comingSoon: true,
     },
     {
       name: 'Slack',
@@ -103,6 +105,7 @@ export default function IntegrationsPage() {
       ],
       color: 'from-accent-400 to-accent-500',
       popular: false,
+      comingSoon: true,
     },
     {
       name: 'ZKTeco Biometric',
@@ -117,6 +120,7 @@ export default function IntegrationsPage() {
       ],
       color: 'from-success-500 to-success-600',
       popular: true,
+      comingSoon: true,
     },
     {
       name: 'eSSL Biometric',
@@ -131,6 +135,7 @@ export default function IntegrationsPage() {
       ],
       color: 'from-success-500 to-success-600',
       popular: false,
+      comingSoon: true,
     },
     {
       name: 'QuickBooks',
@@ -145,6 +150,7 @@ export default function IntegrationsPage() {
       ],
       color: 'from-success-500 to-success-600',
       popular: false,
+      comingSoon: true,
     },
     {
       name: 'Xero',
@@ -159,6 +165,7 @@ export default function IntegrationsPage() {
       ],
       color: 'from-accent-500 to-accent-600',
       popular: false,
+      comingSoon: true,
     },
     {
       name: 'REST API',
@@ -277,7 +284,11 @@ export default function IntegrationsPage() {
                           <h2 className="text-xl font-semibold text-[var(--text-primary)]">
                             {integration.name}
                           </h2>
-                          <Badge variant="success" size="sm">Popular</Badge>
+                          {integration.comingSoon ? (
+                            <Badge variant="warning" size="sm">Coming Soon</Badge>
+                          ) : (
+                            <Badge variant="success" size="sm">Popular</Badge>
+                          )}
                         </div>
                         <p className="text-body-secondary mb-4 leading-relaxed">
                           {integration.description}
@@ -302,9 +313,14 @@ export default function IntegrationsPage() {
                       >
                         <integration.icon className="h-6 w-6 text-white"/>
                       </div>
-                      <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
-                        {integration.name}
-                      </h2>
+                      <div className="flex items-center gap-2 mb-2">
+                        <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+                          {integration.name}
+                        </h2>
+                        {integration.comingSoon && (
+                          <Badge variant="warning" size="sm">Coming Soon</Badge>
+                        )}
+                      </div>
                       <p className="text-body-secondary mb-4 leading-relaxed">
                         {integration.description}
                       </p>
