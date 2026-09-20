@@ -1,67 +1,535 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T01:00:00Z",
+  "lastUpdated": "2026-09-20T02:00:00Z",
   "repositoryCommit": "8f43af22",
   "passId": "pass-1",
   "scopeVersion": "keka-parity-v1",
   "items": {
-    "notifications.attendance_regularized": { "status": "completed", "summary": "ATTENDANCE_REGULARIZED approve/reject now notifies employee (was audit-only, same shape as LEAVE_APPROVED/REJECTED)", "evidence": ["backend/src/main/java/com/nulogic/application/attendance/service/AttendanceRecordService.java"], "lastVerifiedCommit": "8f43af22", "lastVerifiedAt": "2026-09-20T01:00:00Z", "reported": true, "blocker": null },
-    "recruitment.candidate_created_notification": { "status": "blocked", "summary": "CANDIDATE_CREATED unwired — likely correct (creator-only action, no assignee field exists) but never explicitly recorded as a deliberate skip", "evidence": ["backend RecruitmentManagementService.createCandidate():101"], "lastVerifiedCommit": "8f43af22", "lastVerifiedAt": "2026-09-20T01:00:00Z", "reported": true, "blocker": "needs human call: stays unwired, or does a hiring-manager-assignment field get added later" },
-    "recruitment.document_signed_docusign_stub": { "status": "blocked", "summary": "DOCUMENT_SIGNED notification blocked by an unfinished DocuSign completion handler (DocuSignConnector.handleEnvelopeCompleted only logs, doesn't download/store the signed PDF or publish a domain event) — not a notification-wiring gap, a feature-completion gap", "evidence": ["backend DocuSignConnector.java:513"], "lastVerifiedCommit": "8f43af22", "lastVerifiedAt": "2026-09-20T01:00:00Z", "reported": true, "blocker": "needs human call: finish DocuSign envelope-completion handling now, or leave as known stub" },
-    "contracts.documents_module_linkage": { "status": "blocked", "summary": "Signed contracts never surface in employee self-service documents — Contract has no fileUrl/documentId, nothing writes FileMetadata on signature", "evidence": ["backend Contract.java", "EmployeeDocumentController /{id}/documents"], "lastVerifiedCommit": "8f43af22", "lastVerifiedAt": "2026-09-20T01:00:00Z", "reported": true, "blocker": "needs human call: write signed contracts to FileMetadata, or contract visibility is intentionally HR-only" },
-    "contracts.expiry_reminder_recipient": { "status": "blocked", "summary": "Contract expiry reminders default to contract creator (HR), not the employee whose contract expires; deep link requires CONTRACT_VIEW permission employee role likely lacks", "evidence": ["backend ContractLifecycleScheduler.dispatchDueReminders()"], "lastVerifiedCommit": "8f43af22", "lastVerifiedAt": "2026-09-20T01:00:00Z", "reported": true, "blocker": "needs human call: is contract-expiry awareness intentionally HR-only, or should the employee also be notified + granted self-view access" },
-    "performance.training_auto_assignment_linkage": { "status": "blocked", "summary": "No event/listener bridges Performance/Goals to Training — review completion or skill gaps never auto-assign training, fully manual today", "evidence": ["backend application/performance/service/", "application/training/"], "lastVerifiedCommit": "8f43af22", "lastVerifiedAt": "2026-09-20T01:00:00Z", "reported": true, "blocker": "needs human call: in-scope auto-assignment feature, or Training stays a fully manual HR-driven catalog by design" },
-    "US-2FX9MY3RY0PS": { "status": "blocked", "summary": "Resource-pools real persistence (V317)", "evidence": ["backend/src/main/resources/db/migration/V317__create_resource_pools_tables.sql", "backend/src/main/java/com/nulogic/application/resourcemanagement/service/ResourcePoolService.java"], "lastVerifiedCommit": "9b238a17", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "hard-gate signoff needed from human" },
-    "US-2FXAK3826HTN": { "status": "blocked", "summary": "DocuSign replaces internal e-sign when configured, fallback to internal", "evidence": ["backend/src/main/java/com/nulogic/application/esignature/service/ESignatureService.java"], "lastVerifiedCommit": "f380b673", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "decision DC-2FXAQEN3BKW5 not yet resolved by human (user stated intent to resolve, execution blocked - CLI human-only)" },
-    "US-2FXCB6GNEF0X": { "status": "blocked", "summary": "Contract reminders: preserve multi-window cadence + reconcileStaleReminders", "evidence": ["backend/src/main/java/com/nulogic/application/contract/scheduler/ContractLifecycleScheduler.java"], "lastVerifiedCommit": "34bf4866", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "decision DC-2FXCFFBVNYMX not yet resolved by human" },
-    "US-2FXAH0C9PR5D": { "status": "completed", "summary": "RelatedContent widget + minimal backend endpoint", "evidence": ["US-2FYZHMT7JTH0", "backend WikiPageController /pages/{id}/related"], "lastVerifiedCommit": "6a3d4c46", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "performance.nine_box.duplication": { "status": "blocked", "summary": "Two 9-box implementations (client-computed vs server-driven), real gap - CSV export/manual override/search-sort would be lost if consolidated now", "evidence": ["frontend/app/performance/9box/page.tsx", "frontend/app/performance/cycles/[id]/nine-box/page.tsx", "DC-2FYZMWW3CA1W"], "lastVerifiedCommit": "c9c2de0a", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "decision DC-2FYZMWW3CA1W (hold vs build-out) not yet resolved" },
-    "performance.nine_box.navigation": { "status": "completed", "summary": "Nav links added for orphaned calibration + nine-box cycle sub-routes", "evidence": ["US-2FYZPAC6P52N"], "lastVerifiedCommit": "86eb0a04", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "notifications.employee_lifecycle": { "status": "completed", "summary": "EMPLOYEE_CREATED/PROMOTED/STATUS_CHANGED/DEPARTMENT_CHANGED notifications wired; EMPLOYEE_UPDATED and ATTENDANCE_CHECK_IN/OUT deliberately skipped (noise); EMPLOYEE_TRANSFERRED doesn't exist as separate event", "evidence": ["US-2FYY5845HBS3", "backend/src/main/java/com/nulogic/application/event/NotificationEventListener.java"], "lastVerifiedCommit": "60b11514", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "notifications.payroll_processed_payslip": { "status": "completed", "summary": "PAYROLL_PROCESSED + PAYSLIP_GENERATED notifications", "evidence": ["US-2FYE7QCNND5M"], "lastVerifiedCommit": "40858611", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "notifications.asset_assign_return": { "status": "completed", "summary": "ASSET_ASSIGNED + ASSET_RETURNED notifications", "evidence": ["US-2FYE7QWNJ535"], "lastVerifiedCommit": "31fb040e", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "notifications.termination_review_leavecancel": { "status": "completed", "summary": "EMPLOYEE_TERMINATED, REVIEW_COMPLETED, LEAVE_CANCELLED notifications", "evidence": ["US-2FYE7QMTP2D2"], "lastVerifiedCommit": "9d695bc5,2e9ca25f", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "notifications.offer_candidate": { "status": "completed", "summary": "OFFER_READY_TO_SEND + CANDIDATE_STATUS_CHANGED notifications", "evidence": ["US-2FYEQWPJCGE3"], "lastVerifiedCommit": "a00e71a9", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "notifications.goal_review_training_document": { "status": "completed", "summary": "GOAL_CREATED/UPDATED, REVIEW_STARTED, DOCUMENT_UPLOADED, TRAINING_ENROLLED/COMPLETED notifications", "evidence": ["US-2FYERYV698AZ"], "lastVerifiedCommit": "2e9ca25f", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "psa.allocate_resources_stub": { "status": "completed", "summary": "PSAService.allocateResources() now persists PSAProjectAllocation instead of no-op stub. Narrow additive fix only - full PSA/HRMS stack consolidation NOT done, out of scope per user directive", "evidence": ["backend/src/main/java/com/nulogic/application/psa/service/PSAService.java"], "lastVerifiedCommit": "a018758b", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "psa.hrms_stack_consolidation": { "status": "blocked", "summary": "Two disconnected project/resourcing stacks (HRMS Project/ProjectMember/TimeEntry vs PSA PSAProject/PSAInvoice). Full consolidation is a big architecture decision, deliberately not attempted", "evidence": ["docs/pendings.md"], "lastVerifiedCommit": "085c936c", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "explicit user directive: keep as separate architecture decision, do not broaden scope" },
-    "rbac.login_logout_export_audit": { "status": "completed", "summary": "Login/logout/failed-login audited via AuditLogService; AuditAction.EXPORT wired into ExportController + CustomReportController", "evidence": ["US-2FYXTRYK7KJY"], "lastVerifiedCommit": "a13581b6", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "attendance.biometric_stub_labeling": { "status": "completed", "summary": "ESSL/ZKTeco biometric UI labeled not-yet-supported instead of implying live integration", "evidence": ["US-2FYXTRSFDMT0"], "lastVerifiedCommit": "3ca69b55", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "fluence.activityfeed_wiring": { "status": "completed", "summary": "ActivityFeed wired into analytics page, wall page correctly left alone (different layout, not a trivial swap)", "evidence": ["US-2FZ0BYJ4EEF5"], "lastVerifiedCommit": "c95f53d2", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "cleanup.ponytail_backlog_2026_09_20": { "status": "completed", "summary": "Ponytail backlog re-verified against drift and closed: Orval dead dirs, mobile-api scaffold, useDebounce, useNotificationStore(already gone), lib/utils isAdmin/hasPermission, useFeatureFlag(already gone), lib/utils/date.ts, next.config.js. Backend config deletes already done by earlier pass. ObjectMapper dedup + Sms/Payment yagni collapse explicitly held, not attempted.", "evidence": ["US-2FZ0BC70DYQ9", "docs/pendings.md"], "lastVerifiedCommit": "fe4c7508,5af28db6,4754a654,6bf7f389", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "hire.recruitment_domain_duplication": { "status": "blocked", "summary": "Candidate/RecruitmentController (13-stage) vs Applicant/ApplicantController (10-stage) - two parallel, both-real, both-reachable recruitment models. Needs product/architecture call, not a blind fix.", "evidence": ["docs/pendings.md"], "lastVerifiedCommit": "085c936c", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "no decision item filed yet - needs a human call on which model is canonical" },
-    "compensation.dead_hook_exports": { "status": "blocked", "summary": "11 of 17 useCompensation.ts hooks are dead exports; some (submit/review/apply revision) may be scaffolding for an unfinished workflow, not blind-delete candidates", "evidence": ["docs/pendings.md"], "lastVerifiedCommit": "085c936c", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "needs human call: delete as dead code, or finish the submit/review/apply workflow" },
-    "offboarding.phase2_dashboard_asset_recovery": { "status": "blocked", "summary": "Exit dashboard, interview analytics, and most asset-recovery action hooks unused (asset recovery UI itself now wired via US-2FYDSHQHW68Z, but dashboard/analytics/settlement-queue pieces remain unbuilt)", "evidence": ["docs/pendings.md"], "lastVerifiedCommit": "21e3a567", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "feature-sized, needs scoping/priority call" },
-    "documents.filemetadata_wiring": { "status": "completed", "summary": "FileMetadata persistence + GET /employees/{id}/documents list endpoint wired, replacing session-local state", "evidence": ["US-2FYE6BD3P1N9"], "lastVerifiedCommit": "9d695bc5", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "documents.approval_trigger_acl_expiry": { "status": "completed", "summary": "Document approval trigger via generic WorkflowService, access ACL endpoints, expiry tracking + scheduler", "evidence": ["US-2FYBYHPKK1HW", "US-2FYBYJFZTKF8", "US-2FYBYK78PV8B", "US-2FYEC05CBB21"], "lastVerifiedCommit": "3c4f8ae2,7ba2efd7,fdb47d18,a2d376bf", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "fluence.wiki_approval_enforcement": { "status": "completed", "summary": "Wiki publish flow now checks isApprovalRequired, PENDING_APPROVAL status + approve/reject endpoints", "evidence": ["US-2FYDT45QRKY5"], "lastVerifiedCommit": "4062a2a5", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "grow.feedback360_nomination": { "status": "completed", "summary": "360-feedback peer nomination hook + UI wired", "evidence": ["US-2FYDT4BEB1G7"], "lastVerifiedCommit": "75c4ee79", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "employees.probation_extend_fail": { "status": "completed", "summary": "Probation extend/fail actions wired", "evidence": ["US-2FYDVJW3DG3Q"], "lastVerifiedCommit": "219ded57", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "employees.promotion_pip_eligibility_gate": { "status": "completed", "summary": "Promotion blocked during active probation/PIP", "evidence": ["US-2FYEK23MNGGZ"], "lastVerifiedCommit": "a373a7f7", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "expenses.advance_ui": { "status": "completed", "summary": "Expense advance UI (create/approve/disburse/settle) built", "evidence": ["US-2FYDSHJ9NVV9"], "lastVerifiedCommit": "0534281b", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "offboarding.asset_recovery_ui": { "status": "completed", "summary": "Exit-process asset recovery UI (return/lost/waive/verify) wired", "evidence": ["US-2FYDSHQHW68Z"], "lastVerifiedCommit": "21e3a567", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "integrations.coming_soon_labeling": { "status": "completed", "summary": "Unbacked integration cards (7 of 10) labeled Coming Soon instead of implying live capability", "evidence": ["US-2FYE561NCF5J"], "lastVerifiedCommit": "0534281b", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "recruitment.kanban_dead_routes": { "status": "completed", "summary": "Dead recruitment kanban routes deleted (orphaned [jobId]/kanban + stub redirect), /recruitment/pipeline is the one live implementation", "evidence": ["US-2FYEQECB4258"], "lastVerifiedCommit": "06e3d3a4", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "hire.scorecard_submit_summary": { "status": "completed", "summary": "Interview scorecard submit flow + summary display wired", "evidence": ["US-2FXC19K3YS5M", "US-2FXC8WM0201Q"], "lastVerifiedCommit": "50cabf44,6ea04781", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "resources.overallocation_gate": { "status": "completed", "summary": "Over-allocation validation + approval gate wired into CreateAllocationModal", "evidence": ["US-2FYC9C8WD399"], "lastVerifiedCommit": "07bca7e2", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "rbac.permissionscopemerger_dead_code": { "status": "completed", "summary": "Deleted dead PermissionScopeMerger, confirmed superseded by AuthService+ScopeContextService", "evidence": ["US-2FXCB68ETT8E"], "lastVerifiedCommit": "ab67b43c", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "fluence.macrorenderer_dead_code": { "status": "completed", "summary": "Deleted dead MacroRenderer.tsx, superseded by Tiptap NodeView macros", "evidence": ["US-2FXC19ZKBX9W"], "lastVerifiedCommit": "f4357aa0", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "grow.calibrationmatrix_dead_code": { "status": "completed", "summary": "Deleted dead CalibrationMatrix.tsx + FeedbackRequestForm/ResponseForm.tsx, confirmed superseded by inline 9-box + no submission path ever built", "evidence": ["US-2FYDXEMGD2V1"], "lastVerifiedCommit": "1aa9e46b", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "rbac.tenant_register_lockdown": { "status": "completed", "summary": "/tenants/register locked to TENANT_MANAGE, was public self-serve with no product justification", "evidence": ["5cc5b348"], "lastVerifiedCommit": "5cc5b348", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": null },
-    "faylo.pending_decisions": { "status": "blocked", "summary": "6 open faylo decisions + 5 hard-gate signoffs. User has stated intended resolutions but faylo decision resolve/signoff are hard-blocked for any Claude-Code-spawned process (CLAUDECODE=1 check) - human must run these in a terminal.", "evidence": ["DC-2FWTGYQFJRCM (re-scope)", "DC-2FX0CQ9GJE8W (drop-and-rederive)", "DC-2FXAJXP90KYN (resolved by implementation, decision record pending)", "DC-2FXAQEN3BKW5 (resolved by implementation, decision record pending)", "DC-2FXCFFBVNYMX (resolved by implementation, decision record pending)", "DC-2FYZMWW3CA1W (hold)", "US-2FWVF01PY12F/US-2FX1618JXKEP/US-2FX161DHPZHC/US-2FX161HKZRS3/US-2FX9MY3RY0PS signoffs"], "lastVerifiedCommit": "085c936c", "lastVerifiedAt": "2026-09-20T00:00:00Z", "reported": true, "blocker": "human must run faylo CLI commands directly; also feat/login-redesign branch delete and ~/.claude/settings.json Stop-hook edit are similarly human-only" }
+    "notifications.attendance_regularized": {
+      "status": "completed",
+      "summary": "ATTENDANCE_REGULARIZED approve/reject now notifies employee (was audit-only, same shape as LEAVE_APPROVED/REJECTED)",
+      "evidence": [
+        "backend/src/main/java/com/nulogic/application/attendance/service/AttendanceRecordService.java"
+      ],
+      "lastVerifiedCommit": "8f43af22",
+      "lastVerifiedAt": "2026-09-20T01:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "recruitment.candidate_created_notification": {
+      "status": "blocked",
+      "summary": "CANDIDATE_CREATED unwired \u2014 likely correct (creator-only action, no assignee field exists) but never explicitly recorded as a deliberate skip",
+      "evidence": [
+        "backend RecruitmentManagementService.createCandidate():101"
+      ],
+      "lastVerifiedCommit": "8f43af22",
+      "lastVerifiedAt": "2026-09-20T01:00:00Z",
+      "reported": true,
+      "blocker": "DC-2FZ1FZHPJ7ED filed, awaiting human resolve"
+    },
+    "recruitment.document_signed_docusign_stub": {
+      "status": "blocked",
+      "summary": "DOCUMENT_SIGNED notification blocked by an unfinished DocuSign completion handler (DocuSignConnector.handleEnvelopeCompleted only logs, doesn't download/store the signed PDF or publish a domain event) \u2014 not a notification-wiring gap, a feature-completion gap",
+      "evidence": [
+        "backend DocuSignConnector.java:513"
+      ],
+      "lastVerifiedCommit": "8f43af22",
+      "lastVerifiedAt": "2026-09-20T01:00:00Z",
+      "reported": true,
+      "blocker": "DC-2FZ1FZP6XBPK filed, awaiting human resolve"
+    },
+    "contracts.documents_module_linkage": {
+      "status": "blocked",
+      "summary": "Signed contracts never surface in employee self-service documents \u2014 Contract has no fileUrl/documentId, nothing writes FileMetadata on signature",
+      "evidence": [
+        "backend Contract.java",
+        "EmployeeDocumentController /{id}/documents"
+      ],
+      "lastVerifiedCommit": "8f43af22",
+      "lastVerifiedAt": "2026-09-20T01:00:00Z",
+      "reported": true,
+      "blocker": "DC-2FZ1FZV37YM4 filed, awaiting human resolve"
+    },
+    "contracts.expiry_reminder_recipient": {
+      "status": "blocked",
+      "summary": "Contract expiry reminders default to contract creator (HR), not the employee whose contract expires; deep link requires CONTRACT_VIEW permission employee role likely lacks",
+      "evidence": [
+        "backend ContractLifecycleScheduler.dispatchDueReminders()"
+      ],
+      "lastVerifiedCommit": "8f43af22",
+      "lastVerifiedAt": "2026-09-20T01:00:00Z",
+      "reported": true,
+      "blocker": "DC-2FZ1FZZYNNN4 filed, awaiting human resolve"
+    },
+    "performance.training_auto_assignment_linkage": {
+      "status": "blocked",
+      "summary": "No event/listener bridges Performance/Goals to Training \u2014 review completion or skill gaps never auto-assign training, fully manual today",
+      "evidence": [
+        "backend application/performance/service/",
+        "application/training/"
+      ],
+      "lastVerifiedCommit": "8f43af22",
+      "lastVerifiedAt": "2026-09-20T01:00:00Z",
+      "reported": true,
+      "blocker": "DC-2FZ1G048XD6Z filed, awaiting human resolve"
+    },
+    "US-2FX9MY3RY0PS": {
+      "status": "blocked",
+      "summary": "Resource-pools real persistence (V317)",
+      "evidence": [
+        "backend/src/main/resources/db/migration/V317__create_resource_pools_tables.sql",
+        "backend/src/main/java/com/nulogic/application/resourcemanagement/service/ResourcePoolService.java"
+      ],
+      "lastVerifiedCommit": "9b238a17",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "hard-gate signoff needed from human"
+    },
+    "US-2FXAK3826HTN": {
+      "status": "blocked",
+      "summary": "DocuSign replaces internal e-sign when configured, fallback to internal",
+      "evidence": [
+        "backend/src/main/java/com/nulogic/application/esignature/service/ESignatureService.java"
+      ],
+      "lastVerifiedCommit": "f380b673",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "decision DC-2FXAQEN3BKW5 not yet resolved by human (user stated intent to resolve, execution blocked - CLI human-only)"
+    },
+    "US-2FXCB6GNEF0X": {
+      "status": "blocked",
+      "summary": "Contract reminders: preserve multi-window cadence + reconcileStaleReminders",
+      "evidence": [
+        "backend/src/main/java/com/nulogic/application/contract/scheduler/ContractLifecycleScheduler.java"
+      ],
+      "lastVerifiedCommit": "34bf4866",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "decision DC-2FXCFFBVNYMX not yet resolved by human"
+    },
+    "US-2FXAH0C9PR5D": {
+      "status": "completed",
+      "summary": "RelatedContent widget + minimal backend endpoint",
+      "evidence": [
+        "US-2FYZHMT7JTH0",
+        "backend WikiPageController /pages/{id}/related"
+      ],
+      "lastVerifiedCommit": "6a3d4c46",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "performance.nine_box.duplication": {
+      "status": "blocked",
+      "summary": "Two 9-box implementations (client-computed vs server-driven), real gap - CSV export/manual override/search-sort would be lost if consolidated now",
+      "evidence": [
+        "frontend/app/performance/9box/page.tsx",
+        "frontend/app/performance/cycles/[id]/nine-box/page.tsx",
+        "DC-2FYZMWW3CA1W"
+      ],
+      "lastVerifiedCommit": "c9c2de0a",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "decision DC-2FYZMWW3CA1W (hold vs build-out) not yet resolved"
+    },
+    "performance.nine_box.navigation": {
+      "status": "completed",
+      "summary": "Nav links added for orphaned calibration + nine-box cycle sub-routes",
+      "evidence": [
+        "US-2FYZPAC6P52N"
+      ],
+      "lastVerifiedCommit": "86eb0a04",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "notifications.employee_lifecycle": {
+      "status": "completed",
+      "summary": "EMPLOYEE_CREATED/PROMOTED/STATUS_CHANGED/DEPARTMENT_CHANGED notifications wired; EMPLOYEE_UPDATED and ATTENDANCE_CHECK_IN/OUT deliberately skipped (noise); EMPLOYEE_TRANSFERRED doesn't exist as separate event",
+      "evidence": [
+        "US-2FYY5845HBS3",
+        "backend/src/main/java/com/nulogic/application/event/NotificationEventListener.java"
+      ],
+      "lastVerifiedCommit": "60b11514",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "notifications.payroll_processed_payslip": {
+      "status": "completed",
+      "summary": "PAYROLL_PROCESSED + PAYSLIP_GENERATED notifications",
+      "evidence": [
+        "US-2FYE7QCNND5M"
+      ],
+      "lastVerifiedCommit": "40858611",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "notifications.asset_assign_return": {
+      "status": "completed",
+      "summary": "ASSET_ASSIGNED + ASSET_RETURNED notifications",
+      "evidence": [
+        "US-2FYE7QWNJ535"
+      ],
+      "lastVerifiedCommit": "31fb040e",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "notifications.termination_review_leavecancel": {
+      "status": "completed",
+      "summary": "EMPLOYEE_TERMINATED, REVIEW_COMPLETED, LEAVE_CANCELLED notifications",
+      "evidence": [
+        "US-2FYE7QMTP2D2"
+      ],
+      "lastVerifiedCommit": "9d695bc5,2e9ca25f",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "notifications.offer_candidate": {
+      "status": "completed",
+      "summary": "OFFER_READY_TO_SEND + CANDIDATE_STATUS_CHANGED notifications",
+      "evidence": [
+        "US-2FYEQWPJCGE3"
+      ],
+      "lastVerifiedCommit": "a00e71a9",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "notifications.goal_review_training_document": {
+      "status": "completed",
+      "summary": "GOAL_CREATED/UPDATED, REVIEW_STARTED, DOCUMENT_UPLOADED, TRAINING_ENROLLED/COMPLETED notifications",
+      "evidence": [
+        "US-2FYERYV698AZ"
+      ],
+      "lastVerifiedCommit": "2e9ca25f",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "psa.allocate_resources_stub": {
+      "status": "completed",
+      "summary": "PSAService.allocateResources() now persists PSAProjectAllocation instead of no-op stub. Narrow additive fix only - full PSA/HRMS stack consolidation NOT done, out of scope per user directive",
+      "evidence": [
+        "backend/src/main/java/com/nulogic/application/psa/service/PSAService.java"
+      ],
+      "lastVerifiedCommit": "a018758b",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "psa.hrms_stack_consolidation": {
+      "status": "blocked",
+      "summary": "Two disconnected project/resourcing stacks (HRMS Project/ProjectMember/TimeEntry vs PSA PSAProject/PSAInvoice). Full consolidation is a big architecture decision, deliberately not attempted",
+      "evidence": [
+        "docs/pendings.md"
+      ],
+      "lastVerifiedCommit": "085c936c",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "explicit user directive: keep as separate architecture decision, do not broaden scope"
+    },
+    "rbac.login_logout_export_audit": {
+      "status": "completed",
+      "summary": "Login/logout/failed-login audited via AuditLogService; AuditAction.EXPORT wired into ExportController + CustomReportController",
+      "evidence": [
+        "US-2FYXTRYK7KJY"
+      ],
+      "lastVerifiedCommit": "a13581b6",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "attendance.biometric_stub_labeling": {
+      "status": "completed",
+      "summary": "ESSL/ZKTeco biometric UI labeled not-yet-supported instead of implying live integration",
+      "evidence": [
+        "US-2FYXTRSFDMT0"
+      ],
+      "lastVerifiedCommit": "3ca69b55",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "fluence.activityfeed_wiring": {
+      "status": "completed",
+      "summary": "ActivityFeed wired into analytics page, wall page correctly left alone (different layout, not a trivial swap)",
+      "evidence": [
+        "US-2FZ0BYJ4EEF5"
+      ],
+      "lastVerifiedCommit": "c95f53d2",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "cleanup.ponytail_backlog_2026_09_20": {
+      "status": "completed",
+      "summary": "Ponytail backlog re-verified against drift and closed: Orval dead dirs, mobile-api scaffold, useDebounce, useNotificationStore(already gone), lib/utils isAdmin/hasPermission, useFeatureFlag(already gone), lib/utils/date.ts, next.config.js. Backend config deletes already done by earlier pass. ObjectMapper dedup + Sms/Payment yagni collapse explicitly held, not attempted.",
+      "evidence": [
+        "US-2FZ0BC70DYQ9",
+        "docs/pendings.md"
+      ],
+      "lastVerifiedCommit": "fe4c7508,5af28db6,4754a654,6bf7f389",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "hire.recruitment_domain_duplication": {
+      "status": "blocked",
+      "summary": "Candidate/RecruitmentController (13-stage) vs Applicant/ApplicantController (10-stage) - two parallel, both-real, both-reachable recruitment models. Needs product/architecture call, not a blind fix.",
+      "evidence": [
+        "docs/pendings.md"
+      ],
+      "lastVerifiedCommit": "085c936c",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "no decision item filed yet - needs a human call on which model is canonical"
+    },
+    "compensation.dead_hook_exports": {
+      "status": "blocked",
+      "summary": "11 of 17 useCompensation.ts hooks are dead exports; some (submit/review/apply revision) may be scaffolding for an unfinished workflow, not blind-delete candidates",
+      "evidence": [
+        "docs/pendings.md"
+      ],
+      "lastVerifiedCommit": "085c936c",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "needs human call: delete as dead code, or finish the submit/review/apply workflow"
+    },
+    "offboarding.phase2_dashboard_asset_recovery": {
+      "status": "blocked",
+      "summary": "Exit dashboard, interview analytics, and most asset-recovery action hooks unused (asset recovery UI itself now wired via US-2FYDSHQHW68Z, but dashboard/analytics/settlement-queue pieces remain unbuilt)",
+      "evidence": [
+        "docs/pendings.md"
+      ],
+      "lastVerifiedCommit": "21e3a567",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "feature-sized, needs scoping/priority call"
+    },
+    "documents.filemetadata_wiring": {
+      "status": "completed",
+      "summary": "FileMetadata persistence + GET /employees/{id}/documents list endpoint wired, replacing session-local state",
+      "evidence": [
+        "US-2FYE6BD3P1N9"
+      ],
+      "lastVerifiedCommit": "9d695bc5",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "documents.approval_trigger_acl_expiry": {
+      "status": "completed",
+      "summary": "Document approval trigger via generic WorkflowService, access ACL endpoints, expiry tracking + scheduler",
+      "evidence": [
+        "US-2FYBYHPKK1HW",
+        "US-2FYBYJFZTKF8",
+        "US-2FYBYK78PV8B",
+        "US-2FYEC05CBB21"
+      ],
+      "lastVerifiedCommit": "3c4f8ae2,7ba2efd7,fdb47d18,a2d376bf",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "fluence.wiki_approval_enforcement": {
+      "status": "completed",
+      "summary": "Wiki publish flow now checks isApprovalRequired, PENDING_APPROVAL status + approve/reject endpoints",
+      "evidence": [
+        "US-2FYDT45QRKY5"
+      ],
+      "lastVerifiedCommit": "4062a2a5",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "grow.feedback360_nomination": {
+      "status": "completed",
+      "summary": "360-feedback peer nomination hook + UI wired",
+      "evidence": [
+        "US-2FYDT4BEB1G7"
+      ],
+      "lastVerifiedCommit": "75c4ee79",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "employees.probation_extend_fail": {
+      "status": "completed",
+      "summary": "Probation extend/fail actions wired",
+      "evidence": [
+        "US-2FYDVJW3DG3Q"
+      ],
+      "lastVerifiedCommit": "219ded57",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "employees.promotion_pip_eligibility_gate": {
+      "status": "completed",
+      "summary": "Promotion blocked during active probation/PIP",
+      "evidence": [
+        "US-2FYEK23MNGGZ"
+      ],
+      "lastVerifiedCommit": "a373a7f7",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "expenses.advance_ui": {
+      "status": "completed",
+      "summary": "Expense advance UI (create/approve/disburse/settle) built",
+      "evidence": [
+        "US-2FYDSHJ9NVV9"
+      ],
+      "lastVerifiedCommit": "0534281b",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "offboarding.asset_recovery_ui": {
+      "status": "completed",
+      "summary": "Exit-process asset recovery UI (return/lost/waive/verify) wired",
+      "evidence": [
+        "US-2FYDSHQHW68Z"
+      ],
+      "lastVerifiedCommit": "21e3a567",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "integrations.coming_soon_labeling": {
+      "status": "completed",
+      "summary": "Unbacked integration cards (7 of 10) labeled Coming Soon instead of implying live capability",
+      "evidence": [
+        "US-2FYE561NCF5J"
+      ],
+      "lastVerifiedCommit": "0534281b",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "recruitment.kanban_dead_routes": {
+      "status": "completed",
+      "summary": "Dead recruitment kanban routes deleted (orphaned [jobId]/kanban + stub redirect), /recruitment/pipeline is the one live implementation",
+      "evidence": [
+        "US-2FYEQECB4258"
+      ],
+      "lastVerifiedCommit": "06e3d3a4",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "hire.scorecard_submit_summary": {
+      "status": "completed",
+      "summary": "Interview scorecard submit flow + summary display wired",
+      "evidence": [
+        "US-2FXC19K3YS5M",
+        "US-2FXC8WM0201Q"
+      ],
+      "lastVerifiedCommit": "50cabf44,6ea04781",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "resources.overallocation_gate": {
+      "status": "completed",
+      "summary": "Over-allocation validation + approval gate wired into CreateAllocationModal",
+      "evidence": [
+        "US-2FYC9C8WD399"
+      ],
+      "lastVerifiedCommit": "07bca7e2",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "rbac.permissionscopemerger_dead_code": {
+      "status": "completed",
+      "summary": "Deleted dead PermissionScopeMerger, confirmed superseded by AuthService+ScopeContextService",
+      "evidence": [
+        "US-2FXCB68ETT8E"
+      ],
+      "lastVerifiedCommit": "ab67b43c",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "fluence.macrorenderer_dead_code": {
+      "status": "completed",
+      "summary": "Deleted dead MacroRenderer.tsx, superseded by Tiptap NodeView macros",
+      "evidence": [
+        "US-2FXC19ZKBX9W"
+      ],
+      "lastVerifiedCommit": "f4357aa0",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "grow.calibrationmatrix_dead_code": {
+      "status": "completed",
+      "summary": "Deleted dead CalibrationMatrix.tsx + FeedbackRequestForm/ResponseForm.tsx, confirmed superseded by inline 9-box + no submission path ever built",
+      "evidence": [
+        "US-2FYDXEMGD2V1"
+      ],
+      "lastVerifiedCommit": "1aa9e46b",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "rbac.tenant_register_lockdown": {
+      "status": "completed",
+      "summary": "/tenants/register locked to TENANT_MANAGE, was public self-serve with no product justification",
+      "evidence": [
+        "5cc5b348"
+      ],
+      "lastVerifiedCommit": "5cc5b348",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "faylo.pending_decisions": {
+      "status": "blocked",
+      "summary": "6 open faylo decisions + 5 hard-gate signoffs. User has stated intended resolutions but faylo decision resolve/signoff are hard-blocked for any Claude-Code-spawned process (CLAUDECODE=1 check) - human must run these in a terminal.",
+      "evidence": [
+        "DC-2FWTGYQFJRCM (re-scope)",
+        "DC-2FX0CQ9GJE8W (drop-and-rederive)",
+        "DC-2FXAJXP90KYN (resolved by implementation, decision record pending)",
+        "DC-2FXAQEN3BKW5 (resolved by implementation, decision record pending)",
+        "DC-2FXCFFBVNYMX (resolved by implementation, decision record pending)",
+        "DC-2FYZMWW3CA1W (hold)",
+        "US-2FWVF01PY12F/US-2FX1618JXKEP/US-2FX161DHPZHC/US-2FX161HKZRS3/US-2FX9MY3RY0PS signoffs"
+      ],
+      "lastVerifiedCommit": "085c936c",
+      "lastVerifiedAt": "2026-09-20T00:00:00Z",
+      "reported": true,
+      "blocker": "human must run faylo CLI commands directly; also feat/login-redesign branch delete and ~/.claude/settings.json Stop-hook edit are similarly human-only"
+    }
   },
   "passes": [
     {
       "passId": "pass-0-bootstrap",
       "commit": "085c936ca3d5d67a3c5fda8bc325c5115920da67",
       "timestamp": "2026-09-20T00:00:00Z",
-      "delta": ["all items above — bootstrap seed from prior conversation history, not a fresh scan"]
+      "delta": [
+        "all items above \u2014 bootstrap seed from prior conversation history, not a fresh scan"
+      ]
     },
     {
       "passId": "pass-1",
       "commit": "8f43af22",
       "timestamp": "2026-09-20T01:00:00Z",
-      "delta": ["notifications.attendance_regularized", "recruitment.candidate_created_notification", "recruitment.document_signed_docusign_stub", "contracts.documents_module_linkage", "contracts.expiry_reminder_recipient", "performance.training_auto_assignment_linkage", "cleanup.ponytail_backlog_2026_09_20 (re-verified, closed)"]
+      "delta": [
+        "notifications.attendance_regularized",
+        "recruitment.candidate_created_notification",
+        "recruitment.document_signed_docusign_stub",
+        "contracts.documents_module_linkage",
+        "contracts.expiry_reminder_recipient",
+        "performance.training_auto_assignment_linkage",
+        "cleanup.ponytail_backlog_2026_09_20 (re-verified, closed)"
+      ]
     }
   ]
 }
