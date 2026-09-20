@@ -78,6 +78,7 @@ public class FileStorageService {
             CATEGORY_LETTERS, CATEGORY_ATTACHMENTS, CATEGORY_REPORTS);
     private final StorageProvider storageProvider;
     private final JdbcTemplate jdbcTemplate;
+    private final com.nulogic.infrastructure.storage.FileMetadataRepository fileMetadataRepository;
     private final VirusScanService virusScanService;
     private final TenantTimeService tenantTimeService;
     @Value("${app.storage.url-expiry-hours:24}")
@@ -250,6 +251,13 @@ public class FileStorageService {
             log.error("Failed to delete file: {}", objectName, e);
             throw new BusinessException("Failed to delete file");
         }
+        // Soft-delete the matching FileMetadata row, if one was persisted for this
+        // objectName. Every deleteFile() caller (employee documents, profile photos,
+        // etc.) routes through here, so this is the one choke point that keeps
+        // FileMetadata in sync with storage regardless of who requested the delete.
+        UUID tenantId = TenantContext.getCurrentTenant();
+        fileMetadataRepository.findByTenantIdAndStoragePath(tenantId, objectName)
+                .ifPresent(com.nulogic.common.entity.BaseEntity::softDelete);
     }
 
     /**

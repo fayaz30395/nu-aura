@@ -8,6 +8,7 @@ import {
   TalentProfile,
   UpdateEmployeeRequest,
 } from '../../types/hrms/employee';
+import {FileUploadResponse} from '../../generated/api/model';
 
 class EmployeeService {
   async createEmployee(data: CreateEmployeeRequest): Promise<Employee> {
@@ -161,6 +162,45 @@ class EmployeeService {
     const response = await apiClient.get<TalentProfile>(`/employees/${id}/talent-profile`);
     return response.data;
   }
+
+  /**
+   * Upload a document for an employee. Bypasses the generated Orval client for this
+   * endpoint, which serializes the multipart body as JSON — same FormData pattern as
+   * previewImport/executeImport above.
+   */
+  async uploadDocument(employeeId: string, file: File, documentType?: string): Promise<FileUploadResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await apiClient.post<FileUploadResponse>(
+      `/employees/${employeeId}/documents`,
+      formData,
+      {
+        headers: {'Content-Type': 'multipart/form-data'},
+        params: documentType ? {documentType} : undefined,
+      }
+    );
+    return response.data;
+  }
+
+  async deleteDocument(objectName: string): Promise<void> {
+    await apiClient.delete('/files', {params: {objectName}});
+  }
+
+  async listDocuments(employeeId: string): Promise<EmployeeDocumentRecord[]> {
+    const response = await apiClient.get<EmployeeDocumentRecord[]>(`/employees/${employeeId}/documents`);
+    return response.data;
+  }
+}
+
+export interface EmployeeDocumentRecord {
+  id: string;
+  fileName: string;
+  contentType: string;
+  fileSize: number;
+  uploadedAt: string;
+  uploadedBy: string;
+  objectName: string;
+  downloadUrl: string;
 }
 
 export const employeeService = new EmployeeService();

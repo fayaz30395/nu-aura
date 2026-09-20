@@ -1,7 +1,7 @@
 'use client';
 
-import {useMemo, useState} from 'react';
-import {useQueryClient} from '@tanstack/react-query';
+import {useState} from 'react';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {
   useGetEmployeeSkills,
   useVerifySkill,
@@ -10,12 +10,9 @@ import {
 import {notFound, useParams, useRouter, useSearchParams} from 'next/navigation';
 import {
   AlertTriangle,
-  Award,
-  Briefcase,
   CheckCircle2,
   ChevronLeft,
   FileText,
-  FolderOpen,
   IdCard,
   Laptop,
   Mail,
@@ -24,11 +21,8 @@ import {
   Package,
   Pencil,
   Phone,
-  Search,
-  Shield,
   Star,
   Trash2,
-  Users,
 } from 'lucide-react';
 import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
 import {EntityType} from '@/lib/types/core/custom-fields';
@@ -37,6 +31,7 @@ import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
 import {useDeleteEmployee, useDottedLineReports, useEmployee, useSubordinates,} from '@/lib/hooks/queries/useEmployees';
+import {employeeService, EmployeeDocumentRecord} from '@/lib/services/hrms/employee.service';
 import {useAssetsByEmployee} from '@/lib/hooks/queries/useAssets';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {createLogger} from '@/lib/utils/logger';
@@ -77,18 +72,6 @@ const ASSET_SUB_TABS: { key: AssetSubTab; label: string }[] = [
   {key: 'damages', label: 'Damage Charges'},
 ];
 
-// ─── Document categories ─────────────────────────────────────────────
-const DOCUMENT_CATEGORIES = [
-  {name: 'Performance Reviews', icon: Star, count: 0},
-  {name: 'Previous Experience', icon: Briefcase, count: 0},
-  {name: 'Form 16', icon: FileText, count: 0},
-  {name: 'Identity', icon: Shield, count: 0},
-  {name: 'Employee Letters', icon: Mail, count: 0},
-  {name: 'Degrees & Certificates', icon: Award, count: 0},
-  {name: 'Course Certificates', icon: CheckCircle2, count: 0},
-  {name: 'Resume', icon: FileText, count: 0},
-  {name: 'Roles & Responsibilities', icon: Users, count: 0},
-];
 
 // ─── Helpers ─────────────────────────────────────────────────────────
 function getStatusBadgeColor(status: string) {
@@ -222,7 +205,14 @@ export default function EmployeeDetailPage() {
     ASSET_SUB_TABS.some((t) => t.key === initialSubTab) ? (initialSubTab as AssetSubTab) : 'assigned'
   );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [docSearch, setDocSearch] = useState('');
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [docUploadError, setDocUploadError] = useState<string | null>(null);
+  const documentsQueryKey = ['employee-documents', employeeId];
+  const {data: documents = []} = useQuery({
+    queryKey: documentsQueryKey,
+    queryFn: () => employeeService.listDocuments(employeeId),
+    enabled: currentTab === 'documents',
+  });
 
   // React Query hooks
   const {data: employee, isLoading: loading, error: queryError} = useEmployee(employeeId);
@@ -286,14 +276,31 @@ export default function EmployeeDetailPage() {
     }
   };
 
-  // Filter document categories by search
-  const filteredDocCategories = useMemo(
-    () =>
-      DOCUMENT_CATEGORIES.filter((c) =>
-        c.name.toLowerCase().includes(docSearch.toLowerCase())
-      ),
-    [docSearch]
-  );
+  const handleDocumentUpload = async (file: File) => {
+    setIsUploadingDoc(true);
+    setDocUploadError(null);
+    try {
+      await employeeService.uploadDocument(employeeId, file);
+      await queryClient.invalidateQueries({queryKey: documentsQueryKey});
+      toast.success('Document Uploaded', `${file.name} uploaded successfully.`);
+    } catch (err) {
+      setDocUploadError('Failed to upload document. Please try again.');
+      log.error('Error uploading employee document:', err);
+    } finally {
+      setIsUploadingDoc(false);
+    }
+  };
+
+  const handleDocumentDelete = async (doc: EmployeeDocumentRecord) => {
+    try {
+      await employeeService.deleteDocument(doc.objectName);
+      await queryClient.invalidateQueries({queryKey: documentsQueryKey});
+      toast.success('Document Deleted', `${doc.fileName} was deleted.`);
+    } catch (err) {
+      toast.error('Error', 'Failed to delete document.');
+      log.error('Error deleting employee document:', err);
+    }
+  };
 
   // ─── Loading state ──────────────────────────────────────────────────
   if (loading) {
@@ -975,57 +982,79 @@ export default function EmployeeDetailPage() {
           {/* ═══ DOCUMENTS TAB ═══════════════════════════════════════ */}
           {currentTab === 'documents' && (
             <div>
-              {/* Search */}
-              <div className="mb-6">
-                <div className="relative max-w-md">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"
-                          aria-hidden="true"/>
-                  <label htmlFor="doc-categories-search" className="sr-only">Search document categories</label>
+              <PermissionGate permission={Permissions.DOCUMENT_UPLOAD}>
+                <div className="mb-6">
+                  <label
+                    htmlFor="employee-document-upload"
+                    className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer ${isUploadingDoc ? 'opacity-50 pointer-events-none' : ''}`}
+                  >
+                    <FileText className="h-4 w-4"/>
+                    {isUploadingDoc ? 'Uploading...' : 'Upload Document'}
+                  </label>
                   <input
-                    id="doc-categories-search"
-                    type="text"
-                    placeholder="Search document categories..."
-                    value={docSearch}
-                    onChange={(e) => setDocSearch(e.target.value)}
-                    aria-label="Search document categories"
-                    className="w-full pl-10 pr-4 py-2.5 text-sm rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-accent-500 focus:border-accent-500"
+                    id="employee-document-upload"
+                    type="file"
+                    className="sr-only"
+                    disabled={isUploadingDoc}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) void handleDocumentUpload(file);
+                      e.target.value = '';
+                    }}
                   />
+                  {docUploadError && (
+                    <p className="text-sm text-danger-500 mt-2">{docUploadError}</p>
+                  )}
                 </div>
-              </div>
+              </PermissionGate>
 
-              {/* Folder grid */}
-              <Stagger
-                inView
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-              >
-                {filteredDocCategories.map((cat) => {
-                  const Icon = cat.icon;
-                  return (
-                    <StaggerItem key={cat.name}>
-                      <Card className="cursor-pointer hover-lift hover:border-accent-500/30">
-                        <CardContent className="p-6 text-center">
+              {documents.length === 0 ? (
+                <EmptyState
+                  icon={<FileText className="w-full h-full"/>}
+                  title="No documents uploaded yet"
+                  description="Documents uploaded this session will appear here."
+                />
+              ) : (
+                <Stagger inView className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {documents.map((doc) => (
+                    <StaggerItem key={doc.objectName}>
+                      <Card>
+                        <CardContent className="p-4 flex items-start gap-3">
                           <div
-                            className="h-12 w-12 mx-auto mb-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                            <Icon className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
+                            className="h-10 w-10 shrink-0 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                            <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
                           </div>
-                          <p className="text-sm font-medium text-[var(--text-primary)] mb-1">
-                            {cat.name}
-                          </p>
-                          <p className="text-caption">
-                            {cat.count} {cat.count === 1 ? 'document' : 'documents'}
-                          </p>
+                          <div className="min-w-0 flex-1">
+                            {doc.downloadUrl ? (
+                              <a
+                                href={doc.downloadUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm font-medium text-[var(--text-primary)] hover:text-accent-700 truncate block"
+                              >
+                                {doc.fileName}
+                              </a>
+                            ) : (
+                              <p className="text-sm font-medium text-[var(--text-primary)] truncate">
+                                {doc.fileName}
+                              </p>
+                            )}
+                            <p className="text-caption">{Math.round(doc.fileSize / 1024)} KB</p>
+                          </div>
+                          <PermissionGate permission={Permissions.DOCUMENT_DELETE}>
+                            <button
+                              onClick={() => void handleDocumentDelete(doc)}
+                              aria-label={`Delete ${doc.fileName}`}
+                              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="h-4 w-4"/>
+                            </button>
+                          </PermissionGate>
                         </CardContent>
                       </Card>
                     </StaggerItem>
-                  );
-                })}
-              </Stagger>
-
-              {filteredDocCategories.length === 0 && (
-                <EmptyState
-                  icon={<FolderOpen className="w-full h-full"/>}
-                  title="No matching categories found"
-                />
+                  ))}
+                </Stagger>
               )}
             </div>
           )}
