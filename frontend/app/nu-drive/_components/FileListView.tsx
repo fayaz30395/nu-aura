@@ -66,6 +66,7 @@ export function FileListView({files, activeTab, onFileClick, onContextMenu}: Fil
             </div>
             <button
               onClick={(e) => onContextMenu(e, file)}
+              aria-label="More options"
               className="p-2 rounded-full hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <MoreVertical

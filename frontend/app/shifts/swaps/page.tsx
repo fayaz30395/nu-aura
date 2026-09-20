@@ -157,6 +157,7 @@ export default function ShiftSwapsPage() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/shifts')}
+            aria-label="Back to shifts"
             className="p-2 hover:bg-surface-100 dark:hover:bg-surface-700 rounded-lg"
           >
             <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>

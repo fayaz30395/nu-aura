@@ -803,6 +803,7 @@ export default function OneOnOnePage() {
                               {isActive && !item.isDiscussed && (
                                 <button
                                   onClick={() => setDeleteAgendaItem({meetingId: selectedMeetingId!, itemId: item.id})}
+                                  aria-label="Delete agenda item"
                                   className="text-[var(--text-muted)] hover:text-danger-500 transition-colors"
                                 >
                                   <Trash2 className="h-4 w-4"/>

@@ -433,6 +433,7 @@ export default function OKRPage() {
                     <div className="flex items-start gap-4 flex-1">
                       <button
                         onClick={() => toggleExpanded(objective.id)}
+                        aria-label={expandedObjectives.has(objective.id) ? 'Collapse objective' : 'Expand objective'}
                         className="mt-1 text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                       >
                         {expandedObjectives.has(objective.id) ? (
@@ -485,6 +486,7 @@ export default function OKRPage() {
                           <PermissionGate permission={Permissions.OKR_UPDATE}>
                             <button
                               onClick={() => openEditObjective(objective)}
+                              aria-label="Edit objective"
                               className="p-2 text-[var(--text-muted)] hover:text-accent-600"
                             >
                               <Pencil className="h-5 w-5"/>
@@ -493,6 +495,7 @@ export default function OKRPage() {
                           <PermissionGate permission={Permissions.OKR_DELETE}>
                             <button
                               onClick={() => setDeleteObjectiveConfirm(objective.id)}
+                              aria-label="Delete objective"
                               className="p-2 text-[var(--text-muted)] hover:text-danger-600"
                             >
                               <Trash2 className="h-5 w-5"/>
@@ -577,6 +580,7 @@ export default function OKRPage() {
                                         <PermissionGate permission={Permissions.OKR_DELETE}>
                                           <button
                                             onClick={() => setDeleteKeyResultConfirm(kr.id)}
+                                            aria-label="Delete key result"
                                             className="p-1 text-[var(--text-muted)] hover:text-danger-600"
                                           >
                                             <Trash2 className="h-4 w-4"/>

@@ -324,7 +324,7 @@ export default function DepartmentsPage() {
           <div
             className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-400 px-4 py-4 rounded-xl row-between">
             <span>{error}</span>
-            <button onClick={() => setError(null)} className="text-danger-500 hover:text-danger-700">
+            <button onClick={() => setError(null)} aria-label="Dismiss error" className="text-danger-500 hover:text-danger-700">
               <X className="h-5 w-5"/>
             </button>
           </div>

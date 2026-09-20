@@ -524,6 +524,7 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
                     navigator.clipboard.writeText(showSecret);
                     toast.success('Copied to clipboard');
                   }}
+                    aria-label="Copy secret"
                     className="p-1.5 rounded shrink-0 text-warning-700 hover:bg-warning-100 transition-colors">
                     <ClipboardCopy className="w-3.5 h-3.5"/>
                   </button>
@@ -533,6 +534,7 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
                 </p>
               </div>
               <button type="button" onClick={() => setShowSecret(null)}
+                aria-label="Dismiss"
                 className="p-1 text-warning-600 hover:text-warning-800 transition-colors">
                 <XCircle className="w-3.5 h-3.5"/>
               </button>

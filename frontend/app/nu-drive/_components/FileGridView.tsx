@@ -24,6 +24,7 @@ export function FileGridView({files, onFileClick, onContextMenu}: FileGridViewPr
         >
           <button
             onClick={(e) => onContextMenu(e, file)}
+            aria-label="More options"
             className="absolute top-2 right-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-opacity cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             <MoreVertical

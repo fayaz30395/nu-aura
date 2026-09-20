@@ -613,6 +613,7 @@ export const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
               )}
               aria-haspopup="true"
               aria-expanded={showPresetMenu}
+              aria-label="Filter presets"
             >
               <MoreVertical className="h-4 w-4"/>
             </button>

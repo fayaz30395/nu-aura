@@ -281,6 +281,7 @@ export default function NewTravelRequestPage() {
           <button
             type="button"
             onClick={() => router.back()}
+            aria-label="Back"
             className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>

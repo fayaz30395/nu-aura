@@ -354,6 +354,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
                   <button
                     type="button"
                     onClick={() => removePollOption(index)}
+                    aria-label="Remove option"
                     className="rounded p-1 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950 transition-colors"
                   >
                     <X size={14}/>
@@ -418,6 +419,7 @@ export function PostComposer({onPostCreated}: PostComposerProps) {
                     setSelectedRecipient(null);
                     setRecipientSearch('');
                   }}
+                  aria-label="Clear recipient"
                   className="rounded p-1 text-[var(--text-muted)] hover:text-danger-600 transition-colors"
                 >
                   <X size={14}/>

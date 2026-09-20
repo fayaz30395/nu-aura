@@ -66,7 +66,7 @@ function CriteriaEditor({
             className="h-7 text-xs w-16"
             placeholder="Wt"
           />
-          <button type="button" onClick={() => remove(i)} className="h-7 w-7 flex items-center justify-center text-[var(--text-muted)] hover:text-danger-600 shrink-0">
+          <button type="button" onClick={() => remove(i)} aria-label="Remove criterion" className="h-7 w-7 flex items-center justify-center text-[var(--text-muted)] hover:text-danger-600 shrink-0">
             <X className="w-3 h-3"/>
           </button>
         </div>
@@ -231,7 +231,7 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
                 </button>
               </div>
             ) : (
-              <button type="button" onClick={() => setConfirmDelete(true)} className="w-7 h-7 flex items-center justify-center text-[var(--text-muted)] hover:text-danger-600 rounded hover:bg-[var(--bg-secondary)]">
+              <button type="button" onClick={() => setConfirmDelete(true)} aria-label="Delete scorecard" className="w-7 h-7 flex items-center justify-center text-[var(--text-muted)] hover:text-danger-600 rounded hover:bg-[var(--bg-secondary)]">
                 <Trash2 className="w-3.5 h-3.5"/>
               </button>
             )}

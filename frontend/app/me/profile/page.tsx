@@ -734,6 +734,7 @@ export default function MyProfilePage() {
                   </div>
                   <button
                     onClick={() => setShowBankChangeModal(false)}
+                    aria-label="Close"
                     className="p-1 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
                   >
                     <X className="h-5 w-5 text-[var(--text-muted)]"/>

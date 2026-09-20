@@ -168,6 +168,7 @@ export default function SlackIntegrationPage() {
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => router.push('/integrations')}
+            aria-label="Back to integrations"
             className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors"
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>

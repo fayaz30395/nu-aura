@@ -613,6 +613,7 @@ export default function ScheduledReportsPage() {
                               <button
                                 type="button"
                                 onClick={() => removeRecipient(index)}
+                                aria-label="Remove recipient"
                                 className="px-4 py-2 text-danger-600 hover:bg-danger-50 rounded-lg"
                               >
                                 <Trash2 className="h-4 w-4"/>

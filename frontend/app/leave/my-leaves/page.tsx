@@ -154,6 +154,7 @@ export default function MyLeavesPage() {
             </div>
             <button
               onClick={() => setError(null)}
+              aria-label="Dismiss error"
               className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
             >
               <RefreshCw

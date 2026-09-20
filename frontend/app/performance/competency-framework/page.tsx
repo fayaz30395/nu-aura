@@ -216,6 +216,7 @@ function ReviewCompetencyPanel({
                         <PermissionGate permission={Permissions.REVIEW_DELETE}>
                           <button
                             onClick={() => setDeleteTarget(comp)}
+                            aria-label="Delete competency"
                             className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger-500"
                           >
                             <Trash2 size={14}/>

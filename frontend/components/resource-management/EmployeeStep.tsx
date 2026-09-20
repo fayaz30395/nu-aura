@@ -344,6 +344,7 @@ export function EmployeeStep({
                     <button
                       type="button"
                       onClick={() => onRemoveEmployee(allocation.employeeId)}
+                      aria-label="Remove employee"
                       className="p-1.5 text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-900/20 rounded"
                     >
                       <Trash2 className="h-4 w-4"/>

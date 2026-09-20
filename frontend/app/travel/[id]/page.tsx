@@ -270,6 +270,7 @@ export default function TravelRequestDetailsPage() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => router.push('/travel')}
+              aria-label="Back to travel requests"
               className="p-2 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded-xl transition-colors"
             >
               <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>

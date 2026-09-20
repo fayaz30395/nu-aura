@@ -130,6 +130,7 @@ export function DriveToolbar({
           <div className="flex items-center border border-[var(--border-main)] rounded-lg overflow-hidden">
             <button
               onClick={() => onViewModeChange('grid')}
+              aria-label="Grid view"
               className={`p-2 ${viewMode === 'grid' ? 'bg-accent-50 dark:bg-accent-950 text-accent-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
               <Grid
@@ -137,6 +138,7 @@ export function DriveToolbar({
             </button>
             <button
               onClick={() => onViewModeChange('list')}
+              aria-label="List view"
               className={`p-2 ${viewMode === 'list' ? 'bg-accent-50 dark:bg-accent-950 text-accent-700' : 'text-[var(--text-muted)] hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]'}`}
             >
               <List

@@ -343,6 +343,7 @@ export default function PermissionsPage() {
                                   e.stopPropagation();
                                   openEditRoleModal(role);
                                 }}
+                                aria-label="Edit role"
                                 className="p-2 text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 <Pencil className="w-4 h-4"/>
@@ -352,6 +353,7 @@ export default function PermissionsPage() {
                                   e.stopPropagation();
                                   handleDeleteRole(role.id, role.name);
                                 }}
+                                aria-label="Delete role"
                                 className="p-2 text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/30 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                               >
                                 <Trash2 className="w-4 h-4"/>

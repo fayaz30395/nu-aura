@@ -427,6 +427,7 @@ export default function SearchPage() {
                           className="inline-flex items-center gap-1 px-2 py-1 rounded bg-[var(--accent-100)] text-[var(--accent-700)] text-xs">
                           {typeDisplayMap[selectedType.toLowerCase()] || selectedType}
                           <button onClick={() => setSelectedType(undefined)}
+                                  aria-label="Clear type filter"
                                   className="cursor-pointer hover:opacity-70">
                             <X className="h-3 w-3"/>
                           </button>
@@ -437,6 +438,7 @@ export default function SearchPage() {
                           className="inline-flex items-center gap-1 px-2 py-1 rounded bg-[var(--accent-100)] text-[var(--accent-700)] text-xs">
                           {visibilityOption.label}
                           <button onClick={() => setSelectedVisibility(undefined)}
+                                  aria-label="Clear visibility filter"
                                   className="cursor-pointer hover:opacity-70">
                             <X className="h-3 w-3"/>
                           </button>
