@@ -4,6 +4,21 @@
 > Cross-Module Integration). These are REAL gaps verified against the codebase — not surface-level
 > feature comparisons.
 > **Generated:** 2026-04-01 | **Flyway next:** V101 | **TypeScript errors:** 0
+>
+> **⚠️ STALENESS WARNING (added 2026-09-20):** a faylo SDLC re-audit against live `main` found
+> this doc's counts and even entire "BROKEN" items are heavily out of date, ~5.5 months later.
+> Confirmed so far: FIX-001/002/004 (overtime/expense/training → payroll/skills) were already
+> wired; only FIX-003 (review→compensation) and FIX-005 (LOP→payroll) actually still needed
+> work at some point, and FIX-005 turned out already implemented too when re-checked (via
+> `PayrollIntegrationListener.onLeaveApproved`) — all 5 Phase-1 items are done now. FIX-007
+> (`@Valid` coverage, claimed "~40% missing") is actually ~99% (405/407 real gaps are 2
+> legitimate raw-string webhook payloads). FIX-008 (pagination, claimed "~34% unbounded") looks
+> similarly overstated on a sample of ~65 `List<T>`-returning endpoints — nearly all are
+> naturally bounded (per-employee, per-year, or small reference catalogs), not org-wide
+> unbounded queries; not exhaustively re-verified. **Do not size new work off this doc's counts
+> without re-grepping current `main` first** — same lesson as `QA_UIUX_FINDINGS.md`. FIX-009
+> (audit logging), FIX-010 (@Where soft-delete), and Phase 3/4 frontend items (FIX-012 through
+> FIX-021) have NOT been re-verified — treat all of them as unconfirmed hypotheses too.
 
 ---
 
