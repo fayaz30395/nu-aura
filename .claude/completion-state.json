@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T05:30:00Z",
+  "lastUpdated": "2026-09-20T06:00:00Z",
   "repositoryCommit": "d99c55b2",
-  "passId": "pass-4-partial-2",
+  "passId": "pass-4",
   "scopeVersion": "keka-parity-v1",
   "items": {
     "notifications.attendance_regularized": {
@@ -632,6 +632,61 @@
       "lastVerifiedAt": "2026-09-20T03:00:00Z",
       "reported": true,
       "blocker": null
+    },
+    "documents.controller_idor": {
+      "status": "in_flight",
+      "summary": "DocumentController grantAccess/setExpiry/requestApproval don't validate documentId exists/tenant-scoped before writing - real IDOR-shaped gap, fixing directly",
+      "evidence": [
+        "US-2FZ3774CR9Z1"
+      ],
+      "lastVerifiedCommit": "83336b2f",
+      "lastVerifiedAt": "2026-09-20T06:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "frontend.orphan_linkedin_biometric_nav": {
+      "status": "in_flight",
+      "summary": "linkedin-posts and biometric-devices pages complete+real backend, zero nav entry point - fixing directly (pure wiring, not a decision)",
+      "evidence": [
+        "US-2FZ377BJ1EGG"
+      ],
+      "lastVerifiedCommit": "83336b2f",
+      "lastVerifiedAt": "2026-09-20T06:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "frontend.company_spotlight_flagged_off": {
+      "status": "blocked",
+      "summary": "company-spotlight page+widget deliberately disabled via SPOTLIGHT_API_AVAILABLE=false pending a backend SpotlightController that doesn't exist - known, correctly held, not actionable",
+      "evidence": [
+        "lib/services/platform/spotlight.service.ts"
+      ],
+      "lastVerifiedCommit": "83336b2f",
+      "lastVerifiedAt": "2026-09-20T06:00:00Z",
+      "reported": true,
+      "blocker": "backend controller needs to ship first - separate feature, not in scope"
+    },
+    "documents.controller_admin_ui_scope": {
+      "status": "blocked",
+      "summary": "DocumentController's access/approval/expiry endpoints are real backend with zero frontend integration - build a document access-management admin UI now, or defer",
+      "evidence": [
+        "DC-2FZ37CZH6KQN"
+      ],
+      "lastVerifiedCommit": "83336b2f",
+      "lastVerifiedAt": "2026-09-20T06:00:00Z",
+      "reported": true,
+      "blocker": "DC-2FZ37CZH6KQN filed, awaiting human resolve"
+    },
+    "webhook_integration_fallback_scan": {
+      "status": "completed",
+      "summary": "Slack/Google Calendar/Webhook/Email failure handling audited - zero genuine gaps found (all correctly catch-and-log without breaking parent operations)",
+      "evidence": [
+        "pass-4 webhookFallback scan"
+      ],
+      "lastVerifiedCommit": "83336b2f",
+      "lastVerifiedAt": "2026-09-20T06:00:00Z",
+      "reported": true,
+      "blocker": null
     }
   },
   "passes": [
@@ -698,6 +753,18 @@
       "timestamp": "2026-09-20T05:30:00Z",
       "delta": [
         "rbac.scope_model_5_domains"
+      ]
+    },
+    {
+      "passId": "pass-4",
+      "commit": "83336b2f",
+      "timestamp": "2026-09-20T06:00:00Z",
+      "delta": [
+        "documents.controller_idor",
+        "frontend.orphan_linkedin_biometric_nav",
+        "frontend.company_spotlight_flagged_off",
+        "documents.controller_admin_ui_scope",
+        "webhook_integration_fallback_scan"
       ]
     }
   ]
