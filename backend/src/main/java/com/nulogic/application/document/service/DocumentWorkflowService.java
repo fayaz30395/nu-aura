@@ -209,6 +209,15 @@ public class DocumentWorkflowService {
     }
 
     /**
+     * List document access grants for a document
+     */
+    @Transactional(readOnly = true)
+    public List<DocumentAccess> listAccess(UUID documentId) {
+        UUID tenantId = SecurityContext.getCurrentTenantId();
+        return documentAccessRepository.findByTenantIdAndDocumentId(tenantId, documentId);
+    }
+
+    /**
      * Revoke document access
      */
     @Transactional
