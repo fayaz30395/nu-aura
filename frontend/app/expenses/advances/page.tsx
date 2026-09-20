@@ -10,7 +10,17 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {AdvanceStatus, ExpenseAdvanceEntity} from '@/lib/types/hrms/expense';
-import {ConfirmDialog, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
+import {
+  ConfirmDialog,
+  EmptyState,
+  FilterField,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  TableFilterBar,
+  TablePagination,
+} from '@/components/ui';
 import {formatCurrency} from '@/lib/utils';
 import {formatDate} from '@/lib/utils/format/date';
 import {
@@ -35,6 +45,24 @@ type AdvanceRequestFormData = z.infer<typeof advanceRequestSchema>;
 
 type TabType = 'my-advances' | 'all-advances';
 
+const ALL_ADVANCES_PAGE_SIZE = 20;
+
+const ALL_ADVANCES_FILTER_FIELDS: FilterField[] = [
+  {key: 'search', label: 'Search', type: 'text', placeholder: 'Search by purpose or employee'},
+  {
+    key: 'status',
+    label: 'Status',
+    type: 'select',
+    options: [
+      {value: 'REQUESTED', label: 'Requested'},
+      {value: 'APPROVED', label: 'Approved'},
+      {value: 'DISBURSED', label: 'Disbursed'},
+      {value: 'SETTLED', label: 'Settled'},
+      {value: 'CANCELLED', label: 'Cancelled'},
+    ],
+  },
+];
+
 const STATUS_COLORS: Record<AdvanceStatus, string> = {
   REQUESTED: 'bg-accent-100 text-accent-700',
   APPROVED: 'bg-sky-100 text-sky-700',
@@ -51,9 +79,11 @@ export default function ExpenseAdvancesPage() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [selectedAdvance, setSelectedAdvance] = useState<ExpenseAdvanceEntity | null>(null);
   const [selectedClaimId, setSelectedClaimId] = useState('');
+  const [allAdvancesPage, setAllAdvancesPage] = useState(0);
+  const [allAdvancesFilters, setAllAdvancesFilters] = useState<Record<string, string>>({search: '', status: ''});
 
   const myAdvancesQuery = useMyExpenseAdvances(user?.employeeId, 0, 50);
-  const allAdvancesQuery = useAllExpenseAdvances(0, 50);
+  const allAdvancesQuery = useAllExpenseAdvances(allAdvancesPage, ALL_ADVANCES_PAGE_SIZE);
   const myApprovedClaimsQuery = useMyExpenseClaims(user?.employeeId, 0, 50, 'APPROVED');
 
   const createMutation = useCreateExpenseAdvance();
@@ -75,6 +105,30 @@ export default function ExpenseAdvancesPage() {
   const myAdvances = useMemo(() => myAdvancesQuery.data?.content || [], [myAdvancesQuery.data]);
   const allAdvances = useMemo(() => allAdvancesQuery.data?.content || [], [allAdvancesQuery.data]);
   const approvedClaims = useMemo(() => myApprovedClaimsQuery.data?.content || [], [myApprovedClaimsQuery.data]);
+
+  // ponytail: backend /expenses/advances only accepts page/size (no search/status query params),
+  // so search+status filter the current page client-side. Add server-side query params when an
+  // org needs to filter across the full dataset, not just the loaded page.
+  const filteredAllAdvances = useMemo(() => {
+    const search = allAdvancesFilters.search?.trim().toLowerCase() || '';
+    const status = allAdvancesFilters.status || '';
+    return allAdvances.filter((advance) => {
+      const matchesSearch =
+        !search ||
+        advance.purpose?.toLowerCase().includes(search) ||
+        advance.employeeName?.toLowerCase().includes(search);
+      const matchesStatus = !status || advance.status === status;
+      return matchesSearch && matchesStatus;
+    });
+  }, [allAdvances, allAdvancesFilters]);
+
+  const handleAllAdvancesFilterChange = (key: string, value: string) => {
+    setAllAdvancesFilters((prev) => ({...prev, [key]: value}));
+  };
+
+  const handleAllAdvancesFilterClear = () => {
+    setAllAdvancesFilters({search: '', status: ''});
+  };
 
   const handleCreateAdvance = async (data: AdvanceRequestFormData) => {
     if (!user?.employeeId) return;
@@ -246,16 +300,42 @@ export default function ExpenseAdvancesPage() {
                   icon={<TrendingUp className="h-12 w-12 text-surface-400"/>}
                 />
               ) : (
-                <AdvancesTable
-                  advances={allAdvances}
-                  showEmployee
-                  onApprove={(id) => approveMutation.mutate(id)}
-                  onDisburse={(id) => disburseMutation.mutate(id)}
-                  onCancel={openCancelConfirm}
-                  approvePending={approveMutation.isPending}
-                  disbursePending={disburseMutation.isPending}
-                  cancelPending={cancelMutation.isPending}
-                />
+                <>
+                  <TableFilterBar
+                    filters={ALL_ADVANCES_FILTER_FIELDS}
+                    values={allAdvancesFilters}
+                    onChange={handleAllAdvancesFilterChange}
+                    onClear={handleAllAdvancesFilterClear}
+                    onApply={() => {
+                      // ponytail: filtering is reactive via onChange already; Apply is a no-op affordance.
+                    }}
+                  />
+                  {filteredAllAdvances.length === 0 ? (
+                    <EmptyState
+                      title="No matching advances"
+                      description="No advances match the current filters."
+                      icon={<TrendingUp className="h-12 w-12 text-surface-400"/>}
+                    />
+                  ) : (
+                    <AdvancesTable
+                      advances={filteredAllAdvances}
+                      showEmployee
+                      onApprove={(id) => approveMutation.mutate(id)}
+                      onDisburse={(id) => disburseMutation.mutate(id)}
+                      onCancel={openCancelConfirm}
+                      approvePending={approveMutation.isPending}
+                      disbursePending={disburseMutation.isPending}
+                      cancelPending={cancelMutation.isPending}
+                    />
+                  )}
+                  <TablePagination
+                    currentPage={allAdvancesPage}
+                    totalPages={allAdvancesQuery.data?.totalPages ?? 1}
+                    totalItems={allAdvancesQuery.data?.totalElements ?? 0}
+                    pageSize={ALL_ADVANCES_PAGE_SIZE}
+                    onPageChange={setAllAdvancesPage}
+                  />
+                </>
               )}
             </div>
           </PermissionGate>
