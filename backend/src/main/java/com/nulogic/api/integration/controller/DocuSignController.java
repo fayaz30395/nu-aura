@@ -2,16 +2,19 @@ package com.nulogic.api.integration.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nulogic.api.esignature.dto.SignDocumentRequest;
 import com.nulogic.api.integration.dto.DocuSignEnvelopeResponse;
 import com.nulogic.api.integration.dto.DocuSignTemplateMappingRequest;
 import com.nulogic.api.integration.dto.DocuSignTemplateMappingResponse;
 import com.nulogic.application.document.service.FileStorageService;
+import com.nulogic.application.esignature.service.ESignatureService;
 import com.nulogic.application.integration.service.DocuSignManagementService;
 import com.nulogic.application.integration.service.IntegrationConnectorConfigService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.esignature.SignatureApproval;
 import com.nulogic.domain.integration.ConnectorConfig;
 import com.nulogic.domain.integration.docusign.DocuSignEnvelope;
 import com.nulogic.domain.integration.docusign.DocuSignTemplateMapping;
@@ -63,6 +66,7 @@ public class DocuSignController {
     private final ObjectMapper objectMapper;
     private final FileStorageService fileStorageService;
     private final TenantTimeService tenantTimeService;
+    private final ESignatureService eSignatureService;
 
     // ===================== Webhook Endpoint =====================
 
@@ -450,6 +454,34 @@ public class DocuSignController {
         }
 
         docuSignManagementService.saveEnvelope(envelope);
+
+        // Bridge to the internal e-signature domain: when a signing request was routed
+        // through DocuSign (ESignatureService.sendForSignature), this envelope's entity
+        // is the SignatureApproval that DocuSign is handling on our behalf.
+        if ("SignatureApproval".equals(envelope.getEntityType())) {
+            syncSignatureApprovalFromDocuSign(envelope.getEntityId(), event.getStatus());
+        }
+    }
+
+    /**
+     * Applies a DocuSign envelope status change to the corresponding internal
+     * {@code SignatureApproval}, so offer/contract signing tracked by DocuSign shows
+     * up as signed/declined in NU-AURA the same way internal token-based signing does.
+     */
+    private void syncSignatureApprovalFromDocuSign(UUID approvalId, String docuSignStatus) {
+        try {
+            if ("completed".equalsIgnoreCase(docuSignStatus)) {
+                SignDocumentRequest request = new SignDocumentRequest();
+                request.setSignatureMethod(SignatureApproval.SignatureMethod.DIGITAL_CERT);
+                request.setSignatureData("Signed via DocuSign");
+                eSignatureService.signDocument(approvalId, request);
+            } else if ("declined".equalsIgnoreCase(docuSignStatus)) {
+                eSignatureService.declineDocument(approvalId, "Declined via DocuSign");
+            }
+        } catch (Exception e) { // Intentional broad catch — best-effort sync; envelope status is already recorded
+            log.error("Failed to sync signature approval {} from DocuSign status {}: {}",
+                    approvalId, docuSignStatus, e.getMessage(), e);
+        }
     }
 
     /**

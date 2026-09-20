@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.integration.dto.DocuSignEnvelopeResponse;
 import com.nulogic.api.integration.dto.DocuSignTemplateMappingRequest;
 import com.nulogic.application.document.service.FileStorageService;
+import com.nulogic.application.esignature.service.ESignatureService;
 import com.nulogic.application.integration.service.DocuSignManagementService;
 import com.nulogic.application.integration.service.IntegrationConnectorConfigService;
 import com.nulogic.common.config.TestMeterRegistryConfig;
@@ -74,6 +75,8 @@ class DocuSignControllerTest {
     private FileStorageService fileStorageService;
     @MockitoBean
     private TenantTimeService tenantTimeService;
+    @MockitoBean
+    private ESignatureService eSignatureService;
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
     @MockitoBean

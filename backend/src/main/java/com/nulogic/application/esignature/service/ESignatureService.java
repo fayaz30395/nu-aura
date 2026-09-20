@@ -2,6 +2,8 @@ package com.nulogic.application.esignature.service;
 
 import com.nulogic.api.esignature.dto.*;
 import com.nulogic.application.esignature.event.SignatureCompletedEvent;
+import com.nulogic.application.integration.service.DocuSignManagementService;
+import com.nulogic.application.integration.service.IntegrationConnectorConfigService;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
@@ -9,9 +11,13 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.esignature.SignatureApproval;
 import com.nulogic.domain.esignature.SignatureRequest;
+import com.nulogic.domain.integration.ConnectorConfig;
+import com.nulogic.domain.integration.docusign.DocuSignEnvelope;
+import com.nulogic.domain.integration.docusign.DocuSignTemplateMapping;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.esignature.repository.SignatureApprovalRepository;
 import com.nulogic.infrastructure.esignature.repository.SignatureRequestRepository;
+import com.nulogic.infrastructure.integration.docusign.DocuSignApiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,6 +27,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -42,6 +49,12 @@ public class ESignatureService {
     private final DataScopeService dataScopeService;
     private final ApplicationEventPublisher eventPublisher;
     private final TenantTimeService tenantTimeService;
+    private final IntegrationConnectorConfigService integrationConnectorConfigService;
+    private final DocuSignManagementService docuSignManagementService;
+    private final DocuSignApiClient docuSignApiClient;
+
+    private static final String DOCUSIGN_CONNECTOR_ID = "docusign";
+    private static final String DOCUSIGN_ENVELOPE_ENTITY_TYPE = "SignatureApproval";
 
     // ==================== Signature Request Operations ====================
 
@@ -152,7 +165,77 @@ public class ESignatureService {
         signatureApprovalRepository.saveAll(approvals);
 
         SignatureRequest updatedRequest = signatureRequestRepository.save(signatureRequest);
+
+        // If the tenant has DocuSign configured with a template mapping for this
+        // document type, route the primary signer through DocuSign instead of the
+        // internal token-based flow. Falls back to internal signing (already set up
+        // above) when DocuSign isn't configured, has no mapping, or the call fails.
+        tryCreateDocuSignEnvelope(updatedRequest, approvals);
+
         return mapToSignatureRequestResponse(updatedRequest);
+    }
+
+    /**
+     * Creates a DocuSign envelope for the signature request's primary signer when the
+     * tenant has DocuSign connected and an active template mapping exists for the
+     * document type.
+     *
+     * <p>ponytail: only the first approval is routed through DocuSign — sequential
+     * multi-signer DocuSign envelopes aren't wired. Extend if multi-signer DocuSign
+     * signing is needed.</p>
+     */
+    private void tryCreateDocuSignEnvelope(SignatureRequest signatureRequest, List<SignatureApproval> approvals) {
+        if (approvals.isEmpty()) {
+            return;
+        }
+
+        UUID tenantId = signatureRequest.getTenantId();
+        ConnectorConfig config;
+        try {
+            config = integrationConnectorConfigService.getConfig(tenantId, DOCUSIGN_CONNECTOR_ID);
+        } catch (IllegalArgumentException notConfigured) {
+            return; // DocuSign not connected for this tenant — internal e-sign flow stands
+        }
+
+        DocuSignTemplateMapping mapping = docuSignManagementService
+                .findActiveTemplateMapping(tenantId, signatureRequest.getDocumentType().name())
+                .orElse(null);
+        if (mapping == null) {
+            log.debug("No active DocuSign template mapping for document type {}; using internal e-sign",
+                    signatureRequest.getDocumentType());
+            return;
+        }
+
+        SignatureApproval signer = approvals.get(0);
+        if (signer.getSignerEmail() == null || signer.getSignerEmail().isBlank()) {
+            log.warn("Signer {} has no email on file; cannot route through DocuSign", signer.getId());
+            return;
+        }
+        String recipientName = signer.getSignerId() != null
+                ? employeeRepository.findById(signer.getSignerId()).map(Employee::getFullName).orElse(signer.getSignerEmail())
+                : signer.getSignerEmail();
+
+        try {
+            DocuSignApiClient.EnvelopeResponse envelopeResponse = docuSignApiClient.createEnvelope(
+                    config, mapping.getDocusignTemplateId(), signer.getSignerEmail(), recipientName,
+                    signatureRequest.getDocumentUrl(), signatureRequest.getTitle());
+
+            DocuSignEnvelope envelope = DocuSignEnvelope.builder()
+                    .tenantId(tenantId)
+                    .envelopeId(envelopeResponse.envelopeId())
+                    .entityType(DOCUSIGN_ENVELOPE_ENTITY_TYPE)
+                    .entityId(signer.getId())
+                    .status(envelopeResponse.status())
+                    .sentAt(Instant.now())
+                    .build();
+            docuSignManagementService.saveEnvelope(envelope);
+
+            log.info("Created DocuSign envelope {} for signature approval {}", envelopeResponse.envelopeId(), signer.getId());
+        } catch (RuntimeException e) {
+            log.error("Failed to create DocuSign envelope for signature request {}: {}",
+                    signatureRequest.getId(), e.getMessage(), e);
+            // Don't fail sendForSignature — the internal e-sign flow already set up above still works
+        }
     }
 
     @Transactional
