@@ -12,6 +12,8 @@ import {
   useAddEvaluation,
   useAllProbations,
   useConfirmEmployee,
+  useExtendProbation,
+  useFailProbation,
   useProbationsByStatus,
   useProbationsEndingSoon,
   useProbationStatistics,
@@ -99,7 +101,32 @@ export default function ProbationPage() {
 
   // Mutations
   const confirmEmployee = useConfirmEmployee();
+  const extendProbation = useExtendProbation();
+  const failProbation = useFailProbation();
   const addEvaluation = useAddEvaluation();
+
+  const handleExtend = useCallback(
+    (probationId: string) => {
+      const daysInput = window.prompt('Extend probation by how many days?', '30');
+      if (!daysInput) return;
+      const extensionDays = Number(daysInput);
+      if (!Number.isFinite(extensionDays) || extensionDays <= 0) return;
+      const reason = window.prompt('Reason for extension?');
+      if (!reason) return;
+      extendProbation.mutate({probationId, data: {extensionDays, reason}});
+    },
+    [extendProbation]
+  );
+
+  const handleFail = useCallback(
+    (probationId: string) => {
+      const reason = window.prompt('Reason for failing probation?');
+      if (!reason) return;
+      if (!window.confirm('Fail this probation? This cannot be undone.')) return;
+      failProbation.mutate({probationId, data: {reason}});
+    },
+    [failProbation]
+  );
 
   // Form
   const {
@@ -354,6 +381,20 @@ export default function ProbationPage() {
                               className="text-xs px-2.5 py-1 rounded-lg bg-success-100 text-success-700 hover:bg-success-200 dark:bg-success-900/30 dark:text-success-400 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             >
                               Confirm
+                            </button>
+                            <button
+                              onClick={() => handleExtend(probation.id)}
+                              disabled={extendProbation.isPending}
+                              className="text-xs px-2.5 py-1 rounded-lg bg-warning-100 text-warning-700 hover:bg-warning-200 dark:bg-warning-900/30 dark:text-warning-400 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            >
+                              Extend
+                            </button>
+                            <button
+                              onClick={() => handleFail(probation.id)}
+                              disabled={failProbation.isPending}
+                              className="text-xs px-2.5 py-1 rounded-lg bg-danger-100 text-danger-700 hover:bg-danger-200 dark:bg-danger-900/30 dark:text-danger-400 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                            >
+                              Fail
                             </button>
                           </PermissionGate>
                         </>
