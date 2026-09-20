@@ -14,8 +14,10 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.recruitment.CandidateHiredEvent;
+import com.nulogic.domain.event.recruitment.CandidateStatusChangedEvent;
 import com.nulogic.domain.event.recruitment.OfferAcceptedEvent;
 import com.nulogic.domain.event.recruitment.OfferDeclinedEvent;
+import com.nulogic.domain.event.recruitment.OfferReadyToSendEvent;
 import com.nulogic.domain.recruitment.Candidate;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.domain.user.RoleScope;
@@ -451,6 +453,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
                 .orElseThrow(() -> new IllegalArgumentException(CANDIDATE_NOT_FOUND));
 
         Candidate.RecruitmentStage oldStage = candidate.getCurrentStage();
+        Candidate.CandidateStatus oldStatus = candidate.getStatus();
 
         // BIZ-011: Validate stage transition — prevent skipping stages
         // Rejection (CANDIDATE_REJECTED, PANEL_REJECT) is always allowed from any stage
@@ -495,6 +498,19 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
                 log.info("CandidateHiredEvent published for candidate: {}", candidateId);
             } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
                 log.error("Failed to publish CandidateHiredEvent for candidate {}: {}", candidateId, e.getMessage(), e);
+                // Don't fail the stage transition if event publishing fails
+            }
+        }
+
+        if (savedCandidate.getStatus() != oldStatus) {
+            try {
+                JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
+                        .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+                eventPublisher.publish(CandidateStatusChangedEvent.of(
+                        this, savedCandidate, jobOpening, oldStatus, savedCandidate.getStatus()));
+                log.info("CandidateStatusChangedEvent published for candidate: {}", candidateId);
+            } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
+                log.error("Failed to publish CandidateStatusChangedEvent for candidate {}: {}", candidateId, e.getMessage(), e);
                 // Don't fail the stage transition if event publishing fails
             }
         }
@@ -646,6 +662,16 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
                 Candidate.CandidateStatus.OFFER_EXTENDED.toString(),
                 "Offer approval workflow completed - approved by " + approvedBy
         );
+
+        try {
+            JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+            eventPublisher.publish(OfferReadyToSendEvent.of(this, candidate, jobOpening));
+            log.info("OfferReadyToSendEvent published for candidate: {}", entityId);
+        } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
+            log.error("Failed to publish OfferReadyToSendEvent for candidate {}: {}", entityId, e.getMessage(), e);
+            // Don't fail the approval callback if event publishing fails
+        }
 
         log.info("Offer approval callback completed for candidate {}", entityId);
     }

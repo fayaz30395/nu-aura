@@ -3,12 +3,21 @@ package com.nulogic.application.event;
 import com.nulogic.application.notification.dto.NotificationMessage;
 import com.nulogic.application.notification.service.NotificationService;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
+import com.nulogic.common.security.RoleHierarchy;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.domain.employee.Employee;
+import com.nulogic.domain.event.employee.EmployeeTerminatedEvent;
 import com.nulogic.domain.event.expense.ExpenseSubmittedEvent;
 import com.nulogic.domain.event.leave.LeaveRequestedEvent;
+import com.nulogic.domain.event.performance.PerformanceReviewCompletedEvent;
+import com.nulogic.domain.event.recruitment.CandidateStatusChangedEvent;
 import com.nulogic.domain.event.recruitment.OfferAcceptedEvent;
 import com.nulogic.domain.event.recruitment.OfferDeclinedEvent;
+import com.nulogic.domain.event.training.TrainingCompletedEvent;
+import com.nulogic.domain.event.recruitment.OfferReadyToSendEvent;
 import com.nulogic.domain.notification.Notification;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -16,6 +25,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -41,6 +51,8 @@ public class NotificationEventListener {
 
     private final NotificationService notificationService;
     private final WebSocketNotificationService webSocketNotificationService;
+    private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
 
     // ==================== Leave Events ====================
 
@@ -106,6 +118,75 @@ public class NotificationEventListener {
         );
     }
 
+    // ==================== Employee Lifecycle Events ====================
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onEmployeeTerminated(EmployeeTerminatedEvent event) {
+        log.info("Handling EmployeeTerminatedEvent for employee: {}", event.getAggregateId());
+
+        UUID tenantId = event.getTenantId();
+        Employee employee = event.getEmployee();
+        String title = "Employee Offboarding";
+        String message = String.format("%s has been marked as terminated and needs offboarding.",
+                employee.getFullName());
+
+        if (employee.getManagerId() != null) {
+            employeeRepository.findByIdAndTenantId(employee.getManagerId(), tenantId)
+                    .map(Employee::getUser)
+                    .ifPresent(managerUser -> createAndPushNotification(
+                            tenantId, managerUser.getId(), Notification.NotificationType.GENERAL,
+                            title, message, employee.getId(), "Employee", "/offboarding", Notification.Priority.HIGH));
+        }
+
+        // HR and IT (asset recovery / access revocation) both need to act on offboarding —
+        // no dedicated "IT" role exists, ASSET_MANAGER is the closest stand-in for that duty.
+        notifyRoleHolders(tenantId, RoleHierarchy.HR_ADMIN, title, message, employee.getId());
+        notifyRoleHolders(tenantId, RoleHierarchy.ASSET_MANAGER, title, message, employee.getId());
+    }
+
+    private void notifyRoleHolders(UUID tenantId, String roleCode, String title, String message, UUID relatedEntityId) {
+        List<UUID> userIds = userRepository.findUserIdsByRoleCode(tenantId, roleCode);
+        for (UUID userId : userIds) {
+            createAndPushNotification(tenantId, userId, Notification.NotificationType.GENERAL,
+                    title, message, relatedEntityId, "Employee", "/offboarding", Notification.Priority.HIGH);
+        }
+    }
+
+    // ==================== Performance Events ====================
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onPerformanceReviewCompleted(PerformanceReviewCompletedEvent event) {
+        log.info("Handling PerformanceReviewCompletedEvent for employee: {}", event.getEmployeeId());
+
+        UUID tenantId = event.getTenantId();
+        employeeRepository.findByIdAndTenantId(event.getEmployeeId(), tenantId)
+                .map(Employee::getUser)
+                .ifPresent(user -> createAndPushNotification(
+                        tenantId, user.getId(), Notification.NotificationType.GENERAL,
+                        "Performance Review Completed",
+                        "Your performance review has been completed" +
+                                (event.getOverallRating() != null ? " with an overall rating of " + event.getOverallRating() : "") + ".",
+                        event.getReviewId(), "PerformanceReview", "/performance/my-reviews", Notification.Priority.NORMAL));
+    }
+
+    // ==================== Training Events ====================
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onTrainingCompleted(TrainingCompletedEvent event) {
+        log.info("Handling TrainingCompletedEvent for employee: {}", event.getEmployeeId());
+
+        employeeRepository.findByIdAndTenantId(event.getEmployeeId(), event.getTenantId())
+                .map(Employee::getUser)
+                .ifPresent(user -> createAndPushNotification(
+                        event.getTenantId(), user.getId(), Notification.NotificationType.GENERAL,
+                        "Training Completed",
+                        String.format("You have completed the training program: %s", event.getProgramName()),
+                        event.getProgramId(), "TrainingProgram", "/training", Notification.Priority.NORMAL));
+    }
+
     // ==================== Recruitment Events ====================
 
     @Async
@@ -129,6 +210,34 @@ public class NotificationEventListener {
 
         String title = "Offer Declined";
         String message = String.format("%s declined the offer for %s", event.getCandidateName(), event.getJobTitle());
+
+        notifyRecruitmentStakeholders(event.getTenantId(), event.getRecruiterId(), event.getHiringManagerId(),
+                title, message, event.getAggregateId());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onOfferReadyToSend(OfferReadyToSendEvent event) {
+        log.info("Handling OfferReadyToSendEvent: offer for {} ({}) approved and ready to send",
+                event.getCandidateName(), event.getJobTitle());
+
+        String title = "Offer Ready to Send";
+        String message = String.format("The offer for %s (%s) has been approved and is ready to send",
+                event.getCandidateName(), event.getJobTitle());
+
+        notifyRecruitmentStakeholders(event.getTenantId(), event.getRecruiterId(), event.getHiringManagerId(),
+                title, message, event.getAggregateId());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onCandidateStatusChanged(CandidateStatusChangedEvent event) {
+        log.info("Handling CandidateStatusChangedEvent: {} moved from {} to {} for {}",
+                event.getCandidateName(), event.getOldStatus(), event.getNewStatus(), event.getJobTitle());
+
+        String title = "Candidate Status Updated";
+        String message = String.format("%s's status changed from %s to %s for %s",
+                event.getCandidateName(), event.getOldStatus(), event.getNewStatus(), event.getJobTitle());
 
         notifyRecruitmentStakeholders(event.getTenantId(), event.getRecruiterId(), event.getHiringManagerId(),
                 title, message, event.getAggregateId());
