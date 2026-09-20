@@ -26,6 +26,8 @@ import type {SlashMenuHandle} from './SlashMenu';
 import SlashMenu from './SlashMenu';
 import FloatingBar from './FloatingBar';
 import {CalloutNode} from './extensions/CalloutNode';
+import {ExpandCollapseNode} from './extensions/ExpandCollapseNode';
+import {TableOfContentsNode} from './extensions/TableOfContentsNode';
 
 const lowlight = createLowlight(common);
 
@@ -254,6 +256,8 @@ export default function FluenceEditor({
       Color,
       TextStyle,
       CalloutNode,
+      ExpandCollapseNode,
+      TableOfContentsNode,
       createSlashCommandExtension(
         handleSlashActivate,
         handleSlashDeactivate,

@@ -19,6 +19,8 @@ import Color from '@tiptap/extension-color';
 import {TextStyle} from '@tiptap/extension-text-style';
 import {common, createLowlight} from 'lowlight';
 import {CalloutNode} from './editor/extensions/CalloutNode';
+import {ExpandCollapseNode} from './editor/extensions/ExpandCollapseNode';
+import {TableOfContentsNode} from './editor/extensions/TableOfContentsNode';
 
 const lowlight = createLowlight(common);
 
@@ -69,6 +71,8 @@ export default function ContentViewer({
       Color,
       TextStyle,
       CalloutNode,
+      ExpandCollapseNode,
+      TableOfContentsNode,
     ],
     content: content as Record<string, unknown>,
     editable: false,
