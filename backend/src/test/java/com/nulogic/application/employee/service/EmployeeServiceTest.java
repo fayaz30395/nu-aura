@@ -1,10 +1,12 @@
 package com.nulogic.application.employee.service;
 
+import com.nulogic.api.employee.dto.AdminEmployeeUpdateRequest;
 import com.nulogic.api.employee.dto.CreateEmployeeRequest;
 import com.nulogic.api.employee.dto.EmployeeResponse;
 import com.nulogic.api.employee.dto.UpdateEmployeeRequest;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.DuplicateResourceException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.DataScopeService;
@@ -14,6 +16,8 @@ import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.performance.repository.PIPRepository;
+import com.nulogic.infrastructure.probation.repository.ProbationPeriodRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,6 +70,12 @@ class EmployeeServiceTest {
 
     @Mock
     private TokenBlacklistService tokenBlacklistService;
+
+    @Mock
+    private ProbationPeriodRepository probationPeriodRepository;
+
+    @Mock
+    private PIPRepository pipRepository;
 
     @Mock
     private org.springframework.beans.factory.ObjectProvider<EmployeeService> selfProvider;
@@ -355,6 +365,97 @@ class EmployeeServiceTest {
     }
 
     @Nested
+    @DisplayName("Promotion Eligibility Gate Tests")
+    class PromotionEligibilityGateTests {
+
+        @Test
+        @DisplayName("Should block level promotion while employee has active probation")
+        void shouldBlockPromotionOnActiveProbation() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+                employee.setLevel(Employee.EmployeeLevel.MID);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(probationPeriodRepository.existsByEmployeeIdAndTenantIdAndStatusIn(eq(employeeId), eq(tenantId), anyList()))
+                        .thenReturn(true);
+
+                AdminEmployeeUpdateRequest request = new AdminEmployeeUpdateRequest();
+                request.setLevel(Employee.EmployeeLevel.SENIOR);
+
+                assertThatThrownBy(() -> employeeService.updateEmployeeAdminFields(employeeId, request))
+                        .isInstanceOf(BusinessException.class)
+                        .hasMessageContaining("probation");
+
+                verify(employeeRepository, never()).save(any(Employee.class));
+            }
+        }
+
+        @Test
+        @DisplayName("Should block designation promotion while employee has an active PIP")
+        void shouldBlockPromotionOnActivePip() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(probationPeriodRepository.existsByEmployeeIdAndTenantIdAndStatusIn(eq(employeeId), eq(tenantId), anyList()))
+                        .thenReturn(false);
+                when(pipRepository.existsByTenantIdAndEmployeeIdAndStatusIn(eq(tenantId), eq(employeeId), anyList()))
+                        .thenReturn(true);
+
+                AdminEmployeeUpdateRequest request = new AdminEmployeeUpdateRequest();
+                request.setDesignation("Senior Engineer");
+
+                assertThatThrownBy(() -> employeeService.updateEmployeeAdminFields(employeeId, request))
+                        .isInstanceOf(BusinessException.class)
+                        .hasMessageContaining("Performance Improvement Plan");
+
+                verify(employeeRepository, never()).save(any(Employee.class));
+            }
+        }
+
+        @Test
+        @DisplayName("Should allow promotion when no active probation or PIP")
+        void shouldAllowPromotionWithoutActiveProbationOrPip() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+                employee.setLevel(Employee.EmployeeLevel.MID);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.save(any(Employee.class))).thenAnswer(inv -> inv.getArgument(0));
+                when(probationPeriodRepository.existsByEmployeeIdAndTenantIdAndStatusIn(eq(employeeId), eq(tenantId), anyList()))
+                        .thenReturn(false);
+                when(pipRepository.existsByTenantIdAndEmployeeIdAndStatusIn(eq(tenantId), eq(employeeId), anyList()))
+                        .thenReturn(false);
+
+                AdminEmployeeUpdateRequest request = new AdminEmployeeUpdateRequest();
+                request.setLevel(Employee.EmployeeLevel.SENIOR);
+
+                EmployeeResponse response = employeeService.updateEmployeeAdminFields(employeeId, request);
+
+                assertThat(response).isNotNull();
+                verify(employeeRepository).save(any(Employee.class));
+            }
+        }
+
+        @Test
+        @DisplayName("Should allow demotion even during active probation")
+        void shouldAllowDemotionDuringActiveProbation() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+                employee.setLevel(Employee.EmployeeLevel.SENIOR);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.save(any(Employee.class))).thenAnswer(inv -> inv.getArgument(0));
+
+                AdminEmployeeUpdateRequest request = new AdminEmployeeUpdateRequest();
+                request.setLevel(Employee.EmployeeLevel.MID);
+
+                EmployeeResponse response = employeeService.updateEmployeeAdminFields(employeeId, request);
+
+                assertThat(response).isNotNull();
+                verify(employeeRepository).save(any(Employee.class));
+                verify(probationPeriodRepository, never()).existsByEmployeeIdAndTenantIdAndStatusIn(any(), any(), anyList());
+            }
+        }
+    }
+
+    @Nested
     @DisplayName("Batch Status Change Tests")
     class BatchStatusChangeTests {
 
@@ -367,11 +468,11 @@ class EmployeeServiceTest {
 
                 UUID secondId = UUID.randomUUID();
                 Employee second = Employee.builder()
+                        .id(secondId)
+                        .tenantId(tenantId)
                         .employeeCode("EMP002")
                         .status(Employee.EmployeeStatus.ACTIVE)
                         .build();
-                second.setId(secondId);
-                second.setTenantId(tenantId);
 
                 when(selfProvider.getObject()).thenReturn(employeeService);
                 when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));

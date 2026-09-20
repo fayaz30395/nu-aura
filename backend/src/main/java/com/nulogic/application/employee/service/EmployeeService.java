@@ -9,6 +9,7 @@ import com.nulogic.api.employee.dto.UpdateEmployeeRequest;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.common.config.CacheConfig;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.DuplicateResourceException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.DataScopeService;
@@ -19,9 +20,13 @@ import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Department;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.employee.*;
+import com.nulogic.domain.performance.PerformanceImprovementPlan.PIPStatus;
+import com.nulogic.domain.probation.ProbationPeriod.ProbationStatus;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.performance.repository.PIPRepository;
+import com.nulogic.infrastructure.probation.repository.ProbationPeriodRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +80,10 @@ public class EmployeeService {
                     "VALUES (?::uuid, ?::varchar, 1) " +
                     "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = employee_code_sequence.current_value + 1 " +
                     "RETURNING current_value";
+    private static final List<ProbationStatus> ACTIVE_PROBATION_STATUSES =
+            List.of(ProbationStatus.ACTIVE, ProbationStatus.EXTENDED, ProbationStatus.ON_HOLD);
+    private static final List<PIPStatus> ACTIVE_PIP_STATUSES =
+            List.of(PIPStatus.ACTIVE, PIPStatus.EXTENDED);
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository;
@@ -84,6 +93,8 @@ public class EmployeeService {
     private final DataScopeService dataScopeService;
     private final JdbcTemplate jdbcTemplate;
     private final TokenBlacklistService tokenBlacklistService;
+    private final ProbationPeriodRepository probationPeriodRepository;
+    private final PIPRepository pipRepository;
     // ObjectProvider, not @Lazy self-injection, to avoid eager self-construction —
     // same pattern as AutoRegularizationScheduler. Routes batch-status calls back
     // through the Spring proxy so each employee's update gets its own @Transactional
@@ -99,6 +110,8 @@ public class EmployeeService {
                            DataScopeService dataScopeService,
                            JdbcTemplate jdbcTemplate,
                            TokenBlacklistService tokenBlacklistService,
+                           ProbationPeriodRepository probationPeriodRepository,
+                           PIPRepository pipRepository,
                            ObjectProvider<EmployeeService> selfProvider) {
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
@@ -109,6 +122,8 @@ public class EmployeeService {
         this.dataScopeService = dataScopeService;
         this.jdbcTemplate = jdbcTemplate;
         this.tokenBlacklistService = tokenBlacklistService;
+        this.probationPeriodRepository = probationPeriodRepository;
+        this.pipRepository = pipRepository;
         this.selfProvider = selfProvider;
     }
 
@@ -481,6 +496,26 @@ public class EmployeeService {
         if (request.getTaxId() != null && !Objects.equals(request.getTaxId(), employee.getTaxId())) {
             employee.setTaxId(request.getTaxId());
             changedFields.add("taxId");
+        }
+
+        // Keka model: block promotion while the employee is on active probation or an
+        // active PIP. A promotion is inferred the same way EmployeePromotedEvent infers
+        // it below — level or designation changed — narrowed to exclude a clear level
+        // downgrade so a demotion during probation/PIP isn't blocked.
+        // ponytail: transfers (department-only change) are NOT gated here — the audit
+        // didn't specify whether Keka blocks those too, so we gate only the unambiguous
+        // case (promotion). Revisit if the transfer behavior is confirmed.
+        boolean levelDowngraded = previousLevel != null && employee.getLevel() != null
+                && employee.getLevel().ordinal() < previousLevel.ordinal();
+        boolean isPromotion = (changedFields.contains("level") || changedFields.contains("designation"))
+                && !levelDowngraded;
+        if (isPromotion
+                && (probationPeriodRepository.existsByEmployeeIdAndTenantIdAndStatusIn(
+                        employeeId, tenantId, ACTIVE_PROBATION_STATUSES)
+                    || pipRepository.existsByTenantIdAndEmployeeIdAndStatusIn(
+                        tenantId, employeeId, ACTIVE_PIP_STATUSES))) {
+            throw new BusinessException(
+                    "Employee cannot be promoted while on active probation or a Performance Improvement Plan");
         }
 
         employee = employeeRepository.save(employee);
