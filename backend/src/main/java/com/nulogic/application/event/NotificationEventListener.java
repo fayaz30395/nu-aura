@@ -5,8 +5,14 @@ import com.nulogic.application.notification.service.NotificationService;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.common.security.RoleHierarchy;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.application.notification.service.EmailService;
 import com.nulogic.domain.employee.Employee;
+import com.nulogic.domain.event.employee.EmployeeCreatedEvent;
+import com.nulogic.domain.event.employee.EmployeeDepartmentChangedEvent;
+import com.nulogic.domain.event.employee.EmployeePromotedEvent;
+import com.nulogic.domain.event.employee.EmployeeStatusChangedEvent;
 import com.nulogic.domain.event.employee.EmployeeTerminatedEvent;
+import com.nulogic.domain.notification.EmailNotification;
 import com.nulogic.domain.event.expense.ExpenseSubmittedEvent;
 import com.nulogic.domain.event.leave.LeaveRequestedEvent;
 import com.nulogic.domain.event.performance.PerformanceReviewCompletedEvent;
@@ -26,6 +32,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -53,6 +60,7 @@ public class NotificationEventListener {
     private final WebSocketNotificationService webSocketNotificationService;
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     // ==================== Leave Events ====================
 
@@ -151,6 +159,121 @@ public class NotificationEventListener {
             createAndPushNotification(tenantId, userId, Notification.NotificationType.GENERAL,
                     title, message, relatedEntityId, "Employee", "/offboarding", Notification.Priority.HIGH);
         }
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onEmployeeCreated(EmployeeCreatedEvent event) {
+        log.info("Handling EmployeeCreatedEvent for employee: {}", event.getAggregateId());
+
+        UUID tenantId = event.getTenantId();
+        Employee employee = event.getEmployee();
+        if (employee.getManagerId() == null) {
+            return;
+        }
+
+        String title = "New Team Member";
+        String message = String.format("%s has joined your team.", employee.getFullName());
+
+        employeeRepository.findByIdAndTenantId(employee.getManagerId(), tenantId)
+                .map(Employee::getUser)
+                .ifPresent(managerUser -> createAndPushNotification(
+                        tenantId, managerUser.getId(), Notification.NotificationType.GENERAL,
+                        title, message, employee.getId(), "Employee", "/employees/" + employee.getId(),
+                        Notification.Priority.NORMAL));
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onEmployeePromoted(EmployeePromotedEvent event) {
+        log.info("Handling EmployeePromotedEvent for employee: {}", event.getAggregateId());
+
+        UUID tenantId = event.getTenantId();
+        Employee employee = event.getEmployee();
+        String title = "Promotion";
+        String message = String.format("Congratulations! You have been promoted to %s.", event.getNewDesignation());
+
+        if (employee.getUser() != null) {
+            createAndPushNotification(tenantId, employee.getUser().getId(), Notification.NotificationType.GENERAL,
+                    title, message, employee.getId(), "Employee", "/me/profile", Notification.Priority.NORMAL);
+
+            String employeeEmail = employee.getUser().getEmail();
+            if (employeeEmail != null && !employeeEmail.isBlank()) {
+                TenantContext.setCurrentTenant(tenantId);
+                try {
+                    emailService.sendEmail(employeeEmail, employee.getFullName(), EmailNotification.EmailType.GENERAL,
+                            Map.of("employeeName", employee.getFullName(), "message", message));
+                } catch (RuntimeException ex) {
+                    log.error("Failed to send promotion email to {}: {}", employeeEmail, ex.getMessage(), ex);
+                } finally {
+                    TenantContext.clear();
+                }
+            }
+        }
+
+        if (employee.getManagerId() != null) {
+            String managerMessage = String.format("%s has been promoted to %s.",
+                    employee.getFullName(), event.getNewDesignation());
+            employeeRepository.findByIdAndTenantId(employee.getManagerId(), tenantId)
+                    .map(Employee::getUser)
+                    .ifPresent(managerUser -> createAndPushNotification(
+                            tenantId, managerUser.getId(), Notification.NotificationType.GENERAL,
+                            title, managerMessage, employee.getId(), "Employee", "/employees/" + employee.getId(),
+                            Notification.Priority.NORMAL));
+        }
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onEmployeeStatusChanged(EmployeeStatusChangedEvent event) {
+        log.info("Handling EmployeeStatusChangedEvent for employee: {}", event.getAggregateId());
+
+        UUID tenantId = event.getTenantId();
+        Employee employee = event.getEmployee();
+        String title = "Employee Status Changed";
+        String message = String.format("%s's status changed from %s to %s.",
+                employee.getFullName(), event.getPreviousStatus(), event.getNewStatus());
+
+        notifyRoleHolders(tenantId, RoleHierarchy.HR_ADMIN, title, message, employee.getId());
+        notifyRoleHolders(tenantId, RoleHierarchy.HR_MANAGER, title, message, employee.getId());
+    }
+
+    // EMPLOYEE_TRANSFERRED: no distinct domain event exists — Employee.managerId /
+    // departmentId changes only ever raise EmployeeDepartmentChangedEvent, which already
+    // carries both old/new department and manager IDs. Wiring a separate handler for
+    // "transferred" would double-notify the same commit; onEmployeeDepartmentChanged below
+    // covers this case.
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onEmployeeDepartmentChanged(EmployeeDepartmentChangedEvent event) {
+        log.info("Handling EmployeeDepartmentChangedEvent for employee: {}", event.getAggregateId());
+
+        UUID tenantId = event.getTenantId();
+        Employee employee = event.getEmployee();
+        String title = "Department Transfer";
+        String message = String.format("%s has been transferred to a new department.", employee.getFullName());
+
+        if (employee.getUser() != null) {
+            createAndPushNotification(tenantId, employee.getUser().getId(), Notification.NotificationType.GENERAL,
+                    title, message, employee.getId(), "Employee", "/me/profile", Notification.Priority.NORMAL);
+        }
+
+        notifyManagerOfTransfer(tenantId, event.getPreviousManagerId(), employee, title,
+                String.format("%s has left your team (department transfer).", employee.getFullName()));
+        notifyManagerOfTransfer(tenantId, event.getNewManagerId(), employee, title,
+                String.format("%s has joined your team (department transfer).", employee.getFullName()));
+    }
+
+    private void notifyManagerOfTransfer(UUID tenantId, UUID managerId, Employee employee, String title, String message) {
+        if (managerId == null) {
+            return;
+        }
+        employeeRepository.findByIdAndTenantId(managerId, tenantId)
+                .map(Employee::getUser)
+                .ifPresent(managerUser -> createAndPushNotification(
+                        tenantId, managerUser.getId(), Notification.NotificationType.GENERAL,
+                        title, message, employee.getId(), "Employee", "/employees/" + employee.getId(),
+                        Notification.Priority.NORMAL));
     }
 
     // ==================== Performance Events ====================
