@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, {useState} from 'react';
 import {Button} from '@/components/ui/Button';
+import {ScorecardForm} from '@/components/recruitment/ScorecardForm';
 import {Badge} from '@/components/ui/Badge';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
@@ -133,6 +134,7 @@ export function InterviewScorecardModal({
                                           onClose,
                                         }: InterviewScorecardModalProps) {
   const {data, isLoading, isError} = useInterviewsByCandidate(candidateId, open);
+  const [scorecardFormInterviewId, setScorecardFormInterviewId] = useState<string | null>(null);
 
   const interviews: Interview[] = (data as unknown as {
     content?: Interview[]
@@ -240,6 +242,19 @@ export function InterviewScorecardModal({
                             ({interview.interviewType.replace('_', ' ')})
                           </span>
                         )}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="ml-auto"
+                          onClick={() =>
+                            setScorecardFormInterviewId(
+                              scorecardFormInterviewId === interview.id ? null : interview.id
+                            )
+                          }
+                        >
+                          {scorecardFormInterviewId === interview.id ? 'Cancel' : 'Submit Scorecard'}
+                        </Button>
                       </div>
 
                       {/* Row 2: Interviewer + Date */}
@@ -291,6 +306,15 @@ export function InterviewScorecardModal({
                         <p className="text-caption italic">
                           Scorecard not yet submitted
                         </p>
+                      )}
+
+                      {scorecardFormInterviewId === interview.id && (
+                        <ScorecardForm
+                          interviewId={interview.id}
+                          applicantId={interview.candidateId}
+                          jobOpeningId={interview.jobOpeningId}
+                          onComplete={() => setScorecardFormInterviewId(null)}
+                        />
                       )}
                     </div>
                   ))}
