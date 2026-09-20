@@ -1,0 +1,110 @@
+{
+  "engagement_name": "nu-aura-visual-design-enhancement",
+  "one_line_request": "Enhance the platform's visual design/UI quality",
+  "stage01_triggered": false,
+  "business_context_files_used": [],
+  "evidence_files_used": [
+    "DESIGN.md",
+    "qa-reports/qa-100x/QA_UIUX_FINDINGS.md",
+    "qa-reports/qa-100x/QA_RELEASE_READINESS_REPORT.md",
+    "docs/obsidian/00-Home.md",
+    "docs/obsidian/03-Frontend/Components.md",
+    "docs/obsidian/03-Frontend/Pages.md",
+    "docs/obsidian/01-Architecture/Architecture-Decisions.md",
+    "frontend/lib/theme/design-system.ts",
+    "frontend/e2e/accessibility/a11y.spec.ts"
+  ],
+  "documents": {
+    "brd": "artifacts/02-brd/brd.md",
+    "prd": "artifacts/03-prd/prd.md",
+    "frd": "artifacts/04-frd/frd.md"
+  },
+  "open_questions": [
+    "No business-context/ file exists for this initiative; BRD grounded in code/QA evidence instead.",
+    "No confirmed business owner or committed success-metric threshold — proposed metrics need stakeholder sign-off.",
+    "Mantine 9 vs Tailwind consolidation is an unresolved structural decision, out of scope for this PRD/FRD.",
+    "No budget/timeline specified anywhere in available documentation."
+  ],
+  "acceptance_criteria": [
+    {
+      "id": "AC1.1",
+      "epic": "Dark-Mode Coverage Parity",
+      "text": "WHEN a user with dark mode enabled loads any of the 64 pages lacking dark: variants, the system SHALL render all surfaces/text/borders using DESIGN.md dark-* tokens."
+    },
+    {
+      "id": "AC1.2",
+      "epic": "Dark-Mode Coverage Parity",
+      "text": "IF a page introduces a new bg-/text-/border- Tailwind class, THEN the system SHALL require a matching dark: variant before merge."
+    },
+    {
+      "id": "AC1.3",
+      "epic": "Dark-Mode Coverage Parity",
+      "text": "WHEN dark-mode coverage is re-measured, the system SHALL report 286/286 pages with at least one dark: variant."
+    },
+    {
+      "id": "AC2.1",
+      "epic": "Accessibility Remediation",
+      "text": "WHEN a form field is rendered, the system SHALL associate it with a label via htmlFor/id or aria-label."
+    },
+    {
+      "id": "AC2.2",
+      "epic": "Accessibility Remediation",
+      "text": "WHEN a modal/dialog/drawer is opened, the system SHALL expose role=dialog, aria-modal=true, and aria-labelledby or aria-label, matching SlidePanel.tsx's contract."
+    },
+    {
+      "id": "AC2.3",
+      "epic": "Accessibility Remediation",
+      "text": "WHEN an img or icon-only button is rendered, the system SHALL provide non-empty alt or aria-label."
+    },
+    {
+      "id": "AC2.4",
+      "epic": "Accessibility Remediation",
+      "text": "IF a new dialog/input/icon-only component is added to components/ui/, THEN the system SHALL require the corresponding a11y attributes before acceptance."
+    },
+    {
+      "id": "AC2.5",
+      "epic": "Accessibility Remediation",
+      "text": "WHEN this epic is complete, the system SHALL show issues A11Y-01 through A11Y-04 reported CLOSED."
+    },
+    {
+      "id": "AC3.1",
+      "epic": "Color-Contrast & Typography Conformance",
+      "text": "WHEN text at text-xs or smaller uses --text-muted, the system SHALL guarantee contrast ratio >= 4.5:1 in both light and dark schemes."
+    },
+    {
+      "id": "AC3.2",
+      "epic": "Color-Contrast & Typography Conformance",
+      "text": "WHEN tailwind-presets.ts's table-header preset is fixed, the system SHALL apply it once so all 100+ consuming headers inherit it."
+    },
+    {
+      "id": "AC3.3",
+      "epic": "Color-Contrast & Typography Conformance",
+      "text": "IF a page overrides the shared table-header preset with a non-conformant combination, THEN the system SHALL flag it as a design-system violation."
+    },
+    {
+      "id": "AC4.1",
+      "epic": "Design-System Conformance Enforcement",
+      "text": "WHEN a PR modifies frontend/app or frontend/components, the system SHALL check the diff against DESIGN.md Do's/Don'ts and surface a warning on violation."
+    },
+    {
+      "id": "AC4.2",
+      "epic": "Design-System Conformance Enforcement",
+      "text": "WHEN a new shared UI primitive is proposed, the system SHALL require reuse of existing design-system.ts tokens over hardcoded values."
+    },
+    {
+      "id": "AC4.3",
+      "epic": "Design-System Conformance Enforcement",
+      "text": "IF a proposed component duplicates an existing ui/ primitive's responsibility, THEN the system SHALL require justification or consolidation before addition."
+    },
+    {
+      "id": "AC5.1",
+      "epic": "Responsive Polish",
+      "text": "WHEN a table wider than its container renders at <=320px, the system SHALL provide overflow-x-auto with an explicit min-width on the inner table."
+    },
+    {
+      "id": "AC5.2",
+      "epic": "Responsive Polish",
+      "text": "WHEN attendance/shift-swap's assignment grid renders at <=320px, the system SHALL apply the same scroll-container treatment used elsewhere."
+    }
+  ]
+}

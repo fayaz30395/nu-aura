@@ -1,0 +1,8 @@
+{
+  "story": "US-2FWT73TJ3HV5",
+  "action": "cherry-picked b87b6a03 onto main (6884f10f)",
+  "files_touched": ["frontend/package.json", "scripts/check-route-coverage.mjs", "scripts/route-coverage-allowlist.txt"],
+  "tests_run": "npm run check:routes",
+  "test_result": "PASS - no new dead nav links (20 unresolved, 35 allowlisted, 0 new); 15 allowlist entries now resolve and can be tightened separately",
+  "open_questions": ["AC1 branch disposition sign-off still pending from a human operator"]
+}

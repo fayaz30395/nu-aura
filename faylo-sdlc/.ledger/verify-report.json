@@ -1,0 +1,928 @@
+{
+  "US-2FWT73TFJBWK": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "git merge-base --is-ancestor ee2b3847 main",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWT73TFJBWK"
+  },
+  "US-2FWT73TJ3HV5": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "git merge-base --is-ancestor 6884f10f main",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWT73TJ3HV5"
+  },
+  "US-2FWT73TTR4D3": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "git merge-base --is-ancestor 978a9ebe main",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWT73TTR4D3"
+  },
+  "US-2FWT73TXJ40N": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "git merge-base --is-ancestor 0bd4a403 main",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWT73TXJ40N"
+  },
+  "US-2FWVEQZADNJD": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "! grep -rq 'text-\\[var(--text-muted)\\]' frontend/styles/tailwind-presets.ts \"frontend/app/attendance/regularization/_components/TeamRequestsView.tsx\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWVEQZADNJD"
+  },
+  "US-2FWVER467QRE": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "grep -q 'table-shell' frontend/app/attendance/shift-swap/page.tsx",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWVER467QRE"
+  },
+  "US-2FWVEZXEX99N": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "! grep -q 'border-white/' frontend/app/onboarding/templates/page.tsx",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWVEZXEX99N"
+  },
+  "US-2FWVF01PY12F": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"[ \\$(grep -rl 'fixed inset-0 bg-black' frontend/app frontend/components --include='*.tsx' | xargs grep -L 'role=\\\"dialog\\\"' 2>/dev/null | grep -v 'components/ui/Loading.tsx' | wc -l) -eq 0 ]\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWVF01PY12F"
+  },
+  "US-2FWVF05WDJVA": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "node frontend/scripts/check-styling-drift.mjs --json | grep -q '\"border-accent-stripe\"'",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FWVF05WDJVA"
+  },
+  "US-2FX1618JXKEP": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit --pretty false && npx eslint . --max-warnings=0\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FX1618JXKEP"
+  },
+  "US-2FX161DHPZHC": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"[ \\$(grep -c 'alt=\\\"\\\"' frontend/components/ui/Avatar.tsx frontend/app/employees/_components/EmployeeAvatar.tsx | awk -F: '{s+=\\$2} END {print s}') -eq 0 ]\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FX161DHPZHC"
+  },
+  "US-2FX161HKZRS3": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && n=0; for f in app/admin/integrations/webhooks/page.tsx app/admin/permissions/page.tsx app/departments/page.tsx app/fluence/search/page.tsx app/integrations/slack/page.tsx app/leave/approvals/page.tsx app/leave/my-leaves/page.tsx app/me/profile/page.tsx app/nu-drive/_components/DriveToolbar.tsx app/nu-drive/_components/FileGridView.tsx app/nu-drive/_components/FileListView.tsx app/one-on-one/page.tsx app/performance/competency-framework/page.tsx app/performance/okr/page.tsx app/recruitment/scorecards/page.tsx app/reports/scheduled/page.tsx app/shifts/definitions/page.tsx app/shifts/my-schedule/page.tsx app/shifts/patterns/page.tsx app/shifts/swaps/page.tsx 'app/time-tracking/[id]/edit/page.tsx' 'app/time-tracking/[id]/page.tsx' 'app/travel/[id]/page.tsx' app/travel/new/page.tsx components/dashboard/PostComposer.tsx components/resource-management/EmployeeStep.tsx components/ui/AdvancedFilterPanel.tsx; do grep -q 'aria-label' \\\"\\$f\\\" || n=\\$((n+1)); done; [ \\$n -eq 0 ]\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FX161HKZRS3"
+  },
+  "US-2FX576KC3WDC": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"grep -q '\\\"/batch-approve\\\"' backend/src/main/java/com/nulogic/api/leave/controller/LeaveRequestController.java && grep -q '\\\"/batch-reject\\\"' backend/src/main/java/com/nulogic/api/leave/controller/LeaveRequestController.java && grep -q 'RequiresPermission(Permission.LEAVE_APPROVE)' backend/src/main/java/com/nulogic/api/leave/controller/LeaveRequestController.java && grep -q 'RequiresPermission(Permission.LEAVE_REJECT)' backend/src/main/java/com/nulogic/api/leave/controller/LeaveRequestController.java && grep -q 'batchApprove\\|batchReject' backend/src/main/java/com/nulogic/application/leave/service/LeaveRequestService.java\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FX576KC3WDC"
+  },
+  "US-2FX6A9ZZRE65": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"grep -q '\\\"/batch-approve\\\"' backend/src/main/java/com/nulogic/api/expense/controller/ExpenseClaimController.java && grep -q '\\\"/batch-reject\\\"' backend/src/main/java/com/nulogic/api/expense/controller/ExpenseClaimController.java && grep -q 'batchApprove\\|batchReject' backend/src/main/java/com/nulogic/application/expense/service/ExpenseClaimService.java\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FX6A9ZZRE65"
+  },
+  "US-2FX6BNSG0WXF": {
+    "all_pass": true,
+    "date": "2026-09-19",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "grep -q \"ColumnVisibilityToggle\" frontend/app/recruitment/candidates/page.tsx",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FX6BNSG0WXF"
+  },
+  "US-2FX6NY43KZ05": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"grep -q '\\\"/batch-approve-regularization\\\"' backend/src/main/java/com/nulogic/api/attendance/controller/AttendanceController.java && grep -q '\\\"/batch-reject-regularization\\\"' backend/src/main/java/com/nulogic/api/attendance/controller/AttendanceController.java && grep -q 'batchApproveRegularization\\|batchRejectRegularization' backend/src/main/java/com/nulogic/api/attendance/controller/AttendanceController.java\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FX6NY43KZ05"
+  },
+  "US-2FX94JKNDSPX": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "grep -q \"AdvancedFilterPanel\" frontend/app/employees/page.tsx",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FX94JKNDSPX"
+  },
+  "US-2FX9MY3RY0PS": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -Dtest=ResourcePoolServiceTest test\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": [
+          "OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
+        ]
+      }
+    ],
+    "story": "US-2FX9MY3RY0PS"
+  },
+  "US-2FXA99V9AXMX": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXA99V9AXMX"
+  },
+  "US-2FXA9A0ES10G": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXA9A0ES10G"
+  },
+  "US-2FXA9A4QXDBJ": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "grep -q WikiPageTree frontend/app/fluence/wiki/[slug]/page.tsx",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXA9A4QXDBJ"
+  },
+  "US-2FXAJ73FSNSE": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXAJ73FSNSE"
+  },
+  "US-2FXAK3826HTN": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXAK3826HTN"
+  },
+  "US-2FXAMTXHJY2A": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXAMTXHJY2A"
+  },
+  "US-2FXAMV2K7J29": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"! test -f backend/src/main/java/com/nulogic/domain/knowledge/WikiPageApprovalTask.java\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXAMV2K7J29"
+  },
+  "US-2FXC19K3YS5M": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXC19K3YS5M"
+  },
+  "US-2FXC19SFZ1K5": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXC19SFZ1K5"
+  },
+  "US-2FXC19ZKBX9W": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"! test -f frontend/components/fluence/MacroRenderer.tsx && cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXC19ZKBX9W"
+  },
+  "US-2FXC8WM0201Q": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXC8WM0201Q"
+  },
+  "US-2FXCB68ETT8E": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"! test -f backend/src/main/java/com/nulogic/application/user/service/PermissionScopeMerger.java && cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXCB68ETT8E"
+  },
+  "US-2FXCB6GNEF0X": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXCB6GNEF0X"
+  },
+  "US-2FXCB6R6V47Y": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FXCB6R6V47Y"
+  },
+  "US-2FYBYHPKK1HW": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYBYHPKK1HW"
+  },
+  "US-2FYBYJFZTKF8": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYBYJFZTKF8"
+  },
+  "US-2FYBYK78PV8B": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYBYK78PV8B"
+  },
+  "US-2FYC42HPMEBD": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYC42HPMEBD"
+  },
+  "US-2FYC9C8WD399": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYC9C8WD399"
+  },
+  "US-2FYDSHJ9NVV9": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYDSHJ9NVV9"
+  },
+  "US-2FYDSHQHW68Z": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYDSHQHW68Z"
+  },
+  "US-2FYDT45QRKY5": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYDT45QRKY5"
+  },
+  "US-2FYDT4BEB1G7": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYDT4BEB1G7"
+  },
+  "US-2FYDVJW3DG3Q": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYDVJW3DG3Q"
+  },
+  "US-2FYDVK24N81P": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYDVK24N81P"
+  },
+  "US-2FYDXEMGD2V1": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYDXEMGD2V1"
+  },
+  "US-2FYE561NCF5J": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYE561NCF5J"
+  },
+  "US-2FYE6BD3P1N9": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYE6BD3P1N9"
+  },
+  "US-2FYE7QCNND5M": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYE7QCNND5M"
+  },
+  "US-2FYE7QMTP2D2": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYE7QMTP2D2"
+  },
+  "US-2FYE7QWNJ535": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYE7QWNJ535"
+  },
+  "US-2FYEC05CBB21": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYEC05CBB21"
+  },
+  "US-2FYEK23MNGGZ": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYEK23MNGGZ"
+  },
+  "US-2FYEQECB4258": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYEQECB4258"
+  },
+  "US-2FYEQWPJCGE3": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYEQWPJCGE3"
+  },
+  "US-2FYERYV698AZ": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYERYV698AZ"
+  },
+  "US-2FYXTRSFDMT0": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYXTRSFDMT0"
+  },
+  "US-2FYXTRYK7KJY": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYXTRYK7KJY"
+  },
+  "US-2FYY5845HBS3": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYY5845HBS3"
+  },
+  "US-2FYZHMT7JTH0": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYZHMT7JTH0"
+  },
+  "US-2FYZPAC6P52N": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FYZPAC6P52N"
+  },
+  "US-2FZ0BC70DYQ9": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile && cd ../frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ0BC70DYQ9"
+  },
+  "US-2FZ0BYJ4EEF5": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ0BYJ4EEF5"
+  },
+  "US-2FZ1RHSX3HKF": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ1RHSX3HKF"
+  },
+  "US-2FZ1RXB6QNFD": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ1RXB6QNFD"
+  },
+  "US-2FZ3774CR9Z1": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ3774CR9Z1"
+  },
+  "US-2FZ377BJ1EGG": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ377BJ1EGG"
+  },
+  "US-2FZ3WP130FT7": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ3WP130FT7"
+  }
+}

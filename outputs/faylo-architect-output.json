@@ -1,0 +1,30 @@
+{
+  "ticket": "US-2FWT73TFJBWK",
+  "epic": "EP-2FWT73TBXRCF",
+  "stage": "08-dependencies",
+  "tier": "async-review",
+  "tier_note": "Existing story tier (async-review) retained as-is per tier-monotonicity rule (tighten-only). Architect's own read of blast radius for this diff alone (frontend/lib/theme/design-system.ts one-line token swap + docs + .claude/settings.json hook config) would be autonomous, but that assessment cannot loosen a tier already set to async-review.",
+  "blast_radius": "single-repo, non-shared-contract. Change set: (1) frontend/lib/theme/design-system.ts — table.th Tailwind class text-[var(--text-muted)] -> text-[var(--text-secondary)], an accessibility contrast fix (cites qa-reports/qa-100x/QA_UIUX_FINDINGS.md A11Y-04); (2) .claude/settings.json — adds two faylo tooling hooks (PreToolUse block_handwritten_state guard, SessionStart faylo log/status); (3) CLAUDE.md, docs/obsidian/01-Architecture/Architecture-Decisions.md, docs/obsidian/03-Frontend/Components.md, docs/obsidian/05-RBAC/RBAC-Matrix.md, .obsidian/graph.json — documentation/vault-only edits. No API contract, schema, auth, payment, or PII path touched. No client-facing commerce logic. Design token change is a CSS variable already defined elsewhere in the design system (--text-secondary), not a new value.",
+  "dependencies": {
+    "resolvable": true,
+    "depends_on": [],
+    "rationale": "No other story, shared module boundary, or external system this change must wait on. The CSS token it switches to (--text-secondary) already exists in the design-system token set (used elsewhere per design-system.ts), so no cross-story sequencing is required. No `faylo depends` entry recorded (empty Depends-On is a no-op, not a missing check)."
+  },
+  "ui_surface": {
+    "present": true,
+    "detail": "frontend/lib/theme/design-system.ts table.th class affects every table header rendered via the shared `table` design-system export — a visual/accessibility-only change (contrast fix), no new interaction, layout, or component structure.",
+    "stage_07_required": false,
+    "stage_07_rationale": "Change is a like-for-like token swap fixing a WCAG contrast defect already logged in qa-reports/qa-100x/QA_UIUX_FINDINGS.md (A11Y-04) — no new UI to wireframe; Stage 07 (UI design) is not needed for a remediation this narrow."
+  },
+  "implementation_surface": {
+    "surfaces": ["frontend", "tooling-config", "docs"],
+    "schema_touching": false,
+    "specialist_routing": {
+      "10-implementation": ["faylo-frontend-engineer"],
+      "note": "Only frontend/lib/theme/design-system.ts is product implementation code, routed to faylo-frontend-engineer per specialist_routing in stage-registry.json. .claude/settings.json (faylo hook wiring) and the docs/obsidian/*.md + CLAUDE.md + .obsidian/graph.json edits are tooling/documentation, not routed through the 10-implementation specialist list — they are already sitting complete in the working tree, not pending implementation work."
+    }
+  },
+  "adr_raised": false,
+  "adr_rationale": "No departure from an architecture-principles/ rule — this is a design-token substitution using an existing token, not a new pattern.",
+  "decision_deferred": false
+}

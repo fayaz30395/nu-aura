@@ -1,0 +1,10 @@
+{
+  "product": "nu-aura",
+  "require_ac_verification": true,
+  "tier_default": "async-review",
+  "verify_timeout_sec": 600,
+  "operator_signoff_for": [
+    "hard-gate"
+  ],
+  "max_stories_per_run": 20
+}

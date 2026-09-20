@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Stage-to-agent mapping for faylo-sdlc, organized into 6 phases: Planning & Requirements, Design & Prototyping, Development, Testing & Security, Infrastructure & Deployment, Operations & Monitoring. Stage 01 is optional and tier-gated. Stages 02-06 run automatically back to back from a single one-line request, with no manual document authoring in between. Stages 07-12 run per ticket (07 conditional on UI surface), gated only where the tier faylo-architect assigned actually requires it. Stage 13 runs continuously post-release and closes the loop by feeding new work items back into Stage 01. `specialist_routing` and `triggers` below are the single source of truth for routing and failure hand-off -- agent files reference them rather than keeping their own copies (see AGENT-CONTRACT-SPEC.md).",
+  "phases": [
+    {"phase": 0, "name": "Adoption (existing codebases only)", "level": "engagement", "stages": ["00-adopt"]},
+    {"phase": 1, "name": "Planning & Requirements", "level": "engagement", "stages": ["01-clarify", "02-brd", "03-prd", "04-frd", "05-architecture", "06-tickets"]},
+    {"phase": 2, "name": "Design & Prototyping", "level": "per-ticket", "stages": ["07-design"]},
+    {"phase": 3, "name": "Development", "level": "per-ticket", "stages": ["08-dependencies", "09-planning", "10-implementation"]},
+    {"phase": 4, "name": "Testing & Security", "level": "per-ticket", "stages": ["11-verification"]},
+    {"phase": 5, "name": "Infrastructure & Deployment", "level": "per-ticket", "stages": ["12-release"]},
+    {"phase": 6, "name": "Operations & Monitoring", "level": "continuous", "stages": ["13-observe"]}
+  ],
+  "stages": [
+    {"stage": "00-adopt", "level": "engagement", "agent": "faylo-architect + faylo-business-analyst + faylo-technical-writer", "gate": "runs once per existing codebase, before any `start`; `faylo adopt` writes the baseline, the agents write the as-is documents; in-flight stories take precedence in `faylo next`"},
+    {"stage": "01-clarify", "level": "engagement", "agent": "faylo-business-analyst", "gate": "none by default — triggered only when the one-liner is ambiguous or provisional tier is async-review/hard-gate; skipped otherwise, straight to 02"},
+    {"stage": "02-brd", "level": "engagement", "agent": "faylo-prd-creator", "gate": "none — drafted automatically"},
+    {"stage": "03-prd", "level": "engagement", "agent": "faylo-prd-creator", "gate": "none — derived automatically from the BRD"},
+    {"stage": "04-frd", "level": "engagement", "agent": "faylo-prd-creator + faylo-business-analyst", "gate": "none — derived automatically from the PRD"},
+    {"stage": "05-architecture", "level": "engagement", "agent": "faylo-architect + faylo-security-architect (conditional)", "gate": "tier assigned"},
+    {"stage": "06-tickets", "level": "engagement", "agent": "faylo-prd-creator + faylo-tech-lead", "gate": "tickets generated, traceability mapped"},
+    {"stage": "07-design", "level": "per-ticket", "agent": "faylo-ux-researcher + faylo-ui-designer + faylo-accessibility-engineer", "gate": "conditional — runs only for tickets faylo-architect flags with a UI surface"},
+    {"stage": "08-dependencies", "level": "per-ticket", "agent": "faylo-architect", "gate": "ticket-id exists"},
+    {"stage": "09-planning", "level": "per-ticket", "agent": "faylo-architect + faylo-tech-lead (conditional)", "gate": null},
+    {"stage": "10-implementation", "level": "per-ticket", "agent": "faylo-developer (routes to a specialist engineer)", "gate": null},
+    {"stage": "11-verification", "level": "per-ticket", "agent": "faylo-qa-reviewer (coordinates specialists)", "gate": "acceptance criteria pass"},
+    {"stage": "12-release", "level": "per-ticket", "agent": "faylo-release-agent (coordinates specialists)", "gate": "tier-dependent"},
+    {"stage": "13-observe", "level": "continuous", "agent": "faylo-sre-engineer + faylo-secops-analyst + faylo-data-engineer", "gate": "none — continuous; can open a new engagement fed back into Stage 01"}
+  ],
+  "specialist_routing": {
+    "10-implementation": ["faylo-frontend-engineer", "faylo-backend-engineer", "faylo-fullstack-engineer", "faylo-database-engineer", "faylo-mobile-engineer"],
+    "11-verification": ["faylo-qa-automation-engineer", "faylo-appsec-engineer (conditional)", "faylo-pentest-engineer (hard-gate only)", "faylo-performance-engineer", "faylo-accessibility-engineer (conditional)"],
+    "12-release": ["faylo-devops-engineer", "faylo-cloud-engineer (conditional)", "faylo-release-manager", "faylo-data-engineer (conditional)"]
+  },
+  "triggers_doc": "Read by `faylo route <stage> <story>` after a stage's command fails: it logs the failure, re-invokes `on_fail` while attempts <= `max_retries`, and otherwise moves the story to Blocked and defers a decision to a human. `on_new_work_item` is where Stage 13 output re-enters the pipeline (`faylo new epic`). Every firing is in the ledger, so `faylo history --summary` reflects it.",
+  "triggers": {
+    "00-adopt": {"on_fail": "faylo-architect", "max_retries": 1},
+    "05-architecture": {"on_fail": "faylo-tech-lead", "max_retries": 1},
+    "07-design": {"on_fail": "faylo-ui-designer", "max_retries": 1},
+    "08-dependencies": {"on_fail": "faylo-architect", "max_retries": 1},
+    "09-planning": {"on_fail": "faylo-architect", "max_retries": 1},
+    "10-implementation": {"on_fail": "faylo-developer", "max_retries": 2},
+    "11-verification": {"on_fail": "faylo-developer", "max_retries": 2},
+    "12-release": {"on_fail": "faylo-release-agent", "max_retries": 1},
+    "13-observe": {"on_new_work_item": "faylo-prd-creator"}
+  },
+  "advisory": ["faylo-engineering-manager", "faylo-technical-writer"]
+}

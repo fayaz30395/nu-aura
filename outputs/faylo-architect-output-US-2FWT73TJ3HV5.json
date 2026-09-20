@@ -1,0 +1,8 @@
+{
+  "story": "US-2FWT73TJ3HV5",
+  "dependencies": [],
+  "integration_note": "Branch is 617 commits behind main (1 ahead of its own base) — a direct merge would revert unrelated history. Isolated commit b87b6a03 touches only frontend/package.json, scripts/check-route-coverage.mjs (new), scripts/route-coverage-allowlist.txt (new) — 177 lines, zero deps. Recommend cherry-pick, not merge.",
+  "ui_surface": false,
+  "implementation_surface": "frontend-tooling",
+  "specialist_routing": "faylo-frontend-engineer"
+}

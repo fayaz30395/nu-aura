@@ -1,0 +1,120 @@
+{
+  "ci_present": [
+    ".github/workflows"
+  ],
+  "docs_present": [
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "docs"
+  ],
+  "existing_state": {
+    "has_faylo_sdlc": true
+  },
+  "files": 5951,
+  "files_by_extension": {
+    ".java": 2205,
+    ".js": 36,
+    ".json": 80,
+    ".jsx": 52,
+    ".md": 664,
+    ".png": 340,
+    ".sh": 68,
+    ".sql": 318,
+    ".ts": 615,
+    ".tsx": 1361,
+    ".yaml": 43,
+    ".yml": 27
+  },
+  "generated": "2026-09-20T19:24:25Z",
+  "git": {
+    "ahead_of_default": 0,
+    "current_branch": "main",
+    "default_branch": "main",
+    "is_repo": true,
+    "recent_commits": [
+      "60b11514 2026-09-20 feat(notifications): wire employee-lifecycle notifications (created/promoted/status/department)",
+      "a13581b6 2026-09-20 feat(audit): log login/logout/failed-login and wire AuditAction.EXPORT into export endpoints",
+      "a018758b 2026-09-20 fix(psa): persist resource allocations instead of no-op re-save",
+      "3ca69b55 2026-09-20 fix(attendance): label ZKTeco/eSSL biometric sync as not yet supported",
+      "267fb6e1 2026-09-20 fix(documents): update FileStorageServiceTest constructor call for FileMetadataRepository param",
+      "da2dc079 2026-09-20 docs: update pendings.md and faylo story bookkeeping for this session's batch",
+      "75c4ee79 2026-09-20 feat(performance): wire 360-feedback peer nomination submission",
+      "0534281b 2026-09-20 feat(expenses): build expense advance UI (create/approve/disburse/settle)",
+      "21e3a567 2026-09-20 feat(offboarding): wire exit-process asset recovery UI (return/lost/waive/verify)",
+      "219ded57 2026-09-20 feat(hrms): wire probation extend/fail actions",
+      "2e9ca25f 2026-09-20 feat(notifications): add GOAL_CREATED/UPDATED, REVIEW_STARTED, TRAINING_ENROLLED/COMPLETED, LEAVE_CANCELLED",
+      "9d695bc5 2026-09-20 feat(employees): wire FileMetadata persistence + document list/upload/delete + DOCUMENT_UPLOADED notification",
+      "4062a2a5 2026-09-20 feat(fluence): enforce wiki space approval config in publish flow",
+      "a373a7f7 2026-09-20 feat(employees): block promotion during active probation/PIP",
+      "a2d376bf 2026-09-20 chore(documents): delete dead DocumentApprovalWorkflow/Task, superseded by generic WorkflowService trigger"
+    ],
+    "uncommitted": 4,
+    "uncommitted_sample": [
+      "M .claude/settings.json",
+      "?? artifacts/",
+      "?? frontend/app/expenses/advances/",
+      "?? outputs/"
+    ],
+    "unmerged_branches": [
+      {
+        "branch": "chore/route-coverage-check",
+        "commits_ahead": 1,
+        "last": "2026-06-09 chore(frontend): add ratcheting route-coverage check (dead nav-link guard)"
+      },
+      {
+        "branch": "feat/login-redesign",
+        "commits_ahead": 1,
+        "last": "2026-06-09 feat(auth): reconstruct login page presentation (Studio Slate)"
+      },
+      {
+        "branch": "fix/dead-nav-pages",
+        "commits_ahead": 1,
+        "last": "2026-06-09 fix(frontend): wire Scorecards + Fluence AI Chat pages over existing backends"
+      },
+      {
+        "branch": "fix/perf-review-state-machine",
+        "commits_ahead": 1,
+        "last": "2026-06-09 fix(performance): enforce review status state machine (reject illegal transitions)"
+      }
+    ]
+  },
+  "root": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura",
+  "stack": [
+    "docker",
+    "java-maven",
+    "nextjs",
+    "node",
+    "typescript"
+  ],
+  "test_command_guess": "npm test",
+  "todo_fixme_count": 156,
+  "top_level_dirs": [
+    ".agents",
+    ".antigravitycli",
+    ".claude",
+    ".codex",
+    ".github",
+    ".impeccable",
+    ".obsidian",
+    ".ruflo",
+    ".swarm",
+    "artifacts",
+    "backend",
+    "design-import",
+    "design-import-2",
+    "docs",
+    "docs-v2",
+    "faylo-sdlc",
+    "frontend",
+    "infra",
+    "memory",
+    "notes",
+    "outputs",
+    "qa-reports",
+    "refs",
+    "scripts",
+    "tmp",
+    "tools"
+  ]
+}

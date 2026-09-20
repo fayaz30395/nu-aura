@@ -1,0 +1,328 @@
+{"agent": "faylo", "artifact_id": "EP-2FWT73TBXRCF", "note": "adopt: baseline written", "outcome": "started", "stage": "00-adopt", "ts": "2026-09-19T23:17:04Z"}
+{"agent": "faylo", "artifact_id": "US-2FWT73TFJBWK", "note": "in-flight: <working-tree>", "outcome": "started", "stage": "00-adopt", "ts": "2026-09-19T23:17:04Z"}
+{"agent": "faylo", "artifact_id": "US-2FWT73TJ3HV5", "note": "in-flight: chore/route-coverage-check", "outcome": "started", "stage": "00-adopt", "ts": "2026-09-19T23:17:04Z"}
+{"agent": "faylo", "artifact_id": "US-2FWT73TNNDP4", "note": "in-flight: feat/login-redesign", "outcome": "started", "stage": "00-adopt", "ts": "2026-09-19T23:17:04Z"}
+{"agent": "faylo", "artifact_id": "US-2FWT73TTR4D3", "note": "in-flight: fix/dead-nav-pages", "outcome": "started", "stage": "00-adopt", "ts": "2026-09-19T23:17:04Z"}
+{"agent": "faylo", "artifact_id": "US-2FWT73TXJ40N", "note": "in-flight: fix/perf-review-state-machine", "outcome": "started", "stage": "00-adopt", "ts": "2026-09-19T23:17:04Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TFJBWK", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-19T23:17:59Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TFJBWK", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-19T23:18:56Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TFJBWK", "note": "No unresolved dependencies; UI surface=yes (Stage 07 not required, remediation-only); implementation surface=frontend, routed to faylo-frontend-engineer at Stage 10; docs/tooling changes are non-routed. Tier held at async-review (tighten-only; cannot loosen an already-set tier).", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-19T23:19:23Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TFJBWK", "note": "", "outcome": "started", "stage": "09-planning", "ts": "2026-09-19T23:19:50Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TFJBWK", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-19T23:19:53Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TFJBWK", "note": "AC1 requires human verify mark; deferred, moving to next story", "outcome": "fail", "stage": "09-planning", "ts": "2026-09-19T23:22:27Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TJ3HV5", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-19T23:22:56Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TJ3HV5", "note": "", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-19T23:23:12Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TJ3HV5", "note": "", "outcome": "started", "stage": "09-planning", "ts": "2026-09-19T23:23:24Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TJ3HV5", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-19T23:23:24Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWT73TJ3HV5", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-19T23:23:44Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWT73TJ3HV5", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-19T23:24:20Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWT73TJ3HV5", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-19T23:24:27Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWT73TJ3HV5", "note": "AC1 manual verify pending human sign-off; code integrated and tested", "outcome": "fail", "stage": "11-verification", "ts": "2026-09-19T23:24:55Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TTR4D3", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-19T23:29:37Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TTR4D3", "note": "", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-19T23:29:37Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TTR4D3", "note": "", "outcome": "started", "stage": "09-planning", "ts": "2026-09-19T23:29:37Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TTR4D3", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-19T23:29:37Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWT73TTR4D3", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-19T23:29:37Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWT73TTR4D3", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-19T23:29:37Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWT73TTR4D3", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-19T23:29:43Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TXJ40N", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-19T23:29:43Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TXJ40N", "note": "", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-19T23:29:44Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TXJ40N", "note": "", "outcome": "started", "stage": "09-planning", "ts": "2026-09-19T23:29:44Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TXJ40N", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-19T23:29:44Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWT73TXJ40N", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-19T23:29:44Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWT73TXJ40N", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-19T23:29:44Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWT73TXJ40N", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-19T23:29:45Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-19T23:38:56Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-19T23:38:57Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "started", "stage": "09-planning", "ts": "2026-09-19T23:38:57Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-19T23:38:57Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-19T23:38:57Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-19T23:40:43Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-19T23:40:43Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-19T23:41:10Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWVEQZADNJD", "note": "", "outcome": "started", "stage": "12-release", "ts": "2026-09-19T23:41:19Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWVEQZADNJD", "note": "shipped autonomous", "outcome": "ok", "stage": "12-release", "ts": "2026-09-19T23:44:42Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-19T23:44:47Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-19T23:44:47Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "started", "stage": "09-planning", "ts": "2026-09-19T23:44:48Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-19T23:44:48Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-19T23:44:48Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-19T23:46:40Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-19T23:46:40Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-19T23:46:46Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWVER467QRE", "note": "", "outcome": "started", "stage": "12-release", "ts": "2026-09-19T23:46:46Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWVER467QRE", "note": "shipped autonomous", "outcome": "ok", "stage": "12-release", "ts": "2026-09-19T23:46:55Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVF05WDJVA", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-20T01:00:06Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVF05WDJVA", "note": "extend existing frontend/scripts/check-styling-drift.mjs rather than new tooling; chose 2 high-confidence regex rules (border-accent-stripe, gradient-text) + 1 advisory (blur); skipped card-nesting and chrome-accent-color rules as too semantic for regex, documented in script header", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T01:00:06Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVF05WDJVA", "note": "", "outcome": "started", "stage": "09-planning", "ts": "2026-09-20T01:00:06Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVF05WDJVA", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T01:00:06Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWVF05WDJVA", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T01:00:06Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWVF05WDJVA", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T01:00:32Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWVF05WDJVA", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T01:01:00Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWVF05WDJVA", "note": "", "outcome": "started", "stage": "12-release", "ts": "2026-09-20T01:01:01Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWVF05WDJVA", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T01:01:15Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWT73TJ3HV5", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T01:02:34Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWT73TTR4D3", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T01:02:35Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWT73TXJ40N", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T01:02:35Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWT73TFJBWK", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T01:03:51Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TNNDP4", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-20T01:04:59Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWT73TNNDP4", "note": "cherry-pick d52cfc78 conflicts on all 4 auth files, main diverged 603 commits since branch base; not autonomously resolvable, auth-surface security-review trigger", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T01:04:59Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVEZXEX99N", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-20T01:08:21Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVEZXEX99N", "note": "re-audit shows 62/63 findable pages already correct or context-safe false-positives; real scope is 1 file", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T01:08:21Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVEZXEX99N", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T01:08:21Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWVEZXEX99N", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T01:08:21Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWVEZXEX99N", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T01:08:48Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVF01PY12F", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-20T01:17:52Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVF01PY12F", "note": "re-audit: real modal gap is 20 instances/12 files not 476; inputs/images/icon-buttons sub-scopes need their own re-audit before sizing", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T01:17:52Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FWVF01PY12F", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T01:17:52Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FWVF01PY12F", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T01:17:52Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWVF01PY12F", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T01:17:53Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FWVF01PY12F", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T01:19:37Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FWVF01PY12F", "note": "awaiting operator sign-off (hard-gate)", "outcome": "deferred", "stage": "12-release", "ts": "2026-09-20T01:19:37Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX161DHPZHC", "note": "", "outcome": "started", "stage": "08-dependencies", "ts": "2026-09-20T02:28:50Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX161DHPZHC", "note": "re-audit: real gap 2 images not 37", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T02:28:50Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX161DHPZHC", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T02:28:50Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FX161DHPZHC", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T02:28:50Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX161DHPZHC", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T02:29:12Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FX161DHPZHC", "note": "awaiting operator sign-off (hard-gate)", "outcome": "deferred", "stage": "12-release", "ts": "2026-09-20T02:29:12Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX576KC3WDC", "note": "reuses existing approveLeaveRequest/rejectLeaveRequest via ObjectProvider self-proxy, same pattern as EmployeeService.batchUpdateStatus", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T02:29:27Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX576KC3WDC", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T02:29:27Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX161HKZRS3", "note": "re-audit: real count 36, close to cited 32 - one accurate finding this session", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T02:30:33Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX161HKZRS3", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T02:30:33Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX1618JXKEP", "note": "re-audit: real gap 99 across 62 files (vs cited 154); also found a distinct bug class - visible <label> not programmatically associated with its input in CustomFieldRenderer.tsx, ConnectorConfigPanel.tsx, career-page, interviews/page.tsx", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T02:34:29Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX1618JXKEP", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T02:34:30Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FX161HKZRS3", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T02:36:17Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX161HKZRS3", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T02:36:17Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX161HKZRS3", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T02:37:12Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FX161HKZRS3", "note": "awaiting operator sign-off (hard-gate)", "outcome": "deferred", "stage": "12-release", "ts": "2026-09-20T02:37:12Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FX576KC3WDC", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T02:37:18Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX576KC3WDC", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T02:37:18Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX576KC3WDC", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T02:37:37Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FX576KC3WDC", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T02:37:37Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FX1618JXKEP", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T02:46:59Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX1618JXKEP", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T02:46:59Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX1618JXKEP", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T02:47:51Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FX1618JXKEP", "note": "awaiting operator sign-off (hard-gate)", "outcome": "deferred", "stage": "12-release", "ts": "2026-09-20T02:47:51Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX6A9ZZRE65", "note": "same pattern as US-2FX576KC3WDC (leave), reuse ExpenseClaimService.approveExpenseClaim/rejectExpenseClaim via self-proxy", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T02:48:38Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX6A9ZZRE65", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T02:48:38Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX6BNSG0WXF", "note": "reuse ColumnVisibilityToggle component, third rollout", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T02:49:22Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX6BNSG0WXF", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T02:49:22Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FX6BNSG0WXF", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T02:52:10Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX6BNSG0WXF", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T02:52:10Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX6BNSG0WXF", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T02:52:48Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FX6BNSG0WXF", "note": "shipped autonomous", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T02:52:48Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FX6A9ZZRE65", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T02:53:23Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX6A9ZZRE65", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T02:53:23Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX6A9ZZRE65", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T02:53:41Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FX6A9ZZRE65", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T02:53:41Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX6NY43KZ05", "note": "3rd bulk-approval rollout, same self-proxy pattern as leave/expense", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T02:54:58Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX6NY43KZ05", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T02:54:58Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FX6NY43KZ05", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T03:02:44Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX6NY43KZ05", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T03:02:44Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX6NY43KZ05", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T03:03:05Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FX6NY43KZ05", "note": "shipped async-review", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T03:03:05Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX94JKNDSPX", "note": "reuse existing built-but-unwired AdvancedFilterPanel.tsx, client-side filter application on fetched employee list, no backend change", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T03:37:57Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX94JKNDSPX", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T03:37:57Z"}
+{"agent": "faylo-developer", "artifact_id": "US-2FX94JKNDSPX", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T03:40:59Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX94JKNDSPX", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T03:40:59Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX94JKNDSPX", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T03:41:38Z"}
+{"agent": "faylo-release-agent", "artifact_id": "US-2FX94JKNDSPX", "note": "shipped autonomous", "outcome": "ok", "stage": "12-release", "ts": "2026-09-20T03:41:38Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX9MY3RY0PS", "note": "schema change: new resource_pools + resource_pool_members tables, next Flyway version V317. Tenant-scoped RLS required, matching existing pattern. Feature flag stays default-off; this replaces a documented 2026 QA-sweep stub (BUG-QA2-011/UC-RESOURCE-006), not new scope creep - DTOs/permissions/validation already exist in the controller.", "outcome": "ok", "stage": "08-dependencies", "ts": "2026-09-20T03:46:58Z"}
+{"agent": "faylo-architect", "artifact_id": "US-2FX9MY3RY0PS", "note": "", "outcome": "ok", "stage": "09-planning", "ts": "2026-09-20T03:46:58Z"}
+{"agent": "claude-code", "artifact_id": "", "note": "", "outcome": "started", "stage": "session", "ts": "2026-09-20T03:55:55Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX9MY3RY0PS", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T03:56:53Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FX9MY3RY0PS", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T03:57:27Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXA99V9AXMX", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T03:58:21Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXA9A4QXDBJ", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:00:39Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXA9A4QXDBJ", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:00:42Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXA9A4QXDBJ", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:00:46Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXA9A4QXDBJ", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:00:51Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXA9A0ES10G", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:01:12Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXA9A0ES10G", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:01:15Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXA9A0ES10G", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:01:18Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXA9A0ES10G", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:01:29Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXA99V9AXMX", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:01:43Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXA99V9AXMX", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:01:45Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXA99V9AXMX", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:01:56Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXAH0C9PR5D", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:03:03Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXAH0C9PR5D", "note": "", "outcome": "deferred", "stage": "10-implementation", "ts": "2026-09-20T04:03:11Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXAK3826HTN", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:03:39Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXAMTXHJY2A", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:06:56Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXAMTXHJY2A", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:08:52Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXAMTXHJY2A", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:08:57Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXAMTXHJY2A", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:09:09Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXAJ73FSNSE", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:13:33Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXAJ73FSNSE", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:13:39Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXAJ73FSNSE", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:13:39Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXAK3826HTN", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:15:03Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXAK3826HTN", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:15:06Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXAK3826HTN", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:16:04Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXAJ73FSNSE", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:16:21Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXAMV2K7J29", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:17:34Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXAMV2K7J29", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:18:57Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXAMV2K7J29", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:19:00Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXAMV2K7J29", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:19:08Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXC19K3YS5M", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:28:57Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXC19SFZ1K5", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:29:04Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXC19SFZ1K5", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:31:01Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXC19SFZ1K5", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:31:01Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXC19SFZ1K5", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:31:18Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXC19K3YS5M", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:31:18Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXC19K3YS5M", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:31:22Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXC19K3YS5M", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:31:43Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXC19ZKBX9W", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:32:02Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXC19ZKBX9W", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:32:21Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXC19ZKBX9W", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:32:21Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXC19ZKBX9W", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:32:37Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXC8WM0201Q", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:32:55Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FXC8WM0201Q", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:33:27Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXC8WM0201Q", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:33:28Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXC8WM0201Q", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:33:41Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXCB68ETT8E", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:34:23Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXCB6GNEF0X", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:34:26Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXCB68ETT8E", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:35:19Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXCB68ETT8E", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:35:19Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXCB68ETT8E", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:35:31Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXCB6R6V47Y", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T04:35:39Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXCB6R6V47Y", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:39:06Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXCB6R6V47Y", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:39:18Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXCB6R6V47Y", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:39:57Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FXCB6GNEF0X", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T04:41:04Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXCB6GNEF0X", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T04:41:04Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FXCB6GNEF0X", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T04:41:19Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYBYHPKK1HW", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T13:46:31Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYBYHPKK1HW", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T13:48:06Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYBYHPKK1HW", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T13:48:06Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYBYHPKK1HW", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T13:48:17Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYBYJFZTKF8", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T13:48:44Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYC42HPMEBD", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T13:49:25Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYBYJFZTKF8", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T13:50:21Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYBYJFZTKF8", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T13:50:21Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYC42HPMEBD", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T13:50:57Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYC42HPMEBD", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T13:50:59Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYC42HPMEBD", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T13:51:08Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYBYJFZTKF8", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T13:51:16Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYBYK78PV8B", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T13:51:36Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYC9C8WD399", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T13:54:20Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYC9C8WD399", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T13:54:27Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYC9C8WD399", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T13:54:28Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYC9C8WD399", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T13:54:42Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYBYK78PV8B", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T13:57:12Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYBYK78PV8B", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T13:57:12Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYBYK78PV8B", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T13:57:23Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDSHQHW68Z", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:19:11Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDVJW3DG3Q", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:19:49Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDVJW3DG3Q", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:20:25Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDVJW3DG3Q", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:20:25Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDVJW3DG3Q", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:20:38Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDXEMGD2V1", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:20:48Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDVK24N81P", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:20:59Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDXEMGD2V1", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:21:33Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDXEMGD2V1", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:21:34Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDXEMGD2V1", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:21:49Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYDT45QRKY5", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:22:48Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDSHQHW68Z", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:22:50Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDSHJ9NVV9", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:22:52Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYDT45QRKY5", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:22:54Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDT45QRKY5", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:22:54Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDSHJ9NVV9", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:22:55Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDT45QRKY5", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:23:02Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYDT4BEB1G7", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:23:28Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYDVK24N81P", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:24:34Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDVK24N81P", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:24:34Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYE561NCF5J", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:24:49Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDVK24N81P", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:24:50Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYE561NCF5J", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:25:38Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYE6BD3P1N9", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:25:42Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYDT4BEB1G7", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:25:46Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDT4BEB1G7", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:25:46Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE561NCF5J", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:25:50Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE561NCF5J", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:25:52Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDT4BEB1G7", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:25:57Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYE7QCNND5M", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:26:24Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDSHQHW68Z", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:26:48Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDSHQHW68Z", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:26:48Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDSHJ9NVV9", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:27:09Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYDSHJ9NVV9", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:27:10Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYE7QCNND5M", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:28:39Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE7QCNND5M", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:28:39Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYEC05CBB21", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:28:40Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE7QCNND5M", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:29:10Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYEC05CBB21", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:30:41Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYEC05CBB21", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:30:41Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYE6BD3P1N9", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:30:42Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE6BD3P1N9", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:30:42Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYE7QWNJ535", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:30:42Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYEC05CBB21", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:30:48Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE6BD3P1N9", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:30:50Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYE7QMTP2D2", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:31:11Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYE7QWNJ535", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:32:07Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE7QWNJ535", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:32:07Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE7QWNJ535", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:32:19Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYE7QMTP2D2", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:34:29Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE7QMTP2D2", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:34:29Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYE7QMTP2D2", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:34:37Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYEQECB4258", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:34:56Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYERYV698AZ", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:35:52Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYEQECB4258", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:36:03Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYEQECB4258", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:36:17Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYEQECB4258", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:36:17Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYEQWPJCGE3", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T14:38:24Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYEQWPJCGE3", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:38:24Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYEQWPJCGE3", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:38:27Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYERYV698AZ", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:39:30Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYERYV698AZ", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:39:30Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYEQWPJCGE3", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:39:33Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYERYV698AZ", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:39:41Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYEK23MNGGZ", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T14:40:43Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYEK23MNGGZ", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T14:40:43Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYEK23MNGGZ", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T14:40:52Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYXTRYK7KJY", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T18:59:05Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYXTRSFDMT0", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T18:59:45Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYXTRSFDMT0", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T18:59:49Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYXTRSFDMT0", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T18:59:59Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYXTRSFDMT0", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T19:00:00Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYY5845HBS3", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T19:06:46Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYXTRYK7KJY", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T19:06:48Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYXTRYK7KJY", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T19:06:48Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYXTRYK7KJY", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T19:06:57Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYY5845HBS3", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T19:07:36Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYY5845HBS3", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T19:07:45Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYY5845HBS3", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T19:07:46Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYZHMT7JTH0", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T19:29:04Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYZHMZETNE6", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T19:30:13Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYZHMZETNE6", "note": "Held on DC-2FYZMWW3CA1W: server-driven route has zero entry point anywhere in the app and drops 3 real features vs the client-computed route. Not a simple delete-and-redirect.", "outcome": "deferred", "stage": "10-implementation", "ts": "2026-09-20T19:30:36Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYZPAC6P52N", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T19:32:02Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FYZPAC6P52N", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T19:32:02Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYZPAC6P52N", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T19:32:13Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYZPAC6P52N", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T19:32:13Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FYZHMT7JTH0", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T19:32:17Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYZHMT7JTH0", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T19:32:17Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FYZHMT7JTH0", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T19:32:26Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FZ0BC70DYQ9", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T19:43:08Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FZ0BYJ4EEF5", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T19:44:56Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FZ0BYJ4EEF5", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T19:44:56Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ0BYJ4EEF5", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T19:45:13Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ0BYJ4EEF5", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T19:45:13Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FZ0BC70DYQ9", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T19:57:27Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ0BC70DYQ9", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T19:57:27Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ0BC70DYQ9", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T19:57:46Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FZ1RXB6QNFD", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T20:08:23Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FZ1RHSX3HKF", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T20:09:55Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FZ1RHSX3HKF", "note": "No middleware.ts gap exists \u2014 proxy.ts already IS Next.js 16's active edge middleware (Next 16 renamed middleware.ts to proxy.ts; creating middleware.ts alongside it errors the build). Confirmed via runtime test: unauthenticated GET /employees on the built app returns 307->/auth/login with proxy.ts's exact CSP/security headers. Verified zero Server Components fetch sensitive data server-side (only 3 non-redirect-stub Server Components exist: privacy/terms static pages, careers page which only calls the public /public/careers/jobs endpoint). Fixed 2 stale comments in next.config.js referencing a non-existent middleware.ts shim that could mislead a future engineer into recreating the exact mistake that breaks the build.", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T20:20:42Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ1RHSX3HKF", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T20:21:04Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ1RHSX3HKF", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T20:21:04Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FZ1RXB6QNFD", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T20:25:56Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ1RXB6QNFD", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T20:25:56Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ1RXB6QNFD", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T20:26:11Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FZ3774CR9Z1", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T20:33:23Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ3774CR9Z1", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T20:34:09Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ3774CR9Z1", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T20:34:21Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FZ377BJ1EGG", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T20:35:05Z"}
+{"agent": "faylo-frontend-engineer", "artifact_id": "US-2FZ377BJ1EGG", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T20:35:06Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ377BJ1EGG", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T20:35:19Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ377BJ1EGG", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T20:35:20Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FZ3WP130FT7", "note": "", "outcome": "started", "stage": "10-implementation", "ts": "2026-09-20T20:45:06Z"}
+{"agent": "faylo-backend-engineer", "artifact_id": "US-2FZ3WP130FT7", "note": "", "outcome": "ok", "stage": "10-implementation", "ts": "2026-09-20T20:49:30Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ3WP130FT7", "note": "", "outcome": "started", "stage": "11-verification", "ts": "2026-09-20T20:49:30Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2FZ3WP130FT7", "note": "", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-20T20:49:44Z"}
