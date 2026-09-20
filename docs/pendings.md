@@ -12,95 +12,43 @@ updated: 2026-06-25
 Tracking the docs reset → regenerate → merge → ready effort. Broader project/production
 blockers are tracked in `MEMORY.md`, not here.
 
-## 📌 Pending — Ponytail (lean-code) backlog (audited 2026-06-25, implement later)
+## ✅ Ponytail (lean-code) backlog — closed out 2026-09-20 (`US-2FZ0BC70DYQ9`)
 
-Findings from a full repo ponytail audit run on 2026-06-25. **Do not implement without reading
-both ends** — each item is documented here for planning. Items marked ⚠️ HIGH RISK must be
-read end-to-end and have a regression test before touching.
+Originally audited 2026-06-25. Re-verified against current HEAD before touching (3 months of
+drift — several items were already gone). Below: what actually happened, not the stale 06-25 text.
 
-### Frontend (~-127,500 lines possible)
+### Frontend
 
-- [ ] **delete** `lib/generated/api/` — 154 of 185 Orval-generated controller directories are
-      never imported (83%). The codebase migrated to TanStack Query hooks; the generated clients
-      were never pruned. Only 29 dirs have active callers. Orval regenerates on demand — safe to
-      delete the unused dirs. Estimated ~126,880 lines.
+- [x] **deleted** `lib/generated/api/` — 156/185 zero-caller dirs removed (re-verified whole-repo,
+      not just app/), 29 kept. Also removed `.claude-flow/data/` (moot for git, dir is gitignored).
+- [x] **deleted** `app/admin/mobile-api/` (page+hook+service) + its 3 barrel re-exports + the nav
+      sidebar entry + the route-guard entry — leaving those would 404 the sidebar link.
+- [x] **shrunk** `lib/hooks/useDebounce.ts` — removed `useAbortController`/`useThrottledCallback`
+      (confirmed test-only). `useDebouncedFetch` never existed in the current file — stale line.
+- [x] `useNotificationStore.ts` — already deleted (commit `2a60c3a3`, predates this cleanup).
+      Only a stale README table row remained; fixed.
+- [x] **shrunk** `lib/utils/index.ts` — removed `isAdmin()`/`hasPermission()`, migrated 4 real
+      callers to `usePermissions()`.
+- [x] `useFeatureFlag.ts` shim — didn't exist; `FeatureGate.tsx` already imports the real source.
+- [x] **deleted** `lib/utils/date.ts` — migrated 20 callers to `dateUtils.getLocalDateString`.
+      (5 other files have their own unrelated local copy of the same 6-line function — left alone.)
+- [x] **shrunk** `next.config.js` — removed the `@tanstack/react-table` entry (not in
+      package.json); the Radix entries + webpack no-op line were already gone.
 
-- [ ] **delete** `app/admin/mobile-api/page.tsx` + `lib/hooks/queries/useMobileApi.ts` +
-      `lib/services/core/mobile-api.service.ts` (~380 lines). The route renders static API docs
-      (code snippets) for a mobile client that does not exist. YAGNI scaffold.
+### Backend
 
-- [ ] **shrink** `lib/hooks/useDebounce.ts` — remove 3 dead exports: `useAbortController`
-      (lines 64–98), `useDebouncedFetch` (lines 99–173), `useThrottledCallback` (lines 174–222).
-      Zero production callers; only referenced in the test file. Use native `AbortController` +
-      fetch signal at call sites. ~159 lines.
-
-- [ ] **delete** `lib/stores/useNotificationStore.ts` (~38 lines). Store comment says
-      "no production component owns this state yet; forward-looking placeholder." Zero consumers
-      outside the file itself.
-
-- [ ] **shrink** `lib/utils/index.ts` — remove `isAdmin()` and `hasPermission()` (~20 lines).
-      Both duplicate logic from `usePermissions` hook. 4 callers bypass the proper hook — migrate
-      them to `usePermissions()`.
-
-- [ ] **delete** `lib/hooks/useFeatureFlag.ts` (~8 lines). Pure re-export shim; the barrel
-      `lib/hooks/index.ts` already re-exports from `queries/useFeatureFlags` at line 53.
-      Point the 1 remaining direct import (FeatureGate.tsx) to the source directly.
-
-- [ ] **delete** `lib/utils/date.ts` (~6 lines + 26 caller renames). `toLocalDateString()`
-      duplicates `dateUtils.ts:getLocalDateString()` under a different name. Migrate 26 callers,
-      delete the file.
-
-- [ ] **shrink** `next.config.js` (~7 lines). Remove 6 dead `experimental.optimizePackageImports`
-      entries for Radix UI packages removed in the prior audit (`react-dialog`, `react-dropdown-menu`,
-      `react-select`, `react-tabs`, `react-tooltip`) plus `@tanstack/react-table` which is not in
-      `package.json`. Also remove the `webpack: (config) => config` no-op line — comment above it
-      confirms the warning it guarded against was resolved by the `turbopack:{}` entry.
-
-- [ ] **delete** `.claude-flow/data/` inside `lib/generated/api/` — swarm agent runtime
-      artifact that wandered into the source tree. Not code, not committed intentionally.
-
-### Backend (~-390 lines possible)
-
-- [ ] **delete** `common/config/CacheMetricsConfig.java` (~200 lines). AOP around Spring cache
-      methods records `cache.hits` / `cache.misses` meters that stay at 0 forever (the class
-      comment admits this). Spring Actuator + Micrometer already instruments Spring caches via
-      `RedisCacheMetrics`. Add `management.metrics.cache.instrument=true` to yml and delete.
-
-- [ ] **delete** `common/config/MetricsConfig.java` — the 6 unused Counter/Timer `@Bean`
-      definitions (~60 lines). `MetricsService` creates its own meters inline via `MeterRegistry`;
-      none of the 6 beans are injected anywhere. Keep only the `TimedAspect` bean.
-
-- [ ] **delete** `common/config/EmailConfig.java` (~48 lines). `spring-boot-starter-mail` +
-      `JavaMailSenderAutoConfiguration` builds `JavaMailSender` from `spring.mail.*` automatically.
-      This class re-wires the exact same properties manually. Move SMTP auth/starttls to
-      `spring.mail.properties.*` in yml.
-
-- [ ] **shrink** `common/config/JpaQueryConfig.java` — remove the `RepositoryQueryAspect` inner
-      class (lines 39–112, ~75 lines). It intercepts every `JpaRepository.*(..)` call with
-      `System.nanoTime()` + dynamic `Timer.builder().register()` — AOP overhead on all 321
-      entities' repos. `SlowQueryInterceptor` (also in this file) already handles slow SQL at
-      the correct layer.
-
-- [ ] **yagni** `infrastructure/sms/SmsService.java` interface + `MockSmsService.java` (~40 lines
-      total). Only one implementation exists; `TwilioConfig.java` exists but nothing wires it to
-      the interface. Collapse into a concrete class; restore the interface when a second provider
-      arrives.
-
-- [ ] **yagni** `infrastructure/payment/PaymentGatewayService.java` interface +
-      `MockPaymentService.java` (~30 lines total). Same pattern as SMS — `MockPaymentService` IS
-      the only implementation. Collapse into one class.
-
-- [ ] **shrink** `common/config/AIConfig.java` — remove `objectMapper()` @Bean (~15 lines).
-      `JacksonAutoConfiguration` auto-builds this; `jackson-datatype-jsr310` is on the classpath
-      via `spring-boot-starter-web` so `JavaTimeModule` is auto-registered. Move settings to
-      `spring.jackson.*` yml keys. Keep the `RestTemplate` bean (Spring does NOT auto-create it).
-
-- [ ] **stdlib** Two `private static final ObjectMapper MAPPER = new ObjectMapper()` fields in
-      `api/expense/dto/ExpensePolicyResponse.java:24` and `api/payment/dto/PaymentConfigDto.java:25`.
-      These bypass the configured Spring bean, miss `JavaTimeModule` and `FAIL_ON_UNKNOWN_PROPERTIES`.
-      Inject via constructor instead.
-
-- [ ] ⚠️ **HIGH RISK — flag only, do not touch without regression test**:
+- [x] `CacheMetricsConfig.java`, `MetricsConfig.java` dead beans, `EmailConfig.java`,
+      `JpaQueryConfig.java`'s `RepositoryQueryAspect`, `AIConfig.java`'s `objectMapper()` bean —
+      **already gone**, someone cleaned these in an earlier pass. Zero action needed.
+- [ ] **stdlib, held**: two duplicate `ObjectMapper` fields (`ExpensePolicyResponse.java:24`,
+      `PaymentConfigDto.java:25`) — the target shared bean (`AIConfig.objectMapper()`) no longer
+      exists (removed above), and both DTOs are static-factory classes, not Spring-managed, so
+      constructor injection doesn't fit. Not fixed — would need a new shared utility class as its
+      own follow-up, not a 2-line dedup. Flagging rather than inventing one.
+- [ ] **held, not attempted**: `infrastructure/sms/SmsService.java`/`MockSmsService.java` and
+      `infrastructure/payment/PaymentGatewayService.java`/`MockPaymentService.java` yagni
+      collapses — untouched this pass.
+- [ ] ⚠️ **HIGH RISK — still flag only, do not touch without regression test**:
       `ApprovalEscalationJob` vs `WorkflowEscalationScheduler` — both enabled
       (`matchIfMissing=true`), different ShedLock names so they can run concurrently, and both
       mutate the same `StepExecution` rows via different code paths (Job copies; Scheduler calls
@@ -139,25 +87,14 @@ this batch (4319 tests, 3 pre-existing/environmental failures unrelated to this 
 
 ### 🔲 Held — scoped but not dispatched (feature-sized, needs a product call first)
 
-- [ ] **Document management** (`DocumentWorkflowService`, 355 lines, zero controller) — scoped
-      into 3 independent tickets, now in progress: `US-2FYBYHPKK1HW` (approval trigger via the
-      *generic* `WorkflowService`/`DOCUMENT_REQUEST` engine — do NOT rebuild approve/reject,
-      that already exists), `US-2FYBYJFZTKF8` (access ACL endpoints), `US-2FYBYK78PV8B` (expiry
-      tracking + scheduler). Once the approval trigger ships, `DocumentApprovalWorkflow`/
-      `DocumentApprovalTask` become dead code — follow-up ponytail delete, don't remove yet.
-- [ ] **Wiki approval enforcement** — write-path now correctly routes through
-      `WikiSpaceApprovalService.configureApproval()` (`US-2FXCB6R6V47Y`, done), but nothing in
-      the page-publish flow checks `isApprovalRequired`/routes to the approver yet. Needs a page
-      status model (DRAFT/PENDING_APPROVAL/PUBLISHED) + submit/approve endpoints.
-- [ ] **360-feedback peer nomination** — `FeedbackRequestForm.tsx`/`FeedbackResponseForm.tsx`
-      (743 lines combined) are complete, zero usages; backend has the endpoints but no frontend
-      mutation hook was ever built to call them. Real gap, not a pure wire-in.
-- [ ] **Competing 360-feedback implementation** — `CalibrationMatrix.tsx` (447 lines) +
-      `lib/types/grow/performance-360.ts` (used by nothing else in the codebase) look like an
-      entire alternate calibration subsystem from commit `4b57ecc6` that lost to the
-      inline-built 9-box that actually shipped (`app/performance/calibration/page.tsx`,
-      `app/performance/9box/page.tsx`). Needs a call: confirmed-dead (delete) or should replace
-      what's live.
+- [x] **Document management** — done: `US-2FYBYHPKK1HW` (approval trigger via generic
+      WorkflowService), `US-2FYBYJFZTKF8` (access ACL), `US-2FYBYK78PV8B` (expiry+scheduler).
+      Dead `DocumentApprovalWorkflow`/`DocumentApprovalTask` deleted (`US-2FYEC05CBB21`).
+- [x] **Wiki approval enforcement** — done (`US-2FYDT45QRKY5`): page-publish flow now checks
+      `isApprovalRequired`, sets PENDING_APPROVAL, adds approve/reject endpoints.
+- [x] **360-feedback peer nomination** — done (`US-2FYDT4BEB1G7`): nomination hook + UI wired.
+- [x] **Competing 360-feedback implementation** — resolved: `CalibrationMatrix.tsx` +
+      `FeedbackRequestForm`/`FeedbackResponseForm.tsx` confirmed dead, deleted (`US-2FYDXEMGD2V1`).
 - [ ] **Fluence ActivityFeed wiring** — `ActivityFeed.tsx` (complete, actively maintained)
       vs. the cruder inline activity blocks duplicated in `app/fluence/wall/page.tsx` and
       `app/fluence/analytics/page.tsx`. Swapping it in is a page-redesign call, not a pure wire.
@@ -169,10 +106,8 @@ this batch (4319 tests, 3 pre-existing/environmental failures unrelated to this 
       `useMarkAssetAsLost`/`useWaiveAssetRecovery`/`useVerifyAssetReturn` (assets are
       display-only, no action UI), `useSettlementById`/`usePendingSettlementApprovals` (no
       finance-facing settlement queue). Reads as an unbuilt Phase 2, not an accidental miss.
-- [ ] **Probation: no negative-outcome path** — `useExtendProbation`/`useFailProbation`
-      (`lib/hooks/queries/useProbation.ts`) unused; `app/probation/page.tsx` only wires the
-      pass-probation flow (`useConfirmEmployee`/`useAddEvaluation`). No UI action exists for
-      extending or failing probation.
+- [x] **Probation: no negative-outcome path** — done (`US-2FYDVJW3DG3Q`): Extend/Fail buttons
+      wired to `useExtendProbation`/`useFailProbation`.
 - [ ] **Payroll bulk processing** — `usePayroll.ts`'s `useBulkProcessPayroll`/
       `useBulkProcessingStatus`/`usePreviewBulkProcessing` unused; `BulkProcessingWizard.tsx`
       calls `payrollService` directly instead, and the whole feature is gated off by
