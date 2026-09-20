@@ -73,6 +73,15 @@ public interface EmployeeRepository extends JpaRepository<Employee, UUID>, JpaSp
     @Query("SELECT e.id, e.managerId FROM Employee e WHERE e.id IN :ids")
     List<Object[]> findManagerIdsByIds(@Param("ids") Collection<UUID> ids);
 
+    /**
+     * Batch lookup: get employee ID to login user ID mapping for a collection of IDs.
+     * Returns Object[] where [0] = UUID employeeId, [1] = UUID userId. Used to resolve
+     * notification recipients from employee-scoped IDs (e.g. assignedTo, interviewerId).
+     */
+    @Query("SELECT e.id, e.user.id FROM Employee e WHERE e.id IN :ids AND e.tenantId = :tenantId")
+    List<Object[]> findUserIdsByEmployeeIdsAndTenantId(@Param("ids") Collection<UUID> ids,
+                                                        @Param("tenantId") UUID tenantId);
+
     Optional<Employee> findByEmployeeCodeAndTenantId(String employeeCode, UUID tenantId);
 
     @EntityGraph(attributePaths = {"user"})

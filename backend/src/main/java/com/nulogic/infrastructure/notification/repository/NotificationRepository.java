@@ -63,6 +63,15 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     @Query("SELECT CASE WHEN COUNT(n) > 0 THEN true ELSE false END FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId")
     boolean existsByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
 
+    /**
+     * Idempotency guard for scheduled reminder jobs: has this user already been notified
+     * about this entity? Avoids re-sending the same reminder on every daily/hourly run
+     * while the entity stays inside the reminder window.
+     */
+    boolean existsByTenantIdAndUserIdAndRelatedEntityIdAndRelatedEntityTypeAndType(
+            UUID tenantId, UUID userId, UUID relatedEntityId, String relatedEntityType,
+            Notification.NotificationType type);
+
     // ==================== USER-SCOPED QUERY METHODS ====================
 
     @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId AND n.userId = :userId ORDER BY n.createdAt DESC")

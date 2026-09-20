@@ -32,6 +32,9 @@ public interface OnboardingTaskRepository extends JpaRepository<OnboardingTask, 
     @Query("SELECT t FROM OnboardingTask t WHERE t.tenantId = :tenantId AND t.dueDate < :date AND t.status IN ('PENDING', 'IN_PROGRESS')")
     List<OnboardingTask> findOverdue(@Param("tenantId") UUID tenantId, @Param("date") LocalDate date);
 
+    @Query("SELECT t FROM OnboardingTask t WHERE t.tenantId = :tenantId AND t.dueDate BETWEEN :from AND :to AND t.status IN ('PENDING', 'IN_PROGRESS')")
+    List<OnboardingTask> findDueBetween(@Param("tenantId") UUID tenantId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
     @Query("SELECT COUNT(t) FROM OnboardingTask t WHERE t.processId = :processId AND t.status = 'COMPLETED'")
     long countCompletedByProcess(@Param("processId") UUID processId);
 
