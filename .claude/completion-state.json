@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T03:00:00Z",
-  "repositoryCommit": "216cbf6a",
-  "passId": "pass-2-3",
+  "lastUpdated": "2026-09-20T04:00:00Z",
+  "repositoryCommit": "b540cd72",
+  "passId": "pass-3-fixes",
   "scopeVersion": "keka-parity-v1",
   "items": {
     "notifications.attendance_regularized": {
@@ -575,24 +575,25 @@
       "blocker": null
     },
     "psa.allocate_resources_duplicate_risk": {
-      "status": "in_flight",
+      "status": "completed",
       "summary": "No dedup guard on PSAService.allocateResources - duplicate rows possible on rapid double-call. Objectively-implied defect (established codebase pattern exists elsewhere), fixing directly not via decision",
       "evidence": [
-        "US-2FZ1XPPV5RPP"
+        "V318__psa_project_allocations_unique_active.sql",
+        "PSAService.java existsBy check"
       ],
-      "lastVerifiedCommit": "216cbf6a",
-      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "lastVerifiedCommit": "5acbbff8",
+      "lastVerifiedAt": "2026-09-20T04:00:00Z",
       "reported": true,
       "blocker": null
     },
     "recruitment.jobboard_silent_false_success": {
-      "status": "in_flight",
+      "status": "completed",
       "summary": "JobBoardIntegrationService silently marks SHINE/MONSTER postings ACTIVE/PAUSED despite doing nothing (falls through unimplemented-board branch to success path) - real bug, fixing directly",
       "evidence": [
-        "US-2FZ1XPWWEC3S"
+        "JobBoardIntegrationService.java throws UnsupportedOperationException instead of fall-through"
       ],
-      "lastVerifiedCommit": "216cbf6a",
-      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "lastVerifiedCommit": "b540cd72",
+      "lastVerifiedAt": "2026-09-20T04:00:00Z",
       "reported": true,
       "blocker": null
     },
@@ -669,6 +670,15 @@
         "security.middleware_route_gating",
         "rbac.scope_model_5_domains",
         "concurrency.other_checks_verified_safe"
+      ]
+    },
+    {
+      "passId": "pass-3-fixes",
+      "commit": "b540cd72",
+      "timestamp": "2026-09-20T04:00:00Z",
+      "delta": [
+        "psa.allocate_resources_duplicate_risk",
+        "recruitment.jobboard_silent_false_success"
       ]
     }
   ]
