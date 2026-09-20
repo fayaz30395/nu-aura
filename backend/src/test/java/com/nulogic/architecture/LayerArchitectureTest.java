@@ -291,7 +291,6 @@ class LayerArchitectureTest {
                     .that().resideInAPackage("..application..service..")
                     .and().areAnnotatedWith(org.springframework.stereotype.Service.class)
                     .and().doNotHaveSimpleName("ScheduledReportExecutionJob")
-                    .and().doNotHaveSimpleName("PermissionScopeMerger")
                     // Application-layer components that follow different naming conventions
                     .and().doNotHaveSimpleName("ResumeTextExtractor")
                     .and().doNotHaveSimpleName("SamlAuthenticationHandler")
