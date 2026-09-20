@@ -19,4 +19,6 @@ public interface PSAProjectAllocationRepository extends JpaRepository<PSAProject
 
     @Query("SELECT a FROM PSAProjectAllocation a WHERE a.projectId = :projectId AND a.tenantId = :tenantId")
     List<PSAProjectAllocation> findByProjectIdAndTenantId(@Param("projectId") UUID projectId, @Param("tenantId") UUID tenantId);
+
+    boolean existsByTenantIdAndProjectIdAndEmployeeIdAndIsActiveTrue(UUID tenantId, UUID projectId, UUID employeeId);
 }

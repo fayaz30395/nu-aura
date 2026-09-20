@@ -174,7 +174,14 @@ public class PSAService {
 
         return projectRepository.findByIdAndTenantId(id, tenantId)
                 .map(project -> {
-                    allocationRepository.save(buildAllocation(tenantId, id, allocation));
+                    PSAProjectAllocation newAllocation = buildAllocation(tenantId, id, allocation);
+                    if (allocationRepository.existsByTenantIdAndProjectIdAndEmployeeIdAndIsActiveTrue(
+                            tenantId, id, newAllocation.getEmployeeId())) {
+                        throw new IllegalStateException(
+                                "Employee " + newAllocation.getEmployeeId()
+                                        + " already has an active allocation on project " + id);
+                    }
+                    allocationRepository.save(newAllocation);
                     return project;
                 });
     }
