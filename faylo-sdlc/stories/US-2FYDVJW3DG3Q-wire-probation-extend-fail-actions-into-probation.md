@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** autonomous
-> **Status:** Verified
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
