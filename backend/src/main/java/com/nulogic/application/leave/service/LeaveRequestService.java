@@ -60,6 +60,11 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     private final com.nulogic.common.util.TenantTimeService tenantTimeService;
     // PROD-2 FIX: tenant holiday calendar lookup for computeLeaveDays.
     private final HolidayRepository holidayRepository;
+    // ObjectProvider, not @Lazy self-injection, to avoid eager self-construction —
+    // same pattern as AutoRegularizationScheduler/EmployeeService.batchUpdateStatus.
+    // Routes batch-approve/reject calls back through the Spring proxy so each leave
+    // request gets its own @Transactional boundary; one failure doesn't roll back the batch.
+    private final org.springframework.beans.factory.ObjectProvider<LeaveRequestService> selfProvider;
 
     public LeaveRequestService(LeaveRequestRepository leaveRequestRepository,
                                LeaveBalanceService leaveBalanceService,
@@ -70,7 +75,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                                @org.springframework.context.annotation.Lazy WorkflowService workflowService,
                                AuditLogService auditLogService,
                                com.nulogic.common.util.TenantTimeService tenantTimeService,
-                               HolidayRepository holidayRepository) {
+                               HolidayRepository holidayRepository,
+                               org.springframework.beans.factory.ObjectProvider<LeaveRequestService> selfProvider) {
         this.leaveRequestRepository = leaveRequestRepository;
         this.leaveBalanceService = leaveBalanceService;
         this.webSocketNotificationService = webSocketNotificationService;
@@ -81,6 +87,7 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         this.workflowService = workflowService;
         this.auditLogService = auditLogService;
         this.holidayRepository = holidayRepository;
+        this.selfProvider = selfProvider;
     }
 
     @Transactional
@@ -342,6 +349,67 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         });
 
         return saved;
+    }
+
+    /**
+     * Bulk approve from the admin leave-requests table's multi-select toolbar.
+     * Each leave request is approved via its own call through the Spring proxy
+     * ({@link #selfProvider}) so it gets its own transaction — one failing
+     * request (not found, wrong manager, insufficient balance) does not roll
+     * back the others.
+     */
+    public com.nulogic.api.leave.dto.BatchLeaveActionResponse batchApprove(
+            com.nulogic.api.leave.dto.BatchLeaveActionRequest request, UUID approverId) {
+        LeaveRequestService self = selfProvider.getObject();
+        List<UUID> failed = new java.util.ArrayList<>();
+        int processed = 0;
+
+        for (UUID leaveRequestId : request.getLeaveRequestIds()) {
+            try {
+                self.approveLeaveRequest(leaveRequestId, approverId);
+                processed++;
+            } catch (Exception e) {
+                log.warn("Batch approve failed for leave request {}: {}", leaveRequestId, e.getMessage());
+                failed.add(leaveRequestId);
+            }
+        }
+
+        log.info("Batch approve: {} processed, {} failed", processed, failed.size());
+
+        return com.nulogic.api.leave.dto.BatchLeaveActionResponse.builder()
+                .processedCount(processed)
+                .failedLeaveRequestIds(failed)
+                .build();
+    }
+
+    /**
+     * Bulk reject from the admin leave-requests table's multi-select toolbar.
+     * Each leave request is rejected via its own call through the Spring proxy
+     * ({@link #selfProvider}) so it gets its own transaction — one failing
+     * request does not roll back the others.
+     */
+    public com.nulogic.api.leave.dto.BatchLeaveActionResponse batchReject(
+            com.nulogic.api.leave.dto.BatchLeaveRejectRequest request, UUID approverId) {
+        LeaveRequestService self = selfProvider.getObject();
+        List<UUID> failed = new java.util.ArrayList<>();
+        int processed = 0;
+
+        for (UUID leaveRequestId : request.getLeaveRequestIds()) {
+            try {
+                self.rejectLeaveRequest(leaveRequestId, approverId, request.getReason());
+                processed++;
+            } catch (Exception e) {
+                log.warn("Batch reject failed for leave request {}: {}", leaveRequestId, e.getMessage());
+                failed.add(leaveRequestId);
+            }
+        }
+
+        log.info("Batch reject: {} processed, {} failed", processed, failed.size());
+
+        return com.nulogic.api.leave.dto.BatchLeaveActionResponse.builder()
+                .processedCount(processed)
+                .failedLeaveRequestIds(failed)
+                .build();
     }
 
     /**

@@ -64,6 +64,8 @@ class LeaveRequestServiceTest {
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @Mock
     private HolidayRepository holidayRepository;
+    @Mock
+    private org.springframework.beans.factory.ObjectProvider<LeaveRequestService> selfProvider;
     @InjectMocks
     private LeaveRequestService leaveRequestService;
     private UUID tenantId;
@@ -368,6 +370,78 @@ class LeaveRequestServiceTest {
             assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, managerId))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("Only pending requests can be approved");
+        }
+    }
+
+    @Nested
+    @DisplayName("Batch Approve/Reject Leave Requests Tests")
+    class BatchLeaveActionTests {
+
+        @Test
+        @DisplayName("Should approve every leave request in the batch")
+        void shouldApproveEveryRequestInBatch() {
+            UUID secondId = UUID.randomUUID();
+            LeaveRequest second = LeaveRequest.builder()
+                    .employeeId(employeeId)
+                    .leaveTypeId(leaveTypeId)
+                    .startDate(LocalDate.now().plusDays(10))
+                    .endDate(LocalDate.now().plusDays(11))
+                    .totalDays(BigDecimal.valueOf(2.0))
+                    .status(LeaveRequest.LeaveRequestStatus.PENDING)
+                    .build();
+            second.setId(secondId);
+            second.setTenantId(tenantId);
+
+            when(selfProvider.getObject()).thenReturn(leaveRequestService);
+            when(leaveRequestRepository.findByIdAndTenantId(leaveRequest.getId(), tenantId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findByIdAndTenantId(secondId, tenantId))
+                    .thenReturn(Optional.of(second));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            com.nulogic.api.leave.dto.BatchLeaveActionRequest request =
+                    new com.nulogic.api.leave.dto.BatchLeaveActionRequest();
+            request.setLeaveRequestIds(List.of(leaveRequest.getId(), secondId));
+
+            com.nulogic.api.leave.dto.BatchLeaveActionResponse response =
+                    leaveRequestService.batchApprove(request, managerId);
+
+            assertThat(response.getProcessedCount()).isEqualTo(2);
+            assertThat(response.getFailedLeaveRequestIds()).isEmpty();
+            assertThat(leaveRequest.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.APPROVED);
+            assertThat(second.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("Should report a not-found leave request as failed without blocking the rest of the batch")
+        void shouldReportRejectFailureWithoutBlockingRestOfBatch() {
+            UUID missingId = UUID.randomUUID();
+            String rejectionReason = "Insufficient staff coverage";
+
+            when(selfProvider.getObject()).thenReturn(leaveRequestService);
+            when(leaveRequestRepository.findByIdAndTenantId(leaveRequest.getId(), tenantId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.findByIdAndTenantId(missingId, tenantId))
+                    .thenReturn(Optional.empty());
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(employee));
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            com.nulogic.api.leave.dto.BatchLeaveRejectRequest request =
+                    new com.nulogic.api.leave.dto.BatchLeaveRejectRequest();
+            request.setLeaveRequestIds(List.of(leaveRequest.getId(), missingId));
+            request.setReason(rejectionReason);
+
+            com.nulogic.api.leave.dto.BatchLeaveActionResponse response =
+                    leaveRequestService.batchReject(request, managerId);
+
+            assertThat(response.getProcessedCount()).isEqualTo(1);
+            assertThat(response.getFailedLeaveRequestIds()).containsExactly(missingId);
+            assertThat(leaveRequest.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.REJECTED);
         }
     }
 

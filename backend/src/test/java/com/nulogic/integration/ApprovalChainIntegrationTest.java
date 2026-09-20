@@ -148,7 +148,7 @@ class ApprovalChainIntegrationTest {
         LeaveRequestService leaveService = new LeaveRequestService(
                 leaveRequestRepository, leaveBalanceService, webSocketNotificationService,
                 employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService,
-                tenantTimeService, holidayRepository);
+                tenantTimeService, holidayRepository, null);
 
         // BA-6: onApproved re-runs the overlap check — no conflicts in this scenario
         lenient().when(leaveRequestRepository.findOverlappingLeaves(any(), any(), any(), any()))
@@ -474,7 +474,7 @@ class ApprovalChainIntegrationTest {
         LeaveRequestService leaveService = new LeaveRequestService(
                 leaveRequestRepository, leaveBalanceService, webSocketNotificationService,
                 employeeRepository, leaveTypeRepository, domainEventPublisher, null, auditLogService,
-                tenantTimeService, holidayRepository);
+                tenantTimeService, holidayRepository, null);
 
         workflowService = new WorkflowService(
                 workflowDefinitionRepository, approvalStepRepository,

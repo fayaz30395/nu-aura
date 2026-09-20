@@ -226,6 +226,30 @@ public class LeaveRequestController {
         return ResponseEntity.ok(toResponse(rejected));
     }
 
+    @PostMapping("/batch-approve")
+    @RequiresPermission(Permission.LEAVE_APPROVE)
+    @Operation(summary = "Bulk approve leave requests", description = "Approves multiple pending leave requests in one call, from the admin table's multi-select toolbar (must be each employee's manager)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Batch processed — see response body for per-request outcome")
+    })
+    public ResponseEntity<com.nulogic.api.leave.dto.BatchLeaveActionResponse> batchApprove(
+            @Valid @RequestBody com.nulogic.api.leave.dto.BatchLeaveActionRequest request) {
+        UUID approverId = SecurityContext.getCurrentEmployeeId();
+        return ResponseEntity.ok(leaveRequestService.batchApprove(request, approverId));
+    }
+
+    @PostMapping("/batch-reject")
+    @RequiresPermission(Permission.LEAVE_REJECT)
+    @Operation(summary = "Bulk reject leave requests", description = "Rejects multiple pending leave requests with a shared reason in one call, from the admin table's multi-select toolbar (must be each employee's manager)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Batch processed — see response body for per-request outcome")
+    })
+    public ResponseEntity<com.nulogic.api.leave.dto.BatchLeaveActionResponse> batchReject(
+            @Valid @RequestBody com.nulogic.api.leave.dto.BatchLeaveRejectRequest request) {
+        UUID approverId = SecurityContext.getCurrentEmployeeId();
+        return ResponseEntity.ok(leaveRequestService.batchReject(request, approverId));
+    }
+
     @PostMapping("/{id}/cancel")
     @RequiresPermission(Permission.LEAVE_CANCEL)
     @Operation(summary = "Cancel leave request", description = "Cancel a pending or approved leave request")
