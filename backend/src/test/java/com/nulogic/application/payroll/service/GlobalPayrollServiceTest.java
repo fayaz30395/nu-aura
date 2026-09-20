@@ -540,8 +540,6 @@ class GlobalPayrollServiceTest {
 
             when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(run));
             when(payrollRunRepository.save(any(GlobalPayrollRun.class))).thenAnswer(i -> i.getArgument(0));
-            when(recordRepository.findByPayrollRunAndStatus(runId, EmployeePayrollRecord.RecordStatus.CALCULATED))
-                    .thenReturn(Collections.emptyList());
 
             // When
             GlobalPayrollRunDto result = globalPayrollService.approvePayrollRun(runId);
