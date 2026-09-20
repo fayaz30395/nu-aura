@@ -1,5 +1,6 @@
 package com.nulogic.application.performance.service;
 
+import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.performance.dto.*;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -30,15 +31,18 @@ public class ReviewCycleService {
     private final EmployeeRepository employeeRepository;
     private final PerformanceReviewRepository performanceReviewRepository;
     private final TenantTimeService tenantTimeService;
+    private final WebSocketNotificationService webSocketNotificationService;
 
     public ReviewCycleService(ReviewCycleRepository reviewCycleRepository,
                               EmployeeRepository employeeRepository,
                               PerformanceReviewRepository performanceReviewRepository,
-                              TenantTimeService tenantTimeService) {
+                              TenantTimeService tenantTimeService,
+                              WebSocketNotificationService webSocketNotificationService) {
         this.reviewCycleRepository = reviewCycleRepository;
         this.employeeRepository = employeeRepository;
         this.performanceReviewRepository = performanceReviewRepository;
         this.tenantTimeService = tenantTimeService;
+        this.webSocketNotificationService = webSocketNotificationService;
     }
 
     @Transactional
@@ -168,6 +172,8 @@ public class ReviewCycleService {
         performanceReviewRepository.saveAll(createdReviews);
         log.info("Created {} reviews for cycle {}", createdReviews.size(), cycleId);
 
+        notifyReviewsStarted(createdReviews, employeesInScope, tenantId);
+
         // Update cycle status to ACTIVE
         cycle.setStatus(ReviewCycle.CycleStatus.ACTIVE);
         cycle = reviewCycleRepository.save(cycle);
@@ -177,6 +183,30 @@ public class ReviewCycleService {
         response.setReviewsCreated(createdReviews.size());
 
         return response;
+    }
+
+    /**
+     * Notifies each review's assigned reviewer (self or manager) that a review
+     * is now ready for their input. Reuses the employee map already built for
+     * scope resolution to avoid re-querying per review.
+     */
+    private void notifyReviewsStarted(List<PerformanceReview> createdReviews, List<Employee> employeesInScope, UUID tenantId) {
+        try {
+            Map<UUID, String> employeeNames = employeesInScope.stream()
+                    .collect(Collectors.toMap(Employee::getId, Employee::getFullName, (a, b) -> a));
+
+            for (PerformanceReview review : createdReviews) {
+                if (review.getReviewerId() == null) {
+                    continue;
+                }
+                String employeeName = employeeNames.getOrDefault(review.getEmployeeId(), "an employee");
+                employeeRepository.findByIdAndTenantId(review.getReviewerId(), tenantId)
+                        .map(Employee::getUser)
+                        .ifPresent(user -> webSocketNotificationService.notifyReviewStarted(user.getId(), employeeName));
+            }
+        } catch (RuntimeException e) {
+            log.warn("Failed to send review-started notifications for cycle: {}", e.getMessage());
+        }
     }
 
     /**

@@ -6,6 +6,7 @@ import com.nulogic.api.training.dto.TrainingProgramRequest;
 import com.nulogic.api.training.dto.TrainingProgramResponse;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
+import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
@@ -45,6 +46,7 @@ public class TrainingManagementService {
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
+    private final WebSocketNotificationService webSocketNotificationService;
 
     // ==================== Training Program Operations ====================
 
@@ -187,6 +189,14 @@ public class TrainingManagementService {
         enrollment.setNotes(request.getNotes());
 
         TrainingEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
+
+        if (employee.getUser() != null) {
+            try {
+                webSocketNotificationService.notifyTrainingEnrolled(employee.getUser().getId(), program.getProgramName());
+            } catch (RuntimeException e) {
+                log.warn("Failed to send training enrollment notification: {}", e.getMessage());
+            }
+        }
 
         try {
             auditLogService.logAction("TRAINING_ENROLLMENT", savedEnrollment.getId(), AuditAction.CREATE, null, null, "Employee " + request.getEmployeeId() + " enrolled in program " + request.getProgramId());

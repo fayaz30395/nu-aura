@@ -1,13 +1,16 @@
 package com.nulogic.application.performance.service;
 
+import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.performance.dto.GoalRequest;
 import com.nulogic.application.performance.dto.GoalResponse;
 import com.nulogic.common.security.TenantContext;
 
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.performance.Goal;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.performance.repository.GoalRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class GoalService {
 
@@ -27,11 +31,30 @@ public class GoalService {
 
     private final GoalRepository goalRepository;
     private final EmployeeRepository employeeRepository;
+    private final WebSocketNotificationService webSocketNotificationService;
 
     public GoalService(GoalRepository goalRepository,
-                       EmployeeRepository employeeRepository) {
+                       EmployeeRepository employeeRepository,
+                       WebSocketNotificationService webSocketNotificationService) {
         this.goalRepository = goalRepository;
         this.employeeRepository = employeeRepository;
+        this.webSocketNotificationService = webSocketNotificationService;
+    }
+
+    private void notifyGoal(UUID employeeId, UUID tenantId, String goalTitle, boolean created) {
+        try {
+            employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                    .map(Employee::getUser)
+                    .ifPresent(user -> {
+                        if (created) {
+                            webSocketNotificationService.notifyGoalCreated(user.getId(), goalTitle);
+                        } else {
+                            webSocketNotificationService.notifyGoalUpdated(user.getId(), goalTitle);
+                        }
+                    });
+        } catch (RuntimeException e) {
+            log.warn("Failed to send goal notification: {}", e.getMessage());
+        }
     }
 
     @Transactional
@@ -57,6 +80,8 @@ public class GoalService {
 
         goal.setTenantId(tenantId);
         goal = goalRepository.save(goal);
+
+        notifyGoal(goal.getEmployeeId(), tenantId, goal.getTitle(), true);
 
         return mapToResponse(goal);
     }
@@ -96,6 +121,8 @@ public class GoalService {
             goal.setWeight(request.getWeight());
 
         goal = goalRepository.save(goal);
+
+        notifyGoal(goal.getEmployeeId(), tenantId, goal.getTitle(), false);
 
         return mapToResponse(goal);
     }

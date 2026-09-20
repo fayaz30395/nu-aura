@@ -59,7 +59,13 @@ public class NotificationMessage {
         TASK_ASSIGNED,
         DOCUMENT_SHARED,
         BIRTHDAY_REMINDER,
-        WORK_ANNIVERSARY
+        WORK_ANNIVERSARY,
+        EMPLOYEE_TERMINATED,
+        GOAL_CREATED,
+        GOAL_UPDATED,
+        DOCUMENT_UPLOADED,
+        TRAINING_ENROLLED,
+        TRAINING_COMPLETED
     }
 
     public enum Priority {

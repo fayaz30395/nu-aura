@@ -200,6 +200,96 @@ public class WebSocketNotificationService {
     }
 
     /**
+     * Send leave cancellation notification to the employee's manager.
+     */
+    public void notifyLeaveCancelled(UUID managerId, String employeeName, String leaveType, String dates) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.LEAVE_CANCELLED)
+                .title("Leave Request Cancelled")
+                .message(String.format("%s cancelled their %s leave for %s", employeeName, leaveType, dates))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/leave/pending")
+                .build();
+
+        sendToUser(managerId, notification);
+    }
+
+    /**
+     * Send goal created notification to the employee the goal was set for.
+     */
+    public void notifyGoalCreated(UUID employeeId, String goalTitle) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.GOAL_CREATED)
+                .title("New Goal Assigned")
+                .message(String.format("A new goal has been set: %s", goalTitle))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/goals")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
+     * Send goal updated notification to the employee the goal belongs to.
+     */
+    public void notifyGoalUpdated(UUID employeeId, String goalTitle) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.GOAL_UPDATED)
+                .title("Goal Updated")
+                .message(String.format("Your goal \"%s\" has been updated", goalTitle))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/goals")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
+     * Send review-started notification to the assigned reviewer (self or manager).
+     */
+    public void notifyReviewStarted(UUID reviewerId, String employeeName) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.REVIEW_PENDING)
+                .title("Performance Review Started")
+                .message(String.format("A performance review for %s is ready for your input", employeeName))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/performance/reviews")
+                .build();
+
+        sendToUser(reviewerId, notification);
+    }
+
+    /**
+     * Send document-uploaded notification to the employee a document was added for.
+     */
+    public void notifyDocumentUploaded(UUID employeeId, String fileName) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.DOCUMENT_UPLOADED)
+                .title("Document Uploaded")
+                .message(String.format("A new document was added to your profile: %s", fileName))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/employees/me?tab=documents")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
+     * Send training enrollment notification to the enrolled employee.
+     */
+    public void notifyTrainingEnrolled(UUID employeeId, String programName) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.TRAINING_ENROLLED)
+                .title("Enrolled in Training")
+                .message(String.format("You have been enrolled in: %s", programName))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/training")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
      * Send attendance reminder notification.
      */
     public void notifyAttendanceReminder(UUID employeeId) {

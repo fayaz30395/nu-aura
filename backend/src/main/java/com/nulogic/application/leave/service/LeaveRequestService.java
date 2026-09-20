@@ -511,6 +511,8 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
             }
         }
 
+        notifyLeaveCancelled(saved);
+
         return saved;
     }
 
@@ -831,6 +833,29 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                     recipientUserId, leaveTypeName, reason != null ? reason : "No reason provided");
         } catch (RuntimeException e) {
             log.warn("Failed to send leave rejection notification: {}", e.getMessage());
+        }
+    }
+
+    private void notifyLeaveCancelled(LeaveRequest leaveRequest) {
+        try {
+            UUID tenantId = TenantContext.requireCurrentTenant();
+            Employee employee = employeeRepository.findByIdAndTenantId(leaveRequest.getEmployeeId(), tenantId).orElse(null);
+            if (employee == null || employee.getManagerId() == null) {
+                return;
+            }
+            UUID managerUserId = resolveRecipientUserId(employee.getManagerId(), tenantId);
+            if (managerUserId == null) {
+                return;
+            }
+            LeaveType leaveType = leaveTypeRepository.findByIdAndTenantId(leaveRequest.getLeaveTypeId(), tenantId).orElse(null);
+            String leaveTypeName = leaveType != null ? leaveType.getLeaveName() : "Leave";
+            String employeeName = employee.getFirstName() + " " + employee.getLastName();
+            String dates = formatDateRange(leaveRequest);
+
+            webSocketNotificationService.notifyLeaveCancelled(
+                    managerUserId, employeeName, leaveTypeName, dates);
+        } catch (RuntimeException e) {
+            log.warn("Failed to send leave cancellation notification: {}", e.getMessage());
         }
     }
 
