@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T02:00:00Z",
-  "repositoryCommit": "8f43af22",
-  "passId": "pass-1",
+  "lastUpdated": "2026-09-20T03:00:00Z",
+  "repositoryCommit": "216cbf6a",
+  "passId": "pass-2-3",
   "scopeVersion": "keka-parity-v1",
   "items": {
     "notifications.attendance_regularized": {
@@ -506,6 +506,128 @@
       "lastVerifiedAt": "2026-09-20T00:00:00Z",
       "reported": true,
       "blocker": "human must run faylo CLI commands directly; also feat/login-redesign branch delete and ~/.claude/settings.json Stop-hook edit are similarly human-only"
+    },
+    "tests.psa_service_allocate_resources": {
+      "status": "completed",
+      "summary": "Unit tests added for PSAService.allocateResources",
+      "evidence": [
+        "backend/src/test/java/com/nulogic/application/psa/service/PSAServiceTest.java"
+      ],
+      "lastVerifiedCommit": "81b56dfc",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "tests.notification_event_listener": {
+      "status": "completed",
+      "summary": "Unit tests added for 7 NotificationEventListener handlers (employee/performance/training)",
+      "evidence": [
+        "backend/src/test/java/com/nulogic/application/event/NotificationEventListenerTest.java"
+      ],
+      "lastVerifiedCommit": "ba8a7a6c",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "tests.export_audit_logging": {
+      "status": "completed",
+      "summary": "Test coverage for ExportController + CustomReportController audit logging",
+      "evidence": [
+        "backend/src/test/java/com/nulogic/api/export/ExportControllerTest.java",
+        "CustomReportController test"
+      ],
+      "lastVerifiedCommit": "3706fa45,60dededb",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "ui.expense_advances_error_state": {
+      "status": "completed",
+      "summary": "Advances fetch failure now shows error state instead of misleadingly appearing empty",
+      "evidence": [
+        "frontend/app/expenses/advances/page.tsx"
+      ],
+      "lastVerifiedCommit": "a7d8f5c9",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "ui.employee_documents_loading_error_state": {
+      "status": "completed",
+      "summary": "Documents tab now shows loading/error states instead of flashing false-empty",
+      "evidence": [
+        "frontend/app/employees/[id]/page.tsx"
+      ],
+      "lastVerifiedCommit": "5d391a3d",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "ui.advances_table_pagination": {
+      "status": "completed",
+      "summary": "All Advances tab was hard-capped at 50 rows silently, no search/filter/pagination - fixed using existing TableFilterBar/TablePagination components",
+      "evidence": [
+        "frontend/app/expenses/advances/page.tsx"
+      ],
+      "lastVerifiedCommit": "216cbf6a",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "psa.allocate_resources_duplicate_risk": {
+      "status": "in_flight",
+      "summary": "No dedup guard on PSAService.allocateResources - duplicate rows possible on rapid double-call. Objectively-implied defect (established codebase pattern exists elsewhere), fixing directly not via decision",
+      "evidence": [
+        "US-2FZ1XPPV5RPP"
+      ],
+      "lastVerifiedCommit": "216cbf6a",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "recruitment.jobboard_silent_false_success": {
+      "status": "in_flight",
+      "summary": "JobBoardIntegrationService silently marks SHINE/MONSTER postings ACTIVE/PAUSED despite doing nothing (falls through unimplemented-board branch to success path) - real bug, fixing directly",
+      "evidence": [
+        "US-2FZ1XPWWEC3S"
+      ],
+      "lastVerifiedCommit": "216cbf6a",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "security.middleware_route_gating": {
+      "status": "in_flight",
+      "summary": "No server-side route gating (middleware.ts) exists - hard-gate story dispatched, agent verifying actual exposure before implementing",
+      "evidence": [
+        "US-2FZ1RHSX3HKF"
+      ],
+      "lastVerifiedCommit": "216cbf6a",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "rbac.scope_model_5_domains": {
+      "status": "in_flight",
+      "summary": "DataScopeService not wired into Payroll/Compensation/Performance/Benefits/Compliance - hard-gate story dispatched",
+      "evidence": [
+        "US-2FZ1RXB6QNFD"
+      ],
+      "lastVerifiedCommit": "216cbf6a",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
+    },
+    "concurrency.other_checks_verified_safe": {
+      "status": "completed",
+      "summary": "ContractLifecycleScheduler (ShedLock-protected), NotificationEventListener dedup (no redelivery path exists), ResourcePoolService (unique constraint already protects) - all verified safe, no action needed",
+      "evidence": [
+        "pass-3 concurrency scan"
+      ],
+      "lastVerifiedCommit": "216cbf6a",
+      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "reported": true,
+      "blocker": null
     }
   },
   "passes": [
@@ -529,6 +651,24 @@
         "contracts.expiry_reminder_recipient",
         "performance.training_auto_assignment_linkage",
         "cleanup.ponytail_backlog_2026_09_20 (re-verified, closed)"
+      ]
+    },
+    {
+      "passId": "pass-2-3",
+      "commit": "216cbf6a",
+      "timestamp": "2026-09-20T03:00:00Z",
+      "delta": [
+        "tests.psa_service_allocate_resources",
+        "tests.notification_event_listener",
+        "tests.export_audit_logging",
+        "ui.expense_advances_error_state",
+        "ui.employee_documents_loading_error_state",
+        "ui.advances_table_pagination",
+        "psa.allocate_resources_duplicate_risk",
+        "recruitment.jobboard_silent_false_success",
+        "security.middleware_route_gating",
+        "rbac.scope_model_5_domains",
+        "concurrency.other_checks_verified_safe"
       ]
     }
   ]
