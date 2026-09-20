@@ -252,7 +252,7 @@ public class ScheduledReportExecutionJob {
      * same repository query {@code ReportService.generateAttendanceReport} uses, rather than
      * the hardcoded zero/empty placeholders this previously shipped.
      */
-    private Map<String, Object> buildAttendanceReportData(UUID tenantId, LocalDate startDate, LocalDate endDate) {
+    Map<String, Object> buildAttendanceReportData(UUID tenantId, LocalDate startDate, LocalDate endDate) {
         List<AttendanceRecord> records = attendanceRecordRepository
                 .findAllByTenantIdAndAttendanceDateBetween(tenantId, startDate, endDate);
 
@@ -290,7 +290,7 @@ public class ScheduledReportExecutionJob {
      * by leave type (via {@link LeaveBalanceRepository#findAllByTenantIdAndYear}), history
      * from the same query {@code ReportService.generateLeaveReport} uses.
      */
-    private Map<String, Object> buildLeaveReportData(UUID tenantId, int year) {
+    Map<String, Object> buildLeaveReportData(UUID tenantId, int year) {
         Map<UUID, LeaveType> leaveTypeMap = leaveTypeRepository.findAllByTenantId(tenantId).stream()
                 .collect(Collectors.toMap(LeaveType::getId, lt -> lt));
 
@@ -344,7 +344,7 @@ public class ScheduledReportExecutionJob {
      * Real tenant KPIs for the scheduled analytics summary — delegates to
      * {@link AnalyticsService#getAnalyticsSummary()}, the same source the live dashboard uses.
      */
-    private Map<String, Object> buildAnalyticsReportData() {
+    Map<String, Object> buildAnalyticsReportData() {
         AnalyticsSummary summary = analyticsService.getAnalyticsSummary();
         double attendanceRate = summary.getTotalEmployees() > 0
                 ? (summary.getPresentToday() * 100.0) / summary.getTotalEmployees()
