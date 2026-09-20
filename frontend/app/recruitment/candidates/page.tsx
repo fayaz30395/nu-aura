@@ -10,6 +10,7 @@ import {PageTransition, Reveal} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
+import {ColumnVisibilityToggle, loadColumnVisibility, type ToggleableColumn} from '@/components/ui/ColumnVisibilityToggle';
 import {
   Candidate,
   CandidateSource,
@@ -92,6 +93,15 @@ const OfferESignModal = dynamic(
   {ssr: false},
 );
 
+const CANDIDATE_TABLE_COLUMNS: ToggleableColumn[] = [
+  {key: 'candidate', label: 'Candidate', locked: true},
+  {key: 'job', label: 'Job'},
+  {key: 'experience', label: 'Experience'},
+  {key: 'stage', label: 'Stage'},
+  {key: 'status', label: 'Status', locked: true},
+  {key: 'source', label: 'Source'},
+];
+
 // ==================== Loading Fallback ====================
 
 function CandidatesPageLoading() {
@@ -144,6 +154,9 @@ function CandidatesPage() {
   const [statusFilter, setStatusFilter] = useState<string>('');
   const [selectedJobFilter, setSelectedJobFilter] = useState<string>(jobIdFilter || '');
   const [searchQuery, setSearchQuery] = useState('');
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
+    () => loadColumnVisibility('recruitment-candidates', CANDIDATE_TABLE_COLUMNS)
+  );
   const [confirmedJoiningDate, setConfirmedJoiningDate] = useState('');
   const [declineReason, setDeclineReason] = useState('');
 
@@ -691,6 +704,14 @@ function CandidatesPage() {
         />
 
         {/* Candidates Table */}
+        <div className="flex justify-end">
+          <ColumnVisibilityToggle
+            columns={CANDIDATE_TABLE_COLUMNS}
+            visible={visibleColumns}
+            onChange={setVisibleColumns}
+            storageKey="recruitment-candidates"
+          />
+        </div>
         <Reveal inView>
         <Card className="bg-[var(--bg-card)]">
           <CardContent className="p-0">
@@ -714,11 +735,19 @@ function CandidatesPage() {
                   <thead className="border-b border-[var(--border)] bg-[var(--surface-sunken)]">
                   <tr>
                     <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Candidate</th>
-                    <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Job</th>
-                    <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Experience</th>
-                    <th className="px-6 py-3 text-center text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Stage</th>
+                    {visibleColumns.has('job') && (
+                      <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Job</th>
+                    )}
+                    {visibleColumns.has('experience') && (
+                      <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Experience</th>
+                    )}
+                    {visibleColumns.has('stage') && (
+                      <th className="px-6 py-3 text-center text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Stage</th>
+                    )}
                     <th className="px-6 py-3 text-center text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Status</th>
-                    <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Source</th>
+                    {visibleColumns.has('source') && (
+                      <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Source</th>
+                    )}
                     <th className="px-6 py-3 text-right text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Actions</th>
                   </tr>
                   </thead>
@@ -727,6 +756,7 @@ function CandidatesPage() {
                     <CandidateTableRow
                       key={candidate.id}
                       candidate={candidate}
+                      visibleColumns={visibleColumns}
                       matchScore={matchScores.get(candidate.id)}
                       aiLoadingState={aiLoadingState}
                       onView={handleView}

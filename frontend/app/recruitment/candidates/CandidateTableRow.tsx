@@ -28,6 +28,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 
 interface CandidateTableRowProps {
   candidate: Candidate;
+  visibleColumns: Set<string>;
   matchScore?: CandidateMatchResponse;
   aiLoadingState: string | null;
   onView: (candidate: Candidate) => void;
@@ -49,6 +50,7 @@ interface CandidateTableRowProps {
  */
 export const CandidateTableRow = memo(function CandidateTableRow({
                                                                    candidate,
+                                                                   visibleColumns,
                                                                    matchScore,
                                                                    aiLoadingState,
                                                                    onView,
@@ -90,26 +92,32 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       </td>
 
       {/* Job */}
-      <td className="px-6 py-4">
-        <div className="text-sm font-medium text-[var(--text-1)]">{candidate.jobTitle || '—'}</div>
-        <div className="text-xs text-[var(--text-3)] font-mono">{candidate.candidateCode || '—'}</div>
-      </td>
+      {visibleColumns.has('job') && (
+        <td className="px-6 py-4">
+          <div className="text-sm font-medium text-[var(--text-1)]">{candidate.jobTitle || '—'}</div>
+          <div className="text-xs text-[var(--text-3)] font-mono">{candidate.candidateCode || '—'}</div>
+        </td>
+      )}
 
       {/* Experience */}
-      <td className="px-6 py-4">
-        <div className="text-sm text-[var(--text-2)]">
-          {candidate.totalExperience ? <span className="font-mono tabular-nums">{candidate.totalExperience}</span> : '—'}{candidate.totalExperience && ' yrs'}
-        </div>
-      </td>
+      {visibleColumns.has('experience') && (
+        <td className="px-6 py-4">
+          <div className="text-sm text-[var(--text-2)]">
+            {candidate.totalExperience ? <span className="font-mono tabular-nums">{candidate.totalExperience}</span> : '—'}{candidate.totalExperience && ' yrs'}
+          </div>
+        </td>
+      )}
 
       {/* Stage */}
-      <td className="px-6 py-4 text-center">
-        {candidate.currentStage && (
-          <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full ${getStageColor(candidate.currentStage)}`}>
-            {candidate.currentStage.replace(/_/g, ' ')}
-          </span>
-        )}
-      </td>
+      {visibleColumns.has('stage') && (
+        <td className="px-6 py-4 text-center">
+          {candidate.currentStage && (
+            <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full ${getStageColor(candidate.currentStage)}`}>
+              {candidate.currentStage.replace(/_/g, ' ')}
+            </span>
+          )}
+        </td>
+      )}
 
       {/* Status */}
       <td className="px-6 py-4 text-center">
@@ -117,11 +125,13 @@ export const CandidateTableRow = memo(function CandidateTableRow({
       </td>
 
       {/* Source */}
-      <td className="px-6 py-4">
-        <span className="text-sm text-[var(--text-2)]">
-          {candidate.source?.replace(/_/g, ' ') || '—'}
-        </span>
-      </td>
+      {visibleColumns.has('source') && (
+        <td className="px-6 py-4">
+          <span className="text-sm text-[var(--text-2)]">
+            {candidate.source?.replace(/_/g, ' ') || '—'}
+          </span>
+        </td>
+      )}
 
       {/* Actions */}
       <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
