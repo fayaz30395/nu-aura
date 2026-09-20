@@ -1,6 +1,8 @@
 package com.nulogic.api.employee;
 
 import com.nulogic.api.employee.dto.AdminEmployeeUpdateRequest;
+import com.nulogic.api.employee.dto.BatchStatusChangeRequest;
+import com.nulogic.api.employee.dto.BatchStatusChangeResponse;
 import com.nulogic.api.employee.dto.CreateEmployeeRequest;
 import com.nulogic.api.employee.dto.EmployeeResponse;
 import com.nulogic.api.employee.dto.UpdateEmployeeRequest;
@@ -398,5 +400,16 @@ public class EmployeeController {
         AdminEmployeeUpdateRequest req = new AdminEmployeeUpdateRequest();
         req.setStatus(com.nulogic.domain.employee.Employee.EmployeeStatus.INACTIVE);
         return ResponseEntity.ok(employeeService.updateEmployeeAdminFields(id, req));
+    }
+
+    @PostMapping("/batch-status")
+    @RequiresPermission(value = Permission.EMPLOYEE_VIEW_ALL, revalidate = true)
+    @Operation(summary = "Bulk status change", description = "Sets the status of multiple employees in one call, from the directory's multi-select toolbar. Admin-only.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Batch processed — see response body for per-employee outcome")
+    })
+    public ResponseEntity<BatchStatusChangeResponse> batchStatusChange(
+            @Valid @RequestBody BatchStatusChangeRequest request) {
+        return ResponseEntity.ok(employeeService.batchUpdateStatus(request));
     }
 }

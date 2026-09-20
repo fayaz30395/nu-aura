@@ -82,6 +82,17 @@ class EmployeeService {
     await apiClient.delete(`/employees/${id}`);
   }
 
+  async batchUpdateStatus(
+    employeeIds: string[],
+    status: Employee['status']
+  ): Promise<{updatedCount: number; failedEmployeeIds: string[]}> {
+    const response = await apiClient.post<{updatedCount: number; failedEmployeeIds: string[]}>(
+      '/employees/batch-status',
+      {employeeIds, status}
+    );
+    return response.data;
+  }
+
   // Import methods
   async downloadCsvTemplate(): Promise<Blob> {
     const response = await apiClient.get<Blob>('/employees/import/template/csv', {

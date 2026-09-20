@@ -6,7 +6,7 @@ import {Controller, useForm} from 'react-hook-form';
 import {useQueryClient} from '@tanstack/react-query';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {employeeKeys, useCreateEmployee, useDeleteEmployee, useEmployees, useManagers} from '@/lib/hooks/queries/useEmployees';
+import {employeeKeys, useBatchUpdateEmployeeStatus, useCreateEmployee, useDeleteEmployee, useEmployees, useManagers} from '@/lib/hooks/queries/useEmployees';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {CreateEmployeeRequest, Employee} from '@/lib/types/hrms/employee';
 import {AppLayout} from '@/components/layout';
@@ -217,9 +217,29 @@ export default function EmployeesPage() {
       : 'Failed to load employees'
     : null;
 
-  const {error: toastError} = useToast();
+  const {error: toastError, success: toastSuccess} = useToast();
   const createEmployeeMutation = useCreateEmployee();
   const deleteEmployeeMutation = useDeleteEmployee();
+  const batchStatusMutation = useBatchUpdateEmployeeStatus();
+  const canBulkChangeStatus = hasPermission(Permissions.EMPLOYEE_VIEW_ALL);
+
+  const handleBulkDeactivate = () => {
+    const ids = Array.from(selected);
+    batchStatusMutation.mutate(
+      {employeeIds: ids, status: 'INACTIVE'},
+      {
+        onSuccess: (result) => {
+          if (result.failedEmployeeIds.length > 0) {
+            toastError(`Deactivated ${result.updatedCount}, ${result.failedEmployeeIds.length} failed`);
+          } else {
+            toastSuccess(`Deactivated ${result.updatedCount} employee${result.updatedCount === 1 ? '' : 's'}`);
+          }
+          setSelected(new Set());
+        },
+        onError: () => toastError('Bulk deactivate failed'),
+      }
+    );
+  };
 
   // React Hook Form setup
   const {
@@ -470,6 +490,19 @@ export default function EmployeesPage() {
               <span className={listStyles.bulkCount}>
                 <span className="num">{selected.size}</span> selected
               </span>
+              {canBulkChangeStatus && (
+                <>
+                  <span className={listStyles.bulkSep} />
+                  <button
+                    type="button"
+                    className={listStyles.bulkBtn}
+                    disabled={batchStatusMutation.isPending}
+                    onClick={handleBulkDeactivate}
+                  >
+                    {batchStatusMutation.isPending ? 'Deactivating…' : 'Deactivate'}
+                  </button>
+                </>
+              )}
               <span className={listStyles.bulkSep} />
               <button
                 type="button"

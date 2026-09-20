@@ -15,6 +15,7 @@ export type EmploymentType =
 
 export type EmployeeStatus =
   | 'ACTIVE'
+  | 'INACTIVE'
   | 'ON_LEAVE'
   | 'ON_NOTICE'
   | 'TERMINATED'

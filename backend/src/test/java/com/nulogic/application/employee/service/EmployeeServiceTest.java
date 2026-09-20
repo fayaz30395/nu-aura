@@ -67,6 +67,9 @@ class EmployeeServiceTest {
     @Mock
     private TokenBlacklistService tokenBlacklistService;
 
+    @Mock
+    private org.springframework.beans.factory.ObjectProvider<EmployeeService> selfProvider;
+
     @InjectMocks
     private EmployeeService employeeService;
 
@@ -347,6 +350,74 @@ class EmployeeServiceTest {
                 assertThatThrownBy(() -> employeeService.updateEmployee(employeeId, updateRequest))
                         .isInstanceOf(ResourceNotFoundException.class)
                         .hasMessage("Employee not found");
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Batch Status Change Tests")
+    class BatchStatusChangeTests {
+
+        @Test
+        @DisplayName("Should update status for every employee in the batch")
+        void shouldUpdateStatusForEveryEmployeeInBatch() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+
+                UUID secondId = UUID.randomUUID();
+                Employee second = Employee.builder()
+                        .employeeCode("EMP002")
+                        .status(Employee.EmployeeStatus.ACTIVE)
+                        .build();
+                second.setId(secondId);
+                second.setTenantId(tenantId);
+
+                when(selfProvider.getObject()).thenReturn(employeeService);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.findByIdAndTenantId(secondId, tenantId)).thenReturn(Optional.of(second));
+                when(employeeRepository.save(any(Employee.class))).thenAnswer(inv -> inv.getArgument(0));
+
+                com.nulogic.api.employee.dto.BatchStatusChangeRequest request =
+                        new com.nulogic.api.employee.dto.BatchStatusChangeRequest();
+                request.setEmployeeIds(java.util.List.of(employeeId, secondId));
+                request.setStatus(Employee.EmployeeStatus.INACTIVE);
+
+                com.nulogic.api.employee.dto.BatchStatusChangeResponse response =
+                        employeeService.batchUpdateStatus(request);
+
+                assertThat(response.getUpdatedCount()).isEqualTo(2);
+                assertThat(response.getFailedEmployeeIds()).isEmpty();
+                assertThat(employee.getStatus()).isEqualTo(Employee.EmployeeStatus.INACTIVE);
+                assertThat(second.getStatus()).isEqualTo(Employee.EmployeeStatus.INACTIVE);
+            }
+        }
+
+        @Test
+        @DisplayName("Should report a not-found employee as failed without blocking the rest of the batch")
+        void shouldReportFailureWithoutBlockingRestOfBatch() {
+            try (MockedStatic<TenantContext> mockedTenantContext = mockStatic(TenantContext.class)) {
+                mockedTenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+                mockedTenantContext.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+
+                UUID missingId = UUID.randomUUID();
+
+                when(selfProvider.getObject()).thenReturn(employeeService);
+                when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+                when(employeeRepository.findByIdAndTenantId(missingId, tenantId)).thenReturn(Optional.empty());
+                when(employeeRepository.save(any(Employee.class))).thenAnswer(inv -> inv.getArgument(0));
+
+                com.nulogic.api.employee.dto.BatchStatusChangeRequest request =
+                        new com.nulogic.api.employee.dto.BatchStatusChangeRequest();
+                request.setEmployeeIds(java.util.List.of(employeeId, missingId));
+                request.setStatus(Employee.EmployeeStatus.TERMINATED);
+
+                com.nulogic.api.employee.dto.BatchStatusChangeResponse response =
+                        employeeService.batchUpdateStatus(request);
+
+                assertThat(response.getUpdatedCount()).isEqualTo(1);
+                assertThat(response.getFailedEmployeeIds()).containsExactly(missingId);
+                assertThat(employee.getStatus()).isEqualTo(Employee.EmployeeStatus.TERMINATED);
             }
         }
     }

@@ -64,7 +64,7 @@ const updateEmployeeFormSchema = z.object({
   managerId: z.string().optional().or(z.literal('')),
   dottedLineManager1Id: z.string().optional().or(z.literal('')),
   dottedLineManager2Id: z.string().optional().or(z.literal('')),
-  status: z.enum(['ACTIVE', 'ON_LEAVE', 'ON_NOTICE', 'TERMINATED', 'RESIGNED']).optional().nullable(),
+  status: z.enum(['ACTIVE', 'INACTIVE', 'ON_LEAVE', 'ON_NOTICE', 'TERMINATED', 'RESIGNED']).optional().nullable(),
   confirmationDate: z.string().optional().or(z.literal('')),
   bankAccountNumber: z.string().optional().or(z.literal('')),
   bankName: z.string().optional().or(z.literal('')),
@@ -610,6 +610,7 @@ export default function EditEmployeePage() {
                         >
                           <option value="">Select Status</option>
                           <option value="ACTIVE">Active</option>
+                          <option value="INACTIVE">Inactive</option>
                           <option value="ON_LEAVE">On Leave</option>
                           <option value="ON_NOTICE">On Notice</option>
                           <option value="TERMINATED">Terminated</option>

@@ -1,6 +1,8 @@
 package com.nulogic.application.employee.service;
 
 import com.nulogic.api.employee.dto.AdminEmployeeUpdateRequest;
+import com.nulogic.api.employee.dto.BatchStatusChangeRequest;
+import com.nulogic.api.employee.dto.BatchStatusChangeResponse;
 import com.nulogic.api.employee.dto.CreateEmployeeRequest;
 import com.nulogic.api.employee.dto.EmployeeResponse;
 import com.nulogic.api.employee.dto.UpdateEmployeeRequest;
@@ -23,6 +25,7 @@ import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -81,6 +84,11 @@ public class EmployeeService {
     private final DataScopeService dataScopeService;
     private final JdbcTemplate jdbcTemplate;
     private final TokenBlacklistService tokenBlacklistService;
+    // ObjectProvider, not @Lazy self-injection, to avoid eager self-construction —
+    // same pattern as AutoRegularizationScheduler. Routes batch-status calls back
+    // through the Spring proxy so each employee's update gets its own @Transactional
+    // boundary and one failure doesn't roll back the rest of the batch.
+    private final ObjectProvider<EmployeeService> selfProvider;
 
     public EmployeeService(EmployeeRepository employeeRepository,
                            DepartmentRepository departmentRepository,
@@ -90,7 +98,8 @@ public class EmployeeService {
                            AuditLogService auditLogService,
                            DataScopeService dataScopeService,
                            JdbcTemplate jdbcTemplate,
-                           TokenBlacklistService tokenBlacklistService) {
+                           TokenBlacklistService tokenBlacklistService,
+                           ObjectProvider<EmployeeService> selfProvider) {
         this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
         this.userRepository = userRepository;
@@ -100,6 +109,7 @@ public class EmployeeService {
         this.dataScopeService = dataScopeService;
         this.jdbcTemplate = jdbcTemplate;
         this.tokenBlacklistService = tokenBlacklistService;
+        this.selfProvider = selfProvider;
     }
 
     private String generateEmployeeCode(UUID tenantId) {
@@ -499,6 +509,37 @@ public class EmployeeService {
         log.debug("Admin update applied to employee {} — changed fields: {}", employeeId, changedFields);
 
         return EmployeeResponse.fromEmployee(employee);
+    }
+
+    /**
+     * Bulk status change from the employee directory's multi-select toolbar.
+     * Each employee is updated via its own call through the Spring proxy
+     * ({@link #selfProvider}) so it gets its own transaction — one failing
+     * employee (not found, wrong tenant) does not roll back the others.
+     */
+    public BatchStatusChangeResponse batchUpdateStatus(BatchStatusChangeRequest request) {
+        EmployeeService self = selfProvider.getObject();
+        List<UUID> failed = new ArrayList<>();
+        int updated = 0;
+
+        for (UUID employeeId : request.getEmployeeIds()) {
+            try {
+                AdminEmployeeUpdateRequest adminRequest = new AdminEmployeeUpdateRequest();
+                adminRequest.setStatus(request.getStatus());
+                self.updateEmployeeAdminFields(employeeId, adminRequest);
+                updated++;
+            } catch (Exception e) {
+                log.warn("Batch status change failed for employee {}: {}", employeeId, e.getMessage());
+                failed.add(employeeId);
+            }
+        }
+
+        log.info("Batch status change to {}: {} updated, {} failed", request.getStatus(), updated, failed.size());
+
+        return BatchStatusChangeResponse.builder()
+                .updatedCount(updated)
+                .failedEmployeeIds(failed)
+                .build();
     }
 
     @Transactional(readOnly = true)

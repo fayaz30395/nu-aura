@@ -238,6 +238,19 @@ export function useDeleteEmployee() {
   });
 }
 
+// Bulk status change from the directory's multi-select toolbar
+export function useBatchUpdateEmployeeStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({employeeIds, status}: {employeeIds: string[]; status: Employee['status']}) =>
+      employeeService.batchUpdateStatus(employeeIds, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: employeeKeys.lists()});
+    },
+  });
+}
+
 // Prefetch employee (for hover prefetching)
 export function usePrefetchEmployee() {
   const queryClient = useQueryClient();
