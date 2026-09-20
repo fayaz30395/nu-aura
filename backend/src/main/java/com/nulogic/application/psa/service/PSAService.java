@@ -4,9 +4,11 @@ import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.psa.PSAInvoice;
 import com.nulogic.domain.psa.PSAProject;
+import com.nulogic.domain.psa.PSAProjectAllocation;
 import com.nulogic.domain.psa.PSATimeEntry;
 import com.nulogic.domain.psa.PSATimesheet;
 import com.nulogic.infrastructure.psa.repository.PSAInvoiceRepository;
+import com.nulogic.infrastructure.psa.repository.PSAProjectAllocationRepository;
 import com.nulogic.infrastructure.psa.repository.PSAProjectRepository;
 import com.nulogic.infrastructure.psa.repository.PSATimeEntryRepository;
 import com.nulogic.infrastructure.psa.repository.PSATimesheetRepository;
@@ -17,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +42,7 @@ import java.util.UUID;
 public class PSAService {
 
     private final PSAProjectRepository projectRepository;
+    private final PSAProjectAllocationRepository allocationRepository;
     private final PSATimesheetRepository timesheetRepository;
     private final PSATimeEntryRepository timeEntryRepository;
     private final PSAInvoiceRepository invoiceRepository;
@@ -162,17 +167,50 @@ public class PSAService {
      * @param allocation the resource allocation details
      * @return Optional containing the updated project if found
      */
+    @Transactional
     public Optional<PSAProject> allocateResources(UUID id, Map<String, Object> allocation) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Allocating resources to PSA project {} for tenant {}", id, tenantId);
 
         return projectRepository.findByIdAndTenantId(id, tenantId)
                 .map(project -> {
-                    // Resource allocation logic would go here
-                    // This could include updating project assignments, budget allocations, etc.
-                    log.debug("Processing resource allocation for project {}: {}", id, allocation);
-                    return projectRepository.save(project);
+                    allocationRepository.save(buildAllocation(tenantId, id, allocation));
+                    return project;
                 });
+    }
+
+    /**
+     * Builds a PSAProjectAllocation row from the raw allocation request map.
+     *
+     * @param tenantId the current tenant
+     * @param projectId the project being allocated to
+     * @param allocation raw request fields: employeeId (required), roleName,
+     *                    allocationPercentage, startDate (required, ISO date), endDate, billingRate
+     */
+    private PSAProjectAllocation buildAllocation(UUID tenantId, UUID projectId, Map<String, Object> allocation) {
+        Object employeeIdRaw = allocation.get("employeeId");
+        Object startDateRaw = allocation.get("startDate");
+        if (employeeIdRaw == null || startDateRaw == null) {
+            throw new IllegalArgumentException("employeeId and startDate are required to allocate resources");
+        }
+
+        Object endDateRaw = allocation.get("endDate");
+        Object billingRateRaw = allocation.get("billingRate");
+        Object allocationPercentageRaw = allocation.get("allocationPercentage");
+
+        return PSAProjectAllocation.builder()
+                .id(UUID.randomUUID())
+                .tenantId(tenantId)
+                .projectId(projectId)
+                .employeeId(UUID.fromString(employeeIdRaw.toString()))
+                .roleName((String) allocation.get("roleName"))
+                .allocationPercentage(allocationPercentageRaw != null
+                        ? Integer.valueOf(allocationPercentageRaw.toString()) : null)
+                .startDate(LocalDate.parse(startDateRaw.toString()))
+                .endDate(endDateRaw != null ? LocalDate.parse(endDateRaw.toString()) : null)
+                .billingRate(billingRateRaw != null ? new BigDecimal(billingRateRaw.toString()) : null)
+                .isActive(true)
+                .build();
     }
 
     // ==================== Timesheet Operations ====================
