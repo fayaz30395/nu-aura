@@ -4,7 +4,7 @@
 > **Tier:** async-review
 > **Origin:** in-flight
 > **Branch:** <working-tree>
-> **Status:** Verified
+> **Status:** Done
 > **Created:** 2026-09-19
 > **Created-by:** faylo new
 
@@ -20,4 +20,4 @@ Stage 00 describes what this change does (artifacts/00-adopt/in-flight.md); Stag
 
 - **AC1:** Disposition decided and evidenced in git history: shipped as-is (commit ee2b3847 on main; a separate config file's diff was excluded per the self-modification guard, not part of this AC's scope). Decision is self-evidencing via the commit's presence on the tracked branch.
   - **Verify:** shell git merge-base --is-ancestor ee2b3847 main
-  - **Verified:** yes (2026-09-19)
+  - **Verified:** yes (2026-09-20)

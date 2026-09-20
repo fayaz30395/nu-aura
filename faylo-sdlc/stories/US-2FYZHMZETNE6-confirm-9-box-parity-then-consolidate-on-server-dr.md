@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** async-review
-> **Status:** In Progress
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** Server-driven /performance/cycles/[id]/nine-box confirmed to cover everything the client-computed /performance/9box shows (same data, same or better fidelity); once confirmed, /performance/9box deleted and any nav/links redirected to the server-driven route
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)
