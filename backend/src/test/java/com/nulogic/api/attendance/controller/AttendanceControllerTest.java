@@ -539,6 +539,66 @@ class AttendanceControllerTest {
     }
 
     @Nested
+    @DisplayName("Batch Approve/Reject Regularization Tests")
+    class BatchRegularizationActionTests {
+
+        @Test
+        @DisplayName("Should approve every regularization request in the batch")
+        void shouldApproveEveryRecordInBatch() throws Exception {
+            UUID secondRecordId = UUID.randomUUID();
+            AttendanceRecord second = new AttendanceRecord();
+            second.setId(secondRecordId);
+            second.setEmployeeId(employeeId);
+            second.setAttendanceDate(LocalDate.now());
+
+            when(attendanceService.getAttendanceRecordById(eq(attendanceId))).thenReturn(attendanceRecord);
+            when(attendanceService.getAttendanceRecordById(eq(secondRecordId))).thenReturn(second);
+            when(attendanceService.approveRegularization(eq(attendanceId), any(UUID.class))).thenReturn(attendanceRecord);
+            when(attendanceService.approveRegularization(eq(secondRecordId), any(UUID.class))).thenReturn(second);
+
+            String body = objectMapper.writeValueAsString(
+                    java.util.Map.of("recordIds", List.of(attendanceId, secondRecordId)));
+
+            mockMvc.perform(post("/api/v1/attendance/batch-approve-regularization")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.processedCount").value(2))
+                    .andExpect(jsonPath("$.failedRecordIds.length()").value(0));
+
+            verify(attendanceService).approveRegularization(eq(attendanceId), any(UUID.class));
+            verify(attendanceService).approveRegularization(eq(secondRecordId), any(UUID.class));
+        }
+
+        @Test
+        @DisplayName("Should report a not-found record as failed without blocking the rest of the batch")
+        void shouldReportRejectFailureWithoutBlockingRestOfBatch() throws Exception {
+            UUID missingRecordId = UUID.randomUUID();
+
+            when(attendanceService.getAttendanceRecordById(eq(attendanceId))).thenReturn(attendanceRecord);
+            when(attendanceService.getAttendanceRecordById(eq(missingRecordId)))
+                    .thenThrow(new IllegalArgumentException("Attendance record not found"));
+            when(attendanceService.rejectRegularization(eq(attendanceId), any(UUID.class), anyString()))
+                    .thenReturn(attendanceRecord);
+
+            String body = objectMapper.writeValueAsString(
+                    java.util.Map.of("recordIds", List.of(attendanceId, missingRecordId), "reason", "Insufficient evidence"));
+
+            mockMvc.perform(post("/api/v1/attendance/batch-reject-regularization")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.processedCount").value(1))
+                    .andExpect(jsonPath("$.failedRecordIds.length()").value(1))
+                    .andExpect(jsonPath("$.failedRecordIds[0]").value(missingRecordId.toString()));
+
+            verify(attendanceService).rejectRegularization(eq(attendanceId), any(UUID.class), anyString());
+            verify(attendanceService, org.mockito.Mockito.never())
+                    .rejectRegularization(eq(missingRecordId), any(UUID.class), anyString());
+        }
+    }
+
+    @Nested
     @DisplayName("Bulk Operations Tests")
     class BulkOperationsTests {
 

@@ -398,6 +398,74 @@ public class AttendanceController {
         return ResponseEntity.ok(toResponse(record));
     }
 
+    /**
+     * Bulk-approve regularization requests from the admin attendance table's
+     * multi-select toolbar. Reuses {@link #approveRegularization(UUID)} per
+     * record — same access-scope validation and transaction boundary as the
+     * single-item endpoint — so one failing record does not block the rest.
+     */
+    @PostMapping("/batch-approve-regularization")
+    @RequiresPermission(Permission.ATTENDANCE_APPROVE)
+    @Operation(summary = "Bulk approve regularization requests", description = "Approves multiple pending attendance regularization requests in one call, from the admin table's multi-select toolbar")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Batch processed — see response body for per-record outcome")
+    })
+    public ResponseEntity<BatchAttendanceActionResponse> batchApproveRegularization(
+            @Valid @RequestBody BatchAttendanceActionRequest request) {
+        List<UUID> failed = new java.util.ArrayList<>();
+        int processed = 0;
+
+        for (UUID id : request.getRecordIds()) {
+            try {
+                approveRegularization(id);
+                processed++;
+            } catch (Exception e) {
+                log.warn("Batch approve-regularization failed for record {}: {}", id, e.getMessage());
+                failed.add(id);
+            }
+        }
+
+        log.info("Batch approve-regularization: {} processed, {} failed", processed, failed.size());
+        return ResponseEntity.ok(BatchAttendanceActionResponse.builder()
+                .processedCount(processed)
+                .failedRecordIds(failed)
+                .build());
+    }
+
+    /**
+     * Bulk-reject regularization requests from the admin attendance table's
+     * multi-select toolbar. Reuses {@link #rejectRegularization(UUID, String)}
+     * per record — same access-scope validation and transaction boundary as
+     * the single-item endpoint — so one failing record does not block the rest.
+     */
+    @PostMapping("/batch-reject-regularization")
+    @RequiresPermission(Permission.ATTENDANCE_APPROVE)
+    @Operation(summary = "Bulk reject regularization requests", description = "Rejects multiple pending attendance regularization requests with a shared reason in one call, from the admin table's multi-select toolbar")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Batch processed — see response body for per-record outcome")
+    })
+    public ResponseEntity<BatchAttendanceActionResponse> batchRejectRegularization(
+            @Valid @RequestBody BatchAttendanceRejectRequest request) {
+        List<UUID> failed = new java.util.ArrayList<>();
+        int processed = 0;
+
+        for (UUID id : request.getRecordIds()) {
+            try {
+                rejectRegularization(id, request.getReason());
+                processed++;
+            } catch (Exception e) {
+                log.warn("Batch reject-regularization failed for record {}: {}", id, e.getMessage());
+                failed.add(id);
+            }
+        }
+
+        log.info("Batch reject-regularization: {} processed, {} failed", processed, failed.size());
+        return ResponseEntity.ok(BatchAttendanceActionResponse.builder()
+                .processedCount(processed)
+                .failedRecordIds(failed)
+                .build());
+    }
+
     // ===================== Bulk Import (Excel) =====================
 
     @GetMapping("/import/template")
