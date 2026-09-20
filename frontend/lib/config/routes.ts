@@ -33,7 +33,6 @@ export interface RouteConfig {
  */
 export const PUBLIC_ROUTES: string[] = [
   '/auth/login',
-  '/auth/signup',
   '/auth/forgot-password',
   '/careers',
   '/careers/',

@@ -51,13 +51,12 @@ function generateNonce(): string {
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
   '/auth/login',
-  '/auth/signup',
   '/auth/reset-password',
   '/auth/forgot-password',
   '/reset-password',
   '/',
-  '/terms',                  // public legal page (linked from auth/signup)
-  '/privacy',                // public legal page (linked from auth/signup)
+  '/terms',                  // public legal page (linked from login/forgot-password/reset-password)
+  '/privacy',                // public legal page (linked from login/forgot-password/reset-password)
   // Token-based public portals — accessed by candidates/employees without an account session
   '/preboarding/portal/',   // candidate preboarding portal (token in URL)
   '/exit-interview/',        // public exit interview form (token in URL)
