@@ -3,6 +3,8 @@
 import React, {useState} from 'react';
 import {Button} from '@/components/ui/Button';
 import {ScorecardForm} from '@/components/recruitment/ScorecardForm';
+import {ScorecardSummary} from '@/components/recruitment/ScorecardSummary';
+import {useInterviewScorecards} from '@/lib/hooks/queries/useScorecard';
 import {Badge} from '@/components/ui/Badge';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
@@ -122,6 +124,13 @@ function computeAggregateStats(interviews: Interview[]): AggregateStats {
   }
 
   return {total: interviews.length, completed: completed.length, avgRating, resultCounts};
+}
+
+// ==================== Scorecards Section (per interview) ====================
+
+function InterviewScorecardsSection({interviewId}: { interviewId: string }) {
+  const {data} = useInterviewScorecards(interviewId);
+  return <ScorecardSummary scorecards={data ?? []}/>;
 }
 
 // ==================== Main Component ====================
@@ -307,6 +316,8 @@ export function InterviewScorecardModal({
                           Scorecard not yet submitted
                         </p>
                       )}
+
+                      <InterviewScorecardsSection interviewId={interview.id}/>
 
                       {scorecardFormInterviewId === interview.id && (
                         <ScorecardForm
