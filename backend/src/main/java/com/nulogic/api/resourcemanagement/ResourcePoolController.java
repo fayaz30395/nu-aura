@@ -1,5 +1,6 @@
 package com.nulogic.api.resourcemanagement;
 
+import com.nulogic.application.resourcemanagement.service.ResourcePoolService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,13 +14,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,10 +32,9 @@ import java.util.UUID;
  * <p>UC-RESOURCE-006 — Resource Pool Management.
  * Fixes BUG-QA2-011: GET/POST /api/v1/resource-pools were returning 404.
  *
- * <p>Resource pools are a lightweight grouping concept layered on top of existing
- * employee allocations. Until a dedicated resource_pools table and domain entity
- * are created (future Flyway migration), these endpoints return well-formed empty
- * collections rather than 404, unblocking the QA flow.
+ * <p>Backed by {@link ResourcePoolService} and the {@code resource_pools} /
+ * {@code resource_pool_members} tables (V317). Still gated behind
+ * {@code app.features.resource-pools} (default false) — see field {@link #enabled}.
  */
 @RestController
 @RequestMapping("/api/v1/resource-pools")
@@ -41,6 +42,8 @@ import java.util.UUID;
 @Validated
 @Tag(name = "Resource Pools", description = "Resource pool management — UC-RESOURCE-006")
 public class ResourcePoolController {
+
+    private final ResourcePoolService resourcePoolService;
 
     /**
      * QA sweep S2-C K-3 (production-blocker): until a real {@code resource_pools} table
@@ -73,9 +76,9 @@ public class ResourcePoolController {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
-        // Stub: resource pool entity not yet persisted in DB.
-        // Returns empty list with 200 so QA flow proceeds without 404.
-        return ResponseEntity.ok(Collections.emptyList());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ResourcePoolSummary> pools = resourcePoolService.listPools(poolType, pageable);
+        return ResponseEntity.ok(pools.getContent());
     }
 
     /**
@@ -90,18 +93,7 @@ public class ResourcePoolController {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
-        // Stub: acknowledges the request and returns a synthetic pool record.
-        // Full persistence requires a future Flyway migration adding resource_pools table.
-        CreatePoolResponse response = new CreatePoolResponse();
-        response.setId(UUID.randomUUID());
-        response.setName(request.getName());
-        response.setDescription(request.getDescription());
-        response.setPoolType(request.getPoolType() != null ? request.getPoolType() : "SHARED");
-        response.setMemberCount(request.getMemberEmployeeIds() != null
-                ? request.getMemberEmployeeIds().size() : 0);
-        response.setActive(true);
-        response.setCreatedAt(Instant.now().toString());
-        response.setMessage("Resource pool created. Full persistence will be enabled in a future release.");
+        CreatePoolResponse response = resourcePoolService.createPool(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -116,8 +108,7 @@ public class ResourcePoolController {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
-        // Stub: resource pool entity not yet persisted in DB; return 404 rather than empty 200.
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(resourcePoolService.getPool(id));
     }
 
     /**
@@ -135,7 +126,8 @@ public class ResourcePoolController {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
-        return ResponseEntity.ok(Collections.emptyList());
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(resourcePoolService.getPoolMembers(id, pageable).getContent());
     }
 
     // -----------------------------------------------------------------------
@@ -155,9 +147,10 @@ public class ResourcePoolController {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
+        int addedCount = resourcePoolService.addMembers(id, employeeIds);
         return ResponseEntity.ok(Map.of(
                 "poolId", id,
-                "addedCount", employeeIds != null ? employeeIds.size() : 0,
+                "addedCount", addedCount,
                 "message", "Members added to pool."
         ));
     }
@@ -175,6 +168,7 @@ public class ResourcePoolController {
         if (!enabled) {
             return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
         }
+        resourcePoolService.removeMember(id, employeeId);
         return ResponseEntity.noContent().build();
     }
 
