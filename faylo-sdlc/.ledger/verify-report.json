@@ -1064,5 +1064,47 @@
       }
     ],
     "story": "US-2FZ3WP130FT7"
+  },
+  "US-2FZ92MB7FK23": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ92MB7FK23"
+  },
+  "US-2FZ92MYP9DBG": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ92MYP9DBG"
+  },
+  "US-2FZ92N4PT25C": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ92N4PT25C"
   }
 }
