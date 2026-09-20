@@ -9,6 +9,10 @@ import {employeeService} from '@/lib/services/hrms/employee.service';
 import {projectService} from '@/lib/services/hrms/project.service';
 import {Employee} from '@/lib/types/hrms/employee';
 import {AssignEmployeeRequest, CreateProjectRequest, Project, ProjectEmployee} from '@/lib/types/hrms/project';
+import type {AllocationValidationResult, EmployeeCapacity} from '@/lib/types/hrms/resource-management';
+import {useCreateAllocationRequest, useValidateAllocation} from '@/lib/hooks/queries/useResources';
+import {usePermissions} from '@/lib/hooks/usePermissions';
+import {AllocationApprovalModal} from './AllocationApprovalModal';
 import {ProjectStep} from './ProjectStep';
 import type {EmployeeAllocation, EmployeeCapacityMap} from './EmployeeStep';
 import {EmployeeStep} from './EmployeeStep';
@@ -37,6 +41,15 @@ export function CreateAllocationModal({
   const [loadingData, setLoadingData] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const {isAdmin} = usePermissions();
+  const validateAllocation = useValidateAllocation();
+  const createAllocationRequest = useCreateAllocationRequest();
+  const [pendingApproval, setPendingApproval] = useState<{
+    allocation: EmployeeAllocation;
+    validation: AllocationValidationResult;
+    projectId: string;
+    remaining: EmployeeAllocation[];
+  } | null>(null);
 
   // Project form state
   const [projectData, setProjectData] = useState<CreateProjectRequest>({
@@ -211,6 +224,45 @@ export function CreateAllocationModal({
     }
   };
 
+  const assignAllocation = async (projectId: string, allocation: EmployeeAllocation) => {
+    const request: AssignEmployeeRequest = {
+      employeeId: allocation.employeeId,
+      role: allocation.role || undefined,
+      allocationPercentage: allocation.allocationPercentage,
+      startDate: allocation.startDate,
+      endDate: allocation.endDate || undefined,
+    };
+    await projectService.assignEmployee(projectId, request);
+  };
+
+  // Validates each allocation before creating it; stops at the first over-allocation
+  // and hands off to AllocationApprovalModal instead of assigning directly.
+  const processAllocations = async (projectId: string, queue: EmployeeAllocation[]) => {
+    setSubmitting(true);
+    setError(null);
+    try {
+      for (let i = 0; i < queue.length; i++) {
+        const allocation = queue[i];
+        const validation = await validateAllocation.mutateAsync({
+          employeeId: allocation.employeeId,
+          projectId,
+          allocationPercentage: allocation.allocationPercentage,
+        });
+        if (validation.requiresApproval) {
+          setPendingApproval({allocation, validation, projectId, remaining: queue.slice(i + 1)});
+          return;
+        }
+        await assignAllocation(projectId, allocation);
+      }
+      onSuccess();
+      handleClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to assign employees');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmitAllocations = async () => {
     if (allocations.length === 0) {
       setError('Please add at least one employee');
@@ -221,26 +273,31 @@ export function CreateAllocationModal({
       setError('No project selected');
       return;
     }
-    setSubmitting(true);
-    setError(null);
-    try {
-      for (const allocation of allocations) {
-        const request: AssignEmployeeRequest = {
-          employeeId: allocation.employeeId,
-          role: allocation.role || undefined,
-          allocationPercentage: allocation.allocationPercentage,
-          startDate: allocation.startDate,
-          endDate: allocation.endDate || undefined,
-        };
-        await projectService.assignEmployee(projectId, request);
-      }
-      onSuccess();
-      handleClose();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to assign employees');
-    } finally {
-      setSubmitting(false);
-    }
+    await processAllocations(projectId, allocations);
+  };
+
+  const handleProceedAnyway = async () => {
+    if (!pendingApproval) return;
+    const {allocation, projectId, remaining} = pendingApproval;
+    setPendingApproval(null);
+    await assignAllocation(projectId, allocation);
+    await processAllocations(projectId, remaining);
+  };
+
+  const handleSubmitForApproval = async (reason?: string) => {
+    if (!pendingApproval) return;
+    const {allocation, projectId, remaining} = pendingApproval;
+    await createAllocationRequest.mutateAsync({
+      employeeId: allocation.employeeId,
+      projectId,
+      allocationPercentage: allocation.allocationPercentage,
+      role: allocation.role || undefined,
+      startDate: allocation.startDate,
+      endDate: allocation.endDate || undefined,
+      reason,
+    });
+    setPendingApproval(null);
+    await processAllocations(projectId, remaining);
   };
 
   const handleClose = () => {
@@ -267,10 +324,12 @@ export function CreateAllocationModal({
     setCreatedProject(null);
     setSelectedProjectId('');
     setUseExistingProject(false);
+    setPendingApproval(null);
     onClose();
   };
 
   return (
+    <>
     <Modal isOpen={isOpen} onClose={handleClose} size="xl">
       <ModalHeader onClose={handleClose}>
         <div className="flex items-center gap-2">
@@ -385,5 +444,23 @@ export function CreateAllocationModal({
         )}
       </ModalFooter>
     </Modal>
+
+    {pendingApproval && (
+      <AllocationApprovalModal
+        isOpen
+        onClose={() => setPendingApproval(null)}
+        employeeCapacity={{employeeName: pendingApproval.allocation.employeeName} as EmployeeCapacity}
+        projectName={createdProject?.name || ''}
+        projectCode={createdProject?.projectCode || ''}
+        proposedAllocation={pendingApproval.allocation.allocationPercentage}
+        role={pendingApproval.allocation.role}
+        validationResult={pendingApproval.validation}
+        onSubmitForApproval={handleSubmitForApproval}
+        onProceedAnyway={isAdmin ? handleProceedAnyway : undefined}
+        isAdmin={isAdmin}
+        isSubmitting={submitting || createAllocationRequest.isPending}
+      />
+    )}
+    </>
   );
 }
