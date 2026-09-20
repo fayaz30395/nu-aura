@@ -132,46 +132,4 @@ public interface EmployeePayrollRecordRepository extends JpaRepository<EmployeeP
     @Override
     @Deprecated
     void deleteById(UUID id);
-
-    /**
-     * @deprecated Use {@link #findByTenantIdAndPayrollRun(UUID, UUID)} instead.
-     * This method is unsafe for multi-tenant environments.
-     */
-    @Deprecated
-    @Query("SELECT r FROM EmployeePayrollRecord r WHERE r.payrollRun.id = :runId ORDER BY r.employeeName")
-    List<EmployeePayrollRecord> findByPayrollRun(@Param("runId") UUID payrollRunId);
-
-    /**
-     * @deprecated Use {@link #findByTenantIdAndPayrollRunAndLocation(UUID, UUID, String)} instead.
-     * This method is unsafe for multi-tenant environments.
-     */
-    @Deprecated
-    @Query("SELECT r FROM EmployeePayrollRecord r WHERE r.payrollRun.id = :runId AND r.locationCode = :locationCode")
-    List<EmployeePayrollRecord> findByPayrollRunAndLocation(@Param("runId") UUID payrollRunId,
-                                                            @Param("locationCode") String locationCode);
-
-    /**
-     * @deprecated Use {@link #findByTenantIdAndPayrollRunAndStatus(UUID, UUID, EmployeePayrollRecord.RecordStatus)} instead.
-     * This method is unsafe for multi-tenant environments.
-     */
-    @Deprecated
-    @Query("SELECT r FROM EmployeePayrollRecord r WHERE r.payrollRun.id = :runId AND r.status = :status")
-    List<EmployeePayrollRecord> findByPayrollRunAndStatus(@Param("runId") UUID payrollRunId,
-                                                          @Param("status") EmployeePayrollRecord.RecordStatus status);
-
-    /**
-     * @deprecated Use {@link #countByTenantIdAndPayrollRun(UUID, UUID)} instead.
-     * This method is unsafe for multi-tenant environments.
-     */
-    @Deprecated
-    @Query("SELECT COUNT(r) FROM EmployeePayrollRecord r WHERE r.payrollRun.id = :runId")
-    int countByPayrollRun(@Param("runId") UUID payrollRunId);
-
-    /**
-     * @deprecated Use {@link #countDistinctLocationsByTenantIdAndPayrollRun(UUID, UUID)} instead.
-     * This method is unsafe for multi-tenant environments.
-     */
-    @Deprecated
-    @Query("SELECT COUNT(DISTINCT r.locationCode) FROM EmployeePayrollRecord r WHERE r.payrollRun.id = :runId")
-    int countDistinctLocationsByPayrollRun(@Param("runId") UUID payrollRunId);
 }

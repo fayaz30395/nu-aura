@@ -95,11 +95,4 @@ public interface PSAProjectRepository extends JpaRepository<PSAProject, UUID> {
     @Override
     @Deprecated
     void deleteById(UUID id);
-
-    /**
-     * @deprecated Use {@link #findByTenantIdAndProjectCode(UUID, String)} instead.
-     * This method is unsafe for multi-tenant environments.
-     */
-    @Deprecated
-    Optional<PSAProject> findByProjectCode(String projectCode);
 }
