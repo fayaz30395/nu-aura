@@ -15,4 +15,6 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadata, UUID
             UUID tenantId, String entityType, UUID entityId);
 
     Optional<FileMetadata> findByTenantIdAndStoragePath(UUID tenantId, @Param("storagePath") String storagePath);
+
+    Optional<FileMetadata> findByIdAndTenantId(UUID id, UUID tenantId);
 }

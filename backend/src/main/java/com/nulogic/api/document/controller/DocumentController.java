@@ -54,6 +54,7 @@ public class DocumentController {
     public ResponseEntity<WorkflowExecutionResponse> requestApproval(
             @Parameter(description = "Document UUID") @PathVariable UUID documentId,
             @RequestParam(required = false) String title) {
+        documentWorkflowService.requireDocumentExists(documentId);
         WorkflowExecutionRequest request = new WorkflowExecutionRequest();
         request.setEntityType(WorkflowDefinition.EntityType.DOCUMENT_REQUEST);
         request.setEntityId(documentId);

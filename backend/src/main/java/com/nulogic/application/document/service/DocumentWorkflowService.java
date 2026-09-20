@@ -5,6 +5,7 @@ import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.document.*;
+import com.nulogic.infrastructure.storage.FileMetadataRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,22 @@ public class DocumentWorkflowService {
 
     private final DocumentAccessRepository documentAccessRepository;
     private final DocumentExpiryTrackingRepository expiryTrackingRepository;
+    private final FileMetadataRepository fileMetadataRepository;
     private final TenantTimeService tenantTimeService;
+
+    private void requireDocumentExists(UUID documentId, UUID tenantId) {
+        fileMetadataRepository.findByIdAndTenantId(documentId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Document not found"));
+    }
+
+    /**
+     * Verify a document exists and belongs to the current tenant.
+     * Used to reject workflow/approval requests against unknown or cross-tenant document ids.
+     */
+    @Transactional(readOnly = true)
+    public void requireDocumentExists(UUID documentId) {
+        requireDocumentExists(documentId, SecurityContext.getCurrentTenantId());
+    }
 
     /**
      * Grant document access to user, role, or department
@@ -35,6 +51,8 @@ public class DocumentWorkflowService {
                                       DocumentAccess.AccessLevel accessLevel) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID grantedBy = SecurityContext.getCurrentUserId();
+
+        requireDocumentExists(documentId, tenantId);
 
         if (userId == null && roleId == null && departmentId == null) {
             throw new BusinessException("At least one of userId, roleId, or departmentId must be provided");
@@ -93,6 +111,8 @@ public class DocumentWorkflowService {
     public DocumentExpiryTracking setDocumentExpiry(UUID documentId, LocalDate expiryDate, Integer reminderDaysBefore) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
+
+        requireDocumentExists(documentId, tenantId);
 
         if (expiryDate.isBefore(tenantTimeService.today(tenantId))) {
             throw new BusinessException("Expiry date must be in the future");
