@@ -3,6 +3,7 @@ package com.nulogic.application.document.service;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.security.VirusScanService;
+import com.nulogic.infrastructure.storage.FileMetadataRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,13 +47,16 @@ class FileStorageServiceTest {
     @Mock
     private TenantTimeService tenantTimeService;
 
+    @Mock
+    private FileMetadataRepository fileMetadataRepository;
+
     private FileStorageService fileStorageService;
 
     @BeforeEach
     void setUp() {
         TenantContext.setCurrentTenant(TENANT_ID);
         lenient().when(tenantTimeService.now(any())).thenReturn(LocalDateTime.parse("2026-05-20T12:00:00"));
-        fileStorageService = new FileStorageService(storageProvider, jdbcTemplate, virusScanService, tenantTimeService);
+        fileStorageService = new FileStorageService(storageProvider, jdbcTemplate, fileMetadataRepository, virusScanService, tenantTimeService);
     }
 
     @AfterEach
