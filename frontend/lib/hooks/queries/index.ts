@@ -18,7 +18,6 @@ export * from './useContracts';
 export * from './useCustomFields';
 export * from './useDashboards';
 export * from './useDepartments';
-export * from './useDocumentWorkflow';
 export * from './useEmployees';
 export * from './useEscalation';
 export * from './useExpenses';

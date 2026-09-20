@@ -106,36 +106,6 @@ export const KanbanLoadingFallback = () => (
   </div>
 );
 
-// ============ Lazy-loaded Chart Components ============
-
-/**
- * Lazy-loaded standalone chart components from components/charts/
- */
-export const LazyAttendanceTrendChart = dynamic(
-  () => import('@/components/charts/AttendanceTrendChart').then((mod) => ({default: mod.AttendanceTrendChart})),
-  {loading: () => <ChartLoadingFallback/>, ssr: false}
-);
-
-export const LazyLeaveDistributionChart = dynamic(
-  () => import('@/components/charts/LeaveDistributionChart').then((mod) => ({default: mod.LeaveDistributionChart})),
-  {loading: () => <ChartLoadingFallback/>, ssr: false}
-);
-
-export const LazyPayrollCostTrendChart = dynamic(
-  () => import('@/components/charts/PayrollCostTrendChart').then((mod) => ({default: mod.PayrollCostTrendChart})),
-  {loading: () => <ChartLoadingFallback/>, ssr: false}
-);
-
-export const LazyHeadcountTrendChart = dynamic(
-  () => import('@/components/charts/HeadcountTrendChart').then((mod) => ({default: mod.HeadcountTrendChart})),
-  {loading: () => <ChartLoadingFallback/>, ssr: false}
-);
-
-export const LazyDepartmentDistributionChart = dynamic(
-  () => import('@/components/charts/DepartmentDistributionChart').then((mod) => ({default: mod.DepartmentDistributionChart})),
-  {loading: () => <ChartLoadingFallback/>, ssr: false}
-);
-
 // ============ Lazy-loaded Rich Text Editor ============
 
 /**

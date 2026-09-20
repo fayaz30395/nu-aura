@@ -44,7 +44,6 @@ export * from './queries/useContracts';
 export * from './queries/useCustomFields';
 export * from './queries/useDashboards';
 export * from './queries/useDepartments';
-export * from './queries/useDocumentWorkflow';
 export * from './queries/useEmployees';
 export * from './queries/useEscalation';
 export * from './queries/useExpenses';
