@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
- * NU-AURA — Styling Drift Checker (T3-13)
+ * NU-AURA — Styling Drift Checker (T3-13, extended for FR-4)
  *
  * Reports drift from the Mantine + Tailwind rule documented in
- * `frontend/components/ui/README.md`. NEVER fails CI today — emits a
- * report so trends are visible. Wire to `npm run lint:design-system`.
+ * `frontend/components/ui/README.md`, plus DESIGN.md's "Do's and Don'ts"
+ * (section 6, lines 270-291). NEVER fails CI today — emits a report so
+ * trends are visible. Wire to `npm run lint:design-system`.
  *
  * Anti-patterns scanned (component code only, not `components/ui/`):
  *   1. Raw `<input>`, `<select>`, `<textarea>` — should use Mantine
@@ -14,6 +15,26 @@
  *   3. Hex colors in className (e.g. `text-[#1c2033]`) — should use
  *      a CSS var token (`text-[var(--text-primary)]`).
  *   4. Hex literals in inline style values — same reason.
+ *   5. `border-l-N`/`border-r-N` (N>1) as a colored accent stripe —
+ *      DESIGN.md Don't: use a full subtle border + tinted bg instead.
+ *   6. `bg-clip-text` gradient text — DESIGN.md Don't: solid Aura Navy only.
+ *   7. `blur-*`/`backdrop-blur-*` outside `components/ui/` (advisory only —
+ *      the structural `blur(6px)` card treatment is CSS, not a Tailwind
+ *      class, so this rule is a coarse heuristic for manual review, not
+ *      an auto-fixable finding).
+ *
+ * FR-4 scope note: the following DESIGN.md Don'ts are NOT automated here —
+ * they need semantic/AST-level analysis or a maintained exemption list,
+ * not a line-based regex, and would produce false positives (verified
+ * against this codebase, see faylo-sdlc story US-2FWVF05WDJVA):
+ *   - `.card` nested inside `.card` (needs JSX tree awareness)
+ *   - non-navy accent colors in "chrome" vs. permitted sub-app-identity
+ *     surfaces (e.g. `var(--prod-hire)` is legitimately used as a chart
+ *     data-series color in app/reports/page.tsx, not chrome styling —
+ *     a className-only regex can't tell those apart)
+ *   - hardcoded spacing/typography duplicating a design-system.ts export
+ *     (needs a token-value diff, not a text pattern)
+ * Escalate these to a follow-up ticket if broader FR-4 coverage is wanted.
  *
  * Run:  node frontend/scripts/check-styling-drift.mjs
  *       (always exits 0; pass --json for machine output, --quiet for
@@ -42,6 +63,12 @@ const EXEMPT_FILES = new Set([
 const TW_HEX_CLASS_RE = /\b(?:text|bg|border|ring|from|to|via|fill|stroke|shadow|outline|decoration|caret|accent)-\[#[0-9a-fA-F]{3,8}\]/g;
 // JSX inline style: style={{ ... }}
 const INLINE_STYLE_RE = /\bstyle=\{\{[^}]*\}\}/g;
+// border-l-2..9 / border-r-2..9 used as a colored accent stripe (border-l-1/border-r-1 are fine)
+const BORDER_ACCENT_RE = /\bborder-[lr]-[2-9]\b/g;
+// Gradient text: bg-clip-text (paired with text-transparent in practice)
+const BG_CLIP_TEXT_RE = /\bbg-clip-text\b/g;
+// Decorative blur outside components/ui (advisory)
+const BLUR_CLASS_RE = /\b(?:backdrop-)?blur-(?:xs|sm|md|lg|xl|2xl|3xl|\[[^\]]+\])\b/g;
 // Raw native form elements (JSX opening tag — not React.HTMLProps strings)
 const RAW_INPUT_RE = /<input(?=[\s/>])/g;
 const RAW_SELECT_RE = /<select(?=[\s/>])/g;
@@ -99,6 +126,24 @@ async function scanFile(absPath, rel) {
     if (TW_HEX_CLASS_RE.test(line)) {
       findings.push({file: rel, rule: 'hex-in-className', line: lineNo, snippet: trimmed.slice(0, 120)});
       TW_HEX_CLASS_RE.lastIndex = 0;
+    }
+
+    // Rule 5 — border-l/r > 1px as a colored accent stripe (DESIGN.md Don't)
+    if (BORDER_ACCENT_RE.test(line)) {
+      findings.push({file: rel, rule: 'border-accent-stripe', line: lineNo, snippet: trimmed.slice(0, 120)});
+      BORDER_ACCENT_RE.lastIndex = 0;
+    }
+
+    // Rule 6 — gradient text via bg-clip-text (DESIGN.md Don't)
+    if (BG_CLIP_TEXT_RE.test(line)) {
+      findings.push({file: rel, rule: 'gradient-text', line: lineNo, snippet: trimmed.slice(0, 120)});
+      BG_CLIP_TEXT_RE.lastIndex = 0;
+    }
+
+    // Rule 7 — decorative blur outside components/ui (advisory, manual review)
+    if (!isPrimitive && BLUR_CLASS_RE.test(line)) {
+      findings.push({file: rel, rule: 'blur-advisory', line: lineNo, snippet: trimmed.slice(0, 120)});
+      BLUR_CLASS_RE.lastIndex = 0;
     }
   });
 }
