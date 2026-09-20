@@ -1,6 +1,7 @@
 package com.nulogic.application.payroll.service;
 
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
@@ -36,7 +37,10 @@ import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Locale;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,6 +65,7 @@ public class PayrollRunService {
     private final PayrollPeriodLock payrollPeriodLock;
     private final com.nulogic.common.util.TenantTimeService tenantTimeService;
     private final PayrollAdjustmentRepository payrollAdjustmentRepository;
+    private final WebSocketNotificationService webSocketNotificationService;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final HolidayRepository holidayRepository;
     private final LeaveRequestRepository leaveRequestRepository;
@@ -251,7 +256,9 @@ public class PayrollRunService {
                 null,
                 "Payroll run asynchronously processed for period "
                         + payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth());
-        return payrollRunRepository.save(payrollRun);
+        PayrollRun saved = payrollRunRepository.save(payrollRun);
+        notifyPayrollProcessed(saved, processedBy);
+        return saved;
     }
 
     /**
@@ -290,7 +297,9 @@ public class PayrollRunService {
         int generatedPayslips = generatePayslipsForRun(payrollRun);
         payrollRun.setTotalEmployees(generatedPayslips);
         payrollRun.process(processedBy, tenantTimeService.now(payrollRun.getTenantId()));
-        return payrollRunRepository.save(payrollRun);
+        PayrollRun saved = payrollRunRepository.save(payrollRun);
+        notifyPayrollProcessed(saved, processedBy);
+        return saved;
     }
 
     /**
@@ -332,6 +341,27 @@ public class PayrollRunService {
         UUID tenantId = TenantContext.getCurrentTenant();
         return payrollRunRepository.findByIdAndTenantIdForUpdate(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
+    }
+
+    private void notifyPayslipAvailable(UUID employeeId, PayrollRun payrollRun) {
+        try {
+            String monthName = Month.of(payrollRun.getPayPeriodMonth()).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+            webSocketNotificationService.notifyPayslipAvailable(
+                    employeeId, monthName, String.valueOf(payrollRun.getPayPeriodYear()));
+        } catch (RuntimeException e) {
+            log.warn("Failed to send payslip-available notification for employee {}: {}", employeeId, e.getMessage());
+        }
+    }
+
+    private void notifyPayrollProcessed(PayrollRun payrollRun, UUID processedBy) {
+        try {
+            String period = Month.of(payrollRun.getPayPeriodMonth()).getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+                    + " " + payrollRun.getPayPeriodYear();
+            webSocketNotificationService.notifyPayrollProcessed(
+                    processedBy, period, payrollRun.getTotalEmployees());
+        } catch (RuntimeException e) {
+            log.warn("Failed to send payroll-processed notification for run {}: {}", payrollRun.getId(), e.getMessage());
+        }
     }
 
     private int generatePayslipsForRun(PayrollRun payrollRun) {
@@ -416,6 +446,7 @@ public class PayrollRunService {
 
                 payslip.calculateTotals();
                 payslipRepository.save(payslip);
+                notifyPayslipAvailable(employee.getId(), payrollRun);
                 generated++;
             }
         }
