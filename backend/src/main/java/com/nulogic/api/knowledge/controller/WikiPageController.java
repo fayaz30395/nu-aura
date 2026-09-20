@@ -182,6 +182,24 @@ public class WikiPageController {
         return ResponseEntity.ok(toDto(published));
     }
 
+    @PostMapping("/{pageId}/approve")
+    @Operation(summary = "Approve a wiki page pending approval")
+    @ApiResponses.Success
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_APPROVE)
+    public ResponseEntity<WikiPageDto> approvePage(@PathVariable UUID pageId) {
+        WikiPage approved = wikiPageService.approvePage(pageId);
+        return ResponseEntity.ok(toDto(approved));
+    }
+
+    @PostMapping("/{pageId}/reject")
+    @Operation(summary = "Reject a wiki page pending approval, returning it to draft")
+    @ApiResponses.Success
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_APPROVE)
+    public ResponseEntity<WikiPageDto> rejectPage(@PathVariable UUID pageId) {
+        WikiPage rejected = wikiPageService.rejectPage(pageId);
+        return ResponseEntity.ok(toDto(rejected));
+    }
+
     @PostMapping("/{pageId}/archive")
     @Operation(summary = "Archive wiki page")
     @ApiResponses.Success

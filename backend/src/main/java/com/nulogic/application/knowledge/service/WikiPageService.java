@@ -4,6 +4,7 @@ import com.nulogic.api.knowledge.dto.WikiPageBreadcrumb;
 import com.nulogic.api.knowledge.dto.WikiPageTreeNode;
 import com.nulogic.application.knowledge.dto.WikiPageTreeProjection;
 import com.nulogic.application.knowledge.util.TipTapTextExtractor;
+import com.nulogic.common.exception.UnauthorizedException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -45,6 +46,7 @@ public class WikiPageService {
     private final TipTapTextExtractor tipTapTextExtractor;
     private final TenantTimeService tenantTimeService;
     private final EmployeeRepository employeeRepository;
+    private final WikiSpaceApprovalService wikiSpaceApprovalService;
 
     /**
      * Resolve the author Employee (with associated User) for a given user id within a tenant.
@@ -220,6 +222,20 @@ public class WikiPageService {
         WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
 
+        UUID spaceId = page.getSpace() != null ? page.getSpace().getId() : null;
+        if (spaceId != null && wikiSpaceApprovalService.isApprovalRequired(spaceId)) {
+            page.setStatus(WikiPage.PageStatus.PENDING_APPROVAL);
+            WikiPage updated = wikiPageRepository.save(page);
+            log.info("Wiki page {} submitted for approval (space {})", pageId, spaceId);
+            recordActivity(tenantId, userId, "SUBMITTED_FOR_APPROVAL", updated);
+
+            UUID approverEmployeeId = wikiSpaceApprovalService.getApprover(spaceId);
+            if (approverEmployeeId != null) {
+                notifyApprover(tenantId, pageId, approverEmployeeId, updated.getTitle());
+            }
+            return updated;
+        }
+
         page.setStatus(WikiPage.PageStatus.PUBLISHED);
         // Tenant-local publish timestamp — see ContractService pattern.
         page.setPublishedAt(tenantTimeService.now(tenantId));
@@ -235,6 +251,85 @@ public class WikiPageService {
                 tenantId, pageId, userId, "published", updated.getTitle());
 
         return updated;
+    }
+
+    /**
+     * Approve a page pending approval, publishing it. Only the space's configured
+     * approver may call this — enforced here since a single approver per space is
+     * not a general permission grant.
+     */
+    @Transactional
+    public WikiPage approvePage(UUID pageId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID userId = SecurityContext.getCurrentUserId();
+
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+
+        if (page.getStatus() != WikiPage.PageStatus.PENDING_APPROVAL) {
+            throw new IllegalStateException("Wiki page is not pending approval");
+        }
+
+        UUID spaceId = page.getSpace() != null ? page.getSpace().getId() : null;
+        requireIsApprover(spaceId, userId);
+
+        page.setStatus(WikiPage.PageStatus.PUBLISHED);
+        page.setPublishedAt(tenantTimeService.now(tenantId));
+        page.setPublishedBy(userId);
+
+        WikiPage updated = wikiPageRepository.save(page);
+        log.info("Approved and published wiki page: {}", pageId);
+        publishFluenceEvent(pageId, tenantId, FluenceContentEvent.ACTION_PUBLISHED);
+        recordActivity(tenantId, userId, "APPROVED", updated);
+        fluenceNotificationService.notifyWatchers(
+                tenantId, pageId, userId, "published", updated.getTitle());
+
+        return updated;
+    }
+
+    /**
+     * Reject a page pending approval, returning it to draft.
+     */
+    @Transactional
+    public WikiPage rejectPage(UUID pageId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID userId = SecurityContext.getCurrentUserId();
+
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+
+        if (page.getStatus() != WikiPage.PageStatus.PENDING_APPROVAL) {
+            throw new IllegalStateException("Wiki page is not pending approval");
+        }
+
+        UUID spaceId = page.getSpace() != null ? page.getSpace().getId() : null;
+        requireIsApprover(spaceId, userId);
+
+        page.setStatus(WikiPage.PageStatus.DRAFT);
+        WikiPage updated = wikiPageRepository.save(page);
+        log.info("Rejected wiki page: {}", pageId);
+        recordActivity(tenantId, userId, "REJECTED", updated);
+        fluenceNotificationService.notifyWatchers(
+                tenantId, pageId, userId, "sent back to draft", updated.getTitle());
+
+        return updated;
+    }
+
+    private void requireIsApprover(UUID spaceId, UUID userId) {
+        UUID approverEmployeeId = spaceId != null ? wikiSpaceApprovalService.getApprover(spaceId) : null;
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (approverEmployeeId == null || !approverEmployeeId.equals(currentEmployeeId)) {
+            throw new UnauthorizedException("Only the configured space approver can perform this action");
+        }
+    }
+
+    private void notifyApprover(UUID tenantId, UUID pageId, UUID approverEmployeeId, String pageTitle) {
+        employeeRepository.findById(approverEmployeeId)
+                .map(Employee::getUser)
+                .ifPresent(user -> fluenceNotificationService.notifyUser(
+                        tenantId, user.getId(), pageId,
+                        "Wiki page awaiting your approval",
+                        "The wiki page \"" + pageTitle + "\" is waiting for your approval."));
     }
 
     public WikiPage archivePage(UUID pageId) {

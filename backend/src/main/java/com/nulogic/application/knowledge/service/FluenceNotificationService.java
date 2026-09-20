@@ -158,4 +158,27 @@ public class FluenceNotificationService {
             log.error("Failed to notify content owner for {} {}: {}", contentType, contentId, e.getMessage(), e);
         }
     }
+
+    /**
+     * Notify a single user (e.g. a wiki space approver) about a page needing their action.
+     */
+    public void notifyUser(UUID tenantId, UUID userId, UUID pageId, String subject, String body) {
+        try {
+            eventPublisher.publishNotificationEvent(
+                    userId,
+                    "IN_APP",
+                    subject,
+                    body,
+                    null,
+                    null,
+                    tenantId,
+                    pageId,
+                    "WIKI_PAGE",
+                    "/fluence/wiki/" + pageId,
+                    "NORMAL"
+            );
+        } catch (Exception e) { // Intentional broad catch — notification delivery error boundary
+            log.error("Failed to notify user {} for wiki page {}: {}", userId, pageId, e.getMessage(), e);
+        }
+    }
 }

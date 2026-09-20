@@ -101,7 +101,7 @@ public class WikiPage extends TenantAware {
     private UUID publishedBy;
 
     public enum PageStatus {
-        DRAFT, PUBLISHED, ARCHIVED
+        DRAFT, PENDING_APPROVAL, PUBLISHED, ARCHIVED
     }
 
     public enum VisibilityLevel {
