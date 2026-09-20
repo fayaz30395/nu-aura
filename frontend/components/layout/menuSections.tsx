@@ -769,6 +769,20 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               requiredPermission: Permissions.EXIT_VIEW
             },
             {
+              id: 'offboarding-dashboard-hire',
+              label: 'Exit Dashboard',
+              href: '/offboarding/dashboard',
+              icon: sm.barChart2,
+              requiredPermission: Permissions.EXIT_VIEW
+            },
+            {
+              id: 'offboarding-interviews-hire',
+              label: 'Exit Interviews',
+              href: '/offboarding/exit-interviews',
+              icon: sm.messageCircle,
+              requiredPermission: Permissions.EXIT_VIEW
+            },
+            {
               id: 'offboarding-fnf-hire',
               label: 'F&F Settlements',
               href: '/offboarding/fnf',
