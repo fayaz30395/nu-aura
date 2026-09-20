@@ -1,14 +1,19 @@
 package com.nulogic.api.document.controller;
 
 import com.nulogic.api.document.dto.DocumentAccessDto;
+import com.nulogic.api.document.dto.DocumentExpiryDto;
 import com.nulogic.api.document.dto.GrantDocumentAccessRequest;
+import com.nulogic.api.document.dto.SetDocumentExpiryRequest;
 import com.nulogic.api.workflow.dto.WorkflowExecutionRequest;
 import com.nulogic.api.workflow.dto.WorkflowExecutionResponse;
 import com.nulogic.application.document.service.DocumentWorkflowService;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.document.DocumentAccess;
+import com.nulogic.domain.document.DocumentExpiryTracking;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,6 +45,7 @@ public class DocumentController {
 
     private final WorkflowService workflowService;
     private final DocumentWorkflowService documentWorkflowService;
+    private final TenantTimeService tenantTimeService;
 
     @PostMapping("/{documentId}/request-approval")
     @RequiresPermission(Permission.DOCUMENT_APPROVE)
@@ -88,6 +94,56 @@ public class DocumentController {
                 .map(this::toAccessDto)
                 .toList();
         return ResponseEntity.ok(grants);
+    }
+
+    // ===================== Expiry Tracking =====================
+
+    @PutMapping("/{documentId}/expiry")
+    @RequiresPermission(Permission.DOCUMENT_ACCESS_MANAGE)
+    @Operation(summary = "Set document expiry",
+            description = "Sets or updates a document's expiry date and reminder window.")
+    public ResponseEntity<DocumentExpiryDto> setExpiry(
+            @Parameter(description = "Document UUID") @PathVariable UUID documentId,
+            @Valid @RequestBody SetDocumentExpiryRequest request) {
+        DocumentExpiryTracking tracking = documentWorkflowService.setDocumentExpiry(
+                documentId, request.getExpiryDate(), request.getReminderDaysBefore());
+        return ResponseEntity.ok(toExpiryDto(tracking));
+    }
+
+    @GetMapping("/expiring")
+    @RequiresPermission(Permission.DOCUMENT_ACCESS_MANAGE)
+    @Operation(summary = "List documents expiring soon",
+            description = "Documents whose expiry date falls within the given number of days (default 30).")
+    public ResponseEntity<List<DocumentExpiryDto>> getExpiringDocuments(
+            @RequestParam(defaultValue = "30") int days) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        List<DocumentExpiryDto> results = documentWorkflowService
+                .getExpiringDocuments(tenantId, tenantTimeService.today(tenantId).plusDays(days)).stream()
+                .map(this::toExpiryDto)
+                .toList();
+        return ResponseEntity.ok(results);
+    }
+
+    @GetMapping("/expired")
+    @RequiresPermission(Permission.DOCUMENT_ACCESS_MANAGE)
+    @Operation(summary = "List expired documents")
+    public ResponseEntity<List<DocumentExpiryDto>> getExpiredDocuments() {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        List<DocumentExpiryDto> results = documentWorkflowService.getExpiredDocuments(tenantId).stream()
+                .map(this::toExpiryDto)
+                .toList();
+        return ResponseEntity.ok(results);
+    }
+
+    private DocumentExpiryDto toExpiryDto(DocumentExpiryTracking tracking) {
+        return DocumentExpiryDto.builder()
+                .id(tracking.getId())
+                .documentId(tracking.getDocumentId())
+                .expiryDate(tracking.getExpiryDate())
+                .reminderDaysBefore(tracking.getReminderDaysBefore())
+                .isNotified(tracking.getIsNotified())
+                .notifiedAt(tracking.getNotifiedAt())
+                .build();
     }
 
     private DocumentAccessDto toAccessDto(DocumentAccess access) {
