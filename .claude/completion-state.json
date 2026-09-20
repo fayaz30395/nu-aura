@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T06:00:00Z",
+  "lastUpdated": "2026-09-20T06:30:00Z",
   "repositoryCommit": "d99c55b2",
   "passId": "pass-4",
   "scopeVersion": "keka-parity-v1",
@@ -634,13 +634,13 @@
       "blocker": null
     },
     "documents.controller_idor": {
-      "status": "in_flight",
-      "summary": "DocumentController grantAccess/setExpiry/requestApproval don't validate documentId exists/tenant-scoped before writing - real IDOR-shaped gap, fixing directly",
+      "status": "completed",
+      "summary": "Already fixed by a concurrent commit (98acb47a) before this audit landed - verified, no action needed. requireDocumentExists() guards all 3 write endpoints, revokeAccess/listAccess confirmed out of blast radius.",
       "evidence": [
         "US-2FZ3774CR9Z1"
       ],
-      "lastVerifiedCommit": "83336b2f",
-      "lastVerifiedAt": "2026-09-20T06:00:00Z",
+      "lastVerifiedCommit": "98acb47a",
+      "lastVerifiedAt": "2026-09-20T06:30:00Z",
       "reported": true,
       "blocker": null
     },
