@@ -1,11 +1,13 @@
 package com.nulogic.application.payroll.service;
 
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.payroll.Payslip;
 import com.nulogic.infrastructure.payroll.repository.PayslipRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,6 +40,8 @@ class PayslipServiceTest {
     private AuditLogService auditLogService;
     @Mock
     private StatutoryDeductionService statutoryDeductionService;
+    @Mock
+    private DataScopeService dataScopeService;
     @InjectMocks
     private PayslipService payslipService;
     private UUID tenantId;
@@ -232,7 +237,9 @@ class PayslipServiceTest {
         void shouldGetAllPayslipsWithPagination() {
             Pageable pageable = PageRequest.of(0, 10);
             Page<Payslip> page = new PageImpl<>(List.of(payslip));
-            when(payslipRepository.findAllByTenantId(tenantId, pageable)).thenReturn(page);
+            when(dataScopeService.getScopeSpecification(anyString()))
+                    .thenReturn((root, query, cb) -> cb.conjunction());
+            when(payslipRepository.findAll(ArgumentMatchers.<Specification<Payslip>>any(), eq(pageable))).thenReturn(page);
 
             Page<Payslip> result = payslipService.getAllPayslips(pageable);
 

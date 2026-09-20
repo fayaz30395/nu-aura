@@ -6,6 +6,7 @@ import com.nulogic.application.performance.dto.CompetencyRequest;
 import com.nulogic.application.performance.dto.CompetencyResponse;
 import com.nulogic.application.performance.dto.ReviewRequest;
 import com.nulogic.application.performance.dto.ReviewResponse;
+import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +50,7 @@ public class PerformanceReviewService {
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
+    private final DataScopeService dataScopeService;
 
     @Transactional
     public ReviewResponse createReview(ReviewRequest request) {
@@ -177,11 +180,16 @@ public class PerformanceReviewService {
         throw new AccessDeniedException("Access denied");
     }
 
+    // SEC: row-level scope enforcement (audit gap — was tenant-only, no LOCATION/DEPARTMENT/
+    // TEAM filtering). A TEAM-scoped manager now sees only their team's reviews instead of
+    // every review in the tenant. This is the fix, not a regression.
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getAllReviews(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        Page<PerformanceReview> reviews = reviewRepository.findAllByTenantId(tenantId, pageable);
+        Specification<PerformanceReview> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<PerformanceReview> scopeSpec = dataScopeService.getScopeSpecification(Permission.REVIEW_VIEW);
+        Page<PerformanceReview> reviews = reviewRepository.findAll(tenantSpec.and(scopeSpec), pageable);
         return mapReviewPage(reviews);
     }
 

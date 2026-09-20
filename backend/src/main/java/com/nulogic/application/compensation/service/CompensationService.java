@@ -4,6 +4,8 @@ import com.nulogic.api.compensation.dto.*;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.DataScopeService;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -20,7 +22,10 @@ import com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +44,7 @@ public class CompensationService {
     private final SalaryRevisionRepository revisionRepository;
     private final CompensationReviewCycleRepository cycleRepository;
     private final EmployeeRepository employeeRepository;
+    private final DataScopeService dataScopeService;
     private final SalaryStructureRepository salaryStructureRepository;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
@@ -183,11 +189,20 @@ public class CompensationService {
         return enrichRevisionResponse(revision);
     }
 
+    // SEC: row-level scope enforcement (audit gap — was tenant-only, no LOCATION/DEPARTMENT/
+    // TEAM filtering on salary data). A TEAM-scoped manager now sees only their team's
+    // revisions instead of every employee's salary revision in the tenant. This is the fix,
+    // not a regression.
     @Transactional(readOnly = true)
     public Page<SalaryRevisionResponse> getAllRevisions(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        Specification<SalaryRevision> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<SalaryRevision> scopeSpec = dataScopeService.getScopeSpecification(Permission.COMPENSATION_VIEW);
+        Pageable sorted = pageable.getSort().isSorted()
+                ? pageable
+                : PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
         return enrichRevisionPage(
-                revisionRepository.findByTenantIdOrderByCreatedAtDesc(tenantId, pageable), tenantId);
+                revisionRepository.findAll(tenantSpec.and(scopeSpec), sorted), tenantId);
     }
 
     @Transactional(readOnly = true)

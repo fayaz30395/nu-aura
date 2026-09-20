@@ -1,5 +1,7 @@
 package com.nulogic.application.compliance.service;
 
+import com.nulogic.common.security.DataScopeService;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -8,6 +10,7 @@ import com.nulogic.infrastructure.compliance.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,7 @@ public class ComplianceService {
     private final ComplianceAuditLogRepository auditLogRepository;
     private final ComplianceAlertRepository alertRepository;
     private final TenantTimeService tenantTimeService;
+    private final DataScopeService dataScopeService;
 
     // ==================== Policy Management ====================
 
@@ -210,10 +214,16 @@ public class ComplianceService {
         return acknowledgmentRepository.findByPolicyIdAndTenantId(policyId, tenantId);
     }
 
+    // SEC: row-level scope enforcement (audit gap — was tenant-only, no LOCATION/DEPARTMENT/
+    // TEAM filtering). A TEAM-scoped manager now sees only their team's acknowledgments
+    // instead of every employee's in the tenant. This is the fix, not a regression.
     @Transactional(readOnly = true)
     public Page<PolicyAcknowledgment> getPolicyAcknowledgments(UUID policyId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return acknowledgmentRepository.findByPolicyIdAndTenantId(policyId, tenantId, pageable);
+        Specification<PolicyAcknowledgment> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<PolicyAcknowledgment> policySpec = (root, query, cb) -> cb.equal(root.get("policyId"), policyId);
+        Specification<PolicyAcknowledgment> scopeSpec = dataScopeService.getScopeSpecification(Permission.COMPLIANCE_VIEW);
+        return acknowledgmentRepository.findAll(tenantSpec.and(policySpec).and(scopeSpec), pageable);
     }
 
     @Transactional(readOnly = true)

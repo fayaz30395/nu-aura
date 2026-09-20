@@ -2,6 +2,7 @@ package com.nulogic.application.benefits.service;
 
 import com.nulogic.api.benefits.dto.*;
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,7 @@ public class BenefitEnhancedService {
     private final EventPublisher eventPublisher;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
+    private final DataScopeService dataScopeService;
 
     // ==================== BENEFIT PLANS ====================
 
@@ -385,10 +388,16 @@ public class BenefitEnhancedService {
                 .collect(Collectors.toList());
     }
 
+    // SEC: row-level scope enforcement (audit gap — was tenant-only, no LOCATION/DEPARTMENT/
+    // TEAM filtering). A TEAM-scoped manager now sees only their team's pending enrollments
+    // instead of every employee's in the tenant. This is the fix, not a regression.
     @Transactional(readOnly = true)
     public List<EnrollmentResponse> getPendingEnrollments() {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return enrollmentRepository.findPendingEnrollments(tenantId).stream()
+        Specification<BenefitEnrollment> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<BenefitEnrollment> statusSpec = (root, query, cb) -> cb.equal(root.get("status"), BenefitEnrollment.EnrollmentStatus.PENDING);
+        Specification<BenefitEnrollment> scopeSpec = dataScopeService.getScopeSpecification(Permission.BENEFIT_VIEW);
+        return enrollmentRepository.findAll(tenantSpec.and(statusSpec).and(scopeSpec)).stream()
                 .map(EnrollmentResponse::from)
                 .collect(Collectors.toList());
     }

@@ -6,6 +6,8 @@ import com.nulogic.application.payroll.strategy.StatutoryCalculator;
 import com.nulogic.application.payroll.strategy.StatutoryCalculator.StatutoryCalculationInput;
 import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
 import com.nulogic.application.payroll.strategy.StatutoryResult;
+import com.nulogic.common.security.DataScopeService;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,7 @@ public class PayslipService {
     private final PayslipRepository payslipRepository;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
+    private final DataScopeService dataScopeService;
     /**
      * S10-B: routes per-tenant to the correct country-specific calculator. For IN tenants
      * this resolves to {@code IndianStatutoryCalculator} which delegates to the legacy
@@ -94,10 +98,15 @@ public class PayslipService {
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
     }
 
+    // SEC: row-level scope enforcement (audit gap — was tenant-only, no LOCATION/DEPARTMENT/
+    // TEAM filtering). A TEAM-scoped manager now sees only their team's payslips instead of
+    // every payslip in the tenant. This is the fix, not a regression.
     @Transactional(readOnly = true)
     public Page<Payslip> getAllPayslips(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return payslipRepository.findAllByTenantId(tenantId, pageable);
+        Specification<Payslip> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<Payslip> scopeSpec = dataScopeService.getScopeSpecification(Permission.PAYROLL_VIEW_ALL);
+        return payslipRepository.findAll(tenantSpec.and(scopeSpec), pageable);
     }
 
     @Transactional(readOnly = true)

@@ -152,7 +152,7 @@ class SoftDeleteServiceTest {
             assertThat(payslip.isDeleted()).isTrue();
             assertThat(payslip.getDeletedAt()).isNotNull();
             verify(payslipRepository).save(payslip);
-            verify(payslipRepository, never()).delete(any());
+            verify(payslipRepository, never()).delete(any(Payslip.class));
             verify(auditLogService).logAction(eq("PAYSLIP"), eq(ENTITY_ID), eq(AuditLog.AuditAction.DELETE),
                     any(), any(), contains("soft-deleted"));
         }

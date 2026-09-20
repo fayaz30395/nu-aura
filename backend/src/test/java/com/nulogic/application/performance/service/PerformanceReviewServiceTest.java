@@ -6,6 +6,7 @@ import com.nulogic.application.performance.dto.CompetencyRequest;
 import com.nulogic.application.performance.dto.CompetencyResponse;
 import com.nulogic.application.performance.dto.ReviewRequest;
 import com.nulogic.application.performance.dto.ReviewResponse;
+import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
@@ -18,6 +19,7 @@ import com.nulogic.infrastructure.performance.repository.ReviewCompetencyReposit
 import com.nulogic.infrastructure.performance.repository.ReviewCycleRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -26,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -59,6 +62,8 @@ class PerformanceReviewServiceTest {
     private AuditLogService auditLogService;
     @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private DataScopeService dataScopeService;
     @InjectMocks
     private PerformanceReviewService performanceReviewService;
     private UUID tenantId;
@@ -282,7 +287,9 @@ class PerformanceReviewServiceTest {
             Pageable pageable = PageRequest.of(0, 10);
             Page<PerformanceReview> page = new PageImpl<>(List.of(review));
 
-            when(reviewRepository.findAllByTenantId(tenantId, pageable)).thenReturn(page);
+            when(dataScopeService.getScopeSpecification(anyString()))
+                    .thenReturn((root, query, cb) -> cb.conjunction());
+            when(reviewRepository.findAll(ArgumentMatchers.<Specification<PerformanceReview>>any(), eq(pageable))).thenReturn(page);
             when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
             when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
 
