@@ -123,11 +123,13 @@ const nextConfig = {
       {key: 'X-Content-Type-Options', value: 'nosniff'},
       // Control referrer information
       {key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin'},
-      // NOTE: Strict-Transport-Security is set in proxy.ts (via middleware.ts shim).
+      // NOTE: Strict-Transport-Security is set in proxy.ts (Next.js 16's Edge
+      // Proxy — the successor to the old middleware.ts convention; do NOT add
+      // a separate middleware.ts, Next.js 16 errors the build if both exist).
       // Removed here to avoid two HSTS headers with conflicting max-age values.
       // Disable sensitive browser features the app does not use
       {key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=()'},
-      // NOTE: Content-Security-Policy is set in proxy.ts (via middleware.ts shim).
+      // NOTE: Content-Security-Policy is set in proxy.ts (Next.js 16 Edge Proxy).
       // Previously it was duplicated here, causing two CSP headers to be emitted; browsers
       // then intersect the policies and the most-restrictive wins, which is fragile.
     ];
