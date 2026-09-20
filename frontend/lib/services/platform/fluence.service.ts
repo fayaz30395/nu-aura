@@ -1,4 +1,5 @@
 import {apiClient} from '../../api/client';
+import type {RelatedItem} from '@/components/fluence/RelatedContent';
 import {
   BlogCategory,
   BlogPost,
@@ -113,6 +114,14 @@ class FluenceService {
   async getPageBreadcrumbs(pageId: string): Promise<WikiPageBreadcrumb[]> {
     const response = await apiClient.get<WikiPageBreadcrumb[]>(
       `/knowledge/wiki/pages/${pageId}/breadcrumbs`
+    );
+    return response.data;
+  }
+
+  async getRelatedPages(pageId: string, limit: number = 5): Promise<RelatedItem[]> {
+    const response = await apiClient.get<RelatedItem[]>(
+      `/knowledge/wiki/pages/${pageId}/related`,
+      {params: {limit}}
     );
     return response.data;
   }

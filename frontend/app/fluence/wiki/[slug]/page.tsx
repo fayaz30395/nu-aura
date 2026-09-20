@@ -45,6 +45,7 @@ import {
   useDeleteComment,
   useLikeWikiPage,
   useRecordView,
+  useRelatedPages,
   useRemoveFavorite,
   usePageTree,
   useRestoreWikiPageRevision,
@@ -60,6 +61,7 @@ import {card, iconSize, layout, typography} from '@/lib/theme/design-system';
 import {TableOfContents} from '@/components/fluence/TableOfContents';
 import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
 import {WikiPageTree} from '@/components/fluence/WikiPageTree';
+import {RelatedContent} from '@/components/fluence/RelatedContent';
 import {WatchButton} from '@/components/fluence/WatchButton';
 import {InlineCommentsPanel} from '@/components/fluence/InlineComments';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -447,6 +449,7 @@ export default function WikiPageDetailPage() {
   const {data: viewers} = useContentViewers(pageId, 'WIKI', showViewers && !!pageId);
   const {data: revisions} = useWikiPageRevisions(pageId, showHistory && !!pageId);
   const {data: pageTree} = usePageTree(page?.spaceId || '', !!page?.spaceId);
+  const {data: relatedItems} = useRelatedPages(pageId, !!pageId);
 
   const likeMutation = useLikeWikiPage();
   const unlikeMutation = useUnlikeWikiPage();
@@ -918,6 +921,10 @@ export default function WikiPageDetailPage() {
             <div ref={contentContainerRef} data-page-content className={`${card.base} ${card.paddingLarge}`}>
               <ContentViewer content={page.content}/>
             </div>
+
+            {relatedItems && relatedItems.length > 0 && (
+              <RelatedContent items={relatedItems} className="mt-6"/>
+            )}
           </motion.div>
 
           {/* Sidebar */}

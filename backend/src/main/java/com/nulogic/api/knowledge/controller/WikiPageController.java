@@ -142,6 +142,28 @@ public class WikiPageController {
         return ResponseEntity.ok(toDto(page));
     }
 
+    @GetMapping("/{pageId}/related")
+    @Operation(summary = "Get related wiki pages (same space, most recently updated)")
+    @ApiResponses.GetList
+    @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    public ResponseEntity<List<RelatedContentDto>> getRelatedPages(
+            @PathVariable UUID pageId,
+            @RequestParam(defaultValue = "5") int limit) {
+        List<WikiPage> related = wikiPageService.getRelatedPages(pageId, limit);
+        List<RelatedContentDto> dtos = related.stream()
+                .map(p -> RelatedContentDto.builder()
+                        .id(p.getId())
+                        .title(p.getTitle())
+                        .excerpt(p.getExcerpt())
+                        .type("WIKI")
+                        .viewCount(p.getViewCount())
+                        .likeCount(p.getLikeCount())
+                        .updatedAt(p.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @GetMapping("/space/{spaceId}")
     @Operation(summary = "Get pages by space")
     @ApiResponses.GetList

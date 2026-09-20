@@ -42,6 +42,8 @@ export const fluenceKeys = {
     [...fluenceKeys.wikiPages(), 'tree', spaceId] as const,
   wikiPageBreadcrumbs: (pageId: string) =>
     [...fluenceKeys.wikiPages(), 'breadcrumbs', pageId] as const,
+  wikiPageRelated: (pageId: string) =>
+    [...fluenceKeys.wikiPages(), 'related', pageId] as const,
   // Wiki spaces
   wikiSpaces: () => [...fluenceKeys.all, 'wiki-spaces'] as const,
   wikiSpaceList: (page?: number, size?: number) =>
@@ -167,6 +169,15 @@ export function usePageBreadcrumbs(pageId: string, enabled: boolean = true) {
   return useQuery({
     queryKey: fluenceKeys.wikiPageBreadcrumbs(pageId),
     queryFn: () => fluenceService.getPageBreadcrumbs(pageId),
+    enabled: enabled && !!pageId,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useRelatedPages(pageId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: fluenceKeys.wikiPageRelated(pageId),
+    queryFn: () => fluenceService.getRelatedPages(pageId),
     enabled: enabled && !!pageId,
     staleTime: 5 * 60 * 1000,
   });

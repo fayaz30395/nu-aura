@@ -185,6 +185,28 @@ public class WikiPageService {
         return wikiPageRepository.findByTenantIdAndSpaceId(tenantId, spaceId, pageable);
     }
 
+    /**
+     * Related pages for {@code RelatedContent} — no tags/similarity signal exists on
+     * {@link WikiPage}, so "related" is same-space + most-recently-updated, excluding
+     * the page itself. Honest minimal signal, not a recommendation engine.
+     */
+    @Transactional(readOnly = true)
+    public List<WikiPage> getRelatedPages(UUID pageId, int limit) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+        if (page.getSpace() == null) {
+            return List.of();
+        }
+        Pageable pageable = PageRequest.of(0, limit + 1, org.springframework.data.domain.Sort.by(
+                org.springframework.data.domain.Sort.Direction.DESC, "updatedAt"));
+        return wikiPageRepository.findByTenantIdAndSpaceId(tenantId, page.getSpace().getId(), pageable)
+                .stream()
+                .filter(p -> !p.getId().equals(pageId))
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
     @Transactional(readOnly = true)
     public Page<WikiPage> getPagesByStatus(WikiPage.PageStatus status, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
