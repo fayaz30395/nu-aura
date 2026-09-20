@@ -40,23 +40,23 @@ EXPENSE_MANAGER, etc.) appear in the Resource matrix and notes below.
 
 ### [[Nu-HRMS]] — Core HR
 
-| Capability (perm) | SA | TA | HA | HM | HE | PA | DM | TL | EMP | CON | INT |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| View all employees (`EMPLOYEE:VIEW_ALL`) | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| View self only (`EMPLOYEE:VIEW_SELF`) | ✔ | ✔ | ✔ | ✔ | ✔ | ✘ | dept | team | ✔ | ✔ | ✔ |
-| Create/update employee (`EMPLOYEE:CREATE/UPDATE`) | ✔ | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| Delete employee (`EMPLOYEE:DELETE`) | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| Approve leave (`LEAVE:APPROVE`) | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✔ | ✔ | ✘ | ✘ | ✘ |
-| Request leave (`LEAVE:REQUEST`) | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✔ | ✘ | ✔ |
-| Mark attendance (`ATTENDANCE:MARK`) | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✔ | ✔ | ✔ |
-| Process payroll (`PAYROLL:PROCESS`) | ✔ | ✔ | ✔ | ✔ | ✘ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| Approve payroll (`PAYROLL:APPROVE`) | ✔ | ✔ | ✘ | ✘ | ✘ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| View own payslip (`PAYROLL:VIEW_SELF`) | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✔ | ✘ | ✘ |
-| Manage roles/users (`ROLE:MANAGE`,`USER:MANAGE`) | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| Update settings (`SETTINGS:UPDATE`) | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| View audit log (`AUDIT:VIEW`) | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ | ✘ |
-| Approve expense (`EXPENSE:APPROVE`) | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✔ | ✘ | ✘ | ✘ | ✘ |
-| Create expense (`EXPENSE:CREATE`) | ✔ | ✔ | ✔ | ✔ | ✘ | ✘ | ✘ | ✘ | ✔ | ✔ | ✘ |
+| Capability (perm)                                 | SA  | TA  | HA  | HM  | HE  | PA  | DM   | TL   | EMP | CON | INT |
+| ------------------------------------------------- | --- | --- | --- | --- | --- | --- | ---- | ---- | --- | --- | --- |
+| View all employees (`EMPLOYEE:VIEW_ALL`)          | ✔   | ✔   | ✔   | ✔   | ✔   | ✔   | ✘    | ✘    | ✘   | ✘   | ✘   |
+| View self only (`EMPLOYEE:VIEW_SELF`)             | ✔   | ✔   | ✔   | ✔   | ✔   | ✘   | dept | team | ✔   | ✔   | ✔   |
+| Create/update employee (`EMPLOYEE:CREATE/UPDATE`) | ✔   | ✔   | ✔   | ✔   | ✔   | ✘   | ✘    | ✘    | ✘   | ✘   | ✘   |
+| Delete employee (`EMPLOYEE:DELETE`)               | ✔   | ✔   | ✘   | ✘   | ✘   | ✘   | ✘    | ✘    | ✘   | ✘   | ✘   |
+| Approve leave (`LEAVE:APPROVE`)                   | ✔   | ✔   | ✔   | ✔   | ✘   | ✘   | ✔    | ✔    | ✘   | ✘   | ✘   |
+| Request leave (`LEAVE:REQUEST`)                   | ✔   | ✔   | ✔   | ✔   | ✘   | ✘   | ✘    | ✘    | ✔   | ✘   | ✔   |
+| Mark attendance (`ATTENDANCE:MARK`)               | ✔   | ✔   | ✔   | ✔   | ✘   | ✘   | ✘    | ✘    | ✔   | ✔   | ✔   |
+| Process payroll (`PAYROLL:PROCESS`)               | ✔   | ✔   | ✔   | ✔   | ✘   | ✔   | ✘    | ✘    | ✘   | ✘   | ✘   |
+| Approve payroll (`PAYROLL:APPROVE`)               | ✔   | ✔   | ✘   | ✘   | ✘   | ✔   | ✘    | ✘    | ✘   | ✘   | ✘   |
+| View own payslip (`PAYROLL:VIEW_SELF`)            | ✔   | ✔   | ✔   | ✔   | ✘   | ✘   | ✘    | ✘    | ✔   | ✘   | ✘   |
+| Manage roles/users (`ROLE:MANAGE`,`USER:MANAGE`)  | ✔   | ✔   | ✔   | ✘   | ✘   | ✘   | ✘    | ✘    | ✘   | ✘   | ✘   |
+| Update settings (`SETTINGS:UPDATE`)               | ✔   | ✔   | ✔   | ✘   | ✘   | ✘   | ✘    | ✘    | ✘   | ✘   | ✘   |
+| View audit log (`AUDIT:VIEW`)                     | ✔   | ✔   | ✔   | ✘   | ✘   | ✘   | ✘    | ✘    | ✘   | ✘   | ✘   |
+| Approve expense (`EXPENSE:APPROVE`)               | ✔   | ✔   | ✔   | ✔   | ✘   | ✘   | ✔    | ✘    | ✘   | ✘   | ✘   |
+| Create expense (`EXPENSE:CREATE`)                 | ✔   | ✔   | ✔   | ✔   | ✘   | ✘   | ✘    | ✘    | ✔   | ✔   | ✘   |
 
 > `DM`/`TL` "dept"/"team" cells: they instead hold `EMPLOYEE:VIEW_DEPARTMENT`/`VIEW_TEAM`
 > (scoped views), not global view — `RoleHierarchy.java:428`, `:463`.
@@ -117,23 +117,23 @@ EXPENSE_MANAGER, etc.) appear in the Resource matrix and notes below.
 Built from the explicit grants. "Allowed" = roles whose default set includes the gating
 permission(s); `SUPER_ADMIN` always allowed via bypass.
 
-| Sensitive resource | Gating permission | Roles allowed by default |
-|--------------------|-------------------|--------------------------|
-| **Salary (view)** | `FIELD:EMPLOYEE:SALARY:VIEW` | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER, PAYROLL_ADMIN (`:391`,`:598`) |
-| **Salary (edit)** | `FIELD:EMPLOYEE:SALARY:EDIT` | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, PAYROLL_ADMIN (`:285`,`:599`) — **not** HR_MANAGER |
-| **Bank details (view)** | `FIELD:EMPLOYEE:BANK:VIEW` | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER, PAYROLL_ADMIN (`:392`,`:600`) |
-| **Bank details (edit)** | `FIELD:EMPLOYEE:BANK:EDIT` | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, PAYROLL_ADMIN (`:286`,`:601`) |
-| **Tax ID** | `FIELD:EMPLOYEE:TAX_ID:VIEW` | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER, PAYROLL_ADMIN (`:393`,`:602`) |
-| **ID documents** | `FIELD:EMPLOYEE:ID_DOCS:VIEW` | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN (`:287`) |
-| **Payroll approval** | `PAYROLL:APPROVE` | SUPER_ADMIN, TENANT_ADMIN, PAYROLL_ADMIN (`:129`,`:571`) |
-| **Payments (initiate/refund)** | `PAYMENT:INITIATE`/`REFUND` | SUPER_ADMIN, TENANT_ADMIN (`:258`) — gated again by feature flag at service layer |
-| **Compensation manage** | `COMPENSATION:MANAGE` | SUPER_ADMIN, TENANT_ADMIN, PAYROLL_ADMIN (`:239`,`:579`) |
-| **Employee delete** | `EMPLOYEE:DELETE` | SUPER_ADMIN, TENANT_ADMIN (`:129`) |
-| **Role / user management** | `ROLE:MANAGE`,`USER:MANAGE` | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN (`:271`) |
-| **Tenant config / platform** | `TENANT:MANAGE`,`PLATFORM:MANAGE` | SUPER_ADMIN only (`:106`) |
-| **System admin (global bypass)** | `SYSTEM:ADMIN` | SUPER_ADMIN only (`:105`) |
-| **Audit log** | `AUDIT:VIEW` | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, COMPLIANCE_OFFICER (`:274`,`:729`) |
-| **Data migration import/export** | `MIGRATION:IMPORT/EXPORT` | SUPER_ADMIN (`:113`) |
+| Sensitive resource               | Gating permission                 | Roles allowed by default                                                                |
+| -------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------- |
+| **Salary (view)**                | `FIELD:EMPLOYEE:SALARY:VIEW`      | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER, PAYROLL_ADMIN (`:391`,`:598`)          |
+| **Salary (edit)**                | `FIELD:EMPLOYEE:SALARY:EDIT`      | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, PAYROLL_ADMIN (`:285`,`:599`) — **not** HR_MANAGER |
+| **Bank details (view)**          | `FIELD:EMPLOYEE:BANK:VIEW`        | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER, PAYROLL_ADMIN (`:392`,`:600`)          |
+| **Bank details (edit)**          | `FIELD:EMPLOYEE:BANK:EDIT`        | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, PAYROLL_ADMIN (`:286`,`:601`)                      |
+| **Tax ID**                       | `FIELD:EMPLOYEE:TAX_ID:VIEW`      | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, HR_MANAGER, PAYROLL_ADMIN (`:393`,`:602`)          |
+| **ID documents**                 | `FIELD:EMPLOYEE:ID_DOCS:VIEW`     | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN (`:287`)                                            |
+| **Payroll approval**             | `PAYROLL:APPROVE`                 | SUPER_ADMIN, TENANT_ADMIN, PAYROLL_ADMIN (`:129`,`:571`)                                |
+| **Payments (initiate/refund)**   | `PAYMENT:INITIATE`/`REFUND`       | SUPER_ADMIN, TENANT_ADMIN (`:258`) — gated again by feature flag at service layer       |
+| **Compensation manage**          | `COMPENSATION:MANAGE`             | SUPER_ADMIN, TENANT_ADMIN, PAYROLL_ADMIN (`:239`,`:579`)                                |
+| **Employee delete**              | `EMPLOYEE:DELETE`                 | SUPER_ADMIN, TENANT_ADMIN (`:129`)                                                      |
+| **Role / user management**       | `ROLE:MANAGE`,`USER:MANAGE`       | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN (`:271`)                                            |
+| **Tenant config / platform**     | `TENANT:MANAGE`,`PLATFORM:MANAGE` | SUPER_ADMIN only (`:106`)                                                               |
+| **System admin (global bypass)** | `SYSTEM:ADMIN`                    | SUPER_ADMIN only (`:105`)                                                               |
+| **Audit log**                    | `AUDIT:VIEW`                      | SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN, COMPLIANCE_OFFICER (`:274`,`:729`)                 |
+| **Data migration import/export** | `MIGRATION:IMPORT/EXPORT`         | SUPER_ADMIN (`:113`)                                                                    |
 
 > **Two-tier financial control is real:** salary/bank **view** reaches HR_MANAGER, but **edit**
 > stops at HR_ADMIN/PAYROLL_ADMIN. HR_EXECUTIVE has *no* financial access at all (`:422`).

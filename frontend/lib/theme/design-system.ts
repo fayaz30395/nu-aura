@@ -62,8 +62,9 @@ export const card = {
 export const table = {
   /** Table wrapper */
   wrapper: 'table-aura',
-  /** Header cell */
-  th: 'px-4 py-4 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]',
+  /** Header cell — text-secondary (not text-muted): text-muted fails WCAG AA 4.5:1
+   *  at text-xs size, especially in dark mode (see qa-reports/qa-100x/QA_UIUX_FINDINGS.md A11Y-04) */
+  th: 'px-4 py-4 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-secondary)]',
   /** Body cell */
   td: 'px-4 py-4 text-sm text-[var(--text-primary)]',
   /** Row hover */
