@@ -3,6 +3,14 @@
 > Generated: 2026-06-18
 > Updated: 2026-06-18 (Iteration 7)
 > Sources: Iteration 7 UI/UX Discovery, Accessibility Audit, previous iteration verifications
+>
+> **⚠️ STALENESS WARNING (added 2026-09-20):** a faylo SDLC pass re-checked the counts below
+> against live `main` before fixing them, and both had drifted heavily: the 64-page dark-mode
+> gap (line ~21) was down to **1 real file**; the 476-modal accessibility gap (line ~23) was
+> down to **20 instances across 12 files**. Do not size new work off the counts in this document
+> without re-auditing current `main` first — see the `Visual/UI Quality Enhancement` epic in
+> `faylo-sdlc/epics/` for the re-audit methodology used. The 154-input / 37-image / 32-icon-button
+> figures (line ~23) have NOT yet been re-checked — treat them as unverified.
 
 ---
 

@@ -801,6 +801,38 @@ Append-only log of changes.
 
 ---
 
+## Faylo SDLC Pilot + QA-Audit Drift Finding — 2026-09-20
+
+First end-to-end run of `faylo` (multi-agent SDLC CLI at `faylo-sdlc/`) in this repo. Full
+phase-by-phase build status vs. the Keka-replacement product goal published as an artifact:
+https://claude.ai/code/artifact/f2c2f628-20c6-40e8-b47f-28fc2f5cf4ac
+
+**Gotcha for 2.12 — QA/audit-doc counts drift fast, always re-check before fixing.** Every
+cited count acted on this session was re-verified against live `main` first, and every one had
+moved significantly since the source doc was written:
+- `qa-reports/qa-100x/QA_UIUX_FINDINGS.md`'s 64-page dark-mode gap → 1 real file remaining.
+- Same doc's 476-modal accessibility gap → 20 instances / 12 files remaining (157 total modal
+  usages exist; 36 already Mantine-covered, 8 already had `role="dialog"` via shared wrappers).
+- `.claude/commands/skills/nu-aura-agent-orchestration/keka-gap-execution.md` (2026-04-01)'s
+  5 "broken" P0 cross-module integrations → 3 already wired (overtime→payroll,
+  expense→payroll, training→skills); only leave-without-pay→payroll and
+  review-cycle-close→compensation-revision are still genuinely missing.
+
+Rule going forward: treat any cited count/file-list from a prior audit as a hypothesis to
+re-grep against current `main`, not a fact to act on directly.
+
+**Shipped:** 7 stories Done (table-header contrast, table scroll-container, design-system
+drift-lint extension, dark-mode real fix, 2 of 4 in-flight branches from `faylo adopt`), 2 held
+at Verified pending a human release-approval step (hard-gate tier — the 20-modal a11y fix).
+Also fixed a repo-wide `faylo gate` blocker: a DocuSign Javadoc example + test fixture were
+false-positive matching the secret-scanner's private-key pattern.
+
+**Still open, needs a human:** `feat/login-redesign` branch is 603 commits stale and conflicts
+on all 4 auth files on cherry-pick — genuine product call (drop vs. reconcile), not a merge
+task.
+
+---
+
 ## Architecture Audit — 2026-03-21
 
 **Scope:** Deep audit of entire codebase (backend, frontend, docs) by principal architect review.
