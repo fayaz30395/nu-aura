@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState} from 'react';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 import {
   Activity,
   AlertTriangle,
@@ -135,8 +135,8 @@ export default function AuditLogPage() {
   };
 
   const {data: logsData, isLoading} = useSearchAuditLogs(params);
-  const thirtyDaysAgo = toLocalDateString(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
-  const today = toLocalDateString(new Date());
+  const thirtyDaysAgo = getLocalDateString(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000));
+  const today = getLocalDateString(new Date());
   const {data: stats} = useGetAuditStatistics({startDate: thirtyDaysAgo, endDate: today});
 
   const logs: AuditLogResponse[] = (logsData as unknown as {content?: AuditLogResponse[]})?.content ?? [];

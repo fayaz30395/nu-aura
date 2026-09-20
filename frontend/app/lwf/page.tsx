@@ -56,7 +56,7 @@ import {
   LWFFrequency,
   STATUS_CONFIG,
 } from '@/lib/types/hrms/lwf';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -193,7 +193,7 @@ export default function LWFPage() {
       employerContribution: 0,
       frequency: 'HALF_YEARLY',
       applicableMonths: '[6,12]',
-      effectiveFrom: toLocalDateString(new Date()),
+      effectiveFrom: getLocalDateString(new Date()),
       salaryThreshold: undefined,
     });
     setConfigModalOpen(true);

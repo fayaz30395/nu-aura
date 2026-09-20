@@ -17,7 +17,6 @@ const nextConfig = {
       'lucide-react',
       '@tabler/icons-react',
       '@tanstack/react-query',
-      '@tanstack/react-table',
       'date-fns',
       'recharts',
       // framer-motion ships a single barrel; tree-shaking benefits a lot from

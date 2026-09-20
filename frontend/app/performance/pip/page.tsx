@@ -25,7 +25,7 @@ import type {CreatePIPRequest, PIPCheckInRequest, PIPResponse, PIPStatus,} from 
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
@@ -174,8 +174,8 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
       employeeId: '',
       managerId: '',
       reason: '',
-      startDate: toLocalDateString(new Date()),
-      endDate: toLocalDateString(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)),
+      startDate: getLocalDateString(new Date()),
+      endDate: getLocalDateString(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)),
       goals: '',
       checkInFrequency: 'WEEKLY',
     },
@@ -416,7 +416,7 @@ function PIPDetailModal({
 
   const addCheckInMutation = useMutation({
     mutationFn: (data: CheckInFormData) => addCheckIn(pip!.id, {
-      checkInDate: toLocalDateString(new Date()),
+      checkInDate: getLocalDateString(new Date()),
       progressNotes: data.progressNotes,
       managerComments: data.managerComments,
     }),

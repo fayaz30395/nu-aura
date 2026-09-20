@@ -30,7 +30,7 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate} from '@/lib/utils/format/date';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 import {
   useAddKeyResult,
   useCompanyObjectives,
@@ -179,8 +179,8 @@ export default function OKRPage() {
     defaultValues: {
       title: '',
       description: '',
-      startDate: toLocalDateString(new Date()),
-      endDate: toLocalDateString(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)),
+      startDate: getLocalDateString(new Date()),
+      endDate: getLocalDateString(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)),
       objectiveLevel: 'INDIVIDUAL',
       weight: 1,
       isStretchGoal: false,
@@ -251,8 +251,8 @@ export default function OKRPage() {
     objectiveForm.reset({
       title: '',
       description: '',
-      startDate: toLocalDateString(new Date()),
-      endDate: toLocalDateString(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)),
+      startDate: getLocalDateString(new Date()),
+      endDate: getLocalDateString(new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)),
       objectiveLevel: 'INDIVIDUAL',
       weight: 1,
       isStretchGoal: false,

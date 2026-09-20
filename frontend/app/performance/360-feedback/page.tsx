@@ -47,7 +47,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {formatDate} from '@/lib/utils/format/date';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 
 type ReviewerType = 'SELF' | 'MANAGER' | 'PEER' | 'DIRECT_REPORT' | 'EXTERNAL';
 
@@ -164,8 +164,8 @@ export default function Feedback360Page() {
   const [cycleForm, setCycleForm] = useState<CycleRequest>({
     name: '',
     description: '',
-    startDate: toLocalDateString(new Date()),
-    endDate: toLocalDateString(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
+    startDate: getLocalDateString(new Date()),
+    endDate: getLocalDateString(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
     minPeersRequired: 3,
     maxPeersAllowed: 5,
     isAnonymous: true,
@@ -274,8 +274,8 @@ export default function Feedback360Page() {
     setCycleForm({
       name: '',
       description: '',
-      startDate: toLocalDateString(new Date()),
-      endDate: toLocalDateString(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
+      startDate: getLocalDateString(new Date()),
+      endDate: getLocalDateString(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
       minPeersRequired: 3,
       maxPeersAllowed: 5,
       isAnonymous: true,

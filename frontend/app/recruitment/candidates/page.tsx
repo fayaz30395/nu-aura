@@ -52,7 +52,7 @@ import {
 } from '@/lib/types/hire/ai-recruitment';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 
 // Extracted sub-components (Loop 3 refactor — FE-016)
 import {CandidateStats} from './CandidateStats';
@@ -210,7 +210,7 @@ function CandidatesPage() {
       source: 'JOB_PORTAL',
       status: 'NEW',
       currentStage: 'RECRUITERS_PHONE_CALL',
-      appliedDate: toLocalDateString(new Date()),
+      appliedDate: getLocalDateString(new Date()),
       notes: '',
       assignedRecruiterId: '',
     },

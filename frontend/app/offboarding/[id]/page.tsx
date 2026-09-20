@@ -1,7 +1,7 @@
 'use client';
 
 import React, {useState} from 'react';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 import {useParams, useRouter} from 'next/navigation';
 import {
   ActionIcon,
@@ -208,7 +208,7 @@ export default function SeparationDetailPage() {
         id: selectedClearance.id,
         data: {
           status: clearanceAction,
-          approvedDate: clearanceAction === ClearanceStatus.APPROVED ? toLocalDateString(new Date()) : undefined,
+          approvedDate: clearanceAction === ClearanceStatus.APPROVED ? getLocalDateString(new Date()) : undefined,
           comments: clearanceComment || undefined,
         },
       });
@@ -246,7 +246,7 @@ export default function SeparationDetailPage() {
         await recordAssetReturnMutation.mutateAsync({
           id: selectedAsset.id,
           data: {
-            actualReturnDate: toLocalDateString(new Date()),
+            actualReturnDate: getLocalDateString(new Date()),
             conditionOnReturn: returnCondition ?? undefined,
             damageDescription: damageDescription || undefined,
             deductionAmount: deductionAmount === '' ? undefined : deductionAmount,

@@ -22,7 +22,7 @@ import {
   useUpdateEnrollmentStatus,
   useUpdateTrainingProgram,
 } from '@/lib/hooks/queries/useTraining';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 import type {TabType, TrainingProgramFormData} from './_components';
 import {
   CourseCatalogTab,
@@ -117,7 +117,7 @@ export default function TrainingPage() {
   const [enrollFormData, setEnrollFormData] = useState<Partial<TrainingEnrollmentRequest>>({
     programId: '',
     employeeId: '',
-    enrollmentDate: toLocalDateString(new Date()),
+    enrollmentDate: getLocalDateString(new Date()),
   });
 
   const showNotification = (message: string, type: 'success' | 'error') => {
@@ -194,7 +194,7 @@ export default function TrainingPage() {
     setEnrollFormData({
       programId: program.id,
       employeeId: '',
-      enrollmentDate: toLocalDateString(new Date()),
+      enrollmentDate: getLocalDateString(new Date()),
     });
     setIsEnrollModalOpen(true);
   };
@@ -215,7 +215,7 @@ export default function TrainingPage() {
       {
         programId: program.id,
         employeeId: user.employeeId,
-        enrollmentDate: toLocalDateString(new Date()),
+        enrollmentDate: getLocalDateString(new Date()),
       },
       {
         onSuccess: () => {

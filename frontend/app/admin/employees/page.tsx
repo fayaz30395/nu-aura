@@ -44,7 +44,7 @@ import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {CreateEmployeeRequest, Employee} from '@/lib/types/hrms/employee';
 import {usersApi} from '@/lib/api/users';
 import {StatusBadge} from '@/components/ui/StatusBadge';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 
 // ──────────────────────────────────────────────
 // Zod schema
@@ -370,7 +370,7 @@ export default function AdminEmployeesPage() {
     resolver: zodResolver(createEmployeeWithRoleSchema),
     defaultValues: {
       employeeCode: '', firstName: '', middleName: '', lastName: '', workEmail: '', password: '',
-      joiningDate: toLocalDateString(new Date()), employmentType: 'FULL_TIME',
+      joiningDate: getLocalDateString(new Date()), employmentType: 'FULL_TIME',
       departmentId: '', designation: '', managerId: '', roleCodes: [Roles.EMPLOYEE],
     },
   });

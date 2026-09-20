@@ -28,7 +28,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {OnboardingChecklistTemplate, OnboardingProcessRequest} from '@/lib/types/hire/onboarding';
 import {createLogger} from '@/lib/utils/logger';
 import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 
 const log = createLogger('NewOnboardingPage');
 
@@ -65,7 +65,7 @@ export default function NewOnboardingPage() {
   } = useForm<OnboardingFormData>({
     resolver: zodResolver(onboardingFormSchema),
     defaultValues: {
-      startDate: toLocalDateString(new Date()),
+      startDate: getLocalDateString(new Date()),
       expectedCompletionDate: '',
       notes: '',
     },

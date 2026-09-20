@@ -38,7 +38,7 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {createLogger} from '@/lib/utils/logger';
 import {formatMonthYear} from '@/lib/utils/format/date';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 import {EmployeeAvatar} from './_components/EmployeeAvatar';
 import {ProfileSheet} from './_components/ProfileSheet';
 import listStyles from './_components/employees-list.module.css';
@@ -363,7 +363,7 @@ export default function EmployeesPage() {
       departmentId: '',
       employmentType: 'FULL_TIME',
       status: 'ACTIVE',
-      joiningDate: toLocalDateString(new Date()),
+      joiningDate: getLocalDateString(new Date()),
       confirmationDate: '',
       managerId: '',
       dottedLineManager1Id: '',

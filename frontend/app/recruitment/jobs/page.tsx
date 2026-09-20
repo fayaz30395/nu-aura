@@ -42,7 +42,7 @@ import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {formatDate} from '@/lib/utils/format/date';
-import {toLocalDateString} from '@/lib/utils/date';
+import {getLocalDateString} from '@/lib/utils/dateUtils';
 
 export default function JobOpeningsPage() {
   const router = useRouter();
@@ -85,7 +85,7 @@ export default function JobOpeningsPage() {
       skillsRequired: '',
       hiringManagerId: '',
       status: 'DRAFT',
-      postedDate: toLocalDateString(new Date()),
+      postedDate: getLocalDateString(new Date()),
       closingDate: '',
       priority: 'MEDIUM',
       isActive: true,
