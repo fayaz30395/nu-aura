@@ -209,7 +209,6 @@ public class SecurityConfig {
                         // External APIs authenticate via ApiKeyAuthenticationFilter (X-API-Key),
                         // not Spring Security's auth context.
                         .requestMatchers("/api/v1/external/**").permitAll()
-                        .requestMatchers("/api/v1/tenants/register").permitAll()
                         // Actuator: health is public. Prometheus uses a dedicated scrape
                         // bearer token so monitoring can work without opening every
                         // actuator endpoint or minting an interactive SuperAdmin session.

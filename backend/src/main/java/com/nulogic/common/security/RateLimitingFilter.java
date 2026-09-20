@@ -163,10 +163,9 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         if (uri.startsWith("/api/v1/auth")) {
             return DistributedRateLimiter.RateLimitType.AUTH;
         }
-        // RBAC-03: unauthenticated tenant self-registration is an account-creation /
-        // resource-exhaustion vector (mass-tenant creation). Treat it like auth — apply
-        // the tight AUTH bucket (5/min) instead of the generic API bucket (100/min).
-        // A legitimate signup is a single POST, well within this ceiling.
+        // RBAC-03: tenant creation is a resource-exhaustion vector (mass-tenant creation)
+        // even from an authorized SUPER_ADMIN session. Treat it like auth — apply the
+        // tight AUTH bucket (5/min) instead of the generic API bucket (100/min).
         if (uri.startsWith("/api/v1/tenants/register")) {
             return DistributedRateLimiter.RateLimitType.AUTH;
         }

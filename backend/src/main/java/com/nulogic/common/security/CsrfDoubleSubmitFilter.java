@@ -125,8 +125,7 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
                 path.startsWith("/api/v1/public/") ||
                 path.startsWith("/api/public/") ||
                 path.startsWith("/api/v1/exit/interview/public/") ||
-                path.startsWith("/api/v1/preboarding/portal/") ||
-                path.startsWith("/api/v1/tenants/register");
+                path.startsWith("/api/v1/preboarding/portal/");
     }
 
     private void setCsrfCookie(HttpServletResponse response, String token) {
