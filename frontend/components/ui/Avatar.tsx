@@ -69,7 +69,7 @@ export function Avatar({name, src, size = 'md', ring = false, className}: Avatar
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={src}
-        alt=""
+        alt={name}
         width={box}
         height={box}
         style={{width: box, height: box}}

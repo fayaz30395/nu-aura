@@ -52,7 +52,7 @@ export function EmployeeAvatar({name, size = 38, src}: EmployeeAvatarProps) {
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={src}
-        alt=""
+        alt={name}
         width={size}
         height={size}
         className={`shrink-0 rounded-full object-cover ${sizeClass.box}`}
