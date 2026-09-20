@@ -7,6 +7,8 @@ import {z} from 'zod';
 import {Loader2} from 'lucide-react';
 import {Drawer} from '@mantine/core';
 import {Button} from '@/components/ui/Button';
+import {ConnectionTestButton} from '@/components/integrations/ConnectionTestButton';
+import {EventSubscriptionPicker} from '@/components/integrations/EventSubscriptionPicker';
 import {ConnectorConfigField, ConnectorConfigRequest, ConnectorInfo} from '@/lib/types/core/connector';
 
 interface ConnectorConfigPanelProps {
@@ -88,6 +90,8 @@ export function ConnectorConfigPanel({
       : {displayName: ''},
   });
 
+  const [selectedEvents, setSelectedEvents] = React.useState<string[]>([]);
+
   if (!connector) return null;
 
   const onSubmit = async (data: FormData) => {
@@ -96,7 +100,7 @@ export function ConnectorConfigPanel({
     await onSave({
       displayName,
       configData: configData as Record<string, unknown>,
-      eventSubscriptions: [],
+      eventSubscriptions: selectedEvents,
     });
 
     onClose();
@@ -276,6 +280,10 @@ export function ConnectorConfigPanel({
         },
       }}
     >
+      <div className="pb-6 border-b border-[var(--border)]">
+        <ConnectionTestButton connectorId={connector.connectorId} isDisabled={isLoading}/>
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label htmlFor="ccp-display-name" className="block text-sm font-medium text-[var(--text-1)] mb-2">
@@ -296,6 +304,13 @@ export function ConnectorConfigPanel({
         <div className="space-y-4">
           {connector.capabilities.configSchema.map((field) => renderField(field))}
         </div>
+
+        <EventSubscriptionPicker
+          capabilities={connector.capabilities}
+          selectedEvents={selectedEvents}
+          onChange={setSelectedEvents}
+          disabled={isSubmitting || isLoading}
+        />
 
         <div className="flex gap-4 pt-6 border-t border-[var(--border)]">
           <Button
