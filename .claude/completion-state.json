@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T06:30:00Z",
+  "lastUpdated": "2026-09-20T07:00:00Z",
   "repositoryCommit": "d99c55b2",
   "passId": "pass-4",
   "scopeVersion": "keka-parity-v1",
@@ -645,13 +645,14 @@
       "blocker": null
     },
     "frontend.orphan_linkedin_biometric_nav": {
-      "status": "in_flight",
+      "status": "completed",
       "summary": "linkedin-posts and biometric-devices pages complete+real backend, zero nav entry point - fixing directly (pure wiring, not a decision)",
       "evidence": [
-        "US-2FZ377BJ1EGG"
+        "US-2FZ377BJ1EGG",
+        "commit 3c2b5c06"
       ],
-      "lastVerifiedCommit": "83336b2f",
-      "lastVerifiedAt": "2026-09-20T06:00:00Z",
+      "lastVerifiedCommit": "3c2b5c06",
+      "lastVerifiedAt": "2026-09-20T07:00:00Z",
       "reported": true,
       "blocker": null
     },
