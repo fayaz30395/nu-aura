@@ -169,6 +169,8 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         publishAssetAuditEvent(null, "ASSIGN", assetId, tenantId,
                 "Asset " + asset.getAssetCode() + " assigned to employee " + employeeId);
 
+        notifyAssetAssigned(updatedAsset, employeeId);
+
         return mapToAssetResponse(updatedAsset);
     }
 
@@ -180,6 +182,7 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
 
+        UUID previousAssignee = asset.getAssignedTo();
         asset.setAssignedTo(null);
         asset.setStatus(Asset.AssetStatus.AVAILABLE);
 
@@ -188,6 +191,10 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         // Publish audit event for asset return (best-effort)
         publishAssetAuditEvent(null, "RETURN", assetId, tenantId,
                 "Asset " + asset.getAssetCode() + " returned");
+
+        if (previousAssignee != null) {
+            notifyAssetReturned(updatedAsset, previousAssignee);
+        }
 
         return mapToAssetResponse(updatedAsset);
     }
@@ -598,6 +605,68 @@ public class AssetManagementService implements ApprovalCallbackHandler {
     // ─────────────────────────────────────────────────────────────────────────
     // Notification Helpers
     // ─────────────────────────────────────────────────────────────────────────
+
+    // ponytail: no ASSET_ASSIGNED/ASSET_RETURNED entries exist in the shared
+    // NotificationType enums (mirrors notifyAssetApproved/Rejected below, which
+    // reuse APPROVAL_* rather than adding asset-specific values) — GENERAL/
+    // TASK_ASSIGNED are the closest existing fits.
+    private void notifyAssetAssigned(Asset asset, UUID assignedEmployeeId) {
+        try {
+            notificationService.createNotification(
+                    assignedEmployeeId,
+                    com.nulogic.domain.notification.Notification.NotificationType.GENERAL,
+                    "Asset Assigned",
+                    String.format("%s (%s) has been assigned to you", asset.getAssetName(), asset.getAssetCode()),
+                    asset.getId(),
+                    "ASSET",
+                    "/assets/my-assets",
+                    com.nulogic.domain.notification.Notification.Priority.NORMAL
+            );
+
+            com.nulogic.application.notification.dto.NotificationMessage wsNotification =
+                    com.nulogic.application.notification.dto.NotificationMessage.builder()
+                            .type(com.nulogic.application.notification.dto.NotificationMessage.NotificationType.TASK_ASSIGNED)
+                            .title("Asset Assigned")
+                            .message(String.format("%s (%s) has been assigned to you", asset.getAssetName(), asset.getAssetCode()))
+                            .priority(com.nulogic.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                            .actionUrl("/assets/my-assets")
+                            .build();
+
+            webSocketNotificationService.sendToUser(assignedEmployeeId, wsNotification);
+            log.info("Notifications sent for assigned asset: {}", asset.getAssetCode());
+        } catch (Exception e) {
+            log.warn("Failed to send asset assignment notification for asset {}: {}", asset.getAssetCode(), e.getMessage());
+        }
+    }
+
+    private void notifyAssetReturned(Asset asset, UUID previousAssigneeId) {
+        try {
+            notificationService.createNotification(
+                    previousAssigneeId,
+                    com.nulogic.domain.notification.Notification.NotificationType.GENERAL,
+                    "Asset Returned",
+                    String.format("Your return of %s (%s) has been recorded", asset.getAssetName(), asset.getAssetCode()),
+                    asset.getId(),
+                    "ASSET",
+                    "/assets/my-assets",
+                    com.nulogic.domain.notification.Notification.Priority.NORMAL
+            );
+
+            com.nulogic.application.notification.dto.NotificationMessage wsNotification =
+                    com.nulogic.application.notification.dto.NotificationMessage.builder()
+                            .type(com.nulogic.application.notification.dto.NotificationMessage.NotificationType.ANNOUNCEMENT)
+                            .title("Asset Returned")
+                            .message(String.format("Your return of %s (%s) has been recorded", asset.getAssetName(), asset.getAssetCode()))
+                            .priority(com.nulogic.application.notification.dto.NotificationMessage.Priority.NORMAL)
+                            .actionUrl("/assets/my-assets")
+                            .build();
+
+            webSocketNotificationService.sendToUser(previousAssigneeId, wsNotification);
+            log.info("Notifications sent for returned asset: {}", asset.getAssetCode());
+        } catch (Exception e) {
+            log.warn("Failed to send asset return notification for asset {}: {}", asset.getAssetCode(), e.getMessage());
+        }
+    }
 
     private void notifyAssetApproved(Asset asset) {
         try {
