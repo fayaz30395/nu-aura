@@ -124,12 +124,12 @@ export default function TemplatesPage() {
                           {template.description || 'No description provided for this template.'}
                         </p>
 
-                        <div className="row-between mt-auto pt-6 border-t border-white/20">
+                        <div className="row-between mt-auto pt-6 border-t border-[var(--border-subtle)]">
                           <div className="flex items-center gap-2">
                             <div className="flex -space-x-2">
                               {[1, 2, 3].map(i => (
                                 <div key={i}
-                                     className="h-6 w-6 rounded-full bg-[var(--bg-secondary)] border-2 border-white/50"/>
+                                     className="h-6 w-6 rounded-full bg-[var(--bg-secondary)] border-2 border-[var(--border-subtle)]"/>
                               ))}
                             </div>
                             <span
