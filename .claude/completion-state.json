@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T05:00:00Z",
-  "repositoryCommit": "d775ac27",
-  "passId": "pass-4-partial",
+  "lastUpdated": "2026-09-20T05:30:00Z",
+  "repositoryCommit": "d99c55b2",
+  "passId": "pass-4-partial-2",
   "scopeVersion": "keka-parity-v1",
   "items": {
     "notifications.attendance_regularized": {
@@ -611,15 +611,16 @@
       "blocker": "hard-gate story sitting at Verified pending human signoff (formality only - no real remediation needed)"
     },
     "rbac.scope_model_5_domains": {
-      "status": "in_flight",
-      "summary": "DataScopeService not wired into Payroll/Compensation/Performance/Benefits/Compliance - hard-gate story dispatched",
+      "status": "completed",
+      "summary": "DataScopeService wired into all 5 domains at per-employee entity level: Payslip (Payroll), SalaryRevision (Compensation), PerformanceReview (Performance), BenefitEnrollment (Benefits), PolicyAcknowledgment (Compliance). Batch/cycle-level entities (PayrollRun, CompensationReviewCycle) deliberately left unscoped - no employee/dept/location field, scope predicates don't apply meaningfully. Real behavior change: TEAM-scoped roles now see only their team's data in these 5 domains instead of the whole tenant. 75/75 tests green.",
       "evidence": [
-        "US-2FZ1RXB6QNFD"
+        "US-2FZ1RXB6QNFD",
+        "commit d99c55b2"
       ],
-      "lastVerifiedCommit": "216cbf6a",
-      "lastVerifiedAt": "2026-09-20T03:00:00Z",
+      "lastVerifiedCommit": "d99c55b2",
+      "lastVerifiedAt": "2026-09-20T05:30:00Z",
       "reported": true,
-      "blocker": null
+      "blocker": "hard-gate story sitting at Verified pending human signoff"
     },
     "concurrency.other_checks_verified_safe": {
       "status": "completed",
@@ -689,6 +690,14 @@
       "timestamp": "2026-09-20T05:00:00Z",
       "delta": [
         "security.middleware_route_gating (corrected: false finding, no gap existed)"
+      ]
+    },
+    {
+      "passId": "pass-4-partial-2",
+      "commit": "d99c55b2",
+      "timestamp": "2026-09-20T05:30:00Z",
+      "delta": [
+        "rbac.scope_model_5_domains"
       ]
     }
   ]
