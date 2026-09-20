@@ -8,6 +8,7 @@ import {LeaveRequest, LeaveRequestStatus} from '@/lib/types/hrms/leave';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {ColumnVisibilityToggle, loadColumnVisibility, type ToggleableColumn} from '@/components/ui/ColumnVisibilityToggle';
 import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 import {Inbox} from 'lucide-react';
@@ -21,6 +22,17 @@ import {
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
+const LEAVE_REQUEST_TABLE_COLUMNS: ToggleableColumn[] = [
+  {key: 'requestNumber', label: 'Request #', locked: true},
+  {key: 'employeeId', label: 'Employee ID'},
+  {key: 'leaveType', label: 'Leave Type'},
+  {key: 'dates', label: 'Dates'},
+  {key: 'days', label: 'Days'},
+  {key: 'status', label: 'Status', locked: true},
+  {key: 'appliedOn', label: 'Applied On'},
+  {key: 'actions', label: 'Actions', locked: true},
+];
+
 export default function AdminLeaveRequestsPage() {
   const toast = useToast();
   const router = useRouter();
@@ -30,6 +42,9 @@ export default function AdminLeaveRequestsPage() {
   const rejectModalTitleId = useId();
 
   const [selectedStatus, setSelectedStatus] = useState<LeaveRequestStatus | 'ALL'>('PENDING');
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
+    () => loadColumnVisibility('admin-leave-requests', LEAVE_REQUEST_TABLE_COLUMNS)
+  );
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -150,7 +165,8 @@ export default function AdminLeaveRequestsPage() {
         )}
 
         {/* Status Filter Tabs */}
-        <div className="mb-6 flex space-x-2 border-b border-[var(--border-main)]">
+        <div className="mb-6 flex items-center gap-2 border-b border-[var(--border-main)]">
+          <div className="flex space-x-2">
           {(['ALL', 'PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const).map(status => (
             <button
               key={status}
@@ -164,6 +180,15 @@ export default function AdminLeaveRequestsPage() {
               {status}
             </button>
           ))}
+          </div>
+          <div className="ml-auto pb-2">
+            <ColumnVisibilityToggle
+              columns={LEAVE_REQUEST_TABLE_COLUMNS}
+              visible={visibleColumns}
+              onChange={setVisibleColumns}
+              storageKey="admin-leave-requests"
+            />
+          </div>
         </div>
 
         {/* Leave Requests Table */}
@@ -175,24 +200,34 @@ export default function AdminLeaveRequestsPage() {
                 className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
                 Request #
               </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Employee ID
-              </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Leave Type
-              </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Dates
-              </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Days
-              </th>
+              {visibleColumns.has('employeeId') && (
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  Employee ID
+                </th>
+              )}
+              {visibleColumns.has('leaveType') && (
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  Leave Type
+                </th>
+              )}
+              {visibleColumns.has('dates') && (
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  Dates
+                </th>
+              )}
+              {visibleColumns.has('days') && (
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  Days
+                </th>
+              )}
               <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Applied On
-              </th>
+              {visibleColumns.has('appliedOn') && (
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
+                  Applied On
+                </th>
+              )}
               <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
                 Actions
               </th>
@@ -215,24 +250,34 @@ export default function AdminLeaveRequestsPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[var(--text-primary)]">
                     {request.requestNumber}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
-                    {request.employeeId.substring(0, 8)}...
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
-                    {getLeaveTypeName(request.leaveTypeId)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
-                    {formatDate(request.startDate)} - {formatDate(request.endDate)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
-                    {request.totalDays} {request.isHalfDay && '(Half Day)'}
-                  </td>
+                  {visibleColumns.has('employeeId') && (
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
+                      {request.employeeId.substring(0, 8)}...
+                    </td>
+                  )}
+                  {visibleColumns.has('leaveType') && (
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-primary)]">
+                      {getLeaveTypeName(request.leaveTypeId)}
+                    </td>
+                  )}
+                  {visibleColumns.has('dates') && (
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
+                      {formatDate(request.startDate)} - {formatDate(request.endDate)}
+                    </td>
+                  )}
+                  {visibleColumns.has('days') && (
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
+                      {request.totalDays} {request.isHalfDay && '(Half Day)'}
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={request.status} domain={LEAVE_STATUS}/>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
-                    {formatDate(request.appliedOn)}
-                  </td>
+                  {visibleColumns.has('appliedOn') && (
+                    <td className="px-6 py-4 whitespace-nowrap text-body-secondary">
+                      {formatDate(request.appliedOn)}
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                     {request.status === 'PENDING' && (
                       <>
