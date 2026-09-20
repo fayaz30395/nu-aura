@@ -2,12 +2,21 @@ package com.nulogic.application.analytics.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nulogic.application.analytics.dto.AnalyticsSummary;
 import com.nulogic.application.report.service.ReportGenerationService;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.analytics.ReportExecution;
 import com.nulogic.domain.analytics.ScheduledReport;
+import com.nulogic.domain.attendance.AttendanceRecord;
+import com.nulogic.domain.leave.LeaveBalance;
+import com.nulogic.domain.leave.LeaveRequest;
+import com.nulogic.domain.leave.LeaveType;
 import com.nulogic.infrastructure.analytics.repository.ReportExecutionRepository;
+import com.nulogic.infrastructure.attendance.repository.AttendanceRecordRepository;
+import com.nulogic.infrastructure.leave.repository.LeaveBalanceRepository;
+import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
+import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +31,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Scheduler job that executes due scheduled reports.
@@ -44,6 +55,11 @@ public class ScheduledReportExecutionJob {
     private final JavaMailSender mailSender;
     private final ObjectMapper objectMapper;
     private final TenantTimeService tenantTimeService;
+    private final AttendanceRecordRepository attendanceRecordRepository;
+    private final LeaveRequestRepository leaveRequestRepository;
+    private final LeaveTypeRepository leaveTypeRepository;
+    private final LeaveBalanceRepository leaveBalanceRepository;
+    private final AnalyticsService analyticsService;
 
     /**
      * Self-reference resolved through the Spring proxy so that the
@@ -213,29 +229,136 @@ public class ScheduledReportExecutionJob {
                 LocalDate endDate = today;
                 reportData.put("startDate", startDate.toString());
                 reportData.put("endDate", endDate.toString());
-                reportData.put("presentDays", "0");
-                reportData.put("absentDays", "0");
-                reportData.put("lateDays", "0");
-                reportData.put("totalHours", "0");
-                reportData.put("records", List.of());
+                reportData.putAll(buildAttendanceReportData(scheduledReport.getTenantId(), startDate, endDate));
                 yield reportGenerationService.generateAttendanceReport(
                         scheduledReport.getTenantId(), startDate, endDate, reportData, "DEPARTMENT");
             }
             case "LEAVE", "LEAVE_SUMMARY" -> {
-                reportData.put("balances", List.of());
-                reportData.put("history", List.of());
+                reportData.putAll(buildLeaveReportData(scheduledReport.getTenantId(), today.getYear()));
                 yield reportGenerationService.generateLeaveReport(
                         scheduledReport.getTenantId(), today.getYear(), reportData);
             }
             default -> {
                 // Default to analytics report for other types
                 reportData.put("executiveSummary", "Scheduled report: " + scheduledReport.getScheduleName());
-                reportData.put("headcountMetrics", Map.of("totalEmployees", 0, "activeEmployees", 0));
-                reportData.put("attendanceMetrics", Map.of("attendanceRate", 0.0));
-                reportData.put("leaveMetrics", Map.of("pendingRequests", 0));
+                reportData.putAll(buildAnalyticsReportData());
                 yield reportGenerationService.generateAnalyticsReport(reportData, period);
             }
         };
+    }
+
+    /**
+     * Real tenant-wide attendance aggregation for the scheduled PDF summary — reuses the
+     * same repository query {@code ReportService.generateAttendanceReport} uses, rather than
+     * the hardcoded zero/empty placeholders this previously shipped.
+     */
+    private Map<String, Object> buildAttendanceReportData(UUID tenantId, LocalDate startDate, LocalDate endDate) {
+        List<AttendanceRecord> records = attendanceRecordRepository
+                .findAllByTenantIdAndAttendanceDateBetween(tenantId, startDate, endDate);
+
+        long presentDays = records.stream().filter(r -> r.getStatus() == AttendanceRecord.AttendanceStatus.PRESENT).count();
+        long absentDays = records.stream().filter(r -> r.getStatus() == AttendanceRecord.AttendanceStatus.ABSENT).count();
+        long lateDays = records.stream().filter(r -> Boolean.TRUE.equals(r.getIsLate())).count();
+        double totalHours = records.stream()
+                .mapToDouble(r -> r.getWorkDurationMinutes() != null ? r.getWorkDurationMinutes() / 60.0 : 0.0)
+                .sum();
+
+        List<Map<String, Object>> recordRows = records.stream()
+                .map(r -> {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("date", r.getAttendanceDate().toString());
+                    row.put("checkIn", r.getCheckInTime() != null ? r.getCheckInTime().toLocalTime().toString() : "-");
+                    row.put("checkOut", r.getCheckOutTime() != null ? r.getCheckOutTime().toLocalTime().toString() : "-");
+                    row.put("hoursWorked", r.getWorkDurationMinutes() != null
+                            ? String.format("%.1f", r.getWorkDurationMinutes() / 60.0) : "-");
+                    row.put("status", r.getStatus() != null ? r.getStatus().name() : "");
+                    return row;
+                })
+                .collect(Collectors.toList());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("presentDays", String.valueOf(presentDays));
+        data.put("absentDays", String.valueOf(absentDays));
+        data.put("lateDays", String.valueOf(lateDays));
+        data.put("totalHours", String.format("%.1f", totalHours));
+        data.put("records", recordRows);
+        return data;
+    }
+
+    /**
+     * Real tenant-wide leave aggregation for the scheduled PDF summary — balances grouped
+     * by leave type (via {@link LeaveBalanceRepository#findAllByTenantIdAndYear}), history
+     * from the same query {@code ReportService.generateLeaveReport} uses.
+     */
+    private Map<String, Object> buildLeaveReportData(UUID tenantId, int year) {
+        Map<UUID, LeaveType> leaveTypeMap = leaveTypeRepository.findAllByTenantId(tenantId).stream()
+                .collect(Collectors.toMap(LeaveType::getId, lt -> lt));
+
+        Map<UUID, List<LeaveBalance>> balancesByType = leaveBalanceRepository
+                .findAllByTenantIdAndYear(tenantId, year).stream()
+                .collect(Collectors.groupingBy(LeaveBalance::getLeaveTypeId));
+
+        List<Map<String, Object>> balanceRows = balancesByType.entrySet().stream()
+                .map(entry -> {
+                    BigDecimal entitled = entry.getValue().stream()
+                            .map(b -> b.getOpeningBalance().add(b.getAccrued()))
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal used = entry.getValue().stream()
+                            .map(LeaveBalance::getUsed)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    BigDecimal balance = entry.getValue().stream()
+                            .map(LeaveBalance::getAvailable)
+                            .reduce(BigDecimal.ZERO, BigDecimal::add);
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("leaveType", leaveTypeMap.containsKey(entry.getKey())
+                            ? leaveTypeMap.get(entry.getKey()).getLeaveName() : "Unknown");
+                    row.put("entitled", entitled.toString());
+                    row.put("used", used.toString());
+                    row.put("balance", balance.toString());
+                    return row;
+                })
+                .collect(Collectors.toList());
+
+        List<LeaveRequest> leaveRequests = leaveRequestRepository.findByTenantIdAndStartDateBetween(
+                tenantId, LocalDate.of(year, 1, 1), LocalDate.of(year, 12, 31));
+        List<Map<String, Object>> historyRows = leaveRequests.stream()
+                .map(lr -> {
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("leaveType", leaveTypeMap.containsKey(lr.getLeaveTypeId())
+                            ? leaveTypeMap.get(lr.getLeaveTypeId()).getLeaveName() : "Unknown");
+                    row.put("fromDate", lr.getStartDate().toString());
+                    row.put("toDate", lr.getEndDate().toString());
+                    row.put("days", lr.getTotalDays() != null ? lr.getTotalDays().toString() : "0");
+                    row.put("status", lr.getStatus() != null ? lr.getStatus().name() : "");
+                    return row;
+                })
+                .collect(Collectors.toList());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("balances", balanceRows);
+        data.put("history", historyRows);
+        return data;
+    }
+
+    /**
+     * Real tenant KPIs for the scheduled analytics summary — delegates to
+     * {@link AnalyticsService#getAnalyticsSummary()}, the same source the live dashboard uses.
+     */
+    private Map<String, Object> buildAnalyticsReportData() {
+        AnalyticsSummary summary = analyticsService.getAnalyticsSummary();
+        double attendanceRate = summary.getTotalEmployees() > 0
+                ? (summary.getPresentToday() * 100.0) / summary.getTotalEmployees()
+                : 0.0;
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("headcountMetrics", Map.of(
+                "totalEmployees", summary.getTotalEmployees(),
+                "activeEmployees", summary.getTotalEmployees()));
+        data.put("attendanceMetrics", Map.of(
+                "attendanceRate", String.format("%.1f%%", attendanceRate)));
+        data.put("leaveMetrics", Map.of(
+                "pendingRequests", summary.getOnLeaveToday()));
+        return data;
     }
 
     /**
