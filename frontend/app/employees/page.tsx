@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
+  Filter,
   MoreHorizontal,
   Search,
   SlidersHorizontal,
@@ -27,6 +28,7 @@ import {
 } from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {ColumnVisibilityToggle, loadColumnVisibility, type ToggleableColumn} from '@/components/ui/ColumnVisibilityToggle';
+import {AdvancedFilterPanel, type FilterCondition, type FilterField} from '@/components/ui/AdvancedFilterPanel';
 import {Button} from '@/components/ui/Button';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonTable} from '@/components/ui/Skeleton';
@@ -106,6 +108,77 @@ const createEmployeeFormSchema = z.object({
 
 type CreateEmployeeFormData = z.infer<typeof createEmployeeFormSchema>;
 
+const EMPLOYEE_FILTER_FIELDS: FilterField[] = [
+  {key: 'designation', label: 'Designation', type: 'text'},
+  {
+    key: 'status',
+    label: 'Status',
+    type: 'select',
+    options: Object.entries(EMPLOYEE_LIFECYCLE_STATUS).map(([value, meta]) => ({value, label: meta.label})),
+  },
+  {key: 'joiningDate', label: 'Joining Date', type: 'date'},
+  {key: 'city', label: 'Location (City)', type: 'text'},
+];
+
+/** Read the raw comparable value for a filter field off an Employee row. */
+function filterFieldValue(employee: Employee, field: string): string {
+  switch (field) {
+    case 'designation':
+      return employee.designation ?? '';
+    case 'status':
+      return employee.status;
+    case 'joiningDate':
+      return employee.joiningDate ?? '';
+    case 'city':
+      return employee.city ?? '';
+    default:
+      return '';
+  }
+}
+
+/** Evaluate one FilterCondition against an employee row using AdvancedFilterPanel's operator set. */
+function matchesFilterCondition(employee: Employee, condition: FilterCondition): boolean {
+  const raw = filterFieldValue(employee, condition.field);
+  const value = condition.value;
+
+  switch (condition.operator) {
+    case 'isEmpty':
+      return raw === '';
+    case 'isNotEmpty':
+      return raw !== '';
+    case 'equals':
+      return raw.toLowerCase() === String(value ?? '').toLowerCase();
+    case 'contains':
+      return raw.toLowerCase().includes(String(value ?? '').toLowerCase());
+    case 'startsWith':
+      return raw.toLowerCase().startsWith(String(value ?? '').toLowerCase());
+    case 'greaterThan':
+      return raw > String(value ?? '');
+    case 'lessThan':
+      return raw < String(value ?? '');
+    case 'between': {
+      const [start, end] = String(value ?? '').split('|');
+      return (!start || raw >= start) && (!end || raw <= end);
+    }
+    default:
+      return true;
+  }
+}
+
+/** Apply the active AdvancedFilterPanel conditions to the employee list (AND/OR combined). */
+function applyAdvancedFilters(
+  employees: Employee[],
+  conditions: FilterCondition[],
+  logic: 'AND' | 'OR',
+): Employee[] {
+  if (conditions.length === 0) return employees;
+  return employees.filter((employee) =>
+    logic === 'AND'
+      ? conditions.every((c) => matchesFilterCondition(employee, c))
+      : conditions.some((c) => matchesFilterCondition(employee, c))
+  );
+}
+
 const EMPLOYEE_TABLE_COLUMNS: ToggleableColumn[] = [
   {key: 'employee', label: 'Employee', locked: true},
   {key: 'role', label: 'Role'},
@@ -143,6 +216,9 @@ export default function EmployeesPage() {
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
     () => loadColumnVisibility('employees-directory', EMPLOYEE_TABLE_COLUMNS)
   );
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [filterConditions, setFilterConditions] = useState<FilterCondition[]>([]);
+  const [filterLogic, setFilterLogic] = useState<'AND' | 'OR'>('AND');
 
   // React Query - fetch employees, managers, and departments
   const {data: employeeResponse, isLoading: employeesLoading, error: employeesError} = useEmployees(
@@ -190,11 +266,12 @@ export default function EmployeesPage() {
     () => {
       const activeEmployees = employees.filter((employee) => employee.status !== 'TERMINATED');
       const notDeleted = activeEmployees.filter((employee) => !deletedEmployeeIds.has(employee.id));
-      return (deptFilter === 'All'
+      const deptFiltered = (deptFilter === 'All'
         ? notDeleted
         : notDeleted.filter((e) => e.departmentName === deptFilter));
+      return applyAdvancedFilters(deptFiltered, filterConditions, filterLogic);
     },
-    [employees, deptFilter, deletedEmployeeIds],
+    [employees, deptFilter, deletedEmployeeIds, filterConditions, filterLogic],
   );
 
   useEffect(() => {
@@ -567,6 +644,16 @@ export default function EmployeesPage() {
                 >
                   Sort
                 </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  leftIcon={<Filter size={15} aria-hidden />}
+                  onClick={() => setShowFilterPanel((prev) => !prev)}
+                  aria-expanded={showFilterPanel}
+                >
+                  Filters
+                  {filterConditions.length > 0 && ` (${filterConditions.length})`}
+                </Button>
                 <ColumnVisibilityToggle
                   columns={EMPLOYEE_TABLE_COLUMNS}
                   visible={visibleColumns}
@@ -574,6 +661,20 @@ export default function EmployeesPage() {
                   storageKey="employees-directory"
                 />
               </div>
+            </div>
+          )}
+
+          {showFilterPanel && (
+            <div className="px-4 pt-2">
+              <AdvancedFilterPanel
+                fields={EMPLOYEE_FILTER_FIELDS}
+                onApply={(conditions, logic) => {
+                  setFilterConditions(conditions);
+                  setFilterLogic(logic);
+                }}
+                onClear={() => setFilterConditions([])}
+                tableId="employees-directory"
+              />
             </div>
           )}
 
