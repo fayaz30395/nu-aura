@@ -1,6 +1,7 @@
 'use client';
 
 import {useId, useState} from 'react';
+import Link from 'next/link';
 import {Controller, useForm} from 'react-hook-form';
 import {DateInput} from '@mantine/dates';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -15,7 +16,7 @@ import {
   ReviewCycle,
   ReviewCycleRequest
 } from '@/lib/types/grow/performance';
-import {Building2, CheckCircle, MapPin, Play, Users} from 'lucide-react';
+import {Building2, CheckCircle, Grid3x3, MapPin, Play, Scale, Users} from 'lucide-react';
 import {
   useActivatePerformanceCycle,
   useCreatePerformanceCycle,
@@ -380,6 +381,23 @@ export default function ReviewCyclesPage() {
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className="flex gap-2 mb-2">
+                  <Link
+                    href={`/performance/cycles/${cycle.id}/calibration`}
+                    className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
+                  >
+                    <Scale className="h-4 w-4"/>
+                    Calibration
+                  </Link>
+                  <Link
+                    href={`/performance/cycles/${cycle.id}/nine-box`}
+                    className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
+                  >
+                    <Grid3x3 className="h-4 w-4"/>
+                    9-Box
+                  </Link>
                 </div>
 
                 <div className="flex gap-2">
