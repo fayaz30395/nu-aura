@@ -1,11 +1,15 @@
 package com.nulogic.application.attendance.service;
 
+import com.nulogic.application.notification.dto.NotificationMessage;
+import com.nulogic.application.notification.service.NotificationService;
+import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.shift.service.ShiftAttendanceService;
 import com.nulogic.common.config.AttendanceConfigProperties;
 import com.nulogic.common.logging.Audited;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
+import com.nulogic.domain.notification.Notification;
 import com.nulogic.domain.attendance.AttendanceTimeEntry;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.infrastructure.attendance.repository.AttendanceRecordRepository;
@@ -43,6 +47,8 @@ public class AttendanceRecordService {
     private final ShiftAttendanceService shiftAttendanceService;
     private final TenantAttendanceConfigService tenantAttendanceConfigService;
     private final TenantTimeService tenantTimeService;
+    private final NotificationService notificationService;
+    private final WebSocketNotificationService webSocketNotificationService;
 
     /**
      * Check in an employee at the specified time.
@@ -603,6 +609,8 @@ public class AttendanceRecordService {
         attendanceAuditPublisher.publish(approverId, "APPROVE", "AttendanceRecord", savedRecord.getId(),
                 tenantId, "Attendance regularization approved");
 
+        notifyRegularizationApproved(savedRecord);
+
         return savedRecord;
     }
 
@@ -845,7 +853,78 @@ public class AttendanceRecordService {
 
         record.rejectRegularization(rejectorId, reason, tenantTimeService.now(record.getTenantId()));
         log.info("Regularization rejected for record {} by {}", id, rejectorId);
-        return attendanceRecordRepository.save(record);
+        AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
+
+        notifyRegularizationRejected(savedRecord, reason);
+
+        return savedRecord;
+    }
+
+    // ===================== Notification Helpers =====================
+
+    private void notifyRegularizationApproved(AttendanceRecord record) {
+        try {
+            String title = "Attendance Regularization Approved";
+            String message = String.format("Your attendance regularization request for %s has been approved",
+                    record.getAttendanceDate());
+
+            notificationService.createNotification(
+                    record.getEmployeeId(),
+                    Notification.NotificationType.APPROVAL_APPROVED,
+                    title,
+                    message,
+                    record.getId(),
+                    "ATTENDANCE",
+                    "/attendance/regularization",
+                    Notification.Priority.NORMAL
+            );
+
+            NotificationMessage wsNotification = NotificationMessage.builder()
+                    .type(NotificationMessage.NotificationType.APPROVAL_APPROVED)
+                    .title(title)
+                    .message(message)
+                    .priority(NotificationMessage.Priority.NORMAL)
+                    .actionUrl("/attendance/regularization")
+                    .build();
+
+            webSocketNotificationService.sendToUser(record.getEmployeeId(), wsNotification);
+        } catch (Exception e) { // best-effort — never block the approval on notification failure
+            log.warn("Failed to send regularization approval notification for record {}: {}",
+                    record.getId(), e.getMessage());
+        }
+    }
+
+    private void notifyRegularizationRejected(AttendanceRecord record, String reason) {
+        try {
+            String title = "Attendance Regularization Rejected";
+            String rejectionReason = reason != null && !reason.isBlank() ? reason : "No reason provided";
+            String message = String.format("Your attendance regularization request for %s has been rejected: %s",
+                    record.getAttendanceDate(), rejectionReason);
+
+            notificationService.createNotification(
+                    record.getEmployeeId(),
+                    Notification.NotificationType.APPROVAL_REJECTED,
+                    title,
+                    message,
+                    record.getId(),
+                    "ATTENDANCE",
+                    "/attendance/regularization",
+                    Notification.Priority.HIGH
+            );
+
+            NotificationMessage wsNotification = NotificationMessage.builder()
+                    .type(NotificationMessage.NotificationType.APPROVAL_REJECTED)
+                    .title(title)
+                    .message(message)
+                    .priority(NotificationMessage.Priority.HIGH)
+                    .actionUrl("/attendance/regularization")
+                    .build();
+
+            webSocketNotificationService.sendToUser(record.getEmployeeId(), wsNotification);
+        } catch (Exception e) { // best-effort — never block the rejection on notification failure
+            log.warn("Failed to send regularization rejection notification for record {}: {}",
+                    record.getId(), e.getMessage());
+        }
     }
 
     // ===================== Result Classes =====================
