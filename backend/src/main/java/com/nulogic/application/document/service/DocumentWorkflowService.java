@@ -7,8 +7,6 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.document.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,156 +24,9 @@ import java.util.UUID;
 @Transactional
 public class DocumentWorkflowService {
 
-    private final DocumentApprovalWorkflowRepository approvalWorkflowRepository;
-    private final DocumentApprovalTaskRepository approvalTaskRepository;
     private final DocumentAccessRepository documentAccessRepository;
     private final DocumentExpiryTrackingRepository expiryTrackingRepository;
     private final TenantTimeService tenantTimeService;
-
-    /**
-     * Initiate document approval workflow
-     */
-    public DocumentApprovalWorkflow initiateApprovalWorkflow(UUID documentId, int totalApprovalLevels) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
-        UUID userId = SecurityContext.getCurrentUserId();
-
-        // Check if workflow already exists for this document
-        var existing = approvalWorkflowRepository.findByTenantIdAndDocumentId(tenantId, documentId);
-        if (existing.isPresent() && existing.get().getStatus() == DocumentApprovalWorkflow.WorkflowStatus.IN_PROGRESS) {
-            throw new BusinessException("An approval workflow is already in progress for this document");
-        }
-
-        DocumentApprovalWorkflow workflow = DocumentApprovalWorkflow.builder()
-                .tenantId(tenantId)
-                .documentId(documentId)
-                .status(DocumentApprovalWorkflow.WorkflowStatus.PENDING)
-                .requestedBy(userId)
-                .approvalLevel(1)
-                .totalApprovalLevels(totalApprovalLevels)
-                .initiatedAt(tenantTimeService.now(tenantId))
-                .createdBy(userId)
-                .build();
-
-        DocumentApprovalWorkflow savedWorkflow = approvalWorkflowRepository.save(workflow);
-        log.info("Approval workflow initiated for document: {} with {} approval levels", documentId, totalApprovalLevels);
-
-        return savedWorkflow;
-    }
-
-    /**
-     * Create approval task for workflow
-     */
-    @Transactional
-    public DocumentApprovalTask createApprovalTask(UUID workflowId, UUID approverId, int approvalLevel) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
-        UUID userId = SecurityContext.getCurrentUserId();
-
-        DocumentApprovalWorkflow workflow = approvalWorkflowRepository.findById(workflowId)
-                .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
-
-        if (!workflow.getTenantId().equals(tenantId)) {
-            throw new BusinessException("Unauthorized access to workflow");
-        }
-
-        DocumentApprovalTask task = DocumentApprovalTask.builder()
-                .tenantId(tenantId)
-                .workflowId(workflowId)
-                .approverId(approverId)
-                .status(DocumentApprovalTask.TaskStatus.PENDING)
-                .approvalLevel(approvalLevel)
-                .createdBy(userId)
-                .build();
-
-        DocumentApprovalTask savedTask = approvalTaskRepository.save(task);
-        log.info("Approval task created: {} for approver: {}", savedTask.getId(), approverId);
-
-        return savedTask;
-    }
-
-    /**
-     * Approve document
-     */
-    @Transactional
-    public DocumentApprovalWorkflow approveDocument(UUID workflowId, String comments) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
-        UUID userId = SecurityContext.getCurrentUserId();
-
-        DocumentApprovalWorkflow workflow = approvalWorkflowRepository.findById(workflowId)
-                .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
-
-        if (!workflow.getTenantId().equals(tenantId)) {
-            throw new BusinessException("Unauthorized access to workflow");
-        }
-
-        // Find current approval task
-        DocumentApprovalTask currentTask = approvalTaskRepository.findByWorkflowIdAndApprovalLevel(
-                        workflowId, workflow.getApprovalLevel())
-                .orElseThrow(() -> new BusinessException("Current approval task not found"));
-
-        // Verify current user is the approver
-        if (!currentTask.getApproverId().equals(userId)) {
-            throw new BusinessException("You are not authorized to approve this document");
-        }
-
-        // Mark task as approved
-        currentTask.setStatus(DocumentApprovalTask.TaskStatus.APPROVED);
-        currentTask.setComments(comments);
-        currentTask.setApprovedAt(tenantTimeService.now(tenantId));
-        approvalTaskRepository.save(currentTask);
-
-        // Check if all approvals are complete
-        if (workflow.getApprovalLevel() >= workflow.getTotalApprovalLevels()) {
-            workflow.setStatus(DocumentApprovalWorkflow.WorkflowStatus.APPROVED);
-            workflow.setCompletedAt(tenantTimeService.now(tenantId));
-            log.info("Document approved: {}", workflow.getDocumentId());
-        } else {
-            // Move to next approval level
-            workflow.setApprovalLevel(workflow.getApprovalLevel() + 1);
-            workflow.setStatus(DocumentApprovalWorkflow.WorkflowStatus.IN_PROGRESS);
-        }
-
-        return approvalWorkflowRepository.save(workflow);
-    }
-
-    /**
-     * Reject document
-     */
-    @Transactional
-    public DocumentApprovalWorkflow rejectDocument(UUID workflowId, String rejectionReason) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
-        UUID userId = SecurityContext.getCurrentUserId();
-
-        DocumentApprovalWorkflow workflow = approvalWorkflowRepository.findById(workflowId)
-                .orElseThrow(() -> new ResourceNotFoundException("Workflow not found"));
-
-        if (!workflow.getTenantId().equals(tenantId)) {
-            throw new BusinessException("Unauthorized access to workflow");
-        }
-
-        // Find current approval task
-        DocumentApprovalTask currentTask = approvalTaskRepository.findByWorkflowIdAndApprovalLevel(
-                        workflowId, workflow.getApprovalLevel())
-                .orElseThrow(() -> new BusinessException("Current approval task not found"));
-
-        // Verify current user is the approver
-        if (!currentTask.getApproverId().equals(userId)) {
-            throw new BusinessException("You are not authorized to reject this document");
-        }
-
-        // Mark task as rejected
-        currentTask.setStatus(DocumentApprovalTask.TaskStatus.REJECTED);
-        currentTask.setComments(rejectionReason);
-        currentTask.setApprovedAt(tenantTimeService.now(tenantId));
-        approvalTaskRepository.save(currentTask);
-
-        // Mark workflow as rejected
-        workflow.setStatus(DocumentApprovalWorkflow.WorkflowStatus.REJECTED);
-        workflow.setRejectionReason(rejectionReason);
-        workflow.setCompletedAt(tenantTimeService.now(tenantId));
-
-        log.info("Document rejected: {}", workflow.getDocumentId());
-        return approvalWorkflowRepository.save(workflow);
-    }
 
     /**
      * Grant document access to user, role, or department
@@ -298,27 +149,6 @@ public class DocumentWorkflowService {
         tracking.setIsNotified(true);
         tracking.setNotifiedAt(tenantTimeService.now(tenantId));
         expiryTrackingRepository.save(tracking);
-    }
-
-    /**
-     * List approval workflows for tenant
-     */
-    @Transactional(readOnly = true)
-    public Page<DocumentApprovalWorkflow> listApprovalWorkflows(Pageable pageable) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
-        return approvalWorkflowRepository.findByTenantId(tenantId, pageable);
-    }
-
-    /**
-     * List pending approvals for current user
-     */
-    @Transactional(readOnly = true)
-    public Page<DocumentApprovalWorkflow> listPendingApprovalsForUser(Pageable pageable) {
-        UUID tenantId = SecurityContext.getCurrentTenantId();
-        UUID userId = SecurityContext.getCurrentUserId();
-
-        return approvalWorkflowRepository.findByTenantIdAndCurrentApproverIdAndStatus(
-                tenantId, userId, DocumentApprovalWorkflow.WorkflowStatus.IN_PROGRESS, pageable);
     }
 
     /**

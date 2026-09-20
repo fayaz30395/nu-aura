@@ -191,8 +191,6 @@ class LayerArchitectureTest {
                     .and().doNotHaveFullyQualifiedName("com.nulogic.common.security.ApiKeyRepository")
                     // Document-related repositories in domain package (co-located with entities)
                     .and().doNotHaveFullyQualifiedName("com.nulogic.domain.document.DocumentAccessRepository")
-                    .and().doNotHaveFullyQualifiedName("com.nulogic.domain.document.DocumentApprovalTaskRepository")
-                    .and().doNotHaveFullyQualifiedName("com.nulogic.domain.document.DocumentApprovalWorkflowRepository")
                     .and().doNotHaveFullyQualifiedName("com.nulogic.domain.document.DocumentExpiryTrackingRepository")
                     .and().doNotHaveFullyQualifiedName("com.nulogic.domain.document.DocumentVersionRepository")
                     .and().doNotHaveFullyQualifiedName("com.nulogic.domain.document.GeneratedDocumentRepository")
