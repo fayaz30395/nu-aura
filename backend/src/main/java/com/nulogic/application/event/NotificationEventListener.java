@@ -6,6 +6,8 @@ import com.nulogic.application.notification.service.WebSocketNotificationService
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.event.expense.ExpenseSubmittedEvent;
 import com.nulogic.domain.event.leave.LeaveRequestedEvent;
+import com.nulogic.domain.event.recruitment.OfferAcceptedEvent;
+import com.nulogic.domain.event.recruitment.OfferDeclinedEvent;
 import com.nulogic.domain.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,6 +104,51 @@ public class NotificationEventListener {
                 "/expenses/approvals",
                 Notification.Priority.NORMAL
         );
+    }
+
+    // ==================== Recruitment Events ====================
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onOfferAccepted(OfferAcceptedEvent event) {
+        log.info("Handling OfferAcceptedEvent: {} accepted the offer for {}",
+                event.getCandidateName(), event.getJobTitle());
+
+        String title = "Offer Accepted";
+        String message = String.format("%s accepted the offer for %s", event.getCandidateName(), event.getJobTitle());
+
+        notifyRecruitmentStakeholders(event.getTenantId(), event.getRecruiterId(), event.getHiringManagerId(),
+                title, message, event.getAggregateId());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onOfferDeclined(OfferDeclinedEvent event) {
+        log.info("Handling OfferDeclinedEvent: {} declined the offer for {}",
+                event.getCandidateName(), event.getJobTitle());
+
+        String title = "Offer Declined";
+        String message = String.format("%s declined the offer for %s", event.getCandidateName(), event.getJobTitle());
+
+        notifyRecruitmentStakeholders(event.getTenantId(), event.getRecruiterId(), event.getHiringManagerId(),
+                title, message, event.getAggregateId());
+    }
+
+    private void notifyRecruitmentStakeholders(UUID tenantId, UUID recruiterId, UUID hiringManagerId,
+                                               String title, String message, UUID candidateId) {
+        if (recruiterId == null && hiringManagerId == null) {
+            log.warn("No recruiter or hiring manager assigned for candidate {}; skipping offer response notification", candidateId);
+            return;
+        }
+
+        if (recruiterId != null) {
+            createAndPushNotification(tenantId, recruiterId, Notification.NotificationType.GENERAL,
+                    title, message, candidateId, "Candidate", "/hire/candidates", Notification.Priority.NORMAL);
+        }
+        if (hiringManagerId != null && !hiringManagerId.equals(recruiterId)) {
+            createAndPushNotification(tenantId, hiringManagerId, Notification.NotificationType.GENERAL,
+                    title, message, candidateId, "Candidate", "/hire/candidates", Notification.Priority.NORMAL);
+        }
     }
 
     // ==================== Helper ====================

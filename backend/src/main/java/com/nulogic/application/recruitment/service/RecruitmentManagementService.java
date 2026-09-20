@@ -14,6 +14,8 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.recruitment.CandidateHiredEvent;
+import com.nulogic.domain.event.recruitment.OfferAcceptedEvent;
+import com.nulogic.domain.event.recruitment.OfferDeclinedEvent;
 import com.nulogic.domain.recruitment.Candidate;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.domain.user.RoleScope;
@@ -375,6 +377,16 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         log.info("Offer accepted by candidate {}", candidateId);
 
+        try {
+            JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+            eventPublisher.publish(OfferAcceptedEvent.of(this, savedCandidate, jobOpening));
+            log.info("OfferAcceptedEvent published for candidate: {}", candidateId);
+        } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
+            log.error("Failed to publish OfferAcceptedEvent for candidate {}: {}", candidateId, e.getMessage(), e);
+            // Don't fail the offer acceptance if event publishing fails
+        }
+
         return mapToCandidateResponse(savedCandidate);
     }
 
@@ -413,6 +425,16 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         );
 
         log.info("Offer declined by candidate {} - Reason: {}", candidateId, declineReason);
+
+        try {
+            JobOpening jobOpening = jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Job opening not found"));
+            eventPublisher.publish(OfferDeclinedEvent.of(this, savedCandidate, jobOpening, declineReason));
+            log.info("OfferDeclinedEvent published for candidate: {}", candidateId);
+        } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
+            log.error("Failed to publish OfferDeclinedEvent for candidate {}: {}", candidateId, e.getMessage(), e);
+            // Don't fail the offer decline if event publishing fails
+        }
 
         return mapToCandidateResponse(savedCandidate);
     }
