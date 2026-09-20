@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "lastUpdated": "2026-09-20T08:30:00Z",
-  "repositoryCommit": "eeba5366",
+  "lastUpdated": "2026-09-20T17:55:00Z",
+  "repositoryCommit": "b7abbea7",
   "passId": "pass-5",
   "scopeVersion": "keka-parity-v1",
   "items": {
@@ -721,6 +721,17 @@
       "lastVerifiedAt": "2026-09-20T08:30:00Z",
       "reported": true,
       "blocker": null
+    },
+    "tests.scheduled_report_execution_job_data": {
+      "status": "completed",
+      "summary": "Added unit test coverage for ScheduledReportExecutionJob's real attendance/leave/analytics data builders (introduced in eeba5366) \u2014 previously zero test coverage on new branch/loop aggregation logic. Widened 3 methods private->package-private for testability.",
+      "evidence": [
+        "commit b7abbea7"
+      ],
+      "lastVerifiedCommit": "b7abbea7",
+      "lastVerifiedAt": "2026-09-20T17:55:00Z",
+      "reported": true,
+      "blocker": null
     }
   },
   "passes": [
@@ -808,6 +819,14 @@
       "delta": [
         "scheduling.full_sweep_28_jobs",
         "reports.scheduled_report_fake_data"
+      ]
+    },
+    {
+      "passId": "pass-6",
+      "commit": "b7abbea7",
+      "timestamp": "2026-09-20T17:55:00Z",
+      "delta": [
+        "tests.scheduled_report_execution_job_data"
       ]
     }
   ]
