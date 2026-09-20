@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** autonomous
-> **Status:** In Progress
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -15,5 +15,5 @@
 ## Acceptance Criteria
 
 - **AC1:** app/employees/page.tsx uses the existing AdvancedFilterPanel component (851 lines, built but zero usages) for multi-field filtering, applying conditions client-side against the fetched employee list
-  - **Verify:** `shell: grep -q "AdvancedFilterPanel" frontend/app/employees/page.tsx && echo PASS`
-  - **Verified:** pending
+  - **Verify:** shell grep -q "AdvancedFilterPanel" frontend/app/employees/page.tsx
+  - **Verified:** yes (2026-09-20)

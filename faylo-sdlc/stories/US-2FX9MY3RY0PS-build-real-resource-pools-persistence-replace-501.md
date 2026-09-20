@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** hard-gate
-> **Status:** In Progress
+> **Status:** Verified
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -15,5 +15,5 @@
 ## Acceptance Criteria
 
 - **AC1:** ResourcePoolController's 5 endpoints backed by a real resource_pools + resource_pool_members table (new Flyway migration), entity, repository, service - replacing the 2026 QA-sweep stub. app.features.resource-pools stays default false (operator turns on when ready)
-  - **Verify:** `shell` cd backend && mvn -q -Dtest=ResourcePoolServiceTest test
-  - **Verified:** pending
+  - **Verify:** shell bash -c "cd backend && mvn -q -Dtest=ResourcePoolServiceTest test"
+  - **Verified:** yes (2026-09-20)
