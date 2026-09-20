@@ -184,6 +184,15 @@ this batch (4319 tests, 3 pre-existing/environmental failures unrelated to this 
       `useSettleExpenseAdvance`) and compensation cycle-creation/revision-approval set look the
       most feature-shaped. Not individually verified against their owning pages — lower
       confidence than the items above, scope as a separate follow-up sweep if pursued.
+- [ ] **11 dead exports in `useCompensation.ts`** (of 17 total) — `useActiveCycles`,
+      `useCompensationCycleDetail`, `useCycleStatistics`, `useCreateCycle`,
+      `useUpdateCycleStatus`, `useRevisionsByCycle`, `usePendingApprovals`, `useRevisionDetail`,
+      `useSubmitRevision`, `useReviewRevision`, `useApplyRevision` — zero callers anywhere.
+      Confirmed via exact-name grep (a coarse grep earlier substring-matched an unrelated
+      `usePendingApprovalsCount` in `useResources.ts` — false lead, corrected). NOT a blind
+      delete candidate: `useSubmitRevision`/`useReviewRevision`/`useApplyRevision` look like
+      scaffolding for a submit→review→apply revision workflow the page hasn't finished wiring
+      (only approve/reject exist today) — check with whoever owns compensation before removing.
 - [ ] **Two parallel recruitment domain models** — `Candidate`/`RecruitmentController` (13-stage
       `RecruitmentStage`, backs the nav-linked `/recruitment/candidates` list) vs `Applicant`/
       `ApplicantController` (10-stage `ApplicationStatus`, backs the live `/recruitment/pipeline`
