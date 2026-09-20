@@ -111,7 +111,7 @@ export function DeleteSpaceModal({
                 <p className="text-sm text-danger-700 dark:text-danger-400">
                   This space contains <strong>{pageCount} page{pageCount !== 1 ? 's' : ''}</strong>.
                   All pages must be migrated to another space before deletion.
-                  This action requires approval from the space owner.
+                  This action cannot be undone.
                 </p>
               </div>
             </div>
@@ -292,17 +292,16 @@ export function DeleteSpaceModal({
             transition={{duration: 0.2}}
             className="space-y-6"
           >
-            {/* Approval notice */}
+            {/* Final confirmation notice */}
             <div
               className="flex items-start gap-4 p-4 rounded-xl bg-accent-50 dark:bg-accent-950/20 border border-accent-200 dark:border-accent-800">
               <Shield className="h-5 w-5 text-accent-600 dark:text-accent-400 flex-shrink-0 mt-0.5"/>
               <div>
                 <p className="text-sm font-semibold text-accent-800 dark:text-accent-300 mb-1">
-                  Approval Required
+                  This will delete the space immediately
                 </p>
                 <p className="text-sm text-accent-700 dark:text-accent-400">
-                  An approval request will be sent to <strong>{space.ownerName || 'the space owner'}</strong>.
-                  The space will be marked for deletion and removed once approved.
+                  The space will be permanently removed.
                   {pageCount > 0 && selectedTargetId && (
                     <> All {pageCount} pages will be migrated before deletion.</>
                   )}
