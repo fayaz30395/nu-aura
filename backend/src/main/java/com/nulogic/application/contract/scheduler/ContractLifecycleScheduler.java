@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -216,14 +217,21 @@ public class ContractLifecycleScheduler {
 
         List<ContractReminder> remindersToSave = new ArrayList<>();
         for (Contract contract : approachingExpiry) {
+            // Target expiry-reminder dates for the contract's *current* end date. If the end
+            // date has moved since a prior run, drop any pending EXPIRY reminder that no longer
+            // matches one of these dates so it doesn't linger stale forever (BUG: previously the
+            // scheduler only checked exact-date existence, so a changed end date left the old
+            // reminder row untouched and created a brand new one alongside it).
+            Set<LocalDate> targetExpiryDates = new HashSet<>();
             for (int daysBefore : reminderDays) {
                 LocalDate reminderDate = contract.getEndDate().minusDays(daysBefore);
-
-                // Only create future or today reminders
-                if (reminderDate.isBefore(todayLocal)) {
-                    continue;
+                if (!reminderDate.isBefore(todayLocal)) {
+                    targetExpiryDates.add(reminderDate);
                 }
+            }
+            reconcileStaleReminders(contract.getId(), ReminderType.EXPIRY, targetExpiryDates);
 
+            for (LocalDate reminderDate : targetExpiryDates) {
                 // Idempotency check: skip if a pending reminder already exists
                 if (reminderRepository.existsPendingReminder(
                         contract.getId(), ReminderType.EXPIRY, reminderDate)) {
@@ -238,8 +246,7 @@ public class ContractLifecycleScheduler {
                         .isCompleted(false)
                         .build());
 
-                log.debug("Queued expiry reminder for contract {} on {} ({}d before)",
-                        contract.getId(), reminderDate, daysBefore);
+                log.debug("Queued expiry reminder for contract {} on {}", contract.getId(), reminderDate);
             }
 
             // Also create a renewal reminder if the contract is auto-renewable
@@ -248,20 +255,23 @@ public class ContractLifecycleScheduler {
                         Math.min(reminderDays[0], 7));
 
                 // S12-B: tenant-local "today" for renewal-reminder past check — resolved via TenantTimeService.
-                if (!renewalReminderDate.isBefore(tenantTimeService.today(tenantId))
-                        && !reminderRepository.existsPendingReminder(
-                        contract.getId(), ReminderType.RENEWAL, renewalReminderDate)) {
+                if (!renewalReminderDate.isBefore(tenantTimeService.today(tenantId))) {
+                    reconcileStaleReminders(contract.getId(), ReminderType.RENEWAL, Set.of(renewalReminderDate));
 
-                    remindersToSave.add(ContractReminder.builder()
-                            .tenantId(tenantId)
-                            .contractId(contract.getId())
-                            .reminderDate(renewalReminderDate)
-                            .reminderType(ReminderType.RENEWAL)
-                            .isCompleted(false)
-                            .build());
+                    if (!reminderRepository.existsPendingReminder(
+                            contract.getId(), ReminderType.RENEWAL, renewalReminderDate)) {
 
-                    log.debug("Queued renewal reminder for auto-renewable contract {} on {}",
-                            contract.getId(), renewalReminderDate);
+                        remindersToSave.add(ContractReminder.builder()
+                                .tenantId(tenantId)
+                                .contractId(contract.getId())
+                                .reminderDate(renewalReminderDate)
+                                .reminderType(ReminderType.RENEWAL)
+                                .isCompleted(false)
+                                .build());
+
+                        log.debug("Queued renewal reminder for auto-renewable contract {} on {}",
+                                contract.getId(), renewalReminderDate);
+                    }
                 }
             }
         }
@@ -272,6 +282,23 @@ public class ContractLifecycleScheduler {
         }
 
         return remindersToSave.size();
+    }
+
+    /**
+     * Deletes pending (not completed) reminders of the given type for a contract whose
+     * date no longer matches one of the currently valid target dates — i.e. reminders left
+     * stale by a contract end-date change. The idempotent create step below then re-creates
+     * a fresh reminder for each currently valid date.
+     */
+    private void reconcileStaleReminders(UUID contractId, ReminderType type, Set<LocalDate> validDates) {
+        List<ContractReminder> stale = reminderRepository.findByContractIdAndReminderType(contractId, type).stream()
+                .filter(r -> !Boolean.TRUE.equals(r.getIsCompleted()) && !validDates.contains(r.getReminderDate()))
+                .collect(Collectors.toList());
+        if (!stale.isEmpty()) {
+            reminderRepository.deleteAll(stale);
+            log.debug("Removed {} stale {} reminder(s) for contract {} (end date changed)",
+                    stale.size(), type, contractId);
+        }
     }
 
     // ========== Step 4: Dispatch Due Reminders as Notifications ==========

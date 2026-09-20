@@ -2,6 +2,7 @@ package com.nulogic.api.contract.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.contract.dto.*;
+import com.nulogic.application.contract.service.ContractReminderService;
 import com.nulogic.application.contract.service.ContractService;
 import com.nulogic.application.contract.service.ContractSignatureService;
 import com.nulogic.domain.contract.ContractStatus;
@@ -56,6 +57,8 @@ class ContractControllerTest {
     private ContractService contractService;
     @MockitoBean
     private ContractSignatureService signatureService;
+    @MockitoBean
+    private ContractReminderService reminderService;
     @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 

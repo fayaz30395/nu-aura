@@ -1,10 +1,12 @@
 package com.nulogic.api.contract.controller;
 
 import com.nulogic.api.contract.dto.*;
+import com.nulogic.application.contract.service.ContractReminderService;
 import com.nulogic.application.contract.service.ContractService;
 import com.nulogic.application.contract.service.ContractSignatureService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.domain.contract.ContractReminder;
 import com.nulogic.domain.contract.ContractStatus;
 import com.nulogic.domain.contract.ContractType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,6 +38,7 @@ public class ContractController {
 
     private final ContractService contractService;
     private final ContractSignatureService signatureService;
+    private final ContractReminderService reminderService;
 
     // ===================== CRUD Operations =====================
 
@@ -402,5 +405,59 @@ public class ContractController {
             @Parameter(description = "Contract UUID") @PathVariable UUID contractId) {
         Map<String, Integer> summary = signatureService.getSignatureSummary(contractId);
         return ResponseEntity.ok(summary);
+    }
+
+    // ===================== Reminder Operations =====================
+
+    @Operation(summary = "Get reminders due today",
+            description = "Retrieves all pending contract reminders (expiry, renewal, review) due today for the current tenant.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Reminders retrieved successfully")
+    })
+    @GetMapping("/reminders/today")
+    @RequiresPermission(Permission.CONTRACT_VIEW)
+    public ResponseEntity<List<ContractReminderDto>> getRemindersDueToday() {
+        List<ContractReminderDto> reminders = reminderService.getRemindersForToday().stream()
+                .map(this::toReminderDto)
+                .toList();
+        return ResponseEntity.ok(reminders);
+    }
+
+    @Operation(summary = "Get overdue reminders",
+            description = "Retrieves all pending contract reminders past their reminder date for the current tenant.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Reminders retrieved successfully")
+    })
+    @GetMapping("/reminders/overdue")
+    @RequiresPermission(Permission.CONTRACT_VIEW)
+    public ResponseEntity<List<ContractReminderDto>> getOverdueReminders() {
+        List<ContractReminderDto> reminders = reminderService.getOverdueReminders().stream()
+                .map(this::toReminderDto)
+                .toList();
+        return ResponseEntity.ok(reminders);
+    }
+
+    @Operation(summary = "Mark reminder as completed",
+            description = "Marks a contract reminder as completed so it no longer shows as due or overdue.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Reminder marked as completed")
+    })
+    @PatchMapping("/reminders/{reminderId}/complete")
+    @RequiresPermission(Permission.CONTRACT_UPDATE)
+    public ResponseEntity<Void> completeReminder(
+            @Parameter(description = "Reminder UUID") @PathVariable UUID reminderId) {
+        reminderService.markReminderAsCompleted(reminderId);
+        return ResponseEntity.ok().build();
+    }
+
+    private ContractReminderDto toReminderDto(ContractReminder reminder) {
+        return ContractReminderDto.builder()
+                .id(reminder.getId())
+                .contractId(reminder.getContractId())
+                .reminderDate(reminder.getReminderDate())
+                .reminderType(reminder.getReminderType())
+                .isCompleted(reminder.getIsCompleted())
+                .notifiedAt(reminder.getNotifiedAt())
+                .build();
     }
 }
