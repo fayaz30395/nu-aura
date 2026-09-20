@@ -4,6 +4,7 @@ import com.nulogic.api.auth.dto.AuthResponse;
 import com.nulogic.api.auth.dto.ChangePasswordRequest;
 import com.nulogic.api.auth.dto.LoginRequest;
 import com.nulogic.api.auth.dto.ResetPasswordRequest;
+import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.notification.service.EmailNotificationService;
 import com.nulogic.application.user.service.ImplicitRoleService;
 import com.nulogic.common.config.PasswordPolicyConfig;
@@ -55,6 +56,9 @@ import static org.mockito.Mockito.*;
 @MockitoSettings(strictness = Strictness.LENIENT)
 @DisplayName("AuthService Tests")
 class AuthServiceTest {
+
+    @Mock
+    private AuditLogService auditLogService;
 
     @Mock
     private AuthenticationManager authenticationManager;

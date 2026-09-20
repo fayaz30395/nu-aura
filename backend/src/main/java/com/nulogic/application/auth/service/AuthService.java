@@ -7,8 +7,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.nulogic.api.auth.dto.*;
+import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.notification.service.EmailNotificationService;
 import com.nulogic.application.platform.service.HrmsPermissionInitializer;
+import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.infrastructure.security.CaptchaService;
 import com.nulogic.application.user.service.ImplicitRoleService;
 import com.nulogic.common.config.PasswordPolicyConfig;
@@ -87,6 +89,7 @@ public class AuthService {
     private final StringRedisTemplate stringRedisTemplate;
     private final TenantTimeService tenantTimeService;
     private final TenantRlsSessionSync tenantRlsSessionSync;
+    private final AuditLogService auditLogService;
     @Value("${app.jwt.expiration}")
     private long jwtExpiration;
     @Value("${app.security.captcha.threshold-attempts:3}")
@@ -129,7 +132,8 @@ public class AuthService {
                        CaptchaService captchaService,
                        StringRedisTemplate stringRedisTemplate,
                        TenantTimeService tenantTimeService,
-                       TenantRlsSessionSync tenantRlsSessionSync) {
+                       TenantRlsSessionSync tenantRlsSessionSync,
+                       AuditLogService auditLogService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
@@ -147,6 +151,7 @@ public class AuthService {
         this.stringRedisTemplate = stringRedisTemplate;
         this.tenantTimeService = tenantTimeService;
         this.tenantRlsSessionSync = tenantRlsSessionSync;
+        this.auditLogService = auditLogService;
     }
 
     /**
@@ -207,6 +212,8 @@ public class AuthService {
         if (accountLockoutService.isAccountLocked(request.getEmail())) {
             accountLockoutService.equalizeTiming();
             metricsService.recordLoginFailure("password", "account_locked");
+            userByEmail.ifPresent(u -> auditLogService.logAction(
+                    "USER", u.getId(), AuditAction.LOGIN, null, null, "Failed login attempt: account locked"));
             throw new org.springframework.security.authentication.LockedException(
                     "Account temporarily locked due to too many failed login attempts");
         }
@@ -292,11 +299,17 @@ public class AuthService {
 
             // Build auth context (permissions, roles, employee linking) and generate response
             AuthContext ctx = buildAuthContext(user, tenantId);
+            auditLogService.logAction("USER", user.getId(), AuditAction.LOGIN, null, null, "Successful login");
             // CRIT-001: permissions in response body (not JWT) to keep cookie under 4KB
             return buildAuthResponse(user, tenantId, ctx);
         } catch (AuthenticationException | ResourceNotFoundException e) {
             // Record failed login metric
             metricsService.recordLoginFailure("password", e.getClass().getSimpleName());
+            // ponytail: only audited when the email resolves to a real account — an
+            // unknown email has no entity to attach the (NOT NULL) audit row to, and
+            // skipping it also avoids adding an account-enumeration signal.
+            userByEmail.ifPresent(u -> auditLogService.logAction(
+                    "USER", u.getId(), AuditAction.LOGIN, null, null, "Failed login attempt: " + e.getMessage()));
             throw e;
         } catch (org.springframework.security.core.AuthenticationException e) {
             // Spring Security authentication failures (BadCredentialsException, LockedException, etc.)
@@ -304,6 +317,8 @@ public class AuthService {
             // than com.nulogic.common.exception.AuthenticationException
             accountLockoutService.loginFailed(request.getEmail());
             metricsService.recordLoginFailure("password", e.getClass().getSimpleName());
+            userByEmail.ifPresent(u -> auditLogService.logAction(
+                    "USER", u.getId(), AuditAction.LOGIN, null, null, "Failed login attempt: " + e.getClass().getSimpleName()));
             throw new AuthenticationException(e.getMessage(), e);
         } catch (Exception e) { // Intentional broad catch — re-throws after recording failure metric for unexpected errors during login
             // Record unexpected error during login
@@ -419,6 +434,7 @@ public class AuthService {
 
             // Build auth context and generate response
             AuthContext ctx = buildAuthContext(user, tenantId);
+            auditLogService.logAction("USER", user.getId(), AuditAction.LOGIN, null, null, "Successful Google login");
             return buildAuthResponse(user, tenantId, ctx);
         } catch (AuthenticationException e) {
             throw e;
@@ -566,6 +582,7 @@ public class AuthService {
                     tokenProvider.revokeAllUserTokens(userId.toString());
                     // Downgraded from INFO to DEBUG: userId is PII and logout is high-volume.
                     log.debug("All tokens revoked for user {} on logout", userId);
+                    auditLogService.logAction("USER", userId, AuditAction.LOGOUT, null, null, "User logged out");
                 }
             } catch (Exception e) {
                 // Token may already be expired/invalid — the individual revoke above is enough
@@ -1212,6 +1229,7 @@ public class AuthService {
         AuthContext ctx = buildAuthContext(user, tenantId);
 
         log.info("User {} logged in successfully after MFA verification", userId);
+        auditLogService.logAction("USER", userId, AuditAction.LOGIN, null, null, "Successful login (MFA)");
 
         return buildAuthResponse(user, tenantId, ctx);
     }

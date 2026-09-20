@@ -1,11 +1,14 @@
 package com.nulogic.api.export;
 
+import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.common.export.ExportFormat;
 import com.nulogic.common.export.ExportService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.audit.AuditLog.AuditAction;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,6 +36,7 @@ public class ExportController {
 
     private final ExportService exportService;
     private final TenantTimeService tenantTimeService;
+    private final AuditLogService auditLogService;
 
     @PostMapping("/employees")
     @RequiresPermission(Permission.EMPLOYEE_READ)
@@ -146,6 +150,9 @@ public class ExportController {
         UUID tenantId = TenantContext.requireCurrentTenant();
         String timestamp = tenantTimeService.now(tenantId).format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         String filename = prefix + "_" + timestamp + format.getExtension();
+
+        auditLogService.logAction("USER", SecurityContext.getCurrentUserId(), AuditAction.EXPORT,
+                null, null, "Exported " + prefix + " data as " + format);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")

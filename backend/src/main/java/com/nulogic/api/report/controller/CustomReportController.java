@@ -1,11 +1,14 @@
 package com.nulogic.api.report.controller;
 
 import com.nulogic.api.report.dto.ReportTemplateDto;
+import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.report.service.CustomReportService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.audit.AuditLog.AuditAction;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +27,7 @@ public class CustomReportController {
 
     private final CustomReportService customReportService;
     private final TenantTimeService tenantTimeService;
+    private final AuditLogService auditLogService;
 
     @GetMapping("/templates")
     @RequiresPermission(Permission.REPORT_VIEW)
@@ -66,6 +70,8 @@ public class CustomReportController {
         String csv = customReportService.toCsv(query);
         String filename = "custom-report-" + query.getModule().toLowerCase() + "-"
                 + tenantTimeService.today(tenantId) + ".csv";
+        auditLogService.logAction("USER", SecurityContext.getCurrentUserId(), AuditAction.EXPORT,
+                null, null, "Exported custom report: " + query.getModule());
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
                 .contentType(MediaType.parseMediaType("text/csv"))
