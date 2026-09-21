@@ -422,6 +422,7 @@ export default function ExpenseClaims() {
 
         <BentoNavigation
           approvalsWaiting={statistics.approvalsWaitingCount}
+          approvalsError={pendingClaimsQuery.isError}
           onSubmit={() => setShowForm(true)}
           onApprovals={() => {
             setActiveTab('pending');
@@ -700,10 +701,12 @@ function StatsRow({
 // ── Bento navigation ─────────────────────────────────────────────────────────
 function BentoNavigation({
   approvalsWaiting,
+  approvalsError,
   onSubmit,
   onApprovals,
 }: {
   approvalsWaiting: number;
+  approvalsError: boolean;
   onSubmit: () => void;
   onApprovals: () => void;
 }) {
@@ -750,7 +753,7 @@ function BentoNavigation({
       className="grid gap-4 grid-cols-1 lg:grid-cols-12"
       aria-label="Quick actions"
     >
-      <BentoHero approvalsWaiting={approvalsWaiting} onSubmit={onSubmit} onApprovals={onApprovals} />
+      <BentoHero approvalsWaiting={approvalsWaiting} approvalsError={approvalsError} onSubmit={onSubmit} onApprovals={onApprovals} />
       {tiles.map((tile) => (
         <BentoTile key={tile.title} {...tile} />
       ))}
@@ -760,22 +763,28 @@ function BentoNavigation({
 
 function BentoHero({
   approvalsWaiting,
+  approvalsError,
   onSubmit,
   onApprovals,
 }: {
   approvalsWaiting: number;
+  approvalsError: boolean;
   onSubmit: () => void;
   onApprovals: () => void;
 }) {
   // If there are approvals waiting, lead with them; otherwise lead with submit.
-  const leadWithApprovals = approvalsWaiting > 0;
+  const leadWithApprovals = approvalsError || approvalsWaiting > 0;
   const Icon = leadWithApprovals ? Clock : Plus;
-  const title = leadWithApprovals
-    ? `${approvalsWaiting} approval${approvalsWaiting === 1 ? '' : 's'} waiting on you`
-    : 'Submit an expense';
-  const description = leadWithApprovals
-    ? 'Review and clear pending claims in batches. Bulk approve receipts that match policy.'
-    : 'Snap a receipt, pick a category, and file in under a minute. Reimbursements settle on the next payroll cycle.';
+  const title = approvalsError
+    ? "Couldn't load approvals"
+    : leadWithApprovals
+      ? `${approvalsWaiting} approval${approvalsWaiting === 1 ? '' : 's'} waiting on you`
+      : 'Submit an expense';
+  const description = approvalsError
+    ? 'You may not have permission to view pending approvals, or something went wrong. Click to check.'
+    : leadWithApprovals
+      ? 'Review and clear pending claims in batches. Bulk approve receipts that match policy.'
+      : 'Snap a receipt, pick a category, and file in under a minute. Reimbursements settle on the next payroll cycle.';
   const cta = leadWithApprovals ? 'Review approvals' : 'New claim';
 
   return (

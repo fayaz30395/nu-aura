@@ -60,7 +60,7 @@ export default function LinkedInPostsPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   // React Query hooks
-  const {data: postsResponse, isLoading} = useAllLinkedInPosts(0, 100);
+  const {data: postsResponse, isLoading, isError} = useAllLinkedInPosts(0, 100);
   const deletePostMutation = useDeleteLinkedInPost();
 
   const posts = postsResponse?.content || [];
@@ -157,6 +157,12 @@ export default function LinkedInPostsPage() {
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-accent-600"/>
               </div>
+            ) : isError ? (
+              <EmptyState
+                icon={<Linkedin className="h-12 w-12"/>}
+                title="Couldn't Load LinkedIn Posts"
+                description="You may not have permission to view this, or something went wrong. Please try again."
+              />
             ) : filteredPosts.length === 0 ? (
               <EmptyState
                 icon={<Linkedin className="h-12 w-12"/>}

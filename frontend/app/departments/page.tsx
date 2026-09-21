@@ -85,7 +85,7 @@ export default function DepartmentsPage() {
 
   // React Query hooks
   const {data: deptData, isLoading} = useAllDepartments(currentPage, pageSize);
-  const {data: empData} = useEmployees(0, 500);
+  const {data: empData, isError: isEmployeesError} = useEmployees(0, 500);
   const createMutation = useCreateDepartment();
   const updateMutation = useUpdateDepartment();
   const activateMutation = useActivateDepartment();
@@ -634,14 +634,23 @@ export default function DepartmentsPage() {
                           className="w-full px-4 py-2.5 border border-[var(--border-main)] rounded-xl bg-[var(--bg-input)] text-[var(--text-primary)] focus:ring-2 focus:ring-accent-500 focus:border-transparent"
                         >
                           <option value="">Select Manager</option>
-                          {employees.map((emp) => (
-                            <option key={emp.id} value={emp.id}>
-                              {emp.fullName} ({emp.employeeCode})
-                            </option>
-                          ))}
+                          {isEmployeesError ? (
+                            <option value="" disabled>Couldn&apos;t load employees</option>
+                          ) : (
+                            employees.map((emp) => (
+                              <option key={emp.id} value={emp.id}>
+                                {emp.fullName} ({emp.employeeCode})
+                              </option>
+                            ))
+                          )}
                         </select>
                       )}
                     />
+                    {isEmployeesError && (
+                      <p className="text-danger-500 text-sm mt-1">
+                        You may not have permission to view employees, or something went wrong.
+                      </p>
+                    )}
                     {errors.managerId && <p className="text-danger-500 text-sm mt-1">{errors.managerId.message}</p>}
                   </div>
                   <div>
