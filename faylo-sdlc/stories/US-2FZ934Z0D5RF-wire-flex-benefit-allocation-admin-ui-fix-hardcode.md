@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** Flex credits tile shows real remaining balance from getActiveFlexAllocation, not hardcoded 0; BENEFIT_MANAGE has UI to create/view flex allocations
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)

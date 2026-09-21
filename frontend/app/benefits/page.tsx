@@ -6,6 +6,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {
   AlertCircle,
+  BarChart3,
   Building,
   Calendar,
   CheckCircle,
@@ -45,9 +46,12 @@ import {BenefitClaim, BenefitEnrollment, ClaimRequest, CoverageLevel,} from '@/l
 import {
   useActiveBenefitPlans,
   useActiveEnrollments,
+  useActiveFlexAllocation,
   useApproveEnrollment,
+  useBenefitsDashboard,
   useCompleteClaimPayment,
   useEmployeeBenefitEnrollments,
+  useEmployeeBenefitsSummary,
   useEmployeeClaims,
   useEnrollEmployee,
   useInitiateClaimPayment,
@@ -92,7 +96,7 @@ const claimFormSchema = z.object({
 type EnrollmentFormData = z.infer<typeof enrollmentFormSchema>;
 type ClaimFormData = z.infer<typeof claimFormSchema>;
 
-type TabType = 'plans' | 'enrollments' | 'claims' | 'approvals' | 'claim-approvals';
+type TabType = 'plans' | 'enrollments' | 'claims' | 'approvals' | 'claim-approvals' | 'analytics';
 
 interface DisplayBenefit {
   id: string;
@@ -204,6 +208,9 @@ export default function BenefitsPage() {
   const pendingEnrollmentsQuery = usePendingBenefitEnrollments();
   const employeeClaimsQuery = useEmployeeClaims(user?.employeeId || '');
   const pendingClaimsQuery = usePendingBenefitClaims();
+  const flexAllocationQuery = useActiveFlexAllocation(user?.employeeId || '');
+  const employeeSummaryQuery = useEmployeeBenefitsSummary(user?.employeeId || '');
+  const dashboardQuery = useBenefitsDashboard();
   const enrollMutation = useEnrollEmployee();
   const terminateMutation = useTerminateEnrollment();
   const approveMutation = useApproveEnrollment();
@@ -302,7 +309,7 @@ export default function BenefitsPage() {
     monthlyPremium: benefits.filter((b) => b.isEnrolled).reduce((sum, b) => sum + b.monthlyPremium, 0),
     availablePlans: benefits.length,
     totalCoverage: benefits.filter((b) => b.isEnrolled).reduce((sum, b) => sum + b.coverage, 0),
-    flexCredits: 0,
+    flexCredits: flexAllocationQuery.data?.remainingAmount ?? 0,
   };
 
   const handleOpenEnrollModal = (benefit: DisplayBenefit) => {
@@ -625,6 +632,7 @@ export default function BenefitsPage() {
             {id: 'claims', label: 'Claims', icon: Receipt, permission: undefined},
             {id: 'approvals', label: 'Pending Approvals', icon: AlertCircle, permission: Permissions.BENEFIT_MANAGE},
             {id: 'claim-approvals', label: 'Claim Approvals', icon: Receipt, permission: Permissions.BENEFIT_MANAGE},
+            {id: 'analytics', label: 'Analytics', icon: BarChart3, permission: undefined},
           ] as const satisfies ReadonlyArray<{id: TabType; label: string; icon: typeof Gift; permission?: string}>).map(({id, label, icon: TabIcon, permission}) => {
             const isActive = activeTab === id;
             const badgeCount = id === 'approvals'
@@ -1192,6 +1200,112 @@ export default function BenefitsPage() {
               )}
             </div>
           </PermissionGate>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">My benefits summary</h2>
+              <p className="text-xs text-[var(--text-3)]">Your personal enrollment, coverage, and claims activity</p>
+            </div>
+            {employeeSummaryQuery.isLoading ? (
+              <div className="flex h-24 items-center justify-center">
+                <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]"/>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <Card padding="sm">
+                  <Stat
+                    iconTone="success"
+                    icon={<CheckCircle className="h-5 w-5"/>}
+                    label="Active enrollments"
+                    value={<span className="tnum">{employeeSummaryQuery.data?.activeEnrollments ?? 0}</span>}
+                    foot={`of ${employeeSummaryQuery.data?.totalEnrollments ?? 0} total`}
+                  />
+                </Card>
+                <Card padding="sm">
+                  <Stat
+                    iconTone="accent"
+                    icon={<IndianRupee className="h-5 w-5"/>}
+                    label="Monthly contribution"
+                    value={<span className="tnum">{formatINR(employeeSummaryQuery.data?.monthlyContribution ?? 0)}</span>}
+                    foot="Your share / mo"
+                  />
+                </Card>
+                <Card padding="sm">
+                  <Stat
+                    iconTone="info"
+                    icon={<Receipt className="h-5 w-5"/>}
+                    label="Claims submitted"
+                    value={<span className="tnum">{employeeSummaryQuery.data?.claimsSubmitted ?? 0}</span>}
+                    foot={`${employeeSummaryQuery.data?.claimsPaid ?? 0} paid`}
+                  />
+                </Card>
+                <Card padding="sm">
+                  <Stat
+                    iconTone="warning"
+                    icon={<CreditCard className="h-5 w-5"/>}
+                    label="Flex credits used"
+                    value={<span className="tnum">{formatINR(employeeSummaryQuery.data?.flexCreditsUsed ?? 0)}</span>}
+                    foot={`${formatINR(employeeSummaryQuery.data?.flexCreditsAvailable ?? 0)} available`}
+                  />
+                </Card>
+              </div>
+            )}
+
+            <PermissionGate permission={Permissions.REPORT_VIEW}>
+              <div className="space-y-4 border-t border-[var(--border)] pt-6">
+                <div>
+                  <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">Organization dashboard</h2>
+                  <p className="text-xs text-[var(--text-3)]">Benefits program totals across the tenant</p>
+                </div>
+                {dashboardQuery.isLoading ? (
+                  <div className="flex h-24 items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]"/>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <Card padding="sm">
+                      <Stat
+                        iconTone="accent"
+                        icon={<Gift className="h-5 w-5"/>}
+                        label="Active plans"
+                        value={<span className="tnum">{dashboardQuery.data?.activePlans ?? 0}</span>}
+                        foot={`of ${dashboardQuery.data?.totalPlans ?? 0} total`}
+                      />
+                    </Card>
+                    <Card padding="sm">
+                      <Stat
+                        iconTone="success"
+                        icon={<CheckCircle className="h-5 w-5"/>}
+                        label="Active enrollments"
+                        value={<span className="tnum">{dashboardQuery.data?.activeEnrollments ?? 0}</span>}
+                        foot={`${dashboardQuery.data?.pendingEnrollments ?? 0} pending`}
+                      />
+                    </Card>
+                    <Card padding="sm">
+                      <Stat
+                        iconTone="info"
+                        icon={<Receipt className="h-5 w-5"/>}
+                        label="Total claims"
+                        value={<span className="tnum">{dashboardQuery.data?.totalClaims ?? 0}</span>}
+                        foot={`${dashboardQuery.data?.pendingClaims ?? 0} pending`}
+                      />
+                    </Card>
+                    <Card padding="sm">
+                      <Stat
+                        iconTone="warning"
+                        icon={<IndianRupee className="h-5 w-5"/>}
+                        label="Approved claims value"
+                        value={<span className="tnum">{formatINR(dashboardQuery.data?.approvedClaimsAmount ?? 0)}</span>}
+                        foot={`of ${formatINR(dashboardQuery.data?.totalClaimsAmount ?? 0)} claimed`}
+                      />
+                    </Card>
+                  </div>
+                )}
+              </div>
+            </PermissionGate>
+          </div>
         )}
 
         {/* Open Enrollment Banner — Aura accent-soft surface */}

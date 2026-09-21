@@ -15,6 +15,8 @@ export const complianceKeys = {
     [...complianceKeys.policies(), 'paged', {page, size}] as const,
   policiesActive: () => [...complianceKeys.policies(), 'active'] as const,
   policyById: (id: string) => [...complianceKeys.policies(), 'detail', id] as const,
+  pendingAcknowledgments: (employeeId: string) =>
+    [...complianceKeys.policies(), 'pending-acknowledgments', employeeId] as const,
   // Checklists
   checklists: () => [...complianceKeys.all, 'checklists'] as const,
   checklistsPaged: (page: number, size: number) =>
@@ -83,6 +85,14 @@ export function useAcknowledgePolicy() {
     mutationFn: ({policyId, signature}: { policyId: string; signature?: string }) =>
       complianceService.acknowledgePolicy(policyId, {signature}),
     onSuccess: () => qc.invalidateQueries({queryKey: complianceKeys.policies()}),
+  });
+}
+
+export function usePendingAcknowledgments(employeeId: string) {
+  return useQuery({
+    queryKey: complianceKeys.pendingAcknowledgments(employeeId),
+    queryFn: () => complianceService.getPendingAcknowledgments(employeeId, 0, 50),
+    enabled: !!employeeId,
   });
 }
 

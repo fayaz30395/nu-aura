@@ -37,7 +37,9 @@ import {
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {
+  useAcknowledgePolicy,
   useActiveAlerts,
   useActiveChecklists,
   useActivePolicies,
@@ -46,6 +48,7 @@ import {
   useComplianceDashboard,
   useCriticalAlerts,
   useEscalateAlert,
+  usePendingAcknowledgments,
   usePublishPolicy,
   useUpdateAlertStatus,
 } from '@/lib/hooks/queries/useCompliance';
@@ -325,6 +328,79 @@ function ChecklistsTab() {
   );
 }
 
+// ─── My Acknowledgments Tab ───────────────────────────────────────────────────
+
+function MyAcknowledgmentsTab() {
+  const {user} = useAuth();
+  const employeeId = user?.employeeId ?? '';
+  const {data: pendingPage, isLoading} = usePendingAcknowledgments(employeeId);
+  const pending = pendingPage?.content ?? [];
+  const acknowledgeMutation = useAcknowledgePolicy();
+
+  const handleAcknowledge = async (policy: CompliancePolicy) => {
+    try {
+      await acknowledgeMutation.mutateAsync({policyId: policy.id, signature: user?.fullName});
+      notifications.show({
+        title: 'Acknowledged',
+        message: `You've acknowledged ${policy.name}`,
+        color: 'green',
+        icon: <IconCheck size={14}/>
+      });
+    } catch {
+      notifications.show({title: 'Error', message: 'Failed to acknowledge policy', color: 'red'});
+    }
+  };
+
+  if (!employeeId) return (
+    <Center h={200}>
+      <Text c="dimmed">No employee record linked to your account.</Text>
+    </Center>
+  );
+
+  if (isLoading) return <Center h={200}><Loader/></Center>;
+  if (!pending.length) return (
+    <Center h={200}>
+      <Stack align="center" gap="xs">
+        <IconCheckbox size={32} color="var(--text-muted)"/>
+        <Text c="dimmed">No pending policy acknowledgments</Text>
+        <Text size="xs" c="dimmed">You&apos;re all caught up!</Text>
+      </Stack>
+    </Center>
+  );
+
+  return (
+    <Stack gap="sm">
+      {pending.map((policy) => (
+        <Paper key={policy.id} withBorder p="md" radius="md" className="shadow-[var(--shadow-card)]">
+          <Group justify="space-between">
+            <div>
+              <Group gap="xs">
+                <Text size="sm" fw={600}>{policy.name}</Text>
+                <Badge color="gray" variant="light" size="xs">{fmtLabel(policy.category)}</Badge>
+              </Group>
+              {policy.description && (
+                <Text size="xs" c="dimmed" mt={2} lineClamp={2}>{policy.description}</Text>
+              )}
+              <Text size="xs" c="dimmed" mt={2}>
+                v{policy.policyVersion ?? 1} · Effective {policy.effectiveDate ? formatDate(policy.effectiveDate) : '—'}
+              </Text>
+            </div>
+            <Button
+              size="xs"
+              leftSection={<IconCheck size={14}/>}
+              className="cursor-pointer"
+              loading={acknowledgeMutation.isPending && acknowledgeMutation.variables?.policyId === policy.id}
+              onClick={() => handleAcknowledge(policy)}
+            >
+              Acknowledge
+            </Button>
+          </Group>
+        </Paper>
+      ))}
+    </Stack>
+  );
+}
+
 // ─── Alerts Tab ───────────────────────────────────────────────────────────────
 
 function AlertsTab() {
@@ -563,6 +639,13 @@ export default function CompliancePage() {
                 Policies
               </Tabs.Tab>
               <Tabs.Tab
+                value="my-acknowledgments"
+                leftSection={<IconCheckbox size={14}/>}
+                className="cursor-pointer"
+              >
+                My Acknowledgments
+              </Tabs.Tab>
+              <Tabs.Tab
                 value="checklists"
                 leftSection={<IconClipboardList size={14}/>}
                 className="cursor-pointer"
@@ -585,6 +668,9 @@ export default function CompliancePage() {
 
             <Tabs.Panel value="overview" pt="md">
               <PoliciesTab/>
+            </Tabs.Panel>
+            <Tabs.Panel value="my-acknowledgments" pt="md">
+              <MyAcknowledgmentsTab/>
             </Tabs.Panel>
             <Tabs.Panel value="checklists" pt="md">
               <ChecklistsTab/>

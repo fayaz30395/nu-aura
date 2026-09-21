@@ -26,6 +26,10 @@ export const benefitKeys = {
     [...benefitKeys.claims(), 'employee', employeeId, {page, size}] as const,
   claimDetail: (id: string) => [...benefitKeys.claims(), 'detail', id] as const,
   pendingClaims: () => [...benefitKeys.claims(), 'pending'] as const,
+  // Flex / Analytics
+  activeFlexAllocation: (employeeId: string) => [...benefitKeys.all, 'flex', 'active', employeeId] as const,
+  dashboard: () => [...benefitKeys.all, 'dashboard'] as const,
+  employeeSummary: (employeeId: string) => [...benefitKeys.all, 'summary', employeeId] as const,
 };
 
 // ========== QUERIES ==========
@@ -103,6 +107,36 @@ export function usePendingBenefitClaims() {
     queryKey: benefitKeys.pendingClaims(),
     queryFn: () => benefitsService.getPendingClaims(),
     staleTime: 30 * 1000,
+  });
+}
+
+// Get employee's active flex credit allocation
+export function useActiveFlexAllocation(employeeId: string) {
+  return useQuery({
+    queryKey: benefitKeys.activeFlexAllocation(employeeId),
+    queryFn: () => benefitsService.getActiveFlexAllocation(employeeId),
+    enabled: !!employeeId,
+    retry: false, // ponytail: 404 when employee has no flex allocation set up
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Org-wide benefits dashboard analytics
+export function useBenefitsDashboard() {
+  return useQuery({
+    queryKey: benefitKeys.dashboard(),
+    queryFn: () => benefitsService.getBenefitsDashboard(),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+// Per-employee benefits summary
+export function useEmployeeBenefitsSummary(employeeId: string) {
+  return useQuery({
+    queryKey: benefitKeys.employeeSummary(employeeId),
+    queryFn: () => benefitsService.getEmployeeBenefitsSummary(employeeId),
+    enabled: !!employeeId,
+    staleTime: 5 * 60 * 1000,
   });
 }
 
