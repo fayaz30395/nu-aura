@@ -1,0 +1,197 @@
+- generic [active] [ref=e10]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - complementary "Product navigation" [ref=e16]:
+        - generic "NU-AURA" [ref=e17]: "N"
+        - button "NU-HRMS" [ref=e20] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=e28] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=e34] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=e40]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=e45] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=e53] [cursor=pointer]:
+          - generic [ref=e54]: SM
+      - navigation "NU-HRMS navigation" [ref=e55]:
+        - generic [ref=e64]:
+          - generic [ref=e65]: NU-HRMS
+          - generic [ref=e66]: Core HR
+        - button "NU All Modules Active Pro Plan" [ref=e67] [cursor=pointer]:
+          - generic [ref=e68]: NU
+          - generic [ref=e69]:
+            - generic [ref=e70]: All Modules Active
+            - generic [ref=e71]: Pro Plan
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - generic [ref=e77]: Home
+            - link "Home" [ref=e79] [cursor=pointer]:
+              - /url: /me/dashboard
+          - generic [ref=e85]:
+            - generic [ref=e86]: My Space
+            - generic [ref=e87]:
+              - link "My Dashboard" [ref=e88] [cursor=pointer]:
+                - /url: /me/dashboard
+              - link "My Profile" [ref=e96] [cursor=pointer]:
+                - /url: /me/profile
+              - link "My Payslips" [ref=e102] [cursor=pointer]:
+                - /url: /me/payslips
+              - link "My Attendance" [ref=e107] [cursor=pointer]:
+                - /url: /me/attendance
+              - link "My Leaves" [ref=e113] [cursor=pointer]:
+                - /url: /me/leaves
+              - link "My Documents" [ref=e121] [cursor=pointer]:
+                - /url: /me/documents
+              - link "My Skills" [ref=e127] [cursor=pointer]:
+                - /url: /me/skills
+              - link "My Assets" [ref=e132] [cursor=pointer]:
+                - /url: /me/assets
+          - generic [ref=e139]:
+            - generic [ref=e140]: People
+            - generic [ref=e141]:
+              - link "Employees" [ref=e142] [cursor=pointer]:
+                - /url: /employees
+              - link "Departments" [ref=e150] [cursor=pointer]:
+                - /url: /departments
+              - link "Team Directory" [ref=e157] [cursor=pointer]:
+                - /url: /employees/directory
+              - link "Announcements" [ref=e164] [cursor=pointer]:
+                - /url: /announcements
+              - link "LinkedIn Posts" [ref=e170] [cursor=pointer]:
+                - /url: /linkedin-posts
+              - link "Approvals" [ref=e176] [cursor=pointer]:
+                - /url: /approvals/inbox
+          - generic [ref=e183]:
+            - generic [ref=e184]: HR Operations
+            - generic [ref=e185]:
+              - link "Shift Management" [ref=e186] [cursor=pointer]:
+                - /url: /shifts
+              - link "Leave Management" [ref=e192] [cursor=pointer]:
+                - /url: /leave
+              - link "Assets" [ref=e200] [cursor=pointer]:
+                - /url: /assets
+          - generic [ref=e207]:
+            - generic [ref=e208]: Pay & Finance
+            - generic [ref=e209]:
+              - link "Expenses" [ref=e210] [cursor=pointer]:
+                - /url: /expenses
+              - link "Loans" [ref=e216] [cursor=pointer]:
+                - /url: /loans
+              - link "Travel" [ref=e222] [cursor=pointer]:
+                - /url: /travel
+          - generic [ref=e227]:
+            - generic [ref=e228]: Projects & Work
+            - generic [ref=e229]:
+              - link "Time Tracking" [ref=e230] [cursor=pointer]:
+                - /url: /time-tracking
+              - link "Calendar" [ref=e236] [cursor=pointer]:
+                - /url: /nu-calendar
+          - generic [ref=e241]:
+            - generic [ref=e242]: Reports & Insights
+            - generic [ref=e243]:
+              - link "Reports" [ref=e244] [cursor=pointer]:
+                - /url: /reports
+              - link "Budget Planning" [ref=e250] [cursor=pointer]:
+                - /url: /admin/budget
+    - generic [ref=e255]:
+      - banner [ref=e256]:
+        - button "Toggle navigation panel" [ref=e257] [cursor=pointer]
+        - navigation "Breadcrumb" [ref=e260]:
+          - generic [ref=e261]: My Attendance
+        - button "Open command palette" [ref=e262] [cursor=pointer]:
+          - generic [ref=e266]: Search or jump to…
+          - generic [ref=e267]: ⌘K
+        - button "Toggle theme" [ref=e269] [cursor=pointer]
+        - button "Notifications" [ref=e279] [cursor=pointer]
+        - button "User menu for Suresh M" [ref=e285] [cursor=pointer]:
+          - generic [ref=e286]: SM
+          - generic [ref=e287]:
+            - generic [ref=e288]: Suresh M
+            - generic [ref=e289]: RECRUITMENT ADMIN
+      - main [ref=e292]:
+        - main [ref=e293]:
+          - main [ref=e294]:
+            - generic [ref=e295]:
+              - heading "My Attendance" [level=1] [ref=e296]
+              - paragraph [ref=e297]: Track your attendance and working hours
+            - generic [ref=e301]:
+              - generic [ref=e302]:
+                - heading "Today's Status" [level=3] [ref=e303]
+                - generic [ref=e304]: Today's Status, text=Today's Status
+                - paragraph [ref=e305]: No attendance record for today
+              - button "Check In" [ref=e307] [cursor=pointer]
+            - generic [ref=e311]:
+              - generic [ref=e316]:
+                - paragraph [ref=e317]: Present Days
+                - paragraph [ref=e318]: "0"
+              - generic [ref=e327]:
+                - paragraph [ref=e328]: Absent Days
+                - paragraph [ref=e329]: "0"
+              - generic [ref=e339]:
+                - paragraph [ref=e340]: On Leave
+                - paragraph [ref=e341]: "0"
+              - generic [ref=e349]:
+                - paragraph [ref=e350]: Avg. Hours/Day
+                - paragraph [ref=e351]: "0.0"
+            - generic [ref=e356]:
+              - generic [ref=e357]:
+                - generic [ref=e359]:
+                  - heading "Attendance Calendar" [level=3] [ref=e360]
+                  - generic [ref=e363]:
+                    - button "Previous month" [ref=e364] [cursor=pointer]
+                    - generic [ref=e367]: September 2026
+                    - button "Next month" [ref=e368] [cursor=pointer]
+                - generic [ref=e372]:
+                  - generic [ref=e373]: Sun
+                  - generic [ref=e374]: Mon
+                  - generic [ref=e375]: Tue
+                  - generic [ref=e376]: Wed
+                  - generic [ref=e377]: Thu
+                  - generic [ref=e378]: Fri
+                  - generic [ref=e379]: Sat
+                  - button "1" [ref=e382] [cursor=pointer]
+                  - button "2" [ref=e385] [cursor=pointer]
+                  - button "3" [ref=e388] [cursor=pointer]
+                  - button "4" [ref=e391] [cursor=pointer]
+                  - button "5" [ref=e394] [cursor=pointer]
+                  - button "6" [ref=e397] [cursor=pointer]
+                  - button "7" [ref=e400] [cursor=pointer]
+                  - button "8" [ref=e403] [cursor=pointer]
+                  - button "9" [ref=e406] [cursor=pointer]
+                  - button "10" [ref=e409] [cursor=pointer]
+                  - button "11" [ref=e412] [cursor=pointer]
+                  - button "12" [ref=e415] [cursor=pointer]
+                  - button "13" [ref=e418] [cursor=pointer]
+                  - button "14" [ref=e421] [cursor=pointer]
+                  - button "15" [ref=e424] [cursor=pointer]
+                  - button "16" [ref=e427] [cursor=pointer]
+                  - button "17" [ref=e430] [cursor=pointer]
+                  - button "18" [ref=e433] [cursor=pointer]
+                  - button "19" [ref=e436] [cursor=pointer]
+                  - button "20" [ref=e439] [cursor=pointer]
+                  - button "21" [ref=e442] [cursor=pointer]
+                  - button "22" [ref=e445] [cursor=pointer]
+                  - button "23" [ref=e448] [cursor=pointer]
+                  - button "24" [ref=e451] [cursor=pointer]
+                  - button "25" [ref=e454] [cursor=pointer]
+                  - button "26" [ref=e457] [cursor=pointer]
+                  - button "27" [ref=e460] [cursor=pointer]
+                  - button "28" [ref=e463] [cursor=pointer]
+                  - button "29" [ref=e466] [cursor=pointer]
+                  - button "30" [ref=e469] [cursor=pointer]
+              - generic [ref=e472]:
+                - heading "Details" [level=3] [ref=e474]
+                - generic [ref=e479]:
+                  - generic [ref=e480]:
+                    - paragraph [ref=e481]: Date
+                    - paragraph [ref=e482]: Monday, September 21
+                  - generic [ref=e483]:
+                    - paragraph [ref=e485]: Sessions
+                    - paragraph [ref=e486]: No sessions recorded
+  - status
+  - button "Open Next.js Dev Tools" [ref=e6] [cursor=pointer]
+  - alert [ref=e487]

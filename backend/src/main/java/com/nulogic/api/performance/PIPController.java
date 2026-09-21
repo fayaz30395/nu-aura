@@ -4,6 +4,7 @@ import com.nulogic.application.performance.dto.*;
 import com.nulogic.application.performance.service.PIPService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.common.security.SecurityContext;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +12,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -34,7 +37,29 @@ public class PIPController {
     @GetMapping("/{id}")
     @RequiresPermission(Permission.PIP_VIEW)
     public ResponseEntity<PIPResponse> getById(@PathVariable UUID id) {
-        return ResponseEntity.ok(pipService.getById(id));
+        PIPResponse response = pipService.getById(id);
+        enforcePIPOwnershipCheck(response);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * IDOR FIX: same class as FeedbackController.enforceFeedbackOwnershipCheck, ported here.
+     * Allows the caller to view the PIP if they are the employee or manager on it, or hold
+     * HR-manager/EMPLOYEE_VIEW_ALL privileges. Managers may also view PIPs for reportees.
+     */
+    private void enforcePIPOwnershipCheck(PIPResponse pip) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) return;
+        if (SecurityContext.isHRManager()) return;
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) return;
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        if (self == null) throw new AccessDeniedException("Authentication required");
+        if (self.equals(pip.getEmployeeId())) return;
+        if (self.equals(pip.getManagerId())) return;
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)) {
+            Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+            if (reporteeIds.contains(pip.getEmployeeId())) return;
+        }
+        throw new AccessDeniedException("You are not authorized to view this PIP record");
     }
 
     @GetMapping

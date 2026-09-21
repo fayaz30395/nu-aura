@@ -365,6 +365,111 @@ public class WebSocketNotificationService {
     }
 
     /**
+     * Notify an employee they were placed on a Performance Improvement Plan.
+     */
+    public void notifyPIPAssigned(UUID employeeId) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.PIP_ASSIGNED)
+                .title("Performance Improvement Plan")
+                .message("A Performance Improvement Plan has been created for you.")
+                .priority(NotificationMessage.Priority.HIGH)
+                .actionUrl("/performance/pip")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
+     * Notify an employee that a check-in was recorded on their PIP.
+     */
+    public void notifyPIPCheckIn(UUID employeeId) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.PIP_CHECK_IN)
+                .title("PIP Check-In Recorded")
+                .message("A new check-in has been recorded on your Performance Improvement Plan.")
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/performance/pip")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
+     * Notify an employee that their PIP was closed.
+     */
+    public void notifyPIPClosed(UUID employeeId, String finalStatus) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.PIP_CLOSED)
+                .title("PIP Closed")
+                .message("Your Performance Improvement Plan has been closed with status: " + finalStatus + ".")
+                .priority(NotificationMessage.Priority.HIGH)
+                .actionUrl("/performance/pip")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
+     * Notify an employee they received 360-degree feedback.
+     */
+    public void notifyFeedbackReceived(UUID recipientId, String giverName) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.FEEDBACK_RECEIVED)
+                .title("New Feedback Received")
+                .message(String.format("%s gave you feedback", giverName))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/performance/feedback")
+                .build();
+
+        sendToUser(recipientId, notification);
+    }
+
+    /**
+     * Notify an employee that one of their OKR key results was updated.
+     */
+    public void notifyOkrUpdated(UUID employeeId, String objectiveTitle) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.OKR_UPDATED)
+                .title("OKR Updated")
+                .message(String.format("Your objective \"%s\" was updated", objectiveTitle))
+                .priority(NotificationMessage.Priority.LOW)
+                .actionUrl("/performance/okrs")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
+     * Notify a meeting participant they were scheduled for a meeting.
+     */
+    public void notifyMeetingScheduled(UUID participantId, String meetingTitle) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.MEETING_SCHEDULED)
+                .title("Meeting Scheduled")
+                .message(String.format("You've been scheduled for: %s", meetingTitle))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/meetings")
+                .build();
+
+        sendToUser(participantId, notification);
+    }
+
+    /**
+     * Notify an employee that a new survey was published for them to take.
+     */
+    public void notifySurveyPublished(UUID employeeId, String surveyTitle) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.SURVEY_PUBLISHED)
+                .title("New Survey Available")
+                .message(String.format("A new survey is available: %s", surveyTitle))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/surveys")
+                .build();
+
+        sendToUser(employeeId, notification);
+    }
+
+    /**
      * Send attendance reminder notification.
      */
     public void notifyAttendanceReminder(UUID employeeId) {

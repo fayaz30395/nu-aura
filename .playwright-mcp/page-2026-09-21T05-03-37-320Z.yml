@@ -1,0 +1,190 @@
+- generic [active] [ref=f3e11]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f3e15]:
+    - generic [ref=f3e16]:
+      - complementary "Product navigation" [ref=f3e17]:
+        - generic "NU-AURA" [ref=f3e18]: "N"
+        - button "NU-HRMS" [ref=f3e21] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=f3e29] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=f3e35] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=f3e41]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=f3e46] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=f3e54] [cursor=pointer]:
+          - generic [ref=f3e55]: SM
+      - navigation "NU-HRMS navigation" [ref=f3e56]:
+        - generic [ref=f3e65]:
+          - generic [ref=f3e66]: NU-HRMS
+          - generic [ref=f3e67]: Core HR
+        - button "NU All Modules Active Pro Plan" [ref=f3e68] [cursor=pointer]:
+          - generic [ref=f3e69]: NU
+          - generic [ref=f3e70]:
+            - generic [ref=f3e71]: All Modules Active
+            - generic [ref=f3e72]: Pro Plan
+        - generic [ref=f3e76]:
+          - generic [ref=f3e77]:
+            - generic [ref=f3e78]: Home
+            - link "Home" [ref=f3e80] [cursor=pointer]:
+              - /url: /me/dashboard
+          - generic [ref=f3e86]:
+            - generic [ref=f3e87]: My Space
+            - generic [ref=f3e88]:
+              - link "My Dashboard" [ref=f3e89] [cursor=pointer]:
+                - /url: /me/dashboard
+              - link "My Profile" [ref=f3e97] [cursor=pointer]:
+                - /url: /me/profile
+              - link "My Payslips" [ref=f3e103] [cursor=pointer]:
+                - /url: /me/payslips
+              - link "My Attendance" [ref=f3e108] [cursor=pointer]:
+                - /url: /me/attendance
+              - link "My Leaves" [ref=f3e114] [cursor=pointer]:
+                - /url: /me/leaves
+              - link "My Documents" [ref=f3e122] [cursor=pointer]:
+                - /url: /me/documents
+              - link "My Skills" [ref=f3e128] [cursor=pointer]:
+                - /url: /me/skills
+              - link "My Assets" [ref=f3e133] [cursor=pointer]:
+                - /url: /me/assets
+          - generic [ref=f3e140]:
+            - generic [ref=f3e141]: People
+            - generic [ref=f3e142]:
+              - link "Employees" [ref=f3e143] [cursor=pointer]:
+                - /url: /employees
+              - link "Departments" [ref=f3e151] [cursor=pointer]:
+                - /url: /departments
+              - link "Team Directory" [ref=f3e158] [cursor=pointer]:
+                - /url: /employees/directory
+              - link "Announcements" [ref=f3e165] [cursor=pointer]:
+                - /url: /announcements
+              - link "LinkedIn Posts" [ref=f3e171] [cursor=pointer]:
+                - /url: /linkedin-posts
+              - link "Approvals" [ref=f3e177] [cursor=pointer]:
+                - /url: /approvals/inbox
+          - generic [ref=f3e184]:
+            - generic [ref=f3e185]: HR Operations
+            - generic [ref=f3e186]:
+              - link "Shift Management" [ref=f3e187] [cursor=pointer]:
+                - /url: /shifts
+              - link "Leave Management" [ref=f3e193] [cursor=pointer]:
+                - /url: /leave
+              - link "Assets" [ref=f3e201] [cursor=pointer]:
+                - /url: /assets
+          - generic [ref=f3e208]:
+            - generic [ref=f3e209]: Pay & Finance
+            - generic [ref=f3e210]:
+              - link "Expenses" [ref=f3e211] [cursor=pointer]:
+                - /url: /expenses
+              - link "Loans" [ref=f3e217] [cursor=pointer]:
+                - /url: /loans
+              - link "Travel" [ref=f3e223] [cursor=pointer]:
+                - /url: /travel
+          - generic [ref=f3e228]:
+            - generic [ref=f3e229]: Projects & Work
+            - generic [ref=f3e230]:
+              - link "Time Tracking" [ref=f3e231] [cursor=pointer]:
+                - /url: /time-tracking
+              - link "Calendar" [ref=f3e237] [cursor=pointer]:
+                - /url: /nu-calendar
+          - generic [ref=f3e242]:
+            - generic [ref=f3e243]: Reports & Insights
+            - generic [ref=f3e244]:
+              - link "Reports" [ref=f3e245] [cursor=pointer]:
+                - /url: /reports
+              - link "Budget Planning" [ref=f3e251] [cursor=pointer]:
+                - /url: /admin/budget
+    - generic [ref=f3e256]:
+      - banner [ref=f3e257]:
+        - button "Toggle navigation panel" [ref=f3e258] [cursor=pointer]
+        - button "Open command palette" [ref=f3e261] [cursor=pointer]:
+          - generic [ref=f3e265]: Search or jump to…
+          - generic [ref=f3e266]: ⌘K
+        - button "Toggle theme" [ref=f3e268] [cursor=pointer]
+        - button "Notifications" [ref=f3e278] [cursor=pointer]
+        - button "User menu for Suresh M" [ref=f3e284] [cursor=pointer]:
+          - generic [ref=f3e285]: SM
+          - generic [ref=f3e286]:
+            - generic [ref=f3e287]: Suresh M
+            - generic [ref=f3e288]: RECRUITMENT ADMIN
+      - main [ref=f3e291]:
+        - main [ref=f3e292]:
+          - generic [ref=f3e293]:
+            - generic [ref=f3e294]:
+              - generic [ref=f3e295]:
+                - heading "Departments" [level=1] [ref=f3e296]
+                - paragraph [ref=f3e297]: Manage your organization's departments and structure
+              - button [ref=f3e298] [cursor=pointer]
+            - generic [ref=f3e301]:
+              - generic [ref=f3e305]:
+                - paragraph [ref=f3e306]: Total Departments
+                - paragraph [ref=f3e307]: "3"
+              - generic [ref=f3e316]:
+                - paragraph [ref=f3e317]: Active Departments
+                - paragraph [ref=f3e318]: "3"
+              - generic [ref=f3e326]:
+                - paragraph [ref=f3e327]: Total Employees
+                - paragraph [ref=f3e328]: "15"
+            - textbox "Search departments by name, code, or type..." [ref=f3e341]
+            - table [ref=f3e345]:
+              - rowgroup [ref=f3e346]:
+                - row [ref=f3e347]:
+                  - columnheader "Department" [ref=f3e348]
+                  - columnheader "Type" [ref=f3e349]
+                  - columnheader "Parent" [ref=f3e350]
+                  - columnheader "Manager" [ref=f3e351]
+                  - columnheader "Employees" [ref=f3e352]
+                  - columnheader "Status" [ref=f3e353]
+                  - columnheader "Actions" [ref=f3e354]
+              - rowgroup [ref=f3e355]:
+                - row [ref=f3e356]:
+                  - cell [ref=f3e357]:
+                    - generic [ref=f3e364]:
+                      - paragraph [ref=f3e365]: Engineering
+                      - paragraph [ref=f3e366]: ENG
+                  - cell "ENGINEERING" [ref=f3e367]
+                  - cell "-" [ref=f3e368]
+                  - cell "Sumit Kumar" [ref=f3e369]
+                  - cell "8" [ref=f3e370]
+                  - cell "Active" [ref=f3e378]
+                  - cell [ref=f3e379]:
+                    - generic [ref=f3e380]:
+                      - button "Edit department" [ref=f3e381] [cursor=pointer]
+                      - button "Deactivate department" [ref=f3e384] [cursor=pointer]
+                      - button "Delete department" [ref=f3e388] [cursor=pointer]
+                - row [ref=f3e392]:
+                  - cell [ref=f3e393]:
+                    - generic [ref=f3e400]:
+                      - paragraph [ref=f3e401]: Human Resources
+                      - paragraph [ref=f3e402]: HR
+                  - cell "HR" [ref=f3e403]
+                  - cell "-" [ref=f3e404]
+                  - cell "Jagadeesh N" [ref=f3e405]
+                  - cell "4" [ref=f3e406]
+                  - cell "Active" [ref=f3e414]
+                  - cell [ref=f3e415]:
+                    - generic [ref=f3e416]:
+                      - button "Edit department" [ref=f3e417] [cursor=pointer]
+                      - button "Deactivate department" [ref=f3e420] [cursor=pointer]
+                      - button "Delete department" [ref=f3e424] [cursor=pointer]
+                - row [ref=f3e428]:
+                  - cell [ref=f3e429]:
+                    - generic [ref=f3e436]:
+                      - paragraph [ref=f3e437]: Recruitment
+                      - paragraph [ref=f3e438]: HR-REC
+                  - cell "HR" [ref=f3e439]
+                  - cell "Human Resources" [ref=f3e440]
+                  - cell "Suresh M" [ref=f3e441]
+                  - cell "3" [ref=f3e442]
+                  - cell "Active" [ref=f3e450]
+                  - cell [ref=f3e451]:
+                    - generic [ref=f3e452]:
+                      - button "Edit department" [ref=f3e453] [cursor=pointer]
+                      - button "Deactivate department" [ref=f3e456] [cursor=pointer]
+                      - button "Delete department" [ref=f3e460] [cursor=pointer]
+  - status
+  - button "Open Next.js Dev Tools" [ref=f3e6] [cursor=pointer]
+  - alert [ref=f3e10]

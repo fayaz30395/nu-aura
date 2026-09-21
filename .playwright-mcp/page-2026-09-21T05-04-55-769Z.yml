@@ -1,0 +1,11 @@
+- generic [active] [ref=f1e1]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - alert [ref=f1e15]:
+    - generic [ref=f1e18]:
+      - paragraph [ref=f1e19]: Access Denied
+      - paragraph [ref=f1e20]: You do not have permission to access that page.
+    - button "Dismiss notification" [ref=f1e21] [cursor=pointer]
+  - status
+  - button "Open Next.js Dev Tools" [ref=f1e30] [cursor=pointer]
+  - alert [ref=f1e34]: My Dashboard

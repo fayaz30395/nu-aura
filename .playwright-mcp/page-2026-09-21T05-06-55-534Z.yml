@@ -1,0 +1,184 @@
+- generic [active] [ref=f4e10]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f4e14]:
+    - generic [ref=f4e15]:
+      - complementary "Product navigation" [ref=f4e16]:
+        - generic "NU-AURA" [ref=f4e17]: "N"
+        - button "NU-HRMS" [ref=f4e20] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=f4e28] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=f4e34] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=f4e40]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=f4e45] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=f4e53] [cursor=pointer]:
+          - generic [ref=f4e54]: SM
+      - navigation "NU-HRMS navigation" [ref=f4e55]:
+        - generic [ref=f4e64]:
+          - generic [ref=f4e65]: NU-HRMS
+          - generic [ref=f4e66]: Core HR
+        - button "NU All Modules Active Pro Plan" [ref=f4e67] [cursor=pointer]:
+          - generic [ref=f4e68]: NU
+          - generic [ref=f4e69]:
+            - generic [ref=f4e70]: All Modules Active
+            - generic [ref=f4e71]: Pro Plan
+        - generic [ref=f4e75]:
+          - generic [ref=f4e76]:
+            - generic [ref=f4e77]: Home
+            - link "Home" [ref=f4e79] [cursor=pointer]:
+              - /url: /me/dashboard
+          - generic [ref=f4e85]:
+            - generic [ref=f4e86]: My Space
+            - generic [ref=f4e87]:
+              - link "My Dashboard" [ref=f4e88] [cursor=pointer]:
+                - /url: /me/dashboard
+              - link "My Profile" [ref=f4e96] [cursor=pointer]:
+                - /url: /me/profile
+              - link "My Payslips" [ref=f4e102] [cursor=pointer]:
+                - /url: /me/payslips
+              - link "My Attendance" [ref=f4e107] [cursor=pointer]:
+                - /url: /me/attendance
+              - link "My Leaves" [ref=f4e113] [cursor=pointer]:
+                - /url: /me/leaves
+              - link "My Documents" [ref=f4e121] [cursor=pointer]:
+                - /url: /me/documents
+              - link "My Skills" [ref=f4e127] [cursor=pointer]:
+                - /url: /me/skills
+              - link "My Assets" [ref=f4e132] [cursor=pointer]:
+                - /url: /me/assets
+          - generic [ref=f4e139]:
+            - generic [ref=f4e140]: People
+            - generic [ref=f4e141]:
+              - link "Employees" [ref=f4e142] [cursor=pointer]:
+                - /url: /employees
+              - link "Departments" [ref=f4e150] [cursor=pointer]:
+                - /url: /departments
+              - link "Team Directory" [ref=f4e157] [cursor=pointer]:
+                - /url: /employees/directory
+              - link "Announcements" [ref=f4e164] [cursor=pointer]:
+                - /url: /announcements
+              - link "LinkedIn Posts" [ref=f4e170] [cursor=pointer]:
+                - /url: /linkedin-posts
+              - link "Approvals" [ref=f4e176] [cursor=pointer]:
+                - /url: /approvals/inbox
+          - generic [ref=f4e183]:
+            - generic [ref=f4e184]: HR Operations
+            - generic [ref=f4e185]:
+              - link "Shift Management" [ref=f4e186] [cursor=pointer]:
+                - /url: /shifts
+              - link "Leave Management" [ref=f4e192] [cursor=pointer]:
+                - /url: /leave
+              - link "Assets" [ref=f4e200] [cursor=pointer]:
+                - /url: /assets
+          - generic [ref=f4e207]:
+            - generic [ref=f4e208]: Pay & Finance
+            - generic [ref=f4e209]:
+              - link "Expenses" [ref=f4e210] [cursor=pointer]:
+                - /url: /expenses
+              - link "Loans" [ref=f4e216] [cursor=pointer]:
+                - /url: /loans
+              - link "Travel" [ref=f4e222] [cursor=pointer]:
+                - /url: /travel
+          - generic [ref=f4e227]:
+            - generic [ref=f4e228]: Projects & Work
+            - generic [ref=f4e229]:
+              - link "Time Tracking" [ref=f4e230] [cursor=pointer]:
+                - /url: /time-tracking
+              - link "Calendar" [ref=f4e236] [cursor=pointer]:
+                - /url: /nu-calendar
+          - generic [ref=f4e241]:
+            - generic [ref=f4e242]: Reports & Insights
+            - generic [ref=f4e243]:
+              - link "Reports" [ref=f4e244] [cursor=pointer]:
+                - /url: /reports
+              - link "Budget Planning" [ref=f4e250] [cursor=pointer]:
+                - /url: /admin/budget
+    - generic [ref=f4e255]:
+      - banner [ref=f4e256]:
+        - button "Toggle navigation panel" [ref=f4e257] [cursor=pointer]
+        - button "Open command palette" [ref=f4e260] [cursor=pointer]:
+          - generic [ref=f4e264]: Search or jump to…
+          - generic [ref=f4e265]: ⌘K
+        - button "Toggle theme" [ref=f4e267] [cursor=pointer]
+        - button "Notifications" [ref=f4e277] [cursor=pointer]
+        - button "User menu for Suresh M" [ref=f4e283] [cursor=pointer]:
+          - generic [ref=f4e284]: SM
+          - generic [ref=f4e285]:
+            - generic [ref=f4e286]: Suresh M
+            - generic [ref=f4e287]: RECRUITMENT ADMIN
+      - main [ref=f4e290]:
+        - main [ref=f4e291]:
+          - generic [ref=f4e292]:
+            - generic [ref=f4e293]:
+              - generic [ref=f4e294]:
+                - paragraph [ref=f4e295]: Expenses
+                - heading "Claims, approvals, and reimbursements without the spreadsheet shuffle." [level=1] [ref=f4e296]
+                - paragraph [ref=f4e297]: Submit receipts in seconds, approve in batches, and keep reimbursements predictable.
+              - button "Submit expense" [ref=f4e298] [cursor=pointer]
+            - region "Expense summary" [ref=f4e300]:
+              - generic [ref=f4e301]:
+                - generic [ref=f4e302]: Pending claims
+                - paragraph [ref=f4e307]: "0"
+                - paragraph [ref=f4e308]: ₹0.00
+              - generic [ref=f4e309]:
+                - generic [ref=f4e310]: Approved this month
+                - paragraph [ref=f4e315]: ₹0.00
+              - generic [ref=f4e316]:
+                - generic [ref=f4e317]: Awaiting reimbursement
+                - paragraph [ref=f4e322]: ₹0.00
+              - generic [ref=f4e323]:
+                - generic [ref=f4e324]: Over-policy
+                - paragraph [ref=f4e328]: "0"
+            - region "Quick actions" [ref=f4e329]:
+              - button [ref=f4e331] [cursor=pointer]:
+                - heading "Submit an expense" [level=2] [ref=f4e337]
+                - paragraph [ref=f4e338]: Snap a receipt, pick a category, and file in under a minute. Reimbursements settle on the next payroll cycle.
+                - paragraph [ref=f4e349]: New claim
+              - button [ref=f4e351] [cursor=pointer]:
+                - generic [ref=f4e356]:
+                  - heading "My claims" [level=3] [ref=f4e358]
+                  - paragraph [ref=f4e359]: Drafts, submissions, and history of every receipt you have filed.
+              - link [ref=f4e363] [cursor=pointer]:
+                - /url: /expenses/policies
+                - generic [ref=f4e368]:
+                  - heading "Categories & policies" [level=3] [ref=f4e370]
+                  - paragraph [ref=f4e371]: Per-category limits, mileage rates, and policy guardrails.
+              - link [ref=f4e375] [cursor=pointer]:
+                - /url: /expenses/reports
+                - generic [ref=f4e380]:
+                  - heading "Reports" [level=3] [ref=f4e382]
+                  - paragraph [ref=f4e383]: Spend by category, employee, and period. Export to CSV or PDF.
+              - link [ref=f4e387] [cursor=pointer]:
+                - /url: /expenses/advances
+                - generic [ref=f4e392]:
+                  - heading "Advances" [level=3] [ref=f4e394]
+                  - paragraph [ref=f4e395]: Track outstanding travel advances and settlement against claims.
+            - generic [ref=f4e399]:
+              - search [ref=f4e400]:
+                - searchbox "Search claims" [ref=f4e407]
+              - button "Filters" [ref=f4e408] [cursor=pointer]
+            - region "Expense claims" [ref=f4e413]:
+              - tablist "Claim views" [ref=f4e414]:
+                - tab "My claims" [selected] [ref=f4e415] [cursor=pointer]
+                - tab "Pending approval" [ref=f4e418] [cursor=pointer]
+                - tab "Analytics" [ref=f4e420] [cursor=pointer]
+              - status [ref=f4e422]:
+                - generic [ref=f4e423]:
+                  - heading "No Expense Claims" [level=3] [ref=f4e429]
+                  - paragraph [ref=f4e430]: Submit your first expense claim
+                  - button "New Claim" [ref=f4e431] [cursor=pointer]
+  - status
+  - generic [ref=f4e5] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f4e6]
+    - generic [ref=f4e432]:
+      - button "Open issues overlay" [ref=f4e433]:
+        - generic [ref=f4e434]:
+          - generic [aria-hidden] [ref=f4e435]: "0"
+          - generic [ref=f4e436]: "1"
+        - generic [ref=f4e437]: Issue
+      - button "Collapse issues badge" [ref=f4e438]
+  - alert [ref=f4e441]

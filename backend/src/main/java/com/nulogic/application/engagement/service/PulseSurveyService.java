@@ -41,6 +41,8 @@ public class PulseSurveyService {
     private final PulseSurveyAnswerRepository answerRepository;
     private final ObjectMapper objectMapper;
     private final TenantTimeService tenantTimeService;
+    private final com.nulogic.infrastructure.employee.repository.EmployeeRepository employeeRepository;
+    private final com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     // ==================== Survey CRUD ====================
 
@@ -182,7 +184,32 @@ public class PulseSurveyService {
         survey.setTotalQuestions(questionCount);
 
         log.info("Published survey: {} with status: {}", surveyId, survey.getStatus());
-        return surveyRepository.save(survey);
+        PulseSurvey saved = surveyRepository.save(survey);
+
+        if (saved.getStatus() == SurveyStatus.ACTIVE) {
+            notifyActiveEmployeesQuietly(tenantId, saved.getTitle());
+        }
+
+        return saved;
+    }
+
+    /**
+     * Best-effort broadcast to active employees when a survey goes live immediately.
+     * ponytail: bounded to the first 500 active employees (typical tenant size for this
+     * demo/MVP scope); page through with employeeRepository if a tenant exceeds that.
+     */
+    private void notifyActiveEmployeesQuietly(UUID tenantId, String surveyTitle) {
+        try {
+            employeeRepository.findAllByTenantIdAndStatus(tenantId, com.nulogic.domain.employee.Employee.EmployeeStatus.ACTIVE,
+                            org.springframework.data.domain.PageRequest.of(0, 500))
+                    .forEach(employee -> {
+                        if (employee.getUser() != null) {
+                            webSocketNotificationService.notifySurveyPublished(employee.getUser().getId(), surveyTitle);
+                        }
+                    });
+        } catch (Exception e) { // Intentional broad catch — notification failure must not fail the publish
+            log.warn("Failed to broadcast survey-published notification for survey '{}': {}", surveyTitle, e.getMessage());
+        }
     }
 
     @Transactional

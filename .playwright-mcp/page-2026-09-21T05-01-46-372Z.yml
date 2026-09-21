@@ -1,0 +1,89 @@
+- generic [ref=f8e1]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f8e5]:
+    - 'button "Theme: system. Click to cycle." [ref=f8e11] [cursor=pointer]'
+    - generic [ref=f8e19]:
+      - generic [ref=f8e22]:
+        - generic [ref=f8e23]:
+          - generic [ref=f8e24]: "N"
+          - generic [ref=f8e26]:
+            - generic [ref=f8e27]: NU-AURA
+            - generic [ref=f8e28]: by NULogic Technologies
+        - generic [ref=f8e29]: The enterprise people platform
+        - paragraph [ref=f8e31]: One login.Four focused workspaces.
+        - paragraph [ref=f8e32]: HRMS, hiring, growth, and knowledge tools in one role-aware workspace.
+        - generic "Workspace access flow" [ref=f8e33]:
+          - generic [ref=f8e34]:
+            - generic [ref=f8e35]: "01"
+            - generic [ref=f8e36]:
+              - generic [ref=f8e37]: Sign in once
+              - generic [ref=f8e38]: Use one identity for every people workflow.
+          - generic [ref=f8e39]:
+            - generic [ref=f8e40]: "02"
+            - generic [ref=f8e41]:
+              - generic [ref=f8e42]: Open the right workspace
+              - generic [ref=f8e43]: HRMS, Hire, Grow, and Fluence stay grouped.
+          - generic [ref=f8e44]:
+            - generic [ref=f8e45]: "03"
+            - generic [ref=f8e46]:
+              - generic [ref=f8e47]: Continue the task
+              - generic [ref=f8e48]: Navigation and permissions adapt after login.
+        - generic [ref=f8e49]:
+          - generic [ref=f8e57]:
+            - generic [ref=f8e58]: NU-HRMS
+            - generic [ref=f8e59]: Core HR
+          - generic [ref=f8e65]:
+            - generic [ref=f8e66]: NU-Hire
+            - generic [ref=f8e67]: Recruitment
+          - generic [ref=f8e73]:
+            - generic [ref=f8e74]: NU-Grow
+            - generic [ref=f8e75]: Performance
+          - generic [ref=f8e80]:
+            - generic [ref=f8e81]: NU-Fluence
+            - generic [ref=f8e82]: Knowledge
+        - generic [ref=f8e83]: Infinite Innovation
+      - generic [ref=f8e85]:
+        - heading "Sign In to NU-AURA" [level=2] [ref=f8e86]
+        - paragraph [ref=f8e87]: Sign in to your NULogic workspace with Google SSO.
+        - form "Email and password sign-in" [ref=f8e89]:
+          - generic [ref=f8e90]:
+            - generic [ref=f8e91]: Work email
+            - textbox "Work email" [ref=f8e97]:
+              - /placeholder: you@company.com
+              - text: saran@nulogic.io
+          - generic [ref=f8e98]:
+            - generic [ref=f8e99]: Password
+            - generic [ref=f8e100]:
+              - textbox "Password" [active] [ref=f8e105]:
+                - /placeholder: Enter your password
+                - text: Welcome@123
+              - button "Show password" [ref=f8e107] [cursor=pointer]
+          - generic [ref=f8e111]:
+            - button [pressed] [ref=f8e112] [cursor=pointer]
+            - link "Forgot password?" [ref=f8e116] [cursor=pointer]:
+              - /url: /auth/forgot-password
+          - button [ref=f8e117] [cursor=pointer]
+        - generic [ref=f8e121]: or continue with
+        - generic [ref=f8e123]:
+          - button "SSO" [disabled]
+          - button [ref=f8e124] [cursor=pointer]
+          - button "Microsoft" [disabled]
+        - paragraph [ref=f8e131]:
+          - text: Restricted to
+          - generic [ref=f8e132]: "@nulogic.io"
+          - text: accounts.
+        - paragraph [ref=f8e133]: New to NULogic? Contact your administrator
+        - paragraph [ref=f8e134]: Secure session with httpOnly cookies and CSRF protection.
+        - generic [ref=f8e135]:
+          - paragraph [ref=f8e136]:
+            - text: By signing in, you agree to our
+            - link "Terms" [ref=f8e137] [cursor=pointer]:
+              - /url: /terms
+            - text: and
+            - link "Privacy Policy" [ref=f8e138] [cursor=pointer]:
+              - /url: /privacy
+          - paragraph [ref=f8e139]: © 2026 NULogic Technologies · Enterprise SSO secured
+  - status
+  - button "Open Next.js Dev Tools" [ref=f8e145] [cursor=pointer]
+  - alert [ref=f8e149]

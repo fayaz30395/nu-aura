@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-21
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** Selecting a visibility filter actually filters search results
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-21)

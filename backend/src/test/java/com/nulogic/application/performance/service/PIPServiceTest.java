@@ -46,6 +46,8 @@ class PIPServiceTest {
     private PIPCheckInRepository checkInRepository;
     @Mock
     private EmployeeRepository employeeRepository;
+    @Mock
+    private com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     private PIPService service;
     private final UUID tenantId = UUID.randomUUID();
@@ -65,7 +67,7 @@ class PIPServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new PIPService(pipRepository, checkInRepository, employeeRepository);
+        service = new PIPService(pipRepository, checkInRepository, employeeRepository, webSocketNotificationService);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         when(employeeRepository.findAllById(any())).thenReturn(List.of());
     }

@@ -1,0 +1,87 @@
+- generic [active] [ref=f1e1]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f1e5]:
+    - 'button "Theme: system. Click to cycle." [ref=f1e11] [cursor=pointer]'
+    - generic [ref=f1e19]:
+      - generic [ref=f1e22]:
+        - generic [ref=f1e23]:
+          - generic [ref=f1e24]: "N"
+          - generic [ref=f1e26]:
+            - generic [ref=f1e27]: NU-AURA
+            - generic [ref=f1e28]: by NULogic Technologies
+        - generic [ref=f1e29]: The enterprise people platform
+        - paragraph [ref=f1e31]: One login.Four focused workspaces.
+        - paragraph [ref=f1e32]: HRMS, hiring, growth, and knowledge tools in one role-aware workspace.
+        - generic "Workspace access flow" [ref=f1e33]:
+          - generic [ref=f1e34]:
+            - generic [ref=f1e35]: "01"
+            - generic [ref=f1e36]:
+              - generic [ref=f1e37]: Sign in once
+              - generic [ref=f1e38]: Use one identity for every people workflow.
+          - generic [ref=f1e39]:
+            - generic [ref=f1e40]: "02"
+            - generic [ref=f1e41]:
+              - generic [ref=f1e42]: Open the right workspace
+              - generic [ref=f1e43]: HRMS, Hire, Grow, and Fluence stay grouped.
+          - generic [ref=f1e44]:
+            - generic [ref=f1e45]: "03"
+            - generic [ref=f1e46]:
+              - generic [ref=f1e47]: Continue the task
+              - generic [ref=f1e48]: Navigation and permissions adapt after login.
+        - generic [ref=f1e49]:
+          - generic [ref=f1e57]:
+            - generic [ref=f1e58]: NU-HRMS
+            - generic [ref=f1e59]: Core HR
+          - generic [ref=f1e65]:
+            - generic [ref=f1e66]: NU-Hire
+            - generic [ref=f1e67]: Recruitment
+          - generic [ref=f1e73]:
+            - generic [ref=f1e74]: NU-Grow
+            - generic [ref=f1e75]: Performance
+          - generic [ref=f1e80]:
+            - generic [ref=f1e81]: NU-Fluence
+            - generic [ref=f1e82]: Knowledge
+        - generic [ref=f1e83]: Infinite Innovation
+      - generic [ref=f1e85]:
+        - heading "Sign In to NU-AURA" [level=2] [ref=f1e86]
+        - paragraph [ref=f1e87]: Sign in to your NULogic workspace with Google SSO.
+        - form "Email and password sign-in" [ref=f1e89]:
+          - generic [ref=f1e90]:
+            - generic [ref=f1e91]: Work email
+            - textbox "Work email" [ref=f1e97]:
+              - /placeholder: you@company.com
+          - generic [ref=f1e98]:
+            - generic [ref=f1e99]: Password
+            - generic [ref=f1e100]:
+              - textbox "Password" [ref=f1e105]:
+                - /placeholder: Enter your password
+              - button "Show password" [ref=f1e107] [cursor=pointer]
+          - generic [ref=f1e111]:
+            - button [pressed] [ref=f1e112] [cursor=pointer]
+            - link "Forgot password?" [ref=f1e116] [cursor=pointer]:
+              - /url: /auth/forgot-password
+          - button [ref=f1e117] [cursor=pointer]
+        - generic [ref=f1e121]: or continue with
+        - generic [ref=f1e123]:
+          - button "SSO" [disabled]
+          - button [ref=f1e124] [cursor=pointer]
+          - button "Microsoft" [disabled]
+        - paragraph [ref=f1e131]:
+          - text: Restricted to
+          - generic [ref=f1e132]: "@nulogic.io"
+          - text: accounts.
+        - paragraph [ref=f1e133]: New to NULogic? Contact your administrator
+        - paragraph [ref=f1e134]: Secure session with httpOnly cookies and CSRF protection.
+        - generic [ref=f1e135]:
+          - paragraph [ref=f1e136]:
+            - text: By signing in, you agree to our
+            - link "Terms" [ref=f1e137] [cursor=pointer]:
+              - /url: /terms
+            - text: and
+            - link "Privacy Policy" [ref=f1e138] [cursor=pointer]:
+              - /url: /privacy
+          - paragraph [ref=f1e139]: © 2026 NULogic Technologies · Enterprise SSO secured
+  - status
+  - button "Open Next.js Dev Tools" [ref=f1e145] [cursor=pointer]
+  - alert [ref=f1e149]

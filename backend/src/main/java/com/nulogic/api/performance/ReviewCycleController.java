@@ -158,9 +158,9 @@ public class ReviewCycleController {
     @RequiresPermission(Permission.REVIEW_APPROVE)
     public ResponseEntity<Void> updateCalibrationRating(
             @PathVariable UUID reviewId,
-            @RequestParam Integer finalRating
+            @Valid @RequestBody CalibrationRatingRequest request
     ) {
-        reviewCycleService.updateCalibrationRating(reviewId, finalRating);
+        reviewCycleService.updateCalibrationRating(reviewId, request.getFinalRating());
         return ResponseEntity.ok().build();
     }
 }

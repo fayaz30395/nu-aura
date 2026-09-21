@@ -32,6 +32,8 @@ public class OkrService {
     private final KeyResultRepository keyResultRepository;
     private final OkrCheckInRepository checkInRepository;
     private final TenantTimeService tenantTimeService;
+    private final com.nulogic.infrastructure.employee.repository.EmployeeRepository employeeRepository;
+    private final com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     // ================== Objectives ==================
 
@@ -266,7 +268,26 @@ public class OkrService {
         // Update objective progress
         recalculateObjectiveProgress(tenantId, keyResult.getObjectiveId());
 
+        notifyOkrUpdatedQuietly(tenantId, keyResult.getObjectiveId(), keyResult.getOwnerId());
+
         return saved;
+    }
+
+    /** Best-effort: resolves the owner's User and pushes a notification, never failing the update. */
+    private void notifyOkrUpdatedQuietly(UUID tenantId, UUID objectiveId, UUID ownerId) {
+        if (ownerId == null) {
+            return;
+        }
+        try {
+            String objectiveTitle = objectiveRepository.findByIdAndTenantId(objectiveId, tenantId)
+                    .map(Objective::getTitle)
+                    .orElse("your objective");
+            employeeRepository.findByIdAndTenantId(ownerId, tenantId)
+                    .map(com.nulogic.domain.employee.Employee::getUser)
+                    .ifPresent(user -> webSocketNotificationService.notifyOkrUpdated(user.getId(), objectiveTitle));
+        } catch (Exception e) { // Intentional broad catch — notification failure must not fail the update
+            log.warn("Failed to notify OKR owner {} for objective {}: {}", ownerId, objectiveId, e.getMessage());
+        }
     }
 
     @Transactional

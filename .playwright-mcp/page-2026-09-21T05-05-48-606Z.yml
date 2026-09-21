@@ -1,0 +1,181 @@
+- generic [active] [ref=f3e1]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f3e26]:
+    - generic [ref=f3e27]:
+      - complementary "Product navigation" [ref=f3e28]:
+        - generic "NU-AURA" [ref=f3e29]: "N"
+        - button "NU-HRMS" [ref=f3e32] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=f3e40] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=f3e46] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=f3e52]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=f3e57] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=f3e65] [cursor=pointer]:
+          - generic [ref=f3e66]: AT
+      - navigation "NU-HRMS navigation" [ref=f3e67]:
+        - generic [ref=f3e76]:
+          - generic [ref=f3e77]: NU-HRMS
+          - generic [ref=f3e78]: Core HR
+        - button "NU All Modules Active Pro Plan" [ref=f3e79] [cursor=pointer]:
+          - generic [ref=f3e80]: NU
+          - generic [ref=f3e81]:
+            - generic [ref=f3e82]: All Modules Active
+            - generic [ref=f3e83]: Pro Plan
+        - generic [ref=f3e87]:
+          - generic [ref=f3e88]:
+            - generic [ref=f3e89]: Home
+            - link "Home" [ref=f3e91] [cursor=pointer]:
+              - /url: /me/dashboard
+          - generic [ref=f3e97]:
+            - generic [ref=f3e98]: My Space
+            - generic [ref=f3e99]:
+              - link "My Dashboard" [ref=f3e100] [cursor=pointer]:
+                - /url: /me/dashboard
+              - link "My Profile" [ref=f3e108] [cursor=pointer]:
+                - /url: /me/profile
+              - link "My Payslips" [ref=f3e114] [cursor=pointer]:
+                - /url: /me/payslips
+              - link "My Attendance" [ref=f3e119] [cursor=pointer]:
+                - /url: /me/attendance
+              - link "My Leaves" [ref=f3e125] [cursor=pointer]:
+                - /url: /me/leaves
+              - link "My Documents" [ref=f3e133] [cursor=pointer]:
+                - /url: /me/documents
+              - link "My Skills" [ref=f3e139] [cursor=pointer]:
+                - /url: /me/skills
+              - link "My Assets" [ref=f3e144] [cursor=pointer]:
+                - /url: /me/assets
+          - generic [ref=f3e151]:
+            - generic [ref=f3e152]: People
+            - generic [ref=f3e153]:
+              - link "Departments" [ref=f3e154] [cursor=pointer]:
+                - /url: /departments
+              - link "Announcements" [ref=f3e161] [cursor=pointer]:
+                - /url: /announcements
+              - link "LinkedIn Posts" [ref=f3e167] [cursor=pointer]:
+                - /url: /linkedin-posts
+              - link "Approvals" [ref=f3e173] [cursor=pointer]:
+                - /url: /approvals/inbox
+          - generic [ref=f3e180]:
+            - generic [ref=f3e181]: HR Operations
+            - generic [ref=f3e182]:
+              - link "Shift Management" [ref=f3e183] [cursor=pointer]:
+                - /url: /shifts
+              - link "Leave Management" [ref=f3e189] [cursor=pointer]:
+                - /url: /leave
+              - link "Assets" [ref=f3e197] [cursor=pointer]:
+                - /url: /assets
+              - link "Contracts" [ref=f3e204] [cursor=pointer]:
+                - /url: /contracts
+          - generic [ref=f3e210]:
+            - generic [ref=f3e211]: Pay & Finance
+            - generic [ref=f3e212]:
+              - link "Expenses" [ref=f3e213] [cursor=pointer]:
+                - /url: /expenses
+              - link "Loans" [ref=f3e219] [cursor=pointer]:
+                - /url: /loans
+              - link "Travel" [ref=f3e225] [cursor=pointer]:
+                - /url: /travel
+          - generic [ref=f3e230]:
+            - generic [ref=f3e231]: Projects & Work
+            - generic [ref=f3e232]:
+              - link "Time Tracking" [ref=f3e233] [cursor=pointer]:
+                - /url: /time-tracking
+              - link "Calendar" [ref=f3e239] [cursor=pointer]:
+                - /url: /nu-calendar
+    - generic [ref=f3e244]:
+      - banner [ref=f3e245]:
+        - button "Toggle navigation panel" [ref=f3e246] [cursor=pointer]
+        - navigation "Breadcrumb" [ref=f3e249]:
+          - link "NU-HRMS" [ref=f3e250] [cursor=pointer]:
+            - /url: /dashboard
+          - generic [ref=f3e254]: Assets
+        - button "Open command palette" [ref=f3e255] [cursor=pointer]:
+          - generic [ref=f3e259]: Search or jump to…
+          - generic [ref=f3e260]: ⌘K
+        - button "Toggle theme" [ref=f3e262] [cursor=pointer]
+        - button "Notifications" [ref=f3e272] [cursor=pointer]
+        - button "User menu for Arun T" [ref=f3e278] [cursor=pointer]:
+          - generic [ref=f3e279]: AT
+          - generic [ref=f3e280]:
+            - generic [ref=f3e281]: Arun T
+            - generic [ref=f3e282]: EMPLOYEE
+      - main [ref=f3e285]:
+        - main [ref=f3e286]:
+          - generic [ref=f3e287]:
+            - generic [ref=f3e288]:
+              - generic [ref=f3e289]:
+                - heading "Assets" [level=1] [ref=f3e290]
+                - paragraph [ref=f3e291]:
+                  - text: 0 tracked assets ·
+                  - generic [ref=f3e292]: 0%
+                  - text: assigned · ₹0 book value
+              - button [ref=f3e294] [cursor=pointer]
+            - generic [ref=f3e299]:
+              - generic [ref=f3e301]:
+                - generic [ref=f3e308]: Total assets
+                - generic [ref=f3e310]: "0"
+                - generic [ref=f3e311]: Across all locations
+              - generic [ref=f3e313]:
+                - 'generic "Delta: 0%" [ref=f3e320]': 0%
+                - generic [ref=f3e324]: Assigned
+                - generic [ref=f3e326]: "0"
+                - generic [ref=f3e327]: of all inventory
+              - generic [ref=f3e329]:
+                - 'generic "Delta: 0 ready" [ref=f3e335]': 0 ready
+                - generic [ref=f3e337]: Available
+                - generic [ref=f3e339]: "0"
+                - generic [ref=f3e340]: Ready to deploy
+              - generic [ref=f3e342]:
+                - 'generic "Delta: None" [ref=f3e347]': None
+                - generic [ref=f3e349]: In repair
+                - generic [ref=f3e351]: "0"
+                - generic [ref=f3e352]: In maintenance
+            - generic [ref=f3e353]:
+              - generic [ref=f3e354]:
+                - generic [ref=f3e355]:
+                  - group "Filter by category" [ref=f3e356]:
+                    - button "All" [pressed] [ref=f3e357] [cursor=pointer]
+                    - button "Laptop" [ref=f3e358] [cursor=pointer]
+                    - button "Monitor" [ref=f3e359] [cursor=pointer]
+                    - button "Phone" [ref=f3e360] [cursor=pointer]
+                    - button "Tablet" [ref=f3e361] [cursor=pointer]
+                    - button "Peripheral" [ref=f3e362] [cursor=pointer]
+                  - textbox "Search assets" [ref=f3e364]:
+                    - /placeholder: Search serial, name…
+                - status [ref=f3e366]:
+                  - generic [ref=f3e367]:
+                    - heading "No Assets Found" [level=3] [ref=f3e374]
+                    - paragraph [ref=f3e375]: Start tracking company assets by adding your first item. Manage laptops, monitors, furniture, and more.
+                    - button "Add Asset" [ref=f3e376] [cursor=pointer]
+              - generic [ref=f3e378]:
+                - generic [ref=f3e379]:
+                  - heading "By category" [level=2] [ref=f3e380]
+                  - paragraph [ref=f3e381]: Inventory mix
+                - paragraph [ref=f3e382]: No category data.
+                - separator [ref=f3e383]
+                - heading "Lifecycle" [level=2] [ref=f3e384]
+                - generic [ref=f3e385]:
+                  - generic [ref=f3e386]:
+                    - generic [ref=f3e387]:
+                      - generic [ref=f3e388]: Healthy
+                      - generic [ref=f3e389]: 0%
+                    - progressbar "Healthy lifecycle percentage" [ref=f3e390]
+                  - generic [ref=f3e391]:
+                    - generic [ref=f3e392]:
+                      - generic [ref=f3e393]: Aging (3y+)
+                      - generic [ref=f3e394]: 0%
+                    - progressbar "Aging (3y+) lifecycle percentage" [ref=f3e395]
+                  - generic [ref=f3e396]:
+                    - generic [ref=f3e397]:
+                      - generic [ref=f3e398]: End of life
+                      - generic [ref=f3e399]: 0%
+                    - progressbar "End of life lifecycle percentage" [ref=f3e400]
+  - status
+  - button "Open Next.js Dev Tools" [ref=f3e21] [cursor=pointer]
+  - alert [ref=f3e25]

@@ -1,0 +1,223 @@
+- generic [active] [ref=f9e10]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f9e150]:
+    - generic [ref=f9e151]:
+      - complementary "Product navigation" [ref=f9e152]:
+        - generic "NU-AURA" [ref=f9e153]: "N"
+        - button "NU-HRMS" [ref=f9e156] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=f9e164] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=f9e170] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=f9e176]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=f9e181] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=f9e189] [cursor=pointer]:
+          - generic [ref=f9e190]: SV
+      - navigation "NU-HRMS navigation" [ref=f9e191]:
+        - generic [ref=f9e200]:
+          - generic [ref=f9e201]: NU-HRMS
+          - generic [ref=f9e202]: Core HR
+        - button "NU All Modules Active Pro Plan" [ref=f9e203] [cursor=pointer]:
+          - generic [ref=f9e204]: NU
+          - generic [ref=f9e205]:
+            - generic [ref=f9e206]: All Modules Active
+            - generic [ref=f9e207]: Pro Plan
+        - generic [ref=f9e211]:
+          - generic [ref=f9e212]:
+            - generic [ref=f9e213]: Home
+            - link "Home" [ref=f9e215] [cursor=pointer]:
+              - /url: /me/dashboard
+          - generic [ref=f9e221]:
+            - generic [ref=f9e222]: My Space
+            - generic [ref=f9e223]:
+              - link "My Dashboard" [ref=f9e224] [cursor=pointer]:
+                - /url: /me/dashboard
+              - link "My Profile" [ref=f9e232] [cursor=pointer]:
+                - /url: /me/profile
+              - link "My Payslips" [ref=f9e238] [cursor=pointer]:
+                - /url: /me/payslips
+              - link "My Attendance" [ref=f9e243] [cursor=pointer]:
+                - /url: /me/attendance
+              - link "My Leaves" [ref=f9e249] [cursor=pointer]:
+                - /url: /me/leaves
+              - link "My Documents" [ref=f9e257] [cursor=pointer]:
+                - /url: /me/documents
+              - link "My Skills" [ref=f9e263] [cursor=pointer]:
+                - /url: /me/skills
+              - link "My Assets" [ref=f9e268] [cursor=pointer]:
+                - /url: /me/assets
+          - generic [ref=f9e275]:
+            - generic [ref=f9e276]: People
+            - generic [ref=f9e277]:
+              - link "Departments" [ref=f9e278] [cursor=pointer]:
+                - /url: /departments
+              - link "Announcements" [ref=f9e285] [cursor=pointer]:
+                - /url: /announcements
+              - link "LinkedIn Posts" [ref=f9e291] [cursor=pointer]:
+                - /url: /linkedin-posts
+              - link "Approvals" [ref=f9e297] [cursor=pointer]:
+                - /url: /approvals/inbox
+          - generic [ref=f9e304]:
+            - generic [ref=f9e305]: HR Operations
+            - generic [ref=f9e306]:
+              - link "Shift Management" [ref=f9e307] [cursor=pointer]:
+                - /url: /shifts
+              - link "Leave Management" [ref=f9e313] [cursor=pointer]:
+                - /url: /leave
+              - link "Assets" [ref=f9e321] [cursor=pointer]:
+                - /url: /assets
+              - link "Contracts" [ref=f9e328] [cursor=pointer]:
+                - /url: /contracts
+          - generic [ref=f9e334]:
+            - generic [ref=f9e335]: Pay & Finance
+            - generic [ref=f9e336]:
+              - link "Expenses" [ref=f9e337] [cursor=pointer]:
+                - /url: /expenses
+              - link "Loans" [ref=f9e343] [cursor=pointer]:
+                - /url: /loans
+              - link "Travel" [ref=f9e349] [cursor=pointer]:
+                - /url: /travel
+          - generic [ref=f9e354]:
+            - generic [ref=f9e355]: Projects & Work
+            - generic [ref=f9e356]:
+              - link "Time Tracking" [ref=f9e357] [cursor=pointer]:
+                - /url: /time-tracking
+              - link "Calendar" [ref=f9e363] [cursor=pointer]:
+                - /url: /nu-calendar
+    - generic [ref=f9e368]:
+      - banner [ref=f9e369]:
+        - button "Toggle navigation panel" [ref=f9e370] [cursor=pointer]
+        - navigation "Breadcrumb" [ref=f9e373]:
+          - generic [ref=f9e374]: My Dashboard
+        - button "Open command palette" [ref=f9e375] [cursor=pointer]:
+          - generic [ref=f9e379]: Search or jump to…
+          - generic [ref=f9e380]: ⌘K
+        - button "Toggle theme" [ref=f9e382] [cursor=pointer]
+        - button "Notifications" [ref=f9e392] [cursor=pointer]
+        - button "User menu for Saran V" [ref=f9e398] [cursor=pointer]:
+          - generic [ref=f9e399]: SV
+          - generic [ref=f9e400]:
+            - generic [ref=f9e401]: Saran V
+            - generic [ref=f9e402]: EMPLOYEE
+      - main [ref=f9e405]:
+        - main [ref=f9e406]:
+          - main [ref=f9e407]:
+            - generic [ref=f9e408]:
+              - generic [ref=f9e409]:
+                - generic [ref=f9e410]:
+                  - paragraph [ref=f9e411]: Monday, September 21
+                  - heading "Good morning, Saran." [level=1] [ref=f9e412]
+                  - paragraph [ref=f9e413]: Technology Lead. Here's what's on your plate today.
+                - link [ref=f9e414] [cursor=pointer]:
+                  - /url: /approvals/inbox
+                  - button "Inbox" [ref=f9e415]
+              - generic "Your month at a glance" [ref=f9e419]:
+                - generic [ref=f9e420]:
+                  - generic [ref=f9e421]: Attendance this month
+                  - paragraph [ref=f9e426]: 0%
+                - generic [ref=f9e427]:
+                  - generic [ref=f9e428]: Days present
+                  - paragraph [ref=f9e432]: "0"
+                - generic [ref=f9e433]:
+                  - generic [ref=f9e434]: Pending actions
+                  - paragraph [ref=f9e439]: "0"
+                - generic [ref=f9e440]:
+                  - generic [ref=f9e441]: Team on leave today
+                  - paragraph [ref=f9e446]: "0"
+              - region "Today" [ref=f9e447]:
+                - generic [ref=f9e450]:
+                  - generic [ref=f9e451]:
+                    - generic [ref=f9e452]: Mon, 21 Sep 2026
+                    - link "View all attendance" [ref=f9e458] [cursor=pointer]:
+                      - /url: /attendance
+                      - text: View All
+                  - generic [ref=f9e460]:
+                    - generic [ref=f9e461]: 02:02:03
+                    - generic [ref=f9e462]: AM
+                  - button "Clock in" [ref=f9e463] [cursor=pointer]: Clock In
+                - generic [ref=f9e469]:
+                  - heading "Quick Access" [level=2] [ref=f9e471]
+                  - generic [ref=f9e472]:
+                    - paragraph [ref=f9e477]: All caught up. No pending actions.
+                    - link "Inbox" [ref=f9e478] [cursor=pointer]:
+                      - /url: /inbox
+              - region "Your team and time off" [ref=f9e484]:
+                - generic [ref=f9e487]:
+                  - generic [ref=f9e488]:
+                    - heading "Leave Balance" [level=3] [ref=f9e492]
+                    - link "View all leave" [ref=f9e493] [cursor=pointer]:
+                      - /url: /leave
+                      - text: View All
+                  - generic [ref=f9e501]:
+                    - generic [ref=f9e502]: "18"
+                    - generic [ref=f9e503]: Days Left
+                  - generic [ref=f9e504]:
+                    - paragraph [ref=f9e505]: Earned Leave
+                    - paragraph [ref=f9e506]: 2 used · 20 total
+                  - generic [ref=f9e507]:
+                    - button "Leave type 1 of 7" [ref=f9e508] [cursor=pointer]
+                    - button "Leave type 2 of 7" [ref=f9e509] [cursor=pointer]
+                    - button "Leave type 3 of 7" [ref=f9e510] [cursor=pointer]
+                    - button "Leave type 4 of 7" [ref=f9e511] [cursor=pointer]
+                    - button "Leave type 5 of 7" [ref=f9e512] [cursor=pointer]
+                    - button "Leave type 6 of 7" [ref=f9e513] [cursor=pointer]
+                    - button "Leave type 7 of 7" [ref=f9e514] [cursor=pointer]
+                  - generic [ref=f9e515]:
+                    - link "Request Leave" [ref=f9e516] [cursor=pointer]:
+                      - /url: /leave/apply
+                    - link "View All Balances" [ref=f9e517] [cursor=pointer]:
+                      - /url: /leave/my-leaves
+                - generic [ref=f9e519]:
+                  - generic [ref=f9e520]:
+                    - generic [ref=f9e521]: Holidays
+                    - link "View All" [ref=f9e522] [cursor=pointer]:
+                      - /url: /holidays
+                  - paragraph [ref=f9e523]: No upcoming holidays
+                - generic [ref=f9e526]:
+                  - heading "On Leave Today" [level=3] [ref=f9e527]
+                  - paragraph [ref=f9e532]: Everyone is working today!
+                - generic [ref=f9e534]:
+                  - heading "Working Remotely" [level=3] [ref=f9e535]
+                  - generic [ref=f9e537]:
+                    - paragraph [ref=f9e538]: Everyone is at office!
+                    - paragraph [ref=f9e539]: No one is working remotely today.
+              - region "Company feed" [ref=f9e543]:
+                - generic [ref=f9e545]:
+                  - generic [ref=f9e546]:
+                    - button "Post" [ref=f9e547] [cursor=pointer]
+                    - button "Poll" [ref=f9e550] [cursor=pointer]
+                    - button "Praise" [ref=f9e553] [cursor=pointer]
+                  - generic [ref=f9e560]:
+                    - textbox "Write a new post" [ref=f9e561]:
+                      - /placeholder: Write something...
+                    - generic [ref=f9e562]:
+                      - generic [ref=f9e563]:
+                        - button "Add image" [ref=f9e564] [cursor=pointer]
+                        - button "Add emoji" [ref=f9e569] [cursor=pointer]
+                        - button "Attach file" [ref=f9e573] [cursor=pointer]
+                      - button "Post" [disabled] [ref=f9e576]
+                - paragraph [ref=f9e582]: No celebrations this week
+                - generic [ref=f9e584]:
+                  - generic [ref=f9e585]:
+                    - heading "Company Feed" [level=3] [ref=f9e586]
+                    - button "Refresh feed" [ref=f9e587] [cursor=pointer]
+                  - generic [ref=f9e593]:
+                    - button "All" [ref=f9e594] [cursor=pointer]
+                    - button "Announcements" [ref=f9e595] [cursor=pointer]
+                    - button "Birthdays" [ref=f9e596] [cursor=pointer]
+                    - button "Anniversaries" [ref=f9e597] [cursor=pointer]
+                    - button "New Joiners" [ref=f9e598] [cursor=pointer]
+                    - button "Recognition" [ref=f9e599] [cursor=pointer]
+                    - button "LinkedIn" [ref=f9e600] [cursor=pointer]
+                    - button "Posts" [ref=f9e601] [cursor=pointer]
+                  - status [ref=f9e602]:
+                    - generic [ref=f9e603]:
+                      - heading "No feed items yet" [level=3] [ref=f9e608]
+                      - paragraph [ref=f9e609]: Activity from across the company will appear here as it happens.
+  - status
+  - button "Open Next.js Dev Tools" [ref=f9e6] [cursor=pointer]
+  - alert [ref=f9e149]: My Dashboard

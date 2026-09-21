@@ -1638,5 +1638,747 @@
       }
     ],
     "story": "US-2FZSWHDK4MK3"
+  },
+  "US-2FZSYXE4BE9A": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYXE4BE9A"
+  },
+  "US-2FZSYXMVVJ9W": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYXMVVJ9W"
+  },
+  "US-2FZSYXVAG50G": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYXVAG50G"
+  },
+  "US-2FZSYY1R4MTM": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYY1R4MTM"
+  },
+  "US-2FZSYY7Q4564": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYY7Q4564"
+  },
+  "US-2FZSYYESQ81V": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYYESQ81V"
+  },
+  "US-2FZSYYN18GRX": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYYN18GRX"
+  },
+  "US-2FZSYYT9DXD0": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYYT9DXD0"
+  },
+  "US-2FZSYZ2N27XQ": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYZ2N27XQ"
+  },
+  "US-2FZSYZ7WRSJ4": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYZ7WRSJ4"
+  },
+  "US-2FZSYZDGT0D4": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYZDGT0D4"
+  },
+  "US-2FZSYZJV437N": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYZJV437N"
+  },
+  "US-2FZSYZR0FG6P": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYZR0FG6P"
+  },
+  "US-2FZSYZXREB7B": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSYZXREB7B"
+  },
+  "US-2FZSZ02YPQA9": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSZ02YPQA9"
+  },
+  "US-2G00S161WERF": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00S161WERF"
+  },
+  "US-2G00S1G3CW28": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00S1G3CW28"
+  },
+  "US-2G00S1PDXKT1": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00S1PDXKT1"
+  },
+  "US-2G00TXMG1GXN": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00TXMG1GXN"
+  },
+  "US-2G00TY51N6KK": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00TY51N6KK"
+  },
+  "US-2G00TYDND235": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00TYDND235"
+  },
+  "US-2G00TYNYVWFW": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00TYNYVWFW"
+  },
+  "US-2G00TYX9ZTGB": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00TYX9ZTGB"
+  },
+  "US-2G00TZ4ESSKZ": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00TZ4ESSKZ"
+  },
+  "US-2G00TZDDP0Q9": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "cd frontend && npx tsc --noEmit",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00TZDDP0Q9"
+  },
+  "US-2G00WCM0SRYW": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WCM0SRYW"
+  },
+  "US-2G00WCV11JFE": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WCV11JFE"
+  },
+  "US-2G00WD1VJTXK": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WD1VJTXK"
+  },
+  "US-2G00WD7SPTTG": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WD7SPTTG"
+  },
+  "US-2G00WDFM68RJ": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WDFM68RJ"
+  },
+  "US-2G00WDN0Y129": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WDN0Y129"
+  },
+  "US-2G00WDVPXXT8": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WDVPXXT8"
+  },
+  "US-2G00WE3BRZ3J": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WE3BRZ3J"
+  },
+  "US-2G00WEA0GD24": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WEA0GD24"
+  },
+  "US-2G00WEGARKRE": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00WEGARKRE"
+  },
+  "US-2G00Z9F46K76": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00Z9F46K76"
+  },
+  "US-2G00Z9R6NHPD": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00Z9R6NHPD"
+  },
+  "US-2G00ZA0Y39D9": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00ZA0Y39D9"
+  },
+  "US-2G00ZA9T3KN9": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00ZA9T3KN9"
+  },
+  "US-2G00ZAHWVF5F": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00ZAHWVF5F"
+  },
+  "US-2G00ZARVRQDP": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00ZARVRQDP"
+  },
+  "US-2G00ZAZGM9S1": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00ZAZGM9S1"
+  },
+  "US-2G00ZB6A6FE0": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00ZB6A6FE0"
+  },
+  "US-2G00ZBE7EFEN": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G00ZBE7EFEN"
+  },
+  "US-2G019S2XT6JK": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G019S2XT6JK"
+  },
+  "US-2G019SFHC7ND": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G019SFHC7ND"
+  },
+  "US-2G01Q1HMQH64": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G01Q1HMQH64"
+  },
+  "US-2G01Q24P61Z6": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G01Q24P61Z6"
+  },
+  "US-2G01V1SFKH4D": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G01V1SFKH4D"
+  },
+  "US-2G025E4V5PPC": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G025E4V5PPC"
+  },
+  "US-2G04TR3X33SD": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G04TR3X33SD"
+  },
+  "US-2G04VHZA2AM9": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G04VHZA2AM9"
+  },
+  "US-2G055M7PB4XP": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2G055M7PB4XP"
   }
 }

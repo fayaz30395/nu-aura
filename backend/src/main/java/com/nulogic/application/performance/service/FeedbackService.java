@@ -24,11 +24,14 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final EmployeeRepository employeeRepository;
+    private final com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     public FeedbackService(FeedbackRepository feedbackRepository,
-                           EmployeeRepository employeeRepository) {
+                           EmployeeRepository employeeRepository,
+                           com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService) {
         this.feedbackRepository = feedbackRepository;
         this.employeeRepository = employeeRepository;
+        this.webSocketNotificationService = webSocketNotificationService;
     }
 
     @Transactional
@@ -59,7 +62,27 @@ public class FeedbackService {
         feedback.setTenantId(tenantId);
         feedback = feedbackRepository.save(feedback);
 
+        notifyFeedbackReceivedQuietly(tenantId, feedback);
+
         return mapToResponse(feedback);
+    }
+
+    /** Best-effort: resolves the recipient's User and pushes a notification, never failing the write. */
+    private void notifyFeedbackReceivedQuietly(UUID tenantId, Feedback feedback) {
+        if (feedback.getRecipientId() == null) {
+            return;
+        }
+        try {
+            String giverName = Boolean.TRUE.equals(feedback.getIsAnonymous()) || feedback.getGiverId() == null
+                    ? "Someone"
+                    : employeeRepository.findByIdAndTenantId(feedback.getGiverId(), tenantId)
+                            .map(com.nulogic.domain.employee.Employee::getFullName)
+                            .orElse("Someone");
+            employeeRepository.findByIdAndTenantId(feedback.getRecipientId(), tenantId)
+                    .map(com.nulogic.domain.employee.Employee::getUser)
+                    .ifPresent(user -> webSocketNotificationService.notifyFeedbackReceived(user.getId(), giverName));
+        } catch (Exception e) { // Intentional broad catch — notification failure must not fail the write
+        }
     }
 
     @Transactional(readOnly = true)

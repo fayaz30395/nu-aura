@@ -1,0 +1,100 @@
+- generic [active] [ref=f2e10]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f2e14]:
+    - 'button "Theme: system. Click to cycle." [ref=f2e20] [cursor=pointer]'
+    - generic [ref=f2e28]:
+      - generic [ref=f2e31]:
+        - generic [ref=f2e32]:
+          - generic [ref=f2e33]: "N"
+          - generic [ref=f2e35]:
+            - generic [ref=f2e36]: NU-AURA
+            - generic [ref=f2e37]: by NULogic Technologies
+        - generic [ref=f2e38]: The enterprise people platform
+        - paragraph [ref=f2e40]: One login.Four focused workspaces.
+        - paragraph [ref=f2e41]: HRMS, hiring, growth, and knowledge tools in one role-aware workspace.
+        - generic "Workspace access flow" [ref=f2e42]:
+          - generic [ref=f2e43]:
+            - generic [ref=f2e44]: "01"
+            - generic [ref=f2e45]:
+              - generic [ref=f2e46]: Sign in once
+              - generic [ref=f2e47]: Use one identity for every people workflow.
+          - generic [ref=f2e48]:
+            - generic [ref=f2e49]: "02"
+            - generic [ref=f2e50]:
+              - generic [ref=f2e51]: Open the right workspace
+              - generic [ref=f2e52]: HRMS, Hire, Grow, and Fluence stay grouped.
+          - generic [ref=f2e53]:
+            - generic [ref=f2e54]: "03"
+            - generic [ref=f2e55]:
+              - generic [ref=f2e56]: Continue the task
+              - generic [ref=f2e57]: Navigation and permissions adapt after login.
+        - generic [ref=f2e58]:
+          - generic [ref=f2e66]:
+            - generic [ref=f2e67]: NU-HRMS
+            - generic [ref=f2e68]: Core HR
+          - generic [ref=f2e74]:
+            - generic [ref=f2e75]: NU-Hire
+            - generic [ref=f2e76]: Recruitment
+          - generic [ref=f2e82]:
+            - generic [ref=f2e83]: NU-Grow
+            - generic [ref=f2e84]: Performance
+          - generic [ref=f2e89]:
+            - generic [ref=f2e90]: NU-Fluence
+            - generic [ref=f2e91]: Knowledge
+        - generic [ref=f2e92]: Infinite Innovation
+      - generic [ref=f2e94]:
+        - heading "Sign In to NU-AURA" [level=2] [ref=f2e95]
+        - paragraph [ref=f2e96]: Sign in to your NULogic workspace with Google SSO.
+        - generic [ref=f2e153]:
+          - paragraph [ref=f2e154]: Authentication Failed
+          - paragraph [ref=f2e155]: Bad credentials
+        - form "Email and password sign-in" [ref=f2e98]:
+          - generic [ref=f2e99]:
+            - generic [ref=f2e100]: Work email
+            - textbox "Work email" [ref=f2e106]:
+              - /placeholder: you@company.com
+              - text: arun@nulogic.io
+          - generic [ref=f2e107]:
+            - generic [ref=f2e108]: Password
+            - generic [ref=f2e109]:
+              - textbox "Password" [ref=f2e114]:
+                - /placeholder: Enter your password
+                - text: WrongPass999
+              - button "Show password" [ref=f2e116] [cursor=pointer]
+          - generic [ref=f2e120]:
+            - button [pressed] [ref=f2e121] [cursor=pointer]
+            - link "Forgot password?" [ref=f2e125] [cursor=pointer]:
+              - /url: /auth/forgot-password
+          - button [ref=f2e126] [cursor=pointer]
+        - generic [ref=f2e130]: or continue with
+        - generic [ref=f2e132]:
+          - button "SSO" [disabled]
+          - button [ref=f2e133] [cursor=pointer]
+          - button "Microsoft" [disabled]
+        - paragraph [ref=f2e140]:
+          - text: Restricted to
+          - generic [ref=f2e141]: "@nulogic.io"
+          - text: accounts.
+        - paragraph [ref=f2e142]: New to NULogic? Contact your administrator
+        - paragraph [ref=f2e143]: Secure session with httpOnly cookies and CSRF protection.
+        - generic [ref=f2e144]:
+          - paragraph [ref=f2e145]:
+            - text: By signing in, you agree to our
+            - link "Terms" [ref=f2e146] [cursor=pointer]:
+              - /url: /terms
+            - text: and
+            - link "Privacy Policy" [ref=f2e147] [cursor=pointer]:
+              - /url: /privacy
+          - paragraph [ref=f2e148]: © 2026 NULogic Technologies · Enterprise SSO secured
+  - status
+  - generic [ref=f2e5] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f2e6]
+    - generic [ref=f2e159]:
+      - button "Open issues overlay" [ref=f2e160]:
+        - generic [ref=f2e161]:
+          - generic [aria-hidden] [ref=f2e162]: "0"
+          - generic [ref=f2e163]: "1"
+        - generic [ref=f2e164]: Issue
+      - button "Collapse issues badge" [ref=f2e165]
+  - alert [ref=f2e149]

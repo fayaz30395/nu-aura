@@ -70,7 +70,14 @@ public class NotificationMessage {
         INTERVIEW_CANCELLED,
         WALL_PRAISE_RECEIVED,
         WALL_POST_COMMENTED,
-        WALL_POST_REACTED
+        WALL_POST_REACTED,
+        PIP_ASSIGNED,
+        PIP_CHECK_IN,
+        PIP_CLOSED,
+        FEEDBACK_RECEIVED,
+        OKR_UPDATED,
+        MEETING_SCHEDULED,
+        SURVEY_PUBLISHED
     }
 
     public enum Priority {

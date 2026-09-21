@@ -1,0 +1,222 @@
+- generic [active] [ref=f1e10]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f1e475]:
+    - generic [ref=f1e476]:
+      - complementary "Product navigation" [ref=f1e477]:
+        - generic "NU-AURA" [ref=f1e478]: "N"
+        - button "NU-HRMS" [ref=f1e481] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=f1e489] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=f1e495] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=f1e501]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=f1e506] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=f1e514] [cursor=pointer]:
+          - generic [ref=f1e515]: AT
+      - navigation "NU-HRMS navigation" [ref=f1e516]:
+        - generic [ref=f1e525]:
+          - generic [ref=f1e526]: NU-HRMS
+          - generic [ref=f1e527]: Core HR
+        - button "NU All Modules Active Pro Plan" [ref=f1e528] [cursor=pointer]:
+          - generic [ref=f1e529]: NU
+          - generic [ref=f1e530]:
+            - generic [ref=f1e531]: All Modules Active
+            - generic [ref=f1e532]: Pro Plan
+        - generic [ref=f1e536]:
+          - generic [ref=f1e537]:
+            - generic [ref=f1e538]: Home
+            - link "Home" [ref=f1e540] [cursor=pointer]:
+              - /url: /me/dashboard
+          - generic [ref=f1e546]:
+            - generic [ref=f1e547]: My Space
+            - generic [ref=f1e548]:
+              - link "My Dashboard" [ref=f1e549] [cursor=pointer]:
+                - /url: /me/dashboard
+              - link "My Profile" [ref=f1e557] [cursor=pointer]:
+                - /url: /me/profile
+              - link "My Payslips" [ref=f1e563] [cursor=pointer]:
+                - /url: /me/payslips
+              - link "My Attendance" [ref=f1e568] [cursor=pointer]:
+                - /url: /me/attendance
+              - link "My Leaves" [ref=f1e574] [cursor=pointer]:
+                - /url: /me/leaves
+              - link "My Documents" [ref=f1e582] [cursor=pointer]:
+                - /url: /me/documents
+              - link "My Skills" [ref=f1e588] [cursor=pointer]:
+                - /url: /me/skills
+              - link "My Assets" [ref=f1e593] [cursor=pointer]:
+                - /url: /me/assets
+          - generic [ref=f1e600]:
+            - generic [ref=f1e601]: People
+            - generic [ref=f1e602]:
+              - link "Departments" [ref=f1e603] [cursor=pointer]:
+                - /url: /departments
+              - link "Announcements" [ref=f1e610] [cursor=pointer]:
+                - /url: /announcements
+              - link "LinkedIn Posts" [ref=f1e616] [cursor=pointer]:
+                - /url: /linkedin-posts
+              - link "Approvals" [ref=f1e622] [cursor=pointer]:
+                - /url: /approvals/inbox
+          - generic [ref=f1e629]:
+            - generic [ref=f1e630]: HR Operations
+            - generic [ref=f1e631]:
+              - link "Shift Management" [ref=f1e632] [cursor=pointer]:
+                - /url: /shifts
+              - link "Leave Management" [ref=f1e638] [cursor=pointer]:
+                - /url: /leave
+              - link "Assets" [ref=f1e646] [cursor=pointer]:
+                - /url: /assets
+              - link "Contracts" [ref=f1e653] [cursor=pointer]:
+                - /url: /contracts
+          - generic [ref=f1e659]:
+            - generic [ref=f1e660]: Pay & Finance
+            - generic [ref=f1e661]:
+              - link "Expenses" [ref=f1e662] [cursor=pointer]:
+                - /url: /expenses
+              - link "Loans" [ref=f1e668] [cursor=pointer]:
+                - /url: /loans
+              - link "Travel" [ref=f1e674] [cursor=pointer]:
+                - /url: /travel
+          - generic [ref=f1e679]:
+            - generic [ref=f1e680]: Projects & Work
+            - generic [ref=f1e681]:
+              - link "Time Tracking" [ref=f1e682] [cursor=pointer]:
+                - /url: /time-tracking
+              - link "Calendar" [ref=f1e688] [cursor=pointer]:
+                - /url: /nu-calendar
+    - generic [ref=f1e693]:
+      - banner [ref=f1e694]:
+        - button "Toggle navigation panel" [ref=f1e695] [cursor=pointer]
+        - navigation "Breadcrumb" [ref=f1e698]:
+          - generic [ref=f1e699]: My Profile
+        - button "Open command palette" [ref=f1e700] [cursor=pointer]:
+          - generic [ref=f1e704]: Search or jump to…
+          - generic [ref=f1e705]: ⌘K
+        - button "Toggle theme" [ref=f1e707] [cursor=pointer]
+        - button "Notifications" [ref=f1e717] [cursor=pointer]
+        - button "User menu for Arun T" [ref=f1e723] [cursor=pointer]:
+          - generic [ref=f1e724]: AT
+          - generic [ref=f1e725]:
+            - generic [ref=f1e726]: Arun T
+            - generic [ref=f1e727]: EMPLOYEE
+      - main [ref=f1e730]:
+        - main [ref=f1e731]:
+          - main [ref=f1e732]:
+            - generic [ref=f1e733]:
+              - generic [ref=f1e734]:
+                - heading "My Profile" [level=1] [ref=f1e735]
+                - paragraph [ref=f1e736]: Manage your personal information
+              - button "Edit Profile" [ref=f1e737] [cursor=pointer]
+            - generic [ref=f1e744]:
+              - generic [ref=f1e745]: AT
+              - generic [ref=f1e748]:
+                - heading "Arun T" [level=2] [ref=f1e749]
+                - paragraph [ref=f1e750]: HR Executive - Recruitment
+                - generic [ref=f1e751]:
+                  - generic [ref=f1e752]: arun@nulogic.io
+                  - generic [ref=f1e756]: EMP-0010
+                  - generic [ref=f1e760]: Recruitment
+            - generic [ref=f1e765]:
+              - generic [ref=f1e767]:
+                - generic [ref=f1e768]:
+                  - heading "Personal Information" [level=3] [ref=f1e769]
+                  - paragraph [ref=f1e773]: Your basic personal details
+                - generic [ref=f1e774]:
+                  - generic [ref=f1e775]:
+                    - generic [ref=f1e776]: Full Name
+                    - paragraph [ref=f1e777]: Arun T
+                  - generic [ref=f1e778]:
+                    - generic [ref=f1e779]: Date of Birth
+                    - paragraph [ref=f1e780]: Not provided
+                  - generic [ref=f1e781]:
+                    - generic [ref=f1e782]: Gender
+                    - paragraph [ref=f1e783]: Not provided
+              - generic [ref=f1e785]:
+                - generic [ref=f1e786]:
+                  - heading "Contact Information" [level=3] [ref=f1e787]
+                  - paragraph [ref=f1e790]: How to reach you
+                - generic [ref=f1e791]:
+                  - generic [ref=f1e792]:
+                    - generic [ref=f1e793]: Work Email
+                    - paragraph [ref=f1e794]: arun@nulogic.io
+                  - generic [ref=f1e795]:
+                    - text: Personal Email
+                    - paragraph [ref=f1e796]: Not provided
+                  - generic [ref=f1e797]:
+                    - text: Phone Number
+                    - paragraph [ref=f1e798]: Not provided
+                  - generic [ref=f1e799]:
+                    - text: Emergency Contact
+                    - paragraph [ref=f1e800]: Not provided
+              - generic [ref=f1e802]:
+                - generic [ref=f1e803]:
+                  - heading "Address" [level=3] [ref=f1e804]
+                  - paragraph [ref=f1e808]: Your residential address
+                - generic [ref=f1e809]:
+                  - generic [ref=f1e810]:
+                    - text: Street Address
+                    - paragraph [ref=f1e811]: Not provided
+                  - generic [ref=f1e812]:
+                    - generic [ref=f1e813]:
+                      - text: City
+                      - paragraph [ref=f1e814]: N/A
+                    - generic [ref=f1e815]:
+                      - text: State
+                      - paragraph [ref=f1e816]: N/A
+                  - generic [ref=f1e817]:
+                    - generic [ref=f1e818]:
+                      - text: Postal Code
+                      - paragraph [ref=f1e819]: N/A
+                    - generic [ref=f1e820]:
+                      - text: Country
+                      - paragraph [ref=f1e821]: N/A
+              - generic [ref=f1e823]:
+                - generic [ref=f1e824]:
+                  - heading "Employment Details" [level=3] [ref=f1e825]
+                  - paragraph [ref=f1e828]: Your work-related information
+                - generic [ref=f1e829]:
+                  - generic [ref=f1e830]:
+                    - generic [ref=f1e831]: Joining Date
+                    - paragraph [ref=f1e832]: Aug 31, 2023
+                  - generic [ref=f1e833]:
+                    - generic [ref=f1e834]: Employment Type
+                    - paragraph [ref=f1e835]: FULL TIME
+                  - generic [ref=f1e836]:
+                    - generic [ref=f1e837]: Department
+                    - paragraph [ref=f1e838]: Recruitment
+                  - generic [ref=f1e839]:
+                    - generic [ref=f1e840]: Reporting Manager
+                    - paragraph [ref=f1e841]: Sumit Kumar
+                  - generic [ref=f1e842]:
+                    - generic [ref=f1e843]: Status
+                    - generic [ref=f1e844]: ACTIVE
+              - generic [ref=f1e846]:
+                - generic [ref=f1e848]:
+                  - generic [ref=f1e849]:
+                    - heading "Bank Details" [level=3] [ref=f1e850]
+                    - paragraph [ref=f1e853]: Your salary account information
+                  - button "Request Change" [ref=f1e854] [cursor=pointer]
+                - generic [ref=f1e857]:
+                  - generic [ref=f1e858]:
+                    - generic [ref=f1e859]: Bank Name
+                    - paragraph [ref=f1e860]: Not provided
+                  - generic [ref=f1e861]:
+                    - generic [ref=f1e862]: Account Number
+                    - paragraph [ref=f1e863]: Not provided
+                  - generic [ref=f1e864]:
+                    - generic [ref=f1e865]: IFSC Code
+                    - paragraph [ref=f1e866]: Not provided
+              - generic [ref=f1e868]:
+                - generic [ref=f1e869]:
+                  - heading "Tax Information" [level=3] [ref=f1e870]
+                  - paragraph [ref=f1e873]: Your tax identification details
+                - generic [ref=f1e875]:
+                  - generic [ref=f1e876]: PAN Number
+                  - paragraph [ref=f1e877]: Not provided
+  - status
+  - button "Open Next.js Dev Tools" [ref=f1e6] [cursor=pointer]
+  - alert [ref=f1e474]: My Profile

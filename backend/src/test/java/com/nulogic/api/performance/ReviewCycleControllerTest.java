@@ -386,8 +386,14 @@ class ReviewCycleControllerTest {
         void shouldUpdateCalibrationRating() throws Exception {
             doNothing().when(reviewCycleService).updateCalibrationRating(reviewId, 4);
 
+            com.nulogic.application.performance.dto.CalibrationRatingRequest request =
+                    com.nulogic.application.performance.dto.CalibrationRatingRequest.builder()
+                            .finalRating(4)
+                            .build();
+
             mockMvc.perform(put("/api/v1/review-cycles/reviews/{reviewId}/calibration-rating", reviewId)
-                            .param("finalRating", "4"))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
             verify(reviewCycleService).updateCalibrationRating(reviewId, 4);

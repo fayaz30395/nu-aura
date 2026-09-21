@@ -23,6 +23,8 @@ import java.util.UUID;
 public class MeetingService {
 
     private final OneOnOneMeetingRepository meetingRepository;
+    private final com.nulogic.infrastructure.employee.repository.EmployeeRepository employeeRepository;
+    private final com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     /**
      * Schedule a new one-on-one meeting.
@@ -61,6 +63,14 @@ public class MeetingService {
 
         OneOnOneMeeting savedMeeting = meetingRepository.save(meeting);
         log.info("Scheduled meeting {} for tenant {}", savedMeeting.getId(), tenantId);
+
+        try {
+            employeeRepository.findByIdAndTenantId(savedMeeting.getEmployeeId(), tenantId)
+                    .map(com.nulogic.domain.employee.Employee::getUser)
+                    .ifPresent(user -> webSocketNotificationService.notifyMeetingScheduled(user.getId(), savedMeeting.getTitle()));
+        } catch (Exception e) { // Intentional broad catch — notification failure must not fail the schedule
+            log.warn("Failed to notify employee {} for meeting {}: {}", savedMeeting.getEmployeeId(), savedMeeting.getId(), e.getMessage());
+        }
 
         return savedMeeting;
     }

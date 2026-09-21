@@ -1,0 +1,6 @@
+- generic [active] [ref=f3e1]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - status
+  - button "Open Next.js Dev Tools" [ref=f3e21] [cursor=pointer]
+  - alert [ref=f3e25]

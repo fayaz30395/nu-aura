@@ -1,0 +1,137 @@
+- generic [ref=e1]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=e147]:
+    - generic [ref=e148]:
+      - complementary "Product navigation" [ref=e149]:
+        - generic "NU-AURA" [ref=e150]: "N"
+        - button "NU-HRMS" [ref=e153] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=e161] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=e167] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=e173]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=e178] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=e186] [cursor=pointer]:
+          - generic [ref=e187]: SM
+      - navigation "NU-HRMS navigation" [ref=e188]:
+        - generic [ref=e197]:
+          - generic [ref=e198]: NU-HRMS
+          - generic [ref=e199]: Core HR
+        - button "NU All Modules Active Pro Plan" [ref=e200] [cursor=pointer]:
+          - generic [ref=e201]: NU
+          - generic [ref=e202]:
+            - generic [ref=e203]: All Modules Active
+            - generic [ref=e204]: Pro Plan
+        - generic [ref=e208]:
+          - generic [ref=e209]:
+            - generic [ref=e210]: Home
+            - link "Home" [ref=e212] [cursor=pointer]:
+              - /url: /me/dashboard
+          - generic [ref=e218]:
+            - generic [ref=e219]: My Space
+            - generic [ref=e220]:
+              - link "My Dashboard" [ref=e221] [cursor=pointer]:
+                - /url: /me/dashboard
+              - link "My Profile" [ref=e229] [cursor=pointer]:
+                - /url: /me/profile
+              - link "My Payslips" [ref=e235] [cursor=pointer]:
+                - /url: /me/payslips
+              - link "My Attendance" [ref=e240] [cursor=pointer]:
+                - /url: /me/attendance
+              - link "My Leaves" [ref=e246] [cursor=pointer]:
+                - /url: /me/leaves
+              - link "My Documents" [ref=e254] [cursor=pointer]:
+                - /url: /me/documents
+              - link "My Skills" [ref=e260] [cursor=pointer]:
+                - /url: /me/skills
+              - link "My Assets" [ref=e265] [cursor=pointer]:
+                - /url: /me/assets
+          - generic [ref=e272]:
+            - generic [ref=e273]: People
+            - generic [ref=e274]:
+              - link "Employees" [ref=e275] [cursor=pointer]:
+                - /url: /employees
+              - link "Departments" [ref=e283] [cursor=pointer]:
+                - /url: /departments
+              - link "Team Directory" [ref=e290] [cursor=pointer]:
+                - /url: /employees/directory
+              - link "Announcements" [ref=e297] [cursor=pointer]:
+                - /url: /announcements
+              - link "LinkedIn Posts" [ref=e303] [cursor=pointer]:
+                - /url: /linkedin-posts
+              - link "Approvals" [ref=e309] [cursor=pointer]:
+                - /url: /approvals/inbox
+          - generic [ref=e316]:
+            - generic [ref=e317]: HR Operations
+            - generic [ref=e318]:
+              - link "Shift Management" [ref=e319] [cursor=pointer]:
+                - /url: /shifts
+              - link "Leave Management" [ref=e325] [cursor=pointer]:
+                - /url: /leave
+              - link "Assets" [ref=e333] [cursor=pointer]:
+                - /url: /assets
+          - generic [ref=e340]:
+            - generic [ref=e341]: Pay & Finance
+            - generic [ref=e342]:
+              - link "Expenses" [ref=e343] [cursor=pointer]:
+                - /url: /expenses
+              - link "Loans" [ref=e349] [cursor=pointer]:
+                - /url: /loans
+              - link "Travel" [ref=e355] [cursor=pointer]:
+                - /url: /travel
+          - generic [ref=e360]:
+            - generic [ref=e361]: Projects & Work
+            - generic [ref=e362]:
+              - link "Time Tracking" [ref=e363] [cursor=pointer]:
+                - /url: /time-tracking
+              - link "Calendar" [ref=e369] [cursor=pointer]:
+                - /url: /nu-calendar
+          - generic [ref=e374]:
+            - generic [ref=e375]: Reports & Insights
+            - generic [ref=e376]:
+              - link "Reports" [ref=e377] [cursor=pointer]:
+                - /url: /reports
+              - link "Budget Planning" [ref=e383] [cursor=pointer]:
+                - /url: /admin/budget
+    - generic [ref=e388]:
+      - banner [ref=e389]:
+        - button "Toggle navigation panel" [ref=e390] [cursor=pointer]
+        - navigation "Breadcrumb" [ref=e393]:
+          - generic [ref=e394]: NU-Calendar
+        - button "Open command palette" [ref=e395] [cursor=pointer]:
+          - generic [ref=e399]: Search or jump to…
+          - generic [ref=e400]: ⌘K
+        - button "Toggle theme" [ref=e402] [cursor=pointer]
+        - generic [ref=e411]:
+          - button "Notifications" [expanded] [active] [ref=e412] [cursor=pointer]
+          - generic [ref=e712]:
+            - generic [ref=e713]:
+              - button "Google" [ref=e714] [cursor=pointer]
+              - button "System" [ref=e715] [cursor=pointer]
+            - generic [ref=e716]:
+              - generic [ref=e717]: System Alerts
+              - paragraph [ref=e723]: No system notifications
+        - button "User menu for Suresh M" [ref=e418] [cursor=pointer]:
+          - generic [ref=e419]: SM
+          - generic [ref=e420]:
+            - generic [ref=e421]: Suresh M
+            - generic [ref=e422]: RECRUITMENT ADMIN
+      - main [ref=e425]:
+        - main [ref=e426]:
+          - generic [ref=e427]:
+            - generic [ref=e428]:
+              - generic [ref=e433]:
+                - heading "NU-Calendar" [level=1] [ref=e434]
+                - paragraph [ref=e435]: Your Google Calendar events
+              - button [ref=e436] [cursor=pointer]
+            - generic [ref=e442]:
+              - heading "Connect to Google Calendar" [level=2] [ref=e446]
+              - paragraph [ref=e447]: View and manage your Google Calendar events directly within NULogic. Schedule meetings, track appointments, and stay organized.
+              - button [ref=e448] [cursor=pointer]
+  - status
+  - button "Open Next.js Dev Tools" [ref=e142] [cursor=pointer]
+  - alert [ref=e146]

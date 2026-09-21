@@ -31,13 +31,27 @@ public class PIPService {
     private final PIPRepository pipRepository;
     private final PIPCheckInRepository checkInRepository;
     private final EmployeeRepository employeeRepository;
+    private final com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     public PIPService(PIPRepository pipRepository,
                       PIPCheckInRepository checkInRepository,
-                      EmployeeRepository employeeRepository) {
+                      EmployeeRepository employeeRepository,
+                      com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService) {
         this.pipRepository = pipRepository;
         this.checkInRepository = checkInRepository;
         this.employeeRepository = employeeRepository;
+        this.webSocketNotificationService = webSocketNotificationService;
+    }
+
+    /** Best-effort: resolves employeeId's User and pushes a notification, never failing the PIP write. */
+    private void notifyEmployeeQuietly(UUID tenantId, UUID employeeId, java.util.function.Consumer<UUID> notify) {
+        try {
+            employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                    .map(com.nulogic.domain.employee.Employee::getUser)
+                    .ifPresent(user -> notify.accept(user.getId()));
+        } catch (Exception e) { // Intentional broad catch — notification failure must not fail the PIP write
+            log.warn("Failed to notify employee {} for PIP event: {}", employeeId, e.getMessage());
+        }
     }
 
     @Transactional
@@ -58,6 +72,7 @@ public class PIPService {
         pip.setTenantId(tenantId);
         pip = pipRepository.save(pip);
         log.info("Created PIP {} for employee {}", pip.getId(), req.getEmployeeId());
+        notifyEmployeeQuietly(tenantId, req.getEmployeeId(), webSocketNotificationService::notifyPIPAssigned);
         return mapToResponse(pip, false);
     }
 
@@ -82,6 +97,7 @@ public class PIPService {
 
         checkIn.setTenantId(tenantId);
         checkIn = checkInRepository.save(checkIn);
+        notifyEmployeeQuietly(tenantId, pip.getEmployeeId(), webSocketNotificationService::notifyPIPCheckIn);
         return mapCheckInToResponse(checkIn);
     }
 
@@ -100,6 +116,8 @@ public class PIPService {
         pip.setCloseNotes(req.getNotes());
         pipRepository.save(pip);
         log.info("Closed PIP {} with status {}", pipId, req.getFinalStatus());
+        notifyEmployeeQuietly(tenantId, pip.getEmployeeId(),
+                userId -> webSocketNotificationService.notifyPIPClosed(userId, req.getFinalStatus().name()));
     }
 
     @Transactional(readOnly = true)
