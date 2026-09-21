@@ -38,6 +38,7 @@ public class FileStorageService {
     public static final String CATEGORY_LETTERS = "letters";
     public static final String CATEGORY_ATTACHMENTS = "attachments";
     public static final String CATEGORY_REPORTS = "reports";
+    public static final String CATEGORY_CERTIFICATES = "certificates";
     // Allowed file types
     private static final Map<String, Long> ALLOWED_TYPES = Map.of(
             "image/jpeg", 5L * 1024 * 1024,      // 5MB
@@ -75,7 +76,7 @@ public class FileStorageService {
     // value is rejected before it can shape the generated objectName / storage path.
     private static final Set<String> ALLOWED_CATEGORIES = Set.of(
             CATEGORY_PROFILE_PHOTO, CATEGORY_DOCUMENTS, CATEGORY_PAYSLIPS,
-            CATEGORY_LETTERS, CATEGORY_ATTACHMENTS, CATEGORY_REPORTS);
+            CATEGORY_LETTERS, CATEGORY_ATTACHMENTS, CATEGORY_REPORTS, CATEGORY_CERTIFICATES);
     private final StorageProvider storageProvider;
     private final JdbcTemplate jdbcTemplate;
     private final com.nulogic.infrastructure.storage.FileMetadataRepository fileMetadataRepository;

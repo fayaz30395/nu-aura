@@ -3,6 +3,7 @@ package com.nulogic.application.training.service;
 import com.nulogic.api.training.dto.TrainingProgramRequest;
 import com.nulogic.api.training.dto.TrainingProgramResponse;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.domain.training.TrainingEnrollment;
 import com.nulogic.domain.training.TrainingProgram;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.training.repository.TrainingEnrollmentRepository;
@@ -39,6 +40,8 @@ class TrainingManagementServiceTest {
     private TrainingEnrollmentRepository enrollmentRepository;
     @Mock
     private EmployeeRepository employeeRepository;
+    @Mock
+    private TrainingCertificatePdfService certificatePdfService;
     @InjectMocks
     private TrainingManagementService trainingService;
     private UUID tenantId;
@@ -197,6 +200,49 @@ class TrainingManagementServiceTest {
             assertThatThrownBy(() -> trainingService.createProgram(request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("already exists");
+        }
+    }
+
+    @Nested
+    @DisplayName("generateCertificate")
+    class GenerateCertificateTests {
+
+        @Test
+        @DisplayName("Should generate a real PDF and persist its URL for a completed enrollment")
+        void shouldGenerateCertificatePdf() {
+            UUID enrollmentId = UUID.randomUUID();
+            TrainingEnrollment enrollment = new TrainingEnrollment();
+            enrollment.setId(enrollmentId);
+            enrollment.setTenantId(tenantId);
+            enrollment.setStatus(TrainingEnrollment.EnrollmentStatus.COMPLETED);
+
+            when(enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)).thenReturn(Optional.of(enrollment));
+            when(certificatePdfService.generateCertificatePdf(enrollment))
+                    .thenReturn("/api/v1/files/download/direct?objectName=tenant/certificates/x.pdf");
+            when(enrollmentRepository.save(any(TrainingEnrollment.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            trainingService.generateCertificate(enrollmentId);
+
+            verify(certificatePdfService).generateCertificatePdf(enrollment);
+            assertThat(enrollment.getCertificateUrl()).isEqualTo("/api/v1/files/download/direct?objectName=tenant/certificates/x.pdf");
+            assertThat(enrollment.getCertificateIssued()).isTrue();
+        }
+
+        @Test
+        @DisplayName("Should reject certificate generation for a non-completed enrollment")
+        void shouldRejectWhenNotCompleted() {
+            UUID enrollmentId = UUID.randomUUID();
+            TrainingEnrollment enrollment = new TrainingEnrollment();
+            enrollment.setId(enrollmentId);
+            enrollment.setTenantId(tenantId);
+            enrollment.setStatus(TrainingEnrollment.EnrollmentStatus.ENROLLED);
+
+            when(enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)).thenReturn(Optional.of(enrollment));
+
+            assertThatThrownBy(() -> trainingService.generateCertificate(enrollmentId))
+                    .isInstanceOf(IllegalArgumentException.class);
+
+            verify(certificatePdfService, never()).generateCertificatePdf(any());
         }
     }
 }

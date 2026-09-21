@@ -43,6 +43,7 @@ public class TrainingManagementService {
     private final TrainingProgramRepository programRepository;
     private final TrainingEnrollmentRepository enrollmentRepository;
     private final EmployeeRepository employeeRepository;
+    private final TrainingCertificatePdfService certificatePdfService;
     private final DomainEventPublisher domainEventPublisher;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
@@ -332,8 +333,9 @@ public class TrainingManagementService {
                     "Certificate can only be generated for COMPLETED enrollments, current status: " + enrollment.getStatus());
         }
 
-        String certificateUrl = "/certificates/" + tenantId + "/" + enrollmentId + ".pdf";
+        String certificateUrl = certificatePdfService.generateCertificatePdf(enrollment);
         enrollment.setCertificateUrl(certificateUrl);
+        enrollment.setCertificateIssued(true);
 
         TrainingEnrollment savedEnrollment = enrollmentRepository.save(enrollment);
 

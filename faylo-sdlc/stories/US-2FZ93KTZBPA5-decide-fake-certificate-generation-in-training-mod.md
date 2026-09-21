@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** autonomous
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** Decision recorded and implemented: real certificate PDF generation with download route, or remove the fake certificate feature
   - **Verify:** shell true
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)
