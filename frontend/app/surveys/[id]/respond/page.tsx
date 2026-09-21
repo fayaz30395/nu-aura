@@ -12,6 +12,7 @@ import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
 import {useSubmitSurveyResponse, useSurveyQuestions,} from '@/lib/hooks/queries/useSurveyQuestions';
 import type {SubmitAnswerRequest, SurveyQuestion} from '@/lib/types/grow/survey';
 import {QuestionType} from '@/lib/types/grow/survey';
+import {notifications} from '@mantine/notifications';
 import {iconSize, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 
 // ─── Per-question answer state ─────────────────────────────────────────────
@@ -19,6 +20,27 @@ interface AnswerState {
   answerText?: string;
   selectedOptions?: string[];
   ratingValue?: number;
+}
+
+function isAnswered(question: SurveyQuestion, answer: AnswerState | undefined): boolean {
+  if (!answer) return false;
+  if (question.questionType === QuestionType.MULTIPLE_CHOICE) {
+    return (answer.selectedOptions?.length ?? 0) > 0;
+  }
+  if (
+    question.questionType === QuestionType.SINGLE_CHOICE ||
+    question.questionType === QuestionType.YES_NO
+  ) {
+    return (answer.selectedOptions?.length ?? 0) > 0;
+  }
+  if (
+    question.questionType === QuestionType.SCALE ||
+    question.questionType === QuestionType.NPS ||
+    question.questionType === QuestionType.RATING
+  ) {
+    return answer.ratingValue !== undefined && answer.ratingValue !== null;
+  }
+  return !!answer.answerText?.trim();
 }
 
 // ─── Question Renderers ────────────────────────────────────────────────────
@@ -250,6 +272,19 @@ export default function SurveyRespondPage() {
   };
 
   const handleSubmit = () => {
+    const firstUnansweredIndex = sortedQuestions.findIndex(
+      (q) => q.isRequired && !isAnswered(q, answers[q.id])
+    );
+    if (firstUnansweredIndex !== -1) {
+      setCurrentIndex(firstUnansweredIndex);
+      notifications.show({
+        title: 'Answer required',
+        message: 'Please answer all required questions before submitting.',
+        color: 'red',
+      });
+      return;
+    }
+
     // DEV-2: backend expects option INDICES (selectedOption/selectedOptions),
     // ratingAnswer for ratings/scales and npsScore for NPS questions.
     const formattedAnswers: SubmitAnswerRequest[] = sortedQuestions.map((q) => {
