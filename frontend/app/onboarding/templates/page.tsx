@@ -9,15 +9,32 @@ import {Card} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
-import {useOnboardingTemplates} from '@/lib/hooks/queries/useOnboarding';
+import {useDeleteOnboardingTemplate, useOnboardingTemplates} from '@/lib/hooks/queries/useOnboarding';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Skeleton} from '@/components/ui/Skeleton';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {notifications} from '@mantine/notifications';
 
 export default function TemplatesPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [deletingTemplateId, setDeletingTemplateId] = useState<string | null>(null);
   const {data: templates = [], isLoading} = useOnboardingTemplates();
+  const deleteTemplateMutation = useDeleteOnboardingTemplate();
+
+  const handleDeleteTemplate = () => {
+    if (!deletingTemplateId) return;
+    deleteTemplateMutation.mutate(deletingTemplateId, {
+      onSuccess: () => {
+        notifications.show({title: 'Template deleted', message: '', color: 'green'});
+        setDeletingTemplateId(null);
+      },
+      onError: () => {
+        notifications.show({title: 'Error', message: 'Failed to delete template', color: 'red'});
+      },
+    });
+  };
 
   const filteredTemplates = templates.filter(t =>
     t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -137,14 +154,30 @@ export default function TemplatesPage() {
                           </div>
                           <div className="flex gap-2">
                             <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
-                              <Button size="sm" variant="outline"
-                                      className="h-8 w-8 p-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  router.push(`/onboarding/templates/${template.id}`);
+                                }}
+                                aria-label="Edit template"
+                                className="h-8 w-8 p-0 rounded-xl opacity-0 group-hover:opacity-100 transition-all"
+                              >
                                 <Edit3 className="h-3.5 w-3.5"/>
                               </Button>
                             </PermissionGate>
                             <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
-                              <Button size="sm" variant="outline"
-                                      className="h-8 w-8 p-0 rounded-xl text-danger-500 border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDeletingTemplateId(template.id);
+                                }}
+                                aria-label="Delete template"
+                                className="h-8 w-8 p-0 rounded-xl text-danger-500 border-danger-500/20 opacity-0 group-hover:opacity-100 transition-all"
+                              >
                                 <Trash2 className="h-3.5 w-3.5"/>
                               </Button>
                             </PermissionGate>
@@ -159,6 +192,18 @@ export default function TemplatesPage() {
           </Card>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!deletingTemplateId}
+        onClose={() => setDeletingTemplateId(null)}
+        onConfirm={handleDeleteTemplate}
+        title="Delete Template?"
+        message="This action cannot be undone. The template and its tasks will be permanently deleted."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        loading={deleteTemplateMutation.isPending}
+      />
     </AppLayout>
   );
 }
