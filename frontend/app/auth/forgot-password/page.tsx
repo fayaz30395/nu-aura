@@ -8,11 +8,10 @@ import {z} from 'zod';
 import {Button, buttonVariants} from '@/components/ui/Button';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Input} from '@/components/ui/Input';
-import {GoogleGLogo} from '@/components/ui/GoogleGLogo';
 import {ThemeToggle} from '@/components/ui/ThemeToggle';
 import {BrandPanel} from '../_components/BrandPanel';
 import '../_components/auth-form.css';
-import {AlertCircle, ArrowLeft, CheckCircle, ExternalLink, Mail, ShieldCheck} from 'lucide-react';
+import {AlertCircle, ArrowLeft, CheckCircle, Mail} from 'lucide-react';
 import {apiClient} from '@/lib/api/client';
 
 const forgotPasswordSchema = z.object({
@@ -27,7 +26,6 @@ type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSsoUser, setIsSsoUser] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -42,17 +40,14 @@ export default function ForgotPasswordPage() {
   const onSubmit = async (data: ForgotPasswordData) => {
     setError(null);
     setIsLoading(true);
-    setIsSsoUser(false);
 
     try {
-      const response = await apiClient.post<{ message: string; authProvider: string }>(
+      // Response intentionally not inspected for authProvider — surfacing it
+      // here would let anyone probe whether a given email uses Google SSO.
+      await apiClient.post<{ message: string }>(
         '/auth/forgot-password',
         {email: data.email}
       );
-
-      if (response.data.authProvider === 'GOOGLE') {
-        setIsSsoUser(true);
-      }
 
       setIsSubmitted(true);
     } catch (err) {
@@ -80,76 +75,39 @@ export default function ForgotPasswordPage() {
             <section className="w-full max-w-[460px] mx-auto">
               <Card className="auth-shell-card motion-rise">
                 <CardContent className="pt-8 pb-8 text-center">
-                {isSsoUser ? (
-                    <>
-                      {/* Google SSO user — redirect to Google account */}
-                      <div
-                        className="inline-flex items-center justify-center w-12 h-12 bg-accent-100 dark:bg-accent-500/10 rounded-full mb-4">
-                        <ShieldCheck className="w-6 h-6 text-accent-600 dark:text-accent-400"/>
-                      </div>
-                      <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
-                        Google Sign-In Account
-                      </h2>
-                      <p className="text-sm text-[var(--text-secondary)] mb-2">
-                        The account for{' '}
-                        <span className="font-medium text-[var(--text-primary)]">
-                          {getValues('email')}
-                        </span>{' '}
-                        uses Google Sign-In.
-                      </p>
-                      <p className="text-xs text-[var(--text-muted)] mb-6">
-                        Please manage your password through your Google account settings.
-                      </p>
-                      <a
-                        href="https://myaccount.google.com/security"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center w-full gap-2 px-4 py-2 mb-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-main)] text-[var(--text-primary)] font-medium hover:bg-[var(--bg-card-hover)] transition-colors"
-                      >
-                        <GoogleGLogo className="w-5 h-5"/>
-                        Go to Google Account Security
-                        <ExternalLink className="w-4 h-4 text-[var(--text-muted)]"/>
-                      </a>
-                      <Link href="/auth/login" className={buttonVariants({variant: 'primary', className: 'w-full'})}>
-                        <ArrowLeft className="w-4 h-4 mr-2"/>
-                        Back to Sign In
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      {/* Local user — check email */}
-                      <div
-                        className="inline-flex items-center justify-center w-12 h-12 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-                        <CheckCircle className="w-6 h-6 text-success-600 dark:text-success-400"/>
-                      </div>
-                      <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
-                        Check Your Email
-                      </h2>
-                      <p className="text-sm text-[var(--text-secondary)] mb-6">
-                        We&apos;ve sent a password reset link to{' '}
-                        <span className="font-medium text-[var(--text-primary)]">
-                          {getValues('email')}
-                        </span>
-                      </p>
-                      <p className="text-xs text-[var(--text-muted)] mb-6">
-                        Didn&apos;t receive the email? Check your spam folder or{' '}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsSubmitted(false);
-                            setIsSsoUser(false);
-                          }}
-                          className="text-accent-700 dark:text-accent-400 hover:underline font-medium"
-                        >
-                          try again
-                        </button>
-                      </p>
-                      <Link href="/auth/login" className={buttonVariants({variant: 'primary', className: 'w-full'})}>
-                        <ArrowLeft className="w-4 h-4 mr-2"/>
-                        Back to Sign In
-                      </Link>
-                    </>
-                  )}
+                {/* Generic confirmation regardless of auth provider — avoids
+                    letting a submitted email reveal whether it uses Google
+                    SSO or a local password (account-enumeration mitigation).
+                    Provider-specific guidance is delivered via the email
+                    itself, not this response. */}
+                <div
+                  className="inline-flex items-center justify-center w-12 h-12 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
+                  <CheckCircle className="w-6 h-6 text-success-600 dark:text-success-400"/>
+                </div>
+                <h2 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+                  Check Your Email
+                </h2>
+                <p className="text-sm text-[var(--text-secondary)] mb-6">
+                  If an account exists for{' '}
+                  <span className="font-medium text-[var(--text-primary)]">
+                    {getValues('email')}
+                  </span>{' '}
+                  we&apos;ve sent instructions to reset your password.
+                </p>
+                <p className="text-xs text-[var(--text-muted)] mb-6">
+                  Didn&apos;t receive the email? Check your spam folder or{' '}
+                  <button
+                    type="button"
+                    onClick={() => setIsSubmitted(false)}
+                    className="text-accent-700 dark:text-accent-400 hover:underline font-medium"
+                  >
+                    try again
+                  </button>
+                </p>
+                <Link href="/auth/login" className={buttonVariants({variant: 'primary', className: 'w-full'})}>
+                  <ArrowLeft className="w-4 h-4 mr-2"/>
+                  Back to Sign In
+                </Link>
                 </CardContent>
               </Card>
             </section>
