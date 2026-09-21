@@ -26,6 +26,7 @@ import {
   CycleRequest,
   Feedback360Cycle,
   Feedback360Request,
+  Feedback360Summary,
   FeedbackResponse,
 } from '@/lib/services/grow/feedback360.service';
 import {
@@ -160,6 +161,7 @@ export default function Feedback360Page() {
   const [nominateCycle, setNominateCycle] = useState<Feedback360Cycle | null>(null);
   const [nominee, setNominee] = useState<{ id: string; name: string } | null>(null);
   const [nominateReviewerType, setNominateReviewerType] = useState<ReviewerType>('PEER');
+  const [viewingSummary, setViewingSummary] = useState<Feedback360Summary | null>(null);
 
   const [cycleForm, setCycleForm] = useState<CycleRequest>({
     name: '',
@@ -767,6 +769,7 @@ export default function Feedback360Page() {
 
                     <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-subtle)] mt-4">
                       <button
+                        onClick={() => setViewingSummary(summary)}
                         className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                       >
                         <Eye className="h-4 w-4 mr-1"/>
@@ -790,6 +793,59 @@ export default function Feedback360Page() {
             )}
           </div>
         )}
+
+        {/* Summary Details Modal */}
+        <Modal isOpen={!!viewingSummary} onClose={() => setViewingSummary(null)} size="lg">
+          <ModalHeader onClose={() => setViewingSummary(null)}>
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+              Feedback Summary
+            </h2>
+          </ModalHeader>
+          <ModalBody>
+            {viewingSummary && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  {viewingSummary.finalRating !== undefined && (
+                    <div>
+                      <span className="text-body-secondary">Final Rating</span>
+                      <p className="font-medium">{viewingSummary.finalRating}</p>
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-body-secondary">Responses</span>
+                    <p className="font-medium">
+                      {viewingSummary.responsesReceived} / {viewingSummary.totalReviewers}
+                    </p>
+                  </div>
+                </div>
+                {viewingSummary.consolidatedStrengths && (
+                  <div>
+                    <h3 className="text-xs font-medium text-success-600 mb-1">Strengths</h3>
+                    <p className="text-body-secondary whitespace-pre-wrap">
+                      {viewingSummary.consolidatedStrengths}
+                    </p>
+                  </div>
+                )}
+                {viewingSummary.consolidatedImprovements && (
+                  <div>
+                    <h3 className="text-xs font-medium text-warning-600 mb-1">Areas for Improvement</h3>
+                    <p className="text-body-secondary whitespace-pre-wrap">
+                      {viewingSummary.consolidatedImprovements}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <button
+              onClick={() => setViewingSummary(null)}
+              className="inline-flex items-center px-4 py-1.5 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-card)] border border-[var(--border-strong)] rounded hover:bg-[var(--bg-surface)]"
+            >
+              Close
+            </button>
+          </ModalFooter>
+        </Modal>
 
         {/* Create Cycle Modal */}
         <Modal

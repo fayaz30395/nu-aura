@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {Award, ChevronRight, Hexagon, RefreshCw, Share2, Star, Target, Users, Zap} from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -19,6 +20,7 @@ const PerformanceSpiderChart = dynamic(
 );
 
 export default function PerformanceRevolutionPage() {
+  const router = useRouter();
   const {user} = useAuth();
   const currentUserId = user?.employeeId || 'me';
   const okrGraphQuery = useOKRGraph();
@@ -192,7 +194,13 @@ export default function PerformanceRevolutionPage() {
                     </div>
                   </div>
                 ))}
-                <Button variant="ghost" className="w-full text-xs text-accent-700 p-0 h-auto">View All Kudos</Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => router.push('/recognition')}
+                  className="w-full text-xs text-accent-700 p-0 h-auto"
+                >
+                  View All Kudos
+                </Button>
               </CardContent>
             </Card>
 
@@ -204,8 +212,6 @@ export default function PerformanceRevolutionPage() {
                   <CardTitle className="text-accent-900 dark:text-accent-400 flex items-center gap-2">
                     <Users className="h-5 w-5"/> Development Trajectory
                   </CardTitle>
-                  <Button variant="primary" size="sm" className="bg-accent-600 hover:bg-accent-700">Connect with
-                    Coach</Button>
                 </div>
               </CardHeader>
               <CardContent>

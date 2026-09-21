@@ -24,6 +24,11 @@ import {
 import {useCourseDetail, useMyEnrollments, useUpdateCourseProgress} from '@/lib/hooks/queries/useLearning';
 import {Modal, ModalBody, ModalFooter} from '@/components/ui';
 import {safeUrl} from '@/lib/utils/safeUrl';
+import {apiClient} from '@/lib/api/client';
+import {notifications} from '@mantine/notifications';
+import {createLogger} from '@/lib/utils/logger';
+
+const log = createLogger('CoursePlayPage');
 
 type ContentStatus = 'not_started' | 'in_progress' | 'completed';
 
@@ -83,6 +88,25 @@ export default function CoursePlayerPage() {
 
   // Find current enrollment
   const enrollment = allEnrollments?.find(e => e.courseId === id) ?? null;
+
+  const handleDownloadCertificate = useCallback(async () => {
+    if (!enrollment?.certificateId) return;
+    try {
+      const response = await apiClient.get<Blob>(
+        `/lms/certificates/${enrollment.certificateId}/download`,
+        {responseType: 'blob'}
+      );
+      const url = window.URL.createObjectURL(response.data as Blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `certificate-${enrollment.certificateId}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      log.error('Failed to download certificate:', error);
+      notifications.show({title: 'Error', message: 'Failed to download certificate', color: 'red'});
+    }
+  }, [enrollment?.certificateId]);
 
   // Flatten all contents across modules
   const allContents = course?.modules?.flatMap(m => m.contents ?? []) ?? [];
@@ -591,6 +615,7 @@ export default function CoursePlayerPage() {
           <ModalFooter className="flex-col gap-2">
             {enrollment?.certificateId && (
               <button
+                onClick={handleDownloadCertificate}
                 className="w-full px-4 py-2 bg-success-600 text-white rounded-md font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2">
                 Download Certificate
               </button>

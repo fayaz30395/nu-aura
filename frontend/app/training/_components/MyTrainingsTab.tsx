@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import {useRouter} from 'next/navigation';
 import {Award, BookOpen, Download, Loader2, Play} from 'lucide-react';
 import {Badge, Button, Card, CardContent, EmptyState} from '@/components/ui';
 import type {TrainingEnrollment} from '@/lib/types/grow/training';
@@ -16,6 +17,8 @@ interface MyTrainingsTabProps {
 }
 
 export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTrainingsTabProps) {
+  const router = useRouter();
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -115,7 +118,11 @@ export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTr
 
               <div className="flex gap-2">
                 {enrollment.status === EnrollmentStatus.IN_PROGRESS && (
-                  <Button size="sm" variant="outline">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => router.push(`/training/catalog/${enrollment.programId}`)}
+                  >
                     <Play className="h-4 w-4 mr-1"/>
                     Continue
                   </Button>

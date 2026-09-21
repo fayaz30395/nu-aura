@@ -20,6 +20,11 @@ import {
 import {apiClient} from '@/lib/api/client';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {useMyEnrollments} from '@/lib/hooks/queries/useLearning';
+import {notifications} from '@mantine/notifications';
+import {createLogger} from '@/lib/utils/logger';
+
+const log = createLogger('QuizPage');
 
 interface Question {
   id: string;
@@ -79,6 +84,28 @@ interface QuizResult {
 
 export default function QuizPage() {
   const {id: courseId, quizId} = useParams<{ id: string; quizId: string }>();
+  const {data: allEnrollments} = useMyEnrollments();
+  const enrollment = allEnrollments?.find(e => e.courseId === courseId) ?? null;
+
+  const handleDownloadCertificate = useCallback(async () => {
+    if (!enrollment?.certificateId) return;
+    try {
+      const response = await apiClient.get<Blob>(
+        `/lms/certificates/${enrollment.certificateId}/download`,
+        {responseType: 'blob'}
+      );
+      const url = window.URL.createObjectURL(response.data as Blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `certificate-${enrollment.certificateId}.pdf`;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      log.error('Failed to download certificate:', error);
+      notifications.show({title: 'Error', message: 'Failed to download certificate', color: 'red'});
+    }
+  }, [enrollment?.certificateId]);
+
   // Quiz data
   const [attempt, setAttempt] = useState<QuizAttempt | null>(null);
   const [answers, setAnswers] = useState<Map<string, string | string[]>>(new Map());
@@ -656,8 +683,9 @@ export default function QuizPage() {
                       <RefreshCw className="h-4 w-4"/> Retry Quiz
                     </button>
                   )}
-                  {passed && (
+                  {passed && enrollment?.certificateId && (
                     <button
+                      onClick={handleDownloadCertificate}
                       className="flex items-center justify-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg font-medium hover:bg-success-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       <Award className="h-4 w-4"/> View Certificate
