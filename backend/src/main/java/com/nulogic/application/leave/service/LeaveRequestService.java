@@ -8,6 +8,7 @@ import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.RoleHierarchy;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
@@ -415,8 +416,19 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
     /**
      * Validates that the approver is the direct manager of the employee.
      * This enforces L1 (single-level) approval routing.
+     *
+     * SUPER_ADMIN/TENANT_ADMIN/HR_ADMIN/HR_MANAGER bypass this check entirely — they
+     * may approve/reject any still-PENDING request regardless of the employee's
+     * manager, matching the RBAC matrix's unscoped LEAVE:APPROVE for these roles.
+     * This does NOT extend to reversing an already-decided request; the PENDING-only
+     * guard in LeaveRequest.approve()/reject() is untouched and still applies to
+     * admins too.
      */
     private void validateApproverIsManager(UUID employeeId, UUID approverId, UUID tenantId) {
+        if (SecurityContext.isHRManager() || SecurityContext.hasRole(RoleHierarchy.HR_ADMIN)) {
+            return;
+        }
+
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 

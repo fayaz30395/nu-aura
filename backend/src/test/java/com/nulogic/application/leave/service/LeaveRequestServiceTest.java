@@ -128,6 +128,13 @@ class LeaveRequestServiceTest {
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
         securityContextMock.when(() -> SecurityContext.hasPermission(anyString())).thenReturn(false);
+        // Reset every test to non-admin by default — individual tests opt into admin
+        // bypass explicitly; without this reset a stub from one test leaks into the
+        // next since securityContextMock is a class-level static mock (@BeforeAll).
+        securityContextMock.when(SecurityContext::isTenantAdmin).thenReturn(false);
+        securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+        securityContextMock.when(SecurityContext::isHRManager).thenReturn(false);
+        securityContextMock.when(() -> SecurityContext.hasRole(any(String.class))).thenReturn(false);
 
         // Create employee with manager for L1 approval tests
         employee = new Employee();
@@ -313,6 +320,71 @@ class LeaveRequestServiceTest {
             assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, managerId))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("no manager assigned");
+        }
+
+        @Test
+        @DisplayName("D1a: TENANT_ADMIN can approve a PENDING request without being the manager")
+        void shouldAllowTenantAdminToApproveWithoutBeingManager() {
+            UUID requestId = leaveRequest.getId();
+            UUID adminId = UUID.randomUUID();
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+
+            LeaveRequest result = leaveRequestService.approveLeaveRequest(requestId, adminId);
+
+            assertThat(result.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("D1a: SUPER_ADMIN can reject a PENDING request without being the manager")
+        void shouldAllowSuperAdminToRejectWithoutBeingManager() {
+            UUID requestId = leaveRequest.getId();
+            UUID adminId = UUID.randomUUID();
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(true);
+            securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+
+            LeaveRequest result = leaveRequestService.rejectLeaveRequest(requestId, adminId, "admin reject");
+
+            assertThat(result.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.REJECTED);
+        }
+
+        @Test
+        @DisplayName("D1a: HR_ADMIN (literal role, not HR_MANAGER/TENANT_ADMIN) can approve a PENDING request without being the manager")
+        void shouldAllowHrAdminToApproveWithoutBeingManager() {
+            UUID requestId = leaveRequest.getId();
+            UUID adminId = UUID.randomUUID();
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
+                    .thenReturn(Optional.of(leaveRequest));
+            when(leaveRequestRepository.save(any(LeaveRequest.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            securityContextMock.when(() -> SecurityContext.hasRole(com.nulogic.common.security.RoleHierarchy.HR_ADMIN))
+                    .thenReturn(true);
+
+            LeaveRequest result = leaveRequestService.approveLeaveRequest(requestId, adminId);
+
+            assertThat(result.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("R2b stays blocked: TENANT_ADMIN cannot re-approve an already-APPROVED request")
+        void shouldStillBlockAdminFromReapprovingDecidedRequest() {
+            UUID requestId = leaveRequest.getId();
+            UUID adminId = UUID.randomUUID();
+            leaveRequest.approve(managerId, java.time.LocalDateTime.now());
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
+                    .thenReturn(Optional.of(leaveRequest));
+            securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+
+            assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, adminId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("Only pending requests can be approved");
         }
     }
 
