@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic';
 import {AppLayout} from '@/components/layout';
 import {useCreateWikiPage, usePublishWikiPage, useWikiSpaces} from '@/lib/hooks/queries/useFluence';
 import {notifications} from '@mantine/notifications';
-import {Drawer, LoadingOverlay, Select} from '@mantine/core';
+import {Drawer, LoadingOverlay, Modal, Select} from '@mantine/core';
 import {AnimatePresence, motion} from 'framer-motion';
 import {ArrowLeft, Building2, ChevronDown, Eye, FileText, Globe, Lock, Save, Send, Shield,} from 'lucide-react';
 import {isAxiosError} from '@/lib/utils/type-guards';
@@ -33,6 +33,11 @@ const FluenceEditor = dynamic(
       </div>
     ),
   }
+);
+
+const ContentViewer = dynamic(
+  () => import('@/components/fluence/ContentViewer'),
+  {ssr: false}
 );
 
 const createWikiPageSchema = z.object({
@@ -62,6 +67,8 @@ export default function CreateWikiPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [publishDrawerOpen, setPublishDrawerOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const {hasAnyPermission, isReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
@@ -142,6 +149,47 @@ export default function CreateWikiPage() {
   );
 
   if (!isReady || !hasAccess) return null;
+
+  const onSaveDraft = async (data: CreateWikiPageInput) => {
+    if (!data.content || Object.keys(data.content).length === 0) {
+      notifications.show({title: 'Validation Error', message: 'Content cannot be empty', color: 'red'});
+      return;
+    }
+
+    setIsSavingDraft(true);
+    try {
+      createWikiPage(
+        {
+          title: data.title,
+          spaceId: data.spaceId,
+          visibility: data.visibility,
+          parentId: data.parentId,
+          content: data.content,
+          status: 'DRAFT',
+          sharedWithDepartmentIds: sharedDepartmentIds.length > 0 ? sharedDepartmentIds : undefined,
+          sharedWithEmployeeIds: sharedEmployeeIds.length > 0 ? sharedEmployeeIds : undefined,
+        },
+        {
+          onSuccess: (page) => {
+            notifications.show({title: 'Draft saved', message: 'Your wiki page has been saved as a draft', color: 'green'});
+            router.push(`/fluence/wiki/${page.id}`);
+          },
+          onError: (error: unknown) => {
+            const message =
+              isAxiosError(error) &&
+              typeof error.response?.data === 'object' &&
+              error.response?.data !== null &&
+              'message' in error.response.data
+                ? ((error.response.data as { message?: string }).message ?? 'Failed to save draft')
+                : 'Failed to save draft';
+            notifications.show({title: 'Error', message, color: 'red'});
+          },
+        }
+      );
+    } finally {
+      setIsSavingDraft(false);
+    }
+  };
 
   const onSubmit = async (data: CreateWikiPageInput) => {
     if (!data.content || Object.keys(data.content).length === 0) {
@@ -238,6 +286,7 @@ export default function CreateWikiPage() {
           <div className="fluence-page-topbar-right">
             <button
               type="button"
+              onClick={() => setPreviewOpen(true)}
               className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-4 py-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <Eye className="w-4 h-4"/>
@@ -246,10 +295,12 @@ export default function CreateWikiPage() {
 
             <button
               type="button"
-              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] px-4 py-2 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+              onClick={handleSubmit(onSaveDraft)}
+              disabled={isSavingDraft}
+              className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 px-4 py-2 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
               <Save className="w-4 h-4"/>
-              Save Draft
+              {isSavingDraft ? 'Saving...' : 'Save Draft'}
             </button>
 
             <button
@@ -445,7 +496,20 @@ export default function CreateWikiPage() {
           </form>
         </Drawer>
 
-        <LoadingOverlay visible={isSubmitting}/>
+        {/* Preview Modal */}
+        <Modal
+          opened={previewOpen}
+          onClose={() => setPreviewOpen(false)}
+          title={<span className="text-lg font-semibold text-[var(--text-primary)]">Preview</span>}
+          size="lg"
+        >
+          <h2 className="text-xl font-bold text-[var(--text-primary)] mb-4">
+            {title || 'Untitled'}
+          </h2>
+          <ContentViewer content={watch('content')}/>
+        </Modal>
+
+        <LoadingOverlay visible={isSubmitting || isSavingDraft}/>
       </motion.div>
     </AppLayout>
   );
