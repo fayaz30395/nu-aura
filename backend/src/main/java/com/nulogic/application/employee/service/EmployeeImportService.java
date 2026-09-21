@@ -21,9 +21,11 @@ import com.nulogic.infrastructure.user.repository.RoleRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,6 +59,11 @@ public class EmployeeImportService {
     private final CustomFieldValueRepository customFieldValueRepository;
     private final EmailNotificationService emailNotificationService;
     private final TenantTimeService tenantTimeService;
+    // ObjectProvider (not @Lazy self-injection) routes each row through the Spring proxy so it
+    // gets its own REQUIRES_NEW transaction — a DB-level failure on one row (e.g. a race-condition
+    // duplicate employee_code) marks only that transaction rollback-only, not the whole batch.
+    // Same pattern as EmployeeService.batchUpdateStatus / LeaveRequestService.batchApprove.
+    private final ObjectProvider<EmployeeImportService> selfProvider;
 
     /**
      * Parse and validate an import file, returning a preview of what will be imported.
@@ -132,6 +139,8 @@ public class EmployeeImportService {
                 .map(EmployeeImportPreview.EmployeeImportRowPreview::getRowNumber)
                 .collect(Collectors.toSet());
 
+        EmployeeImportService self = selfProvider.getObject();
+
         for (EmployeeImportRow row : rows) {
             if (!validRowNumbers.contains(row.getRowNumber())) {
                 // Skip invalid rows when skipInvalid is true
@@ -139,16 +148,8 @@ public class EmployeeImportService {
             }
 
             try {
-                // Create user account
-                User user = createUserForEmployee(row, tenantId, defaultRole);
-
-                // Create employee
-                Employee employee = createEmployee(row, user, tenantId, departmentCodeToId, employeeCodeToId);
-
-                // Save custom field values
-                if (row.hasCustomFieldValues()) {
-                    saveCustomFieldValues(row, employee.getId(), tenantId, customFieldDefinitions);
-                }
+                Employee employee = self.importRow(row, tenantId, defaultRole, departmentCodeToId,
+                        employeeCodeToId, customFieldDefinitions);
 
                 // Add to employee code map for subsequent rows that might reference this employee as manager
                 employeeCodeToId.put(row.getEmployeeCode().toUpperCase(), employee.getId());
@@ -158,7 +159,7 @@ public class EmployeeImportService {
                         .employeeId(employee.getId())
                         .employeeCode(employee.getEmployeeCode())
                         .fullName(employee.getFullName())
-                        .workEmail(user.getEmail())
+                        .workEmail(employee.getUser().getEmail())
                         .build());
 
                 log.debug("Successfully imported employee: {} ({})", employee.getFullName(), employee.getEmployeeCode());
@@ -200,6 +201,21 @@ public class EmployeeImportService {
                 status, imported.size(), failed.size(), preview.getInvalidRows());
 
         return result;
+    }
+
+    // Own REQUIRES_NEW transaction per call — see selfProvider javadoc above.
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Employee importRow(EmployeeImportRow row, UUID tenantId, Role defaultRole,
+                              Map<String, UUID> departmentCodeToId, Map<String, UUID> employeeCodeToId,
+                              Map<String, CustomFieldDefinition> customFieldDefinitions) {
+        User user = createUserForEmployee(row, tenantId, defaultRole);
+        Employee employee = createEmployee(row, user, tenantId, departmentCodeToId, employeeCodeToId);
+
+        if (row.hasCustomFieldValues()) {
+            saveCustomFieldValues(row, employee.getId(), tenantId, customFieldDefinitions);
+        }
+
+        return employee;
     }
 
     /**
