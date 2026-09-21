@@ -9,7 +9,9 @@ import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.benefits.*;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.infrastructure.benefits.repository.*;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.kafka.producer.EventPublisher;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,7 @@ public class BenefitEnhancedService {
     private final BenefitDependentRepository dependentRepository;
     private final BenefitClaimRepository claimRepository;
     private final FlexBenefitAllocationRepository flexAllocationRepository;
+    private final EmployeeRepository employeeRepository;
     private final EventPublisher eventPublisher;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
@@ -205,6 +209,8 @@ public class BenefitEnhancedService {
         BenefitPlanEnhanced plan = planRepository.findByIdAndTenantId(request.getBenefitPlanId(), tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Benefit plan not found"));
 
+        validateEligibility(plan, request.getEmployeeId(), tenantId);
+
         // Calculate costs
         BigDecimal employeeContrib = request.getEmployeeContribution() != null ?
                 request.getEmployeeContribution() : plan.getEmployeeContribution();
@@ -275,6 +281,56 @@ public class BenefitEnhancedService {
                 tenantId, "Enrollment created for employee " + request.getEmployeeId() + " in plan " + request.getBenefitPlanId());
 
         return EnrollmentResponse.from(enrollment);
+    }
+
+    // Rejects enrollment when the employee's grade/department/tenure/waiting-period
+    // doesn't satisfy the plan's eligibility rules (rules are opt-in: a blank/zero
+    // criterion imposes no restriction).
+    private void validateEligibility(BenefitPlanEnhanced plan, UUID employeeId, UUID tenantId) {
+        Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
+
+        if (plan.getEligibleGrades() != null && !plan.getEligibleGrades().isBlank()) {
+            Set<String> eligibleGrades = splitCsv(plan.getEligibleGrades());
+            String employeeGrade = employee.getLevel() != null ? employee.getLevel().name() : null;
+            if (employeeGrade == null || !eligibleGrades.contains(employeeGrade)) {
+                throw new IllegalArgumentException("Employee grade is not eligible for this benefit plan");
+            }
+        }
+
+        if (plan.getEligibleDepartments() != null && !plan.getEligibleDepartments().isBlank()) {
+            Set<String> eligibleDepartments = splitCsv(plan.getEligibleDepartments());
+            String employeeDepartment = employee.getDepartmentId() != null ? employee.getDepartmentId().toString() : null;
+            if (employeeDepartment == null || !eligibleDepartments.contains(employeeDepartment.toUpperCase())) {
+                throw new IllegalArgumentException("Employee department is not eligible for this benefit plan");
+            }
+        }
+
+        LocalDate joiningDate = employee.getJoiningDate();
+        LocalDate today = tenantTimeService.today(tenantId);
+
+        if (plan.getMinServiceMonths() > 0) {
+            if (joiningDate == null || Period.between(joiningDate, today).toTotalMonths() < plan.getMinServiceMonths()) {
+                throw new IllegalArgumentException("Employee has not met the minimum service period for this benefit plan");
+            }
+        }
+
+        if (plan.getWaitingPeriodDays() > 0) {
+            if (joiningDate == null || today.isBefore(joiningDate.plusDays(plan.getWaitingPeriodDays()))) {
+                throw new IllegalArgumentException("Employee has not completed the waiting period for this benefit plan");
+            }
+        }
+    }
+
+    private Set<String> splitCsv(String csv) {
+        Set<String> values = new HashSet<>();
+        for (String value : csv.split(",")) {
+            String trimmed = value.trim().toUpperCase();
+            if (!trimmed.isEmpty()) {
+                values.add(trimmed);
+            }
+        }
+        return values;
     }
 
     private void addDependentToEnrollment(BenefitEnrollment enrollment, EnrollmentRequest.DependentRequest request) {
