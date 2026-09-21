@@ -85,7 +85,24 @@ public class FluenceAttachmentService {
 
         // save() runs in its own SimpleJpaRepository @Transactional scope — tx is tight
         // around the row insert only, not around the upload above.
-        KnowledgeAttachment saved = attachmentRepository.save(attachment);
+        KnowledgeAttachment saved;
+        try {
+            saved = attachmentRepository.save(attachment);
+        } catch (RuntimeException e) {
+            // Compensating rollback: the file already landed in storage before this DB
+            // insert failed — without cleanup it would be a permanently orphaned, untracked
+            // Drive/MinIO object. Best-effort delete; log and keep the original failure if
+            // the cleanup itself fails too.
+            log.error("KnowledgeAttachment insert failed for content {}; deleting orphaned storage object {}",
+                    contentId, result.getObjectName(), e);
+            try {
+                fileStorageService.deleteFile(result.getObjectName());
+            } catch (RuntimeException cleanupFailure) {
+                log.error("Failed to clean up orphaned storage object {} after DB insert failure",
+                        result.getObjectName(), cleanupFailure);
+            }
+            throw e;
+        }
         log.info("Uploaded fluence attachment: {} for content {} (type={})",
                 saved.getId(), contentId, contentType);
         return saved;

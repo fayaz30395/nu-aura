@@ -118,7 +118,22 @@ public class EmployeeDocumentController {
                 .category(FileMetadata.FileCategory.EMPLOYEE_DOCUMENT)
                 .description(documentType)
                 .build();
-        fileMetadataRepository.save(metadata);
+        try {
+            fileMetadataRepository.save(metadata);
+        } catch (RuntimeException e) {
+            // Compensating rollback: the file already landed in storage before this DB
+            // insert failed — without cleanup it would be a permanently orphaned, untracked
+            // Drive file. Best-effort delete; log and keep the original failure if it fails too.
+            log.error("FileMetadata insert failed for employee {} document {}; deleting orphaned storage object {}",
+                    employeeId, result.getOriginalFilename(), result.getObjectName(), e);
+            try {
+                fileStorageService.deleteFile(result.getObjectName());
+            } catch (RuntimeException cleanupFailure) {
+                log.error("Failed to clean up orphaned storage object {} after DB insert failure",
+                        result.getObjectName(), cleanupFailure);
+            }
+            throw e;
+        }
 
         try {
             employeeRepository.findByIdAndTenantId(employeeId, TenantContext.getCurrentTenant())
