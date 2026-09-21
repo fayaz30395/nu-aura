@@ -420,6 +420,40 @@ class ReviewCycleControllerTest {
 
             verify(reviewCycleService).submitManagerReview(eq(reviewId), any(ManagerReviewRequest.class));
         }
+
+        @Test
+        @DisplayName("Should reject self assessment with out-of-range competency rating")
+        void shouldRejectSelfAssessmentWithInvalidRating() throws Exception {
+            SelfAssessmentRequest.CompetencyRatingItem badItem = SelfAssessmentRequest.CompetencyRatingItem.builder()
+                    .competencyId("comp-1")
+                    .rating(6)
+                    .build();
+            SelfAssessmentRequest request = SelfAssessmentRequest.builder()
+                    .competencyRatings(java.util.List.of(badItem))
+                    .build();
+
+            mockMvc.perform(put("/api/v1/review-cycles/reviews/{reviewId}/self-assessment", reviewId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+
+            verify(reviewCycleService, never()).submitSelfAssessment(any(), any());
+        }
+
+        @Test
+        @DisplayName("Should reject manager review with out-of-range overall rating")
+        void shouldRejectManagerReviewWithInvalidRating() throws Exception {
+            ManagerReviewRequest request = ManagerReviewRequest.builder()
+                    .overallRating(0)
+                    .build();
+
+            mockMvc.perform(put("/api/v1/review-cycles/reviews/{reviewId}/manager-review", reviewId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+
+            verify(reviewCycleService, never()).submitManagerReview(any(), any());
+        }
     }
 
     @Nested

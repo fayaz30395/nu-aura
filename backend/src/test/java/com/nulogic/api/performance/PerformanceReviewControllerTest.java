@@ -105,6 +105,22 @@ class PerformanceReviewControllerTest {
 
             verify(reviewService).createReview(any(ReviewRequest.class));
         }
+
+        @Test
+        @DisplayName("Should reject review with out-of-range overall rating")
+        void shouldRejectReviewWithInvalidRating() throws Exception {
+            ReviewRequest request = new ReviewRequest();
+            request.setEmployeeId(employeeId);
+            request.setReviewerId(reviewerId);
+            request.setOverallRating(new BigDecimal("6"));
+
+            mockMvc.perform(post("/api/v1/reviews")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+
+            verify(reviewService, never()).createReview(any(ReviewRequest.class));
+        }
     }
 
     @Nested
