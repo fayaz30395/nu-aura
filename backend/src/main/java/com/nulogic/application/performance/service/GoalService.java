@@ -155,6 +155,10 @@ public class GoalService {
 
     @Transactional
     public GoalResponse updateProgress(UUID goalId, Integer progressPercentage) {
+        if (progressPercentage == null || progressPercentage < 0 || progressPercentage > 100) {
+            throw new IllegalArgumentException("Progress percentage must be between 0 and 100");
+        }
+
         UUID tenantId = TenantContext.getCurrentTenant();
 
         Goal goal = goalRepository.findByIdAndTenantId(goalId, tenantId)

@@ -313,15 +313,23 @@ class GoalServiceTest {
         }
 
         @Test
-        @DisplayName("Should mark goal as completed when progress exceeds 100%")
-        void shouldMarkGoalAsCompletedWhenProgressExceeds100() {
-            when(goalRepository.findByIdAndTenantId(goalId, tenantId)).thenReturn(Optional.of(goal));
-            when(goalRepository.save(any(Goal.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
+        @DisplayName("Should reject progress percentage above 100")
+        void shouldRejectProgressAbove100() {
+            assertThatThrownBy(() -> goalService.updateProgress(goalId, 120))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("0 and 100");
 
-            GoalResponse result = goalService.updateProgress(goalId, 120);
+            verify(goalRepository, never()).save(any(Goal.class));
+        }
 
-            assertThat(result.getStatus()).isEqualTo(Goal.GoalStatus.COMPLETED);
+        @Test
+        @DisplayName("Should reject negative progress percentage")
+        void shouldRejectNegativeProgress() {
+            assertThatThrownBy(() -> goalService.updateProgress(goalId, -1))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("0 and 100");
+
+            verify(goalRepository, never()).save(any(Goal.class));
         }
 
         @Test
