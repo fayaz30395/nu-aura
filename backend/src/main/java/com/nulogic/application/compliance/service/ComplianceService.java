@@ -249,12 +249,24 @@ public class ComplianceService {
     // acknowledgment window (effectiveDate + acknowledgmentFrequencyDays) with no
     // acknowledgment recorded for the current policy version.
     private long countPendingAcknowledgments(UUID tenantId, LocalDate today) {
+        return findPendingAcknowledgmentGaps(tenantId, today).stream()
+                .map(gap -> gap.employee().getId())
+                .distinct()
+                .count();
+    }
+
+    /**
+     * Every (employee, policy) pair where the employee is in-scope/active and hasn't
+     * acknowledged a published policy past its acknowledgment window. Used by the
+     * dashboard count and by {@code PolicyAcknowledgmentReminderScheduler}.
+     */
+    public List<PendingAcknowledgmentGap> findPendingAcknowledgmentGaps(UUID tenantId, LocalDate today) {
         List<CompliancePolicy> policiesPastWindow = policyRepository.findPoliciesRequiringAcknowledgment(tenantId).stream()
                 .filter(p -> p.getEffectiveDate() != null)
                 .filter(p -> !today.isBefore(p.getEffectiveDate().plusDays(p.getAcknowledgmentFrequencyDays())))
                 .toList();
         if (policiesPastWindow.isEmpty()) {
-            return 0;
+            return List.of();
         }
 
         Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.COMPLIANCE_VIEW);
@@ -262,18 +274,20 @@ public class ComplianceService {
         Specification<Employee> activeSpec = (root, query, cb) -> cb.equal(root.get("status"), Employee.EmployeeStatus.ACTIVE);
         List<Employee> inScopeEmployees = employeeRepository.findAll(tenantSpec.and(activeSpec).and(scopeSpec));
 
-        Set<UUID> pendingEmployeeIds = new HashSet<>();
+        List<PendingAcknowledgmentGap> gaps = new ArrayList<>();
         for (CompliancePolicy policy : policiesPastWindow) {
             Set<UUID> acknowledgedEmployeeIds = acknowledgmentRepository.findAcknowledgedEmployeeIds(
                     policy.getId(), policy.getPolicyVersion());
             for (Employee employee : inScopeEmployees) {
                 if (!acknowledgedEmployeeIds.contains(employee.getId())) {
-                    pendingEmployeeIds.add(employee.getId());
+                    gaps.add(new PendingAcknowledgmentGap(policy, employee));
                 }
             }
         }
-        return pendingEmployeeIds.size();
+        return gaps;
     }
+
+    public record PendingAcknowledgmentGap(CompliancePolicy policy, Employee employee) {}
 
     // ==================== Compliance Checklists ====================
 
