@@ -63,10 +63,39 @@ public class FluenceSearchController {
             return ResponseEntity.ok(results);
         }
 
-        // Fallback to PostgreSQL search — convert WikiPage results to FluenceDocument
-        log.debug("Fluence search via PostgreSQL fallback: query='{}', tenantId={}", query, tenantId);
-        var wikiResults = knowledgeSearchService.searchAllContent(query, pageable);
-        Page<FluenceDocument> fallbackResults = wikiResults.map(page -> FluenceDocument.builder()
+        // Fallback to PostgreSQL search. AC1: honor the same contentType/visibility
+        // filters the ES path applies, instead of silently ignoring them and returning
+        // broader, unfiltered wiki-only results.
+        log.debug("Fluence search via PostgreSQL fallback: query='{}', tenantId={}, contentType={}, visibility={}",
+                query, tenantId, contentType, visibility);
+
+        Page<FluenceDocument> fallbackResults;
+        if ("blog".equalsIgnoreCase(contentType)) {
+            fallbackResults = knowledgeSearchService.searchBlogPosts(query, pageable).map(this::toFluenceDocument);
+        } else if ("wiki".equalsIgnoreCase(contentType)) {
+            fallbackResults = knowledgeSearchService.searchWikiPages(query, pageable).map(this::toFluenceDocument);
+        } else {
+            // No contentType filter requested: searchAllContent only covers wiki pages
+            // today (a pre-existing PostgreSQL-fallback limitation, unrelated to this
+            // fix) — same set the caller would have gotten before this change.
+            fallbackResults = knowledgeSearchService.searchAllContent(query, pageable).map(this::toFluenceDocument);
+        }
+
+        if (visibility != null && !visibility.isBlank()) {
+            // Best-effort post-filter: the native search queries don't take a visibility
+            // parameter, so this is applied after DB-level pagination — page totals can
+            // undercount versus the true filtered count in this degraded (no-ES) mode.
+            var filtered = fallbackResults.getContent().stream()
+                    .filter(doc -> visibility.equalsIgnoreCase(doc.getVisibility()))
+                    .toList();
+            fallbackResults = new org.springframework.data.domain.PageImpl<>(filtered, pageable, filtered.size());
+        }
+
+        return ResponseEntity.ok(fallbackResults);
+    }
+
+    private FluenceDocument toFluenceDocument(com.nulogic.domain.knowledge.WikiPage page) {
+        return FluenceDocument.builder()
                 .id(FluenceDocument.buildId("wiki", page.getId()))
                 .tenantId(page.getTenantId())
                 .contentType("wiki")
@@ -80,8 +109,24 @@ public class FluenceSearchController {
                 .viewCount(page.getViewCount())
                 .likeCount(page.getLikeCount())
                 .deleted(page.isDeleted())
-                .build());
+                .build();
+    }
 
-        return ResponseEntity.ok(fallbackResults);
+    private FluenceDocument toFluenceDocument(com.nulogic.domain.knowledge.BlogPost post) {
+        return FluenceDocument.builder()
+                .id(FluenceDocument.buildId("blog", post.getId()))
+                .tenantId(post.getTenantId())
+                .contentType("blog")
+                .contentId(post.getId())
+                .title(post.getTitle())
+                .excerpt(post.getExcerpt())
+                .slug(post.getSlug())
+                .status(post.getStatus() != null ? post.getStatus().name() : null)
+                .visibility(post.getVisibility() != null ? post.getVisibility().name() : null)
+                .authorId(post.getCreatedBy())
+                .viewCount(post.getViewCount())
+                .likeCount(post.getLikeCount())
+                .deleted(post.isDeleted())
+                .build();
     }
 }
