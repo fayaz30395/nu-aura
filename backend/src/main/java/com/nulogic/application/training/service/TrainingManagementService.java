@@ -80,6 +80,12 @@ public class TrainingManagementService {
         program.setStatus(request.getStatus() != null ? request.getStatus() : TrainingProgram.ProgramStatus.DRAFT);
         program.setPrerequisites(request.getPrerequisites());
         program.setLearningObjectives(request.getLearningObjectives());
+        program.setTrainerName(request.getTrainerName());
+        program.setTrainerEmail(request.getTrainerEmail());
+        program.setIsMandatory(request.getIsMandatory() != null ? request.getIsMandatory() : false);
+        program.setCostPerParticipant(request.getCostPerParticipant());
+        program.setMaterialsUrl(request.getMaterialsUrl());
+        program.setCertificateTemplateUrl(request.getCertificateTemplateUrl());
 
         TrainingProgram savedProgram = programRepository.save(program);
         return mapToProgramResponse(savedProgram);
@@ -107,6 +113,12 @@ public class TrainingManagementService {
         program.setStatus(request.getStatus());
         program.setPrerequisites(request.getPrerequisites());
         program.setLearningObjectives(request.getLearningObjectives());
+        program.setTrainerName(request.getTrainerName());
+        program.setTrainerEmail(request.getTrainerEmail());
+        if (request.getIsMandatory() != null) program.setIsMandatory(request.getIsMandatory());
+        program.setCostPerParticipant(request.getCostPerParticipant());
+        program.setMaterialsUrl(request.getMaterialsUrl());
+        program.setCertificateTemplateUrl(request.getCertificateTemplateUrl());
 
         TrainingProgram updatedProgram = programRepository.save(program);
         return mapToProgramResponse(updatedProgram);
@@ -435,6 +447,12 @@ public class TrainingManagementService {
                 .status(program.getStatus())
                 .prerequisites(program.getPrerequisites())
                 .learningObjectives(program.getLearningObjectives())
+                .trainerName(program.getTrainerName())
+                .trainerEmail(program.getTrainerEmail())
+                .isMandatory(program.getIsMandatory())
+                .costPerParticipant(program.getCostPerParticipant())
+                .materialsUrl(program.getMaterialsUrl())
+                .certificateTemplateUrl(program.getCertificateTemplateUrl())
                 .createdAt(program.getCreatedAt())
                 .updatedAt(program.getUpdatedAt())
                 .build();

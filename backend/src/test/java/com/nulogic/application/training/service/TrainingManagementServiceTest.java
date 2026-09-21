@@ -203,6 +203,62 @@ class TrainingManagementServiceTest {
         }
     }
 
+    @Test
+    @DisplayName("createProgram should persist and round-trip trainer/mandatory/cost fields")
+    void shouldRoundTripTrainerMandatoryCostFields() {
+        TrainingProgramRequest request = buildRequest();
+        request.setTrainerName("Jane Trainer");
+        request.setTrainerEmail("jane@example.com");
+        request.setIsMandatory(true);
+        request.setCostPerParticipant(new java.math.BigDecimal("199.99"));
+        request.setMaterialsUrl("https://example.com/materials.pdf");
+        request.setCertificateTemplateUrl("https://example.com/template.pdf");
+
+        when(programRepository.existsByTenantIdAndProgramCode(tenantId, "TRN-001")).thenReturn(false);
+        when(programRepository.save(any(TrainingProgram.class))).thenAnswer(inv -> {
+            TrainingProgram saved = inv.getArgument(0);
+            saved.setId(UUID.randomUUID());
+            return saved;
+        });
+
+        TrainingProgramResponse result = trainingService.createProgram(request);
+
+        assertThat(result.getTrainerName()).isEqualTo("Jane Trainer");
+        assertThat(result.getTrainerEmail()).isEqualTo("jane@example.com");
+        assertThat(result.getIsMandatory()).isTrue();
+        assertThat(result.getCostPerParticipant()).isEqualByComparingTo("199.99");
+        assertThat(result.getMaterialsUrl()).isEqualTo("https://example.com/materials.pdf");
+        assertThat(result.getCertificateTemplateUrl()).isEqualTo("https://example.com/template.pdf");
+    }
+
+    @Test
+    @DisplayName("updateProgram should persist and round-trip trainer/mandatory/cost fields")
+    void shouldRoundTripTrainerMandatoryCostFieldsOnUpdate() {
+        UUID programId = UUID.randomUUID();
+        TrainingProgram existing = buildProgram();
+        existing.setId(programId);
+
+        TrainingProgramRequest request = buildRequest();
+        request.setTrainerName("Updated Trainer");
+        request.setTrainerEmail("updated@example.com");
+        request.setIsMandatory(true);
+        request.setCostPerParticipant(new java.math.BigDecimal("50.00"));
+        request.setMaterialsUrl("https://example.com/v2.pdf");
+        request.setCertificateTemplateUrl("https://example.com/cert-v2.pdf");
+
+        when(programRepository.findByIdAndTenantId(programId, tenantId)).thenReturn(Optional.of(existing));
+        when(programRepository.save(any(TrainingProgram.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        TrainingProgramResponse result = trainingService.updateProgram(programId, request);
+
+        assertThat(result.getTrainerName()).isEqualTo("Updated Trainer");
+        assertThat(result.getTrainerEmail()).isEqualTo("updated@example.com");
+        assertThat(result.getIsMandatory()).isTrue();
+        assertThat(result.getCostPerParticipant()).isEqualByComparingTo("50.00");
+        assertThat(result.getMaterialsUrl()).isEqualTo("https://example.com/v2.pdf");
+        assertThat(result.getCertificateTemplateUrl()).isEqualTo("https://example.com/cert-v2.pdf");
+    }
+
     @Nested
     @DisplayName("generateCertificate")
     class GenerateCertificateTests {

@@ -32,6 +32,12 @@ public class TrainingProgramResponse {
     private TrainingProgram.ProgramStatus status;
     private String prerequisites;
     private String learningObjectives;
+    private String trainerName;
+    private String trainerEmail;
+    private Boolean isMandatory;
+    private BigDecimal costPerParticipant;
+    private String materialsUrl;
+    private String certificateTemplateUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

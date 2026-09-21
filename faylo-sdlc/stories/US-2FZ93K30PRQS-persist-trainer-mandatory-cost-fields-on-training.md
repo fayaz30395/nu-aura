@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** Creating/editing a program with trainerName/trainerEmail/isMandatory/costPerParticipant/materialsUrl/certificateTemplateUrl persists and round-trips all fields
   - **Verify:** shell bash -c "cd backend && mvn -q -DskipTests compile"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)
