@@ -1,4 +1,4 @@
-# US-2FZSYZXREB7B: Wire or remove 3 dead TemplateController endpoints (update, toggle-active, toggle-featured) - zero frontend callers
+# US-2G00WEA0GD24: Add error handling to PIP create/close, calibration save, and feedback create/delete mutations - all currently fail silently with no onError/try-catch, unlike sibling goals/reviews pages
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
@@ -14,6 +14,6 @@
 
 ## Acceptance Criteria
 
-- **AC1:** Endpoints either have frontend UI or are removed as dead code
+- **AC1:** Failed mutations show a visible error message on all 4 pages
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
   - **Verified:** pending

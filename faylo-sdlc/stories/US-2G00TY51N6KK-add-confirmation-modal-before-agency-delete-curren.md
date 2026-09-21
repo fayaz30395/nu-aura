@@ -1,4 +1,4 @@
-# US-2FZSYZXREB7B: Wire or remove 3 dead TemplateController endpoints (update, toggle-active, toggle-featured) - zero frontend callers
+# US-2G00TY51N6KK: Add confirmation modal before agency delete - currently deletes immediately on click with no confirm, unlike jobs/scorecards which gate delete behind confirmation
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
@@ -14,6 +14,6 @@
 
 ## Acceptance Criteria
 
-- **AC1:** Endpoints either have frontend UI or are removed as dead code
+- **AC1:** Agency delete requires confirmation like jobs.tsx and scorecards.tsx
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
   - **Verified:** pending

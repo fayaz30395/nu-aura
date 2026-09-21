@@ -1,4 +1,4 @@
-# US-2FZSYZXREB7B: Wire or remove 3 dead TemplateController endpoints (update, toggle-active, toggle-featured) - zero frontend callers
+# US-2G00TZ4ESSKZ: Remove dead Exit Process Detail Modal on offboarding page - full modal JSX + showDetailModal state exist but setShowDetailModal(true) is never called, handleViewDetails navigates elsewhere instead
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
@@ -14,6 +14,6 @@
 
 ## Acceptance Criteria
 
-- **AC1:** Endpoints either have frontend UI or are removed as dead code
+- **AC1:** Dead modal code removed, or wired up if actually needed
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
   - **Verified:** pending

@@ -1,4 +1,4 @@
-# US-2FZSYZXREB7B: Wire or remove 3 dead TemplateController endpoints (update, toggle-active, toggle-featured) - zero frontend callers
+# US-2G00WE3BRZ3J: Enforce required-question validation on survey response submit - Required badge is cosmetic, handleSubmit currently allows submitting with required questions unanswered
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
@@ -14,6 +14,6 @@
 
 ## Acceptance Criteria
 
-- **AC1:** Endpoints either have frontend UI or are removed as dead code
+- **AC1:** Submit is blocked with a clear message when required questions are unanswered
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
   - **Verified:** pending

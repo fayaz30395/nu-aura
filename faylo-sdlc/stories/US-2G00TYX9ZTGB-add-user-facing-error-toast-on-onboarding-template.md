@@ -1,4 +1,4 @@
-# US-2FZSYZXREB7B: Wire or remove 3 dead TemplateController endpoints (update, toggle-active, toggle-featured) - zero frontend callers
+# US-2G00TYX9ZTGB: Add user-facing error toast on onboarding template creation failure - currently only logs via log.error, silent failure from user's POV
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
@@ -14,6 +14,6 @@
 
 ## Acceptance Criteria
 
-- **AC1:** Endpoints either have frontend UI or are removed as dead code
+- **AC1:** Failed template creation shows a visible error toast
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
   - **Verified:** pending

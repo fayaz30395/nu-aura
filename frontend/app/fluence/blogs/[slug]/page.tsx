@@ -4,6 +4,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {
+  Archive,
   ArrowLeft,
   Building2,
   Calendar,
@@ -35,12 +36,14 @@ import {TableOfContents} from '@/components/fluence/TableOfContents';
 import {Breadcrumbs} from '@/components/fluence/Breadcrumbs';
 import {
   useAddFavorite,
+  useArchiveBlogPost,
   useBlogPost,
   useComments,
   useContentViewers,
   useCreateComment,
   useDeleteComment,
   useLikeBlogPost,
+  usePublishBlogPost,
   useRecordView,
   useRemoveFavorite,
   useUnlikeBlogPost,
@@ -94,6 +97,24 @@ export default function BlogPostDetailPage() {
   const recordView = useRecordView();
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
+  const publishPost = usePublishBlogPost();
+  const archivePost = useArchiveBlogPost();
+
+  const handlePublish = useCallback(() => {
+    if (!post) return;
+    publishPost.mutate(post.id, {
+      onSuccess: () => notifications.show({title: 'Published', message: 'Blog post is now live', color: 'green'}),
+      onError: () => notifications.show({title: 'Error', message: 'Failed to publish post', color: 'red'}),
+    });
+  }, [post, publishPost]);
+
+  const handleArchive = useCallback(() => {
+    if (!post) return;
+    archivePost.mutate(post.id, {
+      onSuccess: () => notifications.show({title: 'Archived', message: 'Blog post archived', color: 'green'}),
+      onError: () => notifications.show({title: 'Error', message: 'Failed to archive post', color: 'red'}),
+    });
+  }, [post, archivePost]);
 
   const isLiked = post?.isLikedByCurrentUser ?? false;
   const isFavorited = post?.isFavoritedByCurrentUser ?? false;
@@ -244,9 +265,16 @@ export default function BlogPostDetailPage() {
         <Reveal className="space-y-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl md:text-5xl font-bold text-[var(--text-primary)] mb-4 leading-tight">
-                {post.title}
-              </h1>
+              <div className="flex items-center gap-3 mb-4">
+                <h1 className="text-2xl md:text-5xl font-bold text-[var(--text-primary)] leading-tight">
+                  {post.title}
+                </h1>
+                {post.status !== 'PUBLISHED' && (
+                  <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--bg-secondary)] text-[var(--text-secondary)] uppercase tracking-wide">
+                    {post.status.replace('_', ' ')}
+                  </span>
+                )}
+              </div>
 
               {/* Meta Information */}
               <div className="meta-row">
@@ -312,6 +340,36 @@ export default function BlogPostDetailPage() {
                     aria-label="Edit post"
                   >
                     <Edit className="w-5 h-5"/>
+                  </motion.button>
+                </PermissionGate>
+              )}
+              {canEdit && post.status === 'DRAFT' && (
+                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_PUBLISH}>
+                  <motion.button
+                    whileHover={{scale: 1.05}}
+                    whileTap={{scale: 0.95}}
+                    onClick={handlePublish}
+                    disabled={publishPost.isPending}
+                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    title="Publish post"
+                    aria-label="Publish post"
+                  >
+                    <Send className="w-5 h-5"/>
+                  </motion.button>
+                </PermissionGate>
+              )}
+              {canEdit && post.status === 'PUBLISHED' && (
+                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_PUBLISH}>
+                  <motion.button
+                    whileHover={{scale: 1.05}}
+                    whileTap={{scale: 0.95}}
+                    onClick={handleArchive}
+                    disabled={archivePost.isPending}
+                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                    title="Archive post"
+                    aria-label="Archive post"
+                  >
+                    <Archive className="w-5 h-5"/>
                   </motion.button>
                 </PermissionGate>
               )}

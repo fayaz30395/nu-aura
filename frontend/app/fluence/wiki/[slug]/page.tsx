@@ -39,12 +39,16 @@ import {notifications} from '@mantine/notifications';
 import {AppLayout} from '@/components/layout';
 import {
   useAddFavorite,
+  useApproveWikiPage,
+  useArchiveWikiPage,
   useComments,
   useContentViewers,
   useCreateComment,
   useDeleteComment,
   useLikeWikiPage,
+  usePublishWikiPage,
   useRecordView,
+  useRejectWikiPage,
   useRelatedPages,
   useRemoveFavorite,
   usePageTree,
@@ -459,6 +463,13 @@ export default function WikiPageDetailPage() {
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const restoreRevision = useRestoreWikiPageRevision();
+  const publishPage = usePublishWikiPage();
+  const approvePage = useApproveWikiPage();
+  const rejectPage = useRejectWikiPage();
+  const archivePage = useArchiveWikiPage();
+
+  const canPublish = hasAnyPermission(Permissions.KNOWLEDGE_WIKI_PUBLISH);
+  const canApprove = hasAnyPermission(Permissions.KNOWLEDGE_WIKI_APPROVE);
 
   const comments = (commentsData?.content || []) as FluenceComment[];
   const isLiked = page?.isLikedByCurrentUser ?? false;
@@ -499,6 +510,38 @@ export default function WikiPageDetailPage() {
       addFavorite.mutate({contentId: page.id, contentType: 'WIKI_PAGE'});
     }
   }, [page, isFavorited, addFavorite, removeFavorite]);
+
+  const handlePublish = useCallback(() => {
+    if (!page) return;
+    publishPage.mutate(page.id, {
+      onSuccess: () => notifications.show({title: 'Submitted', message: 'Page sent for publishing', color: 'green'}),
+      onError: () => notifications.show({title: 'Error', message: 'Failed to publish page', color: 'red'}),
+    });
+  }, [page, publishPage]);
+
+  const handleApprove = useCallback(() => {
+    if (!page) return;
+    approvePage.mutate(page.id, {
+      onSuccess: () => notifications.show({title: 'Approved', message: 'Page approved and published', color: 'green'}),
+      onError: () => notifications.show({title: 'Error', message: 'Failed to approve page', color: 'red'}),
+    });
+  }, [page, approvePage]);
+
+  const handleReject = useCallback(() => {
+    if (!page) return;
+    rejectPage.mutate(page.id, {
+      onSuccess: () => notifications.show({title: 'Rejected', message: 'Page sent back to draft', color: 'yellow'}),
+      onError: () => notifications.show({title: 'Error', message: 'Failed to reject page', color: 'red'}),
+    });
+  }, [page, rejectPage]);
+
+  const handleArchive = useCallback(() => {
+    if (!page) return;
+    archivePage.mutate(page.id, {
+      onSuccess: () => notifications.show({title: 'Archived', message: 'Page archived', color: 'green'}),
+      onError: () => notifications.show({title: 'Error', message: 'Failed to archive page', color: 'red'}),
+    });
+  }, [page, archivePage]);
 
   const handleExport = useCallback(
     async (format: 'pdf' | 'docx') => {
@@ -683,9 +726,25 @@ export default function WikiPageDetailPage() {
           <div className={card.paddingLarge}>
             <div className="flex items-start justify-between gap-6 mb-4">
               <div className="flex-1 min-w-0">
-                <h1 className="text-xl font-bold text-[var(--text-primary)] mb-4 leading-tight">
-                  {page.title}
-                </h1>
+                <div className="flex items-center gap-3 mb-4">
+                  <h1 className="text-xl font-bold text-[var(--text-primary)] leading-tight">
+                    {page.title}
+                  </h1>
+                  <Badge
+                    size="sm"
+                    color={
+                      page.status === 'PUBLISHED'
+                        ? 'var(--status-success)'
+                        : page.status === 'PENDING_APPROVAL'
+                          ? 'var(--status-warning)'
+                          : page.status === 'ARCHIVED'
+                            ? 'gray'
+                            : 'var(--status-info)'
+                    }
+                  >
+                    {page.status.replace('_', ' ')}
+                  </Badge>
+                </div>
                 <div className="flex flex-wrap items-center gap-6 mb-6">
                   {/* Author */}
                   <div className="flex items-center gap-4">
@@ -1031,14 +1090,55 @@ export default function WikiPageDetailPage() {
                     <span>Version History</span>
                   </motion.button>
 
-                  <motion.button
-                    whileHover={{scale: 1.02}}
-                    whileTap={{scale: 0.98}}
-                    className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                  >
-                    <Archive className={`${iconSize.cardInline} flex-shrink-0`}/>
-                    <span>Archive</span>
-                  </motion.button>
+                  {canPublish && (page.status === 'DRAFT' || page.status === 'PENDING_APPROVAL') && (
+                    <motion.button
+                      whileHover={{scale: 1.02}}
+                      whileTap={{scale: 0.98}}
+                      onClick={handlePublish}
+                      disabled={publishPage.isPending}
+                      className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                    >
+                      <Send className={`${iconSize.cardInline} flex-shrink-0`}/>
+                      <span>Publish</span>
+                    </motion.button>
+                  )}
+
+                  {canApprove && page.status === 'PENDING_APPROVAL' && (
+                    <>
+                      <motion.button
+                        whileHover={{scale: 1.02}}
+                        whileTap={{scale: 0.98}}
+                        onClick={handleApprove}
+                        disabled={approvePage.isPending}
+                        className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--status-success)]/10 hover:bg-[var(--status-success)]/20 transition-colors duration-200 text-sm font-medium text-[var(--status-success-text)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                      >
+                        <Check className={`${iconSize.cardInline} flex-shrink-0`}/>
+                        <span>Approve &amp; Publish</span>
+                      </motion.button>
+                      <motion.button
+                        whileHover={{scale: 1.02}}
+                        whileTap={{scale: 0.98}}
+                        onClick={handleReject}
+                        disabled={rejectPage.isPending}
+                        className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--status-danger)]/10 hover:bg-[var(--status-danger)]/20 transition-colors duration-200 text-sm font-medium text-[var(--status-danger-text)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                      >
+                        <span>Reject</span>
+                      </motion.button>
+                    </>
+                  )}
+
+                  {canPublish && page.status === 'PUBLISHED' && (
+                    <motion.button
+                      whileHover={{scale: 1.02}}
+                      whileTap={{scale: 0.98}}
+                      onClick={handleArchive}
+                      disabled={archivePage.isPending}
+                      className="w-full flex items-center gap-4 px-4 py-2.5 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors duration-200 text-sm font-medium text-[var(--text-primary)] disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                    >
+                      <Archive className={`${iconSize.cardInline} flex-shrink-0`}/>
+                      <span>Archive</span>
+                    </motion.button>
+                  )}
                 </div>
               </div>
             </motion.div>

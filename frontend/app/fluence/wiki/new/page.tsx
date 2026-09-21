@@ -8,7 +8,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import dynamic from 'next/dynamic';
 import {AppLayout} from '@/components/layout';
-import {useCreateWikiPage, useWikiSpaces} from '@/lib/hooks/queries/useFluence';
+import {useCreateWikiPage, usePublishWikiPage, useWikiSpaces} from '@/lib/hooks/queries/useFluence';
 import {notifications} from '@mantine/notifications';
 import {Drawer, LoadingOverlay, Select} from '@mantine/core';
 import {AnimatePresence, motion} from 'framer-motion';
@@ -76,6 +76,7 @@ export default function CreateWikiPage() {
 
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const {mutate: createWikiPage} = useCreateWikiPage();
+  const {mutate: publishWikiPage} = usePublishWikiPage();
   const {data: spacesData, isLoading: spacesLoading} = useWikiSpaces(0, 100);
 
   const {
@@ -163,8 +164,15 @@ export default function CreateWikiPage() {
         },
         {
           onSuccess: (page) => {
-            notifications.show({title: 'Page Created', message: 'Your wiki page has been saved', color: 'green'});
-            router.push(`/fluence/wiki/${page.id}`);
+            publishWikiPage(page.id, {
+              onSuccess: () => {
+                notifications.show({title: 'Submitted', message: 'Page created and sent for publishing', color: 'green'});
+              },
+              onError: () => {
+                notifications.show({title: 'Page Created', message: 'Page saved as draft; publishing failed', color: 'yellow'});
+              },
+              onSettled: () => router.push(`/fluence/wiki/${page.id}`),
+            });
           },
           onError: (error: unknown) => {
             const message =

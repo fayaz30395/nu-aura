@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-21
 > **Created-by:** faylo new
 
@@ -15,5 +15,5 @@
 ## Acceptance Criteria
 
 - **AC1:** UI supports publish/approve/reject/archive/schedule for wiki and blog content
-  - **Verify:** shell npx tsc --noEmit
-  - **Verified:** pending
+  - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
+  - **Verified:** yes (2026-09-21)
