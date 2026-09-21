@@ -73,6 +73,9 @@ public class TimeEntry {
     @Column(name = "rejected_reason", columnDefinition = "TEXT")
     private String rejectedReason;
 
+    @Column(name = "invoice_id")
+    private UUID invoiceId;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

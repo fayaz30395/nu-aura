@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** ProjectInvoiceGenerationService.generateInvoice(projectId, periodStart, periodEnd) creates one PSAInvoice from APPROVED+billable+unbilled TimeEntry rows, sets them BILLED with invoiceId, idempotent on re-run
   - **Verify:** shell bash -c "cd backend && mvn -q -DskipTests compile"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)

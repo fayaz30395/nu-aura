@@ -1,9 +1,11 @@
 package com.nulogic.api.project;
 
 import com.nulogic.api.project.dto.*;
+import com.nulogic.application.project.service.ProjectInvoiceGenerationService;
 import com.nulogic.application.project.service.ProjectService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
+import com.nulogic.domain.psa.PSAInvoice;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -38,9 +40,12 @@ public class ProjectController {
     );
 
     private final ProjectService projectService;
+    private final ProjectInvoiceGenerationService projectInvoiceGenerationService;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService,
+                             ProjectInvoiceGenerationService projectInvoiceGenerationService) {
         this.projectService = projectService;
+        this.projectInvoiceGenerationService = projectInvoiceGenerationService;
     }
 
     @PostMapping
@@ -251,5 +256,24 @@ public class ProjectController {
             @Parameter(description = "Employee UUID") @PathVariable UUID employeeId) {
         List<ProjectEmployeeResponse> allocations = projectService.getEmployeeAllocations(employeeId);
         return ResponseEntity.ok(allocations);
+    }
+
+    @PostMapping("/{id}/invoices/generate")
+    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    @Operation(summary = "Generate invoice from timesheet",
+            description = "Creates one invoice from approved, billable, unbilled time entries in the given period and flips them to BILLED")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Invoice generated successfully"),
+            @ApiResponse(responseCode = "400", description = "No billable time entries for this period"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires PAYROLL:PROCESS permission"),
+            @ApiResponse(responseCode = "404", description = "Project not found")
+    })
+    public ResponseEntity<PSAInvoice> generateInvoice(
+            @Parameter(description = "Project UUID") @PathVariable UUID id,
+            @Parameter(description = "Billing period start") @RequestParam java.time.LocalDate periodStart,
+            @Parameter(description = "Billing period end") @RequestParam java.time.LocalDate periodEnd) {
+        PSAInvoice invoice = projectInvoiceGenerationService.generateInvoice(id, periodStart, periodEnd);
+        return ResponseEntity.ok(invoice);
     }
 }

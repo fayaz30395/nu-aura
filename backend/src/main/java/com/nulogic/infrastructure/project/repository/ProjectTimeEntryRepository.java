@@ -49,4 +49,12 @@ public interface ProjectTimeEntryRepository extends JpaRepository<TimeEntry, UUI
     List<TimeEntry> findByEmployeeAndDate(@Param("tenantId") UUID tenantId,
                                           @Param("employeeId") UUID employeeId,
                                           @Param("date") LocalDate date);
+
+    @Query("SELECT te FROM ProjectTimeEntry te WHERE te.tenantId = :tenantId AND te.projectId = :projectId " +
+            "AND te.status = 'APPROVED' AND te.isBillable = true AND te.invoiceId IS NULL " +
+            "AND te.workDate BETWEEN :periodStart AND :periodEnd")
+    List<TimeEntry> findUnbilledApprovedForPeriod(@Param("tenantId") UUID tenantId,
+                                                  @Param("projectId") UUID projectId,
+                                                  @Param("periodStart") LocalDate periodStart,
+                                                  @Param("periodEnd") LocalDate periodEnd);
 }
