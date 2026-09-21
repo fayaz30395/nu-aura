@@ -251,8 +251,7 @@ export default function FnFManagementPage() {
                 </Table.Thead>
                 <Table.Tbody>
                   {filtered.map((row) => {
-                    const canApprove = row.status === SettlementStatus.PENDING_APPROVAL ||
-                      row.status === SettlementStatus.DRAFT;
+                    const canApprove = row.status === SettlementStatus.PENDING_APPROVAL;
                     return (
                       <Table.Tr key={row.id}>
                         <Table.Td>
