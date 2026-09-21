@@ -36,6 +36,7 @@ public class BlogPostService {
     private final TipTapTextExtractor tipTapTextExtractor;
     private final TenantTimeService tenantTimeService;
     private final EmployeeRepository employeeRepository;
+    private final FluenceEditLockService fluenceEditLockService;
 
     @Autowired(required = false)
     private EventPublisher eventPublisher;
@@ -76,6 +77,8 @@ public class BlogPostService {
 
         BlogPost post = blogPostRepository.findByIdAndTenantId(postId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Blog post not found"));
+
+        fluenceEditLockService.requireNoConflictingLock(tenantId, "BLOG", postId, SecurityContext.getCurrentUserId());
 
         post.setTitle(postData.getTitle());
         post.setSlug(postData.getSlug());

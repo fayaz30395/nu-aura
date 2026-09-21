@@ -40,6 +40,7 @@ class WikiPageApprovalTest {
     @Mock private TenantTimeService tenantTimeService;
     @Mock private EmployeeRepository employeeRepository;
     @Mock private WikiSpaceApprovalService wikiSpaceApprovalService;
+    @Mock private FluenceEditLockService fluenceEditLockService;
 
     private WikiPageService wikiPageService;
 
@@ -53,7 +54,7 @@ class WikiPageApprovalTest {
         wikiPageService = new WikiPageService(
                 wikiPageRepository, wikiPageVersionRepository, fluenceNotificationService,
                 fluenceActivityService, tipTapTextExtractor, tenantTimeService, employeeRepository,
-                wikiSpaceApprovalService);
+                wikiSpaceApprovalService, fluenceEditLockService);
         TenantContext.setCurrentTenant(tenantId);
         lenient().when(tenantTimeService.now(tenantId)).thenReturn(LocalDateTime.now());
     }
@@ -121,5 +122,20 @@ class WikiPageApprovalTest {
         WikiPage result = wikiPageService.approvePage(pageId);
 
         assertThat(result.getStatus()).isEqualTo(WikiPage.PageStatus.PUBLISHED);
+    }
+
+    @Test
+    void updatePage_lockedByAnotherUser_rejectsWithConflict() {
+        SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of(), Map.of());
+        WikiPage page = pageWithStatus(WikiPage.PageStatus.DRAFT);
+        when(wikiPageRepository.findByIdAndTenantId(pageId, tenantId)).thenReturn(Optional.of(page));
+        org.mockito.Mockito.doThrow(new IllegalStateException("Content is currently being edited by Alice"))
+                .when(fluenceEditLockService).requireNoConflictingLock(
+                        org.mockito.ArgumentMatchers.eq(tenantId), org.mockito.ArgumentMatchers.eq("WIKI"),
+                        org.mockito.ArgumentMatchers.eq(pageId), any());
+
+        assertThatThrownBy(() -> wikiPageService.updatePage(pageId, page))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("being edited");
     }
 }

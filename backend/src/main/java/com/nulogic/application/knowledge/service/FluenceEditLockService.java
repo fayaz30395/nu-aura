@@ -141,6 +141,22 @@ public class FluenceEditLockService {
         return false;
     }
 
+    /**
+     * Server-side enforcement: rejects a mutation if another user currently holds the edit
+     * lock. The lock was previously advisory (UI-only courtesy check via the acquire/release
+     * endpoints); this makes the backend the source of truth so a stale/bypassed client can't
+     * silently overwrite a concurrent editor's in-progress changes.
+     *
+     * @throws IllegalStateException (mapped to 409) if a different user holds the lock
+     */
+    public void requireNoConflictingLock(UUID tenantId, String contentType, UUID contentId, UUID userId) {
+        EditLockInfo lock = getLockInfo(tenantId, contentType, contentId);
+        if (lock != null && !lock.userId().equals(userId.toString())) {
+            throw new IllegalStateException(
+                    "Content is currently being edited by " + lock.userName() + ". Please try again later.");
+        }
+    }
+
     private String buildKey(UUID tenantId, String contentType, UUID contentId) {
         return KEY_PREFIX + tenantId + ":" + contentType + ":" + contentId;
     }

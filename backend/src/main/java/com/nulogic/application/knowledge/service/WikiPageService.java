@@ -47,6 +47,7 @@ public class WikiPageService {
     private final TenantTimeService tenantTimeService;
     private final EmployeeRepository employeeRepository;
     private final WikiSpaceApprovalService wikiSpaceApprovalService;
+    private final FluenceEditLockService fluenceEditLockService;
 
     /**
      * Resolve the author Employee (with associated User) for a given user id within a tenant.
@@ -106,6 +107,8 @@ public class WikiPageService {
 
         WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+
+        fluenceEditLockService.requireNoConflictingLock(tenantId, "WIKI", pageId, SecurityContext.getCurrentUserId());
 
         // Store old version before update
         createPageVersion(page, pageData.getExcerpt(), tenantId, SecurityContext.getCurrentUserId());
