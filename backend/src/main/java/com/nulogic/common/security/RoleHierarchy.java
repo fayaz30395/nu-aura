@@ -424,8 +424,14 @@ public final class RoleHierarchy {
                 // PIP - HR Executives can view PIPs
                 Permission.PIP_VIEW,
                 Permission.CALIBRATION_VIEW,
-                Permission.OFFBOARDING_VIEW
+                Permission.OFFBOARDING_VIEW,
                 // Note: NO salary/financial access
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -460,7 +466,13 @@ public final class RoleHierarchy {
                 // Calibration - Department managers participate in calibration sessions
                 Permission.CALIBRATION_VIEW,
                 // Offboarding - Department managers can view offboarding for their dept
-                Permission.OFFBOARDING_VIEW
+                Permission.OFFBOARDING_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -484,7 +496,13 @@ public final class RoleHierarchy {
                 Permission.TIME_TRACKING_UPDATE,
                 Permission.TIME_TRACKING_APPROVE,
                 Permission.TIME_TRACKING_VIEW_ALL,
-                Permission.OVERTIME_APPROVE
+                Permission.OVERTIME_APPROVE,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -565,7 +583,13 @@ public final class RoleHierarchy {
                 Permission.TIME_TRACKING_VIEW,
                 Permission.TIME_TRACKING_CREATE,
                 Permission.EXPENSE_CREATE,
-                Permission.HELPDESK_TICKET_CREATE
+                Permission.HELPDESK_TICKET_CREATE,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -607,7 +631,13 @@ public final class RoleHierarchy {
                 FieldPermission.EMPLOYEE_BANK_EDIT,
                 FieldPermission.EMPLOYEE_TAX_ID_VIEW,
                 // View only for payroll processing
-                Permission.EMPLOYEE_VIEW_ALL
+                Permission.EMPLOYEE_VIEW_ALL,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -635,7 +665,13 @@ public final class RoleHierarchy {
                 // Employee view for context
                 Permission.EMPLOYEE_VIEW_ALL,
                 // Reports
-                Permission.REPORT_VIEW
+                Permission.REPORT_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -654,7 +690,13 @@ public final class RoleHierarchy {
                 Permission.EMPLOYEE_VIEW_ALL,
                 // Reports
                 Permission.REPORT_VIEW,
-                Permission.ANALYTICS_VIEW
+                Permission.ANALYTICS_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -668,7 +710,13 @@ public final class RoleHierarchy {
                 // Employee view for assignment
                 Permission.EMPLOYEE_VIEW_ALL,
                 // Reports
-                Permission.REPORT_VIEW
+                Permission.REPORT_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -682,7 +730,13 @@ public final class RoleHierarchy {
                 Permission.BUDGET_VIEW,
                 // Reports
                 Permission.REPORT_VIEW,
-                Permission.ANALYTICS_VIEW
+                Permission.ANALYTICS_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -698,7 +752,13 @@ public final class RoleHierarchy {
                 // Employee view for tickets
                 Permission.EMPLOYEE_VIEW_ALL,
                 // Reports
-                Permission.REPORT_VIEW
+                Permission.REPORT_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -717,7 +777,13 @@ public final class RoleHierarchy {
                 // Employee view
                 Permission.EMPLOYEE_VIEW_ALL,
                 // Reports
-                Permission.REPORT_VIEW
+                Permission.REPORT_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -742,7 +808,13 @@ public final class RoleHierarchy {
                 Permission.EMPLOYEE_VIEW_ALL,
                 // Reports
                 Permission.REPORT_VIEW,
-                Permission.ANALYTICS_VIEW
+                Permission.ANALYTICS_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
@@ -764,7 +836,13 @@ public final class RoleHierarchy {
                 Permission.EMPLOYEE_VIEW_ALL,
                 // Reports
                 Permission.REPORT_VIEW,
-                Permission.ANALYTICS_VIEW
+                Permission.ANALYTICS_VIEW,
+                // Dashboard & Wall access for all employees
+                Permission.DASHBOARD_VIEW,
+                Permission.WALL_VIEW,
+                Permission.WALL_POST,
+                Permission.WALL_COMMENT,
+                Permission.WALL_REACT
         ));
     }
 
