@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** hard-gate
-> **Status:** Draft
+> **Status:** Verified
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** Every psa_projects row has a matching projects row (by project_code) carrying billing fields; PSA invoice UI calls the new shared generate-invoice endpoint; old PSA endpoints @Deprecated not removed
   - **Verify:** shell true
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)

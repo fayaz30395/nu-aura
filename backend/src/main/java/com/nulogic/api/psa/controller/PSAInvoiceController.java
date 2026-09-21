@@ -25,6 +25,13 @@ import static com.nulogic.common.security.Permission.*;
 public class PSAInvoiceController {
     private final PSAService psaService;
 
+    /**
+     * @deprecated superseded by {@code POST /api/v1/projects/{id}/invoices/generate}
+     * (US-2FZ92MRRMTV6), which derives the invoice from approved timesheet entries
+     * instead of taking a manually-built {@link PSAInvoice} payload. Kept for any
+     * caller not yet migrated; not removed.
+     */
+    @Deprecated
     @PostMapping
     @RequiresPermission(PAYROLL_PROCESS)
     public ResponseEntity<PSAInvoice> createInvoice(@Valid @RequestBody PSAInvoice invoice) {
