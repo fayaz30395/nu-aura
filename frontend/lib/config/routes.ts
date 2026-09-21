@@ -98,6 +98,10 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.SYSTEM_ADMIN, Permissions.LEAVE_MANAGE, Permissions.LEAVE_APPROVE],
   },
   {
+    path: '/admin/benefit-plans',
+    anyPermission: [Permissions.SYSTEM_ADMIN, Permissions.BENEFIT_MANAGE],
+  },
+  {
     path: '/admin/office-locations',
     anyPermission: [Permissions.SYSTEM_ADMIN, Permissions.OFFICE_LOCATION_CREATE],
   },

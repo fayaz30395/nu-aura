@@ -1515,6 +1515,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.sliders,
               requiredPermission: Permissions.CUSTOM_FIELD_VIEW
             },
+            {
+              id: 'benefit-plans-admin',
+              label: 'Benefit Plans',
+              href: '/admin/benefit-plans',
+              icon: sm.dollarSign,
+              requiredPermission: Permissions.BENEFIT_MANAGE
+            },
           ],
         },
         {
