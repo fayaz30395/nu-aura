@@ -1,5 +1,6 @@
 package com.nulogic.domain.performance;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,6 +24,7 @@ public class CompetencyRequirement extends TenantAware {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "framework_id", nullable = false)
+    @JsonIgnore
     private CompetencyFramework framework;
 
     @Column(name = "framework_id", insertable = false, updatable = false)
