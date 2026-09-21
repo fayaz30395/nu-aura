@@ -37,6 +37,7 @@ import {
   useApproveRevision,
   useCompensationCycles,
   useCompensationRevisions,
+  useCreateCycle,
   useRejectRevision,
 } from '@/lib/hooks/queries/useCompensation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -46,15 +47,17 @@ import {
   COMPENSATION_CYCLE_STATUS,
   COMPENSATION_REVISION_STATUS,
 } from '@/lib/status/vocabulary';
+import {CycleType} from '@/lib/types/hrms/compensation';
 import type {
+  CompensationCycleRequest,
   CompensationReviewCycle,
-  CycleType,
   RevisionStatus,
   RevisionType,
   SalaryRevision,
 } from '@/lib/types/hrms/compensation';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate} from '@/lib/utils/format/date';
+import {notifications} from '@mantine/notifications';
 
 const cycleTypeLabels: Record<CycleType, string> = {
   ANNUAL: 'Annual',
@@ -102,6 +105,7 @@ export default function CompensationPage() {
   const {data: revisionsData, isLoading: isRevisionsLoading} = useCompensationRevisions(0, 100);
   const approveRevisionMutation = useApproveRevision();
   const rejectRevisionMutation = useRejectRevision();
+  const createCycleMutation = useCreateCycle();
 
   const cycles = cyclesData?.content || [];
   const loading = isCyclesLoading || isRevisionsLoading;
@@ -115,6 +119,16 @@ export default function CompensationPage() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
   const [isCreateCycleModalOpen, setIsCreateCycleModalOpen] = useState(false);
+  const emptyCycleForm: CompensationCycleRequest = {
+    name: '',
+    cycleType: CycleType.ANNUAL,
+    fiscalYear: new Date().getFullYear(),
+    startDate: '',
+    endDate: '',
+    effectiveDate: '',
+    description: '',
+  };
+  const [createCycleForm, setCreateCycleForm] = useState<CompensationCycleRequest>(emptyCycleForm);
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectionReasonInput, setShowRejectionReasonInput] = useState(false);
 
@@ -149,6 +163,23 @@ export default function CompensationPage() {
     setIsRevisionModalOpen(true);
     setRejectionReason('');
     setShowRejectionReasonInput(false);
+  };
+
+  const handleCreateCycle = async () => {
+    if (!createCycleForm.name.trim() || !createCycleForm.startDate || !createCycleForm.endDate || !createCycleForm.effectiveDate) {
+      notifications.show({title: 'Missing fields', message: 'Name, start date, end date, and effective date are required.', color: 'red'});
+      return;
+    }
+
+    try {
+      await createCycleMutation.mutateAsync(createCycleForm);
+      notifications.show({title: 'Cycle created', message: `"${createCycleForm.name}" has been created.`, color: 'green'});
+      setIsCreateCycleModalOpen(false);
+      setCreateCycleForm(emptyCycleForm);
+    } catch (err) {
+      log.error('Failed to create cycle:', err);
+      notifications.show({title: 'Error', message: 'Failed to create review cycle. Please try again.', color: 'red'});
+    }
   };
 
   const handleApproveRevision = async (revisionId: string) => {
@@ -996,7 +1027,14 @@ export default function CompensationPage() {
         </Modal>
 
         {/* Create Cycle Modal */}
-        <Modal isOpen={isCreateCycleModalOpen} onClose={() => setIsCreateCycleModalOpen(false)} size="lg">
+        <Modal
+          isOpen={isCreateCycleModalOpen}
+          onClose={() => {
+            setIsCreateCycleModalOpen(false);
+            setCreateCycleForm(emptyCycleForm);
+          }}
+          size="lg"
+        >
           <ModalHeader>
             <h2 className="text-xl font-semibold text-[var(--text-primary)]">
               Create Review Cycle
@@ -1008,14 +1046,23 @@ export default function CompensationPage() {
                 <label htmlFor="cycle-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Cycle Name
                 </label>
-                <Input id="cycle-name" placeholder="e.g., Annual Review 2025"/>
+                <Input
+                  id="cycle-name"
+                  placeholder="e.g., Annual Review 2025"
+                  value={createCycleForm.name}
+                  onChange={(e) => setCreateCycleForm((f) => ({...f, name: e.target.value}))}
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="cycle-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Cycle Type
                   </label>
-                  <Select id="cycle-type">
+                  <Select
+                    id="cycle-type"
+                    value={createCycleForm.cycleType}
+                    onChange={(e) => setCreateCycleForm((f) => ({...f, cycleType: e.target.value as CycleType}))}
+                  >
                     <option value="ANNUAL">Annual</option>
                     <option value="MID_YEAR">Mid-Year</option>
                     <option value="QUARTERLY">Quarterly</option>
@@ -1027,7 +1074,11 @@ export default function CompensationPage() {
                   <label htmlFor="cycle-fiscal-year" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Fiscal Year
                   </label>
-                  <Select id="cycle-fiscal-year">
+                  <Select
+                    id="cycle-fiscal-year"
+                    value={String(createCycleForm.fiscalYear)}
+                    onChange={(e) => setCreateCycleForm((f) => ({...f, fiscalYear: Number(e.target.value)}))}
+                  >
                     <option value="2025">2025</option>
                     <option value="2024">2024</option>
                   </Select>
@@ -1038,45 +1089,84 @@ export default function CompensationPage() {
                   <label htmlFor="cycle-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Start Date
                   </label>
-                  <Input id="cycle-start-date" type="date"/>
+                  <Input
+                    id="cycle-start-date"
+                    type="date"
+                    value={createCycleForm.startDate}
+                    onChange={(e) => setCreateCycleForm((f) => ({...f, startDate: e.target.value}))}
+                  />
                 </div>
                 <div>
                   <label htmlFor="cycle-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     End Date
                   </label>
-                  <Input id="cycle-end-date" type="date"/>
+                  <Input
+                    id="cycle-end-date"
+                    type="date"
+                    value={createCycleForm.endDate}
+                    onChange={(e) => setCreateCycleForm((f) => ({...f, endDate: e.target.value}))}
+                  />
                 </div>
                 <div>
                   <label htmlFor="cycle-effective-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Effective Date
                   </label>
-                  <Input id="cycle-effective-date" type="date"/>
+                  <Input
+                    id="cycle-effective-date"
+                    type="date"
+                    value={createCycleForm.effectiveDate}
+                    onChange={(e) => setCreateCycleForm((f) => ({...f, effectiveDate: e.target.value}))}
+                  />
                 </div>
               </div>
               <div>
                 <label htmlFor="cycle-budget-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Budget Amount
                 </label>
-                <Input id="cycle-budget-amount" type="number" placeholder="Enter budget amount"/>
+                <Input
+                  id="cycle-budget-amount"
+                  type="number"
+                  placeholder="Enter budget amount"
+                  value={createCycleForm.budgetAmount ?? ''}
+                  onChange={(e) => setCreateCycleForm((f) => ({...f, budgetAmount: e.target.value ? Number(e.target.value) : undefined}))}
+                />
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label htmlFor="cycle-min-increment" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Min Increment %
                   </label>
-                  <Input id="cycle-min-increment" type="number" placeholder="0"/>
+                  <Input
+                    id="cycle-min-increment"
+                    type="number"
+                    placeholder="0"
+                    value={createCycleForm.minIncrementPercentage ?? ''}
+                    onChange={(e) => setCreateCycleForm((f) => ({...f, minIncrementPercentage: e.target.value ? Number(e.target.value) : undefined}))}
+                  />
                 </div>
                 <div>
                   <label htmlFor="cycle-target-avg" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Target Avg %
                   </label>
-                  <Input id="cycle-target-avg" type="number" placeholder="8"/>
+                  <Input
+                    id="cycle-target-avg"
+                    type="number"
+                    placeholder="8"
+                    value={createCycleForm.averageIncrementTarget ?? ''}
+                    onChange={(e) => setCreateCycleForm((f) => ({...f, averageIncrementTarget: e.target.value ? Number(e.target.value) : undefined}))}
+                  />
                 </div>
                 <div>
                   <label htmlFor="cycle-max-increment" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Max Increment %
                   </label>
-                  <Input id="cycle-max-increment" type="number" placeholder="25"/>
+                  <Input
+                    id="cycle-max-increment"
+                    type="number"
+                    placeholder="25"
+                    value={createCycleForm.maxIncrementPercentage ?? ''}
+                    onChange={(e) => setCreateCycleForm((f) => ({...f, maxIncrementPercentage: e.target.value ? Number(e.target.value) : undefined}))}
+                  />
                 </div>
               </div>
               <div>
@@ -1088,16 +1178,24 @@ export default function CompensationPage() {
                   className="w-full rounded-lg border border-[var(--border-main)] dark:border-[var(--border-main)] bg-[var(--bg-input)] px-4 py-2 text-[var(--text-primary)]"
                   rows={3}
                   placeholder="Describe this review cycle..."
+                  value={createCycleForm.description ?? ''}
+                  onChange={(e) => setCreateCycleForm((f) => ({...f, description: e.target.value}))}
                 />
               </div>
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button variant="outline" onClick={() => setIsCreateCycleModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsCreateCycleModalOpen(false);
+                setCreateCycleForm(emptyCycleForm);
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={() => setIsCreateCycleModalOpen(false)}>
-              Create Cycle
+            <Button onClick={handleCreateCycle} disabled={createCycleMutation.isPending}>
+              {createCycleMutation.isPending ? 'Creating...' : 'Create Cycle'}
             </Button>
           </ModalFooter>
         </Modal>
