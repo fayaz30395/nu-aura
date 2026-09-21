@@ -132,7 +132,16 @@ Wall lives in its own context: `backend/.../domain/wall/model`, served by `WallC
 
 - **Elasticsearch** — full-text index (`FluenceDocument`, tenant-keyed); opt-in via
   `app.elasticsearch.enabled` (default off), falls back to PostgreSQL search when off
-  ([[Shared-Platform]]).
+  ([[Shared-Platform]]). **Confirmed production behavior (2026-09-20):** the `render`
+  profile (`application-render.yml`, live on Railway) hardcodes `app.elasticsearch.enabled:
+  false` and excludes `ElasticsearchRepositoriesAutoConfiguration` entirely — ES is not
+  provisioned there. `FluenceSearchService` (`@ConditionalOnProperty
+  app.elasticsearch.enabled=true`) never registers as a bean in prod, so
+  `FluenceSearchController` always takes its `fluenceSearchService == null` branch and
+  delegates to `KnowledgeSearchService` → `WikiPageRepository`/`BlogPostRepository`'s
+  ILIKE-based PostgreSQL queries. In other words: **search and the AI-chat retrieval path
+  run entirely on the DB ILIKE path in production today**, not Elasticsearch. Kafka/ES
+  code paths are live in the codebase but dormant in this deployment.
 - **Kafka** — `FluenceContentEvent` CDC pipeline keeps Postgres (system of record) and ES
   (read model) eventually consistent via `FluenceSearchConsumer`.
 - **Redis** — distributed edit locks (`FluenceEditLockService`, ~5-min TTL) for the
