@@ -789,6 +789,13 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.dollarSign,
               requiredPermission: Permissions.EXIT_VIEW
             },
+            {
+              id: 'offboarding-settlements-hire',
+              label: 'Settlement Approvals',
+              href: '/offboarding/settlements',
+              icon: sm.clipboardCheck,
+              requiredPermission: Permissions.EXIT_MANAGE
+            },
           ],
         },
         {

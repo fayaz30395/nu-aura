@@ -183,15 +183,16 @@ export function usePsaInvoice(id: string, enabled: boolean = true) {
   });
 }
 
-export function useCreateInvoice() {
+export function useGenerateInvoice() {
   const queryClient = useQueryClient();
   const toast = useToast();
 
   return useMutation({
-    mutationFn: (data: Partial<PSAInvoice>) => psaService.createInvoice(data),
+    mutationFn: ({projectId, periodStart, periodEnd}: {projectId: string; periodStart: string; periodEnd: string}) =>
+      psaService.generateInvoice(projectId, periodStart, periodEnd),
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: psaKeys.invoices()});
-      toast.success('Invoice Created', 'New invoice has been created');
+      toast.success('Invoice Generated', 'New invoice has been generated');
     },
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Failed to create invoice');

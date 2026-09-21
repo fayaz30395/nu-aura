@@ -389,6 +389,13 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     ],
   },
   {
+    path: '/offboarding/settlements',
+    anyPermission: [
+      Permissions.EXIT_MANAGE,
+      Permissions.SYSTEM_ADMIN,
+    ],
+  },
+  {
     path: '/offboarding',
     anyPermission: [Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE],
   },

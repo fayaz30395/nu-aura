@@ -100,12 +100,18 @@ export const psaService = {
 
   // --- Invoices ---
 
-  createInvoice: async (data: Partial<PSAInvoice>): Promise<PSAInvoice> => {
+  // ponytail: PSAInvoiceController.createInvoice is deprecated; invoices are now
+  // generated from approved/unbilled timesheet entries via ProjectController.
+  generateInvoice: async (projectId: string, periodStart: string, periodEnd: string): Promise<PSAInvoice> => {
     try {
-      const response = await apiClient.post<PSAInvoice>(INVOICES_URL, data);
+      const response = await apiClient.post<PSAInvoice>(
+        `/projects/${projectId}/invoices/generate`,
+        null,
+        {params: {periodStart, periodEnd}}
+      );
       return response.data;
     } catch (error) {
-      logger.error('Failed to create invoice', {error, data});
+      logger.error('Failed to generate invoice', {error, projectId, periodStart, periodEnd});
       throw error;
     }
   },
