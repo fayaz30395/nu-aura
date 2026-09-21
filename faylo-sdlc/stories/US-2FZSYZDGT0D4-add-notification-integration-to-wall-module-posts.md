@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-21
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** Praise/comment/reaction on wall notifies relevant parties
   - **Verify:** shell mvn -q -DskipTests compile
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-21)

@@ -320,6 +320,51 @@ public class WebSocketNotificationService {
     }
 
     /**
+     * Notify an employee they received a praise post on the Wall.
+     */
+    public void notifyWallPraiseReceived(UUID userId, String fromName) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.WALL_PRAISE_RECEIVED)
+                .title("You received praise")
+                .message(String.format("%s praised you on the Wall", fromName))
+                .priority(NotificationMessage.Priority.NORMAL)
+                .actionUrl("/wall")
+                .build();
+
+        sendToUser(userId, notification);
+    }
+
+    /**
+     * Notify a post author that someone commented on their Wall post.
+     */
+    public void notifyWallPostCommented(UUID userId, String commenterName) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.WALL_POST_COMMENTED)
+                .title("New comment on your post")
+                .message(String.format("%s commented on your Wall post", commenterName))
+                .priority(NotificationMessage.Priority.LOW)
+                .actionUrl("/wall")
+                .build();
+
+        sendToUser(userId, notification);
+    }
+
+    /**
+     * Notify a post author that someone reacted to their Wall post.
+     */
+    public void notifyWallPostReacted(UUID userId, String reactorName) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.WALL_POST_REACTED)
+                .title("New reaction on your post")
+                .message(String.format("%s reacted to your Wall post", reactorName))
+                .priority(NotificationMessage.Priority.LOW)
+                .actionUrl("/wall")
+                .build();
+
+        sendToUser(userId, notification);
+    }
+
+    /**
      * Send attendance reminder notification.
      */
     public void notifyAttendanceReminder(UUID employeeId) {

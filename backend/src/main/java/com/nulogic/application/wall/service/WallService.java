@@ -40,6 +40,7 @@ public class WallService {
     private final PollVoteRepository pollVoteRepository;
     private final EmployeeRepository employeeRepository;
     private final ContentViewService contentViewService;
+    private final com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     public WallService(
             WallPostRepository wallPostRepository,
@@ -48,7 +49,8 @@ public class WallService {
             PollOptionRepository pollOptionRepository,
             PollVoteRepository pollVoteRepository,
             EmployeeRepository employeeRepository,
-            ContentViewService contentViewService) {
+            ContentViewService contentViewService,
+            com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService) {
         this.wallPostRepository = wallPostRepository;
         this.postReactionRepository = postReactionRepository;
         this.postCommentRepository = postCommentRepository;
@@ -56,6 +58,25 @@ public class WallService {
         this.pollVoteRepository = pollVoteRepository;
         this.employeeRepository = employeeRepository;
         this.contentViewService = contentViewService;
+        this.webSocketNotificationService = webSocketNotificationService;
+    }
+
+    /**
+     * Best-effort Wall notification: resolves the target Employee's User and pushes a
+     * WebSocket notification, swallowing any failure so it never blocks the write.
+     */
+    private void notifyEmployeeQuietly(UUID tenantId, UUID targetEmployeeId, java.util.function.BiConsumer<UUID, String> notify,
+                                        String actorName) {
+        if (targetEmployeeId == null) {
+            return;
+        }
+        try {
+            employeeRepository.findByIdAndTenantId(targetEmployeeId, tenantId)
+                    .map(Employee::getUser)
+                    .ifPresent(user -> notify.accept(user.getId(), actorName));
+        } catch (Exception e) { // Intentional broad catch — notification failure must not fail the wall action
+            log.warn("Failed to send Wall notification to employee {}: {}", targetEmployeeId, e.getMessage());
+        }
     }
 
     // ==================== POSTS ====================
@@ -95,6 +116,13 @@ public class WallService {
         }
 
         WallPost savedPost = wallPostRepository.save(post);
+
+        if (savedPost.getType() == WallPost.PostType.PRAISE && savedPost.getPraiseRecipient() != null
+                && !savedPost.getPraiseRecipient().getId().equals(authorId)) {
+            notifyEmployeeQuietly(tenantId, savedPost.getPraiseRecipient().getId(),
+                    webSocketNotificationService::notifyWallPraiseReceived, author.getFullName());
+        }
+
         return mapToResponse(savedPost, authorId);
     }
 
@@ -278,6 +306,12 @@ public class WallService {
                 // Update like count on the post
                 post.setLikesCount(post.getLikesCount() + 1);
                 wallPostRepository.save(post);
+
+                UUID postAuthorId = post.getAuthor() != null ? post.getAuthor().getId() : null;
+                if (postAuthorId != null && !postAuthorId.equals(employeeId)) {
+                    notifyEmployeeQuietly(tenantId, postAuthorId,
+                            webSocketNotificationService::notifyWallPostReacted, employee.getFullName());
+                }
             } catch (DataIntegrityViolationException e) {
                 log.debug("Concurrent reaction collision for post={} user={}", postId, employeeId);
                 // Idempotent: caller assumes reaction recorded. The other concurrent
@@ -338,6 +372,12 @@ public class WallService {
         // Update comment count on the post
         post.setCommentsCount(post.getCommentsCount() + 1);
         wallPostRepository.save(post);
+
+        UUID postAuthorId = post.getAuthor() != null ? post.getAuthor().getId() : null;
+        if (postAuthorId != null && !postAuthorId.equals(authorId)) {
+            notifyEmployeeQuietly(tenantId, postAuthorId,
+                    webSocketNotificationService::notifyWallPostCommented, author.getFullName());
+        }
 
         return mapCommentToResponse(savedComment);
     }

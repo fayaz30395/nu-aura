@@ -67,7 +67,10 @@ public class NotificationMessage {
         TRAINING_ENROLLED,
         TRAINING_COMPLETED,
         INTERVIEW_SCHEDULED,
-        INTERVIEW_CANCELLED
+        INTERVIEW_CANCELLED,
+        WALL_PRAISE_RECEIVED,
+        WALL_POST_COMMENTED,
+        WALL_POST_REACTED
     }
 
     public enum Priority {
