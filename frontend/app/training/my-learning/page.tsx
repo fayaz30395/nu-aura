@@ -1,10 +1,8 @@
 'use client';
 
-import {useEffect, useRef, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {
-  AlertCircle,
   Award,
   BookOpen,
   CheckCircle,
@@ -19,11 +17,8 @@ import {EmptyState} from '@/components/ui/EmptyState';
 import type {BadgeVariant} from '@/components/ui/types';
 import {useAuth} from '@/lib/hooks/useAuth';
 import type {CourseEnrollment} from '@/lib/services/grow/lms.service';
-import {useMyEnrollments, useUpdateCourseProgress} from '@/lib/hooks/queries/useLearning';
-import {createLogger} from '@/lib/utils/logger';
+import {useMyEnrollments} from '@/lib/hooks/queries/useLearning';
 import {formatDate} from '@/lib/utils/format/date';
-
-const log = createLogger('MyLearningPage');
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -77,60 +72,17 @@ export default function MyLearningPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
 
-  const [error, setError] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const notifTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
-  }, []);
-
   // Queries
   const {data: enrollments = [], isLoading, refetch} = useMyEnrollments();
-  const updateProgressMutation = useUpdateCourseProgress();
-
-  const showNotification = (message: string, type: 'success' | 'error') => {
-    if (type === 'success') {
-      setSuccessMsg(message);
-      setError(null);
-    } else {
-      setError(message);
-      setSuccessMsg(null);
-    }
-    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
-    notifTimerRef.current = setTimeout(() => {
-      setSuccessMsg(null);
-      setError(null);
-    }, 5000);
-  };
 
   // Auth check
   if (hasHydrated && !isAuthenticated) {
     router.replace('/auth/login');
   }
 
-  const handleContinue = async (enrollment: CourseEnrollment) => {
+  const handleContinue = (enrollment: CourseEnrollment) => {
     if (enrollment.status === 'COMPLETED') return;
-
-    const currentProgress = enrollment.progressPercentage ?? 0;
-    const newProgress = Math.min(100, currentProgress + 10);
-
-    setUpdatingId(enrollment.id);
-    try {
-      await updateProgressMutation.mutateAsync({enrollmentId: enrollment.id, progressPercent: newProgress});
-      if (newProgress >= 100) {
-        showNotification('Congratulations! Course completed.', 'success');
-      } else {
-        showNotification(`Progress updated to ${newProgress}%`, 'success');
-      }
-      // Refetch to get updated enrollments
-      await refetch();
-    } catch (err) {
-      log.error('Failed to update progress:', err);
-      showNotification('Failed to update progress. Please try again.', 'error');
-    } finally {
-      setUpdatingId(null);
-    }
+    router.push(`/learning/courses/${enrollment.courseId}/play`);
   };
 
   // ── summary stats ──────────────────────────────────────────────────────────
@@ -167,21 +119,6 @@ export default function MyLearningPage() {
             Refresh
           </Button>
         </div>
-
-        {/* Notifications */}
-        {error && (
-          <div className="flex items-center gap-2 p-4 bg-danger-50 text-danger-700 rounded-lg border border-danger-200">
-            <AlertCircle className="h-5 w-5 shrink-0"/>
-            <span className="text-sm">{error}</span>
-          </div>
-        )}
-        {successMsg && (
-          <div
-            className="flex items-center gap-2 p-4 bg-success-50 text-success-700 rounded-lg border border-success-200">
-            <CheckCircle className="h-5 w-5 shrink-0"/>
-            <span className="text-sm">{successMsg}</span>
-          </div>
-        )}
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -226,7 +163,6 @@ export default function MyLearningPage() {
             {enrollments.map((enrollment) => {
               const progress = enrollment.progressPercentage ?? 0;
               const isCompleted = enrollment.status === 'COMPLETED';
-              const isUpdating = updatingId === enrollment.id;
 
               return (
                 <Card key={enrollment.id}
@@ -286,14 +222,9 @@ export default function MyLearningPage() {
                           <Button
                             size="sm"
                             onClick={() => handleContinue(enrollment)}
-                            disabled={isUpdating || updateProgressMutation.isPending}
                             className="flex items-center gap-1"
                           >
-                            {isUpdating || updateProgressMutation.isPending ? (
-                              <Loader2 className="h-4 w-4 animate-spin"/>
-                            ) : (
-                              <ChevronRight className="h-4 w-4"/>
-                            )}
+                            <ChevronRight className="h-4 w-4"/>
                             Continue
                           </Button>
                         )}
