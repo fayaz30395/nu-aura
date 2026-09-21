@@ -1,7 +1,7 @@
 'use client';
 
-import {useState} from 'react';
-import {useRouter} from 'next/navigation';
+import {Suspense, useState} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {MOTION_EASE} from '@/lib/animation';
 import {AppLayout} from '@/components/layout/AppLayout';
@@ -29,8 +29,18 @@ import {
   Wallet,
 } from 'lucide-react';
 
-export default function LoansPage() {
+export default function LoansPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <LoansPage/>
+    </Suspense>
+  );
+}
+
+function LoansPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isActiveFilter = searchParams.get('filter') === 'active';
   const {isAuthenticated, hasHydrated} = useAuth();
   const [page] = useState(0);
   const [size] = useState(10);
@@ -211,15 +221,22 @@ export default function LoansPage() {
           <Card className="overflow-hidden">
             <div className="row-between px-6 py-5 border-b border-[var(--border)]">
               <motion.h2 className="text-aura-title text-[var(--text-1)]">
-                My Loans
+                {isActiveFilter ? 'Active Loans' : 'My Loans'}
               </motion.h2>
+              {isActiveFilter && (
+                <Button variant="ghost" size="sm" onClick={() => router.push('/loans')}>
+                  Show All
+                </Button>
+              )}
             </div>
 
-            {loans.length === 0 ? (
+            {(isActiveFilter ? activeLoans : loans).length === 0 ? (
               <EmptyState
                 icon={<Wallet className="h-12 w-12"/>}
-                title="No loan requests yet"
-                description="Apply for a loan to request an advance against your salary. Your requests and repayment schedule will appear here."
+                title={isActiveFilter ? 'No active loans' : 'No loan requests yet'}
+                description={isActiveFilter
+                  ? 'You have no active or disbursed loans right now.'
+                  : 'Apply for a loan to request an advance against your salary. Your requests and repayment schedule will appear here.'}
                 action={{label: 'Apply for Loan', onClick: () => router.push('/loans/new')}}
               />
             ) : (
@@ -251,7 +268,7 @@ export default function LoansPage() {
                   </tr>
                   </thead>
                   <tbody className="divide-y divide-[var(--border)]">
-                  {loans.map((loan) => {
+                  {(isActiveFilter ? activeLoans : loans).map((loan) => {
                     return (
                       <tr
                         key={loan.id}
