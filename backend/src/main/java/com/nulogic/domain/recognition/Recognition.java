@@ -87,6 +87,12 @@ public class Recognition extends TenantAware {
         this.commentsCount++;
     }
 
+    public void decrementComments() {
+        if (this.commentsCount > 0) {
+            this.commentsCount--;
+        }
+    }
+
     public enum RecognitionType {
         KUDOS,
         APPRECIATION,

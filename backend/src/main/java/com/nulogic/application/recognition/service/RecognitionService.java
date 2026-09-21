@@ -1,6 +1,8 @@
 package com.nulogic.application.recognition.service;
 
 import com.nulogic.api.recognition.dto.EngagementDashboardResponse;
+import com.nulogic.api.recognition.dto.RecognitionCommentRequest;
+import com.nulogic.api.recognition.dto.RecognitionCommentResponse;
 import com.nulogic.api.recognition.dto.RecognitionRequest;
 import com.nulogic.api.recognition.dto.RecognitionResponse;
 import com.nulogic.api.wall.dto.CreatePostRequest;
@@ -8,9 +10,11 @@ import com.nulogic.api.wall.dto.WallPostResponse;
 import com.nulogic.application.wall.service.WallService;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.recognition.*;
 import com.nulogic.domain.wall.model.WallPost;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -49,6 +53,7 @@ public class RecognitionService {
     // private final PulseSurveyRepository surveyRepository;
     // private final RecognitionSurveyResponseRepository responseRepository;
     private final RecognitionReactionRepository reactionRepository;
+    private final RecognitionCommentRepository commentRepository;
     private final EmployeeRepository employeeRepository;
     private final WallService wallService;
     private final PostReactionRepository postReactionRepository;
@@ -187,6 +192,78 @@ public class RecognitionService {
         reactionRepository.deleteByRecognitionIdAndEmployeeIdAndReactionType(recognitionId, employeeId, reactionType);
         recognition.decrementLikes();
         recognitionRepository.save(recognition);
+    }
+
+    // ==================== Comment Operations ====================
+
+    @Transactional
+    public RecognitionCommentResponse addComment(
+            UUID recognitionId, UUID employeeId, RecognitionCommentRequest request) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        Recognition recognition = recognitionRepository.findByIdAndTenantId(recognitionId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recognition not found: " + recognitionId));
+
+        RecognitionComment comment = RecognitionComment.builder()
+                .recognitionId(recognitionId)
+                .employeeId(employeeId)
+                .content(request.getContent())
+                .build();
+        comment.setTenantId(tenantId);
+        RecognitionComment saved = commentRepository.save(comment);
+
+        recognition.incrementComments();
+        recognitionRepository.save(recognition);
+
+        return toCommentResponse(saved, tenantId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RecognitionCommentResponse> getComments(UUID recognitionId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        recognitionRepository.findByIdAndTenantId(recognitionId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recognition not found: " + recognitionId));
+
+        return commentRepository.findByRecognitionIdAndTenantIdOrderByCommentedAtAsc(recognitionId, tenantId, pageable)
+                .map(comment -> toCommentResponse(comment, tenantId));
+    }
+
+    @Transactional
+    public void deleteComment(UUID recognitionId, UUID commentId, UUID employeeId) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        Recognition recognition = recognitionRepository.findByIdAndTenantId(recognitionId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recognition not found: " + recognitionId));
+
+        RecognitionComment comment = commentRepository.findByIdAndTenantId(commentId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment not found: " + commentId));
+
+        if (!comment.getRecognitionId().equals(recognitionId)) {
+            throw new BusinessException("Comment does not belong to this recognition");
+        }
+        if (!comment.getEmployeeId().equals(employeeId) && !SecurityContext.hasPermission(Permission.RECOGNITION_MANAGE)) {
+            throw new BusinessException("You can only delete your own comments");
+        }
+
+        comment.softDelete();
+        commentRepository.save(comment);
+
+        recognition.decrementComments();
+        recognitionRepository.save(recognition);
+    }
+
+    private RecognitionCommentResponse toCommentResponse(RecognitionComment comment, UUID tenantId) {
+        String employeeName = employeeRepository.findByIdAndTenantId(comment.getEmployeeId(), tenantId)
+                .map(Employee::getFullName)
+                .orElse(null);
+        return RecognitionCommentResponse.builder()
+                .id(comment.getId())
+                .recognitionId(comment.getRecognitionId())
+                .employeeId(comment.getEmployeeId())
+                .employeeName(employeeName)
+                .content(comment.getContent())
+                .commentedAt(comment.getCommentedAt())
+                .build();
     }
 
     // ==================== Badge Operations ====================

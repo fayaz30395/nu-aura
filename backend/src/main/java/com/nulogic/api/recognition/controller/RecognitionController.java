@@ -122,6 +122,45 @@ public class RecognitionController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{id}/comments")
+    @RequiresPermission(Permission.RECOGNITION_CREATE)
+    @Operation(summary = "Comment on recognition", description = "Add a comment to a recognition post")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Comment created successfully"),
+            @ApiResponse(responseCode = "404", description = "Recognition not found")
+    })
+    public ResponseEntity<com.nulogic.api.recognition.dto.RecognitionCommentResponse> addComment(
+            @Parameter(description = "Recognition UUID") @PathVariable UUID id,
+            @Valid @RequestBody com.nulogic.api.recognition.dto.RecognitionCommentRequest request) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        return ResponseEntity.ok(recognitionService.addComment(id, employeeId, request));
+    }
+
+    @GetMapping("/{id}/comments")
+    @RequiresPermission(Permission.RECOGNITION_VIEW)
+    @Operation(summary = "List recognition comments", description = "Paginated list of comments on a recognition post")
+    @ApiResponse(responseCode = "200", description = "Comments retrieved successfully")
+    public ResponseEntity<Page<com.nulogic.api.recognition.dto.RecognitionCommentResponse>> getComments(
+            @Parameter(description = "Recognition UUID") @PathVariable UUID id,
+            Pageable pageable) {
+        return ResponseEntity.ok(recognitionService.getComments(id, pageable));
+    }
+
+    @DeleteMapping("/{id}/comments/{commentId}")
+    @RequiresPermission(Permission.RECOGNITION_CREATE)
+    @Operation(summary = "Delete recognition comment", description = "Delete a comment (own comment, or RECOGNITION:MANAGE)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Comment deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Recognition or comment not found")
+    })
+    public ResponseEntity<Void> deleteComment(
+            @Parameter(description = "Recognition UUID") @PathVariable UUID id,
+            @Parameter(description = "Comment UUID") @PathVariable UUID commentId) {
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        recognitionService.deleteComment(id, commentId, employeeId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/badges")
     @RequiresPermission(Permission.RECOGNITION_VIEW)
     @Operation(summary = "List active badges",
