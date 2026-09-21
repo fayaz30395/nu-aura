@@ -26,11 +26,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +46,10 @@ public class AttendanceRecordService {
     private final TenantTimeService tenantTimeService;
     private final NotificationService notificationService;
     private final WebSocketNotificationService webSocketNotificationService;
+    // ObjectProvider (not @Lazy self-injection) routes bulk check-in/out calls back through
+    // the Spring proxy so each employee gets its own REQUIRES_NEW transaction — one failure
+    // doesn't roll back the batch. Same pattern as LeaveRequestService.batchApprove.
+    private final org.springframework.beans.factory.ObjectProvider<AttendanceRecordService> selfProvider;
 
     /**
      * Check in an employee at the specified time.
@@ -383,12 +384,10 @@ public class AttendanceRecordService {
     // ===================== Bulk Operations =====================
 
     /**
-     * Bulk check-in: 2 SELECTs + 2 batch INSERTs for any N, versus N×5 round-trips in the old path.
-     *
-     * <p>Strategy: pre-load all existing attendance records for today in one query, pre-load
-     * open time entries for those records in a second query, validate business rules in-memory,
-     * then persist with saveAll(). Time entry sequence is 1 for all new records — correct
-     * because bulk check-in rejects any employee already checked in (no prior entries allowed).
+     * Bulk check-in: each employee is checked in via its own call through the Spring proxy
+     * ({@link #selfProvider}) in a {@code REQUIRES_NEW} transaction, so one employee's failure
+     * (already checked in, invalid state, DB constraint) does not roll back the others —
+     * honoring the {@link BulkResult} partial-success contract.
      */
     public BulkResult bulkCheckIn(List<UUID> employeeIds, LocalDateTime checkInTime,
                                   String source, String location, String ip) {
@@ -396,88 +395,28 @@ public class AttendanceRecordService {
             return new BulkResult(List.of(), List.of());
         }
 
-        UUID tenantId = validateAndGetTenantId();
-        LocalDateTime actualCheckInTime = checkInTime != null ? checkInTime : tenantTimeService.now(tenantId);
-        LocalDate checkInDate = actualCheckInTime.toLocalDate();
-
-        // 1 SELECT: existing attendance records for today across all employees
-        Map<UUID, AttendanceRecord> existingByEmployee = attendanceRecordRepository
-                .findByEmployeeIdInAndAttendanceDateAndTenantId(employeeIds, checkInDate, tenantId)
-                .stream()
-                .collect(Collectors.toMap(AttendanceRecord::getEmployeeId, r -> r));
-
-        // 1 SELECT: open time entries for existing records — avoids N individual queries
-        Set<UUID> existingRecordIds = existingByEmployee.values().stream()
-                .map(AttendanceRecord::getId)
-                .collect(Collectors.toSet());
-        Set<UUID> recordsWithOpenEntries = existingRecordIds.isEmpty() ? Set.of() :
-                timeEntryRepository.findOpenEntriesByAttendanceRecordIdIn(existingRecordIds)
-                        .stream()
-                        .map(AttendanceTimeEntry::getAttendanceRecordId)
-                        .collect(Collectors.toSet());
-
-        List<AttendanceRecord> toSave = new ArrayList<>();
+        AttendanceRecordService self = selfProvider.getObject();
+        List<AttendanceRecord> successful = new ArrayList<>();
         List<BulkResult.FailedEntry> failed = new ArrayList<>();
 
         for (UUID employeeId : employeeIds) {
             try {
-                AttendanceRecord record = existingByEmployee.get(employeeId);
-                if (record == null) {
-                    record = AttendanceRecord.builder()
-                            .employeeId(employeeId)
-                            .attendanceDate(checkInDate)
-                            .build();
-                    record.setTenantId(tenantId);
-                } else if (record.hasOpenCheckIn() || recordsWithOpenEntries.contains(record.getId())) {
-                    failed.add(new BulkResult.FailedEntry(employeeId, "Already checked in"));
-                    continue;
-                } else if (record.getCheckInTime() != null && record.getCheckOutTime() != null) {
-                    failed.add(new BulkResult.FailedEntry(employeeId,
-                            "Attendance already recorded for today. Use regularization to modify."));
-                    continue;
-                }
-                record.checkIn(actualCheckInTime, source, location, ip);
-                toSave.add(record);
+                successful.add(self.checkInForBulk(employeeId, checkInTime, source, location, ip));
             } catch (Exception e) {
-                log.error("Failed to prepare bulk check-in for employee {}: {}", employeeId, e.getMessage());
+                log.error("Bulk check-in failed for employee {}: {}", employeeId, e.getMessage());
                 failed.add(new BulkResult.FailedEntry(employeeId, e.getMessage()));
             }
         }
 
-        // 1 batch INSERT/UPDATE
-        List<AttendanceRecord> saved = attendanceRecordRepository.saveAll(toSave);
-
-        // 1 batch INSERT for time entries — sequence=1 is correct: validation above rejected any
-        // employee with existing entries, so there are no prior entries on these records.
-        List<AttendanceTimeEntry> entries = saved.stream()
-                .map(r -> AttendanceTimeEntry.builder()
-                        .attendanceRecordId(r.getId())
-                        .entryType(AttendanceTimeEntry.EntryType.REGULAR)
-                        .checkInTime(actualCheckInTime)
-                        .checkInSource(source)
-                        .checkInLocation(location)
-                        .checkInIp(ip)
-                        .sequenceNumber(1)
-                        .build())
-                .collect(Collectors.toList());
-        timeEntryRepository.saveAll(entries);
-
-        // Fire-and-forget audit events per employee (non-blocking via dedicated publisher)
-        for (AttendanceRecord r : saved) {
-            attendanceAuditPublisher.publish(r.getEmployeeId(), "CHECK_IN", "AttendanceRecord",
-                    r.getId(), tenantId, "Employee checked in via " + source + " (bulk)");
-        }
-
-        log.info("Bulk check-in: {} successful, {} failed (date={}, source={})",
-                saved.size(), failed.size(), checkInDate, source);
-        return new BulkResult(saved, failed);
+        log.info("Bulk check-in: {} successful, {} failed (source={})",
+                successful.size(), failed.size(), source);
+        return new BulkResult(successful, failed);
     }
 
     /**
-     * Bulk check-out: pre-loads today's open records in one query (covers the common same-day
-     * case), falls back to individual checkOut() for overnight-shift employees not in today's
-     * batch. This eliminates N full-table lookups for the typical case while keeping correctness
-     * for multi-day shifts.
+     * Bulk check-out: each employee is checked out via its own call through the Spring proxy
+     * ({@link #selfProvider}) in a {@code REQUIRES_NEW} transaction, so one employee's failure
+     * does not roll back the others — honoring the {@link BulkResult} partial-success contract.
      */
     public BulkResult bulkCheckOut(List<UUID> employeeIds, LocalDateTime checkOutTime,
                                    String source, String location, String ip) {
@@ -485,67 +424,35 @@ public class AttendanceRecordService {
             return new BulkResult(List.of(), List.of());
         }
 
-        UUID tenantId = validateAndGetTenantId();
-        LocalDateTime actualCheckOutTime = checkOutTime != null ? checkOutTime : tenantTimeService.now(tenantId);
-        LocalDate checkOutDate = actualCheckOutTime.toLocalDate();
-
-        // 1 SELECT: today's records for all employees (covers the common same-day case)
-        Map<UUID, AttendanceRecord> todayRecordsByEmployee = attendanceRecordRepository
-                .findByEmployeeIdInAndAttendanceDateAndTenantId(employeeIds, checkOutDate, tenantId)
-                .stream()
-                .collect(Collectors.toMap(AttendanceRecord::getEmployeeId, r -> r));
-
-        // 1 SELECT: open time entries for today's records
-        Set<UUID> todayRecordIds = todayRecordsByEmployee.values().stream()
-                .map(AttendanceRecord::getId)
-                .collect(Collectors.toSet());
-        Map<UUID, List<AttendanceTimeEntry>> openEntriesByRecord = todayRecordIds.isEmpty() ? Map.of() :
-                timeEntryRepository.findOpenEntriesByAttendanceRecordIdIn(todayRecordIds)
-                        .stream()
-                        .collect(Collectors.groupingBy(AttendanceTimeEntry::getAttendanceRecordId));
-
-        List<AttendanceRecord> recordsToSave = new ArrayList<>();
-        List<AttendanceTimeEntry> entriesToSave = new ArrayList<>();
-        List<AttendanceRecord> overnightSuccessful = new ArrayList<>();
+        AttendanceRecordService self = selfProvider.getObject();
+        List<AttendanceRecord> successful = new ArrayList<>();
         List<BulkResult.FailedEntry> failed = new ArrayList<>();
 
         for (UUID employeeId : employeeIds) {
             try {
-                AttendanceRecord todayRecord = todayRecordsByEmployee.get(employeeId);
-                if (todayRecord != null && todayRecord.hasOpenCheckIn()) {
-                    // Common path: same-day check-out — mutate in-memory, batch-save after loop
-                    validateCheckoutTime(todayRecord, actualCheckOutTime);
-                    todayRecord.checkOut(actualCheckOutTime, source, location, ip);
-                    List<AttendanceTimeEntry> openEntries = openEntriesByRecord.getOrDefault(todayRecord.getId(), List.of());
-                    openEntries.forEach(e -> e.checkOut(actualCheckOutTime, source, location, ip));
-                    // In-memory duration computation avoids 2 DB calls per employee (M-17b pattern)
-                    updateRecordDurationsInMemory(todayRecord, openEntries);
-                    entriesToSave.addAll(openEntries);
-                    recordsToSave.add(todayRecord);
-                } else {
-                    // Overnight shift or missing today's record — fall back to single-employee path
-                    overnightSuccessful.add(checkOut(employeeId, checkOutTime, source, location, ip));
-                }
+                successful.add(self.checkOutForBulk(employeeId, checkOutTime, source, location, ip));
             } catch (Exception e) {
-                log.error("Failed to check out employee {}: {}", employeeId, e.getMessage());
+                log.error("Bulk check-out failed for employee {}: {}", employeeId, e.getMessage());
                 failed.add(new BulkResult.FailedEntry(employeeId, e.getMessage()));
             }
         }
 
-        // 2 batch writes replace N individual saves (one for entries, one for records)
-        if (!entriesToSave.isEmpty()) timeEntryRepository.saveAll(entriesToSave);
-        List<AttendanceRecord> savedRecords = recordsToSave.isEmpty()
-                ? List.of() : attendanceRecordRepository.saveAll(recordsToSave);
-
-        savedRecords.forEach(r -> attendanceAuditPublisher.publish(r.getEmployeeId(), "CHECK_OUT",
-                "AttendanceRecord", r.getId(), tenantId, "Employee checked out via " + source + " (bulk)"));
-
-        List<AttendanceRecord> successful = new ArrayList<>(savedRecords);
-        successful.addAll(overnightSuccessful);
-
-        log.info("Bulk check-out: {} successful, {} failed (date={}, source={})",
-                successful.size(), failed.size(), checkOutDate, source);
+        log.info("Bulk check-out: {} successful, {} failed (source={})",
+                successful.size(), failed.size(), source);
         return new BulkResult(successful, failed);
+    }
+
+    // Own REQUIRES_NEW transaction per call — see bulkCheckIn/bulkCheckOut javadoc.
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    public AttendanceRecord checkInForBulk(UUID employeeId, LocalDateTime checkInTime,
+                                           String source, String location, String ip) {
+        return checkIn(employeeId, checkInTime, source, location, ip);
+    }
+
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    public AttendanceRecord checkOutForBulk(UUID employeeId, LocalDateTime checkOutTime,
+                                            String source, String location, String ip) {
+        return checkOut(employeeId, checkOutTime, source, location, ip);
     }
 
     // ===================== Existing Methods =====================
@@ -751,30 +658,6 @@ public class AttendanceRecordService {
                     record.getWorkDurationMinutes(), tenantConfig.fullDayMinutes(),
                     record.getDeficitMinutes());
         }
-    }
-
-    private void updateRecordDurationsInMemory(AttendanceRecord record, List<AttendanceTimeEntry> entries) {
-        int totalWork = entries.stream()
-                .filter(e -> e.getEntryType() == AttendanceTimeEntry.EntryType.REGULAR
-                        && e.getDurationMinutes() != null)
-                .mapToInt(AttendanceTimeEntry::getDurationMinutes)
-                .sum();
-        int totalBreak = entries.stream()
-                .filter(e -> (e.getEntryType() == AttendanceTimeEntry.EntryType.BREAK
-                        || e.getEntryType() == AttendanceTimeEntry.EntryType.LUNCH)
-                        && e.getDurationMinutes() != null)
-                .mapToInt(AttendanceTimeEntry::getDurationMinutes)
-                .sum();
-        if (totalWork > 0) record.setWorkDurationMinutes(totalWork);
-        if (totalBreak > 0) record.setBreakDurationMinutes(totalBreak);
-
-        TenantAttendanceConfigService.TenantAttendanceConfig tenantConfig =
-                tenantAttendanceConfigService.getConfig(record.getTenantId());
-        record.updateStatusBasedOnWorkDuration(
-                tenantConfig.fullDayMinutes(),
-                tenantConfig.halfDayMinutes(),
-                tenantConfig.overtimeThresholdMinutes());
-        shiftAttendanceService.calculateOvertimeForRecord(record);
     }
 
     private AttendanceTimeEntry.EntryType parseEntryType(String type) {

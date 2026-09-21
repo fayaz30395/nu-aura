@@ -63,6 +63,8 @@ class AttendanceRecordServiceTest {
     private TenantAttendanceConfigService tenantAttendanceConfigService;
     @Mock
     private TenantTimeService tenantTimeService;
+    @Mock
+    private org.springframework.beans.factory.ObjectProvider<AttendanceRecordService> selfProvider;
     @InjectMocks
     private AttendanceRecordService attendanceRecordService;
     private UUID tenantId;
@@ -486,6 +488,7 @@ class AttendanceRecordServiceTest {
         void resetTenantContext() {
             tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
             tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+            lenient().when(selfProvider.getObject()).thenReturn(attendanceRecordService);
         }
 
         @Test
@@ -494,19 +497,18 @@ class AttendanceRecordServiceTest {
             List<UUID> employeeIds = List.of(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
             LocalDate checkInDate = checkInTime.toLocalDate();
 
-            // Batch path: no existing records for any employee
-            when(attendanceRecordRepository.findByEmployeeIdInAndAttendanceDateAndTenantId(
-                    anyList(), eq(checkInDate), eq(tenantId)))
-                    .thenReturn(List.of());
-            when(timeEntryRepository.findOpenEntriesByAttendanceRecordIdIn(anyList()))
-                    .thenReturn(List.of());
-            when(attendanceRecordRepository.saveAll(anyList()))
+            // No existing record for any employee — each goes through the first-check-in path.
+            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
+                    any(), eq(checkInDate), eq(tenantId)))
+                    .thenReturn(Optional.empty());
+            when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
                     .thenAnswer(invocation -> {
-                        List<AttendanceRecord> saved = invocation.getArgument(0);
-                        saved.forEach(r -> r.setId(UUID.randomUUID()));
+                        AttendanceRecord saved = invocation.getArgument(0);
+                        saved.setId(UUID.randomUUID());
                         return saved;
                     });
-            when(timeEntryRepository.saveAll(anyList()))
+            when(timeEntryRepository.getMaxSequenceNumber(any())).thenReturn(0);
+            when(timeEntryRepository.save(any(AttendanceTimeEntry.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             AttendanceRecordService.BulkResult result = attendanceRecordService.bulkCheckIn(
@@ -521,7 +523,7 @@ class AttendanceRecordServiceTest {
         }
 
         @Test
-        @DisplayName("Should handle partial failures in bulk check-in")
+        @DisplayName("Should handle partial failures in bulk check-in without rolling back the successful ones")
         void shouldHandlePartialFailuresInBulkCheckIn() {
             UUID successId = UUID.randomUUID();
             UUID failId = UUID.randomUUID();
@@ -529,7 +531,6 @@ class AttendanceRecordServiceTest {
             LocalDate checkInDate = checkInTime.toLocalDate();
 
             // failId has an existing record that's already fully processed (checkIn + checkOut).
-            // The batch loop will reject it with "Attendance already recorded for today".
             AttendanceRecord alreadyDone = AttendanceRecord.builder()
                     .employeeId(failId)
                     .attendanceDate(checkInDate)
@@ -539,18 +540,20 @@ class AttendanceRecordServiceTest {
             alreadyDone.checkIn(checkInTime.minusHours(8), "BIOMETRIC", "Office", "1.1.1.1");
             alreadyDone.checkOut(checkInTime.minusHours(1), "BIOMETRIC", "Office", "1.1.1.1");
 
-            when(attendanceRecordRepository.findByEmployeeIdInAndAttendanceDateAndTenantId(
-                    anyList(), eq(checkInDate), eq(tenantId)))
-                    .thenReturn(List.of(alreadyDone));
-            when(timeEntryRepository.findOpenEntriesByAttendanceRecordIdIn(anyList()))
-                    .thenReturn(List.of());
-            when(attendanceRecordRepository.saveAll(anyList()))
+            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
+                    eq(successId), eq(checkInDate), eq(tenantId)))
+                    .thenReturn(Optional.empty());
+            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
+                    eq(failId), eq(checkInDate), eq(tenantId)))
+                    .thenReturn(Optional.of(alreadyDone));
+            when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
                     .thenAnswer(invocation -> {
-                        List<AttendanceRecord> saved = invocation.getArgument(0);
-                        saved.forEach(r -> r.setId(UUID.randomUUID()));
+                        AttendanceRecord saved = invocation.getArgument(0);
+                        saved.setId(UUID.randomUUID());
                         return saved;
                     });
-            when(timeEntryRepository.saveAll(anyList()))
+            when(timeEntryRepository.getMaxSequenceNumber(any())).thenReturn(0);
+            when(timeEntryRepository.save(any(AttendanceTimeEntry.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
             AttendanceRecordService.BulkResult result = attendanceRecordService.bulkCheckIn(
@@ -560,6 +563,8 @@ class AttendanceRecordServiceTest {
             assertThat(result.failed()).hasSize(1);
             assertThat(result.failed().get(0).employeeId()).isEqualTo(failId);
             assertThat(result.hasFailures()).isTrue();
+            // The failing employee's exception must not have prevented the successful one's save.
+            verify(attendanceRecordRepository).save(argThat(r -> r.getEmployeeId().equals(successId)));
         }
 
         @Test
