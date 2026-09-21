@@ -382,13 +382,6 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
 
   // Offboarding
   {
-    path: '/offboarding/exit/fnf',
-    anyPermission: [
-      Permissions.EXIT_MANAGE,
-      Permissions.SYSTEM_ADMIN,
-    ],
-  },
-  {
     path: '/offboarding/settlements',
     anyPermission: [
       Permissions.EXIT_MANAGE,
