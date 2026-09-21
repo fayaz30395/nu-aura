@@ -2,6 +2,7 @@ package com.nulogic.api.benefits.controller;
 
 import com.nulogic.api.benefits.dto.*;
 import com.nulogic.application.benefits.service.BenefitEnhancedService;
+import com.nulogic.application.benefits.service.BenefitStatementPdfService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
@@ -33,6 +34,7 @@ import java.util.UUID;
 public class BenefitEnhancedController {
 
     private final BenefitEnhancedService benefitService;
+    private final BenefitStatementPdfService benefitStatementPdfService;
 
     /**
      * RBAC-1 IDOR FIX: Enforces ownership scope on /employee/{employeeId} endpoints.
@@ -364,5 +366,17 @@ public class BenefitEnhancedController {
             @PathVariable UUID employeeId) {
         enforceBenefitViewScope(employeeId);
         return ResponseEntity.ok(benefitService.getEmployeeBenefitsSummary(employeeId));
+    }
+
+    @GetMapping("/statement/employee/{employeeId}")
+    @RequiresPermission({Permission.BENEFIT_VIEW, Permission.BENEFIT_VIEW_SELF})
+    @Operation(summary = "Download the employee's Total Benefits Statement PDF")
+    public ResponseEntity<byte[]> getTotalBenefitsStatement(@PathVariable UUID employeeId) {
+        enforceBenefitViewScope(employeeId);
+        byte[] pdf = benefitStatementPdfService.generateStatement(employeeId);
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.APPLICATION_PDF)
+                .header("Content-Disposition", "attachment; filename=total-benefits-statement.pdf")
+                .body(pdf);
     }
 }

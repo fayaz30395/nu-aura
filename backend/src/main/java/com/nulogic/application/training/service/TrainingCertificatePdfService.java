@@ -119,6 +119,8 @@ public class TrainingCertificatePdfService {
             footer.setAlignment(Element.ALIGN_CENTER);
             document.add(footer);
 
+            // close() flushes the xref table/trailer — must happen before reading the buffer.
+            document.close();
             return out.toByteArray();
         } catch (DocumentException e) {
             log.error("Error generating certificate PDF for enrollment {}: {}", enrollment.getId(), e.getMessage(), e);

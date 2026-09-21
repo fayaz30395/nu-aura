@@ -62,6 +62,9 @@ class BenefitEnhancedControllerTest {
     private BenefitEnhancedService benefitService;
 
     @MockitoBean
+    private com.nulogic.application.benefits.service.BenefitStatementPdfService benefitStatementPdfService;
+
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
@@ -537,6 +540,24 @@ class BenefitEnhancedControllerTest {
 
             mockMvc.perform(get("/api/v1/benefits-enhanced/summary/employee/{employeeId}", employeeId))
                     .andExpect(status().isOk());
+        }
+
+        @Test
+        @DisplayName("getTotalBenefitsStatement allows self access and returns a PDF")
+        void getStatementAllowsSelf() throws Exception {
+            when(benefitStatementPdfService.generateStatement(employeeId)).thenReturn(new byte[]{1, 2, 3});
+
+            mockMvc.perform(get("/api/v1/benefits-enhanced/statement/employee/{employeeId}", employeeId))
+                    .andExpect(status().isOk())
+                    .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.header()
+                            .string("Content-Disposition", "attachment; filename=total-benefits-statement.pdf"));
+        }
+
+        @Test
+        @DisplayName("getTotalBenefitsStatement rejects a non-owner without BENEFIT_VIEW")
+        void getStatementRejectsNonOwner() throws Exception {
+            mockMvc.perform(get("/api/v1/benefits-enhanced/statement/employee/{employeeId}", UUID.randomUUID()))
+                    .andExpect(status().isForbidden());
         }
     }
 }
