@@ -5,8 +5,8 @@
 -- ============================================================================
 
 -- Ensure the ANALYTICS:VIEW permission exists
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'ANALYTICS:VIEW', 'Analytics View', 'View analytics and org health dashboards', 'analytics',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'ANALYTICS:VIEW', 'Analytics View', 'View analytics and org health dashboards', 'analytics',
         'view', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

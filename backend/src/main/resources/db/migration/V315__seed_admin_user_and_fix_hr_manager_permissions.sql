@@ -39,6 +39,10 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 -- FIX-1: Seed admin@nulogic.io in the NuLogic tenant
 -- ─────────────────────────────────────────────────────────────────────────────
+-- Fail-closed RLS (rls_ctx_required_*) requires app.current_tenant_id to match
+-- every new row's tenant_id; every statement below targets the NuLogic tenant.
+SELECT set_config('app.current_tenant_id', '660e8400-e29b-41d4-a716-446655440001', true);
+
 -- User row (UUID chosen to not collide with any existing V49/V291 UUIDs)
 INSERT INTO users (
     id,

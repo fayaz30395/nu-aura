@@ -15,29 +15,29 @@
 -- ============================================================================
 -- Step 1: Create missing permissions in the permissions table
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:VIEW', 'Goal View', 'View goals', 'goal', 'view', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:VIEW', 'Goal View', 'View goals', 'goal', 'view', NOW(), NOW(), 0,
         false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:UPDATE', 'Goal Update', 'Update goals', 'goal', 'update', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:UPDATE', 'Goal Update', 'Update goals', 'goal', 'update', NOW(), NOW(), 0,
         false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:DELETE', 'Goal Delete', 'Delete goals', 'goal', 'delete', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:DELETE', 'Goal Delete', 'Delete goals', 'goal', 'delete', NOW(), NOW(), 0,
         false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'OKR:DELETE', 'OKR Delete', 'Delete OKR', 'okr', 'delete', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'OKR:DELETE', 'OKR Delete', 'Delete OKR', 'okr', 'delete', NOW(), NOW(), 0,
         false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
 -- NOTIFICATIONS:VIEW (plural) — V113 Step 1 may have already added this
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'NOTIFICATIONS:VIEW', 'View Notifications', 'View notifications', 'notifications', 'view',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'NOTIFICATIONS:VIEW', 'View Notifications', 'View notifications', 'notifications', 'view',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

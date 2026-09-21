@@ -198,10 +198,10 @@ END $$;
 
 -- 5. Seed LWF permissions (uses current schema: code, name, description, resource, action)
 -- Note: idx_permission_code is a partial unique index (WHERE is_deleted = false)
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LWF:VIEW', 'LWF View', 'View LWF configurations and deductions', 'LWF', 'VIEW', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LWF:VIEW', 'LWF View', 'View LWF configurations and deductions', 'LWF', 'VIEW', NOW(),
         NOW(), 0, false),
-       (gen_random_uuid(), 'LWF:MANAGE', 'LWF Manage', 'Manage LWF configurations', 'LWF', 'MANAGE', NOW(), NOW(), 0,
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LWF:MANAGE', 'LWF Manage', 'Manage LWF configurations', 'LWF', 'MANAGE', NOW(), NOW(), 0,
         false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

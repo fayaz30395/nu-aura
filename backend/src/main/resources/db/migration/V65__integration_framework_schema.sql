@@ -229,8 +229,8 @@ POLICY docusign_template_mappings_tenant_rls ON docusign_template_mappings
 -- Seed two permissions: integration.read and integration.manage
 -- DB format: lowercase dot-separated (module.action)
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000501',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000501', '660e8400-e29b-41d4-a716-446655440001',
         'integration.read',
         'View Integrations',
         'View integration connectors and event logs',
@@ -238,8 +238,8 @@ VALUES ('660e8401-0001-0001-0001-000000000501',
         'read',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000502',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000502', '660e8400-e29b-41d4-a716-446655440001',
         'integration.manage',
         'Manage Integrations',
         'Create, configure, and manage integration connectors',

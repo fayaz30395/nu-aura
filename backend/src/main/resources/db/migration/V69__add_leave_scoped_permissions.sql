@@ -7,16 +7,16 @@
 -- STEP 1: Insert missing scoped leave permissions (idempotent)
 -- permissions table: globally unique code, no tenant_id column
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE:VIEW_ALL', 'View All Leave', 'View all employee leave requests', 'LEAVE', 'VIEW_ALL',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:VIEW_ALL', 'View All Leave', 'View all employee leave requests', 'LEAVE', 'VIEW_ALL',
         NOW(), NOW(), 0, false),
-       (gen_random_uuid(), 'LEAVE:VIEW_TEAM', 'View Team Leave', 'View team leave requests', 'LEAVE', 'VIEW_TEAM',
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:VIEW_TEAM', 'View Team Leave', 'View team leave requests', 'LEAVE', 'VIEW_TEAM',
         NOW(), NOW(), 0, false),
-       (gen_random_uuid(), 'LEAVE:VIEW_SELF', 'View Own Leave', 'View own leave requests', 'LEAVE', 'VIEW_SELF', NOW(),
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:VIEW_SELF', 'View Own Leave', 'View own leave requests', 'LEAVE', 'VIEW_SELF', NOW(),
         NOW(), 0, false),
-       (gen_random_uuid(), 'LEAVE:CANCEL', 'Cancel Leave', 'Cancel leave requests', 'LEAVE', 'CANCEL', NOW(), NOW(), 0,
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:CANCEL', 'Cancel Leave', 'Cancel leave requests', 'LEAVE', 'CANCEL', NOW(), NOW(), 0,
         false),
-       (gen_random_uuid(), 'LEAVE:REJECT', 'Reject Leave', 'Reject leave requests', 'LEAVE', 'REJECT', NOW(), NOW(), 0,
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:REJECT', 'Reject Leave', 'Reject leave requests', 'LEAVE', 'REJECT', NOW(), NOW(), 0,
         false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

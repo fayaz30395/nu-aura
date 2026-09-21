@@ -1079,6 +1079,34 @@
     ],
     "story": "US-2FZ92MB7FK23"
   },
+  "US-2FZ92MJAG93G": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ92MJAG93G"
+  },
+  "US-2FZ92MRRMTV6": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "true",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ92MRRMTV6"
+  },
   "US-2FZ92MYP9DBG": {
     "all_pass": true,
     "date": "2026-09-20",
@@ -1106,5 +1134,509 @@
       }
     ],
     "story": "US-2FZ92N4PT25C"
+  },
+  "US-2FZ92NARFW86": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ92NARFW86"
+  },
+  "US-2FZ9342C8D6Q": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ9342C8D6Q"
+  },
+  "US-2FZ9349PQQ6K": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ9349PQQ6K"
+  },
+  "US-2FZ934HG19D7": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ934HG19D7"
+  },
+  "US-2FZ934R8J10A": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ934R8J10A"
+  },
+  "US-2FZ934Z0D5RF": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ934Z0D5RF"
+  },
+  "US-2FZ9355HPDP7": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ9355HPDP7"
+  },
+  "US-2FZ935C1D9W3": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ935C1D9W3"
+  },
+  "US-2FZ935J9CQZ6": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "true",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ935J9CQZ6"
+  },
+  "US-2FZ935RGM35F": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "true",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ935RGM35F"
+  },
+  "US-2FZ93JNY89DN": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ93JNY89DN"
+  },
+  "US-2FZ93JWJQSQ2": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ93JWJQSQ2"
+  },
+  "US-2FZ93K30PRQS": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ93K30PRQS"
+  },
+  "US-2FZ93K93RN6C": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ93K93RN6C"
+  },
+  "US-2FZ93KF043RB": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx tsc --noEmit\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ93KF043RB"
+  },
+  "US-2FZ93KN09R89": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ93KN09R89"
+  },
+  "US-2FZ93KTZBPA5": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "true",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZ93KTZBPA5"
+  },
+  "US-2FZF1JWJDQ84": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZF1JWJDQ84"
+  },
+  "US-2FZF1K3ATY44": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZF1K3ATY44"
+  },
+  "US-2FZF1K88SWSG": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZF1K88SWSG"
+  },
+  "US-2FZF1KCRXXW7": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZF1KCRXXW7"
+  },
+  "US-2FZF1KH3C0RD": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZF1KH3C0RD"
+  },
+  "US-2FZFCXMESBXC": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZFCXMESBXC"
+  },
+  "US-2FZFCXTHMV0F": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZFCXTHMV0F"
+  },
+  "US-2FZFCY0XCFPH": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZFCY0XCFPH"
+  },
+  "US-2FZFCY70T1C9": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "true",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZFCY70T1C9"
+  },
+  "US-2FZFCYCKZTZ9": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZFCYCKZTZ9"
+  },
+  "US-2FZFCYHX5ZNF": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZFCYHX5ZNF"
+  },
+  "US-2FZFCYQ4MFBC": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -DskipTests compile\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZFCYQ4MFBC"
+  },
+  "US-2FZK4BMV35YV": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "cd frontend && npx tsc --noEmit",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZK4BMV35YV"
+  },
+  "US-2FZKE4DMPM4A": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "cd frontend && npx tsc --noEmit",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZKE4DMPM4A"
+  },
+  "US-2FZQPK4ZEDN6": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZQPK4ZEDN6"
+  },
+  "US-2FZRA8JKCCKE": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "cd frontend && npx tsc --noEmit",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZRA8JKCCKE"
+  },
+  "US-2FZRCP9MG4NV": {
+    "all_pass": true,
+    "date": "2026-09-20",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZRCP9MG4NV"
+  },
+  "US-2FZSWH5ZHSQD": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSWH5ZHSQD"
+  },
+  "US-2FZSWHDK4MK3": {
+    "all_pass": true,
+    "date": "2026-09-21",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "mvn -q -DskipTests compile",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2FZSWHDK4MK3"
   }
 }

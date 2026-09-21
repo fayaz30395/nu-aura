@@ -16,12 +16,12 @@
 
 -- Step 1: Ensure all required permissions exist in the permissions table
 -- Some permissions may not have been seeded in V96
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'NOTIFICATIONS:VIEW', 'View Notifications', 'View notifications', 'notifications', 'view',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'NOTIFICATIONS:VIEW', 'View Notifications', 'View notifications', 'notifications', 'view',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'WORKFLOW:VIEW', 'View Workflow', 'View workflow inbox', 'workflow', 'view', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'WORKFLOW:VIEW', 'View Workflow', 'View workflow inbox', 'workflow', 'view', NOW(), NOW(), 0,
         false) ON CONFLICT DO NOTHING;
 
 -- Step 2: Add missing permissions to HR_MANAGER role

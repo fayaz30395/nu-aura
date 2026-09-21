@@ -6,16 +6,18 @@
 -- enforce canonical Permission.java codes instead, so users could authenticate
 -- successfully but still be blocked from real self-service workflows.
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+
+SELECT set_config('app.current_tenant_id', '660e8400-e29b-41d4-a716-446655440001', true);
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
 VALUES
-  (gen_random_uuid(), 'EXPENSE:VIEW', 'Expense View', 'View expense records', 'expense', 'view', NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'EXPENSE:CREATE', 'Expense Create', 'Submit expense claims', 'expense', 'create', NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'LOAN:VIEW', 'Loan View', 'View employee loans', 'loan', 'view', NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'LOAN:CREATE', 'Loan Create', 'Apply for employee loans', 'loan', 'create', NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'TRAVEL:VIEW', 'Travel View', 'View travel requests', 'travel', 'view', NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'TRAVEL:CREATE', 'Travel Create', 'Submit travel requests', 'travel', 'create', NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'ASSET:VIEW', 'Asset View', 'View assigned assets', 'asset', 'view', NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'ANNOUNCEMENT:VIEW', 'Announcement View', 'View announcements', 'announcement', 'view', NOW(), NOW(), 0, false)
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'EXPENSE:VIEW', 'Expense View', 'View expense records', 'expense', 'view', NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'EXPENSE:CREATE', 'Expense Create', 'Submit expense claims', 'expense', 'create', NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LOAN:VIEW', 'Loan View', 'View employee loans', 'loan', 'view', NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LOAN:CREATE', 'Loan Create', 'Apply for employee loans', 'loan', 'create', NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'TRAVEL:VIEW', 'Travel View', 'View travel requests', 'travel', 'view', NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'TRAVEL:CREATE', 'Travel Create', 'Submit travel requests', 'travel', 'create', NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'ASSET:VIEW', 'Asset View', 'View assigned assets', 'asset', 'view', NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'ANNOUNCEMENT:VIEW', 'Announcement View', 'View announcements', 'announcement', 'view', NOW(), NOW(), 0, false)
 ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
 
 WITH self_service_grants(role_code, permission_code, scope) AS (

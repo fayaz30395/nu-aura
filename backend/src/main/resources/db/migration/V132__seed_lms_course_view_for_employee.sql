@@ -7,8 +7,8 @@
 -- ============================================================================
 
 -- Ensure the LMS:COURSE_VIEW permission exists
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LMS:COURSE_VIEW', 'LMS Course View', 'View LMS courses and content', 'lms', 'course_view',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LMS:COURSE_VIEW', 'LMS Course View', 'View LMS courses and content', 'lms', 'course_view',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

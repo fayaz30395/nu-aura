@@ -2,11 +2,11 @@
 
 // ─── Enums ──────────────────────────────────────────────────────────────────
 
-export type WikiPageStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+export type WikiPageStatus = 'DRAFT' | 'PENDING_APPROVAL' | 'PUBLISHED' | 'ARCHIVED';
 
 export type WikiVisibility = 'PUBLIC' | 'ORGANIZATION' | 'DEPARTMENT' | 'PRIVATE' | 'RESTRICTED';
 
-export type BlogPostStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+export type BlogPostStatus = 'DRAFT' | 'SCHEDULED' | 'PUBLISHED' | 'ARCHIVED';
 
 export type BlogVisibility = 'PUBLIC' | 'ORGANIZATION' | 'DEPARTMENT' | 'PRIVATE' | 'RESTRICTED';
 
@@ -46,6 +46,9 @@ export interface WikiPage {
   isFavoritedByCurrentUser?: boolean;
   /** Whether the current user can edit this page */
   canEdit?: boolean;
+  isPinned?: boolean;
+  publishedAt?: string;
+  publishedBy?: string;
   createdAt: string;
   updatedAt: string;
   archivedAt?: string;

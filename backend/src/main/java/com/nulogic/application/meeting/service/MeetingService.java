@@ -1,5 +1,6 @@
 package com.nulogic.application.meeting.service;
 
+import com.nulogic.api.engagement.dto.OneOnOneMeetingRequest;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.engagement.OneOnOneMeeting;
 import com.nulogic.infrastructure.engagement.repository.OneOnOneMeetingRepository;
@@ -26,15 +27,37 @@ public class MeetingService {
     /**
      * Schedule a new one-on-one meeting.
      *
-     * @param meeting the meeting details to schedule
+     * <p>Mass-assignment fix: takes a whitelisted request DTO instead of binding the JSON
+     * body directly to the JPA entity, so a caller can no longer set id/tenantId/status/
+     * audit fields or another employee's private notes at creation time. managerId is
+     * derived from the authenticated caller, not client-supplied.</p>
+     *
+     * @param request   the meeting details to schedule
+     * @param managerId the scheduling manager (from SecurityContext, not client input)
      * @return the scheduled meeting with generated ID and tenant context
      */
-    public OneOnOneMeeting scheduleMeeting(OneOnOneMeeting meeting) {
+    public OneOnOneMeeting scheduleMeeting(OneOnOneMeetingRequest request, UUID managerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        meeting.setId(UUID.randomUUID());
+        OneOnOneMeeting meeting = OneOnOneMeeting.builder()
+                .managerId(managerId)
+                .employeeId(request.getEmployeeId())
+                .title(request.getTitle())
+                .description(request.getDescription())
+                .meetingDate(request.getMeetingDate())
+                .startTime(request.getStartTime())
+                .endTime(request.getEndTime())
+                .meetingType(request.getMeetingType() != null ? request.getMeetingType() : OneOnOneMeeting.MeetingType.REGULAR)
+                .location(request.getLocation())
+                .meetingLink(request.getMeetingLink())
+                .isRecurring(Boolean.TRUE.equals(request.getIsRecurring()))
+                .recurrencePattern(request.getRecurrencePattern())
+                .recurrenceEndDate(request.getRecurrenceEndDate())
+                .status(OneOnOneMeeting.MeetingStatus.SCHEDULED)
+                .build();
+        if (request.getDurationMinutes() != null) meeting.setDurationMinutes(request.getDurationMinutes());
+        if (request.getReminderMinutesBefore() != null) meeting.setReminderMinutesBefore(request.getReminderMinutesBefore());
         meeting.setTenantId(tenantId);
-        meeting.setStatus(OneOnOneMeeting.MeetingStatus.SCHEDULED);
 
         OneOnOneMeeting savedMeeting = meetingRepository.save(meeting);
         log.info("Scheduled meeting {} for tenant {}", savedMeeting.getId(), tenantId);

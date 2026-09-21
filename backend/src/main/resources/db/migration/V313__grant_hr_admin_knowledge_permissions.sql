@@ -22,12 +22,17 @@
 
 DO $$
 DECLARE
+    tt RECORD;
     r RECORD;
 BEGIN
+    FOR tt IN SELECT id FROM tenants LOOP
+        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
+
     FOR r IN
         SELECT DISTINCT rl.tenant_id, rl.id AS role_id
         FROM roles rl
         WHERE rl.code = 'HR_ADMIN'
+          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
     LOOP
         INSERT INTO role_permissions (
@@ -70,5 +75,6 @@ BEGIN
         )
           AND (p.is_deleted = false OR p.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
+    END LOOP;
     END LOOP;
 END $$;

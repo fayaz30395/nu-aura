@@ -17,16 +17,24 @@
 --   Scope set to 'ALL' — TENANT_ADMIN is the highest intra-tenant role.
 -- =============================================================================
 
--- Helper DO block to bulk-insert permissions across all tenants
+-- Helper DO block to bulk-insert permissions across all tenants.
+-- Fail-closed RLS (rls_ctx_required_*) hides roles/permissions rows for any
+-- tenant that isn't the current app.current_tenant_id session setting, so the
+-- role lookup below is nested inside a per-tenant loop that sets it first.
 DO $$
 DECLARE
+    tt RECORD;
     r RECORD;
 BEGIN
+    FOR tt IN SELECT id FROM tenants LOOP
+        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
+
     -- Iterate over every tenant that has a TENANT_ADMIN role
     FOR r IN
         SELECT DISTINCT rl.tenant_id, rl.id AS role_id
         FROM roles rl
         WHERE rl.code = 'TENANT_ADMIN'
+          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
     LOOP
         -- Insert all permissions TENANT_ADMIN should have.
@@ -282,17 +290,23 @@ BEGIN
           AND (p.is_deleted = false OR p.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
     END LOOP;
+    END LOOP;
 END $$;
 
 -- ── Field-level permissions (stored in field_permissions table if it exists) ──
 -- Grant salary, bank, tax ID field visibility to TENANT_ADMIN across all tenants.
 -- Uses DO block to check table existence first so migration is safe on fresh schemas.
 DO $$
+DECLARE
+    tt RECORD;
 BEGIN
     IF EXISTS (
         SELECT 1 FROM information_schema.tables
         WHERE table_name = 'role_field_permissions'
     ) THEN
+      FOR tt IN SELECT id FROM tenants LOOP
+        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
+
         INSERT INTO role_field_permissions (
             id, tenant_id, role_id, field_permission, scope,
             created_at, updated_at, version, is_deleted
@@ -318,7 +332,9 @@ BEGIN
                 ('EMPLOYEE:ID_DOCS_VIEW')
         ) AS fp(code)
         WHERE rl.code = 'TENANT_ADMIN'
+          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
+      END LOOP;
     END IF;
 END $$;

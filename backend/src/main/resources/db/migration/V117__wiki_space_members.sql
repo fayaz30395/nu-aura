@@ -47,7 +47,7 @@ CREATE INDEX IF NOT EXISTS idx_space_members_space ON wiki_space_members (space_
 CREATE INDEX IF NOT EXISTS idx_space_members_user ON wiki_space_members (user_id);
 
 -- Seed the KNOWLEDGE:SPACE_MANAGE permission
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'KNOWLEDGE:SPACE_MANAGE', 'Manage Wiki Spaces',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'KNOWLEDGE:SPACE_MANAGE', 'Manage Wiki Spaces',
         'Manage space members and settings', 'knowledge', 'space_manage', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;

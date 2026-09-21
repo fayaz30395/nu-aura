@@ -5,9 +5,11 @@
 -- approve submitted employee claims, but previous self-service grants only gave
 -- them create/view access.
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+
+SELECT set_config('app.current_tenant_id', '660e8400-e29b-41d4-a716-446655440001', true);
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
 VALUES
-  (gen_random_uuid(), 'EXPENSE:APPROVE', 'Expense Approve', 'Approve expense claims', 'expense', 'approve', NOW(), NOW(), 0, false)
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'EXPENSE:APPROVE', 'Expense Approve', 'Approve expense claims', 'expense', 'approve', NOW(), NOW(), 0, false)
 ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
 
 WITH manager_grants(role_code, permission_code, scope) AS (

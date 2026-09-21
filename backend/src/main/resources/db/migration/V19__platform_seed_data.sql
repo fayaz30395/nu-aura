@@ -131,137 +131,137 @@ VALUES ('550e8400-e29b-41d4-a716-446655440013', 'FLUENCE', 'NU-Fluence', 'Knowle
         false) ON CONFLICT DO NOTHING;
 
 -- 7. CORE PERMISSIONS (individual inserts for idempotency across multiple unique constraints)
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000001', 'employee.read', 'View Employees', 'View employee profiles', 'employee',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000001', '660e8400-e29b-41d4-a716-446655440001', 'employee.read', 'View Employees', 'View employee profiles', 'employee',
         'read', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000002', 'employee.create', 'Create Employees', 'Add new employees', 'employee',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000002', '660e8400-e29b-41d4-a716-446655440001', 'employee.create', 'Create Employees', 'Add new employees', 'employee',
         'create', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000003', 'employee.update', 'Update Employees', 'Modify employee info',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000003', '660e8400-e29b-41d4-a716-446655440001', 'employee.update', 'Update Employees', 'Modify employee info',
         'employee', 'update', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000004', 'employee.delete', 'Delete Employees', 'Remove employees', 'employee',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000004', '660e8400-e29b-41d4-a716-446655440001', 'employee.delete', 'Delete Employees', 'Remove employees', 'employee',
         'delete', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000011', 'department.read', 'View Departments', 'View departments', 'department',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000011', '660e8400-e29b-41d4-a716-446655440001', 'department.read', 'View Departments', 'View departments', 'department',
         'read', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000012', 'department.create', 'Create Departments', 'Create departments',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000012', '660e8400-e29b-41d4-a716-446655440001', 'department.create', 'Create Departments', 'Create departments',
         'department', 'create', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000013', 'department.update', 'Update Departments', 'Modify departments',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000013', '660e8400-e29b-41d4-a716-446655440001', 'department.update', 'Update Departments', 'Modify departments',
         'department', 'update', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000014', 'department.delete', 'Delete Departments', 'Remove departments',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000014', '660e8400-e29b-41d4-a716-446655440001', 'department.delete', 'Delete Departments', 'Remove departments',
         'department', 'delete', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000021', 'attendance.read', 'View Attendance', 'View attendance', 'attendance',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000021', '660e8400-e29b-41d4-a716-446655440001', 'attendance.read', 'View Attendance', 'View attendance', 'attendance',
         'read', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000022', 'attendance.manage', 'Manage Attendance', 'Manage attendance',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000022', '660e8400-e29b-41d4-a716-446655440001', 'attendance.manage', 'Manage Attendance', 'Manage attendance',
         'attendance', 'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000031', 'leave.read', 'View Leave', 'View leave info', 'leave', 'read', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000031', '660e8400-e29b-41d4-a716-446655440001', 'leave.read', 'View Leave', 'View leave info', 'leave', 'read', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000032', 'leave.request', 'Request Leave', 'Apply for leave', 'leave', 'request',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000032', '660e8400-e29b-41d4-a716-446655440001', 'leave.request', 'Request Leave', 'Apply for leave', 'leave', 'request',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000033', 'leave.approve', 'Approve Leave', 'Approve leave', 'leave', 'approve',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000033', '660e8400-e29b-41d4-a716-446655440001', 'leave.approve', 'Approve Leave', 'Approve leave', 'leave', 'approve',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000034', 'leave.manage', 'Manage Leave', 'Full leave management', 'leave',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000034', '660e8400-e29b-41d4-a716-446655440001', 'leave.manage', 'Manage Leave', 'Full leave management', 'leave',
         'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000041', 'payroll.read', 'View Payroll', 'View payroll', 'payroll', 'read',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000041', '660e8400-e29b-41d4-a716-446655440001', 'payroll.read', 'View Payroll', 'View payroll', 'payroll', 'read',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000042', 'payroll.manage', 'Manage Payroll', 'Manage payroll', 'payroll',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000042', '660e8400-e29b-41d4-a716-446655440001', 'payroll.manage', 'Manage Payroll', 'Manage payroll', 'payroll',
         'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000051', 'performance.read', 'View Performance', 'View performance',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000051', '660e8400-e29b-41d4-a716-446655440001', 'performance.read', 'View Performance', 'View performance',
         'performance', 'read', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000052', 'performance.manage', 'Manage Performance', 'Manage performance',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000052', '660e8400-e29b-41d4-a716-446655440001', 'performance.manage', 'Manage Performance', 'Manage performance',
         'performance', 'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000061', 'recruitment.read', 'View Recruitment', 'View recruitment',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000061', '660e8400-e29b-41d4-a716-446655440001', 'recruitment.read', 'View Recruitment', 'View recruitment',
         'recruitment', 'read', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000062', 'recruitment.manage', 'Manage Recruitment', 'Manage recruitment',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000062', '660e8400-e29b-41d4-a716-446655440001', 'recruitment.manage', 'Manage Recruitment', 'Manage recruitment',
         'recruitment', 'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000071', 'report.view', 'View Reports', 'View reports', 'report', 'view', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000071', '660e8400-e29b-41d4-a716-446655440001', 'report.view', 'View Reports', 'View reports', 'report', 'view', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000072', 'report.manage', 'Manage Reports', 'Manage reports', 'report', 'manage',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000072', '660e8400-e29b-41d4-a716-446655440001', 'report.manage', 'Manage Reports', 'Manage reports', 'report', 'manage',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000081', 'settings.read', 'View Settings', 'View settings', 'settings', 'read',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000081', '660e8400-e29b-41d4-a716-446655440001', 'settings.read', 'View Settings', 'View settings', 'settings', 'read',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000082', 'settings.manage', 'Manage Settings', 'Manage settings', 'settings',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000082', '660e8400-e29b-41d4-a716-446655440001', 'settings.manage', 'Manage Settings', 'Manage settings', 'settings',
         'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000091', 'role.read', 'View Roles', 'View roles', 'role', 'read', NOW(), NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000091', '660e8400-e29b-41d4-a716-446655440001', 'role.read', 'View Roles', 'View roles', 'role', 'read', NOW(), NOW(),
         0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000092', 'role.manage', 'Manage Roles', 'Manage roles', 'role', 'manage', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000092', '660e8400-e29b-41d4-a716-446655440001', 'role.manage', 'Manage Roles', 'Manage roles', 'role', 'manage', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000093', 'user.read', 'View Users', 'View users', 'user', 'read', NOW(), NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000093', '660e8400-e29b-41d4-a716-446655440001', 'user.read', 'View Users', 'View users', 'user', 'read', NOW(), NOW(),
         0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000094', 'user.manage', 'Manage Users', 'Manage users', 'user', 'manage', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000094', '660e8400-e29b-41d4-a716-446655440001', 'user.manage', 'Manage Users', 'Manage users', 'user', 'manage', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000101', 'project.view', 'View Projects', 'View projects', 'project', 'view',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000101', '660e8400-e29b-41d4-a716-446655440001', 'project.view', 'View Projects', 'View projects', 'project', 'view',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000102', 'project.manage', 'Manage Projects', 'Manage projects', 'project',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000102', '660e8400-e29b-41d4-a716-446655440001', 'project.manage', 'Manage Projects', 'Manage projects', 'project',
         'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000111', 'announcement.read', 'View Announcements', 'View announcements',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000111', '660e8400-e29b-41d4-a716-446655440001', 'announcement.read', 'View Announcements', 'View announcements',
         'announcement', 'read', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000112', 'announcement.manage', 'Manage Announcements', 'Manage announcements',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000112', '660e8400-e29b-41d4-a716-446655440001', 'announcement.manage', 'Manage Announcements', 'Manage announcements',
         'announcement', 'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000999', 'system.admin', 'System Admin', 'Full system admin', 'system', 'admin',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000999', '660e8400-e29b-41d4-a716-446655440001', 'system.admin', 'System Admin', 'Full system admin', 'system', 'admin',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000201', 'knowledge.wiki.read', 'View Wiki', 'View wiki pages', 'knowledge',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000201', '660e8400-e29b-41d4-a716-446655440001', 'knowledge.wiki.read', 'View Wiki', 'View wiki pages', 'knowledge',
         'wiki.read', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000202', 'knowledge.wiki.manage', 'Manage Wiki', 'Create/edit wiki pages',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000202', '660e8400-e29b-41d4-a716-446655440001', 'knowledge.wiki.manage', 'Manage Wiki', 'Create/edit wiki pages',
         'knowledge', 'wiki.manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000203', 'knowledge.blog.read', 'View Blogs', 'View blog posts', 'knowledge',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000203', '660e8400-e29b-41d4-a716-446655440001', 'knowledge.blog.read', 'View Blogs', 'View blog posts', 'knowledge',
         'blog.read', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000204', 'knowledge.blog.manage', 'Manage Blogs', 'Create/edit blog posts',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000204', '660e8400-e29b-41d4-a716-446655440001', 'knowledge.blog.manage', 'Manage Blogs', 'Create/edit blog posts',
         'knowledge', 'blog.manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000205', 'knowledge.template.manage', 'Manage Templates', 'Manage doc templates',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000205', '660e8400-e29b-41d4-a716-446655440001', 'knowledge.template.manage', 'Manage Templates', 'Manage doc templates',
         'knowledge', 'template.manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000301', 'contract.read', 'View Contracts', 'View contracts', 'contract', 'read',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000301', '660e8400-e29b-41d4-a716-446655440001', 'contract.read', 'View Contracts', 'View contracts', 'contract', 'read',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000302', 'contract.manage', 'Manage Contracts', 'Create/edit contracts',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000302', '660e8400-e29b-41d4-a716-446655440001', 'contract.manage', 'Manage Contracts', 'Create/edit contracts',
         'contract', 'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000401', 'payment.view', 'View Payments', 'View payments', 'payment', 'view',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000401', '660e8400-e29b-41d4-a716-446655440001', 'payment.view', 'View Payments', 'View payments', 'payment', 'view',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000402', 'payment.initiate', 'Initiate Payments', 'Initiate payments', 'payment',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000402', '660e8400-e29b-41d4-a716-446655440001', 'payment.initiate', 'Initiate Payments', 'Initiate payments', 'payment',
         'initiate', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000403', 'payment.refund', 'Process Refunds', 'Process payment refunds',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000403', '660e8400-e29b-41d4-a716-446655440001', 'payment.refund', 'Process Refunds', 'Process payment refunds',
         'payment', 'refund', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES ('660e8401-0001-0001-0001-000000000404', 'payment.config', 'Manage Payment Config', 'Manage payment settings',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES ('660e8401-0001-0001-0001-000000000404', '660e8400-e29b-41d4-a716-446655440001', 'payment.config', 'Manage Payment Config', 'Manage payment settings',
         'payment', 'config', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- 8. ROLE_PERMISSIONS — grant ALL permissions to SUPER_ADMIN

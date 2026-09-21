@@ -8,29 +8,29 @@
 -- ============================================================================
 
 -- Feedback CRUD permissions (split from blanket REVIEW_VIEW)
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'FEEDBACK:CREATE', 'Create Feedback', 'Create feedback entries for performance reviews',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'FEEDBACK:CREATE', 'Create Feedback', 'Create feedback entries for performance reviews',
         'feedback', 'create', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'FEEDBACK:UPDATE', 'Update Feedback', 'Update existing feedback entries', 'feedback',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'FEEDBACK:UPDATE', 'Update Feedback', 'Update existing feedback entries', 'feedback',
         'update', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'FEEDBACK:DELETE', 'Delete Feedback', 'Delete feedback entries', 'feedback', 'delete', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'FEEDBACK:DELETE', 'Delete Feedback', 'Delete feedback entries', 'feedback', 'delete', NOW(),
         NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
 -- Review granular permissions (previously only CREATE/VIEW existed)
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:UPDATE', 'Update Review', 'Update performance review records', 'review', 'update',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:UPDATE', 'Update Review', 'Update performance review records', 'review', 'update',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:DELETE', 'Delete Review', 'Delete performance review records', 'review', 'delete',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:DELETE', 'Delete Review', 'Delete performance review records', 'review', 'delete',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

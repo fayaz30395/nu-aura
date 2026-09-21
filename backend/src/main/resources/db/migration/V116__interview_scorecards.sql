@@ -262,28 +262,28 @@ ALTER TABLE applicants
 -- ============================================================================
 -- 6. Seed scorecard permissions
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'SCORECARD:VIEW', 'View Scorecards', 'View interview scorecards', 'scorecard', 'view', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:VIEW', 'View Scorecards', 'View interview scorecards', 'scorecard', 'view', NOW(),
         NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'SCORECARD:CREATE', 'Create Scorecards', 'Submit interview scorecards', 'scorecard',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:CREATE', 'Create Scorecards', 'Submit interview scorecards', 'scorecard',
         'create', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'SCORECARD:UPDATE', 'Update Scorecards', 'Edit interview scorecards', 'scorecard', 'update',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:UPDATE', 'Update Scorecards', 'Edit interview scorecards', 'scorecard', 'update',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'SCORECARD:DELETE', 'Delete Scorecards', 'Delete interview scorecards', 'scorecard',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:DELETE', 'Delete Scorecards', 'Delete interview scorecards', 'scorecard',
         'delete', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'SCORECARD:TEMPLATE_MANAGE', 'Manage Scorecard Templates', 'Create/edit scorecard templates',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:TEMPLATE_MANAGE', 'Manage Scorecard Templates', 'Create/edit scorecard templates',
         'scorecard', 'template_manage', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

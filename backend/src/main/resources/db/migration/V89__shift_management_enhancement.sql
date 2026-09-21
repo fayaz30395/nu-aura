@@ -162,14 +162,14 @@ ALTER TABLE roster_entries ENABLE ROW LEVEL SECURITY;
 
 -- ========== Seed shift permissions if not already present ==========
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'SHIFT:VIEW', 'Shift View', 'View shift definitions and schedules', 'SHIFT', 'VIEW', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SHIFT:VIEW', 'Shift View', 'View shift definitions and schedules', 'SHIFT', 'VIEW', NOW(),
         NOW(), 0, false),
-       (gen_random_uuid(), 'SHIFT:CREATE', 'Shift Create', 'Create shift definitions', 'SHIFT', 'CREATE', NOW(), NOW(),
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SHIFT:CREATE', 'Shift Create', 'Create shift definitions', 'SHIFT', 'CREATE', NOW(), NOW(),
         0, false),
-       (gen_random_uuid(), 'SHIFT:ASSIGN', 'Shift Assign', 'Assign shifts to employees', 'SHIFT', 'ASSIGN', NOW(),
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SHIFT:ASSIGN', 'Shift Assign', 'Assign shifts to employees', 'SHIFT', 'ASSIGN', NOW(),
         NOW(), 0, false),
-       (gen_random_uuid(), 'SHIFT:MANAGE', 'Shift Manage', 'Full shift management (patterns, schedules, rules)',
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SHIFT:MANAGE', 'Shift Manage', 'Full shift management (patterns, schedules, rules)',
         'SHIFT', 'MANAGE', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

@@ -4,27 +4,42 @@
 -- single active employee row for each (tenant_id, user_id). Older demo seed
 -- repairs could leave duplicate non-deleted rows, which makes Optional<Employee>
 -- repository methods throw NonUniqueResultException during login.
+--
+-- The runtime connection is fail-closed RLS (rls_ctx_required_*): with no
+-- app.current_tenant_id set, the cleanup below would see zero rows and the
+-- later CREATE UNIQUE INDEX (which is not RLS-filtered) would still hit any
+-- real duplicate. Loop per tenant so each cleanup pass runs in-context.
 
-WITH ranked_employee_links AS (
-    SELECT id,
-           ROW_NUMBER() OVER (
-               PARTITION BY tenant_id, user_id
-               ORDER BY
-                   CASE WHEN status = 'ACTIVE' THEN 0 ELSE 1 END,
-                   created_at ASC,
-                   id ASC
-           ) AS row_rank
-    FROM employees
-    WHERE is_deleted = false
-)
-UPDATE employees e
-SET is_deleted = true,
-    deleted_at = COALESCE(e.deleted_at, NOW()),
-    updated_at = NOW(),
-    version = COALESCE(e.version, 0) + 1
-FROM ranked_employee_links r
-WHERE e.id = r.id
-  AND r.row_rank > 1;
+DO $$
+DECLARE
+    t RECORD;
+BEGIN
+    FOR t IN SELECT id FROM tenants LOOP
+        PERFORM set_config('app.current_tenant_id', t.id::text, true);
+
+        WITH ranked_employee_links AS (
+            SELECT id,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY tenant_id, user_id
+                       ORDER BY
+                           CASE WHEN status = 'ACTIVE' THEN 0 ELSE 1 END,
+                           created_at ASC,
+                           id ASC
+                   ) AS row_rank
+            FROM employees
+            WHERE is_deleted = false
+              AND tenant_id = t.id
+        )
+        UPDATE employees e
+        SET is_deleted = true,
+            deleted_at = COALESCE(e.deleted_at, NOW()),
+            updated_at = NOW(),
+            version = COALESCE(e.version, 0) + 1
+        FROM ranked_employee_links r
+        WHERE e.id = r.id
+          AND r.row_rank > 1;
+    END LOOP;
+END $$;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_employees_user_tenant_active_link
     ON employees (user_id, tenant_id)

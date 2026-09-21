@@ -387,6 +387,51 @@ export function useDeleteWikiPage() {
   });
 }
 
+function invalidateWikiPage(queryClient: ReturnType<typeof useQueryClient>, id: string) {
+  queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPageDetail(id)});
+  queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
+}
+
+export function usePublishWikiPage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.publishWikiPage(id),
+    onSuccess: (_, id) => invalidateWikiPage(queryClient, id),
+  });
+}
+
+export function useApproveWikiPage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.approveWikiPage(id),
+    onSuccess: (_, id) => invalidateWikiPage(queryClient, id),
+  });
+}
+
+export function useRejectWikiPage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.rejectWikiPage(id),
+    onSuccess: (_, id) => invalidateWikiPage(queryClient, id),
+  });
+}
+
+export function useArchiveWikiPage() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.archiveWikiPage(id),
+    onSuccess: (_, id) => invalidateWikiPage(queryClient, id),
+  });
+}
+
+export function useToggleWikiPagePin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.toggleWikiPagePin(id),
+    onSuccess: (_, id) => invalidateWikiPage(queryClient, id),
+  });
+}
+
 // ─── Wiki Space Mutations ───────────────────────────────────────────────────
 
 export function useCreateWikiSpace() {
@@ -456,6 +501,36 @@ export function useDeleteBlogPost() {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
     },
+  });
+}
+
+function invalidateBlogPost(queryClient: ReturnType<typeof useQueryClient>, id: string) {
+  queryClient.invalidateQueries({queryKey: fluenceKeys.blogPostDetail(id)});
+  queryClient.invalidateQueries({queryKey: fluenceKeys.blogPosts()});
+}
+
+export function usePublishBlogPost() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.publishBlogPost(id),
+    onSuccess: (_, id) => invalidateBlogPost(queryClient, id),
+  });
+}
+
+export function useScheduleBlogPost() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({id, scheduledFor}: {id: string; scheduledFor: string}) =>
+      fluenceService.scheduleBlogPost(id, scheduledFor),
+    onSuccess: (_, {id}) => invalidateBlogPost(queryClient, id),
+  });
+}
+
+export function useArchiveBlogPost() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.archiveBlogPost(id),
+    onSuccess: (_, id) => invalidateBlogPost(queryClient, id),
   });
 }
 

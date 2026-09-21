@@ -30,150 +30,150 @@
 -- ============================================================================
 -- Attendance Module Permissions
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'ATTENDANCE:VIEW', 'View Attendance', 'View attendance records', 'attendance', 'view', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'ATTENDANCE:VIEW', 'View Attendance', 'View attendance records', 'attendance', 'view', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'ATTENDANCE:VIEW_ALL', 'View All Attendance', 'View attendance records for all employees',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'ATTENDANCE:VIEW_ALL', 'View All Attendance', 'View attendance records for all employees',
         'attendance', 'view_all', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'ATTENDANCE:VIEW_TEAM', 'View Team Attendance', 'View attendance records for team members',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'ATTENDANCE:VIEW_TEAM', 'View Team Attendance', 'View attendance records for team members',
         'attendance', 'view_team', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'ATTENDANCE:VIEW_SELF', 'View Own Attendance', 'View own attendance records', 'attendance',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'ATTENDANCE:VIEW_SELF', 'View Own Attendance', 'View own attendance records', 'attendance',
         'view_self', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'ATTENDANCE:MANAGE', 'Manage Attendance', 'Manage attendance records and corrections',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'ATTENDANCE:MANAGE', 'Manage Attendance', 'Manage attendance records and corrections',
         'attendance', 'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- Leave Module Permissions
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE:VIEW', 'View Leave', 'View leave requests and balances', 'leave', 'view', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:VIEW', 'View Leave', 'View leave requests and balances', 'leave', 'view', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE:VIEW_ALL', 'View All Leave', 'View all leave requests in organization', 'leave',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:VIEW_ALL', 'View All Leave', 'View all leave requests in organization', 'leave',
         'view_all', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE:VIEW_TEAM', 'View Team Leave', 'View leave requests for team members', 'leave',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:VIEW_TEAM', 'View Team Leave', 'View leave requests for team members', 'leave',
         'view_team', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE:VIEW_SELF', 'View Own Leave', 'View own leave requests and balance', 'leave',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:VIEW_SELF', 'View Own Leave', 'View own leave requests and balance', 'leave',
         'view_self', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE:CREATE', 'Create Leave', 'Create new leave requests', 'leave', 'create', NOW(), NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:CREATE', 'Create Leave', 'Create new leave requests', 'leave', 'create', NOW(), NOW(),
         0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE:APPROVE', 'Approve Leave', 'Approve or reject leave requests', 'leave', 'approve',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE:APPROVE', 'Approve Leave', 'Approve or reject leave requests', 'leave', 'approve',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- Benefits Module Permissions
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'BENEFIT:VIEW', 'View Benefits', 'View benefits information', 'benefit', 'view', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'BENEFIT:VIEW', 'View Benefits', 'View benefits information', 'benefit', 'view', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'BENEFIT:VIEW_ALL', 'View All Benefits', 'View all organization benefits', 'benefit',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'BENEFIT:VIEW_ALL', 'View All Benefits', 'View all organization benefits', 'benefit',
         'view_all', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'BENEFIT:VIEW_SELF', 'View Own Benefits', 'View own benefits enrollment', 'benefit',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'BENEFIT:VIEW_SELF', 'View Own Benefits', 'View own benefits enrollment', 'benefit',
         'view_self', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'BENEFIT:MANAGE', 'Manage Benefits', 'Manage benefits enrollment and administration',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'BENEFIT:MANAGE', 'Manage Benefits', 'Manage benefits enrollment and administration',
         'benefit', 'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- Calendar Module Permissions
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'CALENDAR:VIEW', 'View Calendar', 'View team and organization calendar', 'calendar', 'view',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'CALENDAR:VIEW', 'View Calendar', 'View team and organization calendar', 'calendar', 'view',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'CALENDAR:MANAGE', 'Manage Calendar', 'Create and manage calendar events', 'calendar',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'CALENDAR:MANAGE', 'Manage Calendar', 'Create and manage calendar events', 'calendar',
         'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- Dashboard Module Permissions
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'DASHBOARD:VIEW', 'View Dashboard', 'View personal dashboard', 'dashboard', 'view', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'DASHBOARD:VIEW', 'View Dashboard', 'View personal dashboard', 'dashboard', 'view', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'DASHBOARD:MANAGE', 'Manage Dashboard', 'Customize and manage dashboard widgets',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'DASHBOARD:MANAGE', 'Manage Dashboard', 'Customize and manage dashboard widgets',
         'dashboard', 'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- Performance & Review Module Permissions (KEY ADDITION FOR V67)
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:VIEW', 'View Reviews', 'View performance reviews', 'review', 'view', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:VIEW', 'View Reviews', 'View performance reviews', 'review', 'view', NOW(), NOW(), 0,
         false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:READ', 'Read Reviews', 'Read and view review details', 'review', 'read', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:READ', 'Read Reviews', 'Read and view review details', 'review', 'read', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:CREATE', 'Create Reviews', 'Create new performance reviews', 'review', 'create',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:CREATE', 'Create Reviews', 'Create new performance reviews', 'review', 'create',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:UPDATE', 'Update Reviews', 'Update performance reviews', 'review', 'update', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:UPDATE', 'Update Reviews', 'Update performance reviews', 'review', 'update', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:SUBMIT', 'Submit Reviews', 'Submit performance reviews', 'review', 'submit', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:SUBMIT', 'Submit Reviews', 'Submit performance reviews', 'review', 'submit', NOW(),
         NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:APPROVE', 'Approve Reviews', 'Approve performance reviews', 'review', 'approve',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:APPROVE', 'Approve Reviews', 'Approve performance reviews', 'review', 'approve',
         NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'REVIEW:MANAGE', 'Manage Reviews', 'Full management of performance reviews', 'review',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'REVIEW:MANAGE', 'Manage Reviews', 'Full management of performance reviews', 'review',
         'manage', NOW(), NOW(), 0, false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================
 -- Goal & OKR Module Permissions (ADDITIONAL FOR V67)
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:VIEW', 'View Goals', 'View goals and objectives', 'goal', 'view', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:VIEW', 'View Goals', 'View goals and objectives', 'goal', 'view', NOW(), NOW(), 0,
         false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:READ', 'Read Goals', 'Read goal details', 'goal', 'read', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:READ', 'Read Goals', 'Read goal details', 'goal', 'read', NOW(), NOW(), 0,
         false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:CREATE', 'Create Goals', 'Create new goals', 'goal', 'create', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:CREATE', 'Create Goals', 'Create new goals', 'goal', 'create', NOW(), NOW(), 0,
         false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:UPDATE', 'Update Goals', 'Update goals', 'goal', 'update', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:UPDATE', 'Update Goals', 'Update goals', 'goal', 'update', NOW(), NOW(), 0,
         false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:APPROVE', 'Approve Goals', 'Approve goal submissions', 'goal', 'approve', NOW(), NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:APPROVE', 'Approve Goals', 'Approve goal submissions', 'goal', 'approve', NOW(), NOW(),
         0, false) ON CONFLICT DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'GOAL:MANAGE', 'Manage Goals', 'Full management of goals', 'goal', 'manage', NOW(), NOW(), 0,
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'GOAL:MANAGE', 'Manage Goals', 'Full management of goals', 'goal', 'manage', NOW(), NOW(), 0,
         false) ON CONFLICT DO NOTHING;
 
 -- ============================================================================

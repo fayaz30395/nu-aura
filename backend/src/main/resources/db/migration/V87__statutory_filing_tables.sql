@@ -157,11 +157,11 @@ WHERE FALSE;
 -- Disabled by default; enable per tenant during onboarding
 
 -- Seed permissions for statutory filing management
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'STATUTORY:FILING_VIEW', 'Statutory Filing View', 'View statutory filing reports',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'STATUTORY:FILING_VIEW', 'Statutory Filing View', 'View statutory filing reports',
         'STATUTORY', 'FILING_VIEW', now(), now(), 0, false),
-       (gen_random_uuid(), 'STATUTORY:FILING_GENERATE', 'Statutory Filing Generate',
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'STATUTORY:FILING_GENERATE', 'Statutory Filing Generate',
         'Generate statutory filing reports', 'STATUTORY', 'FILING_GENERATE', now(), now(), 0, false),
-       (gen_random_uuid(), 'STATUTORY:FILING_SUBMIT', 'Statutory Filing Submit', 'Submit statutory filings to portals',
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'STATUTORY:FILING_SUBMIT', 'Statutory Filing Submit', 'Submit statutory filings to portals',
         'STATUTORY', 'FILING_SUBMIT', now(), now(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;

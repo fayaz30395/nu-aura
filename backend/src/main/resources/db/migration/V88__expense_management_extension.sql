@@ -358,11 +358,11 @@ FROM (SELECT id FROM tenants WHERE is_deleted = FALSE) t
 WHERE NOT EXISTS (SELECT 1 FROM expense_categories ec WHERE ec.tenant_id = t.id AND ec.name = cat.name);
 
 -- ─── Seed Expense Permissions ────────────────────────────────────────────────
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'EXPENSE:SETTINGS', 'Expense Settings', 'Manage expense settings (categories, policies)',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'EXPENSE:SETTINGS', 'Expense Settings', 'Manage expense settings (categories, policies)',
         'EXPENSE', 'SETTINGS', NOW(), NOW(), 0, false),
-       (gen_random_uuid(), 'EXPENSE:ADVANCE_MANAGE', 'Expense Advance Manage',
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'EXPENSE:ADVANCE_MANAGE', 'Expense Advance Manage',
         'Manage expense advances (approve, disburse)', 'EXPENSE', 'ADVANCE_MANAGE', NOW(), NOW(), 0, false),
-       (gen_random_uuid(), 'EXPENSE:REPORT', 'Expense Report', 'View expense reports and analytics', 'EXPENSE',
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'EXPENSE:REPORT', 'Expense Report', 'View expense reports and analytics', 'EXPENSE',
         'REPORT', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;

@@ -218,28 +218,28 @@ CREATE INDEX IF NOT EXISTS idx_submission_tenant_candidate
 -- ============================================================================
 -- 3. Seed agency permissions
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'AGENCY:VIEW', 'View Agencies', 'View recruitment agency details', 'agency', 'view', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:VIEW', 'View Agencies', 'View recruitment agency details', 'agency', 'view', NOW(),
         NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'AGENCY:CREATE', 'Create Agencies', 'Create new recruitment agencies', 'agency', 'create',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:CREATE', 'Create Agencies', 'Create new recruitment agencies', 'agency', 'create',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'AGENCY:UPDATE', 'Update Agencies', 'Update recruitment agency details', 'agency', 'update',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:UPDATE', 'Update Agencies', 'Update recruitment agency details', 'agency', 'update',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'AGENCY:DELETE', 'Delete Agencies', 'Soft-delete recruitment agencies', 'agency', 'delete',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:DELETE', 'Delete Agencies', 'Soft-delete recruitment agencies', 'agency', 'delete',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'AGENCY:MANAGE', 'Manage Agency Submissions',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:MANAGE', 'Manage Agency Submissions',
         'Submit candidates and manage agency workflows', 'agency', 'manage', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

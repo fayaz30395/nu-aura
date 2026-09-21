@@ -17,8 +17,8 @@
 -- STEP 1: Insert LEAVE_BALANCE:ENCASH permission if not exists
 -- permissions table: globally unique code, no tenant_id column
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE_BALANCE:ENCASH', 'Encash Leave Balance',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE_BALANCE:ENCASH', 'Encash Leave Balance',
         'Process leave balance encashment for employees', 'LEAVE_BALANCE', 'ENCASH', NOW(), NOW(), 0,
         false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
@@ -69,12 +69,12 @@ WHERE p.code = 'LEAVE_BALANCE:ENCASH'
 -- STEP 4: Also seed the companion permissions if missing
 -- LEAVE_BALANCE:VIEW, LEAVE_BALANCE:VIEW_ALL, LEAVE_BALANCE:MANAGE
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'LEAVE_BALANCE:VIEW', 'View Leave Balance', 'View own leave balance', 'LEAVE_BALANCE',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE_BALANCE:VIEW', 'View Leave Balance', 'View own leave balance', 'LEAVE_BALANCE',
         'VIEW', NOW(), NOW(), 0, false),
-       (gen_random_uuid(), 'LEAVE_BALANCE:VIEW_ALL', 'View All Leave Balances', 'View all employee leave balances',
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE_BALANCE:VIEW_ALL', 'View All Leave Balances', 'View all employee leave balances',
         'LEAVE_BALANCE', 'VIEW_ALL', NOW(), NOW(), 0, false),
-       (gen_random_uuid(), 'LEAVE_BALANCE:MANAGE', 'Manage Leave Balances', 'Create and adjust leave balances',
+       (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'LEAVE_BALANCE:MANAGE', 'Manage Leave Balances', 'Create and adjust leave balances',
         'LEAVE_BALANCE', 'MANAGE', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

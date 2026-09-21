@@ -29,7 +29,7 @@ const editWikiPageSchema = z.object({
   visibility: z.enum(['PUBLIC', 'ORGANIZATION', 'DEPARTMENT', 'PRIVATE', 'RESTRICTED'], {
     errorMap: () => ({message: 'Invalid visibility option'}),
   }),
-  status: z.enum(['DRAFT', 'PUBLISHED', 'ARCHIVED']).optional(),
+  status: z.enum(['DRAFT', 'PENDING_APPROVAL', 'PUBLISHED', 'ARCHIVED']).optional(),
   content: z.record(z.unknown()).default({
     type: 'doc',
     content: [{type: 'paragraph'}],

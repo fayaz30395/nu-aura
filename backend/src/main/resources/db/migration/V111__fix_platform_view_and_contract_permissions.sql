@@ -14,23 +14,23 @@
 -- Step 1: Ensure PLATFORM:VIEW and PLATFORM:MANAGE exist in permissions table
 -- (V96 seeds them but guard with ON CONFLICT just in case)
 -- ============================================================================
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'PLATFORM:VIEW', 'Platform View', 'View platform applications and context', 'platform',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'PLATFORM:VIEW', 'Platform View', 'View platform applications and context', 'platform',
         'view', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'PLATFORM:MANAGE', 'Platform Manage', 'Manage platform configuration', 'platform', 'manage',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'PLATFORM:MANAGE', 'Platform Manage', 'Manage platform configuration', 'platform', 'manage',
         NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'SELF_SERVICE:UPDATE', 'Self Service Update', 'Submit self-service profile update requests',
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SELF_SERVICE:UPDATE', 'Self Service Update', 'Submit self-service profile update requests',
         'self_service', 'update', NOW(), NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
-VALUES (gen_random_uuid(), 'CONTRACT:VIEW', 'Contract View', 'View employment contracts', 'contract', 'view', NOW(),
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'CONTRACT:VIEW', 'Contract View', 'View employment contracts', 'contract', 'view', NOW(),
         NOW(), 0, false) ON CONFLICT (code)
 WHERE is_deleted = false DO NOTHING;
 

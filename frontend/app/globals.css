@@ -67,10 +67,14 @@
     --prod-fluence: #8b5cf6;
 
     /* ── Aura semantic surfaces (light) ── */
-    --accent: #2952A3;
-    --accent-hover: #244288;
+    /* Deepened to a distinct dark navy (was #2952A3) so the brand reads as
+       "dark blue" rather than mid blue, per the NuLogic gradient/white/dark-blue
+       palette direction — reuses the existing accent-800/900 ramp values so
+       contrast is already verified. */
+    --accent: #244288;
+    --accent-hover: #1d356d;
     --accent-soft: #eef2fc;
-    --accent-text: #2952A3;
+    --accent-text: #244288;
 
     --bg-app: #f4f6fb;
     --bg-canvas: #f9fafd;
@@ -221,6 +225,13 @@
        deepen the fill WITHOUT darkening accent text/borders/rings. */
     --btn-primary-bg: var(--accent-primary);
     --btn-primary-bg-hover: var(--accent-primary-hover);
+    /* Dark-blue gradient fill layered as background-image over the solid
+       --btn-primary-bg fallback (background-color) — NuLogic gradient/white/
+       dark-blue direction, applied via bg-[image:var(...)] in Button.tsx and
+       .btn-primary below so it never breaks any existing background-color-only
+       consumer of --btn-primary-bg. */
+    --btn-primary-gradient: linear-gradient(135deg, #3a63bd 0%, #1d356d 100%);
+    --btn-primary-gradient-hover: linear-gradient(135deg, #4463cf 0%, #244288 100%);
 
     /* ── Sidebar → ALIASED to Aura nav rail ──────────────────── */
     --sidebar-active-bg: var(--nav-active);
@@ -520,6 +531,8 @@
        on the brighter #6884dc, which need to stay light against dark surfaces. */
     --btn-primary-bg: var(--aura-accent-500);   /* #4463cf — white label 5.3:1 */
     --btn-primary-bg-hover: var(--aura-accent-600); /* #3350b8 — white label 7.0:1 */
+    --btn-primary-gradient: linear-gradient(135deg, #4463cf 0%, #244288 100%);
+    --btn-primary-gradient-hover: linear-gradient(135deg, #6884dc 0%, #3350b8 100%);
 
     /* ── Sidebar → ALIASED to Aura dark nav rail ───────────── */
     --sidebar-active-bg: var(--nav-active);
@@ -1272,14 +1285,16 @@
   .btn-primary {
     @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-xl;
     background-color: var(--btn-primary-bg);
+    background-image: var(--btn-primary-gradient);
     color: #ffffff;
     border: none;
     box-shadow: 0 1px 2px rgba(41, 82, 163, 0.25), 0 2px 8px rgba(41, 82, 163, 0.18);
-    transition: background-color 180ms ease-out, transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
+    transition: background-color 180ms ease-out, background-image 180ms ease-out, transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
   }
 
   .btn-primary:hover {
     background-color: var(--btn-primary-bg-hover);
+    background-image: var(--btn-primary-gradient-hover);
     transform: translateY(-0.5px);
   }
 

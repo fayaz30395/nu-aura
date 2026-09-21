@@ -23,31 +23,49 @@
 -- =============================================================================
 
 -- ── 1. Rename ADMIN → TENANT_ADMIN where no TENANT_ADMIN exists yet ──────────
-UPDATE roles AS r
-SET code        = 'TENANT_ADMIN',
-    name        = 'Tenant Administrator',
-    description = 'Full intra-tenant administration — manages all HRMS modules',
-    updated_at  = NOW()
-WHERE r.code = 'ADMIN'
-  AND (r.is_deleted = false OR r.is_deleted IS NULL)
-  AND NOT EXISTS (
-      SELECT 1 FROM roles r2
-      WHERE r2.tenant_id = r.tenant_id
-        AND r2.code = 'TENANT_ADMIN'
-        AND (r2.is_deleted = false OR r2.is_deleted IS NULL)
-  );
+-- Fail-closed RLS (rls_ctx_required_*) hides roles rows for any tenant that
+-- isn't the current app.current_tenant_id session setting, so both steps are
+-- looped per-tenant, setting it first.
+DO $$
+DECLARE
+    tt RECORD;
+BEGIN
+    FOR tt IN SELECT id FROM tenants LOOP
+        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
+
+        UPDATE roles AS r
+        SET code        = 'TENANT_ADMIN',
+            name        = 'Tenant Administrator',
+            description = 'Full intra-tenant administration — manages all HRMS modules',
+            updated_at  = NOW()
+        WHERE r.code = 'ADMIN'
+          AND r.tenant_id = tt.id
+          AND (r.is_deleted = false OR r.is_deleted IS NULL)
+          AND NOT EXISTS (
+              SELECT 1 FROM roles r2
+              WHERE r2.tenant_id = r.tenant_id
+                AND r2.code = 'TENANT_ADMIN'
+                AND (r2.is_deleted = false OR r2.is_deleted IS NULL)
+          );
+    END LOOP;
+END $$;
 
 -- ── 2. Backfill permissions for ALL TENANT_ADMIN roles (including renamed ones) ──
 -- Identical to V289 so every permission is present regardless of which version
 -- first created the role. ON CONFLICT DO NOTHING keeps it safe to re-run.
 DO $$
 DECLARE
+    tt RECORD;
     r RECORD;
 BEGIN
+    FOR tt IN SELECT id FROM tenants LOOP
+        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
+
     FOR r IN
         SELECT DISTINCT rl.tenant_id, rl.id AS role_id
         FROM roles rl
         WHERE rl.code = 'TENANT_ADMIN'
+          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
     LOOP
         INSERT INTO role_permissions (
@@ -130,5 +148,6 @@ BEGIN
         )
           AND (p.is_deleted = false OR p.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
+    END LOOP;
     END LOOP;
 END $$;

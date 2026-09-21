@@ -22,57 +22,68 @@
 --   All INSERTs use ON CONFLICT DO NOTHING — idempotent, safe to re-run.
 -- =============================================================================
 
--- ── 1. Insert PAYROLL_ADMIN role for all tenants that lack one ────────────────
-INSERT INTO roles (id, tenant_id, code, name, description, is_system_role,
-                   created_at, updated_at, version, is_deleted)
-SELECT
-    gen_random_uuid(),
-    t.id,
-    'PAYROLL_ADMIN',
-    'Payroll Admin',
-    'Full payroll, compensation, statutory filings and time-tracking access',
-    true,
-    NOW(), NOW(), 0, false
-FROM tenants t
-WHERE t.is_deleted = false
-  AND NOT EXISTS (
-      SELECT 1 FROM roles r
-      WHERE r.tenant_id = t.id
-        AND r.code = 'PAYROLL_ADMIN'
-        AND (r.is_deleted = false OR r.is_deleted IS NULL)
-  )
-ON CONFLICT DO NOTHING;
+-- ── 1 & 2. Insert PAYROLL_ADMIN / TENANT_ADMIN role for tenants that lack one ──
+-- Fail-closed RLS (rls_ctx_required_*) requires app.current_tenant_id to match
+-- each new row's tenant_id, so this runs once per tenant with the GUC set.
+DO $$
+DECLARE
+    t RECORD;
+BEGIN
+    FOR t IN SELECT id FROM tenants WHERE is_deleted = false LOOP
+        PERFORM set_config('app.current_tenant_id', t.id::text, true);
 
--- ── 2. Insert TENANT_ADMIN role for all tenants that lack one ─────────────────
-INSERT INTO roles (id, tenant_id, code, name, description, is_system_role,
-                   created_at, updated_at, version, is_deleted)
-SELECT
-    gen_random_uuid(),
-    t.id,
-    'TENANT_ADMIN',
-    'Tenant Administrator',
-    'Full intra-tenant administration — manages all HRMS modules',
-    true,
-    NOW(), NOW(), 0, false
-FROM tenants t
-WHERE t.is_deleted = false
-  AND NOT EXISTS (
-      SELECT 1 FROM roles r
-      WHERE r.tenant_id = t.id
-        AND r.code = 'TENANT_ADMIN'
-        AND (r.is_deleted = false OR r.is_deleted IS NULL)
-  )
-ON CONFLICT DO NOTHING;
+        INSERT INTO roles (id, tenant_id, code, name, description, is_system_role,
+                           created_at, updated_at, version, is_deleted)
+        SELECT
+            gen_random_uuid(),
+            t.id,
+            'PAYROLL_ADMIN',
+            'Payroll Admin',
+            'Full payroll, compensation, statutory filings and time-tracking access',
+            true,
+            NOW(), NOW(), 0, false
+        WHERE NOT EXISTS (
+            SELECT 1 FROM roles r
+            WHERE r.tenant_id = t.id
+              AND r.code = 'PAYROLL_ADMIN'
+              AND (r.is_deleted = false OR r.is_deleted IS NULL)
+        )
+        ON CONFLICT DO NOTHING;
+
+        INSERT INTO roles (id, tenant_id, code, name, description, is_system_role,
+                           created_at, updated_at, version, is_deleted)
+        SELECT
+            gen_random_uuid(),
+            t.id,
+            'TENANT_ADMIN',
+            'Tenant Administrator',
+            'Full intra-tenant administration — manages all HRMS modules',
+            true,
+            NOW(), NOW(), 0, false
+        WHERE NOT EXISTS (
+            SELECT 1 FROM roles r
+            WHERE r.tenant_id = t.id
+              AND r.code = 'TENANT_ADMIN'
+              AND (r.is_deleted = false OR r.is_deleted IS NULL)
+        )
+        ON CONFLICT DO NOTHING;
+    END LOOP;
+END $$;
 
 -- ── 3. Grant PAYROLL_ADMIN permissions (mirrors V305 — now finds role rows) ───
 DO $$
 DECLARE
+    tt RECORD;
     r RECORD;
 BEGIN
+    FOR tt IN SELECT id FROM tenants LOOP
+        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
+
     FOR r IN
         SELECT DISTINCT rl.tenant_id, rl.id AS role_id
         FROM roles rl
         WHERE rl.code = 'PAYROLL_ADMIN'
+          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
     LOOP
         INSERT INTO role_permissions (
@@ -108,17 +119,23 @@ BEGIN
           AND (p.is_deleted = false OR p.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
     END LOOP;
+    END LOOP;
 END $$;
 
 -- ── 4. Grant TENANT_ADMIN permissions (mirrors V289/V290 — now finds rows) ────
 DO $$
 DECLARE
+    tt RECORD;
     r RECORD;
 BEGIN
+    FOR tt IN SELECT id FROM tenants LOOP
+        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
+
     FOR r IN
         SELECT DISTINCT rl.tenant_id, rl.id AS role_id
         FROM roles rl
         WHERE rl.code = 'TENANT_ADMIN'
+          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
     LOOP
         INSERT INTO role_permissions (
@@ -198,5 +215,6 @@ BEGIN
         )
           AND (p.is_deleted = false OR p.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
+    END LOOP;
     END LOOP;
 END $$;

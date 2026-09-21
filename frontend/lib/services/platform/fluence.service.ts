@@ -87,6 +87,31 @@ class FluenceService {
     await apiClient.delete(`/knowledge/wiki/pages/${id}`);
   }
 
+  async publishWikiPage(id: string): Promise<WikiPage> {
+    const response = await apiClient.post<WikiPage>(`/knowledge/wiki/pages/${id}/publish`);
+    return response.data;
+  }
+
+  async approveWikiPage(id: string): Promise<WikiPage> {
+    const response = await apiClient.post<WikiPage>(`/knowledge/wiki/pages/${id}/approve`);
+    return response.data;
+  }
+
+  async rejectWikiPage(id: string): Promise<WikiPage> {
+    const response = await apiClient.post<WikiPage>(`/knowledge/wiki/pages/${id}/reject`);
+    return response.data;
+  }
+
+  async archiveWikiPage(id: string): Promise<WikiPage> {
+    const response = await apiClient.post<WikiPage>(`/knowledge/wiki/pages/${id}/archive`);
+    return response.data;
+  }
+
+  async toggleWikiPagePin(id: string): Promise<WikiPage> {
+    const response = await apiClient.post<WikiPage>(`/knowledge/wiki/pages/${id}/toggle-pin`);
+    return response.data;
+  }
+
   async getWikiPageRevisions(pageId: string): Promise<WikiPageRevision[]> {
     const response = await apiClient.get<WikiPageRevision[]>(
       `/knowledge/wiki/pages/${pageId}/revisions`
@@ -224,6 +249,23 @@ class FluenceService {
 
   async deleteBlogPost(id: string): Promise<void> {
     await apiClient.delete(`/knowledge/blogs/${id}`);
+  }
+
+  async publishBlogPost(id: string): Promise<BlogPost> {
+    const response = await apiClient.post<BlogPost>(`/knowledge/blogs/${id}/publish`);
+    return response.data;
+  }
+
+  async scheduleBlogPost(id: string, scheduledFor: string): Promise<BlogPost> {
+    const response = await apiClient.post<BlogPost>(`/knowledge/blogs/${id}/schedule`, null, {
+      params: {scheduledFor},
+    });
+    return response.data;
+  }
+
+  async archiveBlogPost(id: string): Promise<BlogPost> {
+    const response = await apiClient.post<BlogPost>(`/knowledge/blogs/${id}/archive`);
+    return response.data;
   }
 
   async likeBlogPost(id: string): Promise<BlogPost> {

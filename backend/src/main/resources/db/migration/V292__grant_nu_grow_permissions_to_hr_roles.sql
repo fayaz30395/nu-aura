@@ -24,31 +24,33 @@
 -- =============================================================================
 
 -- ── 1. Ensure all required permission codes exist in the permissions table ──────
-INSERT INTO permissions (id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
+
+SELECT set_config('app.current_tenant_id', '660e8400-e29b-41d4-a716-446655440001', true);
+INSERT INTO permissions (id, tenant_id, code, name, description, resource, action, created_at, updated_at, version, is_deleted)
 VALUES
-  (gen_random_uuid(), 'WELLNESS:CREATE',          'Wellness Create',          'Create wellness programs',             'wellness',     'create',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'WELLNESS:MANAGE',          'Wellness Manage',          'Manage wellness programs',             'wellness',     'manage',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'SURVEY:UPDATE',            'Survey Update',            'Update surveys',                       'survey',       'update',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'SURVEY:DELETE',            'Survey Delete',            'Delete surveys',                       'survey',       'delete',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'CALENDAR:CREATE',          'Calendar Create',          'Create calendar events',               'calendar',     'create',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'CALENDAR:UPDATE',          'Calendar Update',          'Update calendar events',               'calendar',     'update',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'CALENDAR:DELETE',          'Calendar Delete',          'Delete calendar events',               'calendar',     'delete',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'CALENDAR:SYNC',            'Calendar Sync',            'Sync external calendar',               'calendar',     'sync',     NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'MEETING:VIEW',             'Meeting View',             'View one-on-one meetings',             'meeting',      'view',     NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'MEETING:CREATE',           'Meeting Create',           'Create one-on-one meetings',           'meeting',      'create',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'MEETING:MANAGE',           'Meeting Manage',           'Manage one-on-one meetings',           'meeting',      'manage',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'SCORECARD:VIEW',           'Scorecard View',           'View interview scorecards',            'scorecard',    'view',     NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'SCORECARD:CREATE',         'Scorecard Create',         'Create interview scorecards',          'scorecard',    'create',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'SCORECARD:DELETE',         'Scorecard Delete',         'Delete interview scorecards',          'scorecard',    'delete',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'SCORECARD:TEMPLATE_MANAGE','Scorecard Template Manage','Manage scorecard templates',           'scorecard',    'manage',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'PREBOARDING:VIEW',         'Preboarding View',         'View preboarding tasks',               'preboarding',  'view',     NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'PREBOARDING:CREATE',       'Preboarding Create',       'Create preboarding tasks',             'preboarding',  'create',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'PREBOARDING:MANAGE',       'Preboarding Manage',       'Manage preboarding workflows',         'preboarding',  'manage',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'AGENCY:VIEW',              'Agency View',              'View recruitment agencies',            'agency',       'view',     NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'AGENCY:CREATE',            'Agency Create',            'Create recruitment agencies',          'agency',       'create',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'AGENCY:UPDATE',            'Agency Update',            'Update recruitment agencies',          'agency',       'update',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'AGENCY:DELETE',            'Agency Delete',            'Delete recruitment agencies',          'agency',       'delete',   NOW(), NOW(), 0, false),
-  (gen_random_uuid(), 'AGENCY:MANAGE',            'Agency Manage',            'Full management of agencies',          'agency',       'manage',   NOW(), NOW(), 0, false)
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'WELLNESS:CREATE',          'Wellness Create',          'Create wellness programs',             'wellness',     'create',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'WELLNESS:MANAGE',          'Wellness Manage',          'Manage wellness programs',             'wellness',     'manage',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SURVEY:UPDATE',            'Survey Update',            'Update surveys',                       'survey',       'update',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SURVEY:DELETE',            'Survey Delete',            'Delete surveys',                       'survey',       'delete',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'CALENDAR:CREATE',          'Calendar Create',          'Create calendar events',               'calendar',     'create',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'CALENDAR:UPDATE',          'Calendar Update',          'Update calendar events',               'calendar',     'update',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'CALENDAR:DELETE',          'Calendar Delete',          'Delete calendar events',               'calendar',     'delete',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'CALENDAR:SYNC',            'Calendar Sync',            'Sync external calendar',               'calendar',     'sync',     NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'MEETING:VIEW',             'Meeting View',             'View one-on-one meetings',             'meeting',      'view',     NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'MEETING:CREATE',           'Meeting Create',           'Create one-on-one meetings',           'meeting',      'create',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'MEETING:MANAGE',           'Meeting Manage',           'Manage one-on-one meetings',           'meeting',      'manage',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:VIEW',           'Scorecard View',           'View interview scorecards',            'scorecard',    'view',     NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:CREATE',         'Scorecard Create',         'Create interview scorecards',          'scorecard',    'create',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:DELETE',         'Scorecard Delete',         'Delete interview scorecards',          'scorecard',    'delete',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'SCORECARD:TEMPLATE_MANAGE','Scorecard Template Manage','Manage scorecard templates',           'scorecard',    'manage',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'PREBOARDING:VIEW',         'Preboarding View',         'View preboarding tasks',               'preboarding',  'view',     NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'PREBOARDING:CREATE',       'Preboarding Create',       'Create preboarding tasks',             'preboarding',  'create',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'PREBOARDING:MANAGE',       'Preboarding Manage',       'Manage preboarding workflows',         'preboarding',  'manage',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:VIEW',              'Agency View',              'View recruitment agencies',            'agency',       'view',     NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:CREATE',            'Agency Create',            'Create recruitment agencies',          'agency',       'create',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:UPDATE',            'Agency Update',            'Update recruitment agencies',          'agency',       'update',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:DELETE',            'Agency Delete',            'Delete recruitment agencies',          'agency',       'delete',   NOW(), NOW(), 0, false),
+  (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440001', 'AGENCY:MANAGE',            'Agency Manage',            'Full management of agencies',          'agency',       'manage',   NOW(), NOW(), 0, false)
 ON CONFLICT (code) WHERE is_deleted = false DO NOTHING;
 
 -- ── 2. Tenant-agnostic role permission grants ─────────────────────────────────
