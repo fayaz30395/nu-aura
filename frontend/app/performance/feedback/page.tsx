@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
+import {notifications} from '@mantine/notifications';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useCreateFeedback,
@@ -84,21 +85,36 @@ export default function FeedbackPage() {
       relatedReviewId: formData.relatedReviewId || undefined,
     };
 
-    if (selectedFeedback) {
-      await updateMutation.mutateAsync({id: selectedFeedback.id, data: feedbackData as FeedbackRequest});
-    } else {
-      await createMutation.mutateAsync(feedbackData as FeedbackRequest);
+    try {
+      if (selectedFeedback) {
+        await updateMutation.mutateAsync({id: selectedFeedback.id, data: feedbackData as FeedbackRequest});
+      } else {
+        await createMutation.mutateAsync(feedbackData as FeedbackRequest);
+      }
+      setShowModal(false);
+      resetFormHandler();
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: err instanceof Error ? err.message : 'Failed to save feedback.',
+        color: 'red',
+      });
     }
-
-    setShowModal(false);
-    resetFormHandler();
   };
 
   const handleDelete = async () => {
     if (!selectedFeedback) return;
-    await deleteMutation.mutateAsync(selectedFeedback.id);
-    setShowDeleteConfirm(false);
-    setSelectedFeedback(null);
+    try {
+      await deleteMutation.mutateAsync(selectedFeedback.id);
+      setShowDeleteConfirm(false);
+      setSelectedFeedback(null);
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: err instanceof Error ? err.message : 'Failed to delete feedback.',
+        color: 'red',
+      });
+    }
   };
 
   const openEditModal = (feedback: Feedback) => {

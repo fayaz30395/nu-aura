@@ -189,6 +189,7 @@ function CreatePIPModal({open, onClose, onSuccess}: { open: boolean; onClose: ()
       setSelectedEmployee(null);
       setSelectedManager(null);
     },
+    onError: () => notifications.show({title: 'Error', message: 'Failed to create PIP', color: 'red'}),
   });
 
   if (!open) return null;
@@ -432,6 +433,7 @@ function PIPDetailModal({
     onSuccess: () => {
       onUpdated();
     },
+    onError: () => notifications.show({title: 'Error', message: 'Failed to close PIP', color: 'red'}),
   });
 
   if (!open || !pip) return null;

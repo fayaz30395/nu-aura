@@ -278,6 +278,12 @@ export default function CalibrationPage() {
         };
         await updateReviewMutation.mutateAsync({id: managerReview.id, data: updateData});
       }
+    } catch (err) {
+      notifications.show({
+        title: 'Save failed',
+        message: err instanceof Error ? err.message : 'Failed to save the final rating.',
+        color: 'red',
+      });
     } finally {
       setSaving(null);
     }
