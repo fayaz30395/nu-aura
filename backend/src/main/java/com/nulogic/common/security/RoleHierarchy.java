@@ -324,6 +324,8 @@ public final class RoleHierarchy {
                 Permission.CANDIDATE_EVALUATE,
                 Permission.TRAINING_VIEW,
                 Permission.TRAINING_CREATE,
+                Permission.TRAINING_UPDATE,
+                Permission.TRAINING_DELETE,
                 Permission.TRAINING_APPROVE,
                 Permission.REPORT_VIEW,
                 Permission.REPORT_CREATE,
@@ -755,6 +757,8 @@ public final class RoleHierarchy {
                 // Training
                 Permission.TRAINING_VIEW,
                 Permission.TRAINING_CREATE,
+                Permission.TRAINING_UPDATE,
+                Permission.TRAINING_DELETE,
                 Permission.TRAINING_APPROVE,
                 // Employee view for enrollment
                 Permission.EMPLOYEE_VIEW_ALL,
