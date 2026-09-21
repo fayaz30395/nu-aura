@@ -1,5 +1,6 @@
 import {apiClient} from '../../api/client';
 import type {
+  CompetencyFramework,
   CompetencyRequest,
   EmployeeSkill,
   EmployeeSkillRequest,
@@ -75,6 +76,15 @@ export const skillGapService = {
     const response = await apiClient.get<SkillGapReport>(
       `/lms/employees/${employeeId}/skill-gaps`
     );
+    return response.data;
+  },
+};
+
+// ─── Competency Framework Service (role-based skill requirements) ───────
+
+export const competencyFrameworkService = {
+  listFrameworks: async (): Promise<CompetencyFramework[]> => {
+    const response = await apiClient.get<CompetencyFramework[]>('/performance/competency-frameworks');
     return response.data;
   },
 };

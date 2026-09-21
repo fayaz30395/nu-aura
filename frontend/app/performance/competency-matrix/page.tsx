@@ -51,6 +51,7 @@ import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useAddEmployeeSkill,
+  useCompetencyFrameworks,
   useEmployeeSkills,
   useRemoveSkill,
   useSkillGapAnalysis,
@@ -92,121 +93,6 @@ const addSkillSchema = z.object({
 
 type AddSkillFormValues = z.infer<typeof addSkillSchema>;
 
-// ─── Competency Framework Definitions (admin-managed, static for now) ────
-
-const FRAMEWORK_COMPETENCIES: Array<{
-  name: string;
-  category: CompetencyCategory;
-  description: string;
-  requiredLevel: ProficiencyLevel;
-  department: string;
-}> = [
-  {
-    name: 'System Design',
-    category: 'TECHNICAL',
-    description: 'Ability to design scalable distributed systems',
-    requiredLevel: 4,
-    department: 'Engineering'
-  },
-  {
-    name: 'Java',
-    category: 'TECHNICAL',
-    description: 'Proficiency in Java programming language',
-    requiredLevel: 4,
-    department: 'Engineering'
-  },
-  {
-    name: 'Cloud Architecture',
-    category: 'TECHNICAL',
-    description: 'AWS/GCP/Azure cloud infrastructure design',
-    requiredLevel: 3,
-    department: 'Engineering'
-  },
-  {
-    name: 'API Development',
-    category: 'TECHNICAL',
-    description: 'REST/GraphQL API design and implementation',
-    requiredLevel: 4,
-    department: 'Engineering'
-  },
-  {
-    name: 'Database Design',
-    category: 'TECHNICAL',
-    description: 'Relational and NoSQL database modeling',
-    requiredLevel: 3,
-    department: 'Engineering'
-  },
-  {
-    name: 'Leadership',
-    category: 'LEADERSHIP',
-    description: 'Guiding teams and making strategic decisions',
-    requiredLevel: 4,
-    department: 'Management'
-  },
-  {
-    name: 'Communication',
-    category: 'BEHAVIORAL',
-    description: 'Clear and effective written and verbal communication',
-    requiredLevel: 5,
-    department: 'All'
-  },
-  {
-    name: 'Strategic Planning',
-    category: 'LEADERSHIP',
-    description: 'Long-term planning and vision alignment',
-    requiredLevel: 4,
-    department: 'Management'
-  },
-  {
-    name: 'Team Management',
-    category: 'LEADERSHIP',
-    description: 'Managing and developing team members',
-    requiredLevel: 4,
-    department: 'Management'
-  },
-  {
-    name: 'Problem Solving',
-    category: 'PROBLEM_SOLVING',
-    description: 'Analytical thinking and creative solutions',
-    requiredLevel: 3,
-    department: 'All'
-  },
-  {
-    name: 'Product Strategy',
-    category: 'DOMAIN',
-    description: 'Product vision, roadmap, and market analysis',
-    requiredLevel: 4,
-    department: 'Product'
-  },
-  {
-    name: 'User Research',
-    category: 'DOMAIN',
-    description: 'Conducting user interviews and usability testing',
-    requiredLevel: 3,
-    department: 'Product'
-  },
-  {
-    name: 'Data Analysis',
-    category: 'TECHNICAL',
-    description: 'Statistical analysis and data interpretation',
-    requiredLevel: 3,
-    department: 'Product'
-  },
-  {
-    name: 'Stakeholder Management',
-    category: 'BEHAVIORAL',
-    description: 'Managing relationships with key stakeholders',
-    requiredLevel: 4,
-    department: 'Product'
-  },
-  {
-    name: 'Collaboration',
-    category: 'BEHAVIORAL',
-    description: 'Working effectively within and across teams',
-    requiredLevel: 3,
-    department: 'All'
-  },
-];
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
@@ -229,13 +115,6 @@ const sourceOptions = [
   {value: 'COURSE_COMPLETION', label: 'Course Completion'},
 ];
 
-const departmentOptions = [
-  {value: 'All', label: 'All Departments'},
-  {value: 'Engineering', label: 'Engineering'},
-  {value: 'Management', label: 'Management'},
-  {value: 'Product', label: 'Product'},
-];
-
 const HEATMAP_COLORS = [
   'bg-danger-100 text-danger-800 dark:bg-danger-900/40 dark:text-danger-300',
   'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300',
@@ -252,50 +131,68 @@ function getHeatmapClass(level: number): string {
 // ─── Framework Admin Tab ─────────────────────────────────────────────────
 
 function FrameworkAdminTab() {
-  const [filterCategory, setFilterCategory] = useState<string | null>(null);
-  const [filterDepartment, setFilterDepartment] = useState<string | null>(null);
+  const [filterFramework, setFilterFramework] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filtered = useMemo(() => {
-    return FRAMEWORK_COMPETENCIES.filter((c) => {
-      if (filterCategory && c.category !== filterCategory) return false;
-      if (filterDepartment && filterDepartment !== 'All' && c.department !== filterDepartment && c.department !== 'All') return false;
-      if (searchTerm && !c.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-      return true;
-    });
-  }, [filterCategory, filterDepartment, searchTerm]);
+  const frameworksQuery = useCompetencyFrameworks();
+  const frameworks = useMemo(() => frameworksQuery.data ?? [], [frameworksQuery.data]);
 
-  const categoryStats = useMemo(() => {
-    const stats: Record<string, number> = {};
-    FRAMEWORK_COMPETENCIES.forEach((c) => {
-      stats[c.category] = (stats[c.category] || 0) + 1;
-    });
-    return Object.entries(stats).map(([category, count]) => ({
-      category,
-      label: COMPETENCY_CATEGORY_LABELS[category as CompetencyCategory],
-      count,
-      color: COMPETENCY_CATEGORY_COLORS[category as CompetencyCategory],
-    }));
-  }, []);
+  const frameworkOptions = useMemo(
+    () => frameworks.map((f) => ({value: f.id, label: f.name})),
+    [frameworks]
+  );
+
+  // Flatten framework -> requirement rows for the table, filtered by framework + skill search.
+  const rows = useMemo(() => {
+    return frameworks
+      .filter((f) => !filterFramework || f.id === filterFramework)
+      .flatMap((f) =>
+        f.requirements
+          .filter((r) => !searchTerm || r.skillName.toLowerCase().includes(searchTerm.toLowerCase()))
+          .map((r) => ({...r, frameworkName: f.name, roleFamily: f.roleFamily}))
+      );
+  }, [frameworks, filterFramework, searchTerm]);
+
+  const frameworkStats = useMemo(
+    () => frameworks.map((f) => ({id: f.id, name: f.name, count: f.requirements.length})),
+    [frameworks]
+  );
+
+  if (frameworksQuery.isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader color="indigo" size="lg"/>
+      </div>
+    );
+  }
+
+  if (frameworksQuery.isError) {
+    return (
+      <EmptyState
+        icon={<AlertTriangle className="h-8 w-8"/>}
+        title="Couldn't load competency frameworks"
+        description="Something went wrong loading the framework data. Please try again."
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Category Stats */}
+      {/* Framework Stats */}
       <SimpleGrid cols={{base: 2, sm: 3, md: 5}}>
-        {categoryStats.map((stat) => (
+        {frameworkStats.map((stat) => (
           <Paper
-            key={stat.category}
+            key={stat.id}
             className="p-4 border border-[var(--border-main)] skeuo-card cursor-pointer hover:shadow-[var(--shadow-elevated)] transition-shadow"
-            onClick={() => setFilterCategory(filterCategory === stat.category ? null : stat.category)}
+            onClick={() => setFilterFramework(filterFramework === stat.id ? null : stat.id)}
           >
             <div className="row-between">
               <div>
-                <Text size="xs" c="dimmed">{stat.label}</Text>
+                <Text size="xs" c="dimmed">{stat.name}</Text>
                 <Text size="xl" fw={700} className="text-[var(--text-primary)]">{stat.count}</Text>
               </div>
-              <div className={`w-3 h-3 rounded-full bg-${stat.color}-500`}/>
             </div>
-            {filterCategory === stat.category && (
+            {filterFramework === stat.id && (
               <Badge size="xs" color="indigo" mt={4}>Active Filter</Badge>
             )}
           </Paper>
@@ -310,8 +207,8 @@ function FrameworkAdminTab() {
             <Text size="sm" fw={500}>Filters:</Text>
           </div>
           <TextInput
-            aria-label="Search competencies"
-            placeholder="Search competencies..."
+            aria-label="Search skills"
+            placeholder="Search skills..."
             size="sm"
             leftSection={<Search className="h-3.5 w-3.5"/>}
             value={searchTerm}
@@ -319,78 +216,59 @@ function FrameworkAdminTab() {
             className="flex-1 min-w-[200px]"
           />
           <Select
-            placeholder="Category"
+            placeholder="Framework"
             size="sm"
-            data={categoryOptions}
-            value={filterCategory}
-            onChange={setFilterCategory}
+            data={frameworkOptions}
+            value={filterFramework}
+            onChange={setFilterFramework}
             clearable
-            className="min-w-[160px]"
-          />
-          <Select
-            placeholder="Department"
-            size="sm"
-            data={departmentOptions}
-            value={filterDepartment}
-            onChange={setFilterDepartment}
-            clearable
-            className="min-w-[160px]"
+            className="min-w-[200px]"
           />
         </div>
       </Paper>
 
-      {/* Competency Table */}
+      {/* Requirements Table */}
       <Paper className="border border-[var(--border-main)] skeuo-card overflow-hidden">
         <Table striped highlightOnHover>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>Competency</Table.Th>
-              <Table.Th>Category</Table.Th>
-              <Table.Th>Department</Table.Th>
+              <Table.Th>Skill</Table.Th>
+              <Table.Th>Framework</Table.Th>
+              <Table.Th>Role Family</Table.Th>
               <Table.Th>Required Level</Table.Th>
-              <Table.Th>Description</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
-            {filtered.map((comp, idx) => (
-              <Table.Tr key={`${comp.name}-${idx}`}>
+            {rows.map((row) => (
+              <Table.Tr key={row.id}>
                 <Table.Td>
-                  <Text fw={500} size="sm">{comp.name}</Text>
+                  <Text fw={500} size="sm">{row.skillName}</Text>
                 </Table.Td>
                 <Table.Td>
-                  <Badge
-                    size="sm"
-                    variant="light"
-                    color={COMPETENCY_CATEGORY_COLORS[comp.category]}
-                  >
-                    {COMPETENCY_CATEGORY_LABELS[comp.category]}
-                  </Badge>
+                  <Text size="sm" c="dimmed">{row.frameworkName}</Text>
                 </Table.Td>
                 <Table.Td>
-                  <Text size="sm" c="dimmed">{comp.department}</Text>
+                  <Badge size="sm" variant="light" color="indigo">{row.roleFamily}</Badge>
                 </Table.Td>
                 <Table.Td>
                   <div className="flex items-center gap-2">
                     <Progress
-                      value={(comp.requiredLevel / 5) * 100}
+                      value={(row.requiredLevel / 5) * 100}
                       color="indigo"
                       size="sm"
                       className="w-16"
                     />
                     <Text size="xs" fw={500}>
-                      {comp.requiredLevel}/5 - {PROFICIENCY_LEVEL_LABELS[comp.requiredLevel]}
+                      {row.requiredLevel}/5 - {PROFICIENCY_LEVEL_LABELS[row.requiredLevel as ProficiencyLevel]}
                     </Text>
                   </div>
                 </Table.Td>
-                <Table.Td>
-                  <Text size="xs" c="dimmed" lineClamp={1}>{comp.description}</Text>
-                </Table.Td>
               </Table.Tr>
             ))}
-            {filtered.length === 0 && (
+            {rows.length === 0 && (
               <Table.Tr>
-                <Table.Td colSpan={5}>
-                  <Text ta="center" c="dimmed" py="xl">No competencies match your filters.</Text>
+                <Table.Td colSpan={4}>
+                  <Text ta="center" c="dimmed" py="xl">No skill requirements match your filters.</Text>
                 </Table.Td>
               </Table.Tr>
             )}

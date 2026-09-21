@@ -138,3 +138,21 @@ export const getProficiencyColor = (level: number): string => {
   if (level >= 2) return 'yellow';
   return 'red';
 };
+
+// ─── Competency Framework (role-based skill requirements) ────────────────
+
+export interface CompetencyRequirement {
+  id: string;
+  frameworkId: string;
+  skillName: string;
+  requiredLevel: number;
+}
+
+export interface CompetencyFramework {
+  id: string;
+  name: string;
+  description?: string;
+  roleFamily: string;
+  isActive: boolean;
+  requirements: CompetencyRequirement[];
+}

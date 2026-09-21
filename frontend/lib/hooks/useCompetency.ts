@@ -2,7 +2,12 @@
 
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {notifications} from '@mantine/notifications';
-import {competencyService, employeeSkillService, skillGapService,} from '@/lib/services/grow/competencyService';
+import {
+  competencyFrameworkService,
+  competencyService,
+  employeeSkillService,
+  skillGapService,
+} from '@/lib/services/grow/competencyService';
 import type {CompetencyRequest, EmployeeSkillRequest,} from '@/lib/types/grow/competency';
 
 // ─── Query Key Factory ───────────────────────────────────────────────────
@@ -16,7 +21,18 @@ export const competencyKeys = {
     [...competencyKeys.all, 'review', reviewId] as const,
   skillGaps: (employeeId: string) =>
     [...competencyKeys.all, 'gaps', employeeId] as const,
+  frameworks: () => [...competencyKeys.all, 'frameworks'] as const,
 };
+
+// ─── Competency Framework Hooks ──────────────────────────────────────────
+
+export function useCompetencyFrameworks() {
+  return useQuery({
+    queryKey: competencyKeys.frameworks(),
+    queryFn: () => competencyFrameworkService.listFrameworks(),
+    staleTime: 10 * 60 * 1000,
+  });
+}
 
 // ─── Employee Skills Hooks ───────────────────────────────────────────────
 
