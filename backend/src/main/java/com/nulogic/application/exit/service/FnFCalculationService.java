@@ -28,6 +28,23 @@ import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+/**
+ * Owns auto-calculation of {@link FullAndFinalSettlement} (statutory gratuity, pro-rated
+ * pending salary) and its approval state machine. Backs {@code FnFController} /
+ * {@code /offboarding/fnf} (list) and {@code /offboarding/[id]/fnf} (detail — via
+ * {@code getOrCalculate}/{@code addAdjustment}/{@code approve}).
+ *
+ * <p><b>Split ownership (US-2FZRCP9MG4NV, decided over a full merge):</b> {@link
+ * ExitManagementService}'s settlement methods ({@code createSettlement}, {@code
+ * updateSettlement}, {@code submitForApproval}, {@code processPayment}) are a second,
+ * thinner writer on the same table — kept because {@code FullAndFinalSettlementResponse}
+ * (its DTO) and {@code FnFCalculationResponse} (this service's DTO) already have
+ * independent frontend consumers with different shapes, and a full merge would require
+ * reconciling both without a clear win. The one place both paths could silently diverge —
+ * approval — is already consolidated: {@code ExitManagementService.approveSettlement}
+ * delegates to {@link #approve} for the single status-guarded transition. If a third
+ * write path is ever added here, it must delegate to this class the same way.</p>
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor

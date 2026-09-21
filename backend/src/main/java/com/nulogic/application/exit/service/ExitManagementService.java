@@ -476,6 +476,12 @@ public class ExitManagementService {
     }
 
     // ==================== Full & Final Settlement Operations ====================
+    // Split ownership (US-2FZRCP9MG4NV): FnFCalculationService is canonical for
+    // auto-calculation and approval — see its class javadoc. These methods are a second,
+    // thinner writer on the same FullAndFinalSettlement table, kept for the
+    // FullAndFinalSettlementResponse-shaped frontend consumers. approveSettlement below
+    // delegates to FnFCalculationService.approve; any new settlement mutation added here
+    // that could race with the other path should do the same.
 
     @Transactional
     public FullAndFinalSettlementResponse createSettlement(FullAndFinalSettlementRequest request) {
