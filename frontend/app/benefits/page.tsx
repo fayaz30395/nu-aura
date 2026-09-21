@@ -72,6 +72,11 @@ const enrollmentFormSchema = z.object({
   coverageLevel: z.string().min(1, 'Coverage level required'),
   effectiveDate: z.string().min(1, 'Effective date required'),
   useFlexCredits: z.boolean().default(false),
+  qualifyingLifeEvent: z.boolean().default(false),
+  qleReason: z.string().optional().or(z.literal('')),
+}).refine((data) => !data.qualifyingLifeEvent || !!data.qleReason?.trim(), {
+  message: 'Reason is required for a qualifying life event',
+  path: ['qleReason'],
 });
 
 const claimFormSchema = z.object({
@@ -213,6 +218,7 @@ export default function BenefitsPage() {
     register: registerEnrollment,
     handleSubmit: handleSubmitEnrollment,
     reset: resetEnrollmentForm,
+    watch: watchEnrollment,
     formState: {errors: enrollmentErrors, isSubmitting: isEnrollingForm},
   } = useForm<EnrollmentFormData>({
     resolver: zodResolver(enrollmentFormSchema),
@@ -220,8 +226,11 @@ export default function BenefitsPage() {
       coverageLevel: 'EMPLOYEE_ONLY',
       effectiveDate: getLocalDateString(new Date()),
       useFlexCredits: false,
+      qualifyingLifeEvent: false,
+      qleReason: '',
     },
   });
+  const isQualifyingLifeEvent = watchEnrollment('qualifyingLifeEvent');
 
   // Form setup for claims
   const {
@@ -312,6 +321,8 @@ export default function BenefitsPage() {
         coverageLevel: data.coverageLevel as CoverageLevel,
         effectiveDate: data.effectiveDate,
         useFlexCredits: data.useFlexCredits,
+        qualifyingLifeEvent: data.qualifyingLifeEvent,
+        qleReason: data.qualifyingLifeEvent ? data.qleReason : undefined,
       });
 
       setIsEnrollModalOpen(false);
@@ -1302,6 +1313,34 @@ export default function BenefitsPage() {
                         <label htmlFor="useFlexCredits" className="text-body-secondary">
                           Use flex credits ({formatINR(stats.flexCredits)} available)
                         </label>
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="qualifyingLifeEvent"
+                        className="w-4 h-4"
+                        {...registerEnrollment('qualifyingLifeEvent')}
+                      />
+                      <label htmlFor="qualifyingLifeEvent" className="text-body-secondary">
+                        This enrollment is due to a qualifying life event
+                      </label>
+                    </div>
+                    {isQualifyingLifeEvent && (
+                      <div>
+                        <label htmlFor="qle-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                          Qualifying life event reason
+                        </label>
+                        <textarea
+                          id="qle-reason"
+                          className="w-full input-aura rounded-lg p-2"
+                          rows={2}
+                          placeholder="e.g. Marriage, birth of a child, loss of other coverage..."
+                          {...registerEnrollment('qleReason')}
+                        />
+                        {enrollmentErrors.qleReason &&
+                          <span className="text-danger-500 text-sm">{enrollmentErrors.qleReason.message}</span>}
                       </div>
                     )}
                   </div>

@@ -184,6 +184,8 @@ export interface EnrollmentRequest {
   selectedOptions?: string;
   nomineeDetails?: string;
   useFlexCredits?: boolean;
+  qualifyingLifeEvent?: boolean;
+  qleReason?: string;
 }
 
 export interface BenefitClaim {
