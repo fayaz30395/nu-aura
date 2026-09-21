@@ -16,6 +16,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {onboardingService} from '@/lib/services/hire/onboarding.service';
 import {createLogger} from '@/lib/utils/logger';
 import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
+import {notifications} from '@mantine/notifications';
 
 const log = createLogger('NewTemplatePage');
 
@@ -44,6 +45,11 @@ export default function NewTemplatePage() {
       router.push(`/onboarding/templates/${template.id}`);
     } catch (error) {
       log.error('Failed to create template:', error);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to create template. Please try again.',
+        color: 'red',
+      });
     }
   };
 
