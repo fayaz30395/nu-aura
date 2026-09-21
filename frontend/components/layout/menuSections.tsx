@@ -1416,8 +1416,16 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               icon: sm.dollarSign,
               requiredPermission: Permissions.REPORT_VIEW
             },
-            // DEV-4: Utilization entry hidden — the aggregated
-            // /time-tracking/reports/* backend endpoints do not exist yet.
+            {
+              // DEV-4: aggregated utilization endpoints aren't live yet, but
+              // the page itself shows a clean "not available yet" guard
+              // instead of 404ing, so it's safe to surface in the main nav.
+              id: 'reports-utilization',
+              label: 'Utilization',
+              href: '/reports/utilization',
+              icon: sm.pieChart,
+              requiredPermission: Permissions.REPORT_VIEW
+            },
             {
               id: 'reports-builder',
               label: 'Report Builder',
