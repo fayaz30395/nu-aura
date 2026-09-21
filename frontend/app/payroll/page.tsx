@@ -37,6 +37,7 @@ import {usePayrollRuns} from '@/lib/hooks/queries/usePayroll';
 import type {PayrollRun, PayrollRunStatus} from '@/lib/types/hrms/payroll';
 import type {StatusMeta} from '@/lib/status/vocabulary';
 import {formatCurrency, formatDate} from '@/lib/utils';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 // Compact INR for headline numbers — full precision lives on the runs page.
 function formatCompactINR(amount: number): string {
@@ -130,7 +131,7 @@ export default function PayrollPage() {
 
         {error && (
           <ErrorBanner
-            message={error instanceof Error ? error.message : 'Failed to load payroll data'}
+            message={getErrorMessage(error, 'Failed to load payroll data')}
           />
         )}
 

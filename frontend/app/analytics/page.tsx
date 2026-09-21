@@ -36,6 +36,7 @@ import {chartColors} from '@/lib/utils/theme-colors';
 import {formatCurrency} from '@/lib/utils';
 import {BarChart3 as BarChart3Icon, PieChart as PieChartIcon} from 'lucide-react';
 import {MOTION_EASE} from '@/lib/animation';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 const AnalyticsAttendanceTrendChart = dynamic(
   () => import('./AnalyticsCharts').then((mod) => ({default: mod.AnalyticsAttendanceTrendChart})),
@@ -117,7 +118,7 @@ export default function AnalyticsPage() {
 
         {error && !showLoading && (
           <ErrorBanner
-            message={error instanceof Error ? error.message : 'Unable to load analytics data'}
+            message={getErrorMessage(error, 'Unable to load analytics data')}
             onRetry={() => refetch()}
           />
         )}

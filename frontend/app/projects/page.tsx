@@ -45,6 +45,7 @@ import {
 } from '@/lib/hooks/queries/useProjects';
 import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
 import {getLocalDateString} from '@/lib/utils/dateUtils';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 interface EmployeeSummary {
   id: string;
@@ -144,14 +145,8 @@ const editProjectFormSchema = z.object({
 type EditProjectFormData = z.infer<typeof editProjectFormSchema>;
 
 const parseApiError = (error: unknown): ApiErrorPayload => {
-  const response = (error as { response?: { data?: ApiErrorPayload } })?.response?.data;
-  if (response) {
-    return {message: response.message, details: response.details};
-  }
-  if (error instanceof Error) {
-    return {message: error.message};
-  }
-  return {message: 'Something went wrong. Please try again.'};
+  const details = (error as { response?: { data?: ApiErrorPayload } })?.response?.data?.details;
+  return {message: getErrorMessage(error, 'Something went wrong. Please try again.'), details};
 };
 
 function OwnerTypeahead({label, value, onChange, placeholder, disabled}: OwnerTypeaheadProps) {
@@ -962,7 +957,7 @@ export default function ProjectsPage() {
 
         <Card>
           <CardContent>
-            {!loading && totalElements === 0 && projects.length === 0 ? (
+            {!loading && !error && totalElements === 0 && projects.length === 0 ? (
               <EmptyState
                 icon={<Eye className="h-12 w-12"/>}
                 title="No Projects Yet"

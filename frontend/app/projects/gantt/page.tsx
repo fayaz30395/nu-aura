@@ -31,6 +31,7 @@ import {
   isTaskDelayed,
 } from '@/lib/types/hrms/project-calendar';
 import {categoricalBgClass} from '@/lib/utils/categoricalPalette';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
 
@@ -212,7 +213,7 @@ export default function GanttChartPage() {
   }
 
   if (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorMessage = getErrorMessage(error, 'Failed to load project timeline');
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
         <AlertCircle className="h-12 w-12 text-danger-500"/>

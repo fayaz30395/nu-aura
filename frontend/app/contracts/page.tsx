@@ -17,6 +17,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {CONTRACT_STATUS} from '@/lib/status/vocabulary';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 export default function ContractsPage() {
   const router = useRouter();
@@ -126,7 +127,7 @@ export default function ContractsPage() {
             <div className="flex items-center gap-4">
               <AlertCircle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
               <p className="text-sm text-danger-600 dark:text-danger-400">
-                {error instanceof Error ? error.message : 'Failed to load contracts'}
+                {getErrorMessage(error, 'Failed to load contracts')}
               </p>
             </div>
             <Button variant="light" size="xs" onClick={() => refetch()}
@@ -140,7 +141,7 @@ export default function ContractsPage() {
         <div className="bg-[var(--bg-card)] rounded-lg shadow">
           {isLoading ? (
             <div className="p-8 text-center text-[var(--text-muted)]">Loading contracts...</div>
-          ) : contracts.length === 0 ? (
+          ) : isError ? null : contracts.length === 0 ? (
             <EmptyState
               icon={<FileText className="w-full h-full"/>}
               title="No contracts found"

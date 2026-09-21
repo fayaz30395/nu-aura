@@ -30,6 +30,7 @@ import {
 import {createLogger} from '@/lib/utils/logger';
 import {Stat} from '@/components/ui/Stat';
 import {formatDate} from '@/lib/utils/format/date';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 const log = createLogger('TimeTrackingListPage');
 
@@ -117,7 +118,7 @@ export default function TimeTrackingPage() {
           <div className="flex flex-col items-center gap-4">
             <AlertCircle className="h-12 w-12 text-danger-500"/>
             <p
-              className="text-[var(--text-secondary)]">{error instanceof Error ? error.message : 'Failed to load time entries'}</p>
+              className="text-[var(--text-secondary)]">{getErrorMessage(error, 'Failed to load time entries')}</p>
             <button
               onClick={() => queryClient.invalidateQueries({queryKey: ['time-tracking']})}
               className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors"

@@ -304,9 +304,14 @@ export function initGlobalErrorHandlers(): () => void {
  */
 export function getErrorMessage(error: unknown, fallback = 'An unexpected error occurred'): string {
   // Check for Axios error with response data
-  const axiosError = error as { response?: { data?: { message?: string } } };
+  const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
   if (axiosError?.response?.data?.message) {
     return axiosError.response.data.message;
+  }
+
+  // Plain 403s carry no JSON body — don't leak the raw axios status message.
+  if (axiosError?.response?.status === 403) {
+    return "You don't have permission to view this.";
   }
 
   // Check for standard Error object

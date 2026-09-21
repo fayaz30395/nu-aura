@@ -15,6 +15,7 @@ import {StatusBadge} from '@/components/ui/StatusBadge';
 import {TRAVEL_STATUS} from '@/lib/status/vocabulary';
 import {Card, CardContent} from '@/components/ui/Card';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 import {
   AlertCircle,
   Briefcase,
@@ -247,7 +248,7 @@ export default function TravelPage() {
             className="card-aura flex flex-col items-center justify-center py-12">
             <AlertCircle className="h-12 w-12 text-danger-500 mb-4"/>
             <p
-              className="text-[var(--text-secondary)] mb-4">{error instanceof Error ? error.message : String(error)}</p>
+              className="text-[var(--text-secondary)] mb-4">{getErrorMessage(error, 'Failed to load travel requests')}</p>
             <button
               onClick={() => void refetch()}
               className="px-4 py-2 bg-accent-500 text-white rounded-xl hover:bg-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"

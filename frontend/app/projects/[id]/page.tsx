@@ -36,6 +36,7 @@ import {OverviewTab} from './_tabs/OverviewTab';
 import {TeamTab} from './_tabs/TeamTab';
 import {TimesheetsTab} from './_tabs/TimesheetsTab';
 import {InvoicesTab} from './_tabs/InvoicesTab';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 // Edit form schema
 const editProjectSchema = z.object({
@@ -192,7 +193,7 @@ export default function ProjectDetailPage() {
     );
   }
 
-  const projectError = error ? (error instanceof Error ? error.message : String(error)) : null;
+  const projectError = error ? getErrorMessage(error, 'Failed to load project') : null;
 
   // Determine which tabs to show
   const tabs = [
