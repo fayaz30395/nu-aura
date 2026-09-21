@@ -84,6 +84,10 @@ public class BenefitEnrollment extends TenantAware {
     private String waiverReason;
     private LocalDate waiverDate;
 
+    // Qualifying life event — bypasses the plan's open-enrollment window (Keka parity, MVP)
+    private boolean qualifyingLifeEvent;
+    private String qleReason;
+
     // Approval
     private UUID approvedBy;
     private LocalDateTime approvedAt;

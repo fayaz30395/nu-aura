@@ -52,6 +52,10 @@ public class EnrollmentRequest {
     private boolean waived;
     private String waiverReason;
 
+    // Qualifying life event — bypasses the plan's open-enrollment window
+    private boolean qualifyingLifeEvent;
+    private String qleReason;
+
     @Data
     public static class DependentRequest {
         @NotNull(message = "First name is required")

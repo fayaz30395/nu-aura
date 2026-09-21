@@ -210,6 +210,7 @@ public class BenefitEnhancedService {
                 .orElseThrow(() -> new EntityNotFoundException("Benefit plan not found"));
 
         validateEligibility(plan, request.getEmployeeId(), tenantId);
+        validateEnrollmentWindow(plan, request, tenantId);
 
         // Calculate costs
         BigDecimal employeeContrib = request.getEmployeeContribution() != null ?
@@ -244,6 +245,8 @@ public class BenefitEnhancedService {
                 .waived(request.isWaived())
                 .waiverReason(request.getWaiverReason())
                 .waiverDate(request.isWaived() ? tenantTimeService.today(tenantId) : null)
+                .qualifyingLifeEvent(request.isQualifyingLifeEvent())
+                .qleReason(request.getQleReason())
                 // createdBy is handled by JPA auditing via @CreatedBy in BaseEntity
                 .build();
 
@@ -319,6 +322,27 @@ public class BenefitEnhancedService {
             if (joiningDate == null || today.isBefore(joiningDate.plusDays(plan.getWaitingPeriodDays()))) {
                 throw new IllegalArgumentException("Employee has not completed the waiting period for this benefit plan");
             }
+        }
+    }
+
+    // Open-enrollment window (Keka parity, MVP): if the plan defines a window, enrollment is
+    // only allowed inside it unless the request declares a qualifying life event. A plan with
+    // no window configured (either bound null) is always open — backward compatible.
+    private void validateEnrollmentWindow(BenefitPlanEnhanced plan, EnrollmentRequest request, UUID tenantId) {
+        if (plan.getEnrollmentWindowStart() == null && plan.getEnrollmentWindowEnd() == null) {
+            return;
+        }
+        if (request.isQualifyingLifeEvent()) {
+            return;
+        }
+        LocalDate today = tenantTimeService.today(tenantId);
+        boolean beforeWindow = plan.getEnrollmentWindowStart() != null && today.isBefore(plan.getEnrollmentWindowStart());
+        boolean afterWindow = plan.getEnrollmentWindowEnd() != null && today.isAfter(plan.getEnrollmentWindowEnd());
+        if (beforeWindow || afterWindow) {
+            throw new IllegalArgumentException(
+                    "Enrollment is only open from " + plan.getEnrollmentWindowStart()
+                            + " to " + plan.getEnrollmentWindowEnd()
+                            + " unless enrolling due to a qualifying life event");
         }
     }
 

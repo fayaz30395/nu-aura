@@ -64,6 +64,12 @@ public class BenefitPlanEnhanced extends TenantAware {
     private boolean dependentsCovered;
     private int maxDependents;
 
+    // Open-enrollment window (Keka parity, minimum viable version). Null start/end = no
+    // restriction (always open) — backward compatible with existing plans. A qualifying life
+    // event (see BenefitEnrollment.qualifyingLifeEvent) bypasses the window.
+    private LocalDate enrollmentWindowStart;
+    private LocalDate enrollmentWindowEnd;
+
     // Health insurance specific
     private boolean maternityBenefits;
     private BigDecimal maternityCoverage;

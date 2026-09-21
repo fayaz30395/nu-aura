@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -153,5 +154,48 @@ class BenefitEnhancedServiceEligibilityTest {
         assertThatThrownBy(() -> service.enrollEmployee(request()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("waiting period");
+    }
+
+    @Test
+    @DisplayName("rejects enrollment outside the plan's open-enrollment window")
+    void rejectsWhenOutsideEnrollmentWindow() {
+        BenefitPlanEnhanced plan = BenefitPlanEnhanced.builder().build();
+        plan.setId(planId);
+        plan.setEnrollmentWindowStart(LocalDate.of(2025, 1, 1));
+        plan.setEnrollmentWindowEnd(LocalDate.of(2025, 12, 31));
+        when(planRepository.findByIdAndTenantId(planId, tenantId)).thenReturn(Optional.of(plan));
+
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        employee.setJoiningDate(LocalDate.of(2020, 1, 1));
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+
+        assertThatThrownBy(() -> service.enrollEmployee(request()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Enrollment is only open");
+    }
+
+    @Test
+    @DisplayName("allows enrollment outside the window when it's a qualifying life event")
+    void allowsOutsideWindowForQualifyingLifeEvent() {
+        BenefitPlanEnhanced plan = BenefitPlanEnhanced.builder()
+                .planType(BenefitPlanEnhanced.PlanType.HEALTH_INSURANCE)
+                .build();
+        plan.setId(planId);
+        plan.setEnrollmentWindowStart(LocalDate.of(2025, 1, 1));
+        plan.setEnrollmentWindowEnd(LocalDate.of(2025, 12, 31));
+        when(planRepository.findByIdAndTenantId(planId, tenantId)).thenReturn(Optional.of(plan));
+
+        Employee employee = new Employee();
+        employee.setId(employeeId);
+        employee.setJoiningDate(LocalDate.of(2020, 1, 1));
+        when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+        when(enrollmentRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        EnrollmentRequest request = request();
+        request.setQualifyingLifeEvent(true);
+        request.setQleReason("Marriage");
+
+        assertThatCode(() -> service.enrollEmployee(request)).doesNotThrowAnyException();
     }
 }
