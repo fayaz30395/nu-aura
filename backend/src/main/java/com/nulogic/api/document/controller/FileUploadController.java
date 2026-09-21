@@ -39,6 +39,7 @@ import java.util.UUID;
 public class FileUploadController {
 
     private final FileStorageService fileStorageService;
+    private final com.nulogic.infrastructure.storage.FileMetadataRepository fileMetadataRepository;
 
     @PostMapping("/upload")
     @RequiresPermission(Permission.DOCUMENT_UPLOAD)
@@ -193,6 +194,20 @@ public class FileUploadController {
     }
 
     /**
+     * Categories whose {@code entityId} path segment is an employee id, and
+     * therefore subject to the same self/manager/HR ownership scope as the
+     * {@code /upload/document/{employeeId}} and {@code /upload/profile-photo/{employeeId}}
+     * endpoints. Other categories (letters, certificates, reports, attachments)
+     * key {@code entityId} to a different entity (letter id, enrollment id,
+     * candidate id, tenant id, ...), so applying the employee scope check to
+     * them would be incorrect.
+     */
+    private static final Set<String> EMPLOYEE_SCOPED_CATEGORIES = Set.of(
+            FileStorageService.CATEGORY_PROFILE_PHOTO,
+            FileStorageService.CATEGORY_DOCUMENTS,
+            FileStorageService.CATEGORY_PAYSLIPS);
+
+    /**
      * Tenant ownership guard for all read/delete endpoints.
      *
      * <p>After V143, {@code objectName} is the logical path
@@ -201,6 +216,12 @@ public class FileUploadController {
      * {@code drive_file_mapping} provides a defense-in-depth second check; if
      * the row is missing or owned by another tenant, the provider also throws
      * AccessDeniedException.</p>
+     *
+     * <p>IDOR FIX: the tenant check alone let any DOCUMENT_VIEW holder in the
+     * tenant read/delete any other employee's payslip/PAN/Aadhaar document —
+     * upload enforced self/manager/HR scope but download/delete did not. We
+     * now re-derive the entityId from the logical path and apply the same
+     * scope check for employee-scoped categories.</p>
      */
     private void assertTenantOwns(String objectName) {
         if (objectName == null || objectName.isBlank()) {
@@ -211,6 +232,46 @@ public class FileUploadController {
             throw new org.springframework.security.access.AccessDeniedException(
                     "Access denied: file does not belong to your tenant");
         }
+        enforceEmployeeScopeFromObjectName(objectName);
+    }
+
+    private void enforceEmployeeScopeFromObjectName(String objectName) {
+        String[] parts = objectName.split("/");
+        if (parts.length < 3 || !EMPLOYEE_SCOPED_CATEGORIES.contains(parts[1])) {
+            return;
+        }
+        UUID entityId;
+        try {
+            entityId = UUID.fromString(parts[2]);
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+        enforceEmployeeUploadScope(entityId);
+
+        // Sensitive-tier fix: a manager-in-chain passes enforceEmployeeUploadScope above
+        // but must not read/delete bank/PAN/Aadhaar/salary documents — self + HR/admin only.
+        if (isSelfOrElevated(entityId)) {
+            return;
+        }
+        UUID tenantId = com.nulogic.common.security.TenantContext.getCurrentTenant();
+        fileMetadataRepository.findByTenantIdAndStoragePath(tenantId, objectName)
+                .filter(meta -> meta.getCategory() == com.nulogic.infrastructure.storage.FileMetadata.FileCategory.SENSITIVE_DOCUMENT)
+                .ifPresent(meta -> {
+                    throw new org.springframework.security.access.AccessDeniedException(
+                            "You are not authorized to access this employee's sensitive documents");
+                });
+    }
+
+    /** True when the caller may see this employee's sensitive documents: self or HR/admin. */
+    private boolean isSelfOrElevated(UUID targetEmployeeId) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin() || SecurityContext.isHRManager()) {
+            return true;
+        }
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return true;
+        }
+        return SecurityContext.hasPermission(Permission.DOCUMENT_VIEW_ALL);
     }
 
     /**

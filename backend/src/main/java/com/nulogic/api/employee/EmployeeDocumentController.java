@@ -45,6 +45,15 @@ public class EmployeeDocumentController {
 
     private static final String ENTITY_TYPE_EMPLOYEE = "EMPLOYEE";
 
+    /**
+     * documentType labels (case-insensitive substring match) that are treated as
+     * sensitive: bank/PAN/Aadhaar/salary documents. These get {@link
+     * FileMetadata.FileCategory#SENSITIVE_DOCUMENT}, which excludes manager-in-chain
+     * access — only the employee themself or HR/admin can view/download them.
+     */
+    private static final Set<String> SENSITIVE_DOCUMENT_KEYWORDS = Set.of(
+            "PAN", "AADHAAR", "BANK", "SALARY");
+
     private final FileStorageService fileStorageService;
     private final FileMetadataRepository fileMetadataRepository;
     private final EmployeeRepository employeeRepository;
@@ -63,11 +72,15 @@ public class EmployeeDocumentController {
     public ResponseEntity<List<EmployeeDocumentResponse>> listEmployeeDocuments(
             @Parameter(description = "Employee UUID") @PathVariable("id") UUID employeeId) {
         enforceEmployeeUploadScope(employeeId);
+        // Sensitive-tier fix: a manager-in-chain passes the scope check above but must
+        // not see bank/PAN/Aadhaar/salary documents — only the employee or HR/admin can.
+        boolean excludeSensitive = !isSelfOrElevated(employeeId);
 
         UUID tenantId = TenantContext.getCurrentTenant();
         List<EmployeeDocumentResponse> documents = fileMetadataRepository
                 .findByTenantIdAndEntityTypeAndEntityIdOrderByCreatedAtDesc(tenantId, ENTITY_TYPE_EMPLOYEE, employeeId)
                 .stream()
+                .filter(meta -> !excludeSensitive || meta.getCategory() != FileMetadata.FileCategory.SENSITIVE_DOCUMENT)
                 .map(meta -> new EmployeeDocumentResponse(
                         meta.getId(),
                         meta.getFileName(),
@@ -115,7 +128,7 @@ public class EmployeeDocumentController {
                 .fileSize(result.getSize())
                 .entityType(ENTITY_TYPE_EMPLOYEE)
                 .entityId(employeeId)
-                .category(FileMetadata.FileCategory.EMPLOYEE_DOCUMENT)
+                .category(classifyCategory(documentType))
                 .description(documentType)
                 .build();
         try {
@@ -153,6 +166,30 @@ public class EmployeeDocumentController {
                 .entityId(result.getEntityId())
                 .downloadUrl(fileStorageService.getDownloadUrl(result.getObjectName()))
                 .build());
+    }
+
+    private static FileMetadata.FileCategory classifyCategory(String documentType) {
+        if (documentType != null) {
+            String upper = documentType.toUpperCase();
+            for (String keyword : SENSITIVE_DOCUMENT_KEYWORDS) {
+                if (upper.contains(keyword)) {
+                    return FileMetadata.FileCategory.SENSITIVE_DOCUMENT;
+                }
+            }
+        }
+        return FileMetadata.FileCategory.EMPLOYEE_DOCUMENT;
+    }
+
+    /** True when the caller may see this employee's sensitive documents: self or HR/admin. */
+    private boolean isSelfOrElevated(UUID targetEmployeeId) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin() || SecurityContext.isHRManager()) {
+            return true;
+        }
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
+            return true;
+        }
+        return SecurityContext.hasPermission(Permission.DOCUMENT_VIEW_ALL);
     }
 
     /**

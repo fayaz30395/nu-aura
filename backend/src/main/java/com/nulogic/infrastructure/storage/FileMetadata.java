@@ -60,6 +60,8 @@ public class FileMetadata extends TenantAware {
         CERTIFICATE,
         PAYSLIP,
         LEAVE_ATTACHMENT,
-        OTHER
+        OTHER,
+        /** Bank/PAN/Aadhaar/salary-proof documents: self + HR/admin only, manager-in-chain excluded. */
+        SENSITIVE_DOCUMENT
     }
 }

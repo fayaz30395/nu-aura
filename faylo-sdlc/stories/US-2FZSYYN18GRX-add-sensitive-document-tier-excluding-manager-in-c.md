@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** hard-gate
-> **Status:** Draft
+> **Status:** Verified
 > **Created:** 2026-09-21
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** Sensitive FileCategory tier restricted to HR+self only, manager-in-chain excluded
   - **Verify:** shell mvn -q -DskipTests compile
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-21)

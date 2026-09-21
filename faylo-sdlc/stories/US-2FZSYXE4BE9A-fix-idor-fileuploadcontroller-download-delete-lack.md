@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** hard-gate
-> **Status:** Draft
+> **Status:** Verified
 > **Created:** 2026-09-21
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** download/delete re-derives entityId from FileMetadata and applies same self/manager/HR scope check as upload
   - **Verify:** shell mvn -q -DskipTests compile
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-21)
