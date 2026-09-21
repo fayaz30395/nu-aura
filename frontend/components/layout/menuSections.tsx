@@ -358,7 +358,10 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           ],
         },
         {
-          id: 'shift-management', label: 'Shift Management', icon: icon.timer, href: '/shifts',
+          // No static href/requiredPermission: NavPanel falls back to the first
+          // visible child's href, and a user without SHIFT_VIEW but with
+          // My Schedule access should land there, not on the gated /shifts page.
+          id: 'shift-management', label: 'Shift Management', icon: icon.timer,
           children: [
             {
               id: 'shift-dashboard',
