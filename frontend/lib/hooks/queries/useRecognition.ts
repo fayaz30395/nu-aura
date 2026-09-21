@@ -154,3 +154,50 @@ export function useRemoveReaction() {
     },
   });
 }
+
+// ─── Comment Hooks ─────────────────────────────────────────────────────────
+
+export function useRecognitionComments(recognitionId: string, enabled: boolean = true) {
+  return useQuery({
+    queryKey: [...recognitionKeys.all, 'comments', recognitionId] as const,
+    queryFn: () => recognitionService.getComments(recognitionId),
+    enabled: enabled && !!recognitionId,
+    staleTime: 60 * 1000,
+  });
+}
+
+export function useAddRecognitionComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({recognitionId, content}: { recognitionId: string; content: string }) =>
+      recognitionService.addComment(recognitionId, content),
+    onSuccess: (_data, {recognitionId}) => {
+      queryClient.invalidateQueries({queryKey: [...recognitionKeys.all, 'comments', recognitionId]});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.feed()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.received()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.given()});
+    },
+    onError: () => {
+      notifications.show({title: 'Error', message: 'Failed to post comment', color: 'red'});
+    },
+  });
+}
+
+export function useDeleteRecognitionComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({recognitionId, commentId}: { recognitionId: string; commentId: string }) =>
+      recognitionService.deleteComment(recognitionId, commentId),
+    onSuccess: (_data, {recognitionId}) => {
+      queryClient.invalidateQueries({queryKey: [...recognitionKeys.all, 'comments', recognitionId]});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.feed()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.received()});
+      queryClient.invalidateQueries({queryKey: recognitionKeys.given()});
+    },
+    onError: () => {
+      notifications.show({title: 'Error', message: 'Failed to delete comment', color: 'red'});
+    },
+  });
+}

@@ -18,6 +18,7 @@ import {
   Sparkles,
   Star,
   ThumbsUp,
+  Trash2,
   TrendingUp,
   Trophy,
   Users,
@@ -42,17 +43,21 @@ import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import type {RecognitionRequest} from '@/lib/types/grow/recognition';
 import {ReactionType, RecognitionCategory, RecognitionType} from '@/lib/types/grow/recognition';
 import {
+  useAddRecognitionComment,
   useAddReaction,
+  useDeleteRecognitionComment,
   useGiveRecognition,
   useLeaderboard,
   useMyGivenRecognitions,
   useMyPoints,
   useMyReceivedRecognitions,
   usePublicFeed,
+  useRecognitionComments,
   useRemoveReaction,
 } from '@/lib/hooks/queries/useRecognition';
 import {formatDate} from '@/lib/utils/format/date';
 import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
+import {useAuth} from '@/lib/hooks/useAuth';
 
 // Zod schema for recognition form
 const recognitionFormSchema = z.object({
@@ -125,7 +130,81 @@ const getTypeColor = (type: RecognitionType) => {
   }
 };
 
+function RecognitionCommentSection({
+                                      recognitionId,
+                                      currentEmployeeId,
+                                    }: {
+  recognitionId: string;
+  currentEmployeeId?: string;
+}) {
+  const [text, setText] = useState('');
+  const {data: commentsData, isLoading} = useRecognitionComments(recognitionId);
+  const addCommentMutation = useAddRecognitionComment();
+  const deleteCommentMutation = useDeleteRecognitionComment();
+  const comments = commentsData?.content || [];
+
+  const handleSend = () => {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    addCommentMutation.mutate(
+      {recognitionId, content: trimmed},
+      {onSuccess: () => setText('')}
+    );
+  };
+
+  return (
+    <div className="mt-4 pt-4 border-t border-[var(--border-main)]">
+      <div className="flex gap-2">
+        <input
+          type="text"
+          placeholder="Write a comment..."
+          aria-label="Write a comment"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSend();
+          }}
+          className="flex-1 px-4 py-1.5 text-sm input-skeuo bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
+        />
+        <button
+          aria-label="Send comment"
+          onClick={handleSend}
+          disabled={!text.trim() || addCommentMutation.isPending}
+          className="px-4 py-1.5 bg-accent-700 text-white text-sm rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+        >
+          <Send className="h-3.5 w-3.5"/>
+        </button>
+      </div>
+
+      {isLoading ? (
+        <p className="text-caption mt-2">Loading comments...</p>
+      ) : comments.length > 0 && (
+        <div className="mt-3 space-y-2">
+          {comments.map((comment) => (
+            <div key={comment.id} className="flex items-start justify-between gap-2 text-sm">
+              <p className="text-[var(--text-secondary)]">
+                <span className="font-medium text-[var(--text-primary)]">{comment.employeeName}</span>{' '}
+                {comment.content}
+              </p>
+              {comment.employeeId === currentEmployeeId && (
+                <button
+                  aria-label="Delete comment"
+                  onClick={() => deleteCommentMutation.mutate({recognitionId, commentId: comment.id})}
+                  className="text-[var(--text-muted)] hover:text-danger-500 transition-colors flex-shrink-0"
+                >
+                  <Trash2 className="h-3.5 w-3.5"/>
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function RecognitionPage() {
+  const {user} = useAuth();
   const [activeTab, setActiveTab] = useState<'feed' | 'received' | 'given'>('feed');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -143,7 +222,6 @@ export default function RecognitionPage() {
   const [showReactionPicker, setShowReactionPicker] = useState<string | null>(null);
   // Comment state
   const [expandedComments, setExpandedComments] = useState<Set<string>>(new Set());
-  const [commentText, setCommentText] = useState<Record<string, string>>({});
 
   const reactionEmojis: { type: ReactionType; emoji: string; label: string }[] = [
     {type: ReactionType.LIKE, emoji: '\uD83D\uDC4D', label: 'Like'},
@@ -516,36 +594,10 @@ export default function RecognitionPage() {
 
                           {/* Comment Section */}
                           {expandedComments.has(recognition.id) && (
-                            <div className="mt-4 pt-4 border-t border-[var(--border-main)]">
-                              <div className="flex gap-2">
-                                <input
-                                  type="text"
-                                  placeholder="Write a comment..."
-                                  aria-label="Write a comment"
-                                  value={commentText[recognition.id] || ''}
-                                  onChange={(e) =>
-                                    setCommentText((prev) => ({
-                                      ...prev,
-                                      [recognition.id]: e.target.value,
-                                    }))
-                                  }
-                                  className="flex-1 px-4 py-1.5 text-sm input-skeuo bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
-                                />
-                                <button
-                                  aria-label="Send comment"
-                                  className="px-4 py-1.5 bg-accent-700 text-white text-sm rounded-lg hover:bg-accent-800 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                                  disabled={!commentText[recognition.id]?.trim()}
-                                >
-                                  <Send className="h-3.5 w-3.5"/>
-                                </button>
-                              </div>
-                              {recognition.commentsCount > 0 && (
-                                <p className="text-caption mt-2">
-                                  {recognition.commentsCount} comment{recognition.commentsCount !== 1 ? 's' : ''} - view
-                                  all
-                                </p>
-                              )}
-                            </div>
+                            <RecognitionCommentSection
+                              recognitionId={recognition.id}
+                              currentEmployeeId={user?.employeeId}
+                            />
                           )}
                         </div>
                       </div>

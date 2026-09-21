@@ -6,6 +6,7 @@ import type {
   ReactionType,
   Recognition,
   RecognitionBadge,
+  RecognitionComment,
   RecognitionRequest,
 } from '../../types/grow/recognition';
 
@@ -82,5 +83,21 @@ export const recognitionService = {
   async getUpcomingMilestones(days = 7): Promise<Milestone[]> {
     const response = await apiClient.get<Milestone[]>(`${BASE_URL}/milestones/upcoming`, {params: {days}});
     return response.data;
+  },
+
+  async addComment(recognitionId: string, content: string): Promise<RecognitionComment> {
+    const response = await apiClient.post<RecognitionComment>(`${BASE_URL}/${recognitionId}/comments`, {content});
+    return response.data;
+  },
+
+  async getComments(recognitionId: string, page = 0, size = 20): Promise<PagedResponse<RecognitionComment>> {
+    const response = await apiClient.get<PagedResponse<RecognitionComment>>(
+      `${BASE_URL}/${recognitionId}/comments`, {params: {page, size}}
+    );
+    return response.data;
+  },
+
+  async deleteComment(recognitionId: string, commentId: string): Promise<void> {
+    await apiClient.delete(`${BASE_URL}/${recognitionId}/comments/${commentId}`);
   },
 };

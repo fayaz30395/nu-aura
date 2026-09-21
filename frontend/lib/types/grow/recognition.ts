@@ -115,3 +115,12 @@ export interface EngagementDashboard {
   recognitionsByCategory: Record<string, number>;
   recentRecognitions: Recognition[];
 }
+
+export interface RecognitionComment {
+  id: string;
+  recognitionId: string;
+  employeeId: string;
+  employeeName?: string;
+  content: string;
+  commentedAt: string;
+}
