@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** async-review
-> **Status:** Blocked
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** BenefitPlanEnhancedRequest/Response expose enrollmentWindowStart/End and admin plan form can set them
   - **Verify:** manual
-  - **Verified:** pending
+  - **Verified:** manual: Fayaz 2026-09-21
