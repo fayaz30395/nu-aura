@@ -110,9 +110,9 @@ const DEMO_ACCOUNTS: DemoAccount[] = IS_DEMO_MODE
     {
       name: 'Saran V',
       email: 'saran@nulogic.io',
-      role: 'HR_ADMIN',
-      department: 'HR',
-      level: 'HR Admin',
+      role: 'EMPLOYEE',
+      department: 'Engineering',
+      level: 'Technology Lead',
       color: 'from-accent-600 to-accent-700'
     },
     {
