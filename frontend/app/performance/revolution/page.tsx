@@ -13,6 +13,10 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {useOKRGraph, usePerformanceSpider} from '@/lib/hooks/queries/useOkr';
+import {useMyReceivedRecognitions} from '@/lib/hooks/queries/useRecognition';
+import {useSkillGaps} from '@/lib/hooks/queries/useLearning';
+import {getInitials} from '@/lib/utils';
+import {formatRelative} from '@/lib/utils/format/date';
 
 const PerformanceSpiderChart = dynamic(
   () => import('./PerformanceSpiderChart'),
@@ -25,9 +29,15 @@ export default function PerformanceRevolutionPage() {
   const currentUserId = user?.employeeId || 'me';
   const okrGraphQuery = useOKRGraph();
   const performanceSpiderQuery = usePerformanceSpider(currentUserId);
+  const receivedRecognitionsQuery = useMyReceivedRecognitions(0, 3);
+  const skillGapsQuery = useSkillGaps(currentUserId, currentUserId !== 'me');
 
   const graphData = okrGraphQuery.data || null;
   const spiderData = performanceSpiderQuery.data || null;
+  const recentRecognitions = receivedRecognitionsQuery.data?.content || [];
+  const topGap = skillGapsQuery.data?.gaps?.[0];
+  const topRecommendedCourse = topGap?.recommendedCourses?.[0];
+  const latestBadgeRecognition = recentRecognitions.find((r) => r.badgeName);
 
   return (
     <AppLayout activeMenuItem="performance">
@@ -174,26 +184,32 @@ export default function PerformanceRevolutionPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex gap-4 group cursor-pointer">
-                    <div
-                      className="flex-shrink-0 w-8 h-8 rounded-full bg-warning-100 flex items-center justify-center text-xs font-bold text-warning-700">
-                      {i === 1 ? 'JD' : i === 2 ? 'AL' : 'KS'}
-                    </div>
-                    <div>
-                      <h5 className="text-xs font-bold group-hover:text-accent-700 transition-colors">Amazing Sprint
-                        Finish!</h5>
-                      <p className="text-caption line-clamp-2">&quot;Thanks to the team for pushing through the last few
-                        bugs before release.&quot;</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[8px] text-[var(--text-muted)] uppercase font-bold">2 hours ago</span>
-                        <div className="flex items-center gap-0.5 text-[8px] text-warning-600 font-bold">
-                          <Star className="h-2 w-2 fill-current"/> +5 Karma
+                {recentRecognitions.length === 0 ? (
+                  <p className="text-caption text-center py-4">No recognitions yet</p>
+                ) : (
+                  recentRecognitions.map((r) => (
+                    <div key={r.id} className="flex gap-4 group cursor-pointer">
+                      <div
+                        className="flex-shrink-0 w-8 h-8 rounded-full bg-warning-100 flex items-center justify-center text-xs font-bold text-warning-700">
+                        {getInitials(r.giverName || 'A')}
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold group-hover:text-accent-700 transition-colors">{r.title}</h5>
+                        {r.message && (
+                          <p className="text-caption line-clamp-2">&quot;{r.message}&quot;</p>
+                        )}
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[8px] text-[var(--text-muted)] uppercase font-bold">
+                            {formatRelative(r.recognizedAt)}
+                          </span>
+                          <div className="flex items-center gap-0.5 text-[8px] text-warning-600 font-bold">
+                            <Star className="h-2 w-2 fill-current"/> +{r.pointsAwarded} Karma
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
                 <Button
                   variant="ghost"
                   onClick={() => router.push('/recognition')}
@@ -217,26 +233,42 @@ export default function PerformanceRevolutionPage() {
               <CardContent>
                 <div className="grid grid-cols-2 gap-4">
                   <div
-                    className="p-4 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-card)] border border-accent-100 dark:border-accent-900/50">
+                    onClick={() => topRecommendedCourse && router.push(`/learning/courses/${topRecommendedCourse.courseId}`)}
+                    className={`p-4 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-card)] border border-accent-100 dark:border-accent-900/50 ${topRecommendedCourse ? 'cursor-pointer' : ''}`}
+                  >
                     <h4 className="text-xs font-bold text-accent-600 uppercase tracking-wider mb-2">Growth
                       Opportunity</h4>
-                    <p className="text-sm font-semibold mb-1">Advanced Architecture Workshop</p>
-                    <p className="text-caption">Based on your &quot;System Design&quot; skill Gap</p>
-                    <div className="mt-4 row-between">
-                      <span className="text-xs font-bold text-[var(--text-muted)]">Estimated Effort: 4h</span>
-                      <ChevronRight className="h-4 w-4 text-accent-400"/>
-                    </div>
+                    {topRecommendedCourse && topGap ? (
+                      <>
+                        <p className="text-sm font-semibold mb-1">{topRecommendedCourse.title}</p>
+                        <p className="text-caption">Based on your &quot;{topGap.skillName}&quot; skill gap</p>
+                        <div className="mt-4 row-between">
+                          <span className="text-xs font-bold text-[var(--text-muted)]">{topRecommendedCourse.difficulty}</span>
+                          <ChevronRight className="h-4 w-4 text-accent-400"/>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-caption">No skill gaps identified right now</p>
+                    )}
                   </div>
                   <div
                     className="p-4 bg-[var(--bg-input)] rounded-lg shadow-[var(--shadow-card)] border border-accent-100 dark:border-accent-900/50">
                     <h4 className="text-xs font-bold text-success-600 uppercase tracking-wider mb-2">Peak
                       Performance</h4>
-                    <p className="text-sm font-semibold mb-1">Consistency King</p>
-                    <p className="text-caption">9 weeks of meeting all Weekly Commitments</p>
-                    <div className="mt-4 row-between">
-                      <span className="text-xs font-bold text-[var(--text-muted)]">Awarded last Friday</span>
-                      <Award className="h-4 w-4 text-warning-500"/>
-                    </div>
+                    {latestBadgeRecognition ? (
+                      <>
+                        <p className="text-sm font-semibold mb-1">{latestBadgeRecognition.badgeName}</p>
+                        <p className="text-caption">{latestBadgeRecognition.title}</p>
+                        <div className="mt-4 row-between">
+                          <span className="text-xs font-bold text-[var(--text-muted)]">
+                            Awarded {formatRelative(latestBadgeRecognition.recognizedAt)}
+                          </span>
+                          <Award className="h-4 w-4 text-warning-500"/>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-caption">No badges earned yet</p>
+                    )}
                   </div>
                 </div>
               </CardContent>
