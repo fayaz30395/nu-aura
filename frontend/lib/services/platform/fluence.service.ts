@@ -445,11 +445,15 @@ class FluenceService {
     query: string,
     type?: 'WIKI' | 'BLOG' | 'TEMPLATE',
     page: number = 0,
-    size: number = 20
+    size: number = 20,
+    visibility?: string
   ): Promise<FluenceSearchResponse> {
     const params: Record<string, unknown> = {query, page, size};
     if (type) {
       params.type = type;
+    }
+    if (visibility) {
+      params.visibility = visibility;
     }
     const response = await apiClient.get<FluenceSearchResponse>('/fluence/search', {
       params,

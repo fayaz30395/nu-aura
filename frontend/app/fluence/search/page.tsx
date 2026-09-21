@@ -137,7 +137,8 @@ export default function SearchPage() {
     selectedType,
     0,
     50,
-    debouncedQuery.length > 1
+    debouncedQuery.length > 1,
+    selectedVisibility
   );
 
   const results: SearchResult[] = useMemo(

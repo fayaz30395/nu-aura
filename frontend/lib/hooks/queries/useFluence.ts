@@ -74,8 +74,8 @@ export const fluenceKeys = {
     [...fluenceKeys.comments(), contentType, contentId] as const,
   // Search
   search: () => [...fluenceKeys.all, 'search'] as const,
-  searchResults: (query: string, type?: string) =>
-    [...fluenceKeys.search(), {query, type}] as const,
+  searchResults: (query: string, type?: string, visibility?: string) =>
+    [...fluenceKeys.search(), {query, type, visibility}] as const,
   // Favorites
   favorites: () => [...fluenceKeys.all, 'favorites'] as const,
   // View tracking
@@ -320,11 +320,12 @@ export function useFluenceSearch(
   type?: 'WIKI' | 'BLOG' | 'TEMPLATE',
   page: number = 0,
   size: number = 20,
-  enabled: boolean = true
+  enabled: boolean = true,
+  visibility?: string
 ) {
   return useQuery({
-    queryKey: fluenceKeys.searchResults(query, type),
-    queryFn: () => fluenceService.searchFluence(query, type, page, size),
+    queryKey: fluenceKeys.searchResults(query, type, visibility),
+    queryFn: () => fluenceService.searchFluence(query, type, page, size, visibility),
     enabled: enabled && query.length > 0,
     staleTime: 30 * 1000, // 30 seconds for search
   });
