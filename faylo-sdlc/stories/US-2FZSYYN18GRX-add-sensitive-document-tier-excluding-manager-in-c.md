@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** hard-gate
-> **Status:** Verified
+> **Status:** Done
 > **Created:** 2026-09-21
 > **Created-by:** faylo new
 
