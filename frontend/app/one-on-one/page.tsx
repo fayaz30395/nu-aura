@@ -33,6 +33,7 @@ import {format as formatFns} from 'date-fns';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonStatCard} from '@/components/ui/Skeleton';
@@ -859,14 +860,16 @@ export default function OneOnOnePage() {
                               className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
                             />
                             <div className="grid grid-cols-2 gap-4">
-                              <input
-                                id="action-assignee-id"
-                                aria-label="Assignee Employee ID"
-                                {...actionForm.register('assigneeId')}
-                                placeholder="Assignee Employee ID"
-                                aria-invalid={actionForm.formState.errors.assigneeId ? 'true' : 'false'}
-                                aria-describedby={actionForm.formState.errors.assigneeId ? 'action-assignee-id-error' : undefined}
-                                className="px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] text-sm focus:outline-none focus:ring-2 focus:ring-accent-700"
+                              <Controller
+                                control={actionForm.control}
+                                name="assigneeId"
+                                render={({field}) => (
+                                  <EmployeeSearchAutocomplete
+                                    value={field.value ? {id: field.value, name: field.value} : null}
+                                    onChange={(employee) => field.onChange(employee?.id || '')}
+                                    placeholder="Search for an assignee..."
+                                  />
+                                )}
                               />
                               {actionForm.formState.errors.assigneeId && (
                                 <p
@@ -1369,18 +1372,21 @@ export default function OneOnOnePage() {
 
               {/* Participant */}
               <div>
-                <label htmlFor="one-on-one-employee-id" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Participant (Employee ID)
-                  *</label>
-                <input
-                  id="one-on-one-employee-id"
-                  {...scheduleForm.register('employeeId')}
-                  placeholder="Enter employee ID"
-                  aria-invalid={scheduleForm.formState.errors.employeeId ? 'true' : 'false'}
-                  aria-describedby={scheduleForm.formState.errors.employeeId ? 'one-on-one-employee-id-error' : undefined}
-                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                <Controller
+                  control={scheduleForm.control}
+                  name="employeeId"
+                  render={({field}) => (
+                    <EmployeeSearchAutocomplete
+                      label="Participant *"
+                      value={field.value ? {id: field.value, name: field.value} : null}
+                      onChange={(employee) => field.onChange(employee?.id || '')}
+                      placeholder="Search for a participant..."
+                      required
+                    />
+                  )}
                 />
                 {scheduleForm.formState.errors.employeeId && (
-                  <p id="one-on-one-employee-id-error" className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.employeeId.message}</p>
+                  <p className="text-xs text-danger-500 mt-1">{scheduleForm.formState.errors.employeeId.message}</p>
                 )}
               </div>
 

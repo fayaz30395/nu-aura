@@ -1,11 +1,12 @@
 'use client';
 
 import {useId, useState} from 'react';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
 import {notifications} from '@mantine/notifications';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useCreateFeedback,
@@ -56,6 +57,7 @@ export default function FeedbackPage() {
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: {errors, isSubmitting},
@@ -338,15 +340,18 @@ export default function FeedbackPage() {
                 <form onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="feedback-recipient-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Recipient Employee ID *
-                      </label>
-                      <input
-                        id="feedback-recipient-id"
-                        type="text"
-                        placeholder="Enter employee ID"
-                        {...register('recipientId')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+                      <Controller
+                        control={control}
+                        name="recipientId"
+                        render={({field}) => (
+                          <EmployeeSearchAutocomplete
+                            label="Recipient *"
+                            value={field.value ? {id: field.value, name: field.value} : null}
+                            onChange={(employee) => field.onChange(employee?.id || '')}
+                            placeholder="Search for a recipient..."
+                            required
+                          />
+                        )}
                       />
                       {errors.recipientId && (
                         <p className="text-danger-500 text-sm mt-1">{errors.recipientId.message}</p>
