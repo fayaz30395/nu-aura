@@ -46,6 +46,8 @@ public class BenefitPlanEnhancedRequest {
     private String eligibleDepartments;
     private Boolean dependentsCovered;
     private Integer maxDependents;
+    private LocalDate enrollmentWindowStart;
+    private LocalDate enrollmentWindowEnd;
 
     // Health insurance specific
     private Boolean maternityBenefits;

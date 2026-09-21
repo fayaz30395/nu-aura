@@ -144,9 +144,15 @@ class BenefitEnhancedServiceLifecycleTest {
         void createsPlan() {
             when(planRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-            BenefitPlanEnhancedResponse response = service.createPlan(planRequest());
+            BenefitPlanEnhancedRequest request = planRequest();
+            request.setEnrollmentWindowStart(LocalDate.of(2026, 1, 1));
+            request.setEnrollmentWindowEnd(LocalDate.of(2026, 1, 31));
+
+            BenefitPlanEnhancedResponse response = service.createPlan(request);
 
             assertThat(response.getName()).isEqualTo("Health Plan");
+            assertThat(response.getEnrollmentWindowStart()).isEqualTo(LocalDate.of(2026, 1, 1));
+            assertThat(response.getEnrollmentWindowEnd()).isEqualTo(LocalDate.of(2026, 1, 31));
             verify(planRepository).save(any(BenefitPlanEnhanced.class));
         }
 
@@ -158,10 +164,14 @@ class BenefitEnhancedServiceLifecycleTest {
 
             BenefitPlanEnhancedRequest request = planRequest();
             request.setName("Updated Plan");
+            request.setEnrollmentWindowStart(LocalDate.of(2026, 2, 1));
+            request.setEnrollmentWindowEnd(LocalDate.of(2026, 2, 28));
 
             BenefitPlanEnhancedResponse response = service.updatePlan(planId, request);
 
             assertThat(response.getName()).isEqualTo("Updated Plan");
+            assertThat(response.getEnrollmentWindowStart()).isEqualTo(LocalDate.of(2026, 2, 1));
+            assertThat(response.getEnrollmentWindowEnd()).isEqualTo(LocalDate.of(2026, 2, 28));
         }
 
         @Test

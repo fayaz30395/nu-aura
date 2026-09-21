@@ -43,6 +43,8 @@ public class BenefitPlanEnhancedResponse {
     private String eligibleDepartments;
     private boolean dependentsCovered;
     private int maxDependents;
+    private LocalDate enrollmentWindowStart;
+    private LocalDate enrollmentWindowEnd;
 
     // Health insurance specific
     private boolean maternityBenefits;
@@ -109,6 +111,8 @@ public class BenefitPlanEnhancedResponse {
                 .eligibleDepartments(plan.getEligibleDepartments())
                 .dependentsCovered(plan.isDependentsCovered())
                 .maxDependents(plan.getMaxDependents())
+                .enrollmentWindowStart(plan.getEnrollmentWindowStart())
+                .enrollmentWindowEnd(plan.getEnrollmentWindowEnd())
                 .maternityBenefits(plan.isMaternityBenefits())
                 .maternityCoverage(plan.getMaternityCoverage())
                 .preExistingCovered(plan.isPreExistingCovered())

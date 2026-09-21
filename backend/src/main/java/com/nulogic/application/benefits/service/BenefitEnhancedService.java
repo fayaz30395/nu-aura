@@ -77,6 +77,8 @@ public class BenefitEnhancedService {
                 .eligibleDepartments(request.getEligibleDepartments())
                 .dependentsCovered(Boolean.TRUE.equals(request.getDependentsCovered()))
                 .maxDependents(request.getMaxDependents() != null ? request.getMaxDependents() : 0)
+                .enrollmentWindowStart(request.getEnrollmentWindowStart())
+                .enrollmentWindowEnd(request.getEnrollmentWindowEnd())
                 .maternityBenefits(Boolean.TRUE.equals(request.getMaternityBenefits()))
                 .maternityCoverage(request.getMaternityCoverage())
                 .preExistingCovered(Boolean.TRUE.equals(request.getPreExistingCovered()))
@@ -137,6 +139,8 @@ public class BenefitEnhancedService {
         plan.setEligibleDepartments(request.getEligibleDepartments());
         if (request.getDependentsCovered() != null) plan.setDependentsCovered(request.getDependentsCovered());
         if (request.getMaxDependents() != null) plan.setMaxDependents(request.getMaxDependents());
+        plan.setEnrollmentWindowStart(request.getEnrollmentWindowStart());
+        plan.setEnrollmentWindowEnd(request.getEnrollmentWindowEnd());
         if (request.getIsActive() != null) plan.setActive(request.getIsActive());
         plan.setEffectiveFrom(request.getEffectiveFrom());
         plan.setEffectiveTo(request.getEffectiveTo());
