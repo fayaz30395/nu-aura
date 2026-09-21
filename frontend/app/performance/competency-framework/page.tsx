@@ -99,15 +99,22 @@ function ReviewCompetencyPanel({
                                  reviewId,
                                  employeeName,
                                  onAddClick,
+                                 categoryFilter,
                                }: {
   reviewId: string;
   employeeName: string;
   onAddClick: (reviewId: string) => void;
+  categoryFilter: CompetencyCategory | '';
 }) {
   const [expanded, setExpanded] = useState(false);
-  const {data: competencies = [], isLoading, refetch} = useReviewCompetencies(reviewId, expanded);
+  const {data: allCompetencies = [], isLoading, refetch} = useReviewCompetencies(reviewId, expanded);
   const deleteCompetencyMutation = useDeleteCompetency();
   const [deleteTarget, setDeleteTarget] = useState<ReviewCompetency | null>(null);
+
+  const competencies = useMemo(
+    () => (categoryFilter ? allCompetencies.filter((c) => c.category === categoryFilter) : allCompetencies),
+    [allCompetencies, categoryFilter]
+  );
 
   const grouped = useMemo(() => {
     const map: Record<string, ReviewCompetency[]> = {};
@@ -446,21 +453,11 @@ export default function CompetencyFrameworkPage() {
               <div>
                 <h1 className="text-xl font-bold">Competency Framework</h1>
                 <p className="text-[var(--text-muted)] mt-1 text-sm">
-                  Manage competency ratings for employees within a review cycle
+                  Manage competency ratings for employees within a review cycle. Expand a
+                  review below and use its Add Competency button to add a rating for that
+                  employee.
                 </p>
               </div>
-              <PermissionGate permission={Permissions.REVIEW_CREATE}>
-                <button
-                  onClick={() =>
-                    filteredReviews[0] && setAddModalReviewId(filteredReviews[0].id)
-                  }
-                  disabled={filteredReviews.length === 0}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent-700 text-white text-sm font-medium hover:bg-accent-800 disabled:opacity-40 transition-colors cursor-pointer"
-                >
-                  <Plus size={16}/>
-                  Add Competency
-                </button>
-              </PermissionGate>
             </div>
 
             {/* Category Legend */}
@@ -588,6 +585,7 @@ export default function CompetencyFrameworkPage() {
                         : `Review ${review.id.slice(0, 8)}`
                     }
                     onAddClick={(rid) => setAddModalReviewId(rid)}
+                    categoryFilter={categoryFilter}
                   />
                 ))}
               </div>
