@@ -27,6 +27,7 @@ import {CompanyFeed} from '@/components/dashboard/CompanyFeed';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {attendanceService} from '@/lib/services/hrms/attendance.service';
 import {useSelfServiceDashboard} from '@/lib/hooks/queries';
+import {useLeaveBalances} from '@/lib/hooks/queries/useHome';
 import {useQueryClient} from '@tanstack/react-query';
 import {createLogger} from '@/lib/utils/logger';
 import {MOTION_EASE} from '@/lib/animation';
@@ -61,6 +62,10 @@ export default function MyDashboardPage() {
 
   const {data: dashboard, isLoading: queryLoading} = useSelfServiceDashboard(
     user?.employeeId || '',
+    hasHydrated && !!user?.employeeId
+  );
+  const {data: leaveBalances} = useLeaveBalances(
+    user?.employeeId || null,
     hasHydrated && !!user?.employeeId
   );
 
@@ -297,18 +302,14 @@ export default function MyDashboardPage() {
             >
               <LeaveBalanceWidget
                 leaveBalances={
-                  dashboard?.leaveBalances
-                    ? Object.entries(dashboard.leaveBalances).map(([name, available], idx) => {
-                      const avail = available as number;
-                      const total = avail + 2;
-                      return {
-                        leaveTypeId: String(idx),
-                        leaveName: name,
-                        available: avail,
-                        total,
-                        used: total - avail,
-                      };
-                    })
+                  leaveBalances
+                    ? leaveBalances.map((b) => ({
+                      leaveTypeId: b.leaveTypeId,
+                      leaveName: b.leaveTypeName || b.leaveTypeId,
+                      available: b.available,
+                      total: b.openingBalance + b.accrued,
+                      used: b.used,
+                    }))
                     : undefined
                 }
               />
