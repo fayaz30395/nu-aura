@@ -6,12 +6,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {
   AlertCircle,
-  Briefcase,
-  Building,
-  Calendar,
   CheckCircle,
   Clock,
-  DollarSign,
   Edit,
   Eye,
   FileText,
@@ -46,7 +42,6 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {useRouter} from 'next/navigation';
 import {extractContent} from '@/lib/utils/type-guards';
 import {createLogger} from '@/lib/utils/logger';
-import {formatCurrency} from '@/lib/utils';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
 
 const log = createLogger('OffboardingPage');
@@ -159,7 +154,6 @@ export default function OffboardingPage() {
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showDetailModal, setShowDetailModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedProcess, setSelectedProcess] = useState<ExitProcess | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -879,145 +873,6 @@ export default function OffboardingPage() {
               </PermissionGate>
             </ModalFooter>
           </form>
-        </Modal>
-
-        {/* Exit Process Detail Modal */}
-        <Modal isOpen={showDetailModal} onClose={() => setShowDetailModal(false)} size="lg">
-          <ModalHeader>
-            <div className="flex items-center gap-4">
-              <div className="rounded-full bg-[var(--bg-secondary)] p-2">
-                <User className="h-6 w-6 text-[var(--text-secondary)]"/>
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-[var(--text-primary)]">
-                  {selectedProcess?.employeeName || 'Employee'}
-                </h2>
-                <p className="text-body-muted">Exit Process Details</p>
-              </div>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            {selectedProcess && (
-              <div className="space-y-6">
-                <div className="flex flex-wrap gap-2">
-                  <span className={getStatusColor(selectedProcess.status)}>
-                    {formatStatusLabel(selectedProcess.status)}
-                  </span>
-                  <span className={getExitTypeColor(selectedProcess.exitType)}>
-                    {getExitTypeLabel(selectedProcess.exitType)}
-                  </span>
-                  {selectedProcess.rehireEligible && (
-                    <span className="badge-status status-success">
-                      Rehire Eligible
-                    </span>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 card-aura">
-                    <p className="text-body-muted flex items-center gap-2">
-                      <Calendar className="h-4 w-4"/>
-                      Resignation Date
-                    </p>
-                    <p className="text-lg font-semibold text-[var(--text-primary)]">
-                      {formatDate(selectedProcess.resignationDate)}
-                    </p>
-                  </div>
-                  <div className="p-4 card-aura">
-                    <p className="text-body-muted flex items-center gap-2">
-                      <Calendar className="h-4 w-4"/>
-                      Last Working Day
-                    </p>
-                    <p className="text-lg font-semibold text-[var(--text-primary)]">
-                      {formatDate(selectedProcess.lastWorkingDate)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 card-aura">
-                    <p className="text-body-muted flex items-center gap-2">
-                      <Clock className="h-4 w-4"/>
-                      Notice Period
-                    </p>
-                    <p className="text-lg font-semibold text-[var(--text-primary)]">
-                      {selectedProcess.noticePeriodServed || 0} / {selectedProcess.noticePeriodDays || 0} days
-                    </p>
-                  </div>
-                  {selectedProcess.finalSettlementAmount && (
-                    <div className="p-4 card-aura">
-                      <p className="text-body-muted flex items-center gap-2">
-                        <DollarSign className="h-4 w-4"/>
-                        Settlement Amount
-                      </p>
-                      <p className="text-lg font-semibold text-[var(--text-primary)]">
-                        {formatCurrency(selectedProcess.finalSettlementAmount)}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {selectedProcess.reasonForLeaving && (
-                  <div>
-                    <h4 className="text-sm font-medium text-[var(--text-muted)] mb-1">Reason for Leaving</h4>
-                    <p className="text-[var(--text-secondary)]">
-                      {selectedProcess.reasonForLeaving}
-                    </p>
-                  </div>
-                )}
-
-                {(selectedProcess.newCompany || selectedProcess.newDesignation) && (
-                  <div className="grid grid-cols-2 gap-4">
-                    {selectedProcess.newCompany && (
-                      <div className="p-4 card-aura">
-                        <p className="text-body-muted flex items-center gap-2">
-                          <Building className="h-4 w-4"/>
-                          New Company
-                        </p>
-                        <p className="text-lg font-semibold text-[var(--text-primary)]">
-                          {selectedProcess.newCompany}
-                        </p>
-                      </div>
-                    )}
-                    {selectedProcess.newDesignation && (
-                      <div className="p-4 card-aura">
-                        <p className="text-body-muted flex items-center gap-2">
-                          <Briefcase className="h-4 w-4"/>
-                          New Designation
-                        </p>
-                        <p className="text-lg font-semibold text-[var(--text-primary)]">
-                          {selectedProcess.newDesignation}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {selectedProcess.notes && (
-                  <div>
-                    <h4 className="text-sm font-medium text-[var(--text-muted)] mb-1">Notes</h4>
-                    <p className="text-[var(--text-secondary)]">
-                      {selectedProcess.notes}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="outline" onClick={() => setShowDetailModal(false)}>
-              Close
-            </Button>
-            <PermissionGate permission={Permissions.EXIT_MANAGE}>
-              <Button onClick={() => {
-                setShowDetailModal(false);
-                if (selectedProcess) handleOpenEditModal(selectedProcess);
-              }}>
-                <Edit className="h-4 w-4 mr-2"/>
-                Edit
-              </Button>
-            </PermissionGate>
-          </ModalFooter>
         </Modal>
 
         {/* Delete Confirmation Modal */}
