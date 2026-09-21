@@ -45,8 +45,10 @@ import {BenefitClaim, BenefitEnrollment, ClaimRequest, CoverageLevel,} from '@/l
 import {
   useActiveBenefitPlans,
   useActiveEnrollments,
+  useApproveEnrollment,
   useEmployeeBenefitEnrollments,
   useEnrollEmployee,
+  usePendingBenefitEnrollments,
   useSubmitBenefitClaim,
   useTerminateEnrollment,
 } from '@/lib/hooks/queries';
@@ -79,7 +81,7 @@ const claimFormSchema = z.object({
 type EnrollmentFormData = z.infer<typeof enrollmentFormSchema>;
 type ClaimFormData = z.infer<typeof claimFormSchema>;
 
-type TabType = 'plans' | 'enrollments' | 'claims';
+type TabType = 'plans' | 'enrollments' | 'claims' | 'approvals';
 
 interface DisplayBenefit {
   id: string;
@@ -174,13 +176,16 @@ export default function BenefitsPage() {
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
   const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
   const [selectedEnrollmentForTerminate, setSelectedEnrollmentForTerminate] = useState<string | null>(null);
+  const [approvalAction, setApprovalAction] = useState<{enrollmentId: string; type: 'approve' | 'reject'} | null>(null);
 
   // Initialize React Query hooks
   const plansQuery = useActiveBenefitPlans();
   const activeEnrollmentsQuery = useActiveEnrollments(user?.employeeId || '');
   const employeeEnrollmentsQuery = useEmployeeBenefitEnrollments(user?.employeeId || '');
+  const pendingEnrollmentsQuery = usePendingBenefitEnrollments();
   const enrollMutation = useEnrollEmployee();
   const terminateMutation = useTerminateEnrollment();
+  const approveMutation = useApproveEnrollment();
   const submitClaimMutation = useSubmitBenefitClaim();
 
   // Form setup for enrollment
@@ -324,6 +329,29 @@ export default function BenefitsPage() {
       showNotification((err as {
         response?: { data?: { message?: string } }
       })?.response?.data?.message || 'Failed to terminate enrollment', 'error');
+    }
+  };
+
+  const handleApprovalConfirm = async (comments?: string) => {
+    if (!approvalAction) return;
+
+    try {
+      if (approvalAction.type === 'approve') {
+        await approveMutation.mutateAsync({enrollmentId: approvalAction.enrollmentId, comments});
+        showNotification('Enrollment approved', 'success');
+      } else {
+        await terminateMutation.mutateAsync({
+          enrollmentId: approvalAction.enrollmentId,
+          reason: comments || 'Rejected by approver',
+        });
+        showNotification('Enrollment rejected', 'success');
+      }
+      setApprovalAction(null);
+    } catch (err: unknown) {
+      log.error('Error processing enrollment approval:', err);
+      showNotification((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to process enrollment', 'error');
     }
   };
 
@@ -493,12 +521,13 @@ export default function BenefitsPage() {
         {/* Tabs — Aura underline tab strip */}
         <div className="flex gap-1 border-b border-[var(--border)]" role="tablist" aria-label="Benefits views">
           {([
-            {id: 'plans', label: 'Benefit Plans', icon: Gift},
-            {id: 'enrollments', label: 'My Enrollments', icon: CheckCircle},
-            {id: 'claims', label: 'Claims', icon: Receipt},
-          ] as const).map(({id, label, icon: TabIcon}) => {
+            {id: 'plans', label: 'Benefit Plans', icon: Gift, permission: undefined},
+            {id: 'enrollments', label: 'My Enrollments', icon: CheckCircle, permission: undefined},
+            {id: 'claims', label: 'Claims', icon: Receipt, permission: undefined},
+            {id: 'approvals', label: 'Pending Approvals', icon: AlertCircle, permission: Permissions.BENEFIT_MANAGE},
+          ] as const satisfies ReadonlyArray<{id: TabType; label: string; icon: typeof Gift; permission?: string}>).map(({id, label, icon: TabIcon, permission}) => {
             const isActive = activeTab === id;
-            return (
+            const tabButton = (
               <button
                 key={id}
                 type="button"
@@ -513,8 +542,16 @@ export default function BenefitsPage() {
               >
                 <TabIcon className="h-4 w-4"/>
                 {label}
+                {id === 'approvals' && (pendingEnrollmentsQuery.data?.length ?? 0) > 0 && (
+                  <Badge variant="warning" size="sm">{pendingEnrollmentsQuery.data?.length}</Badge>
+                )}
               </button>
             );
+            return permission ? (
+              <PermissionGate key={id} permission={permission}>
+                {tabButton}
+              </PermissionGate>
+            ) : tabButton;
           })}
         </div>
 
@@ -841,6 +878,85 @@ export default function BenefitsPage() {
           </div>
         )}
 
+        {activeTab === 'approvals' && (
+          <PermissionGate permission={Permissions.BENEFIT_MANAGE}>
+            <div className="space-y-4">
+              {pendingEnrollmentsQuery.isLoading ? (
+                <div className="flex h-32 items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]"/>
+                </div>
+              ) : (pendingEnrollmentsQuery.data || []).length === 0 ? (
+                <Card>
+                  <EmptyState
+                    icon={<CheckCircle className="h-12 w-12"/>}
+                    title="No pending approvals"
+                    description="There are no benefit enrollments awaiting approval right now."
+                  />
+                </Card>
+              ) : (
+                (pendingEnrollmentsQuery.data || []).map((enrollment) => (
+                  <Card key={enrollment.id} hover className="p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="mb-3 flex items-center gap-2">
+                          <h3 className="font-display text-[15px] font-bold text-[var(--text-1)]">
+                            {enrollment.benefitPlanName}
+                          </h3>
+                          <Badge variant="warning" size="sm">Pending</Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4">
+                          <div>
+                            <div className="text-aura-micro">Coverage level</div>
+                            <p className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              {coverageLevelLabels[enrollment.coverageLevel]}
+                            </p>
+                          </div>
+                          <div>
+                            <div className="text-aura-micro">Effective date</div>
+                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              {formatDate(enrollment.effectiveDate)}
+                            </p>
+                          </div>
+                          <div>
+                            <div className="text-aura-micro">Monthly premium</div>
+                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              {formatINR(enrollment.employeeContribution)}
+                            </p>
+                          </div>
+                          <div>
+                            <div className="text-aura-micro">Enrolled on</div>
+                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              {formatDate(enrollment.enrollmentDate)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 gap-2">
+                        <Button
+                          size="sm"
+                          variant="soft-danger"
+                          leftIcon={<XCircle className="h-4 w-4"/>}
+                          onClick={() => setApprovalAction({enrollmentId: enrollment.id, type: 'reject'})}
+                        >
+                          Reject
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="soft"
+                          leftIcon={<CheckCircle className="h-4 w-4"/>}
+                          onClick={() => setApprovalAction({enrollmentId: enrollment.id, type: 'approve'})}
+                        >
+                          Approve
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))
+              )}
+            </div>
+          </PermissionGate>
+        )}
+
         {/* Open Enrollment Banner — Aura accent-soft surface */}
         <Card className="border-[var(--border)] bg-[var(--accent-soft)]">
           <CardContent className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -1135,6 +1251,28 @@ export default function BenefitsPage() {
           cancelText="Cancel"
           type="danger"
           loading={terminateMutation.isPending}
+        />
+
+        {/* Approve/Reject Enrollment Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={!!approvalAction}
+          onClose={() => setApprovalAction(null)}
+          onConfirm={handleApprovalConfirm}
+          title={approvalAction?.type === 'approve' ? 'Approve Enrollment' : 'Reject Enrollment'}
+          message={
+            approvalAction?.type === 'approve'
+              ? 'Approve this benefit enrollment? The employee will be notified.'
+              : 'Reject this benefit enrollment? Provide a reason for the employee.'
+          }
+          confirmText={approvalAction?.type === 'approve' ? 'Approve' : 'Reject'}
+          cancelText="Cancel"
+          type={approvalAction?.type === 'approve' ? 'info' : 'danger'}
+          loading={approveMutation.isPending || terminateMutation.isPending}
+          reason={
+            approvalAction?.type === 'approve'
+              ? {label: 'Comments (optional)', placeholder: 'Add approval comments...'}
+              : {label: 'Reason for rejection', placeholder: 'Explain why this enrollment is rejected...', required: true}
+          }
         />
       </div>
     </AppLayout>
