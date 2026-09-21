@@ -255,7 +255,7 @@ function PageHeader({latest}: {latest?: PayrollRun}) {
             Export
           </Button>
         </Link>
-        <Link href="/payroll/structures">
+        <Link href="/payroll/salary-structures">
           <Button variant="ghost" leftIcon={<Settings2 className="h-4 w-4" />}>
             Configure
           </Button>

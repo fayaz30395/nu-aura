@@ -899,10 +899,6 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     path: '/payroll/runs',
     anyPermission: [Permissions.PAYROLL_VIEW_ALL, Permissions.PAYROLL_PROCESS, Permissions.PAYROLL_APPROVE],
   },
-  {
-    path: '/payroll/structures',
-    anyPermission: [Permissions.PAYROLL_VIEW, Permissions.PAYROLL_VIEW_ALL],
-  },
 
   // FnF + Offboarding detail pages (CRITICAL)
   {

@@ -41,7 +41,7 @@ const PAYROLL_LINKS = [
     bg: 'bg-accent-50 dark:bg-accent-950/20',
   },
   {
-    href: '/payroll/structures',
+    href: '/payroll/salary-structures',
     label: 'Salary Structures',
     description: 'Manage components, allowances and deductions',
     icon: Layers,
@@ -242,7 +242,7 @@ export default function AdminPayrollPage() {
                 Recent Salary Structures
               </h2>
               <Link
-                href="/payroll/structures"
+                href="/payroll/salary-structures"
                 className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 View all <ChevronRight className="h-3 w-3"/>

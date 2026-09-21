@@ -1,150 +1,229 @@
 'use client';
 
-import {AppLayout} from '@/components/layout';
-import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
-import {Badge, Box, Card, Group, Loader, Stack, Table, Text, Title,} from '@mantine/core';
-import {AlertCircle, Banknote, Plus} from 'lucide-react';
-import {useSalaryStructures} from '@/lib/hooks/queries/usePayroll';
+import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {formatDate} from '@/lib/utils/format/date';
+import {useFieldArray, useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {AppLayout} from '@/components/layout';
+import {PageTransition} from '@/components/motion';
+import {Skeleton} from '@mantine/core';
+import dynamic from 'next/dynamic';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {
+  useCreateSalaryStructure,
+  useDeleteSalaryStructure,
+  useSalaryStructures,
+  useUpdateSalaryStructure,
+} from '@/lib/hooks/queries/usePayroll';
+import {SalaryStructureRequest} from '@/lib/types/hrms/payroll';
+import {
+  FormModalState,
+  SalaryStructure,
+  SalaryStructureFormData,
+  salaryStructureSchema,
+  SalaryStructuresTab,
+} from '../_components';
+
+const SalaryStructureModal = dynamic(
+  () => import('../_components/PayrollModals').then((m) => ({default: m.SalaryStructureModal})),
+  {loading: () => <Skeleton height={500} radius="md"/>, ssr: false}
+);
+const DeleteConfirmModal = dynamic(
+  () => import('../_components/PayrollModals').then((m) => ({default: m.DeleteConfirmModal})),
+  {loading: () => <Skeleton height={200} radius="md"/>, ssr: false}
+);
 
 export default function SalaryStructuresPage() {
   const router = useRouter();
-  const {data, isLoading, isError} = useSalaryStructures(0, 20);
+  const {hasPermission, isReady: permReady} = usePermissions();
 
-  const rawContent = data?.content;
-  const structures = Array.isArray(rawContent) ? rawContent : [];
-  const hasStructures = structures.length > 0;
+  useEffect(() => {
+    if (!permReady) return;
+    if (!hasPermission(Permissions.PAYROLL_VIEW)) {
+      router.replace('/me/dashboard?denied=1');
+    }
+  }, [permReady, hasPermission, router]);
+
+  const [error, setError] = useState<string | null>(null);
+  const [structureFilter, setStructureFilter] = useState<'ACTIVE' | 'INACTIVE' | 'PENDING' | 'ALL'>('ACTIVE');
+  const [selectedStructure, setSelectedStructure] = useState<SalaryStructure | null>(null);
+  const [structureModal, setStructureModal] = useState<FormModalState>({isOpen: false, mode: 'create'});
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const structuresQuery = useSalaryStructures(0, 100);
+  const salaryStructures = structuresQuery.data?.content || [];
+
+  const structureFormHook = useForm<SalaryStructureFormData>({
+    resolver: zodResolver(salaryStructureSchema),
+    defaultValues: {employeeId: '', effectiveDate: '', baseSalary: 0, allowances: [], deductions: []},
+  });
+
+  const {fields: allowanceFields, append: appendAllowance, remove: removeAllowance} = useFieldArray({
+    control: structureFormHook.control,
+    name: 'allowances',
+  });
+
+  const {fields: deductionFields, append: appendDeduction, remove: removeDeduction} = useFieldArray({
+    control: structureFormHook.control,
+    name: 'deductions',
+  });
+
+  const createStructureMutation = useCreateSalaryStructure();
+  const updateStructureMutation = useUpdateSalaryStructure();
+  const deleteStructureMutation = useDeleteSalaryStructure();
+
+  if (!permReady || !hasPermission(Permissions.PAYROLL_VIEW)) {
+    return null;
+  }
+
+  const loading =
+    structuresQuery.isLoading ||
+    createStructureMutation.isPending ||
+    updateStructureMutation.isPending ||
+    deleteStructureMutation.isPending;
+
+  const handleCreateStructure = () => {
+    structureFormHook.reset({employeeId: '', effectiveDate: '', baseSalary: 0, allowances: [], deductions: []});
+    setSelectedStructure(null);
+    setStructureModal({isOpen: true, mode: 'create'});
+  };
+
+  const handleEditStructure = (structure: SalaryStructure) => {
+    setSelectedStructure(structure);
+    structureFormHook.reset({
+      employeeId: structure.employeeId,
+      effectiveDate: structure.effectiveDate,
+      baseSalary: structure.baseSalary,
+      allowances: (structure.allowances ?? []).map(a => ({
+        name: a.name,
+        amount: a.amount,
+        type: a.type,
+        description: a.description || ''
+      })),
+      deductions: (structure.deductions ?? []).map(d => ({
+        name: d.name,
+        amount: d.amount,
+        type: d.type,
+        description: d.description || ''
+      })),
+    });
+    setStructureModal({isOpen: true, mode: 'edit'});
+  };
+
+  const onSubmitStructure = (data: SalaryStructureFormData) => {
+    if (selectedStructure) {
+      updateStructureMutation.mutate(
+        {id: selectedStructure.id, data: data as SalaryStructureRequest},
+        {
+          onSuccess: () => {
+            setStructureModal({isOpen: false, mode: 'create'});
+          },
+          onError: (err: unknown) => {
+            setError((err as {
+              response?: { data?: { message?: string } }
+            })?.response?.data?.message || 'Failed to save salary structure');
+          },
+        }
+      );
+    } else {
+      createStructureMutation.mutate(data as SalaryStructureRequest, {
+        onSuccess: () => {
+          setStructureModal({isOpen: false, mode: 'create'});
+        },
+        onError: (err: unknown) => {
+          setError((err as {
+            response?: { data?: { message?: string } }
+          })?.response?.data?.message || 'Failed to save salary structure');
+        },
+      });
+    }
+  };
+
+  const handleDeleteStructure = () => {
+    if (!selectedStructure) return;
+    deleteStructureMutation.mutate(selectedStructure.id, {
+      onSuccess: () => {
+        setShowDeleteConfirm(false);
+        setSelectedStructure(null);
+      },
+      onError: (err: unknown) => {
+        setError((err as {
+          response?: { data?: { message?: string } }
+        })?.response?.data?.message || 'Failed to delete salary structure');
+      },
+    });
+  };
 
   return (
     <AppLayout activeMenuItem="payroll">
       <PermissionGate permission={Permissions.PAYROLL_VIEW}
-                      fallback={<Box p="lg"><Text c="red">You do not have permission to view salary
-                        structures.</Text></Box>}>
-        <Box p="lg">
-          <Stack gap="lg">
-            {/* Page header */}
-            <Group justify="space-between" align="flex-start">
-              <div>
-                <Title order={2} fw={600} className="">
-                  Salary Structures
-                </Title>
-                <Text c="dimmed" size="sm" mt={4} className="">
-                  Define and manage salary structures with component breakdowns, CTC calculations, and grade-based
-                  templates.
-                </Text>
-              </div>
-              <Group gap="sm">
-                <Badge variant="light" color="blue" size="lg">
-                  Payroll
-                </Badge>
+                      fallback={<div className="p-6"><p className="text-danger-600">You do not have permission to view
+                        salary structures.</p></div>}>
+        <PageTransition className="p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="mb-8">
+              <h1 className="text-xl font-bold">Salary Structures</h1>
+              <p className="text-[var(--text-secondary)] mt-2">Define and manage employee salary structures
+                with allowances and deductions</p>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div
+                className="mb-6 p-4 bg-danger-50 dark:bg-danger-900/40 border border-danger-200 dark:border-danger-800 text-danger-800 dark:text-danger-300 rounded-lg">
+                {error}
                 <button
-                  onClick={() => router.push('/payroll/salary-structures/create')}
-                  aria-label="Create new salary structure"
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  onClick={() => setError(null)}
+                  className="ml-4 text-sm underline hover:no-underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  <Plus className="w-4 h-4"/>
-                  Create Structure
+                  Dismiss
                 </button>
-              </Group>
-            </Group>
-
-            {/* Loading state */}
-            {isLoading && (
-              <Card withBorder shadow="xs" radius="md" p="xl" className="skeuo-card">
-                <Stack align="center" gap="md" py="xl">
-                  <Loader size="lg" color="blue"/>
-                  <Text c="dimmed" size="sm">Loading salary structures...</Text>
-                </Stack>
-              </Card>
+              </div>
             )}
 
-            {/* Error state */}
-            {isError && !isLoading && (
-              <Card withBorder shadow="xs" radius="md" p="xl" className="skeuo-card">
-                <Stack align="center" gap="md" py="xl">
-                  <div className="rounded-full bg-danger-50 dark:bg-danger-950/20 p-4">
-                    <AlertCircle className="w-12 h-12 text-danger-500"/>
-                  </div>
-                  <Title order={4} fw={500} ta="center" className="">
-                    Failed to Load Salary Structures
-                  </Title>
-                  <Text c="dimmed" size="sm" ta="center" maw={420}>
-                    There was an error loading salary structures. Please try again later.
-                  </Text>
-                </Stack>
-              </Card>
-            )}
+            <SalaryStructuresTab
+              salaryStructures={salaryStructures}
+              loading={loading}
+              structureFilter={structureFilter}
+              onFilterChange={setStructureFilter}
+              onCreateStructure={handleCreateStructure}
+              onEditStructure={handleEditStructure}
+              onDeleteStructure={(structure) => {
+                setSelectedStructure(structure);
+                setShowDeleteConfirm(true);
+              }}
+            />
+          </div>
 
-            {/* Empty state */}
-            {!isLoading && !isError && !hasStructures && (
-              <Card withBorder shadow="xs" radius="md" p="xl" className="skeuo-card">
-                <Stack align="center" gap="md" py="xl">
-                  <div className="rounded-full bg-[var(--bg-secondary)] p-4">
-                    <Banknote className="w-12 h-12 text-[var(--text-muted)]"/>
-                  </div>
-                  <Title order={4} fw={500} ta="center" className="">
-                    No Salary Structures Configured
-                  </Title>
-                  <Text c="dimmed" size="sm" ta="center" maw={420}>
-                    Salary structures define how CTC is broken down into components like Basic, HRA, DA, and more.
-                    Create your first structure to start configuring payroll.
-                  </Text>
-                  <button
-                    onClick={() => router.push('/payroll/salary-structures/create')}
-                    aria-label="Create new salary structure"
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors mt-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    <Plus className="w-4 h-4"/>
-                    Create Structure
-                  </button>
-                </Stack>
-              </Card>
-            )}
+          <SalaryStructureModal
+            isOpen={structureModal.isOpen}
+            mode={structureModal.mode}
+            formHook={structureFormHook}
+            allowanceFields={allowanceFields}
+            deductionFields={deductionFields}
+            appendAllowance={appendAllowance}
+            removeAllowance={removeAllowance}
+            appendDeduction={appendDeduction}
+            removeDeduction={removeDeduction}
+            isSaving={createStructureMutation.isPending || updateStructureMutation.isPending}
+            onClose={() => setStructureModal({isOpen: false, mode: 'create'})}
+            onSubmit={onSubmitStructure}
+          />
 
-            {/* Data table */}
-            {!isLoading && !isError && hasStructures && (
-              <Card withBorder shadow="xs" radius="md" p="md" className="skeuo-card">
-                <Table striped highlightOnHover>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Employee</Table.Th>
-                      <Table.Th>Effective Date</Table.Th>
-                      <Table.Th>Base Salary</Table.Th>
-                      <Table.Th>Total CTC</Table.Th>
-                      <Table.Th>Status</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {structures.filter(Boolean).map((structure) => (
-                      <Table.Tr key={structure.id} className="cursor-pointer">
-                        <Table.Td>{structure.employeeName || structure.employeeId || '—'}</Table.Td>
-                        <Table.Td>{structure.effectiveDate ? formatDate(structure.effectiveDate) : '—'}</Table.Td>
-                        <Table.Td>{new Intl.NumberFormat('en-IN', {
-                          style: 'currency',
-                          currency: 'INR'
-                        }).format(Number(structure.baseSalary) || 0)}</Table.Td>
-                        <Table.Td>{new Intl.NumberFormat('en-IN', {
-                          style: 'currency',
-                          currency: 'INR'
-                        }).format(Number(structure.totalCTC) || 0)}</Table.Td>
-                        <Table.Td>
-                          <Badge
-                            color={structure.status === 'ACTIVE' ? 'green' : structure.status === 'PENDING' ? 'yellow' : 'gray'}
-                            variant="light"
-                          >
-                            {structure.status || 'UNKNOWN'}
-                          </Badge>
-                        </Table.Td>
-                      </Table.Tr>
-                    ))}
-                  </Table.Tbody>
-                </Table>
-              </Card>
-            )}
-          </Stack>
-        </Box>
+          <DeleteConfirmModal
+            isOpen={showDeleteConfirm && !!selectedStructure}
+            title="Delete Salary Structure"
+            message={`Are you sure you want to delete the salary structure for ${selectedStructure?.employeeName || 'this employee'}? This action cannot be undone.`}
+            loading={deleteStructureMutation.isPending}
+            onCancel={() => {
+              setShowDeleteConfirm(false);
+              setSelectedStructure(null);
+            }}
+            onConfirm={handleDeleteStructure}
+          />
+        </PageTransition>
       </PermissionGate>
     </AppLayout>
   );
