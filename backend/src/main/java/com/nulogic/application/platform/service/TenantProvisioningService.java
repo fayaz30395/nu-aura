@@ -15,16 +15,16 @@ import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import com.nulogic.infrastructure.user.repository.RoleRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import com.nulogic.infrastructure.workflow.repository.WorkflowDefinitionRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -53,6 +53,10 @@ public class TenantProvisioningService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final WorkflowDefinitionRepository workflowDefinitionRepository;
+    private final com.nulogic.common.security.TenantRlsSessionSync tenantRlsSessionSync;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public AuthResponse register(TenantRegistrationRequest req) {
 
@@ -76,8 +80,14 @@ public class TenantProvisioningService {
         UUID tenantId = tenant.getId();
         log.info("Provisioned new tenant: {} ({})", tenant.getName(), tenantId);
 
-        // Set context so downstream operations use the correct tenant
+        // Set context so downstream operations use the correct tenant. TenantContext
+        // is only the in-JVM ThreadLocal — this transaction's Postgres session GUC
+        // (app.current_tenant_id) was already set for the CALLING super-admin's
+        // tenant at transaction start, so it must be explicitly re-synced here or
+        // every subsequent insert for the new tenant violates RLS's restrictive
+        // fail-closed policy.
         TenantContext.setCurrentTenant(tenantId);
+        tenantRlsSessionSync.syncCurrentTenant(tenantId);
 
         // ── 3. Create admin user ─────────────────────────────────────────────
         User adminUser = new User();
@@ -101,21 +111,43 @@ public class TenantProvisioningService {
                     r.setName("Tenant Administrator");
                     r.setDescription("Full intra-tenant administration — manages all HRMS modules");
                     r.setIsSystemRole(true);
-                    return roleRepository.save(r);
+                    Role saved = roleRepository.save(r);
+                    seedRolePermissions(saved.getId(), tenantId, RoleHierarchy.TENANT_ADMIN);
+                    return saved;
                 });
 
         // ── 5. Assign role to user ───────────────────────────────────────────
-        adminUser.setRoles(Set.of(adminRole));
-        adminUser = userRepository.save(adminUser);
-
+        // user_roles is a plain Hibernate-managed @ManyToMany join table with no
+        // entity mapping for its (nullable) tenant_id column, so a normal
+        // setRoles()+save() never populates it — the RESTRICTIVE RLS policy on
+        // user_roles then rejects the insert (tenant_id IS NULL never matches the
+        // session GUC). Insert the join row explicitly with tenant_id set.
+        entityManager.createNativeQuery(
+                        "INSERT INTO user_roles (user_id, role_id, tenant_id, is_deleted) VALUES (?1, ?2, ?3, false)")
+                .setParameter(1, adminUser.getId())
+                .setParameter(2, adminRole.getId())
+                .setParameter(3, tenantId)
+                .executeUpdate();
         // ── 6. Seed default approval workflows (BA-8) ────────────────────────
         seedDefaultWorkflowDefinitions(tenantId);
 
         // ── 7. Generate JWT ──────────────────────────────────────────────────
+        // Deliberately NOT calling adminUser.setRoles(...)/UserPrincipal.create() —
+        // adminUser is still an attached/managed entity, and Hibernate dirty-checks
+        // collection fields at flush time regardless of whether save() is called
+        // again, which would re-trigger the same tenant_id-less user_roles insert
+        // the native query above exists to avoid. Build the principal/authorities
+        // directly from adminRole instead.
+        java.util.Set<org.springframework.security.core.GrantedAuthority> authorities = new java.util.HashSet<>();
+        adminRole.getPermissions().forEach(rp ->
+                authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority(rp.getPermission().getCode())));
+        authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + adminRole.getCode()));
+        com.nulogic.common.security.UserPrincipal userPrincipal = new com.nulogic.common.security.UserPrincipal(
+                adminUser.getId(), tenantId, adminUser.getEmail(), adminUser.getPasswordHash(), authorities);
         Authentication auth = new UsernamePasswordAuthenticationToken(
-                adminUser.getEmail(),
+                userPrincipal,
                 null,
-                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                userPrincipal.getAuthorities()
         );
 
         String accessToken = jwtTokenProvider.generateToken(auth, tenantId, adminUser.getId());
@@ -131,6 +163,32 @@ public class TenantProvisioningService {
                 .email(adminUser.getEmail())
                 .fullName(adminUser.getFullName())
                 .build();
+    }
+
+    /**
+     * Seeds role_permissions for a newly-created role from RoleHierarchy's static
+     * default permission set — the same computation used to build the display-only
+     * permission list in the login response. Without this, a brand-new tenant's role
+     * has zero role_permissions rows and every @RequiresPermission check denies,
+     * despite the role code matching TENANT_ADMIN (login-time RoleHierarchy lookups
+     * and per-request permission enforcement are two independent code paths — see
+     * SecurityService.getCachedPermissions, which reads role_permissions, not
+     * RoleHierarchy.java).
+     */
+    private void seedRolePermissions(UUID roleId, UUID tenantId, String roleCode) {
+        java.util.Set<String> codes = RoleHierarchy.getDefaultPermissions(roleCode);
+        if (codes.isEmpty()) {
+            return;
+        }
+        entityManager.createNativeQuery(
+                        "INSERT INTO role_permissions (id, tenant_id, role_id, permission_id, scope, "
+                                + "created_at, updated_at, version, is_deleted) "
+                                + "SELECT gen_random_uuid(), :tenantId, :roleId, p.id, 'ALL', NOW(), NOW(), 0, false "
+                                + "FROM permissions p WHERE p.code IN :codes AND (p.is_deleted = false OR p.is_deleted IS NULL)")
+                .setParameter("tenantId", tenantId)
+                .setParameter("roleId", roleId)
+                .setParameter("codes", codes)
+                .executeUpdate();
     }
 
     /**
