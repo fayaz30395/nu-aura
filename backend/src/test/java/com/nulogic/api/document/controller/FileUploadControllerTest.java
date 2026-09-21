@@ -66,6 +66,8 @@ class FileUploadControllerTest {
     private ApiKeyService apiKeyService;
     @MockitoBean
     private ScopeContextService scopeContextService;
+    @MockitoBean
+    private com.nulogic.infrastructure.storage.FileMetadataRepository fileMetadataRepository;
     private MockedStatic<TenantContext> tenantContextMock;
 
     @BeforeEach

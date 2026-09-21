@@ -46,6 +46,12 @@ class BlogPostServiceTest {
     private FluenceEditLockService fluenceEditLockService;
     @Mock
     private EventPublisher eventPublisher;
+    @Mock
+    private FluenceNotificationService fluenceNotificationService;
+    @Mock
+    private com.nulogic.infrastructure.knowledge.repository.BlogCommentRepository blogCommentRepository;
+    @Mock
+    private com.nulogic.infrastructure.knowledge.repository.BlogLikeRepository blogLikeRepository;
 
     private BlogPostService service;
     private final UUID tenantId = UUID.randomUUID();
@@ -54,7 +60,8 @@ class BlogPostServiceTest {
     @BeforeEach
     void setUp() {
         service = new BlogPostService(blogPostRepository, fluenceActivityService, tipTapTextExtractor,
-                tenantTimeService, employeeRepository, fluenceEditLockService);
+                tenantTimeService, employeeRepository, fluenceEditLockService, fluenceNotificationService,
+                blogCommentRepository, blogLikeRepository);
         ReflectionTestUtils.setField(service, "eventPublisher", eventPublisher);
         TenantContext.setCurrentTenant(tenantId);
         lenient().when(tenantTimeService.now(tenantId)).thenReturn(LocalDateTime.now());

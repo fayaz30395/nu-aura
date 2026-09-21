@@ -47,6 +47,8 @@ class WallServiceTest {
     private EmployeeRepository employeeRepository;
     @Mock
     private ContentViewService contentViewService;
+    @Mock
+    private com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     private WallService service;
     private final UUID tenantId = UUID.randomUUID();
@@ -56,7 +58,8 @@ class WallServiceTest {
     @BeforeEach
     void setUp() {
         service = new WallService(wallPostRepository, postReactionRepository, postCommentRepository,
-                pollOptionRepository, pollVoteRepository, employeeRepository, contentViewService);
+                pollOptionRepository, pollVoteRepository, employeeRepository, contentViewService,
+                webSocketNotificationService);
         TenantContext.setCurrentTenant(tenantId);
         lenient().when(postReactionRepository.countReactionsByTypeForPost(any())).thenReturn(List.of());
         lenient().when(postReactionRepository.findRecentByPostId(any(), any())).thenReturn(List.of());

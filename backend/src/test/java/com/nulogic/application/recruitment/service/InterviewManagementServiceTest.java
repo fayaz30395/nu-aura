@@ -49,6 +49,8 @@ class InterviewManagementServiceTest {
     private AuditLogService auditLogService;
     @Mock
     private GoogleMeetService googleMeetService;
+    @Mock
+    private com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
     @InjectMocks
     private InterviewManagementService interviewManagementService;
     private UUID tenantId;

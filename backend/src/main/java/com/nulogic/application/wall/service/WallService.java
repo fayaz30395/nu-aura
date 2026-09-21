@@ -2,6 +2,7 @@ package com.nulogic.application.wall.service;
 
 import com.nulogic.api.wall.dto.*;
 import com.nulogic.application.common.service.ContentViewService;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.common.ContentView.ContentType;
@@ -59,6 +60,18 @@ public class WallService {
         this.employeeRepository = employeeRepository;
         this.contentViewService = contentViewService;
         this.webSocketNotificationService = webSocketNotificationService;
+    }
+
+    /**
+     * Shared ownership-or-admin guard, deduplicated from updatePost/deletePost/deleteComment:
+     * the caller must be the content's owner, or hold WALL:MANAGE / be a super admin.
+     */
+    private void requireOwnerOrManager(UUID ownerId, UUID callerId, String denialMessage) {
+        boolean isOwner = ownerId.equals(callerId);
+        boolean isAdmin = SecurityContext.hasPermission(Permission.WALL_MANAGE) || SecurityContext.isSuperAdmin();
+        if (!isOwner && !isAdmin) {
+            throw new IllegalArgumentException(denialMessage);
+        }
     }
 
     /**
@@ -243,12 +256,7 @@ public class WallService {
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        // Allow update by: post author, or admins with WALL_MANAGE / SYSTEM_ADMIN permission
-        boolean isAuthor = post.getAuthor().getId().equals(userId);
-        boolean isAdmin = SecurityContext.hasPermission("WALL:MANAGE") || SecurityContext.isSuperAdmin();
-        if (!isAuthor && !isAdmin) {
-            throw new IllegalArgumentException("You can only edit your own posts");
-        }
+        requireOwnerOrManager(post.getAuthor().getId(), userId, "You can only edit your own posts");
 
         // Only allow editing content and image — type, visibility, poll options are immutable after creation
         post.setContent(request.getContent());
@@ -266,12 +274,7 @@ public class WallService {
         WallPost post = wallPostRepository.findByIdAndActiveTrue(tenantId, postId)
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
-        // Allow deletion by: post author, or admins with WALL_MANAGE / SYSTEM_ADMIN permission
-        boolean isAuthor = post.getAuthor().getId().equals(userId);
-        boolean isAdmin = SecurityContext.hasPermission("WALL:MANAGE") || SecurityContext.isSuperAdmin();
-        if (!isAuthor && !isAdmin) {
-            throw new IllegalArgumentException("You can only delete your own posts");
-        }
+        requireOwnerOrManager(post.getAuthor().getId(), userId, "You can only delete your own posts");
 
         post.setActive(false);
         wallPostRepository.save(post);
@@ -434,11 +437,7 @@ public class WallService {
         PostComment comment = postCommentRepository.findByIdAndTenantIdAndActiveTrue(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
 
-        boolean isAuthor = comment.getAuthor().getId().equals(userId);
-        boolean isAdmin = SecurityContext.hasPermission("WALL:MANAGE") || SecurityContext.isSuperAdmin();
-        if (!isAuthor && !isAdmin) {
-            throw new IllegalArgumentException("You can only delete your own comments");
-        }
+        requireOwnerOrManager(comment.getAuthor().getId(), userId, "You can only delete your own comments");
 
         comment.setActive(false);
         postCommentRepository.save(comment);
