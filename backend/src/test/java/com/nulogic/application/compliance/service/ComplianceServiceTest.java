@@ -401,6 +401,61 @@ class ComplianceServiceTest {
         }
     }
 
+    // ==================== Self-Scoped Acknowledgment Access Tests (R3 fix) ====================
+
+    @Nested
+    @DisplayName("getEmployeeAcknowledgments / getPendingAcknowledgments self-scope")
+    class SelfScopeAcknowledgmentTests {
+
+        @Test
+        @DisplayName("EMPLOYEE (COMPLIANCE:VIEW_SELF only) can read own acknowledgments")
+        void employeeCanReadOwnAcknowledgments() {
+            securityContextMock.when(() -> SecurityContext.hasPermission(anyString())).thenReturn(false);
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+            when(acknowledgmentRepository.findByEmployeeIdAndTenantId(eq(employeeId), eq(tenantId), any()))
+                    .thenReturn(new PageImpl<>(List.of()));
+
+            Page<PolicyAcknowledgment> result = complianceService.getEmployeeAcknowledgments(employeeId, PageRequest.of(0, 10));
+
+            assertThat(result).isNotNull();
+        }
+
+        @Test
+        @DisplayName("EMPLOYEE cannot read another employee's acknowledgments (IDOR fix)")
+        void employeeCannotReadAnotherEmployeesAcknowledgments() {
+            securityContextMock.when(() -> SecurityContext.hasPermission(anyString())).thenReturn(false);
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+            UUID otherEmployeeId = UUID.randomUUID();
+
+            assertThatThrownBy(() -> complianceService.getEmployeeAcknowledgments(otherEmployeeId, PageRequest.of(0, 10)))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        }
+
+        @Test
+        @DisplayName("EMPLOYEE cannot read another employee's pending acknowledgments (IDOR fix)")
+        void employeeCannotReadAnotherEmployeesPendingAcknowledgments() {
+            securityContextMock.when(() -> SecurityContext.hasPermission(anyString())).thenReturn(false);
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+            UUID otherEmployeeId = UUID.randomUUID();
+
+            assertThatThrownBy(() -> complianceService.getPendingAcknowledgments(otherEmployeeId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        }
+
+        @Test
+        @DisplayName("Admin (COMPLIANCE:VIEW) can still read any employee's acknowledgments")
+        void adminCanReadAnyEmployeesAcknowledgments() {
+            securityContextMock.when(() -> SecurityContext.hasPermission(anyString())).thenReturn(true);
+            UUID otherEmployeeId = UUID.randomUUID();
+            when(acknowledgmentRepository.findByEmployeeIdAndTenantId(eq(otherEmployeeId), eq(tenantId), any()))
+                    .thenReturn(new PageImpl<>(List.of()));
+
+            Page<PolicyAcknowledgment> result = complianceService.getEmployeeAcknowledgments(otherEmployeeId, PageRequest.of(0, 10));
+
+            assertThat(result).isNotNull();
+        }
+    }
+
     // ==================== Audit Logging Tests ====================
 
     @Nested

@@ -516,6 +516,8 @@ public final class RoleHierarchy {
                 Permission.ATTENDANCE_REGULARIZE,
                 Permission.ATTENDANCE_VIEW_SELF,
                 Permission.PAYROLL_VIEW_SELF,
+                Permission.COMPLIANCE_VIEW_SELF,
+                Permission.COMPLIANCE_ACKNOWLEDGE,
                 Permission.REVIEW_VIEW,
                 Permission.GOAL_CREATE,
                 Permission.TRAINING_VIEW,

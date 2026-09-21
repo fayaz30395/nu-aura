@@ -207,8 +207,22 @@ public class ComplianceService {
 
     @Transactional(readOnly = true)
     public Page<PolicyAcknowledgment> getEmployeeAcknowledgments(UUID employeeId, Pageable pageable) {
+        assertSelfOrFullView(employeeId);
         UUID tenantId = TenantContext.getCurrentTenant();
         return acknowledgmentRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable);
+    }
+
+    // SEC: COMPLIANCE:VIEW_SELF holders (employees) may only read their own acknowledgment
+    // records — the endpoint takes a raw employeeId path param with no scope filtering
+    // otherwise. Full COMPLIANCE:VIEW (admins/compliance officers) is unrestricted, as before.
+    private void assertSelfOrFullView(UUID employeeId) {
+        if (SecurityContext.hasPermission(Permission.COMPLIANCE_VIEW) || SecurityContext.isSuperAdmin()) {
+            return;
+        }
+        if (!employeeId.equals(SecurityContext.getCurrentEmployeeId())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Cannot access another employee's compliance records");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -231,6 +245,7 @@ public class ComplianceService {
 
     @Transactional(readOnly = true)
     public List<CompliancePolicy> getPendingAcknowledgments(UUID employeeId) {
+        assertSelfOrFullView(employeeId);
         UUID tenantId = TenantContext.getCurrentTenant();
         List<CompliancePolicy> policiesRequiringAck = policyRepository.findPoliciesRequiringAcknowledgment(tenantId);
         List<PolicyAcknowledgment> existingAcks = acknowledgmentRepository.findByEmployeeIdAndTenantId(employeeId, tenantId);

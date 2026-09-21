@@ -79,14 +79,14 @@ public class ComplianceController {
     }
 
     @GetMapping("/policies/{id}")
-    @RequiresPermission(Permission.COMPLIANCE_VIEW)
+    @RequiresPermission({Permission.COMPLIANCE_VIEW, Permission.COMPLIANCE_VIEW_SELF})
     @Operation(summary = "Get a specific policy")
     public ResponseEntity<CompliancePolicyResponse> getPolicy(@PathVariable UUID id) {
         return ResponseEntity.ok(CompliancePolicyResponse.from(complianceService.getPolicy(id)));
     }
 
     @GetMapping("/policies/active")
-    @RequiresPermission(Permission.COMPLIANCE_VIEW)
+    @RequiresPermission({Permission.COMPLIANCE_VIEW, Permission.COMPLIANCE_VIEW_SELF})
     @Operation(summary = "Get all active policies")
     public ResponseEntity<Page<CompliancePolicyResponse>> getActivePolicies(Pageable pageable) {
         return ResponseEntity.ok(complianceService.getActivePolicies(pageable).map(CompliancePolicyResponse::from));
@@ -104,7 +104,7 @@ public class ComplianceController {
     // ==================== Policy Acknowledgment Endpoints ====================
 
     @PostMapping("/policies/{policyId}/acknowledge")
-    @RequiresPermission(Permission.COMPLIANCE_VIEW)
+    @RequiresPermission({Permission.COMPLIANCE_VIEW, Permission.COMPLIANCE_ACKNOWLEDGE})
     @Operation(summary = "Acknowledge a policy")
     public ResponseEntity<PolicyAcknowledgment> acknowledgePolicy(
             @PathVariable UUID policyId,
@@ -115,7 +115,7 @@ public class ComplianceController {
     }
 
     @GetMapping("/acknowledgments/employee/{employeeId}")
-    @RequiresPermission(Permission.COMPLIANCE_VIEW)
+    @RequiresPermission({Permission.COMPLIANCE_VIEW, Permission.COMPLIANCE_VIEW_SELF})
     @Operation(summary = "Get acknowledgments for an employee")
     public ResponseEntity<Page<PolicyAcknowledgment>> getEmployeeAcknowledgments(
             @PathVariable UUID employeeId, Pageable pageable) {
@@ -131,7 +131,7 @@ public class ComplianceController {
     }
 
     @GetMapping("/acknowledgments/pending/{employeeId}")
-    @RequiresPermission(Permission.COMPLIANCE_VIEW)
+    @RequiresPermission({Permission.COMPLIANCE_VIEW, Permission.COMPLIANCE_VIEW_SELF})
     @Operation(summary = "Get pending policy acknowledgments for an employee")
     public ResponseEntity<Page<CompliancePolicyResponse>> getPendingAcknowledgments(
             @PathVariable UUID employeeId, Pageable pageable) {

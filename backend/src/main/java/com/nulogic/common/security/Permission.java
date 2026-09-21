@@ -289,6 +289,8 @@ public final class Permission {
 
     // Compliance & Audit Management
     public static final String COMPLIANCE_VIEW = "COMPLIANCE:VIEW";
+    public static final String COMPLIANCE_VIEW_SELF = "COMPLIANCE:VIEW_SELF";
+    public static final String COMPLIANCE_ACKNOWLEDGE = "COMPLIANCE:ACKNOWLEDGE";
     public static final String COMPLIANCE_MANAGE = "COMPLIANCE:MANAGE";
     public static final String POLICY_MANAGE = "POLICY:MANAGE";
     public static final String CHECKLIST_VIEW = "CHECKLIST:VIEW";
