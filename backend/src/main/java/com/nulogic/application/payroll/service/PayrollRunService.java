@@ -289,6 +289,10 @@ public class PayrollRunService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun processPayrollRun(UUID id, UUID processedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        // Legacy sync path previously skipped this pre-flight, silently undercounting
+        // payslips when active employees were missing a salary structure. Enforce the
+        // same guard initiateProcessing already applies.
+        validateSalaryStructuresCoverage(payrollRun);
         // T1-04: same period-wide lock as completeProcessing — the legacy sync
         // path must serialize with the async consumer path on the same period.
         payrollPeriodLock.lockPeriod(payrollRun.getTenantId(),
