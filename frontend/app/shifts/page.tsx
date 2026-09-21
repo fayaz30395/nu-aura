@@ -199,7 +199,7 @@ export default function ShiftDashboardPage() {
             </button>
           </div>
 
-          {/* Schedule Grid */}
+          {/* Schedule Grid / List */}
           {isLoading ? (
             <SkeletonTable rows={6} columns={6}/>
           ) : scheduleByEmployee.length === 0 ? (
@@ -208,6 +208,51 @@ export default function ShiftDashboardPage() {
               title="No Schedule Data"
               description="No shift assignments found for this week. Generate a schedule or assign shifts to team members."
             />
+          ) : viewMode === 'list' ? (
+            <div
+              className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-x-auto">
+              <table className="w-full min-w-[600px]">
+                <thead>
+                <tr className="border-b border-surface-200 dark:border-surface-700">
+                  <th className="text-left p-4 text-sm font-medium text-surface-500 dark:text-surface-400">Employee</th>
+                  <th className="text-left p-4 text-sm font-medium text-surface-500 dark:text-surface-400">Date</th>
+                  <th className="text-left p-4 text-sm font-medium text-surface-500 dark:text-surface-400">Shift</th>
+                  <th className="text-left p-4 text-sm font-medium text-surface-500 dark:text-surface-400">Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                {scheduleData
+                  .slice()
+                  .sort((a, b) => a.date.localeCompare(b.date) || a.employeeName.localeCompare(b.employeeName))
+                  .map((entry) => (
+                    <tr
+                      key={`${entry.employeeId}-${entry.date}`}
+                      className="h-11 border-b border-surface-100 dark:border-surface-700/50 hover:bg-surface-50 dark:hover:bg-surface-700/30"
+                    >
+                      <td className="p-4">
+                        <p className="font-medium text-sm text-surface-900 dark:text-white">{entry.employeeName}</p>
+                        <p className="text-xs text-surface-500 dark:text-surface-400">{entry.employeeCode}</p>
+                      </td>
+                      <td className="p-4 text-sm text-surface-600 dark:text-surface-300">
+                        {formatWeekday(new Date(entry.date))}, {new Date(entry.date).getDate()}
+                      </td>
+                      <td className="p-4">
+                        <span
+                          className={`inline-flex px-2 py-1 rounded-lg text-white text-xs font-medium ${getShiftMarkerClass(
+                            activeShifts.findIndex((shift) => shift.shiftCode === entry.shiftCode)
+                          )}`}
+                        >
+                          {entry.shiftCode}
+                        </span>
+                      </td>
+                      <td className="p-4 text-sm text-surface-600 dark:text-surface-300">
+                        {formatTime(entry.startTime)} - {formatTime(entry.endTime)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <div
               className="bg-[var(--bg-card)] rounded-xl border border-surface-200 dark:border-surface-700 overflow-x-auto">
