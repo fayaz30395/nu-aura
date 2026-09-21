@@ -51,6 +51,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     private final com.nulogic.infrastructure.onboarding.OnboardingTaskTemplateRepository roleTemplateRepository;
     private final WorkflowService workflowService;
     private final TenantTimeService tenantTimeService;
+    private final com.nulogic.application.event.DomainEventPublisher eventPublisher;
 
     public OnboardingManagementService(OnboardingProcessRepository onboardingRepository,
                                        EmployeeRepository employeeRepository,
@@ -59,7 +60,8 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
                                        OnboardingTaskRepository taskRepository,
                                        com.nulogic.infrastructure.onboarding.OnboardingTaskTemplateRepository roleTemplateRepository,
                                        @org.springframework.context.annotation.Lazy WorkflowService workflowService,
-                                       TenantTimeService tenantTimeService) {
+                                       TenantTimeService tenantTimeService,
+                                       com.nulogic.application.event.DomainEventPublisher eventPublisher) {
         this.onboardingRepository = onboardingRepository;
         this.employeeRepository = employeeRepository;
         this.templateRepository = templateRepository;
@@ -68,6 +70,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         this.roleTemplateRepository = roleTemplateRepository;
         this.workflowService = workflowService;
         this.tenantTimeService = tenantTimeService;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -377,6 +380,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         if (tasks.isEmpty()) {
             return;
         }
+        OnboardingProcess.ProcessStatus oldStatus = process.getStatus();
         long done = tasks.stream()
                 .filter(t -> t.getStatus() == OnboardingTask.TaskStatus.COMPLETED
                         || t.getStatus() == OnboardingTask.TaskStatus.SKIPPED)
@@ -389,6 +393,15 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         if (percentage >= 100 && process.getStatus() != OnboardingProcess.ProcessStatus.COMPLETED) {
             process.setStatus(OnboardingProcess.ProcessStatus.COMPLETED);
             process.setActualCompletionDate(tenantTimeService.today(tenantId));
+        }
+        publishStatusChangeIfNeeded(process, oldStatus);
+    }
+
+    /** AC1: onboarding state transitions publish a domain event, whatever triggered them. */
+    private void publishStatusChangeIfNeeded(OnboardingProcess process, OnboardingProcess.ProcessStatus oldStatus) {
+        if (process.getStatus() != oldStatus) {
+            eventPublisher.publish(new com.nulogic.domain.event.onboarding.OnboardingProcessStatusChangedEvent(
+                    this, process, oldStatus));
         }
     }
 
@@ -441,6 +454,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
             }
         }
 
+        OnboardingProcess.ProcessStatus oldStatus = process.getStatus();
         process.setStatus(status);
         if (status == OnboardingProcess.ProcessStatus.COMPLETED) {
             process.setActualCompletionDate(tenantTimeService.today(tenantId));
@@ -448,6 +462,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         }
 
         OnboardingProcess updatedProcess = onboardingRepository.save(process);
+        publishStatusChangeIfNeeded(updatedProcess, oldStatus);
         return mapToResponse(updatedProcess);
     }
 
@@ -460,6 +475,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND));
 
+        OnboardingProcess.ProcessStatus oldStatus = process.getStatus();
         process.setCompletionPercentage(completionPercentage);
         if (completionPercentage > 0 && process.getStatus() == OnboardingProcess.ProcessStatus.NOT_STARTED) {
             process.setStatus(OnboardingProcess.ProcessStatus.IN_PROGRESS);
@@ -470,6 +486,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         }
 
         OnboardingProcess updatedProcess = onboardingRepository.save(process);
+        publishStatusChangeIfNeeded(updatedProcess, oldStatus);
         return mapToResponse(updatedProcess);
     }
 
@@ -656,8 +673,10 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
 
         onboardingRepository.findByIdAndTenantId(entityId, tenantId).ifPresent(process -> {
             if (process.getStatus() == OnboardingProcess.ProcessStatus.NOT_STARTED) {
+                OnboardingProcess.ProcessStatus oldStatus = process.getStatus();
                 process.setStatus(OnboardingProcess.ProcessStatus.IN_PROGRESS);
-                onboardingRepository.save(process);
+                OnboardingProcess saved = onboardingRepository.save(process);
+                publishStatusChangeIfNeeded(saved, oldStatus);
                 log.info("Onboarding process {} transitioned to IN_PROGRESS after approval", entityId);
             }
         });
@@ -670,9 +689,11 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
 
         onboardingRepository.findByIdAndTenantId(entityId, tenantId).ifPresent(process -> {
             if (process.getStatus() == OnboardingProcess.ProcessStatus.NOT_STARTED) {
+                OnboardingProcess.ProcessStatus oldStatus = process.getStatus();
                 process.setStatus(OnboardingProcess.ProcessStatus.CANCELLED);
                 process.setNotes(reason != null ? "Rejected: " + reason : "Rejected via workflow");
-                onboardingRepository.save(process);
+                OnboardingProcess saved = onboardingRepository.save(process);
+                publishStatusChangeIfNeeded(saved, oldStatus);
                 log.info("Onboarding process {} cancelled after rejection", entityId);
             }
         });

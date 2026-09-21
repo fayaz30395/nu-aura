@@ -276,6 +276,40 @@ public class NotificationEventListener {
                         Notification.Priority.NORMAL));
     }
 
+    // ==================== Onboarding/Offboarding Events ====================
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void onOnboardingProcessStatusChanged(
+            com.nulogic.domain.event.onboarding.OnboardingProcessStatusChangedEvent event) {
+        log.info("Handling OnboardingProcessStatusChangedEvent: process {} ({} -> {})",
+                event.getAggregateId(), event.getOldStatus(), event.getNewStatus());
+
+        UUID tenantId = event.getTenantId();
+        String processLabel = event.getProcessType() != null ? event.getProcessType().name() : "Onboarding";
+        String title = processLabel + " Status Updated";
+        String message = String.format("Your %s process moved from %s to %s",
+                processLabel.toLowerCase(), event.getOldStatus(), event.getNewStatus());
+
+        employeeRepository.findByIdAndTenantId(event.getEmployeeId(), tenantId)
+                .map(Employee::getUser)
+                .ifPresent(user -> createAndPushNotification(
+                        tenantId, user.getId(), Notification.NotificationType.GENERAL,
+                        title, message, event.getAggregateId(), "OnboardingProcess",
+                        "/onboarding", Notification.Priority.NORMAL));
+
+        if (event.getAssignedBuddyId() != null) {
+            employeeRepository.findByIdAndTenantId(event.getAssignedBuddyId(), tenantId)
+                    .map(Employee::getUser)
+                    .ifPresent(buddyUser -> createAndPushNotification(
+                            tenantId, buddyUser.getId(), Notification.NotificationType.GENERAL,
+                            processLabel + " Buddy Update",
+                            String.format("An %s process you are buddying moved from %s to %s",
+                                    processLabel.toLowerCase(), event.getOldStatus(), event.getNewStatus()),
+                            event.getAggregateId(), "OnboardingProcess", "/onboarding", Notification.Priority.LOW));
+        }
+    }
+
     // ==================== Performance Events ====================
 
     @Async
