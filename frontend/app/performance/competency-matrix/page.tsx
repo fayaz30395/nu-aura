@@ -1,6 +1,7 @@
 'use client';
 
 import {useCallback, useMemo, useState} from 'react';
+import {useQueries} from '@tanstack/react-query';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -55,6 +56,8 @@ import {
   useSkillGapAnalysis,
   useVerifySkill,
 } from '@/lib/hooks/useCompetency';
+import {employeeSkillService, skillGapService} from '@/lib/services/grow/competencyService';
+import {useSubordinates} from '@/lib/hooks/queries/useEmployees';
 import type {CompetencyCategory, EmployeeSkill, ProficiencyLevel, SkillGapDetail,} from '@/lib/types/grow/competency';
 import {
   COMPETENCY_CATEGORY_COLORS,
@@ -725,13 +728,51 @@ function TeamViewTab({managerId}: { managerId: string }) {
   const [_selectedCategory, _setSelectedCategory] = useState<string | null>(null);
   const verifySkillMutation = useVerifySkill();
 
-  // In a production system, this would call a team skills endpoint.
-  // For now, we show the manager's own gap analysis as a representative view.
-  const gapQuery = useSkillGapAnalysis(managerId);
-  const skillsQuery = useEmployeeSkills(managerId);
+  const subordinatesQuery = useSubordinates(managerId, !!managerId);
+  const reportIds = useMemo(
+    () => (subordinatesQuery.data || []).map((e) => e.id),
+    [subordinatesQuery.data]
+  );
 
-  const skills = useMemo(() => skillsQuery.data || [], [skillsQuery.data]);
-  const gapReport = gapQuery.data;
+  const skillsQueries = useQueries({
+    queries: reportIds.map((id) => ({
+      queryKey: ['employeeSkills', id],
+      queryFn: () => employeeSkillService.getByEmployee(id),
+      enabled: !!id,
+      staleTime: 5 * 60 * 1000,
+    })),
+  });
+
+  const gapQueries = useQueries({
+    queries: reportIds.map((id) => ({
+      queryKey: ['skillGapAnalysis', id],
+      queryFn: () => skillGapService.analyze(id),
+      enabled: !!id,
+      staleTime: 5 * 60 * 1000,
+    })),
+  });
+
+  const skillsLoading = subordinatesQuery.isLoading || skillsQueries.some((q) => q.isLoading);
+  const gapsLoading = subordinatesQuery.isLoading || gapQueries.some((q) => q.isLoading);
+
+  const skills = useMemo(
+    () => skillsQueries.flatMap((q) => q.data || []),
+    [skillsQueries]
+  );
+
+  // Merge each reportee's gaps into one list, keeping the worst-case gap per skill.
+  const gapReport = useMemo(() => {
+    const bySkill = new Map<string, SkillGapDetail>();
+    for (const q of gapQueries) {
+      for (const gap of q.data?.gaps || []) {
+        const existing = bySkill.get(gap.skillName);
+        if (!existing || gap.currentLevel - gap.requiredLevel < existing.currentLevel - existing.requiredLevel) {
+          bySkill.set(gap.skillName, gap);
+        }
+      }
+    }
+    return {gaps: Array.from(bySkill.values())};
+  }, [gapQueries]);
 
   // Build heatmap bar chart data
   const heatmapData = useMemo(() => {
@@ -751,11 +792,21 @@ function TeamViewTab({managerId}: { managerId: string }) {
   }, [skills]);
 
 
-  if (skillsQuery.isLoading || gapQuery.isLoading) {
+  if (skillsLoading || gapsLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader color="indigo" size="lg"/>
       </div>
+    );
+  }
+
+  if (reportIds.length === 0) {
+    return (
+      <EmptyState
+        icon={<Users className="h-8 w-8"/>}
+        title="No Direct Reports"
+        description="Team competency data will appear here once you have direct reports."
+      />
     );
   }
 
