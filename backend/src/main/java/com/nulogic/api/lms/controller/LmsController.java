@@ -79,6 +79,16 @@ public class LmsController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found: " + id));
     }
 
+    // ─── Learning Paths ─────────────────────────────────────────────────────
+
+    @GetMapping("/learning-paths/{id}")
+    @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
+    public LearningPath getLearningPath(@PathVariable UUID id) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return lmsService.getLearningPathById(tenantId, id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Learning path not found: " + id));
+    }
+
     @PostMapping("/courses")
     @ResponseStatus(HttpStatus.CREATED)
     @RequiresPermission(Permission.LMS_COURSE_MANAGE)

@@ -32,6 +32,7 @@ public class LmsService {
     private final CourseEnrollmentRepository enrollmentRepository;
     private final ContentProgressRepository progressRepository;
     private final CertificateRepository certificateRepository;
+    private final LearningPathRepository learningPathRepository;
     private final TenantTimeService tenantTimeService;
 
     // ================== Course Management ==================
@@ -66,6 +67,11 @@ public class LmsService {
     @Transactional(readOnly = true)
     public Optional<Course> getCourseById(UUID tenantId, UUID id) {
         return courseRepository.findByIdAndTenantId(id, tenantId);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<LearningPath> getLearningPathById(UUID tenantId, UUID id) {
+        return learningPathRepository.findByIdAndTenantIdWithCourses(id, tenantId);
     }
 
     @Transactional(readOnly = true)
