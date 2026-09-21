@@ -43,6 +43,7 @@ public class InterviewManagementService {
     private final DataScopeService dataScopeService;
     private final AuditLogService auditLogService;
     private final GoogleMeetService googleMeetService;
+    private final com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     /**
      * Rejects scheduling/rescheduling an interview whose [scheduledAt, scheduledAt+duration)
@@ -75,6 +76,37 @@ public class InterviewManagementService {
         if (overlaps) {
             throw new IllegalStateException(
                     "Interviewer is already booked for an overlapping time slot");
+        }
+    }
+
+    /**
+     * Interview scheduling/rescheduling/cancellation was previously only audit-logged —
+     * the interviewer never got a real-time notification. Best-effort: resolves the
+     * interviewer's Employee -> User and pushes a WebSocket notification, swallowing any
+     * failure so it never blocks the schedule/update itself.
+     */
+    private void notifyInterviewer(Interview interview, boolean cancelled) {
+        if (interview.getInterviewerId() == null) {
+            return;
+        }
+        try {
+            UUID tenantId = TenantContext.getCurrentTenant();
+            employeeRepository.findByIdAndTenantId(interview.getInterviewerId(), tenantId)
+                    .map(Employee::getUser)
+                    .ifPresent(user -> {
+                        String candidateName = candidateRepository.findById(interview.getCandidateId())
+                                .map(Candidate::getFullName)
+                                .orElse("the candidate");
+                        if (cancelled) {
+                            webSocketNotificationService.notifyInterviewCancelled(user.getId(), candidateName);
+                        } else {
+                            webSocketNotificationService.notifyInterviewScheduled(
+                                    user.getId(), candidateName, String.valueOf(interview.getScheduledAt()));
+                        }
+                    });
+        } catch (Exception e) { // Intentional broad catch — notification failure must not fail scheduling
+            log.warn("Failed to notify interviewer {} for interview {}: {}",
+                    interview.getInterviewerId(), interview.getId(), e.getMessage());
         }
     }
 
@@ -178,6 +210,8 @@ public class InterviewManagementService {
                 "Interview scheduled: " + savedInterview.getInterviewRound() + " for candidate " + savedInterview.getCandidateId() + " at " + savedInterview.getScheduledAt()
         );
 
+        notifyInterviewer(savedInterview, savedInterview.getStatus() == Interview.InterviewStatus.CANCELLED);
+
         return mapToInterviewResponse(savedInterview);
     }
 
@@ -215,6 +249,8 @@ public class InterviewManagementService {
                 updatedInterview.getInterviewRound() + " - " + updatedInterview.getStatus() + (updatedInterview.getResult() != null ? " - " + updatedInterview.getResult() : ""),
                 "Interview updated: " + updatedInterview.getInterviewRound() + " for candidate " + updatedInterview.getCandidateId()
         );
+
+        notifyInterviewer(updatedInterview, updatedInterview.getStatus() == Interview.InterviewStatus.CANCELLED);
 
         return mapToInterviewResponse(updatedInterview);
     }

@@ -290,6 +290,36 @@ public class WebSocketNotificationService {
     }
 
     /**
+     * Notify an interviewer that an interview was scheduled or rescheduled.
+     */
+    public void notifyInterviewScheduled(UUID userId, String candidateName, String scheduledAt) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.INTERVIEW_SCHEDULED)
+                .title("Interview Scheduled")
+                .message(String.format("Your interview with %s is scheduled for %s", candidateName, scheduledAt))
+                .priority(NotificationMessage.Priority.HIGH)
+                .actionUrl("/recruitment/interviews")
+                .build();
+
+        sendToUser(userId, notification);
+    }
+
+    /**
+     * Notify an interviewer that an interview was cancelled.
+     */
+    public void notifyInterviewCancelled(UUID userId, String candidateName) {
+        NotificationMessage notification = NotificationMessage.builder()
+                .type(NotificationMessage.NotificationType.INTERVIEW_CANCELLED)
+                .title("Interview Cancelled")
+                .message(String.format("Your interview with %s has been cancelled", candidateName))
+                .priority(NotificationMessage.Priority.HIGH)
+                .actionUrl("/recruitment/interviews")
+                .build();
+
+        sendToUser(userId, notification);
+    }
+
+    /**
      * Send attendance reminder notification.
      */
     public void notifyAttendanceReminder(UUID employeeId) {

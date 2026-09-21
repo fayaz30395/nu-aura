@@ -65,7 +65,9 @@ public class NotificationMessage {
         GOAL_UPDATED,
         DOCUMENT_UPLOADED,
         TRAINING_ENROLLED,
-        TRAINING_COMPLETED
+        TRAINING_COMPLETED,
+        INTERVIEW_SCHEDULED,
+        INTERVIEW_CANCELLED
     }
 
     public enum Priority {
