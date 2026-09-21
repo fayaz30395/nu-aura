@@ -41,6 +41,10 @@ public class ExitManagementService {
     private final EmployeeRepository employeeRepository;
     private final EventPublisher eventPublisher;
     private final TenantTimeService tenantTimeService;
+    // Consolidation (US-2FZQPK4ZEDN6): FnFCalculationService owns the one statutory-gratuity-
+    // aware approval state machine for FullAndFinalSettlement. Delegate here instead of
+    // duplicating the status guard, so both offboarding F&F surfaces share one approve path.
+    private final FnFCalculationService fnfCalculationService;
 
     // ==================== Exit Process Operations ====================
 
@@ -479,6 +483,14 @@ public class ExitManagementService {
         UUID currentUserId = SecurityContext.getCurrentUserId();
         log.info("Creating F&F settlement for exit process {} in tenant {}", request.getExitProcessId(), tenantId);
 
+        // Consolidation guard: FnFCalculationService.getOrCalculate auto-creates a settlement
+        // for an exit process too — without this check, calling both surfaces for the same
+        // exit process would create two FullAndFinalSettlement rows for it.
+        if (settlementRepository.findByExitProcessIdAndTenantId(request.getExitProcessId(), tenantId).isPresent()) {
+            throw new IllegalStateException(
+                    "A settlement already exists for exit process " + request.getExitProcessId());
+        }
+
         FullAndFinalSettlement settlement = new FullAndFinalSettlement();
         settlement.setTenantId(tenantId);
         settlement.setExitProcessId(request.getExitProcessId());
@@ -565,15 +577,16 @@ public class ExitManagementService {
     @Transactional
     public FullAndFinalSettlementResponse approveSettlement(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        UUID currentUserId = SecurityContext.getCurrentUserId();
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
-        settlement.setStatus(FullAndFinalSettlement.SettlementStatus.APPROVED);
-        settlement.setApprovedBy(currentUserId);
-        // S12-B: tenant-local "today" for approval date — resolved via TenantTimeService.
-        settlement.setApprovalDate(tenantTimeService.today(tenantId));
-        return mapToSettlementResponse(settlementRepository.save(settlement));
+        // Consolidation: delegate to the one status-guarded approve implementation
+        // (rejects anything other than DRAFT/PENDING_APPROVAL) instead of duplicating it here.
+        fnfCalculationService.approve(settlement.getExitProcessId());
+
+        FullAndFinalSettlement approved = settlementRepository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
+        return mapToSettlementResponse(approved);
     }
 
     @Transactional
