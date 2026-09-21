@@ -33,6 +33,7 @@ import {
   useOnboardingProcessTasks,
   useUpdateOnboardingTaskStatus
 } from '@/lib/hooks/queries/useOnboarding';
+import {useEmployee} from '@/lib/hooks/queries/useEmployees';
 import {useGoogleLogin} from '@react-oauth/google';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {createLogger} from '@/lib/utils/logger';
@@ -67,6 +68,7 @@ export default function OnboardingDetailPage() {
   // React Query hooks
   const {data: process, isLoading} = useOnboardingProcess(processId);
   const {data: tasks = []} = useOnboardingProcessTasks(processId);
+  const {data: buddy} = useEmployee(process?.assignedBuddyId || '', !!process?.assignedBuddyId);
   const {mutate: updateTaskStatus, isPending: isUpdating} = useUpdateOnboardingTaskStatus();
 
   useEffect(() => {
@@ -345,8 +347,13 @@ export default function OnboardingDetailPage() {
                   <div className="bg-white/40 dark:bg-white/5 rounded-lg p-4">
                     <p className="text-xs font-black uppercase tracking-widest opacity-60">Onboarding Buddy</p>
                     <p className="font-bold text-lg mt-1">{process.assignedBuddyName || 'Not Assigned'}</p>
-                    <Button variant="ghost" size="sm"
-                            className="w-full mt-4 bg-white/40 hover:bg-white/60 dark:bg-white/5 dark:hover:bg-white/10 border-0 text-accent-900 dark:text-accent-100 text-xs">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      disabled={!buddy?.workEmail}
+                      onClick={() => buddy?.workEmail && (window.location.href = `mailto:${buddy.workEmail}`)}
+                      className="w-full mt-4 bg-white/40 hover:bg-white/60 dark:bg-white/5 dark:hover:bg-white/10 border-0 text-accent-900 dark:text-accent-100 text-xs disabled:opacity-50"
+                    >
                       Send Message
                     </Button>
                   </div>
