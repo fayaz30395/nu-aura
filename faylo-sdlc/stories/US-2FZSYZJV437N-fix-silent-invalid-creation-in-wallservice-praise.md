@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWT73TBXRCF
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-21
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** PRAISE requires recipientId, POLL requires non-empty pollOptions, both enforced with 400 on violation
   - **Verify:** shell mvn -q -DskipTests compile
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-21)

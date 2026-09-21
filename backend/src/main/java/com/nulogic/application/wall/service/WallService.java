@@ -93,12 +93,22 @@ public class WallService {
         Employee author = employeeRepository.findByIdAndTenantId(authorId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Author not found"));
 
+        // AC1: a PRAISE post with no recipient, or a POLL with no options, previously
+        // saved silently instead of rejecting — reject both up front.
+        if (request.getType() == WallPost.PostType.PRAISE && request.getPraiseRecipientId() == null) {
+            throw new IllegalArgumentException("Praise posts require a praiseRecipientId");
+        }
+        if (request.getType() == WallPost.PostType.POLL
+                && (request.getPollOptions() == null || request.getPollOptions().isEmpty())) {
+            throw new IllegalArgumentException("Poll posts require at least one poll option");
+        }
+
         WallPost post = new WallPost(request.getType(), request.getContent(), author);
         post.setImageUrl(request.getImageUrl());
         post.setVisibility(request.getVisibility());
 
         // Handle praise recipient
-        if (request.getType() == WallPost.PostType.PRAISE && request.getPraiseRecipientId() != null) {
+        if (request.getType() == WallPost.PostType.PRAISE) {
             Employee recipient = employeeRepository.findByIdAndTenantId(request.getPraiseRecipientId(), tenantId)
                     .orElseThrow(() -> new IllegalArgumentException("Praise recipient not found"));
             post.setPraiseRecipient(recipient);
@@ -108,7 +118,7 @@ public class WallService {
         }
 
         // Handle poll options
-        if (request.getType() == WallPost.PostType.POLL && request.getPollOptions() != null) {
+        if (request.getType() == WallPost.PostType.POLL) {
             for (int i = 0; i < request.getPollOptions().size(); i++) {
                 PollOption option = new PollOption(request.getPollOptions().get(i), i);
                 post.addPollOption(option);
