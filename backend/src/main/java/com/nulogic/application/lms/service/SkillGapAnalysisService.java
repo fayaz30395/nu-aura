@@ -2,12 +2,17 @@ package com.nulogic.application.lms.service;
 
 import com.nulogic.api.lms.dto.SkillGapReport;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.employee.EmployeeSkill;
 import com.nulogic.domain.lms.Course;
+import com.nulogic.domain.performance.CompetencyFramework;
+import com.nulogic.domain.performance.CompetencyRequirement;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeSkillRepository;
 import com.nulogic.infrastructure.lms.repository.CourseRepository;
+import com.nulogic.infrastructure.performance.repository.CompetencyFrameworkRepository;
+import com.nulogic.infrastructure.performance.repository.CompetencyRequirementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,6 +29,8 @@ public class SkillGapAnalysisService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeSkillRepository employeeSkillRepository;
     private final CourseRepository courseRepository;
+    private final CompetencyFrameworkRepository competencyFrameworkRepository;
+    private final CompetencyRequirementRepository competencyRequirementRepository;
 
     public SkillGapReport analyzeGaps(UUID tenantId, UUID employeeId) {
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
@@ -69,42 +76,47 @@ public class SkillGapAnalysisService {
                 .build();
     }
 
+    /**
+     * Required skills now come from CompetencyFramework/CompetencyRequirement
+     * (admin-editable via CompetencyFrameworkController) instead of a hardcoded
+     * per-role map. The role-family classification below is matching logic, not
+     * skill data — the actual skill names/levels live in the database.
+     */
     private Map<String, Integer> getRequiredSkillsForRole(Employee employee) {
-        // This is a simplified version. In production, this would:
-        // 1. Look up the employee's Position
-        // 2. Parse the requiredSkills field from Position
-        // 3. Or use a dedicated SkillMatrix/CompetencyFramework table
+        UUID tenantId = TenantContext.getCurrentTenant();
+        String roleFamily = classifyRoleFamily(employee);
 
-        Map<String, Integer> required = new HashMap<>();
-
-        // Example role-based requirements
-        if (employee.getJobRole() != null) {
-            String role = employee.getJobRole().name();
-            if (role.contains("ENGINEER") || role.contains("DEVELOPER")) {
-                required.put("System Design", 4);
-                required.put("Java", 4);
-                required.put("Cloud Architecture", 3);
-                required.put("Database Design", 3);
-                required.put("API Development", 4);
-            } else if (role.contains("MANAGER")) {
-                required.put("Leadership", 4);
-                required.put("Communication", 5);
-                required.put("Strategic Planning", 4);
-                required.put("Team Management", 4);
-            } else if (role.contains("PRODUCT")) {
-                required.put("Product Strategy", 4);
-                required.put("User Research", 3);
-                required.put("Data Analysis", 3);
-                required.put("Stakeholder Management", 4);
-            } else {
-                // Default skills for other roles
-                required.put("Communication", 3);
-                required.put("Collaboration", 3);
-                required.put("Problem Solving", 3);
-            }
+        Optional<CompetencyFramework> framework = competencyFrameworkRepository
+                .findByTenantIdAndRoleFamilyAndIsActiveTrue(tenantId, roleFamily);
+        if (framework.isEmpty() && !"DEFAULT".equals(roleFamily)) {
+            framework = competencyFrameworkRepository.findByTenantIdAndRoleFamilyAndIsActiveTrue(tenantId, "DEFAULT");
+        }
+        if (framework.isEmpty()) {
+            return Map.of();
         }
 
-        return required;
+        List<CompetencyRequirement> requirements = competencyRequirementRepository
+                .findByFrameworkIdAndTenantId(framework.get().getId(), tenantId);
+        return requirements.stream()
+                .collect(Collectors.toMap(CompetencyRequirement::getSkillName, CompetencyRequirement::getRequiredLevel,
+                        (existing, replacement) -> existing));
+    }
+
+    private String classifyRoleFamily(Employee employee) {
+        if (employee.getJobRole() == null) {
+            return "DEFAULT";
+        }
+        String role = employee.getJobRole().name();
+        if (role.contains("ENGINEER") || role.contains("DEVELOPER")) {
+            return "ENGINEER";
+        }
+        if (role.contains("MANAGER")) {
+            return "MANAGER";
+        }
+        if (role.contains("PRODUCT")) {
+            return "PRODUCT";
+        }
+        return "DEFAULT";
     }
 
     private String getDepartmentName(Employee employee) {
