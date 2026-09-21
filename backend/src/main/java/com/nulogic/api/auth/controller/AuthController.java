@@ -291,12 +291,14 @@ public class AuthController {
     // ==================== Cookie Helper Methods ====================
 
     @PostMapping("/forgot-password")
-    @Operation(summary = "Request password reset", description = "Request a password reset link via email. Returns authProvider=GOOGLE if user uses SSO.")
+    @Operation(summary = "Request password reset", description = "Request a password reset link via email.")
     public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
-        String authProvider = authService.requestPasswordReset(request.getEmail());
+        // SEC FIX: previously returned authProvider (GOOGLE vs local), letting anyone
+        // probe an email address to learn its account type (account-enumeration smell).
+        // Same generic response regardless of account existence or provider.
+        authService.requestPasswordReset(request.getEmail());
         return ResponseEntity.ok(Map.of(
-                "message", "If an account exists with this email, a password reset link has been sent.",
-                "authProvider", authProvider
+                "message", "If an account exists with this email, a password reset link has been sent."
         ));
     }
 
