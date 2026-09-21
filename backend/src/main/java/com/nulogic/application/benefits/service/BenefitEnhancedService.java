@@ -794,6 +794,47 @@ public class BenefitEnhancedService {
         }
     }
 
+    // ==================== DEPENDENT VERIFICATION ====================
+
+    @Transactional(readOnly = true)
+    public List<BenefitDependent> listPendingVerificationDependents() {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return dependentRepository.findPendingVerification(tenantId);
+    }
+
+    @Transactional
+    public BenefitDependent verifyDependent(UUID dependentId, boolean approved, String reason) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID currentUser = SecurityContext.getCurrentUserId();
+
+        BenefitDependent dependent = dependentRepository.findByIdAndTenantId(dependentId, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Dependent not found"));
+
+        if (dependent.getStatus() != BenefitDependent.DependentStatus.PENDING_VERIFICATION) {
+            throw new IllegalStateException(
+                    "Dependent is not pending verification, current status: " + dependent.getStatus());
+        }
+
+        dependent.setStatus(approved ? BenefitDependent.DependentStatus.VERIFIED : BenefitDependent.DependentStatus.REJECTED);
+        dependent.setVerifiedBy(currentUser);
+        dependent.setVerifiedAt(tenantTimeService.now(tenantId));
+        dependent.setVerificationReason(reason);
+        if (!approved) {
+            dependent.setCovered(false);
+        }
+
+        BenefitDependent saved = dependentRepository.save(dependent);
+
+        try {
+            auditLogService.logAction("BENEFIT_DEPENDENT", saved.getId(), AuditAction.UPDATE, null, null,
+                    "Dependent " + (approved ? "verified" : "rejected") + ": " + reason);
+        } catch (Exception e) {
+            log.warn("Audit log failed for dependent verification: {}", e.getMessage());
+        }
+
+        return saved;
+    }
+
     // ==================== ANALYTICS ====================
 
     @Transactional(readOnly = true)
@@ -819,6 +860,7 @@ public class BenefitEnhancedService {
         dashboard.put("pendingEnrollments", enrollmentRepository.findPendingEnrollments(tenantId).size());
         dashboard.put("pendingClaims", claimRepository.findPendingClaims(tenantId).size());
         dashboard.put("claimsPendingPayment", claimRepository.findApprovedClaimsPendingPayment(tenantId).size());
+        dashboard.put("pendingDependentVerifications", dependentRepository.findPendingVerification(tenantId).size());
 
         return dashboard;
     }

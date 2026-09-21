@@ -299,6 +299,27 @@ public class BenefitEnhancedController {
         return ResponseEntity.ok(benefitService.getPendingClaims());
     }
 
+    // ==================== DEPENDENT VERIFICATION ====================
+
+    @GetMapping("/dependents/pending-verification")
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
+    @Operation(summary = "List dependents pending verification")
+    public ResponseEntity<List<EnrollmentResponse.DependentResponse>> getPendingVerificationDependents() {
+        List<EnrollmentResponse.DependentResponse> response = benefitService.listPendingVerificationDependents()
+                .stream().map(EnrollmentResponse.DependentResponse::from).toList();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/dependents/{dependentId}/verify")
+    @RequiresPermission(Permission.BENEFIT_MANAGE)
+    @Operation(summary = "Verify or reject a dependent pending verification")
+    public ResponseEntity<EnrollmentResponse.DependentResponse> verifyDependent(
+            @PathVariable UUID dependentId,
+            @Valid @RequestBody DependentVerificationRequest request) {
+        var dependent = benefitService.verifyDependent(dependentId, request.getApproved(), request.getReason());
+        return ResponseEntity.ok(EnrollmentResponse.DependentResponse.from(dependent));
+    }
+
     // ==================== FLEX BENEFITS ====================
 
     @PostMapping("/flex/allocations")

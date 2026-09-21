@@ -173,6 +173,12 @@ public class BenefitDependent extends TenantAware {
     @Builder.Default
     private DependentStatus status = DependentStatus.ACTIVE;
 
+    // Verification workflow (PENDING_VERIFICATION -> VERIFIED/REJECTED)
+    private java.util.UUID verifiedBy;
+    private LocalDateTime verifiedAt;
+    @Column(columnDefinition = "TEXT")
+    private String verificationReason;
+
     // createdAt / updatedAt are stamped by TimeAuditingEntityListener via @TenantTimestamp —
     // see backend/docs/audit/prepersist-now-audit.md rows 23 & 24.
     @TenantTimestamp
@@ -216,6 +222,8 @@ public class BenefitDependent extends TenantAware {
 
     public enum DependentStatus {
         PENDING_VERIFICATION,
+        VERIFIED,
+        REJECTED,
         ACTIVE,
         INACTIVE,
         REMOVED
