@@ -182,6 +182,17 @@ export default function MyLeavesPage() {
   const onLeaveSubmit = async (data: LeaveFormData) => {
     try {
       const totalDays = calculateDays();
+
+      const balance = leaveBalances.find((b) => b.leaveTypeId === data.leaveTypeId);
+      const isSameEditingType = editingRequest?.leaveTypeId === data.leaveTypeId;
+      const availableForCheck = isSameEditingType
+        ? (balance?.available || 0) + editingRequest!.totalDays
+        : balance?.available || 0;
+      if (balance && totalDays > availableForCheck) {
+        setError(`Insufficient leave balance. You have ${availableForCheck} day(s) available for this leave type.`);
+        return;
+      }
+
       const leaveRequestData: LeaveRequestRequest = {
         employeeId: user!.employeeId!,
         leaveTypeId: data.leaveTypeId,
