@@ -353,6 +353,26 @@ export default function AdminIntegrationsPage() {
         </Card>
       )}
 
+      {/* Slack Integration */}
+      <Card>
+        <CardHeader>
+          <div className="row-between">
+            <div className="flex items-center gap-4">
+              <div className="p-2 rounded-lg bg-accent-100 dark:bg-accent-900/30">
+                <Zap className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
+              </div>
+              <div>
+                <CardTitle>Slack</CardTitle>
+                <CardDescription>Slash commands, interactive components, and event subscriptions</CardDescription>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => router.push('/integrations/slack')}>
+              Configure
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+
       {/* SMS Integration */}
       <Card>
         <CardHeader>

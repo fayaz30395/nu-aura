@@ -1219,8 +1219,37 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           id: 'projects',
           label: 'Projects',
           icon: icon.folderKanban,
-          href: '/projects',
-          requiredPermission: Permissions.PROJECT_VIEW
+          requiredPermission: Permissions.PROJECT_VIEW,
+          children: [
+            {
+              id: 'projects-list',
+              label: 'All Projects',
+              href: '/projects',
+              icon: sm.folderKanban,
+              requiredPermission: Permissions.PROJECT_VIEW,
+            },
+            {
+              id: 'projects-calendar',
+              label: 'Calendar',
+              href: '/projects/calendar',
+              icon: sm.calendar,
+              requiredPermission: Permissions.PROJECT_VIEW,
+            },
+            {
+              id: 'projects-gantt',
+              label: 'Gantt Chart',
+              href: '/projects/gantt',
+              icon: sm.barChart3,
+              requiredPermission: Permissions.PROJECT_VIEW,
+            },
+            {
+              id: 'projects-resource-conflicts',
+              label: 'Resource Conflicts',
+              href: '/projects/resource-conflicts',
+              icon: sm.alertTriangle,
+              requiredPermission: Permissions.RESOURCE_VIEW,
+            },
+          ],
         },
         {
           id: 'psa-projects',
