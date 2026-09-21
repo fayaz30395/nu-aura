@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import {Calendar, Laptop, MapPin, Package} from 'lucide-react';
+import {AlertCircle, Calendar, Laptop, MapPin, Package} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -41,6 +41,16 @@ export default function MyAssetsPage() {
           </Card>
         ) : assetsQuery.isLoading ? (
           <SkeletonTable rows={4} columns={4}/>
+        ) : assetsQuery.isError ? (
+          <Card className="card-aura">
+            <CardContent className="py-12">
+              <EmptyState
+                icon={<AlertCircle className="h-8 w-8" aria-hidden="true"/>}
+                title="Couldn't load assets"
+                description="Something went wrong while loading your assets. Please try again."
+              />
+            </CardContent>
+          </Card>
         ) : assets.length === 0 ? (
           <Card className="card-aura">
             <CardContent className="py-12">

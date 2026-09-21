@@ -41,7 +41,7 @@ export default function MyPayslipsPage() {
   const allPayslipsQuery = usePayslips(0, 100, undefined, undefined, hasHydrated && isAdminView);
 
   // Determine which data to use
-  const {data: payslipsData, isLoading} = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
+  const {data: payslipsData, isLoading, isError: isQueryError} = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
   const payslips = payslipsData?.content ?? [];
 
   const toggleView = () => {
@@ -282,7 +282,17 @@ export default function MyPayslipsPage() {
         )}
 
         {/* Payslips List */}
-        {filteredPayslips.length === 0 ? (
+        {isQueryError ? (
+          <Card className="card-aura">
+            <CardContent>
+              <EmptyState
+                icon={<AlertCircle className="w-full h-full"/>}
+                title="Couldn't Load Payslips"
+                description="Something went wrong while loading your payslips. Please try again."
+              />
+            </CardContent>
+          </Card>
+        ) : filteredPayslips.length === 0 ? (
           <Card className="card-aura">
             <CardContent>
               <EmptyState
