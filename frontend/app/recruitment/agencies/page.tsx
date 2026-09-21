@@ -36,6 +36,7 @@ import {
   Users,
 } from 'lucide-react';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -99,6 +100,7 @@ function AgenciesPage() {
   const [statusFilter, setStatusFilter] = useState<AgencyStatus | undefined>();
   const [showForm, setShowForm] = useState(false);
   const [editingAgency, setEditingAgency] = useState<RecruitmentAgency | null>(null);
+  const [deletingAgencyId, setDeletingAgencyId] = useState<string | null>(null);
 
   const agenciesQuery = useAgencies(0, 100, statusFilter, search || undefined);
   const createMutation = useCreateAgency();
@@ -177,8 +179,10 @@ function AgenciesPage() {
     form.reset();
   }
 
-  async function handleDelete(id: string) {
-    await deleteMutation.mutateAsync(id);
+  async function handleDelete() {
+    if (!deletingAgencyId) return;
+    await deleteMutation.mutateAsync(deletingAgencyId);
+    setDeletingAgencyId(null);
   }
 
   if (agenciesQuery.isError) {
@@ -589,7 +593,7 @@ function AgenciesPage() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleDelete(agency.id);
+                                setDeletingAgencyId(agency.id);
                               }}
                               className="p-1.5 rounded-md hover:bg-danger-50 dark:hover:bg-danger-900/20 cursor-pointer"
                               aria-label="Delete agency"
@@ -607,6 +611,18 @@ function AgenciesPage() {
           )}
         </Stagger>
       </PermissionGate>
+
+      <ConfirmDialog
+        isOpen={!!deletingAgencyId}
+        onClose={() => setDeletingAgencyId(null)}
+        onConfirm={handleDelete}
+        title="Delete Agency?"
+        message="This action cannot be undone. The agency will be permanently deleted."
+        confirmText="Delete"
+        cancelText="Cancel"
+        type="danger"
+        loading={deleteMutation.isPending}
+      />
     </AppLayout>
   );
 }
