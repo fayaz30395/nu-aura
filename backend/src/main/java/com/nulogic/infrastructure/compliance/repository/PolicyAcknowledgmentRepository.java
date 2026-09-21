@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
@@ -33,4 +34,7 @@ public interface PolicyAcknowledgmentRepository extends JpaRepository<PolicyAckn
 
     @Query("SELECT a.policyId, COUNT(a) FROM PolicyAcknowledgment a WHERE a.tenantId = :tenantId GROUP BY a.policyId")
     List<Object[]> countAcknowledgmentsByPolicy(@Param("tenantId") UUID tenantId);
+
+    @Query("SELECT a.employeeId FROM PolicyAcknowledgment a WHERE a.policyId = :policyId AND a.policyVersion = :version")
+    Set<UUID> findAcknowledgedEmployeeIds(@Param("policyId") UUID policyId, @Param("version") Integer version);
 }

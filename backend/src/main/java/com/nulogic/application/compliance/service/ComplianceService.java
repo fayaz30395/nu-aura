@@ -6,7 +6,9 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.compliance.*;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.infrastructure.compliance.repository.*;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,7 @@ public class ComplianceService {
     private final ComplianceChecklistRepository checklistRepository;
     private final ComplianceAuditLogRepository auditLogRepository;
     private final ComplianceAlertRepository alertRepository;
+    private final EmployeeRepository employeeRepository;
     private final TenantTimeService tenantTimeService;
     private final DataScopeService dataScopeService;
 
@@ -240,6 +243,36 @@ public class ComplianceService {
         return policiesRequiringAck.stream()
                 .filter(p -> !acknowledgedPolicies.contains(p.getId() + "-" + p.getPolicyVersion()))
                 .toList();
+    }
+
+    // Counts distinct in-scope employees who have a published policy past its
+    // acknowledgment window (effectiveDate + acknowledgmentFrequencyDays) with no
+    // acknowledgment recorded for the current policy version.
+    private long countPendingAcknowledgments(UUID tenantId, LocalDate today) {
+        List<CompliancePolicy> policiesPastWindow = policyRepository.findPoliciesRequiringAcknowledgment(tenantId).stream()
+                .filter(p -> p.getEffectiveDate() != null)
+                .filter(p -> !today.isBefore(p.getEffectiveDate().plusDays(p.getAcknowledgmentFrequencyDays())))
+                .toList();
+        if (policiesPastWindow.isEmpty()) {
+            return 0;
+        }
+
+        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.COMPLIANCE_VIEW);
+        Specification<Employee> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
+        Specification<Employee> activeSpec = (root, query, cb) -> cb.equal(root.get("status"), Employee.EmployeeStatus.ACTIVE);
+        List<Employee> inScopeEmployees = employeeRepository.findAll(tenantSpec.and(activeSpec).and(scopeSpec));
+
+        Set<UUID> pendingEmployeeIds = new HashSet<>();
+        for (CompliancePolicy policy : policiesPastWindow) {
+            Set<UUID> acknowledgedEmployeeIds = acknowledgmentRepository.findAcknowledgedEmployeeIds(
+                    policy.getId(), policy.getPolicyVersion());
+            for (Employee employee : inScopeEmployees) {
+                if (!acknowledgedEmployeeIds.contains(employee.getId())) {
+                    pendingEmployeeIds.add(employee.getId());
+                }
+            }
+        }
+        return pendingEmployeeIds.size();
     }
 
     // ==================== Compliance Checklists ====================
@@ -573,6 +606,7 @@ public class ComplianceService {
         // Acknowledgment stats
         List<Object[]> acksByPolicy = acknowledgmentRepository.countAcknowledgmentsByPolicy(tenantId);
         dashboard.put("acknowledgmentsByPolicy", acksByPolicy.size());
+        dashboard.put("pendingAcknowledgments", countPendingAcknowledgments(tenantId, today));
 
         // Audit activity (last 7 days)
         List<Object[]> auditActivity = auditLogRepository.countByAction(tenantId, tenantTimeService.now(tenantId).minusDays(7));

@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** autonomous
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** GET /compliance/dashboard includes real pendingAcknowledgments count instead of frontend showing em-dash placeholder
   - **Verify:** shell bash -c "cd backend && mvn -q -DskipTests compile"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)

@@ -46,7 +46,11 @@ class ComplianceServiceTest {
     @Mock
     private ComplianceAlertRepository alertRepository;
     @Mock
+    private com.nulogic.infrastructure.employee.repository.EmployeeRepository employeeRepository;
+    @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private com.nulogic.common.security.DataScopeService dataScopeService;
     @InjectMocks
     private ComplianceService complianceService;
     private UUID tenantId;
@@ -211,12 +215,49 @@ class ComplianceServiceTest {
         when(alertRepository.countByType(tenantId)).thenReturn(List.of());
         when(acknowledgmentRepository.countAcknowledgmentsByPolicy(tenantId)).thenReturn(List.of());
         when(auditLogRepository.countByAction(eq(tenantId), any(LocalDateTime.class))).thenReturn(List.of());
+        when(policyRepository.findPoliciesRequiringAcknowledgment(tenantId)).thenReturn(List.of());
 
         Map<String, Object> result = complianceService.getComplianceDashboard();
 
         assertThat(result).containsKey("totalActivePolicies");
         assertThat(result).containsKey("complianceScore");
         assertThat(result.get("totalActivePolicies")).isEqualTo(1);
+        assertThat(result.get("pendingAcknowledgments")).isEqualTo(0L);
+    }
+
+    @Test
+    @DisplayName("getComplianceDashboard should count in-scope employees pending acknowledgment past the window")
+    void shouldCountPendingAcknowledgmentsPastWindow() {
+        when(policyRepository.findActivePolicies(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
+        when(policyRepository.findExpiringPolicies(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
+        when(checklistRepository.findActiveChecklists(tenantId)).thenReturn(List.of());
+        when(checklistRepository.findOverdueChecklists(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
+        when(alertRepository.findActiveAlerts(tenantId)).thenReturn(List.of());
+        when(alertRepository.findCriticalAlerts(tenantId)).thenReturn(List.of());
+        when(alertRepository.findOverdueAlerts(eq(tenantId), any(LocalDate.class))).thenReturn(List.of());
+        when(alertRepository.countByStatus(tenantId)).thenReturn(List.of());
+        when(alertRepository.countByType(tenantId)).thenReturn(List.of());
+        when(acknowledgmentRepository.countAcknowledgmentsByPolicy(tenantId)).thenReturn(List.of());
+        when(auditLogRepository.countByAction(eq(tenantId), any(LocalDateTime.class))).thenReturn(List.of());
+
+        CompliancePolicy policy = new CompliancePolicy();
+        policy.setId(UUID.randomUUID());
+        policy.setPolicyVersion(1);
+        policy.setEffectiveDate(LocalDate.now().minusDays(400));
+        policy.setAcknowledgmentFrequencyDays(365);
+        when(policyRepository.findPoliciesRequiringAcknowledgment(tenantId)).thenReturn(List.of(policy));
+        when(acknowledgmentRepository.findAcknowledgedEmployeeIds(policy.getId(), 1)).thenReturn(java.util.Set.of());
+
+        com.nulogic.domain.employee.Employee employee = new com.nulogic.domain.employee.Employee();
+        employee.setId(UUID.randomUUID());
+        when(dataScopeService.getScopeSpecification(anyString()))
+                .thenReturn((root, query, cb) -> cb.conjunction());
+        when(employeeRepository.findAll(any(org.springframework.data.jpa.domain.Specification.class)))
+                .thenReturn(List.of(employee));
+
+        Map<String, Object> result = complianceService.getComplianceDashboard();
+
+        assertThat(result.get("pendingAcknowledgments")).isEqualTo(1L);
     }
 
     // ==================== Checklist Tests ====================
