@@ -194,7 +194,10 @@ public class ApprovalEscalationJob {
                 .status(StepExecution.StepStatus.PENDING)
                 .assignedToUserId(targetUserId)
                 .assignedAt(tenantTimeService.now(tenantId))
-                .deadline(step.getDeadline())
+                // Fresh deadline from escalation time, not a copy of the already-past
+                // original deadline — copying it verbatim made the new PENDING step
+                // immediately re-eligible for escalation on the next scheduler tick.
+                .deadline(tenantTimeService.now(tenantId).plusHours(step.getApprovalStep().getSlaHours()))
                 .build();
 
         // Save both steps
