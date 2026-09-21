@@ -220,6 +220,8 @@ export interface DocumentTemplate {
   usageCount: number;
   icon?: string;
   tags: string[];
+  isActive?: boolean;
+  isFeatured?: boolean;
   createdAt: string;
   updatedAt: string;
 }

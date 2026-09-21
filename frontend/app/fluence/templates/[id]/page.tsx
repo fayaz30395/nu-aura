@@ -4,9 +4,9 @@ import {useCallback, useEffect, useState} from 'react';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {motion} from 'framer-motion';
-import {ArrowLeft, Calendar, Copy, Eye, RefreshCw, Tag, Trash2, User,} from 'lucide-react';
+import {ArrowLeft, Calendar, Copy, Edit, Eye, RefreshCw, Star, Tag, Trash2, User,} from 'lucide-react';
 import dynamic from 'next/dynamic';
-import {Modal, Select, Skeleton, TextInput} from '@mantine/core';
+import {Modal, Select, Skeleton, Switch, TagsInput, TextInput} from '@mantine/core';
 import {notifications} from '@mantine/notifications';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -17,10 +17,14 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {PermissionGate} from '@/components/auth/PermissionGate';
 import {
   useDeleteFluenceTemplate,
   useFluenceTemplate,
   useInstantiateTemplate,
+  useToggleTemplateActive,
+  useToggleTemplateFeatured,
+  useUpdateFluenceTemplate,
   useWikiSpaces,
 } from '@/lib/hooks/queries/useFluence';
 
@@ -35,6 +39,14 @@ const instantiateFormSchema = instantiateTemplateSchema.pick({
 
 type InstantiateFormData = z.infer<typeof instantiateFormSchema>;
 
+const editTemplateFormSchema = z.object({
+  name: z.string().min(3, 'Name must be at least 3 characters').max(255),
+  description: z.string().max(500).optional().or(z.literal('')),
+  tags: z.array(z.string().min(1).max(50)).optional().default([]),
+});
+
+type EditTemplateFormData = z.infer<typeof editTemplateFormSchema>;
+
 const ContentViewer = dynamic(
   () => import('@/components/fluence/ContentViewer'),
   {ssr: false, loading: () => <Skeleton height={300} radius="md"/>}
@@ -45,6 +57,7 @@ export default function TemplateDetailPage() {
   const params = useParams();
   const templateId = params.id as string;
   const [showInstantiateModal, setShowInstantiateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const {hasAnyPermission, isReady} = usePermissions();
 
@@ -62,6 +75,9 @@ export default function TemplateDetailPage() {
   const {data: spacesData} = useWikiSpaces(0, 100);
   const instantiate = useInstantiateTemplate();
   const deleteTemplate = useDeleteFluenceTemplate();
+  const updateTemplate = useUpdateFluenceTemplate();
+  const toggleActive = useToggleTemplateActive();
+  const toggleFeatured = useToggleTemplateFeatured();
 
   const spaces = spacesData?.content || [];
 
@@ -74,6 +90,17 @@ export default function TemplateDetailPage() {
   } = useForm<InstantiateFormData>({
     resolver: zodResolver(instantiateFormSchema),
     defaultValues: {documentTitle: '', spaceId: ''},
+  });
+
+  const {
+    register: registerEdit,
+    handleSubmit: handleEditSubmit,
+    control: editControl,
+    formState: {errors: editErrors},
+    reset: resetEdit,
+  } = useForm<EditTemplateFormData>({
+    resolver: zodResolver(editTemplateFormSchema),
+    defaultValues: {name: '', description: '', tags: []},
   });
 
   const handleInstantiate = useCallback(
@@ -106,6 +133,56 @@ export default function TemplateDetailPage() {
     },
     [template, instantiate, reset, router]
   );
+
+  const handleOpenEdit = useCallback(() => {
+    if (!template) return;
+    resetEdit({
+      name: template.name,
+      description: template.description || '',
+      tags: template.tags || [],
+    });
+    setShowEditModal(true);
+  }, [template, resetEdit]);
+
+  const handleEdit = useCallback(
+    (data: EditTemplateFormData) => {
+      if (!template) return;
+      updateTemplate.mutate(
+        {
+          id: template.id,
+          data: {
+            name: data.name,
+            description: data.description || undefined,
+            tags: data.tags && data.tags.length > 0 ? data.tags : undefined,
+          },
+        },
+        {
+          onSuccess: () => {
+            setShowEditModal(false);
+            notifications.show({title: 'Template updated', message: '', color: 'green'});
+          },
+          onError: () => {
+            notifications.show({title: 'Error', message: 'Failed to update template', color: 'red'});
+          },
+        }
+      );
+    },
+    [template, updateTemplate]
+  );
+
+  const handleToggleActive = useCallback(() => {
+    if (!template) return;
+    toggleActive.mutate(template.id, {
+      onError: () => notifications.show({title: 'Error', message: 'Failed to toggle active state', color: 'red'}),
+    });
+  }, [template, toggleActive]);
+
+  const handleToggleFeatured = useCallback(() => {
+    if (!template) return;
+    toggleFeatured.mutate(template.id, {
+      onError: () => notifications.show({title: 'Error', message: 'Failed to toggle featured state', color: 'red'}),
+    });
+  }, [template, toggleFeatured]);
 
   const handleDelete = useCallback(() => {
     if (!template) return;
@@ -189,6 +266,16 @@ export default function TemplateDetailPage() {
               <Copy className="w-4 h-4"/>
               Use Template
             </Button>
+            <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_UPDATE}>
+              <Button
+                variant="secondary"
+                className="gap-2"
+                onClick={handleOpenEdit}
+                aria-label="Edit template"
+              >
+                <Edit className="w-4 h-4"/>
+              </Button>
+            </PermissionGate>
             <Button
               variant="secondary"
               className="gap-2"
@@ -243,6 +330,38 @@ export default function TemplateDetailPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Status toggles */}
+            <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_UPDATE}>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Status</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="row-between">
+                    <span className="text-body-secondary">Active</span>
+                    <Switch
+                      checked={template.isActive ?? true}
+                      onChange={handleToggleActive}
+                      disabled={toggleActive.isPending}
+                      aria-label="Toggle template active"
+                    />
+                  </div>
+                  <div className="row-between">
+                    <span className="text-body-secondary flex items-center gap-1">
+                      <Star className="w-4 h-4"/>
+                      Featured
+                    </span>
+                    <Switch
+                      checked={template.isFeatured ?? false}
+                      onChange={handleToggleFeatured}
+                      disabled={toggleFeatured.isPending}
+                      aria-label="Toggle template featured"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </PermissionGate>
 
             {/* Tags */}
             {template.tags && template.tags.length > 0 && (
@@ -316,6 +435,52 @@ export default function TemplateDetailPage() {
             >
               <Copy className="w-4 h-4"/>
               {instantiate.isPending ? 'Creating...' : 'Create Page'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        opened={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        title="Edit Template"
+        size="md"
+      >
+        <form onSubmit={handleEditSubmit(handleEdit)} className="space-y-4">
+          <TextInput
+            label="Name"
+            required
+            {...registerEdit('name')}
+            error={editErrors.name?.message}
+          />
+          <TextInput
+            label="Description"
+            {...registerEdit('description')}
+            error={editErrors.description?.message}
+          />
+          <Controller
+            control={editControl}
+            name="tags"
+            render={({field}) => (
+              <TagsInput
+                {...field}
+                label="Tags"
+                value={field.value ?? []}
+                clearable
+              />
+            )}
+          />
+          <div className="flex gap-2 justify-end pt-2">
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={() => setShowEditModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={updateTemplate.isPending}>
+              {updateTemplate.isPending ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
         </form>

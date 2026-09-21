@@ -369,6 +369,16 @@ class FluenceService {
     await apiClient.delete(`/knowledge/templates/${id}`);
   }
 
+  async toggleTemplateActive(id: string): Promise<DocumentTemplate> {
+    const response = await apiClient.post<DocumentTemplate>(`/knowledge/templates/${id}/toggle-active`);
+    return response.data;
+  }
+
+  async toggleTemplateFeatured(id: string): Promise<DocumentTemplate> {
+    const response = await apiClient.post<DocumentTemplate>(`/knowledge/templates/${id}/toggle-featured`);
+    return response.data;
+  }
+
   async instantiateTemplate(data: InstantiateTemplateRequest): Promise<WikiPage> {
     const response = await apiClient.post<WikiPage>(
       '/knowledge/templates/instantiate',

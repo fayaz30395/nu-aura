@@ -632,6 +632,28 @@ export function useDeleteFluenceTemplate() {
   });
 }
 
+export function useToggleTemplateActive() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.toggleTemplateActive(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.templates()});
+    },
+  });
+}
+
+export function useToggleTemplateFeatured() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => fluenceService.toggleTemplateFeatured(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: fluenceKeys.templates()});
+    },
+  });
+}
+
 export function useInstantiateTemplate() {
   const queryClient = useQueryClient();
 
