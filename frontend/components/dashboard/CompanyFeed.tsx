@@ -10,7 +10,7 @@ import {
   startOfWeek,
   subWeeks,
 } from 'date-fns';
-import {Activity, RefreshCw} from 'lucide-react';
+import {Activity, AlertCircle, RefreshCw} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {feedService} from '@/lib/services/core/feed.service';
 import type {FeedItem, FeedItemType} from '@/lib/types/core/feed';
@@ -96,6 +96,7 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
   const [activeFilter, setActiveFilter] = useState<FeedFilter>('ALL');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [olderLoaded, setOlderLoaded] = useState(false);
+  const [error, setError] = useState(false);
 
   const loadFeed = async (showRefresh = false, isCancelled?: () => boolean) => {
     try {
@@ -105,10 +106,11 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
       if (isCancelled?.()) return;
       setItems(data);
       setOlderLoaded(true);
-    } catch {
+      setError(false);
+    } catch (err) {
       if (isCancelled?.()) return;
-      setItems(getDemoFeed());
-      setOlderLoaded(true);
+      logger.error('Failed to load company feed:', err);
+      setError(true);
     } finally {
       if (!isCancelled?.()) {
         setIsLoading(false);
@@ -239,6 +241,14 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
             );
           })}
         </div>
+      ) : error ? (
+        <EmptyState
+          icon={<AlertCircle className="h-8 w-8"/>}
+          title="Couldn't load activity feed"
+          description="Something went wrong while loading the company feed."
+          actionLabel="Retry"
+          onAction={() => loadFeed()}
+        />
       ) : (
         <EmptyState
           icon={<Activity className="h-8 w-8"/>}
@@ -248,75 +258,4 @@ export function CompanyFeed({employeeId, refreshKey = 0}: CompanyFeedProps) {
       )}
     </div>
   );
-}
-
-// ─── Demo Feed Data ───────────────────────────────────────────────────
-function getDemoFeed(): FeedItem[] {
-  const today = new Date().toISOString();
-  const yesterday = new Date(Date.now() - 86400000).toISOString();
-  const twoDaysAgo = new Date(Date.now() - 172800000).toISOString();
-  const threeDaysAgo = new Date(Date.now() - 259200000).toISOString();
-  const fiveDaysAgo = new Date(Date.now() - 432000000).toISOString();
-
-  return [
-    {
-      id: 'demo-ann-1', type: 'ANNOUNCEMENT', timestamp: today,
-      title: 'Q1 2026 All-Hands Meeting: March 20th',
-      description: 'Join us for the quarterly all-hands meeting. We will discuss company performance, upcoming product launches, and open Q&A with leadership.',
-      category: 'EVENT', priority: 'HIGH', isPinned: true, publishedByName: 'HR Team', readCount: 45,
-    },
-    {
-      id: 'demo-bday-1', type: 'BIRTHDAY', timestamp: today,
-      title: 'Happy Birthday, Priya Sharma!',
-      personName: 'Priya Sharma', personDepartment: 'Engineering', isToday: true, daysUntil: 0,
-    },
-    {
-      id: 'demo-recog-1', type: 'RECOGNITION', timestamp: yesterday,
-      title: 'Outstanding Delivery',
-      description: 'Incredible work on the payment gateway integration. The client was thrilled with the early delivery!',
-      giverName: 'Arjun Patel', receiverName: 'Meera Nair',
-      recognitionType: 'KUDOS', recognitionCategory: 'GOING_EXTRA_MILE',
-      pointsAwarded: 50, likesCount: 12, commentsCount: 3,
-    },
-    {
-      id: 'demo-anniv-1', type: 'WORK_ANNIVERSARY', timestamp: yesterday,
-      title: 'Rahul Verma completes 3 years!',
-      personName: 'Rahul Verma', personDepartment: 'Product', personDesignation: 'Senior Product Manager',
-      yearsCompleted: 3, isToday: false, daysUntil: 1,
-    },
-    {
-      id: 'demo-newjoin-1', type: 'NEW_JOINER', timestamp: twoDaysAgo,
-      title: 'Welcome Ananya Reddy to the team!',
-      description: 'UX Designer - Design',
-      personName: 'Ananya Reddy', personDepartment: 'Design', personDesignation: 'UX Designer',
-      daysSinceJoining: 2,
-    },
-    {
-      id: 'demo-ann-2', type: 'ANNOUNCEMENT', timestamp: threeDaysAgo,
-      title: 'Updated Remote Work Policy: Effective April 1',
-      description: 'We are updating our hybrid work policy. Employees can now work remotely up to 3 days per week.',
-      category: 'POLICY_UPDATE', priority: 'MEDIUM', isPinned: false, publishedByName: 'Deepa Kumar', readCount: 128,
-    },
-    {
-      id: 'demo-recog-2', type: 'RECOGNITION', timestamp: fiveDaysAgo,
-      title: 'Team Player Award',
-      description: 'Always willing to help others and share knowledge. A true team player!',
-      giverName: 'Vikram Singh', receiverName: 'Kavitha Rajan',
-      recognitionType: 'APPRECIATION', recognitionCategory: 'TEAMWORK',
-      pointsAwarded: 30, likesCount: 8, commentsCount: 1,
-    },
-    {
-      id: 'demo-bday-2', type: 'BIRTHDAY', timestamp: new Date(Date.now() + 172800000).toISOString(),
-      title: "Arun Kumar's birthday is coming up",
-      personName: 'Arun Kumar', personDepartment: 'Finance', isToday: false, daysUntil: 2,
-    },
-    {
-      id: 'demo-linkedin-1', type: 'LINKEDIN_POST' as FeedItemType, timestamp: yesterday,
-      title: 'Nulogic recognized as Top 50 HR Tech Startups 2026',
-      description: 'Thrilled to announce that Nulogic has been featured in the Top 50 HR Tech Startups to Watch in 2026.',
-      linkedinAuthor: 'Nulogic', linkedinAuthorTitle: 'Official Company Page',
-      linkedinPostUrl: 'https://linkedin.com/company/nulogic', linkedinImageUrl: undefined,
-      linkedinEngagement: {likes: 234, comments: 45, shares: 67},
-    },
-  ];
 }
