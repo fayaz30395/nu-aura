@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** hard-gate
-> **Status:** Draft
+> **Status:** Verified
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** 80% coverage bar reached for BenefitEnhancedService/Controller covering enrollment/claim/flex/COBRA lifecycles + IDOR scope enforcement
   - **Verify:** shell bash -c "cd backend && mvn -q -DskipTests compile"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)
