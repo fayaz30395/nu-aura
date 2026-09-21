@@ -199,6 +199,32 @@ class WikiPageControllerTest {
         }
 
         @Test
+        @DisplayName("Should reject update with oversized title")
+        void shouldRejectUpdateWithOversizedTitle() throws Exception {
+            Map<String, Object> request = Map.of("title", "x".repeat(301));
+
+            mockMvc.perform(put("/api/v1/knowledge/wiki/pages/{pageId}", pageId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+
+            verify(wikiPageService, never()).updatePage(any(), any());
+        }
+
+        @Test
+        @DisplayName("Should reject update with oversized content")
+        void shouldRejectUpdateWithOversizedContent() throws Exception {
+            Map<String, Object> request = Map.of("content", "x".repeat(100001));
+
+            mockMvc.perform(put("/api/v1/knowledge/wiki/pages/{pageId}", pageId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+
+            verify(wikiPageService, never()).updatePage(any(), any());
+        }
+
+        @Test
         @DisplayName("Should publish wiki page")
         void shouldPublishWikiPage() throws Exception {
             when(wikiPageService.publishPage(pageId)).thenReturn(mockPage);

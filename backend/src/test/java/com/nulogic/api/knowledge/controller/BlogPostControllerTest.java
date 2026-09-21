@@ -220,6 +220,32 @@ class BlogPostControllerTest {
         }
 
         @Test
+        @DisplayName("Should reject update with oversized title")
+        void shouldRejectUpdateWithOversizedTitle() throws Exception {
+            Map<String, Object> request = Map.of("title", "x".repeat(301));
+
+            mockMvc.perform(put("/api/v1/knowledge/blogs/{postId}", postId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+
+            verify(blogPostService, never()).updatePost(any(), any());
+        }
+
+        @Test
+        @DisplayName("Should reject update with oversized content")
+        void shouldRejectUpdateWithOversizedContent() throws Exception {
+            Map<String, Object> request = Map.of("content", "x".repeat(100001));
+
+            mockMvc.perform(put("/api/v1/knowledge/blogs/{postId}", postId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+
+            verify(blogPostService, never()).updatePost(any(), any());
+        }
+
+        @Test
         @DisplayName("Should publish blog post")
         void shouldPublishBlogPost() throws Exception {
             when(blogPostService.publishPost(postId)).thenReturn(mockPost);
