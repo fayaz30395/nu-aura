@@ -46,9 +46,15 @@ import {
   useActiveBenefitPlans,
   useActiveEnrollments,
   useApproveEnrollment,
+  useCompleteClaimPayment,
   useEmployeeBenefitEnrollments,
+  useEmployeeClaims,
   useEnrollEmployee,
+  useInitiateClaimPayment,
+  usePendingBenefitClaims,
   usePendingBenefitEnrollments,
+  useProcessBenefitClaim,
+  useRejectBenefitClaim,
   useSubmitBenefitClaim,
   useTerminateEnrollment,
 } from '@/lib/hooks/queries';
@@ -81,7 +87,7 @@ const claimFormSchema = z.object({
 type EnrollmentFormData = z.infer<typeof enrollmentFormSchema>;
 type ClaimFormData = z.infer<typeof claimFormSchema>;
 
-type TabType = 'plans' | 'enrollments' | 'claims' | 'approvals';
+type TabType = 'plans' | 'enrollments' | 'claims' | 'approvals' | 'claim-approvals';
 
 interface DisplayBenefit {
   id: string;
@@ -177,16 +183,30 @@ export default function BenefitsPage() {
   const [showTerminateConfirm, setShowTerminateConfirm] = useState(false);
   const [selectedEnrollmentForTerminate, setSelectedEnrollmentForTerminate] = useState<string | null>(null);
   const [approvalAction, setApprovalAction] = useState<{enrollmentId: string; type: 'approve' | 'reject'} | null>(null);
+  const [claimRejectAction, setClaimRejectAction] = useState<string | null>(null);
+  const [claimApproveAction, setClaimApproveAction] = useState<BenefitClaim | null>(null);
+  const [claimApprovedAmount, setClaimApprovedAmount] = useState('');
+  const [claimApproveComments, setClaimApproveComments] = useState('');
+  const [claimPaymentAction, setClaimPaymentAction] = useState<{claimId: string; type: 'initiate' | 'complete'} | null>(null);
+  // ponytail: no backend "approved, awaiting payment" list endpoint — track claims
+  // this session approves so payment can be initiated/completed right after approval.
+  const [approvedClaims, setApprovedClaims] = useState<BenefitClaim[]>([]);
 
   // Initialize React Query hooks
   const plansQuery = useActiveBenefitPlans();
   const activeEnrollmentsQuery = useActiveEnrollments(user?.employeeId || '');
   const employeeEnrollmentsQuery = useEmployeeBenefitEnrollments(user?.employeeId || '');
   const pendingEnrollmentsQuery = usePendingBenefitEnrollments();
+  const employeeClaimsQuery = useEmployeeClaims(user?.employeeId || '');
+  const pendingClaimsQuery = usePendingBenefitClaims();
   const enrollMutation = useEnrollEmployee();
   const terminateMutation = useTerminateEnrollment();
   const approveMutation = useApproveEnrollment();
   const submitClaimMutation = useSubmitBenefitClaim();
+  const processClaimMutation = useProcessBenefitClaim();
+  const rejectClaimMutation = useRejectBenefitClaim();
+  const initiateClaimPaymentMutation = useInitiateClaimPayment();
+  const completeClaimPaymentMutation = useCompleteClaimPayment();
 
   // Form setup for enrollment
   const {
@@ -266,10 +286,7 @@ export default function BenefitsPage() {
     return employeeEnrollmentsQuery.data || [];
   }, [employeeEnrollmentsQuery.data]);
 
-  // Placeholder for claims - would need a useEmployeeClaims hook
-  const claims: BenefitClaim[] = [];
-  // Note: We kept this as empty since we didn't create a hook for it.
-  // If needed, add useEmployeeClaims to the useBenefits hooks.
+  const claims: BenefitClaim[] = employeeClaimsQuery.data?.content || [];
 
   const stats = {
     totalEnrolled: benefits.filter((b) => b.isEnrolled).length,
@@ -352,6 +369,77 @@ export default function BenefitsPage() {
       showNotification((err as {
         response?: { data?: { message?: string } }
       })?.response?.data?.message || 'Failed to process enrollment', 'error');
+    }
+  };
+
+  const handleOpenClaimApprove = (claim: BenefitClaim) => {
+    setClaimApproveAction(claim);
+    setClaimApprovedAmount(String(claim.claimAmount));
+    setClaimApproveComments('');
+  };
+
+  const handleClaimApproveConfirm = async () => {
+    if (!claimApproveAction) return;
+    const approvedAmount = Number(claimApprovedAmount);
+    if (!Number.isFinite(approvedAmount) || approvedAmount < 0) {
+      showNotification('Enter a valid approved amount', 'error');
+      return;
+    }
+
+    try {
+      const updated = await processClaimMutation.mutateAsync({
+        claimId: claimApproveAction.id,
+        approvedAmount,
+        comments: claimApproveComments || undefined,
+      });
+      setApprovedClaims((prev) => [...prev.filter((c) => c.id !== updated.id), updated]);
+      showNotification('Claim approved', 'success');
+      setClaimApproveAction(null);
+    } catch (err: unknown) {
+      log.error('Error approving claim:', err);
+      showNotification((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to approve claim', 'error');
+    }
+  };
+
+  const handleClaimRejectConfirm = async (reason?: string) => {
+    if (!claimRejectAction) return;
+
+    try {
+      await rejectClaimMutation.mutateAsync({claimId: claimRejectAction, reason: reason || 'Rejected by approver'});
+      showNotification('Claim rejected', 'success');
+      setClaimRejectAction(null);
+    } catch (err: unknown) {
+      log.error('Error rejecting claim:', err);
+      showNotification((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to reject claim', 'error');
+    }
+  };
+
+  const handleClaimPaymentConfirm = async (paymentReference?: string) => {
+    if (!claimPaymentAction) return;
+
+    try {
+      if (claimPaymentAction.type === 'initiate') {
+        const updated = await initiateClaimPaymentMutation.mutateAsync(claimPaymentAction.claimId);
+        setApprovedClaims((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+        showNotification('Payment initiated', 'success');
+      } else {
+        await completeClaimPaymentMutation.mutateAsync({
+          claimId: claimPaymentAction.claimId,
+          paymentReference: paymentReference || '',
+        });
+        setApprovedClaims((prev) => prev.filter((c) => c.id !== claimPaymentAction.claimId));
+        showNotification('Payment completed', 'success');
+      }
+      setClaimPaymentAction(null);
+    } catch (err: unknown) {
+      log.error('Error processing claim payment:', err);
+      showNotification((err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || 'Failed to process payment', 'error');
     }
   };
 
@@ -525,8 +613,14 @@ export default function BenefitsPage() {
             {id: 'enrollments', label: 'My Enrollments', icon: CheckCircle, permission: undefined},
             {id: 'claims', label: 'Claims', icon: Receipt, permission: undefined},
             {id: 'approvals', label: 'Pending Approvals', icon: AlertCircle, permission: Permissions.BENEFIT_MANAGE},
+            {id: 'claim-approvals', label: 'Claim Approvals', icon: Receipt, permission: Permissions.BENEFIT_MANAGE},
           ] as const satisfies ReadonlyArray<{id: TabType; label: string; icon: typeof Gift; permission?: string}>).map(({id, label, icon: TabIcon, permission}) => {
             const isActive = activeTab === id;
+            const badgeCount = id === 'approvals'
+              ? pendingEnrollmentsQuery.data?.length ?? 0
+              : id === 'claim-approvals'
+                ? pendingClaimsQuery.data?.length ?? 0
+                : 0;
             const tabButton = (
               <button
                 key={id}
@@ -542,8 +636,8 @@ export default function BenefitsPage() {
               >
                 <TabIcon className="h-4 w-4"/>
                 {label}
-                {id === 'approvals' && (pendingEnrollmentsQuery.data?.length ?? 0) > 0 && (
-                  <Badge variant="warning" size="sm">{pendingEnrollmentsQuery.data?.length}</Badge>
+                {badgeCount > 0 && (
+                  <Badge variant="warning" size="sm">{badgeCount}</Badge>
                 )}
               </button>
             );
@@ -815,7 +909,7 @@ export default function BenefitsPage() {
             ) : (
               claims.map((claim) => {
                 const claimStatusVariant: 'success' | 'danger' | 'warning' | 'info' =
-                  claim.status === 'APPROVED' || claim.status === 'PAID'
+                  claim.status === 'APPROVED' || claim.status === 'PAYMENT_COMPLETED'
                     ? 'success'
                     : claim.status === 'REJECTED'
                       ? 'danger'
@@ -952,6 +1046,138 @@ export default function BenefitsPage() {
                     </div>
                   </Card>
                 ))
+              )}
+            </div>
+          </PermissionGate>
+        )}
+
+        {activeTab === 'claim-approvals' && (
+          <PermissionGate permission={Permissions.BENEFIT_MANAGE}>
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">Pending claims</h2>
+                  <p className="text-xs text-[var(--text-3)]">Submitted claims awaiting review</p>
+                </div>
+                {pendingClaimsQuery.isLoading ? (
+                  <div className="flex h-32 items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-[var(--accent)]"/>
+                  </div>
+                ) : (pendingClaimsQuery.data || []).length === 0 ? (
+                  <Card>
+                    <EmptyState
+                      icon={<Receipt className="h-12 w-12"/>}
+                      title="No pending claims"
+                      description="There are no benefit claims awaiting review right now."
+                    />
+                  </Card>
+                ) : (
+                  (pendingClaimsQuery.data || []).map((claim) => (
+                    <Card key={claim.id} hover className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="mb-2 flex items-center gap-2">
+                            <h3 className="tnum font-display text-[15px] font-bold text-[var(--text-1)]">
+                              {claim.claimNumber}
+                            </h3>
+                            <Badge variant="warning" size="sm">{claim.status}</Badge>
+                          </div>
+                          <p className="mb-3 text-[13px] text-[var(--text-2)]">{claim.description}</p>
+                          <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4">
+                            <div>
+                              <div className="text-aura-micro">Type</div>
+                              <p className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">{claim.claimType}</p>
+                            </div>
+                            <div>
+                              <div className="text-aura-micro">Service date</div>
+                              <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                                {formatDate(claim.serviceDate)}
+                              </p>
+                            </div>
+                            <div>
+                              <div className="text-aura-micro">Claim amount</div>
+                              <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                                {formatINR(claim.claimAmount)}
+                              </p>
+                            </div>
+                            <div>
+                              <div className="text-aura-micro">Deductible / co-pay</div>
+                              <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                                {formatINR(claim.deductibleApplied)} / {formatINR(claim.coPayApplied)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          <Button
+                            size="sm"
+                            variant="soft-danger"
+                            leftIcon={<XCircle className="h-4 w-4"/>}
+                            onClick={() => setClaimRejectAction(claim.id)}
+                          >
+                            Reject
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="soft"
+                            leftIcon={<CheckCircle className="h-4 w-4"/>}
+                            onClick={() => handleOpenClaimApprove(claim)}
+                          >
+                            Approve
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                )}
+              </div>
+
+              {approvedClaims.length > 0 && (
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">Ready for payment</h2>
+                    <p className="text-xs text-[var(--text-3)]">Approved this session — initiate or complete payment</p>
+                  </div>
+                  {approvedClaims.map((claim) => (
+                    <Card key={claim.id} hover className="p-4">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="min-w-0">
+                          <div className="mb-1 flex items-center gap-2">
+                            <h3 className="tnum font-display text-[15px] font-bold text-[var(--text-1)]">
+                              {claim.claimNumber}
+                            </h3>
+                            <Badge variant="success" size="sm">{claim.status}</Badge>
+                          </div>
+                          <p className="tnum text-[13px] text-[var(--text-2)]">
+                            Approved: {formatINR(claim.approvedAmount ?? claim.claimAmount)}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          {claim.status === 'APPROVED' && (
+                            <Button
+                              size="sm"
+                              variant="soft"
+                              leftIcon={<CreditCard className="h-4 w-4"/>}
+                              onClick={() => setClaimPaymentAction({claimId: claim.id, type: 'initiate'})}
+                            >
+                              Initiate payment
+                            </Button>
+                          )}
+                          {claim.status === 'PAYMENT_INITIATED' && (
+                            <Button
+                              size="sm"
+                              variant="soft"
+                              leftIcon={<CheckCircle className="h-4 w-4"/>}
+                              onClick={() => setClaimPaymentAction({claimId: claim.id, type: 'complete'})}
+                            >
+                              Complete payment
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
               )}
             </div>
           </PermissionGate>
@@ -1274,6 +1500,94 @@ export default function BenefitsPage() {
               : {label: 'Reason for rejection', placeholder: 'Explain why this enrollment is rejected...', required: true}
           }
         />
+
+        {/* Reject Claim Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={!!claimRejectAction}
+          onClose={() => setClaimRejectAction(null)}
+          onConfirm={handleClaimRejectConfirm}
+          title="Reject Claim"
+          message="Reject this benefit claim? Provide a reason for the employee."
+          confirmText="Reject"
+          cancelText="Cancel"
+          type="danger"
+          loading={rejectClaimMutation.isPending}
+          reason={{label: 'Reason for rejection', placeholder: 'Explain why this claim is rejected...', required: true}}
+        />
+
+        {/* Claim Payment Confirmation Dialog */}
+        <ConfirmDialog
+          isOpen={!!claimPaymentAction}
+          onClose={() => setClaimPaymentAction(null)}
+          onConfirm={handleClaimPaymentConfirm}
+          title={claimPaymentAction?.type === 'initiate' ? 'Initiate Payment' : 'Complete Payment'}
+          message={
+            claimPaymentAction?.type === 'initiate'
+              ? 'Initiate payment for this approved claim?'
+              : 'Mark this claim as paid. Enter the payment reference.'
+          }
+          confirmText={claimPaymentAction?.type === 'initiate' ? 'Initiate' : 'Complete'}
+          cancelText="Cancel"
+          type="info"
+          loading={initiateClaimPaymentMutation.isPending || completeClaimPaymentMutation.isPending}
+          reason={
+            claimPaymentAction?.type === 'complete'
+              ? {label: 'Payment reference', placeholder: 'Transaction/reference number...', required: true}
+              : undefined
+          }
+        />
+
+        {/* Approve Claim Modal — amount + comments */}
+        <Modal isOpen={!!claimApproveAction} onClose={() => setClaimApproveAction(null)} size="md">
+          <ModalHeader>
+            <h2 className="font-display text-lg font-bold text-[var(--text-1)]">
+              Approve Claim {claimApproveAction?.claimNumber}
+            </h2>
+          </ModalHeader>
+          <ModalBody>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="claim-approved-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  Approved amount (INR)
+                </label>
+                <input
+                  id="claim-approved-amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  className="w-full input-aura rounded-lg p-2"
+                  value={claimApprovedAmount}
+                  onChange={(e) => setClaimApprovedAmount(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="claim-approve-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                  Comments (optional)
+                </label>
+                <textarea
+                  id="claim-approve-comments"
+                  className="w-full input-aura rounded-lg p-2"
+                  rows={3}
+                  value={claimApproveComments}
+                  onChange={(e) => setClaimApproveComments(e.target.value)}
+                />
+              </div>
+              <div className="flex justify-end gap-2 border-t border-[var(--border-main)] pt-4">
+                <Button type="button" variant="outline" onClick={() => setClaimApproveAction(null)}>
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  isLoading={processClaimMutation.isPending}
+                  loadingText="Approving…"
+                  onClick={handleClaimApproveConfirm}
+                >
+                  Approve claim
+                </Button>
+              </div>
+            </div>
+          </ModalBody>
+        </Modal>
       </div>
     </AppLayout>
   );

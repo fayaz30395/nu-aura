@@ -192,7 +192,24 @@ export interface BenefitClaim {
   employeeId: string;
   claimNumber: string;
   claimType: 'MEDICAL' | 'DENTAL' | 'VISION' | 'PRESCRIPTION' | 'OTHER';
-  status: 'SUBMITTED' | 'UNDER_REVIEW' | 'APPROVED' | 'REJECTED' | 'PAID' | 'APPEALED';
+  status:
+    | 'DRAFT'
+    | 'SUBMITTED'
+    | 'DOCUMENTS_PENDING'
+    | 'UNDER_REVIEW'
+    | 'ADDITIONAL_INFO_REQUIRED'
+    | 'PRE_AUTH_PENDING'
+    | 'PRE_AUTH_APPROVED'
+    | 'PRE_AUTH_REJECTED'
+    | 'APPROVED'
+    | 'PARTIALLY_APPROVED'
+    | 'REJECTED'
+    | 'PAYMENT_INITIATED'
+    | 'PAYMENT_COMPLETED'
+    | 'CLOSED'
+    | 'APPEALED'
+    | 'APPEAL_APPROVED'
+    | 'APPEAL_REJECTED';
 
   // Amount
   claimAmount: number;

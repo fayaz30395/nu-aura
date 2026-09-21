@@ -22,6 +22,8 @@ export const benefitKeys = {
   pendingEnrollments: () => [...benefitKeys.enrollments(), 'pending'] as const,
   // Claims
   claims: () => [...benefitKeys.all, 'claims'] as const,
+  claimsByEmployee: (employeeId: string, page: number, size: number) =>
+    [...benefitKeys.claims(), 'employee', employeeId, {page, size}] as const,
   claimDetail: (id: string) => [...benefitKeys.claims(), 'detail', id] as const,
   pendingClaims: () => [...benefitKeys.claims(), 'pending'] as const,
 };
@@ -82,6 +84,25 @@ export function usePendingBenefitEnrollments() {
     queryKey: benefitKeys.pendingEnrollments(),
     queryFn: () => benefitsService.getPendingEnrollments(),
     staleTime: 30 * 1000, // 30 seconds - pending items change frequently
+  });
+}
+
+// Get employee's own submitted claims
+export function useEmployeeClaims(employeeId: string, page: number = 0, size: number = 20) {
+  return useQuery({
+    queryKey: benefitKeys.claimsByEmployee(employeeId, page, size),
+    queryFn: () => benefitsService.getEmployeeClaims(employeeId, page, size),
+    enabled: !!employeeId,
+    staleTime: 60 * 1000,
+  });
+}
+
+// Get pending benefit claims (for approval)
+export function usePendingBenefitClaims() {
+  return useQuery({
+    queryKey: benefitKeys.pendingClaims(),
+    queryFn: () => benefitsService.getPendingClaims(),
+    staleTime: 30 * 1000,
   });
 }
 
@@ -158,6 +179,45 @@ export function useProcessBenefitClaim() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({queryKey: benefitKeys.claimDetail(data.id)});
       queryClient.invalidateQueries({queryKey: benefitKeys.pendingClaims()});
+    },
+  });
+}
+
+// Reject benefit claim
+export function useRejectBenefitClaim() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({claimId, reason}: { claimId: string; reason: string }) =>
+      benefitsService.rejectClaim(claimId, reason),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({queryKey: benefitKeys.claimDetail(data.id)});
+      queryClient.invalidateQueries({queryKey: benefitKeys.pendingClaims()});
+    },
+  });
+}
+
+// Initiate payment for an approved claim
+export function useInitiateClaimPayment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (claimId: string) => benefitsService.initiateClaimPayment(claimId),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({queryKey: benefitKeys.claimDetail(data.id)});
+    },
+  });
+}
+
+// Complete payment for a claim
+export function useCompleteClaimPayment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({claimId, paymentReference}: { claimId: string; paymentReference: string }) =>
+      benefitsService.completeClaimPayment(claimId, paymentReference),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({queryKey: benefitKeys.claimDetail(data.id)});
     },
   });
 }

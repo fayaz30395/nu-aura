@@ -2,7 +2,7 @@
 
 > **Epic:** EP-2FWVEHJV5G29
 > **Tier:** async-review
-> **Status:** Draft
+> **Status:** Done
 > **Created:** 2026-09-20
 > **Created-by:** faylo new
 
@@ -16,4 +16,4 @@
 
 - **AC1:** BENEFIT_MANAGE user sees pending claims, can approve/reject/mark-payment via UI; employee sees their own claim status
   - **Verify:** shell bash -c "cd frontend && npx tsc --noEmit"
-  - **Verified:** pending
+  - **Verified:** yes (2026-09-20)

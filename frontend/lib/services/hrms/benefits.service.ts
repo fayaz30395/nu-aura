@@ -201,6 +201,22 @@ class BenefitsService {
     return response.data;
   }
 
+  async initiateClaimPayment(claimId: string): Promise<BenefitClaim> {
+    const response = await apiClient.post<BenefitClaim>(
+      `/benefits-enhanced/claims/${claimId}/initiate-payment`
+    );
+    return response.data;
+  }
+
+  async completeClaimPayment(claimId: string, paymentReference: string): Promise<BenefitClaim> {
+    const response = await apiClient.post<BenefitClaim>(
+      `/benefits-enhanced/claims/${claimId}/complete-payment`,
+      null,
+      {params: {paymentReference}}
+    );
+    return response.data;
+  }
+
   // ==================== FLEX BENEFITS ====================
 
   async getActiveFlexAllocation(employeeId: string): Promise<FlexAllocation> {
