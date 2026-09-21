@@ -14,6 +14,8 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {useCreateDocumentRequest, useDocumentTypes, useMyDocumentRequests,} from '@/lib/hooks/queries';
 import {DeliveryMode, DocumentRequestDto, DocumentRequestStatus, DocumentType,} from '@/lib/types/hrms/selfservice';
+import {notifications} from '@mantine/notifications';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 
 // UI metadata for known document types. Used to enrich API-returned type values with
 // human-readable labels and descriptions. If the backend introduces a new type that is
@@ -161,9 +163,13 @@ export default function MyDocumentsPage() {
       priority: data.priority,
     };
 
-    await createMutation.mutateAsync({employeeId: user.employeeId, data: payload});
-    setShowModal(false);
-    reset(defaultValues);
+    try {
+      await createMutation.mutateAsync({employeeId: user.employeeId, data: payload});
+      setShowModal(false);
+      reset(defaultValues);
+    } catch (err) {
+      notifications.show({title: 'Error', message: getErrorMessage(err), color: 'red'});
+    }
   };
 
   const handleModalClose = () => {
