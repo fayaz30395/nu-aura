@@ -37,6 +37,9 @@ public class BlogPostService {
     private final TenantTimeService tenantTimeService;
     private final EmployeeRepository employeeRepository;
     private final FluenceEditLockService fluenceEditLockService;
+    private final FluenceNotificationService fluenceNotificationService;
+    private final com.nulogic.infrastructure.knowledge.repository.BlogCommentRepository blogCommentRepository;
+    private final com.nulogic.infrastructure.knowledge.repository.BlogLikeRepository blogLikeRepository;
 
     @Autowired(required = false)
     private EventPublisher eventPublisher;
@@ -209,6 +212,14 @@ public class BlogPostService {
         log.info("Published blog post: {}", postId);
         publishFluenceEvent(postId, tenantId, FluenceContentEvent.ACTION_PUBLISHED);
         recordActivity(tenantId, userId, "PUBLISHED", updated);
+
+        // WikiPageService notifies watchers on publish; blog posts have no dedicated watch
+        // table, so approximate the watcher audience as the author + prior commenters/likers.
+        fluenceNotificationService.notifyBlogWatchers(
+                tenantId, postId, updated.getCreatedBy(), userId, "published", updated.getTitle(),
+                blogCommentRepository.findDistinctCommenterUserIds(tenantId, postId),
+                blogLikeRepository.findDistinctLikerUserIds(tenantId, postId));
+
         return updated;
     }
 

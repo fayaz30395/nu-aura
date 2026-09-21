@@ -69,6 +69,62 @@ public class FluenceNotificationService {
     }
 
     /**
+     * Notify a blog post's "watchers" about an action (publish, etc.), excluding the actor.
+     * Blog posts have no dedicated watch table like {@link WikiPageWatch} — the interested
+     * audience is approximated as the post author plus anyone who has commented or liked it.
+     *
+     * @param tenantId          tenant context
+     * @param postId            the blog post that was changed
+     * @param authorId          the post's author (createdBy), may be null
+     * @param actorId           the user who performed the action
+     * @param action            description of what happened (e.g., "published")
+     * @param postTitle         title of the blog post
+     * @param commenterUserIds  distinct user ids who have commented on the post
+     * @param likerUserIds      distinct user ids who have liked the post
+     */
+    public void notifyBlogWatchers(UUID tenantId, UUID postId, UUID authorId, UUID actorId, String action,
+                                    String postTitle, List<UUID> commenterUserIds, List<UUID> likerUserIds) {
+        try {
+            Set<UUID> recipients = new java.util.HashSet<>();
+            if (authorId != null) {
+                recipients.add(authorId);
+            }
+            if (commenterUserIds != null) {
+                recipients.addAll(commenterUserIds);
+            }
+            if (likerUserIds != null) {
+                recipients.addAll(likerUserIds);
+            }
+            recipients.remove(actorId);
+
+            String subject = "Blog post " + action;
+            String body = "The blog post \"" + postTitle + "\" was " + action + ".";
+            String actionUrl = "/fluence/blogs/" + postId;
+
+            for (UUID userId : recipients) {
+                eventPublisher.publishNotificationEvent(
+                        userId,
+                        "IN_APP",
+                        subject,
+                        body,
+                        null,
+                        null,
+                        tenantId,
+                        postId,
+                        "BLOG_POST",
+                        actionUrl,
+                        "NORMAL"
+                );
+            }
+
+            log.debug("Sent watcher notifications for blog post {} to {} recipients (excluding actor {})",
+                    postId, recipients.size(), actorId);
+        } catch (Exception e) { // Intentional broad catch — notification delivery error boundary
+            log.error("Failed to notify watchers for blog post {}: {}", postId, e.getMessage(), e);
+        }
+    }
+
+    /**
      * Notify users who were @mentioned in content.
      *
      * @param tenantId         tenant context

@@ -32,4 +32,7 @@ public interface BlogCommentRepository extends JpaRepository<BlogComment, UUID> 
     long countByTenantIdAndPostId(UUID tenantId, UUID postId);
 
     long countByTenantIdAndPostIdAndIsApprovedTrue(UUID tenantId, UUID postId);
+
+    @Query("SELECT DISTINCT bc.createdBy FROM BlogComment bc WHERE bc.tenantId = :tenantId AND bc.post.id = :postId")
+    List<UUID> findDistinctCommenterUserIds(@Param("tenantId") UUID tenantId, @Param("postId") UUID postId);
 }

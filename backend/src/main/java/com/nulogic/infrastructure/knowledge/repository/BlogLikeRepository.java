@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,6 +14,9 @@ import java.util.UUID;
 public interface BlogLikeRepository extends JpaRepository<BlogLike, UUID> {
 
     Optional<BlogLike> findByPostIdAndUserId(UUID postId, UUID userId);
+
+    @Query("SELECT DISTINCT bl.userId FROM BlogLike bl WHERE bl.tenantId = :tenantId AND bl.post.id = :postId")
+    List<UUID> findDistinctLikerUserIds(@Param("tenantId") UUID tenantId, @Param("postId") UUID postId);
 
     @Query("SELECT COUNT(bl) FROM BlogLike bl WHERE bl.tenantId = :tenantId AND bl.post.id = :postId")
     long countByTenantIdAndPostId(@Param("tenantId") UUID tenantId, @Param("postId") UUID postId);
