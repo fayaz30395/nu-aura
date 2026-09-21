@@ -1,7 +1,7 @@
 'use client';
 
-import {useMemo, useState} from 'react';
-import {useRouter} from 'next/navigation';
+import {Suspense, useEffect, useMemo, useState} from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
 import {Stagger, StaggerItem} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
@@ -84,8 +84,17 @@ function RatingStars({rating}: { rating?: number }) {
   );
 }
 
-export default function AgenciesPage() {
+export default function AgenciesPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <AgenciesPage/>
+    </Suspense>
+  );
+}
+
+function AgenciesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<AgencyStatus | undefined>();
   const [showForm, setShowForm] = useState(false);
@@ -139,6 +148,18 @@ export default function AgenciesPage() {
     });
     setShowForm(true);
   }
+
+  // Deep-link from agency detail page: /recruitment/agencies?edit={id}
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (!editId || agenciesQuery.isLoading) return;
+    const agency = agencies.find((a) => a.id === editId);
+    if (agency) {
+      openEditForm(agency);
+    }
+    router.replace('/recruitment/agencies');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, agenciesQuery.isLoading, agencies]);
 
   async function onSubmit(values: AgencyFormValues) {
     const payload = {

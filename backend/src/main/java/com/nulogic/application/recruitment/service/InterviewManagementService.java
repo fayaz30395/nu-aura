@@ -44,6 +44,40 @@ public class InterviewManagementService {
     private final AuditLogService auditLogService;
     private final GoogleMeetService googleMeetService;
 
+    /**
+     * Rejects scheduling/rescheduling an interview whose [scheduledAt, scheduledAt+duration)
+     * window overlaps another SCHEDULED/RESCHEDULED interview for the same interviewer.
+     * {@code excludeInterviewId} skips the interview being updated so it doesn't conflict
+     * with itself.
+     */
+    private void checkInterviewerAvailability(UUID tenantId, UUID interviewerId,
+                                               java.time.LocalDateTime scheduledAt, Integer durationMinutes,
+                                               UUID excludeInterviewId) {
+        if (interviewerId == null || scheduledAt == null) {
+            return;
+        }
+        int duration = durationMinutes != null ? durationMinutes : 60;
+        java.time.LocalDateTime newStart = scheduledAt;
+        java.time.LocalDateTime newEnd = scheduledAt.plusMinutes(duration);
+
+        boolean overlaps = interviewRepository.findByTenantIdAndInterviewerId(tenantId, interviewerId).stream()
+                .filter(existing -> !existing.getId().equals(excludeInterviewId))
+                .filter(existing -> existing.getStatus() == Interview.InterviewStatus.SCHEDULED
+                        || existing.getStatus() == Interview.InterviewStatus.RESCHEDULED)
+                .filter(existing -> existing.getScheduledAt() != null)
+                .anyMatch(existing -> {
+                    java.time.LocalDateTime existingStart = existing.getScheduledAt();
+                    java.time.LocalDateTime existingEnd = existingStart.plusMinutes(
+                            existing.getDurationMinutes() != null ? existing.getDurationMinutes() : 60);
+                    return newStart.isBefore(existingEnd) && existingStart.isBefore(newEnd);
+                });
+
+        if (overlaps) {
+            throw new IllegalStateException(
+                    "Interviewer is already booked for an overlapping time slot");
+        }
+    }
+
     // ==================== Interview Operations ====================
 
     public InterviewResponse scheduleInterview(InterviewRequest request) {
@@ -78,6 +112,9 @@ public class InterviewManagementService {
         interview.setRating(request.getRating());
         interview.setResult(request.getResult());
         interview.setNotes(request.getNotes());
+
+        checkInterviewerAvailability(tenantId, request.getInterviewerId(), request.getScheduledAt(),
+                request.getDurationMinutes(), null);
 
         // Google Meet integration: create a Calendar event with Meet link if requested
         if (request.isCreateGoogleMeet() && request.getGoogleAccessToken() != null) {
@@ -151,6 +188,9 @@ public class InterviewManagementService {
 
         Interview interview = interviewRepository.findByIdAndTenantId(interviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(INTERVIEW_NOT_FOUND));
+
+        checkInterviewerAvailability(tenantId, request.getInterviewerId(), request.getScheduledAt(),
+                request.getDurationMinutes(), interviewId);
 
         interview.setInterviewRound(request.getInterviewRound());
         interview.setInterviewType(request.getInterviewType());

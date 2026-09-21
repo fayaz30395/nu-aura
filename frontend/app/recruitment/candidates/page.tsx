@@ -1,6 +1,6 @@
 'use client';
 
-import React, {Suspense, useCallback, useMemo, useState} from 'react';
+import React, {Suspense, useCallback, useEffect, useMemo, useState} from 'react';
 import dynamic from 'next/dynamic';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {useForm} from 'react-hook-form';
@@ -322,6 +322,18 @@ function CandidatesPage() {
     });
     setShowAddModal(true);
   }, [candidateForm]);
+
+  // Deep-link from candidate detail page: /recruitment/candidates?edit={id}
+  useEffect(() => {
+    const editId = searchParams.get('edit');
+    if (!editId || candidatesLoading) return;
+    const candidate = candidates.find((c) => c.id === editId);
+    if (candidate) {
+      handleEditCandidate(candidate);
+    }
+    router.replace('/recruitment/candidates');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, candidatesLoading, candidates]);
 
   const handleDeleteCandidate = async () => {
     if (!candidateToDelete) return;

@@ -73,8 +73,10 @@ public class OnboardingManagementController {
     })
     public ResponseEntity<OnboardingProcessResponse> updateStatus(
             @Parameter(description = "Process UUID") @PathVariable UUID processId,
-            @Parameter(description = "Target status", example = "IN_PROGRESS") @RequestParam OnboardingProcess.ProcessStatus status) {
-        OnboardingProcessResponse response = onboardingService.updateStatus(processId, status);
+            @Parameter(description = "Target status", example = "IN_PROGRESS") @RequestParam OnboardingProcess.ProcessStatus status,
+            @Parameter(description = "Required to force COMPLETED when mandatory tasks are still incomplete")
+            @RequestParam(required = false) String overrideReason) {
+        OnboardingProcessResponse response = onboardingService.updateStatus(processId, status, overrideReason);
         return ResponseEntity.ok(response);
     }
 

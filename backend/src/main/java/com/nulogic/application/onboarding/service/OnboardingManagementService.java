@@ -353,7 +353,43 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
             task.setCompletedDate(tenantTimeService.today(tenantId));
         }
 
-        return mapToTaskResponse(taskRepository.save(task));
+        OnboardingTaskResponse response = mapToTaskResponse(taskRepository.save(task));
+
+        // Task completion previously never fed back into the process — completionPercentage
+        // stayed wherever it was last set via the separate /progress endpoint. Recompute it
+        // from actual task state on every task status change.
+        onboardingRepository.findByIdAndTenantId(task.getProcessId(), tenantId)
+                .ifPresent(process -> {
+                    recalculateProgress(process, tenantId);
+                    onboardingRepository.save(process);
+                });
+
+        return response;
+    }
+
+    /**
+     * Recomputes completionPercentage from the process's tasks (COMPLETED or SKIPPED
+     * count as done) and advances status NOT_STARTED->IN_PROGRESS->COMPLETED accordingly.
+     * No-op when the process has no tasks yet.
+     */
+    private void recalculateProgress(OnboardingProcess process, UUID tenantId) {
+        List<OnboardingTask> tasks = taskRepository.findByProcessIdAndTenantId(process.getId(), tenantId);
+        if (tasks.isEmpty()) {
+            return;
+        }
+        long done = tasks.stream()
+                .filter(t -> t.getStatus() == OnboardingTask.TaskStatus.COMPLETED
+                        || t.getStatus() == OnboardingTask.TaskStatus.SKIPPED)
+                .count();
+        int percentage = (int) Math.round(done * 100.0 / tasks.size());
+        process.setCompletionPercentage(percentage);
+        if (percentage > 0 && process.getStatus() == OnboardingProcess.ProcessStatus.NOT_STARTED) {
+            process.setStatus(OnboardingProcess.ProcessStatus.IN_PROGRESS);
+        }
+        if (percentage >= 100 && process.getStatus() != OnboardingProcess.ProcessStatus.COMPLETED) {
+            process.setStatus(OnboardingProcess.ProcessStatus.COMPLETED);
+            process.setActualCompletionDate(tenantTimeService.today(tenantId));
+        }
     }
 
     @Transactional
@@ -375,11 +411,35 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
 
     @Transactional
     public OnboardingProcessResponse updateStatus(UUID processId, OnboardingProcess.ProcessStatus status) {
+        return updateStatus(processId, status, null);
+    }
+
+    @Transactional
+    public OnboardingProcessResponse updateStatus(UUID processId, OnboardingProcess.ProcessStatus status,
+                                                   String overrideReason) {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Updating onboarding process {} status to {} for tenant {}", processId, status, tenantId);
 
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND));
+
+        if (status == OnboardingProcess.ProcessStatus.COMPLETED) {
+            List<OnboardingTask> tasks = taskRepository.findByProcessIdAndTenantId(processId, tenantId);
+            boolean allMandatoryDone = tasks.stream()
+                    .filter(t -> Boolean.TRUE.equals(t.getIsMandatory()))
+                    .allMatch(t -> t.getStatus() == OnboardingTask.TaskStatus.COMPLETED
+                            || t.getStatus() == OnboardingTask.TaskStatus.SKIPPED);
+            if (!allMandatoryDone) {
+                if (overrideReason == null || overrideReason.isBlank()) {
+                    throw new IllegalStateException(
+                            "Cannot mark onboarding COMPLETED: mandatory tasks are incomplete. "
+                                    + "Provide an override reason to force completion.");
+                }
+                process.setNotes(process.getNotes() == null || process.getNotes().isBlank()
+                        ? "Completion override: " + overrideReason
+                        : process.getNotes() + "\nCompletion override: " + overrideReason);
+            }
+        }
 
         process.setStatus(status);
         if (status == OnboardingProcess.ProcessStatus.COMPLETED) {

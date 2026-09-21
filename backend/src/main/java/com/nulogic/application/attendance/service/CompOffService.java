@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -262,19 +261,16 @@ public class CompOffService {
 
     private BigDecimal calculateCompOffDays(int overtimeMinutes) {
         int fullDayMinutes = config.getCompOff().getFullDayMinutes();
-        int halfDayMinutes = config.getCompOff().getHalfDayMinutes();
 
         if (overtimeMinutes >= fullDayMinutes) {
             return BigDecimal.ONE;
-        } else if (overtimeMinutes >= halfDayMinutes) {
-            return new BigDecimal("0.5");
         } else {
-            // Proportional: round down to nearest 0.5
-            double raw = (double) overtimeMinutes / fullDayMinutes;
-            BigDecimal bd = BigDecimal.valueOf(raw).setScale(1, RoundingMode.FLOOR);
-            // Snap to nearest 0.5
-            return bd.remainder(new BigDecimal("0.5")).compareTo(BigDecimal.ZERO) == 0
-                    ? bd : bd.subtract(bd.remainder(new BigDecimal("0.5")));
+            // Below full-day threshold but callers only reach here once overtime has
+            // already cleared minOvertimeMinutes (see requestCompOff), and 0.5 days is
+            // the minimum accrual unit — so any overtime short of a full day accrues
+            // the half-day unit rather than a proportional fraction that used to floor
+            // to zero for anything under halfDayMinutes.
+            return new BigDecimal("0.5");
         }
     }
 }
