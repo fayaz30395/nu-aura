@@ -1,0 +1,89 @@
+- generic [ref=f38e10]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f38e379]:
+    - generic [ref=f38e380]:
+      - complementary "Product navigation" [ref=f38e381]:
+        - generic "NU-AURA" [ref=f38e382]: "N"
+        - button "NU-HRMS" [ref=f38e385] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=f38e393] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=f38e399] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=f38e405]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=f38e410] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=f38e418] [cursor=pointer]:
+          - generic [ref=f38e419]: SV
+      - navigation "NU-Grow navigation" [ref=f38e420]:
+        - generic [ref=f38e427]:
+          - generic [ref=f38e428]: NU-Grow
+          - generic [ref=f38e429]: Performance
+        - button "NU All Modules Active Pro Plan" [ref=f38e430] [cursor=pointer]:
+          - generic [ref=f38e431]: NU
+          - generic [ref=f38e432]:
+            - generic [ref=f38e433]: All Modules Active
+            - generic [ref=f38e434]: Pro Plan
+        - generic [ref=f38e439]:
+          - generic [ref=f38e440]: NU-Grow
+          - generic [ref=f38e441]:
+            - link "Performance Hub" [ref=f38e442] [cursor=pointer]:
+              - /url: /performance
+            - link "Revolution" [ref=f38e447] [cursor=pointer]:
+              - /url: /performance/revolution
+            - link "OKR" [ref=f38e452] [cursor=pointer]:
+              - /url: /performance/okr
+            - link "360 Feedback" [ref=f38e459] [cursor=pointer]:
+              - /url: /performance/360-feedback
+            - link "Training" [ref=f38e464] [cursor=pointer]:
+              - /url: /training
+            - link "Learning (LMS)" [ref=f38e470] [cursor=pointer]:
+              - /url: /learning
+            - link "Recognition" [ref=f38e475] [cursor=pointer]:
+              - /url: /recognition
+            - link "Surveys" [ref=f38e481] [cursor=pointer]:
+              - /url: /surveys
+            - link "Competency Matrix" [ref=f38e487] [cursor=pointer]:
+              - /url: /performance/competency-matrix
+            - link "Wellness" [ref=f38e492] [cursor=pointer]:
+              - /url: /wellness
+    - generic [ref=f38e497]:
+      - banner [ref=f38e498]:
+        - button "Toggle navigation panel" [ref=f38e499] [cursor=pointer]
+        - button "Open command palette" [ref=f38e502] [cursor=pointer]:
+          - generic [ref=f38e506]: Search or jump to…
+          - generic [ref=f38e507]: ⌘K
+        - button "Toggle theme" [ref=f38e509] [cursor=pointer]
+        - button "Notifications" [ref=f38e519] [cursor=pointer]
+        - button "User menu for Saran V" [ref=f38e525] [cursor=pointer]:
+          - generic [ref=f38e526]: SV
+          - generic [ref=f38e527]:
+            - generic [ref=f38e528]: Saran V
+            - generic [ref=f38e529]: EMPLOYEE
+      - main [ref=f38e532]:
+        - main [ref=f38e533]:
+          - main [ref=f38e534]:
+            - generic [ref=f38e540]:
+              - heading "Competency Matrix" [level=1] [ref=f38e541]
+              - paragraph [ref=f38e542]: Manage competency frameworks, assess skills, and identify gaps
+            - generic [ref=f38e543]:
+              - tablist [ref=f38e544]:
+                - tab "My Competencies" [ref=f38e545] [cursor=pointer]
+                - tab "Team View" [active] [selected] [ref=f38e552] [cursor=pointer]
+                - tab "Competency Framework" [ref=f38e560] [cursor=pointer]
+              - tabpanel "Team View" [ref=f38e608]
+  - status
+  - generic [ref=f38e5] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=f38e6]
+    - generic [ref=f38e598]:
+      - button "Open issues overlay" [ref=f38e599]:
+        - generic [ref=f38e611]:
+          - generic [aria-hidden] [ref=f38e612]: "2"
+          - generic [ref=f38e613]: "3"
+        - generic [ref=f38e603]:
+          - text: Issue
+          - generic [aria-hidden] [ref=f38e604]: s
+      - button "Collapse issues badge" [ref=f38e605]
+  - alert [ref=f38e298]: Competency Matrix

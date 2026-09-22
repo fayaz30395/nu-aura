@@ -1,0 +1,127 @@
+- generic [active] [ref=f38e10]:
+  - link "Skip to content":
+    - /url: "#main-content"
+  - generic [ref=f38e14]:
+    - generic [ref=f38e15]:
+      - complementary "Product navigation" [ref=f38e16]:
+        - generic "NU-AURA" [ref=f38e17]: "N"
+        - button "NU-HRMS" [ref=f38e20] [cursor=pointer]:
+          - generic [aria-hidden]: NU-HRMS
+        - button "NU-Hire" [ref=f38e28] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Hire
+        - button "NU-Grow" [ref=f38e34] [cursor=pointer]:
+          - generic [aria-hidden]: NU-Grow
+        - button "NU-Fluence" [disabled] [ref=f38e40]:
+          - generic [aria-hidden]: NU-Fluence
+        - button "Help & support" [ref=f38e45] [cursor=pointer]:
+          - generic [aria-hidden]: Help & support
+        - button "Your profile" [ref=f38e53] [cursor=pointer]:
+          - generic [ref=f38e54]: SV
+      - navigation "NU-Grow navigation" [ref=f38e55]:
+        - generic [ref=f38e62]:
+          - generic [ref=f38e63]: NU-Grow
+          - generic [ref=f38e64]: Performance
+        - button "NU All Modules Active Pro Plan" [ref=f38e65] [cursor=pointer]:
+          - generic [ref=f38e66]: NU
+          - generic [ref=f38e67]:
+            - generic [ref=f38e68]: All Modules Active
+            - generic [ref=f38e69]: Pro Plan
+        - generic [ref=f38e74]:
+          - generic [ref=f38e75]: NU-Grow
+          - generic [ref=f38e76]:
+            - link "Performance Hub" [ref=f38e77] [cursor=pointer]:
+              - /url: /performance
+            - link "Revolution" [ref=f38e82] [cursor=pointer]:
+              - /url: /performance/revolution
+            - link "OKR" [ref=f38e87] [cursor=pointer]:
+              - /url: /performance/okr
+            - link "360 Feedback" [ref=f38e94] [cursor=pointer]:
+              - /url: /performance/360-feedback
+            - link "Training" [ref=f38e99] [cursor=pointer]:
+              - /url: /training
+            - link "Learning (LMS)" [ref=f38e105] [cursor=pointer]:
+              - /url: /learning
+            - link "Recognition" [ref=f38e110] [cursor=pointer]:
+              - /url: /recognition
+            - link "Surveys" [ref=f38e116] [cursor=pointer]:
+              - /url: /surveys
+            - link "Competency Matrix" [ref=f38e122] [cursor=pointer]:
+              - /url: /performance/competency-matrix
+            - link "Wellness" [ref=f38e127] [cursor=pointer]:
+              - /url: /wellness
+    - generic [ref=f38e132]:
+      - banner [ref=f38e133]:
+        - button "Toggle navigation panel" [ref=f38e134] [cursor=pointer]
+        - button "Open command palette" [ref=f38e137] [cursor=pointer]:
+          - generic [ref=f38e141]: Search or jump to…
+          - generic [ref=f38e142]: ⌘K
+        - button "Toggle theme" [ref=f38e144] [cursor=pointer]
+        - button "Notifications" [ref=f38e154] [cursor=pointer]
+        - button "User menu for Saran V" [ref=f38e160] [cursor=pointer]:
+          - generic [ref=f38e161]: SV
+          - generic [ref=f38e162]:
+            - generic [ref=f38e163]: Saran V
+            - generic [ref=f38e164]: EMPLOYEE
+      - main [ref=f38e167]:
+        - main [ref=f38e168]:
+          - main [ref=f38e169]:
+            - generic [ref=f38e171]:
+              - generic [ref=f38e172]:
+                - paragraph [ref=f38e173]: Performance Management
+                - heading "Goals, reviews, and growth in one steady rhythm." [level=1] [ref=f38e174]
+                - paragraph [ref=f38e175]: Track progress, run cycles, and finalise ratings without losing the thread.
+              - link [ref=f38e176] [cursor=pointer]:
+                - /url: /performance/goals
+                - button "Set a goal" [ref=f38e177]
+            - generic "Performance at a glance" [ref=f38e180]:
+              - generic [ref=f38e181]:
+                - generic [ref=f38e182]: Active goals
+                - paragraph [ref=f38e186]: "0"
+              - generic [ref=f38e187]:
+                - generic [ref=f38e188]: Goal progress
+                - paragraph [ref=f38e193]: 0%
+              - generic [ref=f38e194]:
+                - generic [ref=f38e195]: OKR progress
+                - paragraph [ref=f38e198]: 0%
+              - generic [ref=f38e199]:
+                - generic [ref=f38e200]: Pending reviews
+                - paragraph [ref=f38e205]: "0"
+            - generic "Explore performance" [ref=f38e206]:
+              - link [ref=f38e208] [cursor=pointer]:
+                - /url: /performance/reviews
+                - heading "Performance reviews" [level=2] [ref=f38e217]
+                - paragraph [ref=f38e218]: Run review cycles end-to-end. Track completion, nudge stragglers, and finalise outcomes.
+                - paragraph [ref=f38e229]: No active cycles
+              - link [ref=f38e231] [cursor=pointer]:
+                - /url: /performance/goals
+                - generic [ref=f38e235]:
+                  - heading "Goals" [level=3] [ref=f38e237]
+                  - paragraph [ref=f38e238]: Set and track individual, team, and org goals.
+              - link [ref=f38e242] [cursor=pointer]:
+                - /url: /performance/okr
+                - generic [ref=f38e245]:
+                  - heading "OKR management" [level=3] [ref=f38e247]
+                  - paragraph [ref=f38e248]: Objectives and key results for strategic alignment.
+              - link [ref=f38e252] [cursor=pointer]:
+                - /url: /performance/360-feedback
+                - generic [ref=f38e259]:
+                  - heading "360 feedback" [level=3] [ref=f38e261]
+                  - paragraph [ref=f38e262]: Multi-rater feedback from peers, managers, reports.
+              - link [ref=f38e266] [cursor=pointer]:
+                - /url: /performance/cycles
+                - generic [ref=f38e270]:
+                  - heading "Review cycles" [level=3] [ref=f38e272]
+                  - paragraph [ref=f38e273]: Manage review periods and deadlines.
+              - link [ref=f38e277] [cursor=pointer]:
+                - /url: /performance/9box
+                - generic [ref=f38e281]:
+                  - heading "9-box grid" [level=3] [ref=f38e283]
+                  - paragraph [ref=f38e284]: Talent segmentation by performance and potential.
+              - link [ref=f38e288] [cursor=pointer]:
+                - /url: /performance/competency-matrix
+                - generic [ref=f38e292]:
+                  - heading "Competency matrix" [level=3] [ref=f38e294]
+                  - paragraph [ref=f38e295]: Frameworks, skill assessments, and gap analysis.
+  - status
+  - button "Open Next.js Dev Tools" [ref=f38e6] [cursor=pointer]
+  - alert [ref=f38e298]: Performance | NU-AURA
