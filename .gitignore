@@ -45,6 +45,7 @@ Thumbs.db
 .env.*.local
 .env.production
 .env.production.local
+.env.bak*
 
 # Binary documents
 #*.docx
