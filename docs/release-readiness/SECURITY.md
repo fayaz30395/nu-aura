@@ -162,6 +162,43 @@ this environment does not have. Current codebase already reads both from environ
 (no code change needed once rotated) — `NEON_JDBC_URL`/`NEON_DB_USERNAME`/`NEON_DB_PASSWORD` and
 `OPENAI_API_KEY` are all externally injected, confirmed via `application*.yml` above.
 
+## A4-followup-2 — history purge readiness (2026-09-22, closure pass)
+
+**Scope is far wider than "this local clone".** `24a6c4c7` is reachable from `refs/heads/main`,
+both configured remotes' `main`/`master` (`fayaz-deen`, `fayaz30395`), and every one of ~60
+`dependabot/*` remote branches on both remotes — confirmed by walking every local+remote ref with
+`git merge-base --is-ancestor 24a6c4c7 <ref>`. This means the exposure is **already live on
+GitHub**, not just locally. A `git filter-repo` run in this clone only rewrites this clone's
+objects; it does nothing to the exposure until force-pushed to both remotes, and even then GitHub
+retains unreferenced objects for a retention window and any existing fork/PR ref keeps the old
+blob reachable. A true purge requires: rewriting locally, force-pushing `main` to both remotes,
+closing/rebasing every dependabot branch (or letting Dependabot regenerate them), and — for full
+remediation — a GitHub support request to purge cached views of the removed commits. None of that
+is "safe to execute locally" in isolation; it is a coordinated, multi-remote, approval-gated
+operation.
+
+Exact paths confirmed by direct commit inspection this pass:
+- `24a6c4c7` — `.env` (3 lines added), commit `git show --stat 24a6c4c7 -- .env` confirms.
+- `83f70807` — `backend/start-backend.sh`, confirmed via `git show --name-only 83f70807`.
+
+Both match the procedure already documented above. Working tree at time of this check: clean
+(only an unrelated `faylo-sdlc/.ledger/events.jsonl` modification, not part of this remediation).
+
+### HISTORY PURGE READINESS
+- Prepared: YES (exact `git filter-repo` command documented above, paths re-confirmed this pass)
+- Safe to execute locally: YES, as a **local-only** rewrite (produces a rewritten clone state) —
+  but that rewrite has **no remediation effect** until force-pushed, and force-pushing is NOT safe
+  without explicit approval (rewrites shared `main` history on two remotes and orphans ~60
+  dependabot branches)
+- Shared remote branch affected: **YES** — `main` on both `fayaz-deen` and `fayaz30395` remotes,
+  plus every dependabot branch on both, all currently contain both exposed commits
+- Explicit approval required before rewrite: YES
+- Exact command/procedure: see `git filter-repo --path .env --path backend/start-backend.sh
+  --invert-paths --force` variant above; note the original procedure listed `.env.production` as a
+  second path — re-scoped here to the two paths actually confirmed to hold the secrets
+  (`.env`, `backend/start-backend.sh`), since `.env.production`'s commits were not re-verified to
+  contain either of these two specific credentials this pass.
+
 ## A5 — Regression: PASS
 
 Re-verified live on this session's freshly-restarted backend (not reusing pre-restart state):
