@@ -360,6 +360,105 @@ class AuthServiceTest {
             verify(tenantRlsSessionSync).syncCurrentTenant(nulogicTenantId);
             verify(userRepository).findByEmailAndTenantId("fayaz.m@nulogic.io", nulogicTenantId);
         }
+
+        private static final String KNOWN_DEMO_HASH =
+                "$2a$10$D7mb1w2eljWfrBF3i8iZCu5A/H4mUXe8.3rHyWvgYy2j8eC3ghqD2"; // Welcome@123
+
+        @Test
+        @DisplayName("D-DEMO: demoCredentialsEnabled=false blocks login for a known demo password hash even when status is ACTIVE")
+        void shouldBlockDemoCredentialLoginWhenFlagDisabled() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Welcome@123");
+            request.setTenantId(tenantId);
+            ReflectionTestUtils.setField(authService, "accountLockoutUseRedis", false);
+            ReflectionTestUtils.setField(authService, "demoCredentialsEnabled", false);
+            user.setPasswordHash(KNOWN_DEMO_HASH);
+
+            Authentication authentication = mock(Authentication.class);
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(authentication);
+            when(userRepository.findByEmailAndTenantId("test@example.com", tenantId))
+                    .thenReturn(Optional.of(user));
+
+            assertThatThrownBy(() -> authService.login(request))
+                    .isInstanceOf(AuthenticationException.class)
+                    .hasMessageContaining("Invalid email or password");
+            verify(tokenProvider, never()).generateTokenWithAppPermissions(
+                    any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("D-DEMO: demoCredentialsEnabled=true allows login for a known demo password hash")
+        void shouldAllowDemoCredentialLoginWhenFlagEnabled() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("Welcome@123");
+            request.setTenantId(tenantId);
+            ReflectionTestUtils.setField(authService, "accountLockoutUseRedis", false);
+            ReflectionTestUtils.setField(authService, "demoCredentialsEnabled", true);
+            user.setPasswordHash(KNOWN_DEMO_HASH);
+
+            Authentication authentication = mock(Authentication.class);
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(authentication);
+            when(userRepository.findByEmailAndTenantId("test@example.com", tenantId))
+                    .thenReturn(Optional.of(user));
+            when(userRepository.save(any(User.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            when(userAppAccessRepository.findByUserIdAndAppCodeWithPermissions(any(), any()))
+                    .thenReturn(Optional.empty());
+            when(userAppAccessRepository.findUserApplications(any()))
+                    .thenReturn(Collections.emptyList());
+            when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
+                    any(), any(), any(), any()))
+                    .thenReturn("access-token");
+            when(tokenProvider.generateRefreshToken(any(), any(), any()))
+                    .thenReturn("refresh-token");
+            when(employeeRepository.findByUserIdAndTenantId(userId, tenantId))
+                    .thenReturn(Optional.of(employee));
+
+            AuthResponse response = authService.login(request);
+
+            assertThat(response).isNotNull();
+            assertThat(response.getAccessToken()).isEqualTo("access-token");
+        }
+
+        @Test
+        @DisplayName("D-DEMO: demoCredentialsEnabled=false does not affect login for a non-demo password hash")
+        void shouldNotAffectNormalLoginWhenFlagDisabled() {
+            LoginRequest request = new LoginRequest();
+            request.setEmail("test@example.com");
+            request.setPassword("password123");
+            request.setTenantId(tenantId);
+            ReflectionTestUtils.setField(authService, "accountLockoutUseRedis", false);
+            ReflectionTestUtils.setField(authService, "demoCredentialsEnabled", false);
+            // user.passwordHash stays the default "hashedPassword" — not a known demo hash.
+
+            Authentication authentication = mock(Authentication.class);
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(authentication);
+            when(userRepository.findByEmailAndTenantId("test@example.com", tenantId))
+                    .thenReturn(Optional.of(user));
+            when(userRepository.save(any(User.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            when(userAppAccessRepository.findByUserIdAndAppCodeWithPermissions(any(), any()))
+                    .thenReturn(Optional.empty());
+            when(userAppAccessRepository.findUserApplications(any()))
+                    .thenReturn(Collections.emptyList());
+            when(tokenProvider.generateTokenWithAppPermissions(any(), any(), any(), any(), any(), any(),
+                    any(), any(), any(), any()))
+                    .thenReturn("access-token");
+            when(tokenProvider.generateRefreshToken(any(), any(), any()))
+                    .thenReturn("refresh-token");
+            when(employeeRepository.findByUserIdAndTenantId(userId, tenantId))
+                    .thenReturn(Optional.of(employee));
+
+            AuthResponse response = authService.login(request);
+
+            assertThat(response).isNotNull();
+            assertThat(response.getAccessToken()).isEqualTo("access-token");
+        }
     }
 
     @Nested

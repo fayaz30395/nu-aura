@@ -115,6 +115,23 @@ public class AuthService {
     private boolean loginBookkeepingEnabled;
     @Value("${app.account-lockout.use-redis:true}")
     private boolean accountLockoutUseRedis;
+    /**
+     * Phase 3 fix: V270/V272 etc. only neutralize known-demo password hashes at
+     * MIGRATION time — a one-shot Flyway run. If demoCredentialsEnabled was true
+     * when those migrations ran (e.g. dev/demo profile) and is later flipped to
+     * false without a fresh migration, the seeded accounts stay ACTIVE forever;
+     * flipping the env var alone does nothing. This re-reads the SAME Flyway
+     * placeholder at request time and gates the same well-known demo-password
+     * hashes here too, so the flag also has runtime effect, not just seed-time.
+     */
+    @Value("${spring.flyway.placeholders.demoCredentialsEnabled:false}")
+    private boolean demoCredentialsEnabled;
+
+    private static final java.util.Set<String> KNOWN_DEMO_PASSWORD_HASHES = java.util.Set.of(
+            "$2a$10$D7mb1w2eljWfrBF3i8iZCu5A/H4mUXe8.3rHyWvgYy2j8eC3ghqD2", // Welcome@123 (V49 demo users)
+            "$2a$10$Yz2jagooVRjNy0jIkBH65uLechlFdTUIRtz44XSrXEtcPAnWObR/e", // Welcome@123 (V122/V173, incl. SUPER_ADMIN)
+            "$2a$12$XMYaVk5yNVtCKiuFM5m3rOpR.73IKHFykmuvWP3OWYi8cqRbK0VHG"  // Welcome@123 (V110 new joiner)
+    );
 
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
@@ -260,6 +277,16 @@ public class AuthService {
 
             User user = userRepository.findByEmailAndTenantId(request.getEmail(), tenantId)
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
+
+            // Phase 3: runtime-enforce demoCredentialsEnabled even when migration-time
+            // neutralization never ran (see field javadoc above). Generic message —
+            // does not reveal that this is specifically a demo-account block.
+            if (!demoCredentialsEnabled && KNOWN_DEMO_PASSWORD_HASHES.contains(user.getPasswordHash())) {
+                metricsService.recordLoginFailure("password", "demo_credentials_disabled");
+                auditLogService.logAction("USER", user.getId(), AuditAction.LOGIN, null, null,
+                        "Failed login attempt: demo credentials disabled");
+                throw new AuthenticationException("Invalid email or password");
+            }
 
             // Check password expiry (90-day policy)
             if (user.getPasswordChangedAt() != null && passwordPolicyConfig.getMaxAgeDays() > 0) {
