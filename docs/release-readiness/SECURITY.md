@@ -116,6 +116,52 @@ across all 1893 commits timed out; used targeted pickaxe searches on `main` only
 incremental signal). A full `gitleaks`/`trufflehog` pass would be more thorough than this manual
 sweep — recommended as a follow-up tool, not performed here.
 
+## A4-followup — Phase 2 remediation pass (2026-09-22)
+
+**Current-codebase state: CLEAN.** Re-verified this pass:
+- `git merge-base --is-ancestor 83f70807 HEAD` → yes; `git merge-base --is-ancestor 24a6c4c7 HEAD`
+  → yes. Both bad commits still reachable from current `HEAD` — history exposure unchanged.
+- `backend/start-backend.sh` (current working tree): no `gsk_` pattern present — confirms the
+  `fb465678` neutralization holds today.
+- Full tracked-source grep (`.java`/`.yml`/`.sh`/`.properties`, repo-wide) for `gsk_[A-Za-z0-9]`
+  or a literal `NEON_DB_PASSWORD=` assignment: zero matches. No hardcoded credential in the
+  current codebase for either secret.
+- Groq/OpenAI-compatible key is config-only: `application.yml` reads `${OPENAI_API_KEY:}`
+  (empty default), never a literal. No `GROQ_API_KEY`-named variable exists in the app — Groq is
+  reached via the OpenAI-compatible `base-url` override.
+
+**New finding, fixed this pass:** untracked `.env.bak2` / `.env.bak3` exist in repo root, not
+matched by any existing `.env*` `.gitignore` pattern — `git add -A` would have staged them.
+Contents were NOT inspected (this environment's sandbox denies read/grep access to these two
+paths outright, regardless of operation — a hard deny, not a choice made here). Fixed by adding
+`.env.bak*` to `.gitignore` (commit `9c0af1b3`). **Operator must inspect and rotate/delete these
+two files directly** — their content is unknown from this pass.
+
+**History-cleaning procedure — prepared, NOT executed** (per instruction: no history rewrite of a
+shared branch without prior approval; no push regardless, SSH unavailable here):
+
+```bash
+# Removes .env and .env.production from ALL history on this local clone.
+# Rewrites every commit SHA after 24a6c4c7 / 6b348f80 — DESTRUCTIVE to shared history.
+# Requires: git-filter-repo (brew install git-filter-repo)
+git filter-repo --path .env --path .env.production --invert-paths --force
+
+# After running: every collaborator must re-clone (rebasing onto rewritten history
+# does not work cleanly). A force-push to origin/main would be required to publish
+# the rewrite -- NOT done here (no push authorization, SSH unavailable in this
+# environment regardless).
+```
+
+This has **not** been run. Rewriting `main`'s history is a shared-branch action requiring explicit
+owner approval per the stop conditions in this task — flagging the exact command rather than
+guessing consent.
+
+**Rotation status: OPERATOR ACTION REQUIRED for both credentials** — rotating a live Neon DB
+password or a live Groq API key requires access to the Neon console / console.groq.com, which
+this environment does not have. Current codebase already reads both from environment variables
+(no code change needed once rotated) — `NEON_JDBC_URL`/`NEON_DB_USERNAME`/`NEON_DB_PASSWORD` and
+`OPENAI_API_KEY` are all externally injected, confirmed via `application*.yml` above.
+
 ## A5 — Regression: PASS
 
 Re-verified live on this session's freshly-restarted backend (not reusing pre-restart state):
