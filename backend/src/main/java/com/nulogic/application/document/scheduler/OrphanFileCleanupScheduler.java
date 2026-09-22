@@ -2,6 +2,7 @@ package com.nulogic.application.document.scheduler;
 
 import com.nulogic.application.document.service.StorageProvider;
 import com.nulogic.application.document.service.StorageProvider.StoredObjectInfo;
+import com.nulogic.common.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * Scheduled job for detecting orphaned files in storage.
@@ -51,38 +53,57 @@ public class OrphanFileCleanupScheduler {
         log.info("OrphanFileCleanupScheduler: starting weekly orphan file detection");
 
         try {
-            // 1. Collect all known file paths from the database
-            Set<String> knownPaths = collectKnownFilePaths();
-            log.info("OrphanFileCleanupScheduler: found {} tracked file paths in database", knownPaths.size());
+            // generated_documents/document_versions/file_metadata all have RLS enabled
+            // (V81) keyed on app.current_tenant_id. This scheduler runs with no request
+            // context, so TenantContext.getCurrentTenant() is null unless explicitly set
+            // — querying those tables without setting it returns ZERO rows (RLS fails
+            // closed), which would previously have flagged every real file in every
+            // tenant as orphaned. Fixed by iterating tenants explicitly and setting
+            // TenantContext per tenant, rather than relying on ambient request context.
+            List<UUID> tenantIds = jdbcTemplate.queryForList("SELECT id FROM tenants", UUID.class);
 
-            // 2. List all objects in storage older than threshold
+            List<StoredObjectInfo> storedObjects = storageProvider.listObjects(null);
             ZonedDateTime cutoff = ZonedDateTime.now().minusHours(ORPHAN_AGE_THRESHOLD_HOURS);
             List<String> orphanedFiles = new ArrayList<>();
             long totalObjects = 0;
+            long totalKnownPaths = 0;
 
-            List<StoredObjectInfo> storedObjects = storageProvider.listObjects(null);
-
-            for (StoredObjectInfo item : storedObjects) {
-                totalObjects++;
-
-                // Skip directories
-                if (item.isDirectory()) {
-                    continue;
+            for (UUID tenantId : tenantIds) {
+                Set<String> knownPaths;
+                try {
+                    TenantContext.setCurrentTenant(tenantId);
+                    knownPaths = collectKnownFilePaths();
+                } finally {
+                    TenantContext.clear();
                 }
+                totalKnownPaths += knownPaths.size();
 
-                // Only consider objects older than the threshold
-                ZonedDateTime lastModified = item.lastModified();
-                if (lastModified != null && lastModified.isAfter(cutoff)) {
-                    continue;
-                }
+                String tenantPrefix = tenantId + "/";
+                for (StoredObjectInfo item : storedObjects) {
+                    if (!item.objectName().startsWith(tenantPrefix)) {
+                        continue;
+                    }
+                    totalObjects++;
 
-                String objectName = item.objectName();
-                if (!knownPaths.contains(objectName)) {
-                    orphanedFiles.add(objectName);
+                    if (item.isDirectory()) {
+                        continue;
+                    }
+
+                    ZonedDateTime lastModified = item.lastModified();
+                    if (lastModified != null && lastModified.isAfter(cutoff)) {
+                        continue;
+                    }
+
+                    String objectName = item.objectName();
+                    if (!knownPaths.contains(objectName)) {
+                        orphanedFiles.add(objectName);
+                    }
                 }
             }
+            log.info("OrphanFileCleanupScheduler: found {} tracked file paths across {} tenant(s)",
+                    totalKnownPaths, tenantIds.size());
 
-            // 3. Log results (Phase 1: report only, no deletion)
+            // Report only (Phase 1: no deletion)
             if (orphanedFiles.isEmpty()) {
                 log.info("OrphanFileCleanupScheduler: no orphaned files detected " +
                         "(scanned {} objects)", totalObjects);
@@ -96,11 +117,14 @@ public class OrphanFileCleanupScheduler {
 
         } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
             log.error("OrphanFileCleanupScheduler: failed during orphan detection", e);
+        } finally {
+            TenantContext.clear();
         }
     }
 
     /**
-     * Collect all file paths tracked in the database across both document tables.
+     * Collect all file paths tracked in the database, for the tenant currently set
+     * on {@link TenantContext} (across all three document tables).
      */
     private Set<String> collectKnownFilePaths() {
         Set<String> paths = new HashSet<>();
