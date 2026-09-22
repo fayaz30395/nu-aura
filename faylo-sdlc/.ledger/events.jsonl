@@ -531,3 +531,8 @@
 {"agent": "claude-code", "artifact_id": "", "note": "", "outcome": "ok", "stage": "session", "ts": "2026-09-22T21:21:07Z"}
 {"agent": "claude-code", "artifact_id": "", "note": "", "outcome": "ok", "stage": "session", "ts": "2026-09-22T21:23:28Z"}
 {"agent": "claude-code", "artifact_id": "", "note": "", "outcome": "ok", "stage": "session", "ts": "2026-09-22T21:23:30Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2G4FX1A5TEFX", "note": "IDOR fixes (Reviews/Mileage/Contracts) PASS: assertEmployeeInScope/assertSelfOrBroaderScope confirmed present in main..release-readiness/verified-fixes diff", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-22T22:50:50Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2G4FX1A5TEFX", "note": "Demo-credential runtime enforcement PASS: AuthService.java diff confirms demoCredentialsEnabled check present", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-22T22:50:50Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2G4FX1A5TEFX", "note": "Orphan-scheduler tenant safety PASS: OrphanFileCleanupScheduler.java diff confirms TenantContext.setCurrentTenant present", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-22T22:50:51Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2G4FX1A5TEFX", "note": "Realtime notification E2E PASS: 2/2 passed, realtime-notification-delivery.spec.ts, live run", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-22T22:50:52Z"}
+{"agent": "faylo-qa-reviewer", "artifact_id": "US-2G4FX1A5TEFX", "note": "Frontend production build PASS: NEXT_PUBLIC_API_URL set, next build Compiled successfully in 113s, ~340 routes", "outcome": "ok", "stage": "11-verification", "ts": "2026-09-22T22:50:55Z"}
