@@ -12,6 +12,7 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.performance.PerformanceReviewCompletedEvent;
 import com.nulogic.domain.performance.PerformanceReview;
 import com.nulogic.domain.performance.ReviewCompetency;
@@ -196,6 +197,7 @@ public class PerformanceReviewService {
     @Transactional(readOnly = true)
     public List<ReviewResponse> getEmployeeReviews(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertEmployeeInScope(employeeId, tenantId);
 
         List<PerformanceReview> reviews = reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId);
         return mapReviewList(reviews);
@@ -204,7 +206,29 @@ public class PerformanceReviewService {
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getEmployeeReviewsPaged(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertEmployeeInScope(employeeId, tenantId);
         return mapReviewPage(reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable));
+    }
+
+    // SEC: getEmployeeReviews/getEmployeeReviewsPaged take a caller-supplied employeeId with
+    // no scope filtering otherwise. Checked against the Employee entity directly (not review
+    // rows) so the check is correct even when the target employee has zero reviews — reuses
+    // the same DataScopeService scope resolution the "list all reviews" endpoint above already
+    // relies on for REVIEW_VIEW, instead of a one-off self-check, so SELF/TEAM/DEPARTMENT-scoped
+    // callers get the same enforcement here as everywhere else this permission is checked.
+    private void assertEmployeeInScope(UUID employeeId, UUID tenantId) {
+        Specification<Employee> idSpec = (root, query, cb) -> cb.and(
+                cb.equal(root.get("tenantId"), tenantId),
+                cb.equal(root.get("id"), employeeId));
+        // A nonexistent employeeId isn't a scope violation — the downstream review query
+        // returns empty either way, and 403-vs-empty would itself be an existence oracle.
+        if (!employeeRepository.exists(idSpec)) {
+            return;
+        }
+        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.REVIEW_VIEW);
+        if (!employeeRepository.exists(idSpec.and(scopeSpec))) {
+            throw new AccessDeniedException("Cannot access another employee's reviews");
+        }
     }
 
     @Transactional(readOnly = true)

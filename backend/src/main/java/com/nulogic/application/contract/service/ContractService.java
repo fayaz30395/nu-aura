@@ -4,6 +4,8 @@ import com.nulogic.api.contract.dto.*;
 import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.metrics.MetricsService;
+import com.nulogic.common.security.DataScopeService;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.contract.*;
@@ -17,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +50,7 @@ public class ContractService {
     private final ContractReminderRepository reminderRepository;
     private final EmployeeService employeeService;
     private final EmployeeRepository employeeRepository;
+    private final DataScopeService dataScopeService;
     private final MetricsService metricsService;
     private final TenantTimeService tenantTimeService;
 
@@ -223,7 +228,25 @@ public class ContractService {
     @Transactional(readOnly = true)
     public Page<ContractListDto> getEmployeeContracts(UUID employeeId, Pageable pageable) {
         UUID tenantId = SecurityContext.getCurrentTenantId();
+        assertEmployeeInScope(employeeId, tenantId);
         return mapContractPage(contractRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable));
+    }
+
+    // SEC: getEmployeeContracts took a caller-supplied employeeId with no scope filtering.
+    // Checked against the Employee entity directly (not contract rows) so it's correct even
+    // when the target employee has zero contracts. Reuses DataScopeService's CONTRACT_VIEW
+    // scope resolution rather than a one-off self-check, matching the established pattern.
+    private void assertEmployeeInScope(UUID employeeId, UUID tenantId) {
+        Specification<Employee> idSpec = (root, query, cb) -> cb.and(
+                cb.equal(root.get("tenantId"), tenantId),
+                cb.equal(root.get("id"), employeeId));
+        if (!employeeRepository.exists(idSpec)) {
+            return;
+        }
+        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.CONTRACT_VIEW);
+        if (!employeeRepository.exists(idSpec.and(scopeSpec))) {
+            throw new AccessDeniedException("Cannot access another employee's contracts");
+        }
     }
 
     /**

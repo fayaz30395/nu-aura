@@ -215,9 +215,30 @@ public class MileageService {
     @Transactional(readOnly = true)
     public Page<MileageLogResponse> getEmployeeMileageLogs(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        assertSelfOrBroaderScope(employeeId);
         Page<MileageLog> page = mileageLogRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
         Map<UUID, String> nameMap = buildMileageNameMap(page.getContent(), tenantId);
         return page.map(log -> enrichResponseFromCache(MileageLogResponse.fromEntity(log), nameMap));
+    }
+
+    // SEC: the controller's @RequiresPermission accepts EXPENSE_VIEW (self-scope, held broadly
+    // e.g. by EMPLOYEE) OR EXPENSE_VIEW_TEAM/EXPENSE_VIEW_ALL/EXPENSE_MANAGE (broader scopes) —
+    // but the method itself never checked WHICH of those the caller actually held, so a plain
+    // EXPENSE_VIEW holder could pass any employeeId. Callers with only the self-scoped
+    // permission are restricted to their own id; anyone holding a broader permission is
+    // unaffected.
+    private void assertSelfOrBroaderScope(UUID employeeId) {
+        boolean hasBroaderScope = com.nulogic.common.security.SecurityContext.hasPermission(com.nulogic.common.security.Permission.EXPENSE_VIEW_TEAM)
+                || com.nulogic.common.security.SecurityContext.hasPermission(com.nulogic.common.security.Permission.EXPENSE_VIEW_ALL)
+                || com.nulogic.common.security.SecurityContext.hasPermission(com.nulogic.common.security.Permission.EXPENSE_MANAGE)
+                || com.nulogic.common.security.SecurityContext.isSuperAdmin();
+        if (hasBroaderScope) {
+            return;
+        }
+        UUID currentEmployeeId = com.nulogic.common.security.SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId == null || !currentEmployeeId.equals(employeeId)) {
+            throw new org.springframework.security.access.AccessDeniedException("Cannot access another employee's mileage logs");
+        }
     }
 
     @Transactional(readOnly = true)

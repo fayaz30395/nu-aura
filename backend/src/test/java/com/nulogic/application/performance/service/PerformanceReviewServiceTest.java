@@ -302,6 +302,9 @@ class PerformanceReviewServiceTest {
         @Test
         @DisplayName("Should get employee reviews")
         void shouldGetEmployeeReviews() {
+            when(employeeRepository.exists(ArgumentMatchers.<Specification<Employee>>any())).thenReturn(true);
+            when(dataScopeService.getScopeSpecification(anyString()))
+                    .thenReturn((root, query, cb) -> cb.conjunction());
             when(reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId))
                     .thenReturn(List.of(review));
             when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
@@ -311,6 +314,31 @@ class PerformanceReviewServiceTest {
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getEmployeeId()).isEqualTo(employeeId);
+        }
+
+        @Test
+        @DisplayName("D-IDOR: cannot view another employee's reviews when out of scope")
+        void shouldDenyEmployeeReviewsWhenOutOfScope() {
+            UUID otherEmployeeId = UUID.randomUUID();
+            when(employeeRepository.exists(ArgumentMatchers.<Specification<Employee>>any()))
+                    .thenReturn(true)  // existence check
+                    .thenReturn(false); // scope check
+
+            assertThatThrownBy(() -> performanceReviewService.getEmployeeReviews(otherEmployeeId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        }
+
+        @Test
+        @DisplayName("D-IDOR: nonexistent employeeId returns empty, not a scope error")
+        void shouldReturnEmptyForNonexistentEmployee() {
+            UUID missingEmployeeId = UUID.randomUUID();
+            when(employeeRepository.exists(ArgumentMatchers.<Specification<Employee>>any())).thenReturn(false);
+            when(reviewRepository.findAllByTenantIdAndEmployeeId(tenantId, missingEmployeeId))
+                    .thenReturn(List.of());
+
+            List<ReviewResponse> result = performanceReviewService.getEmployeeReviews(missingEmployeeId);
+
+            assertThat(result).isEmpty();
         }
 
         @Test

@@ -3,6 +3,7 @@ package com.nulogic.application.platform.service;
 import com.nulogic.api.platform.dto.TenantRegistrationRequest;
 import com.nulogic.common.security.JwtTokenProvider;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.security.TenantRlsSessionSync;
 import com.nulogic.domain.tenant.Tenant;
 import com.nulogic.domain.user.User;
 import com.nulogic.domain.workflow.WorkflowDefinition;
@@ -10,6 +11,8 @@ import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import com.nulogic.infrastructure.user.repository.RoleRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import com.nulogic.infrastructure.workflow.repository.WorkflowDefinitionRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +30,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_SELF;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,13 +52,22 @@ class TenantProvisioningServiceTest {
     private JwtTokenProvider jwtTokenProvider;
     @Mock
     private WorkflowDefinitionRepository workflowDefinitionRepository;
+    @Mock
+    private TenantRlsSessionSync tenantRlsSessionSync;
+    @Mock
+    private EntityManager entityManager;
 
     private TenantProvisioningService service;
 
     @BeforeEach
     void setUp() {
         service = new TenantProvisioningService(tenantRepository, userRepository, roleRepository,
-                passwordEncoder, jwtTokenProvider, workflowDefinitionRepository);
+                passwordEncoder, jwtTokenProvider, workflowDefinitionRepository, tenantRlsSessionSync);
+        ReflectionTestUtils.setField(service, "entityManager", entityManager);
+        // entityManager is @PersistenceContext field-injected in the real bean, not a
+        // constructor param — set directly since this test constructs the service by hand.
+        Query nativeQueryStub = mock(Query.class, RETURNS_SELF);
+        when(entityManager.createNativeQuery(anyString())).thenReturn(nativeQueryStub);
 
         when(tenantRepository.existsByCode(anyString())).thenReturn(false);
         when(tenantRepository.save(any(Tenant.class))).thenAnswer(inv -> {

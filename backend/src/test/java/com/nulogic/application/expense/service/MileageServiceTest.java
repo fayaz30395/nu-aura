@@ -5,6 +5,7 @@ import com.nulogic.api.expense.dto.MileageLogRequest;
 import com.nulogic.api.expense.dto.MileageLogResponse;
 import com.nulogic.api.expense.dto.MileageSummaryResponse;
 import com.nulogic.common.exception.ValidationException;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.expense.ExpenseClaim;
@@ -431,6 +432,8 @@ class MileageServiceTest {
         Pageable pageable = PageRequest.of(0, 20);
         Page<MileageLog> page = new PageImpl<>(List.of(log), pageable, 1);
 
+        securityContextMock.when(() -> SecurityContext.hasPermission(Permission.EXPENSE_VIEW_ALL))
+                .thenReturn(true);
         when(mileageLogRepository.findByTenantIdAndEmployeeId(TENANT_ID, EMPLOYEE_ID, pageable))
                 .thenReturn(page);
 
@@ -438,5 +441,32 @@ class MileageServiceTest {
 
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getTotalElements()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("D-IDOR: self-scoped caller can view own mileage logs")
+    void getEmployeeMileageLogs_selfScope_allowed() {
+        Pageable pageable = PageRequest.of(0, 20);
+        Page<MileageLog> page = new PageImpl<>(List.of(), pageable, 0);
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(EMPLOYEE_ID);
+        when(mileageLogRepository.findByTenantIdAndEmployeeId(TENANT_ID, EMPLOYEE_ID, pageable))
+                .thenReturn(page);
+
+        Page<MileageLogResponse> result = mileageService.getEmployeeMileageLogs(EMPLOYEE_ID, pageable);
+
+        assertThat(result.getTotalElements()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("D-IDOR: self-scoped caller cannot view another employee's mileage logs")
+    void getEmployeeMileageLogs_crossEmployee_denied() {
+        Pageable pageable = PageRequest.of(0, 20);
+        UUID otherEmployeeId = UUID.randomUUID();
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(EMPLOYEE_ID);
+        securityContextMock.when(() -> SecurityContext.hasPermission(Permission.EXPENSE_VIEW_ALL))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> mileageService.getEmployeeMileageLogs(otherEmployeeId, pageable))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
     }
 }
