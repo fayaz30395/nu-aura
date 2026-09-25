@@ -1,6 +1,7 @@
 package com.nulogic.application.lms.service;
 
 import com.nulogic.api.lms.dto.CourseCatalogResponse;
+import com.nulogic.api.lms.dto.LearningPathSummaryResponse;
 import com.nulogic.api.lms.dto.CourseCatalogResponse.CourseSummaryDto;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
@@ -33,6 +34,7 @@ public class LmsService {
     private final ContentProgressRepository progressRepository;
     private final CertificateRepository certificateRepository;
     private final LearningPathRepository learningPathRepository;
+    private final LearningPathCourseRepository learningPathCourseRepository;
     private final TenantTimeService tenantTimeService;
 
     // ================== Course Management ==================
@@ -72,6 +74,94 @@ public class LmsService {
     @Transactional(readOnly = true)
     public Optional<LearningPath> getLearningPathById(UUID tenantId, UUID id) {
         return learningPathRepository.findByIdAndTenantIdWithCourses(id, tenantId);
+    }
+
+    /**
+     * BUG-L1: published learning paths for the tenant, decorated with the caller's own
+     * progress. This is the list {@code /learning/paths} has always called and never had.
+     *
+     * <p>A path counts as enrolled when the employee holds a {@link CourseEnrollment} for at
+     * least one member course; progress is the employee's mean course progress over the
+     * path's full course count, so an untouched course drags the average down rather than
+     * being excluded.</p>
+     */
+    @Transactional(readOnly = true)
+    public Page<LearningPathSummaryResponse> getLearningPaths(UUID tenantId, UUID employeeId, Pageable pageable) {
+        Page<LearningPath> paths = learningPathRepository.findPublishedPaths(tenantId, pageable);
+        if (paths.isEmpty()) {
+            return paths.map(path -> toSummary(path, List.of(), Map.of(), 0L));
+        }
+
+        List<UUID> pathIds = paths.getContent().stream().map(LearningPath::getId).toList();
+
+        Map<UUID, List<UUID>> courseIdsByPath = learningPathCourseRepository.findByPathIds(tenantId, pathIds)
+                .stream()
+                .collect(Collectors.groupingBy(LearningPathCourse::getPathId,
+                        Collectors.mapping(LearningPathCourse::getCourseId, Collectors.toList())));
+
+        Map<UUID, Long> learnersByPath = learningPathCourseRepository
+                .countDistinctLearnersByPath(tenantId, pathIds).stream()
+                .collect(Collectors.toMap(row -> (UUID) row[0], row -> (Long) row[1]));
+
+        Map<UUID, CourseEnrollment> myEnrollments = employeeId == null
+                ? Map.of()
+                : enrollmentRepository.findByEmployee(tenantId, employeeId).stream()
+                .collect(Collectors.toMap(CourseEnrollment::getCourseId, e -> e, (a, b) -> a));
+
+        return paths.map(path -> toSummary(path,
+                courseIdsByPath.getOrDefault(path.getId(), List.of()),
+                myEnrollments,
+                learnersByPath.getOrDefault(path.getId(), 0L)));
+    }
+
+    /**
+     * BUG-L1: enroll an employee in every course of a learning path. Idempotent — an existing
+     * course enrollment is returned untouched by {@link #enrollEmployee}.
+     */
+    @Transactional
+    public void enrollInLearningPath(UUID tenantId, UUID pathId, UUID employeeId, UUID enrolledBy) {
+        LearningPath path = learningPathRepository.findByIdAndTenantIdWithCourses(pathId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Learning path not found: " + pathId));
+        for (LearningPathCourse member : path.getCourses()) {
+            enrollEmployee(tenantId, member.getCourseId(), employeeId, enrolledBy);
+        }
+    }
+
+    private LearningPathSummaryResponse toSummary(LearningPath path, List<UUID> courseIds,
+                                                  Map<UUID, CourseEnrollment> myEnrollments, long learners) {
+        List<CourseEnrollment> mine = courseIds.stream()
+                .map(myEnrollments::get)
+                .filter(Objects::nonNull)
+                .toList();
+
+        int courseCount = courseIds.size();
+        int progress = 0;
+        String status = "NOT_STARTED";
+        if (!mine.isEmpty() && courseCount > 0) {
+            double sum = mine.stream()
+                    .map(CourseEnrollment::getProgressPercentage)
+                    .filter(Objects::nonNull)
+                    .mapToDouble(BigDecimal::doubleValue)
+                    .sum();
+            progress = (int) Math.round(sum / courseCount);
+            boolean allDone = mine.size() == courseCount
+                    && mine.stream().allMatch(e -> e.getStatus() == EnrollmentStatus.COMPLETED);
+            status = allDone ? "COMPLETED" : "IN_PROGRESS";
+        }
+
+        return LearningPathSummaryResponse.builder()
+                .id(path.getId())
+                .title(path.getTitle())
+                .description(path.getDescription())
+                .difficulty(path.getDifficultyLevel() != null ? path.getDifficultyLevel().name() : null)
+                .durationHours(path.getEstimatedHours())
+                .courseCount(courseCount)
+                .totalEnrollments(learners)
+                .thumbnailUrl(path.getThumbnailUrl())
+                .isEnrolled(!mine.isEmpty())
+                .progressPercentage(progress)
+                .status(status)
+                .build();
     }
 
     @Transactional(readOnly = true)

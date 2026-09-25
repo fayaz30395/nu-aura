@@ -39,6 +39,10 @@ public class FileStorageService {
     public static final String CATEGORY_ATTACHMENTS = "attachments";
     public static final String CATEGORY_REPORTS = "reports";
     public static final String CATEGORY_CERTIFICATES = "certificates";
+    // BUG-E1: OcrReceiptService has always stored receipts under this category, but it was
+    // missing from ALLOWED_CATEGORIES below, so generateObjectName threw
+    // BusinessException("Invalid file category: receipts") on EVERY receipt upload.
+    public static final String CATEGORY_RECEIPTS = "receipts";
     // Allowed file types
     private static final Map<String, Long> ALLOWED_TYPES = Map.of(
             "image/jpeg", 5L * 1024 * 1024,      // 5MB
@@ -76,7 +80,8 @@ public class FileStorageService {
     // value is rejected before it can shape the generated objectName / storage path.
     private static final Set<String> ALLOWED_CATEGORIES = Set.of(
             CATEGORY_PROFILE_PHOTO, CATEGORY_DOCUMENTS, CATEGORY_PAYSLIPS,
-            CATEGORY_LETTERS, CATEGORY_ATTACHMENTS, CATEGORY_REPORTS, CATEGORY_CERTIFICATES);
+            CATEGORY_LETTERS, CATEGORY_ATTACHMENTS, CATEGORY_REPORTS, CATEGORY_CERTIFICATES,
+            CATEGORY_RECEIPTS);
     private final StorageProvider storageProvider;
     private final JdbcTemplate jdbcTemplate;
     private final com.nulogic.infrastructure.storage.FileMetadataRepository fileMetadataRepository;
@@ -271,6 +276,31 @@ public class FileStorageService {
     /**
      * Copy a file to a new location.
      */
+    /**
+     * File-metadata accessors (B3): API-layer controllers must not talk to
+     * {@link com.nulogic.infrastructure.storage.FileMetadataRepository} directly —
+     * LayerArchitectureTest forbids api -> infrastructure.repository. These three
+     * pass-throughs are the service-layer seam the controllers use instead.
+     */
+    @Transactional(readOnly = true)
+    public java.util.List<com.nulogic.infrastructure.storage.FileMetadata> listMetadata(
+            UUID tenantId, String entityType, UUID entityId) {
+        return fileMetadataRepository
+                .findByTenantIdAndEntityTypeAndEntityIdOrderByCreatedAtDesc(tenantId, entityType, entityId);
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.Optional<com.nulogic.infrastructure.storage.FileMetadata> findMetadataByStoragePath(
+            UUID tenantId, String storagePath) {
+        return fileMetadataRepository.findByTenantIdAndStoragePath(tenantId, storagePath);
+    }
+
+    @Transactional
+    public com.nulogic.infrastructure.storage.FileMetadata saveMetadata(
+            com.nulogic.infrastructure.storage.FileMetadata metadata) {
+        return fileMetadataRepository.save(metadata);
+    }
+
     public String copyFile(String sourceObjectName, String category, UUID newEntityId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         String destinationObjectName = generateObjectName(tenantId, category, newEntityId,

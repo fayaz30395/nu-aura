@@ -9,9 +9,7 @@ import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
-import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.storage.FileMetadata;
-import com.nulogic.infrastructure.storage.FileMetadataRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,8 +53,7 @@ public class EmployeeDocumentController {
             "PAN", "AADHAAR", "BANK", "SALARY");
 
     private final FileStorageService fileStorageService;
-    private final FileMetadataRepository fileMetadataRepository;
-    private final EmployeeRepository employeeRepository;
+    private final com.nulogic.application.employee.service.EmployeeService employeeService;
     private final WebSocketNotificationService webSocketNotificationService;
 
     @GetMapping("/{id}/documents")
@@ -77,8 +74,8 @@ public class EmployeeDocumentController {
         boolean excludeSensitive = !isSelfOrElevated(employeeId);
 
         UUID tenantId = TenantContext.getCurrentTenant();
-        List<EmployeeDocumentResponse> documents = fileMetadataRepository
-                .findByTenantIdAndEntityTypeAndEntityIdOrderByCreatedAtDesc(tenantId, ENTITY_TYPE_EMPLOYEE, employeeId)
+        List<EmployeeDocumentResponse> documents = fileStorageService
+                .listMetadata(tenantId, ENTITY_TYPE_EMPLOYEE, employeeId)
                 .stream()
                 .filter(meta -> !excludeSensitive || meta.getCategory() != FileMetadata.FileCategory.SENSITIVE_DOCUMENT)
                 .map(meta -> new EmployeeDocumentResponse(
@@ -132,7 +129,7 @@ public class EmployeeDocumentController {
                 .description(documentType)
                 .build();
         try {
-            fileMetadataRepository.save(metadata);
+            fileStorageService.saveMetadata(metadata);
         } catch (RuntimeException e) {
             // Compensating rollback: the file already landed in storage before this DB
             // insert failed — without cleanup it would be a permanently orphaned, untracked
@@ -149,7 +146,7 @@ public class EmployeeDocumentController {
         }
 
         try {
-            employeeRepository.findByIdAndTenantId(employeeId, TenantContext.getCurrentTenant())
+            employeeService.findByIdAndTenant(employeeId, TenantContext.getCurrentTenant())
                     .map(Employee::getUser)
                     .ifPresent(user -> webSocketNotificationService.notifyDocumentUploaded(
                             user.getId(), result.getOriginalFilename()));

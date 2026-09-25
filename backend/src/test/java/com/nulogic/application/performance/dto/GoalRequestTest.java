@@ -60,6 +60,9 @@ class GoalRequestTest {
     @DisplayName("accepts valid request")
     void acceptsValidRequest() {
         GoalRequest request = GoalRequest.builder()
+                .employeeId(java.util.UUID.randomUUID())
+                .title("Improve test coverage")
+                .goalType(com.nulogic.domain.performance.Goal.GoalType.KPI)
                 .targetValue(new BigDecimal("100"))
                 .currentValue(BigDecimal.ZERO)
                 .startDate(LocalDate.of(2026, 1, 1))

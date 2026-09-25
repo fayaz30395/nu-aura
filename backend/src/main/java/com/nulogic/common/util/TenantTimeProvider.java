@@ -1,6 +1,7 @@
 package com.nulogic.common.util;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -99,6 +100,23 @@ public class TenantTimeProvider {
         INSTANCE = this.timeService;
         log.info("[TenantTimeProvider] Static holder wired — entity predicates will use "
                 + "tenant-zone time resolution (fallback zone: {}).", TenantTimeService.DEFAULT_ZONE);
+    }
+
+    /**
+     * Releases the static holder when this bean's context shuts down, so entity predicates
+     * never dereference a {@link TenantTimeService} bound to a closed ApplicationContext.
+     * That stale reference surfaces as a spurious ConfigurationPropertiesBindException from
+     * whichever {@code @ConfigurationProperties} bean the dead context is asked for first,
+     * and it also makes the documented {@code INSTANCE == null} fallback unreachable.
+     *
+     * <p>The identity guard stops a closing context from clearing a holder that another live
+     * context owns — relevant under Surefire, where several cached contexts share one JVM.</p>
+     */
+    @PreDestroy
+    void shutdown() {
+        if (INSTANCE == this.timeService) {
+            INSTANCE = null;
+        }
     }
 
     // -------------------------------------------------------------------------

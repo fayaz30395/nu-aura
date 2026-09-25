@@ -9,11 +9,13 @@ import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.payroll.PayrollRun;
+import com.nulogic.domain.payroll.SalaryStructure;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.kafka.producer.EventPublisher;
 import com.nulogic.infrastructure.payroll.repository.PayrollRunRepository;
+import com.nulogic.infrastructure.payroll.repository.SalaryStructureRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.*;
@@ -70,9 +73,12 @@ class PayrollE2ETest extends AbstractPostgresIntegrationTest {
     private EmployeeRepository employeeRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SalaryStructureRepository salaryStructureRepository;
     private UUID testEmployeeId;
     private UUID testUserId;
     private UUID createdPayrollRunId;
+    private final List<UUID> createdSalaryStructureIds = new ArrayList<>();
 
     @BeforeAll
     void setUpTestData() {
@@ -331,6 +337,11 @@ class PayrollE2ETest extends AbstractPostgresIntegrationTest {
         assertThat(created.getId()).isNotNull();
         assertThat(created.getStatus()).isEqualTo(PayrollRun.PayrollStatus.DRAFT);
 
+        // Pre-flight is tenant-wide: EVERY active employee in TEST_TENANT_ID needs an
+        // active salary structure, not just this class's fixture employee — other test
+        // classes share this tenant and leave ACTIVE employees behind.
+        ensureActiveSalaryStructuresForTenant();
+
         // Process the run
         PayrollRun processed = payrollRunService.processPayrollRun(created.getId(), TEST_USER_ID);
         assertThat(processed.getStatus()).isIn(
@@ -340,6 +351,28 @@ class PayrollE2ETest extends AbstractPostgresIntegrationTest {
 
         // Clean up
         payrollRunRepository.deleteById(created.getId());
+    }
+
+    /** Give every ACTIVE employee in the test tenant an active salary structure. */
+    private void ensureActiveSalaryStructuresForTenant() {
+        for (Employee employee : employeeRepository.findByTenantIdAndStatus(
+                TEST_TENANT_ID, Employee.EmployeeStatus.ACTIVE)) {
+            boolean covered = salaryStructureRepository
+                    .findAllByTenantIdAndEmployeeId(TEST_TENANT_ID, employee.getId())
+                    .stream()
+                    .anyMatch(structure -> Boolean.TRUE.equals(structure.getIsActive()));
+            if (covered) {
+                continue;
+            }
+            SalaryStructure structure = SalaryStructure.builder()
+                    .employeeId(employee.getId())
+                    .effectiveDate(LocalDate.now().minusYears(1))
+                    .basicSalary(new BigDecimal("50000.00"))
+                    .isActive(true)
+                    .build();
+            structure.setTenantId(TEST_TENANT_ID);
+            createdSalaryStructureIds.add(salaryStructureRepository.save(structure).getId());
+        }
     }
 
     // ==================== Validation Tests ====================
@@ -389,6 +422,9 @@ class PayrollE2ETest extends AbstractPostgresIntegrationTest {
 
     @AfterAll
     void cleanUp() {
+        // Clean up salary structures created for the tenant-wide pre-flight coverage check
+        createdSalaryStructureIds.forEach(salaryStructureRepository::deleteById);
+        createdSalaryStructureIds.clear();
         // Clean up test payroll runs
         if (createdPayrollRunId != null) {
             payrollRunRepository.deleteById(createdPayrollRunId);

@@ -142,7 +142,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // but the backend @RequiresPermission uses "RESOURCE:ACTION" format (e.g. "EMPLOYEE:READ").
                     // We normalize to the UPPERCASE:COLON format expected by Permission.java constants.
                     if (permissionScopes.isEmpty() && !roles.isEmpty()) {
-                        Set<String> dbPermissions;
+                        Map<String, com.nulogic.domain.user.RoleScope> dbScopes;
 
                         // Try to extract userId from JWT for user-keyed cache lookup (Task 8)
                         UUID userId = null;
@@ -152,21 +152,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             log.debug("Could not extract userId from JWT, falling back to role-based cache", e);
                         }
 
-                        // Prefer user-keyed cache if userId available, otherwise use role-based cache
+                        // SEC-1 (CRITICAL): this used to load permission CODES only and stamp every one
+                        // of them RoleScope.GLOBAL (== ALL). Permissions moved out of the JWT, so this
+                        // path runs for every cookie-authenticated request — which silently neutralised
+                        // EVERY scope check in the application (validateEmployeeAccess, getPermissionScope,
+                        // DataScopeService): a SELF-scoped EMPLOYEE was evaluated as ALL. Verified live:
+                        // an employee could read another employee's expense claims and leave requests.
+                        // The scope-preserving loaders already existed; use them and keep the real scope.
                         if (userId != null) {
-                            dbPermissions = securityService.getCachedPermissionsForUser(userId, roles);
-                            log.debug("BUG-012 fix (user-keyed): Loaded {} permissions for user {} with roles {}: {}",
-                                    dbPermissions.size(), userId, roles, dbPermissions);
+                            dbScopes = securityService.getCachedPermissionScopesForUser(userId, roles);
+                            log.debug("Loaded {} scoped permissions for user {} with roles {}",
+                                    dbScopes.size(), userId, roles);
                         } else {
-                            dbPermissions = securityService.getCachedPermissions(roles);
-                            log.debug("BUG-012 fix (role-based): Loaded {} permissions from DB for roles {}: {}",
-                                    dbPermissions.size(), roles, dbPermissions);
+                            dbScopes = securityService.getCachedPermissionScopes(roles);
+                            log.debug("Loaded {} scoped permissions from DB for roles {}", dbScopes.size(), roles);
                         }
 
                         permissionScopes = new HashMap<>();
-                        for (String dbPerm : dbPermissions) {
-                            String normalized = normalizePermissionCode(dbPerm);
-                            permissionScopes.put(normalized, com.nulogic.domain.user.RoleScope.GLOBAL);
+                        for (Map.Entry<String, com.nulogic.domain.user.RoleScope> entry : dbScopes.entrySet()) {
+                            String normalized = normalizePermissionCode(entry.getKey());
+                            // Fail closed on a missing scope: SELF is the narrowest grant, never ALL.
+                            permissionScopes.put(normalized,
+                                    entry.getValue() != null
+                                            ? entry.getValue()
+                                            : com.nulogic.domain.user.RoleScope.SELF);
                             authorities.add(new SimpleGrantedAuthority(normalized));
                         }
                     }

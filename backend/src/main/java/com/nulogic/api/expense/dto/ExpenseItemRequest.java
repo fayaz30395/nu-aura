@@ -45,4 +45,13 @@ public class ExpenseItemRequest {
 
     @Size(max = 1000, message = "Notes cannot exceed 1000 characters")
     private String notes;
+
+    // BUG-E1: the uploaded receipt returned by POST /expenses/receipts/scan. Without these the
+    // API had nowhere to put the stored file, so the UI threw the upload result away and the
+    // claim detail page had no receiptFileName to render.
+    @Size(max = 1000, message = "Receipt storage path cannot exceed 1000 characters")
+    private String receiptStoragePath;
+
+    @Size(max = 255, message = "Receipt file name cannot exceed 255 characters")
+    private String receiptFileName;
 }

@@ -853,6 +853,10 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
      * Validates that the current user can access data for a specific employee based on their scope.
      * Throws AccessDeniedException if access is not allowed.
      */
+    public void assertEmployeeAccess(UUID targetEmployeeId, String permission) {
+        validateEmployeeAccess(targetEmployeeId, permission);
+    }
+
     private void validateEmployeeAccess(UUID targetEmployeeId, String permission) {
         UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
 

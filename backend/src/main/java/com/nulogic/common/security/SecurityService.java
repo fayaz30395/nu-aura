@@ -101,6 +101,147 @@ public class SecurityService {
     }
 
     /**
+     * Breadth ranking for {@link com.nulogic.domain.user.RoleScope}, used only to resolve the
+     * conflict where one permission reaches a user through several roles at different scopes.
+     *
+     * <p>Higher wins. A user who is both a TEAM-scoped lead and an ALL-scoped admin must keep
+     * ALL — taking the narrower scope would deny access they legitimately hold.
+     * CUSTOM ranks lowest because it is an explicit allow-list, not a containing set.</p>
+     */
+    private static int scopeBreadth(com.nulogic.domain.user.RoleScope scope) {
+        if (scope == null) {
+            return -1;
+        }
+        return switch (scope) {
+            case ALL -> 5;
+            case LOCATION -> 4;
+            case DEPARTMENT -> 3;
+            case TEAM -> 2;
+            case SELF -> 1;
+            case CUSTOM -> 0;
+        };
+    }
+
+    /** Keep the broader of two scopes for the same permission code. */
+    private static void mergeScope(Map<String, com.nulogic.domain.user.RoleScope> target,
+                                   String code,
+                                   com.nulogic.domain.user.RoleScope scope) {
+        com.nulogic.domain.user.RoleScope effective =
+                scope != null ? scope : com.nulogic.domain.user.RoleScope.SELF;
+        target.merge(code, effective,
+                (a, b) -> scopeBreadth(a) >= scopeBreadth(b) ? a : b);
+    }
+
+    /**
+     * Permission code -> effective {@link com.nulogic.domain.user.RoleScope} for the given roles.
+     *
+     * <p>Exists because the scope is the authorization decision, not decoration:
+     * {@code LEAVE:VIEW_SELF} granted at SELF scope and the same code granted at ALL scope are
+     * completely different grants. Callers that only need the codes can use
+     * {@link #getCachedPermissions(Collection)}, which now delegates here.</p>
+     */
+    @Cacheable(
+            value = CacheConfig.ROLE_PERMISSIONS,
+            key = "'scopes:' + T(com.nulogic.common.security.TenantContext).getCurrentTenant() + ':' + #roles",
+            condition = "T(com.nulogic.common.security.TenantContext).getCurrentTenant() != null && #roles != null && !#roles.isEmpty()"
+    )
+    @Transactional(readOnly = true)
+    public Map<String, com.nulogic.domain.user.RoleScope> getCachedPermissionScopes(Collection<String> roles) {
+        Map<String, com.nulogic.domain.user.RoleScope> scopes = new HashMap<>();
+        UUID tenantId = TenantContext.getCurrentTenant();
+        if (tenantId == null || roles == null || roles.isEmpty()) {
+            log.warn("getCachedPermissionScopes called without TenantContext; returning empty permissions");
+            return scopes;
+        }
+        List<Role> activeRoles = roleRepository.findByCodeInAndTenantId(roles, tenantId);
+        for (Role role : activeRoles) {
+            if (role.getPermissions() != null) {
+                for (RolePermission rp : role.getPermissions()) {
+                    mergeScope(scopes, rp.getPermission().getCode(), rp.getScope());
+                }
+            }
+        }
+        return scopes;
+    }
+
+    /**
+     * Scope-preserving counterpart of {@link #getCachedPermissionsForUser(UUID, Collection)},
+     * covering explicit roles, the inheritance chain, and active implicit roles.
+     */
+    @Transactional(readOnly = true)
+    public Map<String, com.nulogic.domain.user.RoleScope> getCachedPermissionScopesForUser(
+            UUID userId, Collection<String> explicitRoleCodes) {
+        Map<String, com.nulogic.domain.user.RoleScope> scopes = new HashMap<>();
+        UUID tenantId = TenantContext.getCurrentTenant();
+
+        if (tenantId == null || userId == null) {
+            log.warn("getCachedPermissionScopesForUser called without TenantContext or userId; returning empty permissions");
+            return scopes;
+        }
+
+        List<Role> allTenantRoles = roleRepository.findByTenantIdWithPermissions(tenantId);
+        Map<UUID, Role> roleMap = new HashMap<>();
+        for (Role r : allTenantRoles) {
+            roleMap.put(r.getId(), r);
+        }
+
+        if (explicitRoleCodes != null && !explicitRoleCodes.isEmpty()) {
+            List<Role> explicitRoles = roleRepository.findByCodeInAndTenantId(explicitRoleCodes, tenantId);
+            for (Role role : explicitRoles) {
+                flattenRolePermissionScopes(role, roleMap, scopes);
+            }
+        }
+
+        List<ImplicitUserRole> implicitRoles = implicitUserRoleRepository
+                .findByUserIdAndTenantIdAndIsActiveTrue(userId, tenantId);
+        for (ImplicitUserRole implicitRole : implicitRoles) {
+            Role role = roleMap.get(implicitRole.getRoleId());
+            if (role != null) {
+                flattenRolePermissionScopes(role, roleMap, scopes);
+            }
+        }
+
+        log.debug("getCachedPermissionScopesForUser: user={}, explicitRoles={}, implicitRoles={}, totalPermissions={}",
+                userId, explicitRoleCodes, implicitRoles.size(), scopes.size());
+
+        return scopes;
+    }
+
+    /** Scope-preserving variant of {@link #flattenRolePermissions(Role, Map)}. */
+    private void flattenRolePermissionScopes(Role role,
+                                             Map<UUID, Role> roleMap,
+                                             Map<String, com.nulogic.domain.user.RoleScope> out) {
+        Set<UUID> visited = new HashSet<>();
+        Queue<Role> toProcess = new LinkedList<>();
+        toProcess.offer(role);
+
+        int depth = 0;
+        int maxDepth = 10;
+
+        while (!toProcess.isEmpty() && depth < maxDepth) {
+            Role current = toProcess.poll();
+            if (current == null || visited.contains(current.getId())) {
+                continue;
+            }
+            visited.add(current.getId());
+
+            if (current.getPermissions() != null) {
+                for (RolePermission rp : current.getPermissions()) {
+                    mergeScope(out, rp.getPermission().getCode(), rp.getScope());
+                }
+            }
+
+            if (current.getParentRoleId() != null) {
+                Role parent = roleMap.get(current.getParentRoleId());
+                if (parent != null) {
+                    toProcess.offer(parent);
+                }
+            }
+            depth++;
+        }
+    }
+
+    /**
      * Fetch permissions directly from the database, bypassing the cache.
      * Used by {@link PermissionAspect} when {@code @RequiresPermission(revalidate = true)}
      * is set on sensitive operations (payroll, admin, role changes).

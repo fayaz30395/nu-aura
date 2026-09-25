@@ -56,6 +56,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  *      prevents session-scoped {@code set_config} calls from reappearing in production code.
  */
 @DisplayName("ARCH-01: NOBYPASSRLS — RLS correctly isolates tenant data when accessed via nu_app_rls role")
+// GAP-1: this gate is satisfied only by ci.yml (pr-validation.yml sets no env), so on the PR gate
+// BOTH tests in this class report "skipped" and surefire still exits 0 — the PR check was green
+// with zero RLS assertions executed. The same assertions run unconditionally in
+// com.nulogic.architecture.RlsTenantGucScopeTest, which now fails loudly when Docker is missing
+// in CI. Keeping the env gate here (it is a duplicate) but recording why it is not coverage.
 @EnabledIfEnvironmentVariable(named = "DOCKER_AVAILABLE", matches = "true")
 class RlsNoBypassTest {
 

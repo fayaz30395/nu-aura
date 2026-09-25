@@ -1,6 +1,8 @@
 package com.nulogic.application.psa.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.exception.ValidationException;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.psa.PSAInvoice;
 import com.nulogic.domain.psa.PSAProject;
@@ -236,6 +238,18 @@ public class PSAService {
         timesheet.setId(UUID.randomUUID());
         timesheet.setTenantId(tenantId);
         timesheet.setStatus(PSATimesheet.TimesheetStatus.DRAFT);
+
+        // SEC-IV1: employeeId arrived on the request body, so any holder of TIMESHEET:SUBMIT
+        // could file (and submit) billable time AS another employee. The owner is a fact about
+        // the caller, never a client input — stamp it from the security context. A caller with
+        // a broader scope (a manager filing on behalf) must go through the scope-checked path,
+        // not by asserting an id in the payload.
+        UUID callerEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (callerEmployeeId != null) {
+            timesheet.setEmployeeId(callerEmployeeId);
+        } else if (timesheet.getEmployeeId() == null) {
+            throw new ValidationException("Cannot determine the employee for this timesheet");
+        }
 
         return timesheetRepository.save(timesheet);
     }

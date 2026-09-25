@@ -1,6 +1,7 @@
 package com.nulogic.api.lms.controller;
 
 import com.nulogic.api.lms.dto.CourseCatalogResponse;
+import com.nulogic.api.lms.dto.LearningPathSummaryResponse;
 import com.nulogic.api.lms.dto.SkillGapReport;
 import com.nulogic.application.lms.service.LmsService;
 import com.nulogic.application.lms.service.QuizManagementService;
@@ -80,6 +81,29 @@ public class LmsController {
     }
 
     // ─── Learning Paths ─────────────────────────────────────────────────────
+
+    // BUG-L1: the list + enrol endpoints /learning/paths has always called. Only
+    // GET /learning-paths/{id} existed, so the page spun on "Loading learning paths…" forever.
+    @GetMapping("/learning-paths")
+    @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})
+    public Page<LearningPathSummaryResponse> getLearningPaths(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        return lmsService.getLearningPaths(tenantId, employeeId, PageRequest.of(page, size));
+    }
+
+    @PostMapping("/learning-paths/{id}/enroll")
+    @RequiresPermission(Permission.LMS_ENROLL)
+    public ResponseEntity<Void> enrollInLearningPath(@PathVariable UUID id) {
+        lmsService.enrollInLearningPath(
+                TenantContext.getCurrentTenant(),
+                id,
+                SecurityContext.getCurrentEmployeeId(),
+                SecurityContext.getCurrentUserId());
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/learning-paths/{id}")
     @RequiresPermission({Permission.TRAINING_VIEW, Permission.LMS_COURSE_VIEW})

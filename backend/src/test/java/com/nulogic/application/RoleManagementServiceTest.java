@@ -42,6 +42,9 @@ class RoleManagementServiceTest {
     @Mock
     private com.nulogic.application.audit.service.AuditLogService auditLogService;
 
+    @Mock
+    private com.nulogic.common.security.JwtTokenProvider jwtTokenProvider;
+
     @InjectMocks
     private RoleManagementService roleManagementService;
 
@@ -515,6 +518,27 @@ class RoleManagementServiceTest {
             assertThat(result).isNotNull();
             verify(userRepository).findByIdAndTenantId(userId, tenantId);
             verify(userRepository).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("SEC-AUTH1: changing a user's roles revokes their existing tokens")
+        void assignRolesRevokesExistingTokens() {
+            // Authority comes from the JWT `roles` claim and the DB is never re-consulted for an
+            // already-issued token, so without this a demotion did not take effect until the
+            // access token expired (60-90 minutes of retained privilege).
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(true);
+
+            AssignRolesRequest request = new AssignRolesRequest();
+            request.setRoleCodes(new HashSet<>(Set.of(RoleHierarchy.SUPER_ADMIN)));
+
+            when(userRepository.findByIdAndTenantId(userId, tenantId)).thenReturn(Optional.of(regularUser));
+            when(roleRepository.findByCodeInAndTenantId(Set.of(RoleHierarchy.SUPER_ADMIN), tenantId))
+                    .thenReturn(List.of(superAdminRole));
+            when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            roleManagementService.assignRolesToUser(userId, request);
+
+            verify(jwtTokenProvider).revokeAllUserTokens(userId.toString());
         }
 
         @Test

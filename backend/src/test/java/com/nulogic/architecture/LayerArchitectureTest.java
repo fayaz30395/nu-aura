@@ -155,6 +155,10 @@ class LayerArchitectureTest {
                     .and().doNotHaveFullyQualifiedName("com.nulogic.domain.notification.WebSocketNotificationService")
                     .and().doNotHaveFullyQualifiedName("com.nulogic.infrastructure.payment.MockPaymentService")
                     .and().doNotHaveFullyQualifiedName("com.nulogic.infrastructure.sms.MockSmsService")
+                    // 2a60c3a3 collapsed the interface+Mock* split into these concrete adapters;
+                    // same infrastructure-adapter category as their former Mock* pair above.
+                    .and().doNotHaveFullyQualifiedName("com.nulogic.infrastructure.payment.PaymentGatewayService")
+                    .and().doNotHaveFullyQualifiedName("com.nulogic.infrastructure.sms.SmsService")
                     // Infrastructure services that are implementation details (not domain services)
                     .and().doNotHaveFullyQualifiedName("com.nulogic.infrastructure.integration.docusign.DocuSignAuthService")
                     .and().doNotHaveFullyQualifiedName("com.nulogic.infrastructure.kafka.IdempotencyService")

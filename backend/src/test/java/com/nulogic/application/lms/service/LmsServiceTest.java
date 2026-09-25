@@ -27,6 +27,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,6 +51,12 @@ class LmsServiceTest {
 
     @Mock
     private CertificateRepository certificateRepository;
+
+    @Mock
+    private LearningPathRepository learningPathRepository;
+
+    @Mock
+    private LearningPathCourseRepository learningPathCourseRepository;
 
     @Mock
     private TenantTimeService tenantTimeService;
@@ -785,5 +793,187 @@ class LmsServiceTest {
         assertEquals(2L, dashboard.get("totalCourses"));
         assertEquals(2L, dashboard.get("publishedCourses"));
         assertEquals(0, dashboard.get("mandatoryCourses"));
+    }
+
+    // ─── BUG-L1: learning paths list + enrolment ────────────────────────────
+    //
+    // GET /lms/learning-paths and POST /lms/learning-paths/{id}/enroll did not exist at all;
+    // the Programs page called both and sat on "Loading learning paths…" forever.
+
+    private LearningPath pathWith(UUID pathId, String title) {
+        LearningPath path = new LearningPath();
+        path.setId(pathId);
+        path.setTenantId(tenantId);
+        path.setTitle(title);
+        path.setDescription("Path description");
+        path.setDifficultyLevel(LearningPath.DifficultyLevel.BEGINNER);
+        path.setEstimatedHours(7);
+        path.setIsPublished(true);
+        return path;
+    }
+
+    private LearningPathCourse member(UUID pathId, UUID memberCourseId, int order) {
+        LearningPathCourse lpc = LearningPathCourse.builder()
+                .id(UUID.randomUUID())
+                .tenantId(tenantId)
+                .pathId(pathId)
+                .courseId(memberCourseId)
+                .orderIndex(order)
+                .isRequired(true)
+                .build();
+        return lpc;
+    }
+
+    private CourseEnrollment enrollmentFor(UUID memberCourseId, String progress, EnrollmentStatus status) {
+        CourseEnrollment e = CourseEnrollment.builder()
+                .id(UUID.randomUUID())
+                .courseId(memberCourseId)
+                .employeeId(employeeId)
+                .status(status)
+                .progressPercentage(new BigDecimal(progress))
+                .build();
+        e.setTenantId(tenantId);
+        return e;
+    }
+
+    @Test
+    void getLearningPaths_withoutEnrollment_reportsNotStarted() {
+        UUID pathId = UUID.randomUUID();
+        UUID courseA = UUID.randomUUID();
+        UUID courseB = UUID.randomUUID();
+        Pageable pageable = PageRequest.of(0, 20);
+
+        when(learningPathRepository.findPublishedPaths(tenantId, pageable))
+                .thenReturn(new PageImpl<>(List.of(pathWith(pathId, "Security Onboarding"))));
+        when(learningPathCourseRepository.findByPathIds(eq(tenantId), anyCollection()))
+                .thenReturn(List.of(member(pathId, courseA, 0), member(pathId, courseB, 1)));
+        when(learningPathCourseRepository.countDistinctLearnersByPath(eq(tenantId), anyCollection()))
+                .thenReturn(List.<Object[]>of(new Object[]{pathId, 4L}));
+        when(enrollmentRepository.findByEmployee(tenantId, employeeId)).thenReturn(List.of());
+
+        var result = lmsService.getLearningPaths(tenantId, employeeId, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        var dto = result.getContent().get(0);
+        assertEquals("Security Onboarding", dto.getTitle());
+        assertEquals("BEGINNER", dto.getDifficulty());
+        assertEquals(7, dto.getDurationHours());
+        assertEquals(2, dto.getCourseCount());
+        assertEquals(4L, dto.getTotalEnrollments());
+        assertFalse(dto.isEnrolled());
+        assertEquals(0, dto.getProgressPercentage());
+        assertEquals("NOT_STARTED", dto.getStatus());
+    }
+
+    @Test
+    void getLearningPaths_partialProgress_averagesOverEveryCourseInThePath() {
+        UUID pathId = UUID.randomUUID();
+        UUID courseA = UUID.randomUUID();
+        UUID courseB = UUID.randomUUID();
+        Pageable pageable = PageRequest.of(0, 20);
+
+        when(learningPathRepository.findPublishedPaths(tenantId, pageable))
+                .thenReturn(new PageImpl<>(List.of(pathWith(pathId, "Security Onboarding"))));
+        when(learningPathCourseRepository.findByPathIds(eq(tenantId), anyCollection()))
+                .thenReturn(List.of(member(pathId, courseA, 0), member(pathId, courseB, 1)));
+        when(learningPathCourseRepository.countDistinctLearnersByPath(eq(tenantId), anyCollection()))
+                .thenReturn(List.of());
+        when(enrollmentRepository.findByEmployee(tenantId, employeeId)).thenReturn(List.of(
+                enrollmentFor(courseA, "100", EnrollmentStatus.COMPLETED),
+                enrollmentFor(courseB, "50", EnrollmentStatus.IN_PROGRESS)));
+
+        var dto = lmsService.getLearningPaths(tenantId, employeeId, pageable).getContent().get(0);
+
+        assertTrue(dto.isEnrolled());
+        assertEquals(75, dto.getProgressPercentage());
+        assertEquals("IN_PROGRESS", dto.getStatus());
+        assertEquals(0L, dto.getTotalEnrollments());
+    }
+
+    @Test
+    void getLearningPaths_allCoursesCompleted_reportsCompleted() {
+        UUID pathId = UUID.randomUUID();
+        UUID courseA = UUID.randomUUID();
+        Pageable pageable = PageRequest.of(0, 20);
+
+        when(learningPathRepository.findPublishedPaths(tenantId, pageable))
+                .thenReturn(new PageImpl<>(List.of(pathWith(pathId, "Security Onboarding"))));
+        when(learningPathCourseRepository.findByPathIds(eq(tenantId), anyCollection()))
+                .thenReturn(List.of(member(pathId, courseA, 0)));
+        when(learningPathCourseRepository.countDistinctLearnersByPath(eq(tenantId), anyCollection()))
+                .thenReturn(List.of());
+        when(enrollmentRepository.findByEmployee(tenantId, employeeId))
+                .thenReturn(List.of(enrollmentFor(courseA, "100", EnrollmentStatus.COMPLETED)));
+
+        var dto = lmsService.getLearningPaths(tenantId, employeeId, pageable).getContent().get(0);
+
+        assertEquals(100, dto.getProgressPercentage());
+        assertEquals("COMPLETED", dto.getStatus());
+    }
+
+    @Test
+    void getLearningPaths_withoutEmployeeContext_doesNotQueryEnrollments() {
+        UUID pathId = UUID.randomUUID();
+        Pageable pageable = PageRequest.of(0, 20);
+
+        when(learningPathRepository.findPublishedPaths(tenantId, pageable))
+                .thenReturn(new PageImpl<>(List.of(pathWith(pathId, "Security Onboarding"))));
+        when(learningPathCourseRepository.findByPathIds(eq(tenantId), anyCollection()))
+                .thenReturn(List.of(member(pathId, UUID.randomUUID(), 0)));
+        when(learningPathCourseRepository.countDistinctLearnersByPath(eq(tenantId), anyCollection()))
+                .thenReturn(List.of());
+
+        var dto = lmsService.getLearningPaths(tenantId, null, pageable).getContent().get(0);
+
+        assertFalse(dto.isEnrolled());
+        assertEquals("NOT_STARTED", dto.getStatus());
+        verify(enrollmentRepository, never()).findByEmployee(any(), any());
+    }
+
+    @Test
+    void getLearningPaths_emptyPage_returnsEmptyWithoutTouchingJoinTable() {
+        Pageable pageable = PageRequest.of(0, 20);
+        when(learningPathRepository.findPublishedPaths(tenantId, pageable))
+                .thenReturn(new PageImpl<>(List.of()));
+
+        assertTrue(lmsService.getLearningPaths(tenantId, employeeId, pageable).isEmpty());
+        verify(learningPathCourseRepository, never()).findByPathIds(any(), anyCollection());
+    }
+
+    @Test
+    void enrollInLearningPath_enrollsEveryMemberCourse_andIsIdempotent() {
+        UUID pathId = UUID.randomUUID();
+        UUID courseA = UUID.randomUUID();
+        UUID courseB = UUID.randomUUID();
+        UUID enrolledBy = UUID.randomUUID();
+
+        LearningPath path = pathWith(pathId, "Security Onboarding");
+        path.setCourses(List.of(member(pathId, courseA, 0), member(pathId, courseB, 1)));
+        when(learningPathRepository.findByIdAndTenantIdWithCourses(pathId, tenantId))
+                .thenReturn(Optional.of(path));
+
+        // courseA is already enrolled, courseB is not.
+        when(enrollmentRepository.findByCourseIdAndEmployeeIdAndTenantId(courseA, employeeId, tenantId))
+                .thenReturn(Optional.of(enrollmentFor(courseA, "10", EnrollmentStatus.IN_PROGRESS)));
+        when(enrollmentRepository.findByCourseIdAndEmployeeIdAndTenantId(courseB, employeeId, tenantId))
+                .thenReturn(Optional.empty());
+        when(enrollmentRepository.save(any(CourseEnrollment.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(courseRepository.findByIdAndTenantId(courseB, tenantId)).thenReturn(Optional.of(testCourse));
+
+        lmsService.enrollInLearningPath(tenantId, pathId, employeeId, enrolledBy);
+
+        // Only the missing enrolment is created — the existing one is untouched.
+        verify(enrollmentRepository, times(1)).save(any(CourseEnrollment.class));
+    }
+
+    @Test
+    void enrollInLearningPath_unknownPath_throwsNotFound() {
+        UUID pathId = UUID.randomUUID();
+        when(learningPathRepository.findByIdAndTenantIdWithCourses(pathId, tenantId))
+                .thenReturn(Optional.empty());
+
+        assertThrows(com.nulogic.common.exception.ResourceNotFoundException.class,
+                () -> lmsService.enrollInLearningPath(tenantId, pathId, employeeId, UUID.randomUUID()));
+        verify(enrollmentRepository, never()).save(any());
     }
 }

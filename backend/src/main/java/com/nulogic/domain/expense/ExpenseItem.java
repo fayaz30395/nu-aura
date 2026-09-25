@@ -1,6 +1,6 @@
 package com.nulogic.domain.expense;
 
-import com.nulogic.common.entity.BaseEntity;
+import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -27,7 +27,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ExpenseItem extends BaseEntity {
+// expense_items.tenant_id is NOT NULL (V88), but this entity extended BaseEntity, which has no
+// tenant column and no TenantEntityListener — so every insert sent tenant_id = NULL and adding
+// ANY item to a claim failed with a 400 data-integrity violation. TenantAware stamps it on
+// persist from TenantContext, exactly as ExpenseClaim does. Found while verifying BUG-E1.
+public class ExpenseItem extends TenantAware {
 
     @Column(name = "expense_claim_id", nullable = false)
     private UUID expenseClaimId;

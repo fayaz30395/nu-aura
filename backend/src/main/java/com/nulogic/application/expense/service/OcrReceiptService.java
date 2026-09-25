@@ -39,7 +39,8 @@ import java.util.regex.Pattern;
 @Slf4j
 public class OcrReceiptService {
 
-    private static final String FILE_CATEGORY = "receipts";
+    // Single source of truth with the storage allow-list (BUG-E1).
+    private static final String FILE_CATEGORY = com.nulogic.application.document.service.FileStorageService.CATEGORY_RECEIPTS;
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/jpeg",
             "image/png",

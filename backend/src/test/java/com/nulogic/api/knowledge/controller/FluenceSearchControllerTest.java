@@ -117,7 +117,7 @@ class FluenceSearchControllerTest {
         @DisplayName("Should pass content type filter to search")
         void shouldPassContentTypeFilter() throws Exception {
             Page<WikiPage> emptyPage = new PageImpl<>(List.of(), PageRequest.of(0, 20), 0);
-            when(knowledgeSearchService.searchAllContent(anyString(), any(Pageable.class)))
+            when(knowledgeSearchService.searchWikiPages(anyString(), any(Pageable.class)))
                     .thenReturn(emptyPage);
 
             try (MockedStatic<TenantContext> tc = mockStatic(TenantContext.class)) {
@@ -129,6 +129,10 @@ class FluenceSearchControllerTest {
                                 .param("visibility", "ORGANIZATION"))
                         .andExpect(status().isOk());
             }
+
+            // contentType=wiki must route to the wiki-only query, not the broad one (B5)
+            verify(knowledgeSearchService).searchWikiPages(eq("spring"), any(Pageable.class));
+            verify(knowledgeSearchService, never()).searchAllContent(anyString(), any(Pageable.class));
         }
 
         @Test

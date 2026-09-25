@@ -127,10 +127,18 @@ public class RlsTenantGucScopeTest {
     @Test
     @DisplayName("nu_app_rls (NOBYPASSRLS) sees only the tenant matching app.current_tenant_id — cross-tenant rows hidden by RLS")
     void noBypassRlsRoleEnforcesTenantIsolation() throws Exception {
-        boolean dockerAvailable = isDockerAvailable();
-        org.junit.jupiter.api.Assumptions.assumeTrue(dockerAvailable,
-                "Docker not available — skipping NOBYPASSRLS live integration test. " +
-                "Run with a Docker daemon present, or set DOCKER_AVAILABLE=true in CI.");
+        // GAP-1 repair: a skipped tenant-isolation test must never read as green coverage in CI.
+        // GitHub Actions always sets CI=true, so no workflow change is needed; a local developer
+        // without Docker still gets a deliberate, visible abort rather than a silent pass.
+        if (!isDockerAvailable()) {
+            if (System.getenv("CI") != null) {
+                throw new IllegalStateException(
+                        "Docker unavailable in CI — RLS tenant isolation cannot be skipped here. "
+                                + "Provide a Docker daemon on the runner.");
+            }
+            org.junit.jupiter.api.Assumptions.abort(
+                    "Docker not available locally — RLS tenant isolation NOT verified in this run.");
+        }
 
         try (PostgreSQLContainer<?> postgres =
                      new PostgreSQLContainer<>(DockerImageName.parse(POSTGRES_IMAGE))

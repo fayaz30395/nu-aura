@@ -62,6 +62,7 @@ public class RoleManagementService {
     private final CustomScopeTargetRepository customScopeTargetRepository;
     private final com.nulogic.infrastructure.user.repository.UserRepository userRepository;
     private final com.nulogic.application.audit.service.AuditLogService auditLogService;
+    private final com.nulogic.common.security.JwtTokenProvider jwtTokenProvider;
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
     private final OfficeLocationRepository officeLocationRepository;
@@ -593,6 +594,14 @@ public class RoleManagementService {
 
         com.nulogic.domain.user.User updatedUser = userRepository.save(user);
         log.info("Assigned roles to user: {} for tenant: {}", user.getEmail(), tenantId);
+
+        // SEC-AUTH1: authority is derived from the JWT `roles` claim, and the DB is never
+        // re-consulted for an already-issued token. Without this, a demotion or revocation did
+        // not take effect until the access token expired (60-90 min) — the user kept using the
+        // privileges they had just lost. Revoking every token issued before now forces the next
+        // request to re-authenticate with the new roles.
+        jwtTokenProvider.revokeAllUserTokens(updatedUser.getId().toString());
+        log.info("Revoked existing tokens for user {} after role change", updatedUser.getId());
 
         // Audit log
         auditLogService.logAction("USER", updatedUser.getId(),

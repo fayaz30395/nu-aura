@@ -42,8 +42,20 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
      * Alternate env var name used by start-backend.sh and render deployment.
      */
     private static final String ENV_KEY_ALT = "APP_SECURITY_ENCRYPTION_KEY";
+    /**
+     * Previous-key env vars, read during a key rotation. Ciphertext written under the
+     * retired key still decrypts while the re-encryption backfill drains; new writes
+     * always use the current key. Unset once the backfill reports zero rows remaining.
+     */
+    private static final String ENV_PREV_KEY = "ENCRYPTION_KEY_PREVIOUS";
+    private static final String ENV_PREV_KEY_ALT = "APP_SECURITY_ENCRYPTION_KEY_PREVIOUS";
 
     private final Supplier<String> configuredKeySupplier;
+    private final Supplier<String> previousKeySupplier;
+
+    /** Lazily resolved previous key; absent when no rotation is in flight. */
+    private volatile SecretKeySpec previousSecretKey;
+    private volatile boolean previousKeyResolved = false;
 
     /**
      * Lazily resolved key — avoids failing at class-load time in test contexts.
@@ -59,7 +71,64 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
     }
 
     EncryptedStringConverter(Supplier<String> configuredKeySupplier) {
+        this(configuredKeySupplier, EncryptedStringConverter::resolvePreviousKey);
+    }
+
+    EncryptedStringConverter(Supplier<String> configuredKeySupplier, Supplier<String> previousKeySupplier) {
         this.configuredKeySupplier = configuredKeySupplier;
+        this.previousKeySupplier = previousKeySupplier;
+    }
+
+    /**
+     * Resolves the retired key, or {@code null} when no rotation is in flight.
+     * A malformed previous key is treated as absent (logged once) rather than
+     * failing every read — the current key still works.
+     */
+    private SecretKeySpec getPreviousKey() {
+        if (previousKeyResolved) {
+            return previousSecretKey;
+        }
+        synchronized (this) {
+            if (previousKeyResolved) {
+                return previousSecretKey;
+            }
+            String keyBase64 = previousKeySupplier.get();
+            if (keyBase64 != null && !keyBase64.isBlank()) {
+                try {
+                    byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
+                    if (keyBytes.length == 32) {
+                        previousSecretKey = new SecretKeySpec(keyBytes, "AES");
+                    } else {
+                        log.error("Previous encryption key must decode to 32 bytes, got {} — ignoring it.", keyBytes.length);
+                    }
+                } catch (IllegalArgumentException e) {
+                    log.error("Previous encryption key is not valid Base64 — ignoring it: {}", e.getMessage());
+                }
+            }
+            previousKeyResolved = true;
+            return previousSecretKey;
+        }
+    }
+
+    private static String resolvePreviousKey() {
+        String keyBase64 = System.getenv(ENV_PREV_KEY);
+        if (keyBase64 == null || keyBase64.isBlank()) {
+            keyBase64 = System.getenv(ENV_PREV_KEY_ALT);
+        }
+        if (keyBase64 == null || keyBase64.isBlank()) {
+            keyBase64 = System.getProperty(ENV_PREV_KEY);
+        }
+        if (keyBase64 == null || keyBase64.isBlank()) {
+            keyBase64 = System.getProperty(ENV_PREV_KEY_ALT);
+        }
+        return keyBase64;
+    }
+
+    private static byte[] decrypt(SecretKeySpec key, byte[] iv, byte[] ciphertext)
+            throws java.security.GeneralSecurityException {
+        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(GCM_TAG_LENGTH, iv));
+        return cipher.doFinal(ciphertext);
     }
 
     private SecretKeySpec getKey() {
@@ -155,10 +224,20 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
             byte[] iv = Base64.getDecoder().decode(parts[0]);
             byte[] ciphertext = Base64.getDecoder().decode(parts[1]);
 
-            Cipher cipher = Cipher.getInstance(ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, getKey(), new GCMParameterSpec(GCM_TAG_LENGTH, iv));
-
-            byte[] plaintext = cipher.doFinal(ciphertext);
+            byte[] plaintext;
+            try {
+                plaintext = decrypt(getKey(), iv, ciphertext);
+            } catch (java.security.GeneralSecurityException currentKeyFailure) {
+                // Rotation window: the row may still hold ciphertext written under the
+                // retired key. Fall back to it for READS only; writes re-encrypt under
+                // the current key, which is what drains the backfill.
+                SecretKeySpec previous = getPreviousKey();
+                if (previous == null) {
+                    throw currentKeyFailure;
+                }
+                plaintext = decrypt(previous, iv, ciphertext);
+                log.debug("Column value decrypted with the previous encryption key — pending re-encryption backfill.");
+            }
             return new String(plaintext, StandardCharsets.UTF_8);
         } catch (IllegalArgumentException e) {
             // Base64 decode failure or unexpected format — likely legacy unencrypted data

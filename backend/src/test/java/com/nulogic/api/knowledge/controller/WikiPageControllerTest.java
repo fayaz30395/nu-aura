@@ -3,6 +3,7 @@ package com.nulogic.api.knowledge.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.application.knowledge.service.WikiExportService;
 import com.nulogic.application.knowledge.service.WikiPageService;
+import com.nulogic.application.knowledge.service.WikiSpaceService;
 import com.nulogic.common.security.JwtAuthenticationFilter;
 import com.nulogic.common.security.TenantFilter;
 import com.nulogic.domain.knowledge.WikiPage;
@@ -60,6 +61,9 @@ class WikiPageControllerTest {
 
     @MockitoBean
     private WikiPageService wikiPageService;
+
+    @MockitoBean
+    private WikiSpaceService wikiSpaceService;
 
     @MockitoBean
     private WikiExportService wikiExportService;

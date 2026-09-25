@@ -273,4 +273,73 @@ class EncryptedStringConverterTest {
                     .doesNotThrowAnyException();
         }
     }
+
+    // -----------------------------------------------------------------------
+    // Key rotation — dual-key decrypt fallback (US-2G9V0TF3AXX2 AC1)
+    // -----------------------------------------------------------------------
+
+    @Nested
+    @DisplayName("Key rotation (previous-key decrypt fallback)")
+    class KeyRotationTests {
+
+        // A second, distinct valid 32-byte key standing in for the rotated-in key.
+        private static final String NEW_KEY_BASE64 = Base64.getEncoder().encodeToString(newKeyBytes());
+
+        private static byte[] newKeyBytes() {
+            byte[] k = new byte[32];
+            java.util.Arrays.fill(k, (byte) 7);
+            return k;
+        }
+
+        private EncryptedStringConverter rotating(String currentKey, String previousKey) {
+            return new EncryptedStringConverter(() -> currentKey, () -> previousKey);
+        }
+
+        @Test
+        @DisplayName("Ciphertext written under the old key still decrypts after rotation")
+        void oldKeyCiphertextDecryptsUnderNewCurrentKey() {
+            String oldCiphertext = converterWithKey(VALID_KEY_BASE64).convertToDatabaseColumn("aadhaar-1234-5678");
+
+            EncryptedStringConverter rotated = rotating(NEW_KEY_BASE64, VALID_KEY_BASE64);
+
+            assertThat(rotated.convertToEntityAttribute(oldCiphertext)).isEqualTo("aadhaar-1234-5678");
+        }
+
+        @Test
+        @DisplayName("Re-encryption under the new key produces ciphertext the old key cannot read")
+        void reEncryptionMovesValueToNewKey() {
+            EncryptedStringConverter rotated = rotating(NEW_KEY_BASE64, VALID_KEY_BASE64);
+
+            String oldCiphertext = converterWithKey(VALID_KEY_BASE64).convertToDatabaseColumn("PAN-ABCDE1234F");
+            String plaintext = rotated.convertToEntityAttribute(oldCiphertext);
+            String newCiphertext = rotated.convertToDatabaseColumn(plaintext);
+
+            // Backfill invariant: the rewritten row reads back correctly under the new key alone…
+            assertThat(new EncryptedStringConverter(() -> NEW_KEY_BASE64, () -> null)
+                    .convertToEntityAttribute(newCiphertext)).isEqualTo("PAN-ABCDE1234F");
+            // …and is no longer readable with the retired key, proving it actually moved.
+            assertThat(new EncryptedStringConverter(() -> VALID_KEY_BASE64, () -> null)
+                    .convertToEntityAttribute(newCiphertext)).isEqualTo("***DECRYPTION_FAILED***");
+            assertThat(newCiphertext).isNotEqualTo(oldCiphertext);
+        }
+
+        @Test
+        @DisplayName("Without a previous key configured, old ciphertext fails closed to the masked sentinel")
+        void noPreviousKeyStillFailsClosed() {
+            String oldCiphertext = converterWithKey(VALID_KEY_BASE64).convertToDatabaseColumn("secret");
+
+            EncryptedStringConverter rotated = rotating(NEW_KEY_BASE64, null);
+
+            assertThat(rotated.convertToEntityAttribute(oldCiphertext)).isEqualTo("***DECRYPTION_FAILED***");
+        }
+
+        @Test
+        @DisplayName("A malformed previous key is ignored rather than breaking every read")
+        void malformedPreviousKeyIsIgnored() {
+            EncryptedStringConverter rotated = rotating(NEW_KEY_BASE64, "not-base64!!");
+
+            String current = rotated.convertToDatabaseColumn("still-works");
+            assertThat(rotated.convertToEntityAttribute(current)).isEqualTo("still-works");
+        }
+    }
 }

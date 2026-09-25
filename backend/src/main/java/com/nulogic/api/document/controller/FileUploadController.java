@@ -39,7 +39,6 @@ import java.util.UUID;
 public class FileUploadController {
 
     private final FileStorageService fileStorageService;
-    private final com.nulogic.infrastructure.storage.FileMetadataRepository fileMetadataRepository;
 
     @PostMapping("/upload")
     @RequiresPermission(Permission.DOCUMENT_UPLOAD)
@@ -254,7 +253,7 @@ public class FileUploadController {
             return;
         }
         UUID tenantId = com.nulogic.common.security.TenantContext.getCurrentTenant();
-        fileMetadataRepository.findByTenantIdAndStoragePath(tenantId, objectName)
+        fileStorageService.findMetadataByStoragePath(tenantId, objectName)
                 .filter(meta -> meta.getCategory() == com.nulogic.infrastructure.storage.FileMetadata.FileCategory.SENSITIVE_DOCUMENT)
                 .ifPresent(meta -> {
                     throw new org.springframework.security.access.AccessDeniedException(

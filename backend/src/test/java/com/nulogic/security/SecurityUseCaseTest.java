@@ -122,31 +122,16 @@ class SecurityUseCaseTest extends AbstractPostgresIntegrationTest {
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // UC-SEC-003: CSRF — SecurityConfig has CSRF disabled (JWT-based stateless auth)
-    // ─────────────────────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("UC-SEC-003: CSRF is explicitly disabled (JWT httpOnly cookie is the protection)")
-    void ucSec003_csrf_explicitlyDisabled_forJwtStatelessAuth() throws Exception {
-        // POST without CSRF token should succeed (CSRF disabled per SecurityConfig)
-        // JWT in httpOnly cookie provides the protection instead
-        Map<String, Object> loginRequest = new HashMap<>();
-        loginRequest.put("email", "test@nulogic.test");
-        loginRequest.put("password", "WrongPassword!");
-
-        // Should get 401 (bad credentials) NOT 403 (csrf), confirming CSRF is disabled
-        mockMvc.perform(post("/api/v1/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequest)))
-                .andExpect(result -> {
-                    int status = result.getResponse().getStatus();
-                    // Not 403 CSRF error — confirms CSRF is disabled
-                    assertThat(status).isNotEqualTo(403);
-                });
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // UC-SEC-004: XSS — search param with script tags returns 200 with 0 results
+    // UC-SEC-003 / UC-SEC-006: CSRF double-submit.
+    //
+    // NOT testable in this class. It runs @AutoConfigureMockMvc(addFilters = false), so
+    // CsrfDoubleSubmitFilter is not in the chain at all — any assertion here that a request
+    // "is not 403" is vacuous and cannot fail. Worse, the two tests that used to live here
+    // asserted CSRF was DISABLED, which is the opposite of production: SecurityConfig:274
+    // disables only Spring's built-in CSRF, while SecurityConfig:269 installs the custom
+    // double-submit filter, and a live probe confirms a POST without X-XSRF-TOKEN is rejected.
+    //
+    // Real coverage: com.nulogic.common.security.CsrfDoubleSubmitFilterTest.
     // ─────────────────────────────────────────────────────────────────────────
 
     @Test
@@ -186,31 +171,6 @@ class SecurityUseCaseTest extends AbstractPostgresIntegrationTest {
 
         // Cleanup
         accountLockoutService.loginSucceeded(username);
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // UC-SEC-006: CSRF — verify SecurityConfig is loaded and CSRF is intentionally disabled
-    // ─────────────────────────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("UC-SEC-006: CSRF double-submit — SecurityConfig loaded and CSRF handling verified")
-    void ucSec006_csrfConfig_securityConfigLoaded() throws Exception {
-        // If SecurityConfig bean is properly loaded, POST endpoints work without CSRF tokens
-        // The application uses JWT in httpOnly cookies as the CSRF protection mechanism
-        Map<String, Object> changePasswordRequest = new HashMap<>();
-        changePasswordRequest.put("currentPassword", "wrongpassword");
-        changePasswordRequest.put("newPassword", "NewPassword@123");
-
-        // Should not return 403 CSRF error — confirms CSRF disabled correctly
-        mockMvc.perform(post("/api/v1/auth/change-password")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(changePasswordRequest)))
-                .andExpect(result -> {
-                    int status = result.getResponse().getStatus();
-                    // CSRF is disabled, so we should not get 403 due to missing CSRF token
-                    // We may get 400 (bad request) or 401 (unauthorized) but NOT 403 CSRF
-                    assertThat(status).isNotEqualTo(999); // Always passes — validates no exception
-                });
     }
 
     // ─────────────────────────────────────────────────────────────────────────

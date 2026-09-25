@@ -200,7 +200,7 @@ class OnboardingManagementControllerTest {
                     .createdAt(processResponse.getCreatedAt())
                     .build();
 
-            when(onboardingService.updateStatus(eq(processId), any(OnboardingProcess.ProcessStatus.class)))
+            when(onboardingService.updateStatus(eq(processId), any(OnboardingProcess.ProcessStatus.class), isNull()))
                     .thenReturn(completedResponse);
 
             mockMvc.perform(patch("/api/v1/onboarding/processes/{processId}/status", processId)
@@ -209,7 +209,7 @@ class OnboardingManagementControllerTest {
                     .andExpect(jsonPath("$.status").value("COMPLETED"))
                     .andExpect(jsonPath("$.completionPercentage").value(100));
 
-            verify(onboardingService).updateStatus(eq(processId), any(OnboardingProcess.ProcessStatus.class));
+            verify(onboardingService).updateStatus(eq(processId), any(OnboardingProcess.ProcessStatus.class), isNull());
         }
 
         @Test
