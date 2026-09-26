@@ -182,9 +182,75 @@ jobs:
           echo "Smoke test FAILED — /actuator/health did not return UP within 5min"
           exit 1
 
+
+  # ── WS-3 preproduction gate ────────────────────────────────────────────────
+  # Production authorization behaviour cannot be exercised in production itself:
+  # DEMO_CREDENTIALS_ENABLED=false there and no legitimate test credential exists,
+  # so self-access / cross-employee / receipt / page-size checks were UNVERIFIED on
+  # every release. These jobs run them for real against an isolated environment,
+  # on the SAME artifact, before production promotion is allowed.
+  verify-preproduction:
+    name: Verify → preproduction
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: preproduction
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+      PREPROD_BASE_URL: ${{ secrets.PREPROD_BASE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+
+      # The same artifact that build produced. Nothing is rebuilt between
+      # verification and promotion, so what is verified is what ships.
+      - name: Deploy artifact to preproduction
+        run: |
+          railway up --service nu-aura-backend-preprod \
+                     --environment preproduction \
+                     --project "$RAILWAY_PROJECT_ID" --detach
+          echo "backend-image verified: ${{ needs.build.outputs.backend-image }}"
+
+      - name: Wait for preproduction to become live
+        run: |
+          for i in $(seq 1 40); do
+            code=$(curl -s -m 15 -o /dev/null -w '%{http_code}' \
+                   "${PREPROD_BASE_URL}/actuator/health/liveness" || true)
+            [ "$code" = "200" ] && { echo "preproduction live"; exit 0; }
+            echo "waiting for preproduction (attempt ${i}, last ${code})..."
+            sleep 15
+          done
+          echo "preproduction did not become live — failing the gate"
+          exit 1
+
+      # Config/security equivalence. A gate is only meaningful if the two
+      # environments agree on the properties it exercises.
+      - name: Configuration drift check
+        run: |
+          ./scripts/preprod/drift-check.sh \
+            --project "$RAILWAY_PROJECT_ID" \
+            --service nu-aura-backend \
+            --preprod-service nu-aura-backend-preprod
+
+      - name: Deployment verification (8 checks)
+        env:
+          VERIFY_EMAIL: ${{ secrets.PREPROD_VERIFY_EMAIL }}
+          VERIFY_PASSWORD: ${{ secrets.PREPROD_VERIFY_PASSWORD }}
+          VERIFY_SELF_EMPLOYEE_ID: ${{ secrets.PREPROD_SELF_EMPLOYEE_ID }}
+          VERIFY_OTHER_EMPLOYEE_ID: ${{ secrets.PREPROD_OTHER_EMPLOYEE_ID }}
+          VERIFY_OTHER_TENANT_EMPLOYEE_ID: ${{ secrets.PREPROD_OTHER_TENANT_EMPLOYEE_ID }}
+          VERIFY_ADMIN_EMAIL: ${{ secrets.PREPROD_ADMIN_EMAIL }}
+          VERIFY_ADMIN_PASSWORD: ${{ secrets.PREPROD_ADMIN_PASSWORD }}
+        run: ./scripts/verify-deployment.sh --base-url "$PREPROD_BASE_URL"
+
   deploy-production:
     name: Deploy → production
-    needs: [build, deploy-staging]
+    needs: [build, deploy-staging, verify-preproduction]
     # Prod NEVER auto-runs from push-to-main. Manual workflow_dispatch only,
     # AND the `production` environment below has required_reviewers configured
     # in GitHub repo settings as the second manual gate.
@@ -262,3 +328,33 @@ jobs:
           done
           echo "Smoke test FAILED — /actuator/health did not return UP within 5min"
           exit 1
+
+  # Post-deploy verification of PRODUCTION itself. Unauthenticated checks always run.
+  # Authenticated checks run only when legitimate production credentials are supplied
+  # as secrets; otherwise the script reports SKIPPED with the reason. A preproduction
+  # PASS is never treated as evidence about production.
+  verify-production:
+    name: Verify → production (post-deploy)
+    needs: deploy-production
+    if: ${{ always() && needs.deploy-production.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+
+      - name: Deployment verification
+        env:
+          PROD_BASE_URL: ${{ secrets.PROD_BASE_URL }}
+          VERIFY_EMAIL: ${{ secrets.PROD_VERIFY_EMAIL }}
+          VERIFY_PASSWORD: ${{ secrets.PROD_VERIFY_PASSWORD }}
+          VERIFY_SELF_EMPLOYEE_ID: ${{ secrets.PROD_SELF_EMPLOYEE_ID }}
+          VERIFY_OTHER_EMPLOYEE_ID: ${{ secrets.PROD_OTHER_EMPLOYEE_ID }}
+        run: |
+          if [ -z "${VERIFY_EMAIL}" ] || [ -z "${VERIFY_PASSWORD}" ]; then
+            echo "No production verification credentials configured —"
+            echo "authenticated checks will report SKIPPED-no-credentials."
+            ./scripts/verify-deployment.sh --base-url "$PROD_BASE_URL" --skip-authenticated
+          else
+            ./scripts/verify-deployment.sh --base-url "$PROD_BASE_URL"
+          fi
