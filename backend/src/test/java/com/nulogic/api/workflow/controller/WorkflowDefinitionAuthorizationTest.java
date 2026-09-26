@@ -69,15 +69,53 @@ class WorkflowDefinitionAuthorizationTest {
     }
 
     @Test
-    @DisplayName("every definition read requires WORKFLOW:MANAGE, never WORKFLOW:VIEW")
-    void definitionReadsRequireManage() {
+    @DisplayName("definition reads accept DEFINITION_VIEW or MANAGE, never WORKFLOW:VIEW")
+    void definitionReadsRequireDefinitionViewOrManage() {
         for (String path : DEFINITION_READ_PATHS) {
             Method m = endpoint(path);
             assertThat(requiredPermissions(m))
                     .as("GET %s exposes approval-routing configuration; WORKFLOW:VIEW reaches "
                             + "EMPLOYEE and must not open it", path)
-                    .containsExactly(Permission.WORKFLOW_MANAGE)
-                    .doesNotContain("WORKFLOW:VIEW");
+                    .containsExactlyInAnyOrder(
+                            Permission.WORKFLOW_DEFINITION_VIEW, Permission.WORKFLOW_MANAGE)
+                    .doesNotContain(Permission.WORKFLOW_VIEW);
+        }
+    }
+
+    @Test
+    @DisplayName("definition WRITES stay MANAGE-only — the read permission never opens authoring")
+    void definitionWritesStayManageOnly() {
+        for (Method m : WorkflowController.class.getDeclaredMethods()) {
+            boolean isDefinitionWrite =
+                    (m.isAnnotationPresent(org.springframework.web.bind.annotation.PostMapping.class)
+                            || m.isAnnotationPresent(org.springframework.web.bind.annotation.PutMapping.class)
+                            || m.isAnnotationPresent(org.springframework.web.bind.annotation.DeleteMapping.class))
+                            && m.getName().toLowerCase().contains("definition");
+            if (!isDefinitionWrite) {
+                continue;
+            }
+            assertThat(requiredPermissions(m))
+                    .as("%s creates/updates/deletes routing configuration", m.getName())
+                    .contains(Permission.WORKFLOW_MANAGE)
+                    .doesNotContain(Permission.WORKFLOW_DEFINITION_VIEW);
+        }
+    }
+
+    @Test
+    @DisplayName("the approved RBAC matrix is encoded in RoleHierarchy, and excludes EMPLOYEE")
+    void roleHierarchyMatchesApprovedMatrix() {
+        // TEAM_LEAD is deliberately absent: definitions are tenant-level objects, so a TEAM
+        // scope would not constrain them. Revisit only as an explicit RBAC decision.
+        for (String role : java.util.List.of("SUPER_ADMIN", "TENANT_ADMIN", "HR_ADMIN",
+                                             "HR_MANAGER", "DEPARTMENT_MANAGER", "RECRUITMENT_ADMIN")) {
+            assertThat(com.nulogic.common.security.RoleHierarchy.getDefaultPermissions(role))
+                    .as("%s is in the approved DEFINITION_VIEW matrix", role)
+                    .contains(Permission.WORKFLOW_DEFINITION_VIEW);
+        }
+        for (String role : java.util.List.of("EMPLOYEE", "TEAM_LEAD", "CONTRACTOR")) {
+            assertThat(com.nulogic.common.security.RoleHierarchy.getDefaultPermissions(role))
+                    .as("%s must NOT read approval-routing configuration", role)
+                    .doesNotContain(Permission.WORKFLOW_DEFINITION_VIEW);
         }
     }
 

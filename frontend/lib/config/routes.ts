@@ -1007,7 +1007,9 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   // Workflow management
   {
     path: '/workflows',
-    anyPermission: [Permissions.WORKFLOW_VIEW, Permissions.WORKFLOW_MANAGE],
+    // WORKFLOW_VIEW deliberately absent: it is seeded to EMPLOYEE for the approval inbox,
+    // so keeping it here put the Workflow Builder in every employee's navigation.
+    anyPermission: [Permissions.WORKFLOW_DEFINITION_VIEW, Permissions.WORKFLOW_MANAGE],
   },
 
   // Expense sub-routes

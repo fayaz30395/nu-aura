@@ -191,10 +191,11 @@ export default function WorkflowDetailPage() {
   const router = useRouter();
   const {hasPermission, isAdmin, isReady} = usePermissions();
   const canManage = isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_MANAGE));
-  // SECURITY: matches the list page and the backend — GET /workflow/definitions/{id} now
-  // requires WORKFLOW:MANAGE. WORKFLOW:VIEW is the employee approval-inbox permission and
-  // must not reach the approval-routing definition screen.
-  const canView = canManage;
+  // SECURITY: matches the list page and the backend — GET /workflow/definitions/{id} accepts
+  // WORKFLOW:DEFINITION_VIEW (read-only) or WORKFLOW:MANAGE (authoring). WORKFLOW:VIEW is the
+  // employee approval-inbox grant and must not reach the approval-routing definition screen.
+  const canView =
+    isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_DEFINITION_VIEW) || canManage);
 
   const workflowId = params.id as string;
   const isNew = workflowId === 'new';
