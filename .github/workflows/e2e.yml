@@ -179,6 +179,18 @@ jobs:
           # Generate the API client from the committed snapshot (the prebuild
           # step does this) rather than fetching /v3/api-docs from the backend.
           API_DOCS_URL: ./openapi-snapshot.json
+          # Node's default old-space cap on a 64-bit runner is ~2 GB. The Next.js
+          # production build of this app exceeds it: run 36215605204 died here with
+          # "FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out
+          # of memory", the last GCs plateauing at 1898-2021 MB before the build
+          # worker took SIGABRT. Playwright never launched — 0 of 278 tests attempted.
+          #
+          # 4096 MiB is the smallest power-of-two headroom above the observed ~2.1 GB
+          # ceiling and fits a standard GitHub runner (ubuntu-latest has 16 GB).
+          # CI-only: the step's own env, so no application code, Next.js config or
+          # production setting is touched. The identical commit already builds clean
+          # locally, where the default heap is not the constraint.
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
       - name: Start frontend
