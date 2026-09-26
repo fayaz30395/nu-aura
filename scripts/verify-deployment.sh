@@ -196,9 +196,11 @@ else
   if command -v psql >/dev/null 2>&1; then q() { psql "$VERIFY_DB_URL" -At -c "$1"; }
   else q() { docker run --rm -e U="$VERIFY_DB_URL" -e Q="$1" postgres:16-alpine \
              sh -c 'psql "$U" -At -c "$Q"'; }; fi
-  BYPASS="$(q "SELECT rolsuper||'/'||rolbypassrls FROM pg_roles WHERE rolname = current_user")"
-  [[ "$BYPASS" == "f/f" ]] && pass "8a. runtime role is NOSUPERUSER NOBYPASSRLS" \
-      || fail "8a. runtime role" "current_user has super/bypassrls = ${BYPASS}, want f/f"
+  # Cast explicitly: `boolean || text` renders as true/false while a bare boolean
+  # column renders as t/f, and which one you get depends on how the query is written.
+  BYPASS="$(q "SELECT (rolsuper::int)::text || '/' || (rolbypassrls::int)::text FROM pg_roles WHERE rolname = current_user")"
+  [[ "$BYPASS" == "0/0" ]] && pass "8a. runtime role is NOSUPERUSER NOBYPASSRLS" \
+      || fail "8a. runtime role" "current_user rolsuper/rolbypassrls = ${BYPASS}, want 0/0"
   HEAD="$(q "SELECT max(version::int) FROM flyway_schema_history WHERE success")"
   if [[ -n "${VERIFY_EXPECTED_FLYWAY_HEAD:-}" ]]; then
     [[ "$HEAD" == "$VERIFY_EXPECTED_FLYWAY_HEAD" ]] && pass "8b. Flyway head = ${HEAD}" \

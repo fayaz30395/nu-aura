@@ -99,3 +99,55 @@ Cost is a second backend + Postgres + Redis. Sleep the environment between relea
 delete it entirely: `railway environment delete preproduction`. Production shares no
 resource with it. If the environment goes away, remove the CI gate in the same change —
 though the script's unreachable-is-FAIL rule means a dangling gate fails loudly.
+
+## Operating rule: release isolation (enforced)
+
+`railway up`, `docker build` and any release commit take the **working directory**, not a
+commit. A second session editing that directory therefore edits the artifact.
+
+This is not hypothetical. On 2026-09-25, session `ab8fb9e2-…` — started as a read-only
+code review but holding Edit/Write tools — modified nine files in the shared tree while a
+release was building, including `V331` and `V334`, two migrations already applied to
+production. The release was unaffected only because it was built from an isolated
+worktree. Nothing structural prevented the alternative.
+
+Rules, in order of how much they actually protect you:
+
+1. **Build, verify and commit releases from `git worktree add`, never the primary
+   checkout.** `scripts/release-guard.sh` fails when run from the primary checkout, when
+   the tree is dirty, or when an applied migration's hash has changed. Run it immediately
+   before every `railway up` and every release commit.
+2. **`MigrationRlsGuardTest` pins `V331`/`V334` by SHA-256**, so a build cannot pass with
+   either altered — the guard rail survives even if someone skips the script.
+3. **Review-only sessions must not hold write tools.** A reviewer with Edit/Write will
+   eventually apply a fix it believes is correct. Give reviewers `Read`/`Grep`/`Glob` and
+   have them report findings; a reviewer that must demonstrate a fix does it in its own
+   worktree.
+4. **One release owner at a time.** Concurrent sessions in one repo are fine for reading;
+   they are not fine while an artifact is being cut.
+
+## SMTP / aggregate health — open release risk
+
+`/actuator/health` returns **503** in production. Sole cause:
+
+```
+o.s.b.actuate.mail.MailHealthIndicator : Mail health check failed
+jakarta.mail.AuthenticationFailedException: 535-5.7.8 Username and Password not accepted
+```
+
+Production sets no `MAIL_*` variable, so `application.yml:174-178` falls back to
+`smtp.gmail.com` / `your-email@gmail.com` / empty password and Gmail rejects it.
+`application-render.yml` disables the redis, kafka and elasticsearch indicators but not
+mail. Liveness (`ping,diskSpace`) and readiness (`ping,db`) exclude mail and both return
+200, and Railway's `healthcheckPath` is null, so nothing restarts on it.
+
+**The real impact is functional, not cosmetic:** password reset (`AuthService`),
+notifications, scheduled reports and DSR compliance mail all fail silently. Eight services
+depend on `JavaMailSender`.
+
+No approved provider exists in this repository — the only reference is a
+`// SENDGRID, TWILIO, FIREBASE, etc.` comment in `NotificationChannelConfig`. Choosing one
+is a product decision.
+
+**Do not disable `MailHealthIndicator` to turn the tile green.** That hides a real outage.
+The fix is real SMTP configuration; until then this stays an explicit, visible risk.

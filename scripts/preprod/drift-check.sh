@@ -100,14 +100,15 @@ dbq() { # $1 url, $2 sql
   else docker run --rm -e U="$1" -e Q="$2" postgres:16-alpine sh -c 'psql "$U" -At -c "$Q"'; fi
 }
 NORLS_SQL="SELECT count(*) FROM (SELECT c.relname FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace JOIN information_schema.columns col ON col.table_name=c.relname AND col.table_schema='public' AND col.column_name='tenant_id' WHERE n.nspname='public' AND c.relkind='r' AND (c.relrowsecurity=false OR c.relforcerowsecurity=false)) x"
-ROLE_SQL="SELECT rolsuper||'/'||rolbypassrls FROM pg_roles WHERE rolname='nu_app_rls'"
+# Cast explicitly: `boolean || text` renders true/false, a bare boolean column renders t/f.
+ROLE_SQL="SELECT (rolsuper::int)::text||'/'||(rolbypassrls::int)::text FROM pg_roles WHERE rolname='nu_app_rls'"
 HEAD_SQL="SELECT max(version::int) FROM flyway_schema_history WHERE success"
 REPAIR_SQL="SELECT count(*) FROM flyway_schema_history WHERE type='DELETE' OR success=false"
 
 if [[ -n "${PREPROD_DB_URL:-}" ]]; then
   R="$(dbq "$PREPROD_DB_URL" "$ROLE_SQL")"
-  [[ "$R" == "f/f" ]] && pass "preprod nu_app_rls is NOSUPERUSER NOBYPASSRLS" \
-      || fail "preprod nu_app_rls" "super/bypassrls = ${R:-<absent>}, want f/f"
+  [[ "$R" == "0/0" ]] && pass "preprod nu_app_rls is NOSUPERUSER NOBYPASSRLS" \
+      || fail "preprod nu_app_rls" "rolsuper/rolbypassrls = ${R:-<absent>}, want 0/0"
   N="$(dbq "$PREPROD_DB_URL" "$NORLS_SQL")"
   [[ "$N" == "0" ]] && pass "preprod tenant tables without RLS = 0" \
       || fail "preprod tenant tables without RLS" "${N}"
@@ -116,9 +117,17 @@ if [[ -n "${PREPROD_DB_URL:-}" ]]; then
       || fail "preprod Flyway repair rows" "${RP}"
   PRE_HEAD="$(dbq "$PREPROD_DB_URL" "$HEAD_SQL")"
   if [[ -n "${PROD_DB_URL:-}" ]]; then
-    PROD_HEAD="$(dbq "$PROD_DB_URL" "$HEAD_SQL")"   # read-only
-    [[ "$PRE_HEAD" == "$PROD_HEAD" ]] && pass "Flyway head matches (${PRE_HEAD})" \
-        || fail "Flyway head" "preprod=${PRE_HEAD} production=${PROD_HEAD}"
+    PROD_HEAD="$(dbq "$PROD_DB_URL" "$HEAD_SQL")"   # read-only SELECT, never a write
+    # Preproduction is EXPECTED to be ahead while a release is in flight — that is the
+    # whole point of verifying pending migrations there first. Behind is the real fault:
+    # it means preproduction is not exercising what production already runs.
+    if [[ "$PRE_HEAD" == "$PROD_HEAD" ]]; then
+      pass "Flyway head matches (${PRE_HEAD})"
+    elif [[ "$PRE_HEAD" -gt "$PROD_HEAD" ]]; then
+      pass "Flyway head: preprod ${PRE_HEAD} ahead of production ${PROD_HEAD} (pending release)"
+    else
+      fail "Flyway head" "preprod=${PRE_HEAD} is BEHIND production=${PROD_HEAD}"
+    fi
   else
     skip "Flyway head comparison" "PROD_DB_URL not set (preprod head ${PRE_HEAD})"
   fi
