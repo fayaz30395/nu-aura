@@ -150,7 +150,10 @@ export default function WorkflowListPage() {
   const router = useRouter();
   const {hasPermission, isAdmin, isReady} = usePermissions();
   const canManage = isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_MANAGE));
-  const canView = isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_VIEW) || canManage);
+  // WORKFLOW_VIEW is the employee approval-inbox grant and must not open the Builder;
+  // read-only access is WORKFLOW_DEFINITION_VIEW. canManage still gates every write control.
+  const canView =
+    isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_DEFINITION_VIEW) || canManage);
 
   // Filters
   const [search, setSearch] = useState('');

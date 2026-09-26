@@ -102,6 +102,8 @@ public final class RoleHierarchy {
 
     private static Set<String> getSuperAdminPermissions() {
         return new HashSet<>(Arrays.asList(
+                // Read-only workflow definitions (global).
+                Permission.WORKFLOW_DEFINITION_VIEW,
                 Permission.SYSTEM_ADMIN,
                 Permission.TENANT_MANAGE,
                 Permission.ROLE_MANAGE,
@@ -125,6 +127,8 @@ public final class RoleHierarchy {
         // access to Nu-Grow and Nu-Fluence modules which HR_ADMIN does not cover.
         Set<String> perms = new HashSet<>(getHRAdminPermissions());
         perms.addAll(Arrays.asList(
+                // Read-only workflow definitions (owns tenant workflow configuration).
+                Permission.WORKFLOW_DEFINITION_VIEW,
                 // Tenant Admin exclusive — not granted to HR_ADMIN
                 Permission.EMPLOYEE_DELETE,
                 Permission.PAYROLL_APPROVE,
@@ -292,6 +296,8 @@ public final class RoleHierarchy {
     private static Set<String> getHRManagerPermissions() {
         return new HashSet<>(Arrays.asList(
                 Permission.EMPLOYEE_VIEW_ALL,
+                // Read-only approval-routing configuration. Authoring stays WORKFLOW:MANAGE.
+                Permission.WORKFLOW_DEFINITION_VIEW,
                 Permission.EMPLOYEE_CREATE,
                 Permission.EMPLOYEE_UPDATE,
                 // HR_MANAGER holds an employee record and must be able to access
@@ -437,6 +443,8 @@ public final class RoleHierarchy {
 
     private static Set<String> getDepartmentManagerPermissions() {
         return new HashSet<>(Arrays.asList(
+                // Read-only workflow definitions (sees routing for approvals they act on).
+                Permission.WORKFLOW_DEFINITION_VIEW,
                 Permission.EMPLOYEE_VIEW_DEPARTMENT,
                 Permission.LEAVE_APPROVE,
                 Permission.LEAVE_VIEW_TEAM,
@@ -645,6 +653,8 @@ public final class RoleHierarchy {
 
     private static Set<String> getRecruitmentAdminPermissions() {
         return new HashSet<>(Arrays.asList(
+                // Read-only workflow definitions (sees routing for recruitment workflows).
+                Permission.WORKFLOW_DEFINITION_VIEW,
                 // Recruitment - Full Access
                 Permission.RECRUITMENT_VIEW,
                 Permission.RECRUITMENT_CREATE,

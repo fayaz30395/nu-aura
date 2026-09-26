@@ -632,13 +632,23 @@ class WorkflowControllerTest {
         }
 
         @Test
-        @DisplayName("getWorkflowDefinition should require WORKFLOW:VIEW")
-        void getDefinitionShouldRequireView() throws Exception {
+        @DisplayName("getWorkflowDefinition should require DEFINITION_VIEW or MANAGE (B3)")
+        void getDefinitionShouldRequireDefinitionViewOrManage() throws Exception {
+            // Changed 2026-09-25: this assertion used to require WORKFLOW:VIEW, which pinned the
+            // vulnerability rather than the requirement. A workflow definition is the tenant's
+            // approval-routing configuration, and WORKFLOW:VIEW is seeded to EMPLOYEE for their
+            // own approval inbox — so every employee could read it. See
+            // WorkflowDefinitionAuthorizationTest for the full contract, including the endpoints
+            // that deliberately stay on WORKFLOW:VIEW.
             var method = WorkflowController.class.getMethod("getWorkflowDefinition", UUID.class);
             var annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation);
-            Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()[0]).contains("WORKFLOW:VIEW"));
+            var required = java.util.Arrays.asList(annotation.value());
+            // anyOf: read-only DEFINITION_VIEW or authoring MANAGE. WORKFLOW:VIEW — the
+            // employee approval-inbox grant — must not appear.
+            Assertions.assertTrue(required.contains("WORKFLOW:DEFINITION_VIEW"));
+            Assertions.assertTrue(required.contains("WORKFLOW:MANAGE"));
+            Assertions.assertFalse(required.contains("WORKFLOW:VIEW"));
         }
 
         @Test
