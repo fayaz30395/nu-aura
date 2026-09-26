@@ -209,23 +209,58 @@ jobs:
 
       # The same artifact that build produced. Nothing is rebuilt between
       # verification and promotion, so what is verified is what ships.
+      # Record the deployment id BEFORE deploying, so the wait step can prove the new
+      # container is the one answering rather than the outgoing one.
       - name: Deploy artifact to preproduction
+        id: preprod_deploy
         run: |
+          PREV_ID=$(railway deployment list --service nu-aura-backend-preprod \
+                      --environment preproduction --project "$RAILWAY_PROJECT_ID" 2>/dev/null \
+                    | sed 's/\x1b\[[0-9;]*m//g' | sed -n '2p' | awk '{print $1}')
+          echo "previous-deployment=${PREV_ID}" >> "$GITHUB_OUTPUT"
+          echo "Previous deployment: ${PREV_ID:-<none>}"
           railway up --service nu-aura-backend-preprod \
                      --environment preproduction \
                      --project "$RAILWAY_PROJECT_ID" --detach
           echo "backend-image verified: ${{ needs.build.outputs.backend-image }}"
 
-      - name: Wait for preproduction to become live
+      # Liveness alone is not enough: during a Railway rollover the OUTGOING container
+      # still answers 200, so the checks can run against the previous artifact. Observed
+      # on 2026-09-25 as a transient 5 PASS / 2 FAIL / 6 SKIPPED immediately after a swap.
+      # Both conditions must hold: a NEW deployment id reached SUCCESS, and readiness is 200.
+      - name: Wait for the new preproduction deployment to serve
+        env:
+          PREV_DEPLOYMENT: ${{ steps.preprod_deploy.outputs.previous-deployment }}
         run: |
-          for i in $(seq 1 40); do
-            code=$(curl -s -m 15 -o /dev/null -w '%{http_code}' \
-                   "${PREPROD_BASE_URL}/actuator/health/liveness" || true)
-            [ "$code" = "200" ] && { echo "preproduction live"; exit 0; }
-            echo "waiting for preproduction (attempt ${i}, last ${code})..."
+          NEW_ID=""
+          for i in $(seq 1 60); do
+            LINE=$(railway deployment list --service nu-aura-backend-preprod \
+                     --environment preproduction --project "$RAILWAY_PROJECT_ID" 2>/dev/null \
+                   | sed 's/\x1b\[[0-9;]*m//g' | sed -n '2p')
+            ID=$(echo "$LINE"   | awk '{print $1}')
+            STATUS=$(echo "$LINE" | awk '{print $3}')
+            case "$STATUS" in
+              FAILED|CRASHED)
+                echo "New preproduction deployment ${ID} ended ${STATUS} — failing the gate"
+                exit 1 ;;
+            esac
+            if [ -n "$ID" ] && [ "$ID" != "$PREV_DEPLOYMENT" ] && [ "$STATUS" = "SUCCESS" ]; then
+              NEW_ID="$ID"
+              READY=$(curl -s -m 15 -o /dev/null -w '%{http_code}' \
+                      "${PREPROD_BASE_URL}/actuator/health/readiness" || true)
+              LIVE=$(curl -s -m 15 -o /dev/null -w '%{http_code}' \
+                     "${PREPROD_BASE_URL}/actuator/health/liveness" || true)
+              if [ "$READY" = "200" ] && [ "$LIVE" = "200" ]; then
+                echo "New deployment ${NEW_ID} is SUCCESS and serving (readiness ${READY}, liveness ${LIVE})"
+                exit 0
+              fi
+              echo "deployment ${NEW_ID} SUCCESS but not serving yet (readiness ${READY}, liveness ${LIVE})..."
+            else
+              echo "waiting for a new deployment (attempt ${i}, current ${ID:-<none>} ${STATUS:-<none>})..."
+            fi
             sleep 15
           done
-          echo "preproduction did not become live — failing the gate"
+          echo "No new preproduction deployment became ready — failing the gate"
           exit 1
 
       # Config/security equivalence. A gate is only meaningful if the two
