@@ -23,8 +23,9 @@ import java.util.Properties;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Proves that V331 and V334 do what their headers claim when the migration connection is NOT a
- * BYPASSRLS role — the case that makes them silently do nothing.
+ * Proves the RLS-under-non-BYPASSRLS behavior of V331/V334 (immutable, production-applied,
+ * proven broken by design) and their forward-only corrections V337 and V340 (which must
+ * actually work under the same role).
  *
  * <h2>Why this test exists</h2>
  * Every tenant table carries a RESTRICTIVE {@code rls_ctx_required_*} policy (V254/V262) plus
@@ -34,21 +35,25 @@ import static org.assertj.core.api.Assertions.assertThat;
  * the deploy is green and the data is simply not there. It is the same class of defect as V316,
  * whose EXISTS guard never matched in production.
  *
+ * <h2>V331/V334 are immutable — do not expect them to pass</h2>
+ * V331 and V334 are already applied in production. {@code MigrationRlsGuardTest} pins their
+ * checksums; this class must never be "fixed" by editing them in place — that is the exact V316
+ * mistake repeated. Instead the defect they carry is corrected forward-only: V337 re-asserts
+ * V334's LMS grants across every tenant, RLS-safely; V340 re-asserts V331's password-expiry
+ * refresh across every tenant, RLS-safely. This test pins BOTH halves: the old migrations stay
+ * broken as shipped, and the new ones actually work.
+ *
  * <h2>Why it cannot be tested through the normal harness</h2>
  * {@link AbstractPostgresIntegrationTest} runs Flyway as the container's {@code POSTGRES_USER},
  * which is a SUPERUSER and therefore BYPASSRLS. Under that role the bug is unreproducible and a
  * test asserting only the post-chain data state would pass against a broken migration. So this
  * test creates a dedicated NOSUPERUSER / NOBYPASSRLS role and re-executes the real migration
  * files through it — the assertion is about the artifact that ships, not a copy of its SQL.
- *
- * <p>Findings this pins (measured 2026-09-25 on postgres:16, role nu_app_rls, transaction rolled
- * back): V334 without the GUC → {@code INSERT 0 0}; with it → {@code INSERT 0 6}. V331 without
- * the GUC → {@code UPDATE 0}; with it → {@code UPDATE 20}.
  */
 @SpringBootTest
 @ActiveProfiles("test")
 @Import(TestSecurityConfig.class)
-@DisplayName("V331/V334 under a non-BYPASSRLS migration role")
+@DisplayName("V331/V334 (immutable, broken-as-shipped) vs V337/V340 (forward-only corrections) under a non-BYPASSRLS migration role")
 class MigrationTenantContextTest extends AbstractPostgresIntegrationTest {
 
     /** The demo tenant V332/V333/V334 all target. */
@@ -65,6 +70,7 @@ class MigrationTenantContextTest extends AbstractPostgresIntegrationTest {
               JOIN permissions p ON p.id = rp.permission_id
              WHERE p.code IN ('LMS:ENROLL', 'LMS:CERTIFICATE_VIEW')
                AND rp.role_id IN ('%s', '%s', '%s')
+               AND (rp.is_deleted = false OR rp.is_deleted IS NULL)
             """.formatted(EMPLOYEE_ROLE_ID, MANAGER_ROLE_ID, TEAM_LEAD_ROLE_ID);
 
     @Autowired
@@ -114,8 +120,8 @@ class MigrationTenantContextTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("V334 as shipped grants LMS:ENROLL + LMS:CERTIFICATE_VIEW under a NOBYPASSRLS role")
-    void v334GrantsUnderNonBypassRole() throws Exception {
+    @DisplayName("V334 as shipped (immutable, production-applied) grants NOTHING under a NOBYPASSRLS role")
+    void v334AsShippedGrantsNothingUnderNonBypassRole() throws Exception {
         String v334 = migrationSql("V334__restore_employee_lms_enroll_and_certificate_grants.sql");
 
         try (Connection c = probeConnection()) {
@@ -123,33 +129,17 @@ class MigrationTenantContextTest extends AbstractPostgresIntegrationTest {
             clearLmsGrants(c);
             assertThat(scalar(c, COUNT_LMS_GRANTS)).isZero();
 
+            // clearLmsGrants sets the tenant GUC (is_local=true) to do its own DELETE, and that
+            // setting stays in effect for the rest of THIS transaction/connection. Clear it before
+            // running V334, or V334 unintentionally inherits an ambient tenant context it never
+            // set itself, defeating the point of this test.
+            exec(c, "SELECT set_config('app.current_tenant_id', '', true)");
             exec(c, v334);
 
             exec(c, "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true)");
             assertThat(scalar(c, COUNT_LMS_GRANTS))
-                    .as("2 permissions x 3 roles (EMPLOYEE/SELF, MANAGER/TEAM, TEAM_LEAD/TEAM)")
-                    .isEqualTo(6);
-
-            c.rollback();
-        }
-    }
-
-    @Test
-    @DisplayName("V334 with its set_config removed grants NOTHING — the guard is load-bearing")
-    void v334WithoutTenantContextGrantsNothing() throws Exception {
-        String stripped = stripSetConfig(
-                migrationSql("V334__restore_employee_lms_enroll_and_certificate_grants.sql"));
-
-        try (Connection c = probeConnection()) {
-            c.setAutoCommit(false);
-            clearLmsGrants(c);
-
-            exec(c, "SELECT set_config('app.current_tenant_id', '', true)");
-            exec(c, stripped);
-
-            exec(c, "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true)");
-            assertThat(scalar(c, COUNT_LMS_GRANTS))
-                    .as("the pre-remediation form of V334: green migration, zero grants")
+                    .as("V334 carries no per-tenant GUC — this is the documented, immutable defect "
+                            + "that V337 corrects forward-only. Do not fix by editing V334.")
                     .isZero();
 
             c.rollback();
@@ -157,9 +147,62 @@ class MigrationTenantContextTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    @DisplayName("V331 as shipped refreshes the demo password expiry under a NOBYPASSRLS role")
-    void v331RefreshesExpiryUnderNonBypassRole() throws Exception {
+    @DisplayName("V337 (forward-only correction) grants LMS:ENROLL + LMS:CERTIFICATE_VIEW under a NOBYPASSRLS role")
+    void v337GrantsUnderNonBypassRole() throws Exception {
+        String v337 = migrationSql("V337__lms_grants_all_tenants_rls_safe.sql");
+
+        try (Connection c = probeConnection()) {
+            c.setAutoCommit(false);
+            clearLmsGrants(c);
+            assertThat(scalar(c, COUNT_LMS_GRANTS)).isZero();
+
+            exec(c, v337);
+
+            exec(c, "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true)");
+            assertThat(scalar(c, COUNT_LMS_GRANTS))
+                    .as("2 permissions x 3 roles (EMPLOYEE/SELF, MANAGER/TEAM, TEAM_LEAD/TEAM) "
+                            + "for the demo tenant alone; V337 iterates every tenant")
+                    .isEqualTo(6);
+
+            c.rollback();
+        }
+    }
+
+    @Test
+    @DisplayName("V331 as shipped (immutable, production-applied) refreshes NOTHING under a NOBYPASSRLS role")
+    void v331AsShippedRefreshesNothingUnderNonBypassRole() throws Exception {
         String v331 = migrationSql("V331__refresh_demo_password_expiry.sql")
+                .replace("${demoCredentialsEnabled}", "true");
+
+        try (Connection c = probeConnection()) {
+            c.setAutoCommit(false);
+            exec(c, "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true)");
+            exec(c, "UPDATE users SET password_changed_at = NOW() - interval '200 days' "
+                    + "WHERE tenant_id = '" + DEMO_TENANT + "' AND email LIKE '%@nulogic.io'");
+
+            int demoUsers = scalar(c, "SELECT count(*) FROM users WHERE email LIKE '%@nulogic.io'");
+            assertThat(demoUsers).as("the chain must seed demo accounts for this to mean anything")
+                    .isPositive();
+            int expiredBefore = expiredDemoAccounts(c);
+            assertThat(expiredBefore).isEqualTo(demoUsers);
+
+            exec(c, "SELECT set_config('app.current_tenant_id', '', true)");
+            exec(c, v331);
+
+            exec(c, "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true)");
+            assertThat(expiredDemoAccounts(c))
+                    .as("V331 carries no per-tenant GUC — this is the documented, immutable defect "
+                            + "that V340 corrects forward-only. Do not fix by editing V331.")
+                    .isEqualTo(expiredBefore);
+
+            c.rollback();
+        }
+    }
+
+    @Test
+    @DisplayName("V340 (forward-only correction) refreshes the demo password expiry under a NOBYPASSRLS role")
+    void v340RefreshesExpiryUnderNonBypassRole() throws Exception {
+        String v340 = migrationSql("V340__refresh_demo_password_expiry_all_tenants_rls_safe.sql")
                 .replace("${demoCredentialsEnabled}", "true");
 
         try (Connection c = probeConnection()) {
@@ -174,7 +217,7 @@ class MigrationTenantContextTest extends AbstractPostgresIntegrationTest {
             assertThat(expiredDemoAccounts(c)).isEqualTo(demoUsers);
 
             exec(c, "SELECT set_config('app.current_tenant_id', '', true)");
-            exec(c, v331);
+            exec(c, v340);
 
             exec(c, "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true)");
             assertThat(expiredDemoAccounts(c))
@@ -185,45 +228,11 @@ class MigrationTenantContextTest extends AbstractPostgresIntegrationTest {
         }
     }
 
-    @Test
-    @DisplayName("V331 with its per-tenant set_config removed refreshes NOTHING")
-    void v331WithoutTenantContextRefreshesNothing() throws Exception {
-        String stripped = migrationSql("V331__refresh_demo_password_expiry.sql")
-                .replace("${demoCredentialsEnabled}", "true")
-                .replace("PERFORM set_config('app.current_tenant_id', tt.id::text, true);", "");
-
-        try (Connection c = probeConnection()) {
-            c.setAutoCommit(false);
-            exec(c, "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true)");
-            exec(c, "UPDATE users SET password_changed_at = NOW() - interval '200 days' "
-                    + "WHERE tenant_id = '" + DEMO_TENANT + "' AND email LIKE '%@nulogic.io'");
-            int expiredBefore = expiredDemoAccounts(c);
-            assertThat(expiredBefore).isPositive();
-
-            exec(c, "SELECT set_config('app.current_tenant_id', '', true)");
-            exec(c, stripped);
-
-            exec(c, "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true)");
-            assertThat(expiredDemoAccounts(c))
-                    .as("the pre-remediation form of V331: green migration, still-expired accounts, "
-                            + "and auth.setup.ts fails for the whole Playwright suite")
-                    .isEqualTo(expiredBefore);
-
-            c.rollback();
-        }
-    }
-
     // ── helpers ───────────────────────────────────────────────────────────────────
 
     private int expiredDemoAccounts(Connection c) throws SQLException {
         return scalar(c, "SELECT count(*) FROM users WHERE email LIKE '%@nulogic.io' "
                 + "AND password_changed_at < NOW() - interval '90 days'");
-    }
-
-    /** Removes only the top-level statement, leaving the rest of the migration byte-identical. */
-    private static String stripSetConfig(String sql) {
-        return sql.replace(
-                "SELECT set_config('app.current_tenant_id', '" + DEMO_TENANT + "', true);", "");
     }
 
     private void clearLmsGrants(Connection c) throws SQLException {

@@ -54,6 +54,8 @@ class AdminServiceTest {
     private com.nulogic.application.audit.service.AuditLogService auditLogService;
     @Mock
     private WorkflowExecutionRepository workflowExecutionRepository;
+    @Mock
+    private com.nulogic.common.security.PermissionCacheEvictor permissionCacheEvictor;
 
     @InjectMocks
     private AdminService adminService;
