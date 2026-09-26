@@ -6,6 +6,7 @@ import com.nulogic.api.admin.dto.UpdateUserRoleRequest;
 import com.nulogic.api.user.dto.RoleResponse;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
+import com.nulogic.common.security.PermissionCacheEvictor;
 import com.nulogic.common.security.RoleHierarchy;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.employee.Department;
@@ -50,6 +51,7 @@ public class AdminService {
     private final RoleRepository roleRepository;
     private final com.nulogic.application.audit.service.AuditLogService auditLogService;
     private final WorkflowExecutionRepository workflowExecutionRepository;
+    private final PermissionCacheEvictor permissionCacheEvictor;
 
     /**
      * Get platform settings
@@ -163,6 +165,22 @@ public class AdminService {
      * Can assign/update roles for any user across any tenant
      */
     @Transactional
+    // SEC (remediation 2026-09-25): this is the SECOND path that mutates a user's explicit roles
+    // (the other is RoleManagementService.assignRolesToUser). Since
+    // SecurityService.getCachedPermissionScopesForUser became @Cacheable, that map is what
+    // JwtAuthenticationFilter turns into the principal's authorities — so without an eviction a
+    // demotion made through the admin API kept serving the OLD role's permissions from the
+    // rolePermissions cache for up to its 15-minute TTL, and a re-login inside that window hit
+    // the same stale entry.
+    //
+    // The eviction is an explicit after-commit call via PermissionCacheEvictor rather than
+    // @CacheEvict(allEntries = true). @CacheEvict fires relative to ADVISOR ORDER, and the cache
+    // and transaction advisors both sit at Ordered.LOWEST_PRECEDENCE here — nothing declares which
+    // wins. CacheEvictTransactionOrderingTest measures the current answer (cache advisor outer, so
+    // eviction does land after commit today) but that is registration order, not a contract. If it
+    // ever flipped, the flush would run before this transaction commits and a concurrent
+    // authorization lookup would re-cache the PRE-demotion authorities for the full TTL. Routing
+    // through the evictor makes the timing explicit instead of incidental.
     public AdminUserResponse updateUserRole(UUID userId, UpdateUserRoleRequest request) {
         // DEF-49/50: Privilege escalation prevention — even though AdminController requires
         // SYSTEM_ADMIN, defense-in-depth: verify the caller is SuperAdmin before assigning SUPER_ADMIN role
@@ -208,6 +226,10 @@ public class AdminService {
 
         User updatedUser = userRepository.save(user);
         log.info("SuperAdmin updated roles for user: {} (email: {})", userId, user.getEmail());
+
+        // allEntries: the user-keyed entries and the role-keyed entries are not reachable from one
+        // key, and a role's permission set is shared by every holder. Deferred to after commit.
+        permissionCacheEvictor.evictAllPermissions();
 
         // Audit log
         auditLogService.logAction("USER", updatedUser.getId(),

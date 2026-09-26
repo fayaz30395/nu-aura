@@ -7,6 +7,7 @@ import com.nulogic.api.expense.dto.MileageLogResponse;
 import com.nulogic.api.expense.dto.MileageSummaryResponse;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.expense.ExpenseClaim;
 import com.nulogic.domain.expense.MileageLog;
@@ -69,6 +70,7 @@ public class MileageService {
     private final ObjectMapper objectMapper;
     private final JdbcTemplate jdbcTemplate;
     private final com.nulogic.common.util.TenantTimeService tenantTimeService;
+    private final ExpenseClaimService expenseClaimService;
 
     private String generateMileageClaimNumber(UUID tenantId) {
         String ym = LocalDate.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyyMM"));
@@ -94,6 +96,17 @@ public class MileageService {
     @Transactional
     public MileageLogResponse createMileageLog(UUID employeeId, MileageLogRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+
+        // SEC-E8: `employeeId` is a path variable and was never checked. This file already had
+        // an ownership gate (assertSelfOrBroaderScope) but it was wired only to the two READ
+        // methods, so the reimbursable WRITE was open: any EXPENSE:CREATE holder — a baseline
+        // employee grant — could file mileage against a colleague. Same shape as SEC-E5 on
+        // expense claims, so it takes the same gate: the scope of EXPENSE:CREATE, the write
+        // permission the controller already requires, resolved against the target employee.
+        // Deliberately NOT assertSelfOrBroaderScope: that helper asks only whether a broader
+        // permission CODE is present and never reads its RoleScope, which would let a
+        // TEAM-scoped holder of EXPENSE:VIEW_ALL write tenant-wide.
+        expenseClaimService.assertEmployeeAccess(employeeId, Permission.EXPENSE_CREATE);
 
         if (!employeeRepository.existsByIdAndTenantId(employeeId, tenantId)) {
             throw new EntityNotFoundException("Employee not found: " + employeeId);

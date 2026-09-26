@@ -53,7 +53,7 @@ public class ExpenseItemController {
             @PathVariable UUID claimId,
             @PathVariable UUID itemId) {
         log.info("Deleting item {} from claim: {}", itemId, claimId);
-        itemService.deleteItem(itemId);
+        itemService.deleteItem(claimId, itemId);
         return ResponseEntity.noContent().build();
     }
 

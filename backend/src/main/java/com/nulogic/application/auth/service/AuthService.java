@@ -133,6 +133,24 @@ public class AuthService {
             "$2a$12$XMYaVk5yNVtCKiuFM5m3rOpR.73IKHFykmuvWP3OWYi8cqRbK0VHG"  // Welcome@123 (V110 new joiner)
     );
 
+    /**
+     * Whether this account is a shared demo account that is exempt from password expiry.
+     *
+     * <p>The shared demo password ages like any other, so on a rolling {@code maxAgeDays}
+     * clock every seeded demo account expires and the E2E auth setup starts failing. A
+     * dated migration (V331) can only reset the clock once; ~90 days later it recurs.
+     * Exempting the demo accounts removes the recurrence at the source.
+     *
+     * <p>Fail-closed: this returns true ONLY when {@code demoCredentialsEnabled} is
+     * explicitly enabled (dev / demo / E2E). Production runs with the flag false, so
+     * expiry applies to every account there, unchanged — and in fact these same
+     * well-known hashes are already rejected outright by the gate in {@code login()}.
+     * Real accounts never match a known demo hash, so they expire even in demo envs.
+     */
+    private boolean isExpiryExemptDemoAccount(User user) {
+        return demoCredentialsEnabled && KNOWN_DEMO_PASSWORD_HASHES.contains(user.getPasswordHash());
+    }
+
     public AuthService(AuthenticationManager authenticationManager,
                        UserRepository userRepository,
                        EmployeeRepository employeeRepository,
@@ -289,7 +307,8 @@ public class AuthService {
             }
 
             // Check password expiry (90-day policy)
-            if (user.getPasswordChangedAt() != null && passwordPolicyConfig.getMaxAgeDays() > 0) {
+            if (user.getPasswordChangedAt() != null && passwordPolicyConfig.getMaxAgeDays() > 0
+                    && !isExpiryExemptDemoAccount(user)) {
                 long daysSinceChange = java.time.temporal.ChronoUnit.DAYS.between(
                         user.getPasswordChangedAt().toLocalDate(), tenantTimeService.today(tenantId));
                 if (daysSinceChange > passwordPolicyConfig.getMaxAgeDays()) {

@@ -137,13 +137,16 @@ public class SecurityService {
      *
      * <p>Exists because the scope is the authorization decision, not decoration:
      * {@code LEAVE:VIEW_SELF} granted at SELF scope and the same code granted at ALL scope are
-     * completely different grants. Callers that only need the codes can use
-     * {@link #getCachedPermissions(Collection)}, which now delegates here.</p>
+     * completely different grants. Callers that only need the codes use
+     * {@link #getCachedPermissions(Collection)}, which loads the same rows independently
+     * (it does not delegate here — the two are cached under different keys).</p>
      */
     @Cacheable(
             value = CacheConfig.ROLE_PERMISSIONS,
-            key = "'scopes:' + T(com.nulogic.common.security.TenantContext).getCurrentTenant() + ':' + #roles",
-            condition = "T(com.nulogic.common.security.TenantContext).getCurrentTenant() != null && #roles != null && !#roles.isEmpty()"
+            // Same order-normalising key helper as getCachedPermissions: a raw #roles key makes
+            // ["EMPLOYEE","MANAGER"] and ["MANAGER","EMPLOYEE"] two different cache entries.
+            key = "'scopes:' + #root.target.rolesCacheKey(#roles)",
+            condition = "#root.target.isTenantContextPresent() && #roles != null && !#roles.isEmpty()"
     )
     @Transactional(readOnly = true)
     public Map<String, com.nulogic.domain.user.RoleScope> getCachedPermissionScopes(Collection<String> roles) {
@@ -167,7 +170,35 @@ public class SecurityService {
     /**
      * Scope-preserving counterpart of {@link #getCachedPermissionsForUser(UUID, Collection)},
      * covering explicit roles, the inheritance chain, and active implicit roles.
+     *
+     * <p>PERF (remediation 2026-09-25): this MUST stay cached. Permissions no longer travel in
+     * the JWT, so {@code JwtAuthenticationFilter} calls this on the userId branch for every
+     * cookie-authenticated request. Uncached, each request ran
+     * {@code findByTenantIdWithPermissions} (every role in the tenant joined to every
+     * role_permissions and permissions row) plus an implicit-role lookup and a role-code lookup.
+     * Cache key mirrors {@link #getCachedPermissionsForUser} with a distinct prefix so the two
+     * return types never collide in the shared {@code rolePermissions} cache. Correctness of the
+     * SEC-1 scope fix is preserved because every mutating method on RoleManagementService
+     * carries {@code @CacheEvict(value = ROLE_PERMISSIONS, allEntries = true)}.</p>
+     *
+     * <p>Why the key omits {@code explicitRoleCodes}. The roles claim is not an independent
+     * input: a user's roles are themselves derived from the (tenant, user) rows this entry is
+     * keyed by, so two callers presenting different role sets for the same user are not two
+     * legitimate answers — one of them is stale. Both mutation paths evict, which is what makes
+     * the omission safe rather than merely convenient:
+     * {@code RoleManagementService.assignRolesToUser} (explicit roles) evicts all entries, and
+     * {@code ImplicitRoleEngine.recompute} (implicit roles) evicts this user's two entries via
+     * {@link PermissionCacheEvictor}. Including the role codes in the key would instead leave a
+     * revoked-role entry addressable under its old key, so eviction would have to enumerate
+     * every historical role combination. Pinned by {@code PermissionScopeCacheTest}.</p>
      */
+    @Cacheable(
+            value = CacheConfig.ROLE_PERMISSIONS,
+            // Prefix mirrors SecurityService.USER_PERMISSION_SCOPES_KEY_PREFIX; PermissionCacheEvictor
+            // builds the identical key via userPermissionScopesCacheKey(tenantId, userId).
+            key = "'permissionScopes:' + #root.target.userCacheKey(#userId)",
+            condition = "#root.target.isTenantContextPresent()"
+    )
     @Transactional(readOnly = true)
     public Map<String, com.nulogic.domain.user.RoleScope> getCachedPermissionScopesForUser(
             UUID userId, Collection<String> explicitRoleCodes) {
@@ -305,6 +336,8 @@ public class SecurityService {
      */
     @Cacheable(
             value = CacheConfig.ROLE_PERMISSIONS,
+            // Prefix mirrors SecurityService.USER_PERMISSIONS_KEY_PREFIX; PermissionCacheEvictor
+            // builds the identical key via userPermissionsCacheKey(tenantId, userId).
             key = "'permissions:' + #root.target.userCacheKey(#userId)",
             condition = "#root.target.isTenantContextPresent()"
     )
@@ -414,11 +447,37 @@ public class SecurityService {
      * Used by @Cacheable condition SpEL.
      */
     public String userCacheKey(UUID userId) {
-        UUID tenantId = TenantContext.getCurrentTenant();
+        return userCacheKey(TenantContext.getCurrentTenant(), userId);
+    }
+
+    /**
+     * Tenant-explicit form of {@link #userCacheKey(UUID)}.
+     *
+     * <p>Static, and the single definition of the user-keyed cache-key format, so that an
+     * eviction path can build the exact key {@code @Cacheable} produced without re-deriving
+     * the format. {@link PermissionCacheEvictor} is the only other caller.</p>
+     */
+    public static String userCacheKey(UUID tenantId, UUID userId) {
         if (tenantId == null) {
             return "NO_TENANT::" + userId;
         }
         return tenantId + ":" + userId;
+    }
+
+    /** Prefix of the {@link #getCachedPermissionsForUser} entry (permission codes only). */
+    public static final String USER_PERMISSIONS_KEY_PREFIX = "permissions:";
+
+    /** Prefix of the {@link #getCachedPermissionScopesForUser} entry (code -> scope). */
+    public static final String USER_PERMISSION_SCOPES_KEY_PREFIX = "permissionScopes:";
+
+    /** The exact {@code rolePermissions} key holding this user's permission codes. */
+    public static String userPermissionsCacheKey(UUID tenantId, UUID userId) {
+        return USER_PERMISSIONS_KEY_PREFIX + userCacheKey(tenantId, userId);
+    }
+
+    /** The exact {@code rolePermissions} key holding this user's permission scopes. */
+    public static String userPermissionScopesCacheKey(UUID tenantId, UUID userId) {
+        return USER_PERMISSION_SCOPES_KEY_PREFIX + userCacheKey(tenantId, userId);
     }
 
     // Check if user is the current employee

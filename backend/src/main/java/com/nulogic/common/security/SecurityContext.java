@@ -247,6 +247,43 @@ public class SecurityContext {
      * <p>
      * Permission hierarchy: MANAGE implies all actions (MARK, READ, VIEW_ALL, VIEW_TEAM, etc.)
      */
+    /**
+     * Scope-aware companion to {@link #hasPermission(String)}: true only when the caller holds
+     * {@code permission} AND holds it at a scope at least as permissive as {@code required}.
+     *
+     * <p>Why this exists. {@link #hasPermission(String)} answers only "is this code in my set" —
+     * it reads {@link #getCurrentPermissions()}, which is {@code keySet()} and discards the
+     * {@link RoleScope} value. That is correct and load-bearing for endpoint admission
+     * ({@code PermissionAspect} gates on possession and lets {@code DataScopeService} narrow the
+     * rows) and for the branch selectors that choose WHICH scope specification to apply. It is
+     * wrong for a guard that authorizes access to one specific target id, because
+     * {@code V107__repopulate_role_permissions.sql:103} grants {@code %:VIEW_ALL} codes to
+     * MANAGER/TEAM_LEAD at {@code scope='TEAM'} — so a permission literally named VIEW_ALL is
+     * routinely held at TEAM scope, and a guard that early-returns on its mere presence hands a
+     * team-scoped role tenant-wide reach.
+     *
+     * <p>This method is purely additive. {@code hasPermission} is unchanged, so no existing
+     * caller shifts behaviour; sites that must enforce scope opt in by switching one call.
+     *
+     * <p>Comparison uses {@link RoleScope#getRank()} rather than {@code ordinal()} because rank
+     * is the declared, documented ordering and places {@code CUSTOM} (an explicit allow-list,
+     * not a containing set) below {@code SELF} deliberately. A {@code null} held scope means the
+     * caller does not hold the permission at all, which is a denial. Super-admin is NOT special
+     * cased here: callers that allow a super-admin bypass already check
+     * {@link #isSuperAdmin()} separately, and burying it here would make this primitive
+     * un-auditable.</p>
+     *
+     * @param permission permission code, with or without the current app prefix
+     * @param required   the least permissive scope that is acceptable
+     */
+    public static boolean hasPermissionAtLeast(String permission, RoleScope required) {
+        if (permission == null || required == null) {
+            return false;
+        }
+        RoleScope held = getPermissionScope(permission);
+        return held != null && held.getRank() >= required.getRank();
+    }
+
     public static boolean hasPermission(String permission) {
         if (permission == null) {
             return false;

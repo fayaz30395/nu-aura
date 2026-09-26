@@ -3,6 +3,7 @@ package com.nulogic.application.expense.service;
 import com.nulogic.api.expense.dto.ExpenseAdvanceRequest;
 import com.nulogic.api.expense.dto.ExpenseAdvanceResponse;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.expense.ExpenseAdvance;
@@ -26,10 +27,18 @@ public class ExpenseAdvanceService {
     private final ExpenseAdvanceRepository advanceRepository;
     private final EmployeeRepository employeeRepository;
     private final TenantTimeService tenantTimeService;
+    private final ExpenseClaimService expenseClaimService;
 
     @Transactional
     public ExpenseAdvanceResponse createAdvance(UUID employeeId, ExpenseAdvanceRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+
+        // SEC-E9: same unchecked path variable as SEC-E5/SEC-E8. The controller's
+        // @RequiresPermission(EXPENSE:CREATE) only proves the caller may request SOME advance;
+        // it says nothing about whose name goes on it. Without this, any employee could raise a
+        // cash-advance request against a colleague. Gate on the write permission's scope,
+        // before anything is persisted.
+        expenseClaimService.assertEmployeeAccess(employeeId, Permission.EXPENSE_CREATE);
 
         if (!employeeRepository.existsByIdAndTenantId(employeeId, tenantId)) {
             throw new EntityNotFoundException("Employee not found: " + employeeId);

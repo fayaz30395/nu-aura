@@ -5,6 +5,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
@@ -227,16 +228,44 @@ public class SelfServiceService {
     }
 
     /**
-     * M-5: Same-tenant IDOR guard for self-service request reads. These endpoints are gated
-     * only by EMPLOYEE_VIEW_SELF and expose unmasked PII (bank account numbers, personal info,
+     * M-5: Same-tenant IDOR guard for self-service request reads. These endpoints are gated only
+     * by EMPLOYEE_VIEW_SELF and expose unmasked PII (bank account numbers, personal info,
      * address) via {@code currentValue}/{@code requestedValue}. Tenant isolation does not enforce
      * per-employee ownership, so a caller may read a request only when they own it
-     * (request.employeeId == caller) — mirroring the existing cancel-path check — or hold the
-     * elevated EMPLOYEE_UPDATE / EMPLOYEE_VIEW_ALL permission used by the approval workflow.
+     * (request.employeeId == caller) or hold a genuinely tenant-wide administrative grant.
+     *
+     * <p>SEC-M5b (2026-09-25): as originally written this guard never fired. Both clauses were
+     * {@link SecurityContext#hasPermission}, which is scope-blind, and
+     * {@code V107__repopulate_role_permissions.sql:46} grants {@code EMPLOYEE:UPDATE} to the
+     * baseline EMPLOYEE role at {@code scope='SELF'} — so the first clause was true for every
+     * authenticated employee, the method returned immediately, and both the ownership comparison
+     * and its {@code SECURITY: IDOR attempt} audit line below were unreachable. Any employee
+     * could read any colleague's unmasked bank details, and nothing was logged.
+     *
+     * <p>Two distinct corrections:</p>
+     * <ul>
+     *   <li>The {@code EMPLOYEE_UPDATE} clause is <b>removed outright</b>, not made scope-aware.
+     *   It is a SELF-scoped <em>write</em> permission; holding it is not authorization to
+     *   <em>read</em> another employee's record at any scope. The approval workflow does not need
+     *   it here — approvals run through their own service methods
+     *   ({@code getPendingProfileUpdateRequests}, {@code getAllProfileUpdateRequests},
+     *   {@code approveProfileUpdateRequest}, {@code rejectProfileUpdateRequest}), none of which
+     *   route through this guard.</li>
+     *   <li>{@code EMPLOYEE_VIEW_ALL} is now required at {@link RoleScope#ALL}, which is what a
+     *   "tenant-wide" grant actually means. V107 gives that code to HR_MANAGER and HR_ADMIN at
+     *   ALL (lines 215, 280) — so the administrative detail view still works — but to MANAGER at
+     *   only TEAM (line 155), which must not reach an arbitrary employee's bank details.</li>
+     * </ul>
+     *
+     * <p>Super-admin keeps an explicit bypass, matching every other ownership guard in the
+     * codebase (e.g. {@code ExpenseClaimService.validateEmployeeAccess}). This is not a widening:
+     * super-admin passed before through the {@code EMPLOYEE_UPDATE} clause.</p>
      */
     private void assertOwnsRequestOrPrivileged(UUID ownerEmployeeId, UUID requestId) {
-        if (SecurityContext.hasPermission(Permission.EMPLOYEE_UPDATE)
-                || SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+        if (SecurityContext.isSuperAdmin()) {
+            return;
+        }
+        if (SecurityContext.hasPermissionAtLeast(Permission.EMPLOYEE_VIEW_ALL, RoleScope.ALL)) {
             return;
         }
         UUID callerId = SecurityContext.getCurrentEmployeeId();

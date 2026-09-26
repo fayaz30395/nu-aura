@@ -60,6 +60,13 @@ public class ExpenseItemService {
         ExpenseClaim claim = claimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
+        // SEC-E4: tenant scoping is not authorization. Without this, any holder of
+        // EXPENSE:CREATE could append line items to ANOTHER employee's DRAFT claim and
+        // inflate a total that employee is about to submit. The write scope is read from
+        // EXPENSE:CREATE, not EXPENSE:VIEW — a manager with a broader VIEW scope must not
+        // inherit write reach over a reportee's claim from it.
+        expenseClaimService.assertEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_CREATE);
+
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.DRAFT) {
             throw new ValidationException("Can only add items to DRAFT expense claims");
         }
@@ -104,7 +111,9 @@ public class ExpenseItemService {
 
         ExpenseClaim claim = claimRepository.findByIdAndTenantId(item.getExpenseClaimId(), tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found"));
-        expenseClaimService.assertEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
+        // SEC-E3: the gate is derived from the item's OWN claim, so it holds regardless of
+        // what {claimId} the caller put in the path. EXPENSE:CREATE is the write scope.
+        expenseClaimService.assertEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_CREATE);
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.DRAFT) {
             throw new ValidationException("Can only update items on DRAFT expense claims");
@@ -138,15 +147,27 @@ public class ExpenseItemService {
         return enrichResponse(ExpenseItemResponse.fromEntity(saved), tenantId);
     }
 
+    /**
+     * SEC-E3/SEC-E4: {@code claimId} is the path variable the caller supplied and is used only
+     * to reject a mismatched route. Authorization is derived from the item's OWN claim, never
+     * from the path — a caller cannot widen their reach by choosing a different claim id, and
+     * the gate still holds if the route ever stops carrying one.
+     */
     @Transactional
-    public void deleteItem(UUID itemId) {
+    public void deleteItem(UUID claimId, UUID itemId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
         ExpenseItem item = itemRepository.findByIdAndTenantId(itemId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense item not found: " + itemId));
 
+        if (claimId != null && !item.getExpenseClaimId().equals(claimId)) {
+            throw new EntityNotFoundException("Expense item not found on claim: " + claimId);
+        }
+
         ExpenseClaim claim = claimRepository.findByIdAndTenantId(item.getExpenseClaimId(), tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found"));
+
+        expenseClaimService.assertEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_CREATE);
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.DRAFT) {
             throw new ValidationException("Can only delete items from DRAFT expense claims");
@@ -162,30 +183,20 @@ public class ExpenseItemService {
 
     @Transactional(readOnly = true)
     public List<ExpenseItemResponse> getItemsByClaimId(UUID claimId) {
-        // SEC-E2: same ownership gate as openReceipt — the list leaked other employees' items.
-        claimRepository.findByIdAndTenantId(claimId, TenantContext.requireCurrentTenant())
-                .ifPresent(c -> expenseClaimService.assertEmployeeAccess(c.getEmployeeId(), Permission.EXPENSE_VIEW));
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        // Verify claim belongs to tenant
-        claimRepository.findByIdAndTenantId(claimId, tenantId)
+        ExpenseClaim claim = claimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
+
+        // SEC-E2: same ownership gate as openReceipt — the list leaked other employees' items.
+        // The gate runs unconditionally: the earlier `ifPresent` form skipped it whenever the
+        // claim lookup missed, which is exactly the branch that must not fall through.
+        expenseClaimService.assertEmployeeReadAccess(claim.getEmployeeId());
 
         List<ExpenseItem> items = itemRepository.findAllByExpenseClaimId(claimId);
         return enrichResponses(items.stream()
                 .map(ExpenseItemResponse::fromEntity)
                 .collect(Collectors.toList()), tenantId);
-    }
-
-    @Transactional
-    public ExpenseItemResponse setItemReceipt(UUID itemId, String storagePath, String fileName) {
-        UUID tenantId = TenantContext.requireCurrentTenant();
-        ExpenseItem item = itemRepository.findByIdAndTenantId(itemId, tenantId)
-                .orElseThrow(() -> new EntityNotFoundException("Expense item not found: " + itemId));
-        item.setReceiptStoragePath(storagePath);
-        item.setReceiptFileName(fileName);
-        ExpenseItem saved = itemRepository.save(item);
-        return ExpenseItemResponse.fromEntity(saved);
     }
 
     /**
@@ -213,7 +224,7 @@ public class ExpenseItemService {
         // holder (SELF scope) could read another employee's receipts.
         ExpenseClaim owningClaim = claimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
-        expenseClaimService.assertEmployeeAccess(owningClaim.getEmployeeId(), Permission.EXPENSE_VIEW);
+        expenseClaimService.assertEmployeeReadAccess(owningClaim.getEmployeeId());
 
         String storagePath = item.getReceiptStoragePath();
         if (storagePath == null || storagePath.isBlank()) {
