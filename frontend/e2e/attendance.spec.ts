@@ -239,7 +239,7 @@ test.describe('Attendance Management', () => {
       // The team-attendance page renders an <h1>Team Attendance</h1>; assert it
       // directly (auto-waits for the cold navigation to render).
       await expect(
-        page.getByRole('heading', {name: /Team Attendance/i})
+        page.getByRole('heading', {name: /Team Attendance/i, level: 1})
       ).toBeVisible({timeout: 20000});
     });
   });
