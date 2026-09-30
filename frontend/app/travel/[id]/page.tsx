@@ -49,7 +49,7 @@ export default function TravelRequestDetailsPage() {
   const toast = useToast();
   const router = useRouter();
   const params = useParams();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permissionsReady} = usePermissions();
   const {user, isAuthenticated, hasHydrated} = useAuth();
   const [error] = useState<string | null>(null);
   const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);

@@ -26,18 +26,18 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function IntegrationsPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
   const router = useRouter();
 
   const hasAccess = hasAnyPermission(Permissions.SYSTEM_ADMIN, Permissions.INTEGRATION_MANAGE);
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   const categories = [
     {id: 'all', name: 'All Integrations'},

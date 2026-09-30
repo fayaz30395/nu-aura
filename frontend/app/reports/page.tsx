@@ -152,7 +152,7 @@ const SCHEDULED: ScheduledDelivery[] = [
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function ReportsPage() {
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const [selectedReport, setSelectedReport] = useState<ReportConfig | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
 

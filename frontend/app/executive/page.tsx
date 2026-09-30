@@ -10,18 +10,18 @@ import {Loader2, ArrowRight, Building2} from 'lucide-react';
 /** /executive redirect — the actual page lives at /dashboards/executive */
 export default function ExecutiveRedirectPage() {
   const router = useRouter();
-  const {hasPermission, isReady} = usePermissions();
+  const {hasPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasPermission(Permissions.DASHBOARD_EXECUTIVE);
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isPermissionReady) return;
     if (!hasAccess) {
       router.replace('/me/dashboard?denied=1');
     } else {
       router.replace('/dashboards/executive');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   return (
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">

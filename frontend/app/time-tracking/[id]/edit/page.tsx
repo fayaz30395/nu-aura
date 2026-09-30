@@ -51,7 +51,7 @@ export default function EditTimeEntryPage() {
   const router = useRouter();
   const params = useParams();
   const entryId = params.id as string;
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(
     Permissions.TIME_TRACKING_CREATE,
     Permissions.TIME_TRACKING_MANAGE

@@ -53,7 +53,7 @@ const LEGEND_COLORS = [
 
 export default function OrganizationHealthPage() {
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const {data, isLoading: loading, error, refetch} = useOrganizationHealth();
 
   // RBAC guard — org health requires REPORT_VIEW permission (DEF-52)

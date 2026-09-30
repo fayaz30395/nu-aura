@@ -74,7 +74,7 @@ export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE);
 
   useEffect(() => {

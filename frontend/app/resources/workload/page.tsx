@@ -91,7 +91,7 @@ const calculateDynamicStatus = (activeAllocation: number): AllocationStatus => {
 
 export default function WorkloadDashboardPage() {
   const router = useRouter();
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.ALLOCATION_VIEW, Permissions.ALLOCATION_MANAGE);
 
   useEffect(() => {

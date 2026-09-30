@@ -37,7 +37,7 @@ const EmployeeAttendanceChart = dynamic(
 
 export default function EmployeeDashboardPage() {
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const {data, isLoading: loading, error, refetch} = useEmployeeDashboard();
 
   // A3: Permission gate — redirect if user lacks DASHBOARD:EMPLOYEE

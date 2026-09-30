@@ -1,6 +1,8 @@
 'use client';
 
 import {useEffect, useState} from 'react';
+import {Spinner} from '@/components/ui/Spinner';
+import {Button} from '@/components/ui/Button';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -30,7 +32,7 @@ interface LearningPath {
 export default function LearningPathsPage() {
   const toast = useToast();
   const router = useRouter();
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,15 +42,15 @@ export default function LearningPathsPage() {
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('ALL');
 
   // Query for learning paths
-  const {data: paths = [], isLoading, refetch} = useQuery({
+  const {data: paths = [], isLoading, isError, refetch} = useQuery({
     queryKey: ['learning-paths'],
     queryFn: async () => {
       const response = await apiClient.get<{ content: LearningPath[] }>('/lms/learning-paths');
@@ -71,7 +73,7 @@ export default function LearningPathsPage() {
     },
   });
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   // Apply filters
   const filteredPaths = (() => {
@@ -163,12 +165,23 @@ export default function LearningPathsPage() {
         </div>
 
         {/* Content */}
-        {isLoading ? (
+        {isLoading && !isError ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div
-                className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
+              <Spinner size="lg" label="Loading learning paths" className="mx-auto mb-4"/>
               <p className="text-[var(--text-muted)]">Loading learning paths...</p>
+            </div>
+          </div>
+        ) : isError ? (
+          /* BUG-L1 defence-in-depth: the page had no error branch at all, so a failing
+             request left it on the spinner indefinitely instead of saying anything. */
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <p className="text-[var(--text-primary)] font-medium">Couldn&apos;t load learning paths</p>
+              <p className="mt-1 text-[var(--text-muted)]">Something went wrong fetching your programs.</p>
+              <Button variant="secondary" size="sm" className="mt-4" onClick={() => refetch()}>
+                Try again
+              </Button>
             </div>
           </div>
         ) : filteredPaths.length > 0 ? (

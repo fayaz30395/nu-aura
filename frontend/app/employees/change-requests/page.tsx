@@ -22,7 +22,7 @@ export default function EmploymentChangeRequestsPage() {
   const toast = useToast();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permissionsReady} = usePermissions();
 
   // DEF-44: Redirect unauthorized users — prevents change request data exposure
   useEffect(() => {

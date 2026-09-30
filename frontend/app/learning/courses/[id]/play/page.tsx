@@ -1,6 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Spinner} from '@/components/ui/Spinner';
 import DOMPurify from 'dompurify';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -60,7 +61,7 @@ export default function CoursePlayerPage() {
   const {id} = useParams<{ id: string }>();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.TRAINING_VIEW,
@@ -68,10 +69,10 @@ export default function CoursePlayerPage() {
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const [activeContentId, setActiveContentId] = useState<string | null>(null);
   const [contentStatus, setContentStatus] = useState<ContentState>({});
@@ -155,7 +156,7 @@ export default function CoursePlayerPage() {
     }
   }, [enrollment, contentStatus, totalContents, updateProgressMutation]);
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   const navigateTo = (contentId: string) => {
     setActiveContentId(contentId);
@@ -387,8 +388,7 @@ export default function CoursePlayerPage() {
     return (
       <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="text-center">
-          <div
-            className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
+          <Spinner size="lg" label="Loading course player" className="mx-auto mb-4"/>
           <p className="text-[var(--text-muted)] text-sm">Loading course...</p>
         </div>
       </div>

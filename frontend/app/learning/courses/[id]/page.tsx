@@ -1,6 +1,7 @@
 'use client';
 
 import {useState} from 'react';
+import {Spinner} from '@/components/ui/Spinner';
 import Image from 'next/image';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import Link from 'next/link';
@@ -121,7 +122,7 @@ export default function CourseDetailPage() {
   if (isLoading) {
     return (
       <div className="page-shell-centered fade-slide-up auth-delay-20">
-        <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
+        <Spinner size="lg" label="Loading course"/>
       </div>
     );
   }

@@ -28,7 +28,7 @@ type ViewMode = 'month' | 'week';
 
 export default function AvailabilityCalendarPage() {
   const router = useRouter();
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.ALLOCATION_VIEW, Permissions.ALLOCATION_MANAGE);
 
   useEffect(() => {

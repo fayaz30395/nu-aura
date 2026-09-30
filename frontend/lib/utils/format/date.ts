@@ -3,9 +3,25 @@ import {format, formatDistanceToNow} from 'date-fns';
 /** Accepted shapes for date inputs: Date instance, ISO string, or epoch ms. */
 export type DateInput = Date | string | number;
 
-/** Normalize any {@link DateInput} into a Date. */
+/** Matches a bare calendar date with no time or offset component. */
+const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Normalize any {@link DateInput} into a Date.
+ *
+ * Date-only strings ('2026-05-15') are parsed as LOCAL midnight. Per the
+ * ECMAScript spec `new Date('2026-05-15')` is UTC midnight, which renders as the
+ * previous day for any viewer west of UTC — a stored calendar date must display
+ * as itself regardless of the viewer's timezone. Strings carrying a time or an
+ * offset keep native parsing, where the instant is genuinely meaningful.
+ */
 function toDate(d: DateInput): Date {
-  return d instanceof Date ? d : new Date(d);
+  if (d instanceof Date) return d;
+  if (typeof d === 'string' && DATE_ONLY.test(d)) {
+    const [y, m, day] = d.split('-').map(Number);
+    return new Date(y, m - 1, day);
+  }
+  return new Date(d);
 }
 
 /**

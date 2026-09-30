@@ -46,7 +46,7 @@ type DepartmentFormData = z.infer<typeof departmentSchema>;
 export default function DepartmentsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const toast = useToast();
 
   // Form state — ALL hooks must be called unconditionally before any returns

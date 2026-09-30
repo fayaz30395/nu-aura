@@ -24,7 +24,7 @@ import {formatDate} from '@/lib/utils/format/date';
 export default function LoanDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permissionsReady} = usePermissions();
   const loanId = params.id as string;
 
   useEffect(() => {

@@ -428,6 +428,10 @@ export default function ExpenseClaims() {
             setActiveTab('pending');
             setSelectedClaims(new Set());
           }}
+          onMyClaims={() => {
+            setActiveTab('my-claims');
+            setSelectedClaims(new Set());
+          }}
         />
 
         {statistics.overPolicyCount > 0 && (
@@ -704,11 +708,13 @@ function BentoNavigation({
   approvalsError,
   onSubmit,
   onApprovals,
+  onMyClaims,
 }: {
   approvalsWaiting: number;
   approvalsError: boolean;
   onSubmit: () => void;
   onApprovals: () => void;
+  onMyClaims: () => void;
 }) {
   const tiles: Array<{
     title: string;
@@ -722,8 +728,10 @@ function BentoNavigation({
       title: 'My claims',
       description: 'Drafts, submissions, and history of every receipt you have filed.',
       icon: Receipt,
-      onClick: () => undefined,
-      href: '#my-claims',
+      // BUG-E2: this was `onClick: () => undefined` plus a dead `#my-claims` anchor — a tile
+      // that looked clickable, shared its label with the real tab, and did nothing. It now
+      // selects the My claims view, the same way the approvals tile selects its own.
+      onClick: onMyClaims,
     },
     {
       title: 'Categories & policies',

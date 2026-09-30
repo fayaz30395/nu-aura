@@ -46,7 +46,7 @@ export default function UtilizationReportsPage() {
   const customStartDateId = useId();
   const customEndDateId = useId();
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
 
   // RBAC guard — redirect if user lacks required permission
   useEffect(() => {

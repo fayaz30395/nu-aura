@@ -29,7 +29,7 @@ interface CalendarDay {
 export default function LeaveCalendarPage() {
   const router = useRouter();
   const {user, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // A3: Permission gate — redirect if user lacks LEAVE:VIEW_SELF

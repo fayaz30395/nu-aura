@@ -74,7 +74,7 @@ export default function RecruitmentDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const toast = useToast();
-  const {hasAnyRole, isReady} = usePermissions();
+  const {hasAnyRole, isPermissionReady} = usePermissions();
 
   useEffect(() => {
     if (searchParams.get('denied') === '1') {
@@ -135,7 +135,7 @@ export default function RecruitmentDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isReady && !hasAccess) {
+  if (isPermissionReady && !hasAccess) {
     return (
       <AppLayout>
         <div className="mx-auto w-full max-w-3xl px-6 py-16 text-center space-y-6">

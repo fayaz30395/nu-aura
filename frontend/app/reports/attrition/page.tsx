@@ -1,6 +1,7 @@
 'use client';
 
 import {useState} from 'react';
+import {Spinner} from '@/components/ui/Spinner';
 import {AppLayout} from '@/components/layout';
 import {apiClient} from '@/lib/api/client';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
@@ -181,7 +182,7 @@ export default function AttritionReportPage() {
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
+            <Spinner size="lg" label="Loading attrition report"/>
           </div>
         ) : filtered.length === 0 ? (
           <div className="skeuo-card">

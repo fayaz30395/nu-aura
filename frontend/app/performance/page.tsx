@@ -55,7 +55,7 @@ interface DashboardStats {
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function PerformancePage() {
   const router = useRouter();
-  const {hasAnyRole, isReady} = usePermissions();
+  const {hasAnyRole, isPermissionReady} = usePermissions();
   const hasAccess = hasAnyRole(...PERFORMANCE_ALLOWED_ROLES);
 
   // All hooks called before any early return
@@ -92,7 +92,7 @@ export default function PerformancePage() {
   const hasError =
     goalsQuery.isError || cyclesQuery.isError || okrQuery.isError || pending360Query.isError;
 
-  if (isReady && !hasAccess) {
+  if (isPermissionReady && !hasAccess) {
     return (
       <AppLayout>
         <div className="mx-auto w-full max-w-3xl px-6 py-20 text-center space-y-6">

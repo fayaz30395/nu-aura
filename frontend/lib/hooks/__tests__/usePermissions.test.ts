@@ -1,3 +1,9 @@
+/**
+ * Tests for usePermissions hook — role-identity matrix (isAdmin/isHR/isManager per
+ * role code, TENANT_ADMIN without SYSTEM:ADMIN) and isReady/isPermissionReady across
+ * session-restore states. The older, broader suite lives alongside the source at
+ * ../usePermissions.test.ts; both are collected by vitest — keep them in sync.
+ */
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {renderHook} from '@testing-library/react';
 import {Permissions, Roles, usePermissions} from '../usePermissions';
@@ -299,10 +305,40 @@ describe('usePermissions', () => {
       expect(result.current.isReady).toBe(false);
     });
 
-    it('isReady is true when hydrated', () => {
-      mockUseAuth.mockReturnValue({user: null, hasHydrated: true});
+    it('isReady is true once hydrated AND the user object is loaded', () => {
+      mockAuthWith([{code: 'EMPLOYEE', permissions: []}]);
       const {result} = renderHook(() => usePermissions());
       expect(result.current.isReady).toBe(true);
+    });
+
+    // BUG-L3 regression. `isReady` intentionally stays TRUE for a visitor the store considers
+    // logged out — AuthGuard needs that, and tightening it deadlocks every page on
+    // "Session restoring". The safe-to-DENY signal is a separate flag, and it is the one a
+    // page must use before redirecting to ?denied=1 on a failed permission check; while the
+    // user object is absent `permissions` is [], so any deny decision taken then is wrong.
+    it('isReady stays true when hydrated and logged out (AuthGuard depends on this)', () => {
+      mockUseAuth.mockReturnValue({user: null, hasHydrated: true, isAuthenticated: false});
+      const {result} = renderHook(() => usePermissions());
+      expect(result.current.isReady).toBe(true);
+    });
+
+    it('isPermissionReady is false while the user object has not loaded yet', () => {
+      mockUseAuth.mockReturnValue({user: null, hasHydrated: true, isAuthenticated: false});
+      const {result} = renderHook(() => usePermissions());
+      expect(result.current.isPermissionReady).toBe(false);
+      expect(result.current.permissions).toEqual([]);
+    });
+
+    it('isPermissionReady is false mid session-restore (authenticated flag set, user null)', () => {
+      mockUseAuth.mockReturnValue({user: null, hasHydrated: true, isAuthenticated: true});
+      const {result} = renderHook(() => usePermissions());
+      expect(result.current.isPermissionReady).toBe(false);
+    });
+
+    it('isPermissionReady is true once the user object is loaded', () => {
+      mockAuthWith([{code: 'EMPLOYEE', permissions: []}]);
+      const {result} = renderHook(() => usePermissions());
+      expect(result.current.isPermissionReady).toBe(true);
     });
   });
 

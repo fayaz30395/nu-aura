@@ -180,6 +180,9 @@ export interface CreateExpenseItemRequest {
   isBillable?: boolean;
   projectCode?: string;
   notes?: string;
+  // BUG-E1: the receipt returned by POST /expenses/receipts/scan, persisted against the item.
+  receiptStoragePath?: string;
+  receiptFileName?: string;
 }
 
 // ─── Expense Advance ────────────────────────────────────────────────────────

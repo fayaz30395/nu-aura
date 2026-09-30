@@ -54,6 +54,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -74,6 +75,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -94,6 +96,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -120,6 +123,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -140,6 +144,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -160,6 +165,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -183,6 +189,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -205,6 +212,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -225,6 +233,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -245,6 +254,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -268,6 +278,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -290,6 +301,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -310,6 +322,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -332,6 +345,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(() => true),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -352,6 +366,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(() => false),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -374,6 +389,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(() => true),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -394,6 +410,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(() => false),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -416,6 +433,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -436,6 +454,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -456,6 +475,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: true,
+        isPermissionReady: true,
       });
 
       render(
@@ -465,6 +485,96 @@ describe('PermissionGate', () => {
       );
 
       expect(screen.queryByText('Combined Check Content')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('BUG-L3: readiness must gate the DENIAL, not just the render', () => {
+    /**
+     * The window that caused the intermittent "Access Restricted": the auth store has
+     * hydrated (`isReady` true, because AuthGuard needs it true for an anonymous visitor)
+     * but `user` has not landed yet, so `permissions` is still empty. Every check inside
+     * the gate evaluates false. If the gate decided on `isReady`, it rendered its fallback —
+     * a visible denial — at a user who is in fact authorized a tick later.
+     */
+    it('shows the loading state, NOT the fallback, when hydrated but the user is not loaded', () => {
+      mockUsePermissions.mockReturnValue({
+        hasPermission: vi.fn(() => false),
+        hasAnyPermission: vi.fn(() => false),
+        hasAllPermissions: vi.fn(() => false),
+        hasRole: vi.fn(() => false),
+        hasAnyRole: vi.fn(() => false),
+        hasAllRoles: vi.fn(() => false),
+        isAdmin: false,
+        isReady: true,            // hydrated
+        isPermissionReady: false, // ...but the user object has not arrived
+      });
+
+      render(
+        <PermissionGate
+          permission={Permissions.EMPLOYEE_CREATE}
+          fallback={<div>Access Restricted</div>}
+        >
+          <div>Protected Content</div>
+        </PermissionGate>
+      );
+
+      expect(screen.queryByText('Access Restricted')).not.toBeInTheDocument();
+      expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
+      expect(screen.getByRole('status')).toBeInTheDocument();
+    });
+
+    it('denies once the user IS loaded and genuinely lacks the permission', () => {
+      mockUsePermissions.mockReturnValue({
+        hasPermission: vi.fn(() => false),
+        hasAnyPermission: vi.fn(() => false),
+        hasAllPermissions: vi.fn(() => false),
+        hasRole: vi.fn(() => false),
+        hasAnyRole: vi.fn(() => false),
+        hasAllRoles: vi.fn(() => false),
+        isAdmin: false,
+        isReady: true,
+        isPermissionReady: true,
+      });
+
+      render(
+        <PermissionGate
+          permission={Permissions.EMPLOYEE_CREATE}
+          fallback={<div>Access Restricted</div>}
+        >
+          <div>Protected Content</div>
+        </PermissionGate>
+      );
+
+      expect(screen.getByText('Access Restricted')).toBeInTheDocument();
+    });
+
+    it.each([
+      ['AdminGate', AdminGate],
+      ['HRGate', HRGate],
+      ['ManagerGate', ManagerGate],
+    ])('%s renders nothing rather than its fallback before the user is loaded', (_name, Gate) => {
+      mockUsePermissions.mockReturnValue({
+        hasPermission: vi.fn(() => false),
+        hasAnyPermission: vi.fn(() => false),
+        hasAllPermissions: vi.fn(() => false),
+        hasRole: vi.fn(() => false),
+        hasAnyRole: vi.fn(() => false),
+        hasAllRoles: vi.fn(() => false),
+        isAdmin: false,
+        isHR: false,
+        isManager: false,
+        isReady: true,
+        isPermissionReady: false,
+      });
+
+      render(
+        <Gate fallback={<div>Access Restricted</div>}>
+          <div>Gated Content</div>
+        </Gate>
+      );
+
+      expect(screen.queryByText('Access Restricted')).not.toBeInTheDocument();
+      expect(screen.queryByText('Gated Content')).not.toBeInTheDocument();
     });
   });
 
@@ -478,6 +588,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: false,
+        isPermissionReady: false,
       });
 
       render(
@@ -498,6 +609,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: false,
+        isPermissionReady: false,
       });
 
       render(
@@ -518,6 +630,7 @@ describe('PermissionGate', () => {
         hasAnyRole: vi.fn(),
         hasAllRoles: vi.fn(),
         isReady: false,
+        isPermissionReady: false,
       });
 
       render(
@@ -553,6 +666,7 @@ describe('AdminGate', () => {
       hasAllRoles: vi.fn(),
       isAdmin: true,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -574,6 +688,7 @@ describe('AdminGate', () => {
       hasAllRoles: vi.fn(),
       isAdmin: false,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -595,6 +710,7 @@ describe('AdminGate', () => {
       hasAllRoles: vi.fn(),
       isAdmin: false,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -616,6 +732,7 @@ describe('AdminGate', () => {
       hasAllRoles: vi.fn(),
       isAdmin: true,
       isReady: false,
+      isPermissionReady: false,
     });
 
     render(
@@ -643,6 +760,7 @@ describe('HRGate', () => {
       hasAllRoles: vi.fn(),
       isHR: true,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -664,6 +782,7 @@ describe('HRGate', () => {
       hasAllRoles: vi.fn(),
       isHR: false,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -685,6 +804,7 @@ describe('HRGate', () => {
       hasAllRoles: vi.fn(),
       isHR: false,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -706,6 +826,7 @@ describe('HRGate', () => {
       hasAllRoles: vi.fn(),
       isHR: true,
       isReady: false,
+      isPermissionReady: false,
     });
 
     render(
@@ -733,6 +854,7 @@ describe('ManagerGate', () => {
       hasAllRoles: vi.fn(),
       isManager: true,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -754,6 +876,7 @@ describe('ManagerGate', () => {
       hasAllRoles: vi.fn(),
       isManager: false,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -775,6 +898,7 @@ describe('ManagerGate', () => {
       hasAllRoles: vi.fn(),
       isManager: false,
       isReady: true,
+      isPermissionReady: true,
     });
 
     render(
@@ -796,6 +920,7 @@ describe('ManagerGate', () => {
       hasAllRoles: vi.fn(),
       isManager: true,
       isReady: false,
+      isPermissionReady: false,
     });
 
     render(

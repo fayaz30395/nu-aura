@@ -17,7 +17,7 @@ type TabType = 'wiki' | 'blog' | 'favorites';
 
 export default function MyContentPage() {
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const [activeTab, setActiveTab] = useState<TabType>('wiki');
 
   // A3: Permission gate — redirect if user lacks KNOWLEDGE:WIKI_READ
@@ -175,12 +175,14 @@ export default function MyContentPage() {
                 <WikiPageList
                   pages={myWikiPages}
                   onNavigate={(id) => router.push(`/fluence/wiki/${id}`)}
+                  onCreate={() => router.push('/fluence/wiki/new')}
                 />
               )}
               {activeTab === 'blog' && (
                 <BlogPostList
                   posts={myBlogPosts}
                   onNavigate={(id) => router.push(`/fluence/blogs/${id}`)}
+                  onCreate={() => router.push('/fluence/blogs/new')}
                 />
               )}
               {activeTab === 'favorites' && (
@@ -241,9 +243,11 @@ function StatCard({icon: Icon, label, value, variant}: StatCardProps) {
 function WikiPageList({
                         pages,
                         onNavigate,
+                        onCreate,
                       }: {
   pages: WikiPage[];
   onNavigate: (id: string) => void;
+  onCreate: () => void;
 }) {
   if (pages.length === 0) {
     return (
@@ -252,9 +256,10 @@ function WikiPageList({
         title="No wiki pages yet"
         description="Create your first wiki page to get started"
         actionLabel="New Page"
-        onAction={() => {
-          // Navigate to new page (handled by parent)
-        }}
+        // BUG-F1: this used to be an empty handler with a comment claiming the parent
+        // handled it; nothing did. The one user guaranteed to see this empty state is a
+        // brand-new user, and the primary CTA did nothing when clicked.
+        onAction={onCreate}
       />
     );
   }
@@ -291,9 +296,11 @@ function WikiPageList({
 function BlogPostList({
                         posts,
                         onNavigate,
+                        onCreate,
                       }: {
   posts: BlogPost[];
   onNavigate: (id: string) => void;
+  onCreate: () => void;
 }) {
   if (posts.length === 0) {
     return (
@@ -302,9 +309,7 @@ function BlogPostList({
         title="No blog posts yet"
         description="Write your first blog post to share with the team"
         actionLabel="New Post"
-        onAction={() => {
-          // Navigate to new post (handled by parent)
-        }}
+        onAction={onCreate}
       />
     );
   }

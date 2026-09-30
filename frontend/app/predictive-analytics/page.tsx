@@ -556,7 +556,7 @@ const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
 export default function PredictiveAnalyticsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [selectedYear] = useState(new Date().getFullYear());
 

@@ -81,7 +81,7 @@ const STATE_OPTIONS = [
 export default function StatutoryPage() {
 
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
 
   // RBAC guard — redirect if user lacks required permission
   useEffect(() => {

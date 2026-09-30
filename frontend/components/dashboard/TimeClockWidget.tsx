@@ -98,7 +98,7 @@ export function TimeClockWidget({
             <div className="flex items-center justify-center w-6 h-6 rounded-aura-sm bg-[var(--info-bg)]">
               <Clock className="h-3.5 w-3.5 text-[var(--info-fg)]"/>
             </div>
-            <span className="text-aura-micro text-[var(--text-3)]">
+            <span data-testid="live-time" className="text-aura-micro text-[var(--text-3)]">
               {dateDisplay}
             </span>
           </div>
@@ -113,7 +113,7 @@ export function TimeClockWidget({
 
         {/* Time Display — large monospace with accent period */}
         <div className="mb-6">
-          <div className="flex items-baseline gap-1.5">
+          <div data-testid="live-time" className="flex items-baseline gap-1.5">
             <span
               className="text-aura-stat text-[var(--text-1)] tracking-tight leading-none num">
               {timeValue}

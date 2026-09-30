@@ -316,7 +316,7 @@ function InlineRoleEditor({employee, onClose}: { employee: Employee; onClose: ()
 // Main Page
 // ──────────────────────────────────────────────
 export default function AdminEmployeesPage() {
-  const {hasAnyPermission, isAdmin, isReady} = usePermissions();
+  const {hasAnyPermission, isAdmin, isPermissionReady} = usePermissions();
   useEffect(() => {
     document.title = 'Admin · Employees | NU-AURA';
   }, []);
@@ -378,7 +378,7 @@ export default function AdminEmployeesPage() {
   const selectedRoleCodes = watch('roleCodes');
 
   // RBAC guard — only SuperAdmin or users with employee create/update permission
-  if (isReady && !isAdmin && !hasAnyPermission(Permissions.EMPLOYEE_CREATE, Permissions.EMPLOYEE_UPDATE)) {
+  if (isPermissionReady && !isAdmin && !hasAnyPermission(Permissions.EMPLOYEE_CREATE, Permissions.EMPLOYEE_UPDATE)) {
     return (
       <AdminPageContent className="page-shell p-8 flex items-center justify-center h-[60vh]">
         <div className="text-center space-y-4">

@@ -51,7 +51,7 @@ type TaxDeclarationFormData = z.infer<typeof taxDeclarationSchema>;
 export default function TaxDeclarationsPage() {
   const router = useRouter();
   const {user, isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isReady: permissionsReady, isPermissionReady} = usePermissions();
   const [modalOpen, setModalOpen] = useState(false);
 
   // BUG-L6-004: Page-level permission gate for tax declarations
@@ -174,7 +174,9 @@ export default function TaxDeclarationsPage() {
   ));
 
   // Permission guard
-  if (!hasHydrated || !permissionsReady || (!hasPermission(Permissions.TDS_DECLARE) && !hasPermission(Permissions.STATUTORY_VIEW))) {
+  // BUG-L3: deny needs the user object loaded; permissionsReady (isReady) is true for a
+  // visitor the store considers logged out, when permissions are still empty.
+  if (!hasHydrated || !isPermissionReady || (!hasPermission(Permissions.TDS_DECLARE) && !hasPermission(Permissions.STATUTORY_VIEW))) {
     return null;
   }
 

@@ -131,7 +131,7 @@ const EMPTY_SEARCH_RESULT = {content: [] as Employee[], totalPages: 0, totalElem
 export default function TeamDirectory() {
   const router = useRouter();
   useAuth();
-  const {hasAnyPermission, isReady: permReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permReady} = usePermissions();
   // A3: Permission gate — directory requires VIEW_ALL or VIEW_TEAM
   useEffect(() => {
     if (!permReady) return;

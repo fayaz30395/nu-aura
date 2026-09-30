@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
+import {Spinner} from '@/components/ui/Spinner';
 import {useRouter} from 'next/navigation';
 import {logger} from '@/lib/utils/logger';
 import Link from 'next/link';
@@ -32,7 +33,10 @@ import {formatDate} from '@/lib/utils/format/date';
 export default function CertificateGalleryPage() {
   const router = useRouter();
   const toast = useToast();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  // BUG-L3: deny only once the user object is loaded — isReady is true for a visitor the
+  // store considers logged out, and permissions are [] in that window, so gating the redirect
+  // on isReady bounced legitimate employees to ?denied=1.
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const [searchQuery, setSearchQuery] = useState('');
 
   // A3: Permission gate — redirect if user lacks LMS:CERTIFICATE_VIEW
@@ -200,8 +204,7 @@ export default function CertificateGalleryPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div
-                className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
+              <Spinner size="lg" label="Loading certificates" className="mx-auto mb-4"/>
               <p className="text-[var(--text-muted)]">Loading certificates...</p>
             </div>
           </div>

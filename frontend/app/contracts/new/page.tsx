@@ -31,16 +31,16 @@ type ContractFormData = z.infer<typeof contractFormSchema>;
 
 export default function CreateContractPage() {
   const router = useRouter();
-  const {hasPermission, isReady} = usePermissions();
+  const {hasPermission, isPermissionReady} = usePermissions();
   const createMutation = useCreateContract();
 
   const hasAccess = hasPermission(Permissions.CONTRACT_CREATE);
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const {register, control, handleSubmit, formState: {errors, isSubmitting, isDirty}} = useForm<ContractFormData>({
     resolver: zodResolver(contractFormSchema),
@@ -56,7 +56,7 @@ export default function CreateContractPage() {
 
   useUnsavedChanges(isDirty);
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   const onSubmit = async (data: ContractFormData) => {
     try {

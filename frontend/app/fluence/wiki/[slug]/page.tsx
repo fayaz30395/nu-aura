@@ -425,17 +425,17 @@ export default function WikiPageDetailPage() {
   const pageId = params.slug as string;
   const {user} = useAuth();
   const [commentText, setCommentText] = useState('');
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_WIKI_READ,
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
@@ -663,7 +663,7 @@ export default function WikiPageDetailPage() {
     [page, restoreRevision]
   );
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   const canEdit =
     page?.canEdit || page?.authorId === user?.id || page?.editorIds?.includes(user?.id || '');

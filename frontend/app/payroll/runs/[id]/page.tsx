@@ -47,7 +47,7 @@ export default function PayrollRunDetailPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const runId = params?.id ?? '';
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
 
   useEffect(() => {
     if (!permReady) return;

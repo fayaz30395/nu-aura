@@ -63,7 +63,7 @@ const COLORS = [
 export default function ExecutiveDashboardPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isReady: permissionsReady, isPermissionReady} = usePermissions();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   const {data, isLoading: loading, error, refetch} = useExecutiveDashboard(
@@ -172,7 +172,9 @@ export default function ExecutiveDashboardPage() {
   );
 
   // DEF-35/DEF-36: Don't render any dashboard content until permission is confirmed
-  if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.DASHBOARD_EXECUTIVE)) {
+  // BUG-L3: deny needs the user object loaded; permissionsReady (isReady) is true for a
+  // visitor the store considers logged out, when permissions are still empty.
+  if (!hasHydrated || !isPermissionReady || !hasPermission(Permissions.DASHBOARD_EXECUTIVE)) {
     return null;
   }
 

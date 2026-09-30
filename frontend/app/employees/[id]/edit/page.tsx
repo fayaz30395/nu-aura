@@ -79,7 +79,7 @@ export default function EditEmployeePage() {
   const router = useRouter();
   const params = useParams();
   const employeeId = params.id as string;
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permissionsReady} = usePermissions();
 
   // DEF-43: Redirect unauthorized users — prevents PII exposure in pre-populated form
   useEffect(() => {

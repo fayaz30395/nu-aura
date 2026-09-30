@@ -40,7 +40,7 @@ export default function AdminLayoutInner({
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const {roles, hasPermission, isReady} = usePermissions();
+  const {roles, hasPermission, isPermissionReady} = usePermissions();
   const {user} = useAuth();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
@@ -75,14 +75,14 @@ export default function AdminLayoutInner({
       hasPermission(Permissions.SETTINGS_UPDATE),
     [isSuperAdmin, roles, hasPermission]
   );
-  const {data: unreadCount} = useUnreadNotificationCount(isReady && hasAdminAccess);
+  const {data: unreadCount} = useUnreadNotificationCount(isPermissionReady && hasAdminAccess);
 
   // Redirect unauthorized users after hydration
   useEffect(() => {
-    if (isReady && !hasAdminAccess) {
+    if (isPermissionReady && !hasAdminAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAdminAccess, router]);
+  }, [isPermissionReady, hasAdminAccess, router]);
 
   // Get primary user role for display
   const userRoleDisplay = useMemo(() => {
@@ -276,7 +276,7 @@ export default function AdminLayoutInner({
   // `JSON.stringify(permissions)` dep hack (which serialized the whole permission
   // array on every render just to diff it).
   const filteredSidebarItems = useMemo(() => {
-    if (!isReady) {
+    if (!isPermissionReady) {
       // During hydration, show the raw menu to avoid flicker
       return sidebarItems;
     }
@@ -309,7 +309,7 @@ export default function AdminLayoutInner({
     return sidebarItems
       .map((item) => filterItem(item))
       .filter((item): item is SidebarItem => item !== null);
-  }, [sidebarItems, isReady, isSuperAdmin, hasPermission]);
+  }, [sidebarItems, isPermissionReady, isSuperAdmin, hasPermission]);
 
   // Get active item ID from current pathname
   const getActiveId = () => {
@@ -410,7 +410,7 @@ export default function AdminLayoutInner({
 
           {/* Scrollable content area */}
           <main className="flex-1 overflow-auto bg-[var(--bg-page)]">
-            {!isReady ? (
+            {!isPermissionReady ? (
               <div className="page-shell-centered fade-slide-up">
                 <div
                   className="page-shell-card w-full max-w-3xl border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] p-6"

@@ -36,7 +36,7 @@ const DeleteConfirmModal = dynamic(
 
 export default function SalaryStructuresPage() {
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
 
   useEffect(() => {
     if (!permReady) return;

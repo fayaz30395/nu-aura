@@ -37,7 +37,7 @@ interface ConflictLog {
 
 export default function ResourceConflictsPage() {
   const router = useRouter();
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.ALLOCATION_VIEW, Permissions.PROJECT_MANAGE);
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {Spinner} from '@/components/ui/Spinner';
 import {notFound, useParams} from 'next/navigation';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import Link from 'next/link';
@@ -234,8 +235,7 @@ export default function QuizPage() {
     return (
       <div className="page-shell-centered fade-slide-up auth-delay-20">
         <div className="text-center">
-          <div
-            className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full mx-auto mb-4"/>
+          <Spinner size="lg" label="Loading quiz" className="mx-auto mb-4"/>
           <p className="text-[var(--text-muted)]">Loading quiz...</p>
         </div>
       </div>

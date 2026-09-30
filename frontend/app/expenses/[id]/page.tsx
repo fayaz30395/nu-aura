@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
+import {apiConfig} from '@/lib/config';
 import {useParams, useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
@@ -70,7 +71,7 @@ const STATUS_CONFIG: Record<ExpenseStatus, { color: string; icon: typeof Clock; 
 export default function ExpenseDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permissionsReady} = usePermissions();
   const {user} = useAuth();
   const claimId = params.id as string;
 
@@ -92,6 +93,9 @@ export default function ExpenseDetailPage() {
   const rejectMutation = useRejectExpenseClaim();
 
   const [showAddItem, setShowAddItem] = useState(false);
+  // BUG-E1: the receipt uploaded by the scanner, held until the item is created.
+  const [pendingReceipt, setPendingReceipt] =
+    useState<{storagePath: string; fileName: string} | null>(null);
   const [showReceiptScanner, setShowReceiptScanner] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
@@ -113,10 +117,24 @@ export default function ExpenseDetailPage() {
 
   const onAddItem = (data: ItemFormData) => {
     addItemMutation.mutate(
-      {claimId, data: {...data, currency: 'INR'} as CreateExpenseItemRequest},
+      {
+        claimId,
+        data: {
+          ...data,
+          currency: 'INR',
+          // BUG-E1: the scanned receipt used to be thrown away here — the upload succeeded
+          // (once the storage category was fixed) but nothing ever reached the API, so the
+          // claim detail page had no receiptFileName to render and the file was orphaned.
+          ...(pendingReceipt && {
+            receiptStoragePath: pendingReceipt.storagePath,
+            receiptFileName: pendingReceipt.fileName,
+          }),
+        } as CreateExpenseItemRequest,
+      },
       {
         onSuccess: () => {
           setShowAddItem(false);
+          setPendingReceipt(null);
           resetForm();
         },
       }
@@ -125,6 +143,9 @@ export default function ExpenseDetailPage() {
 
   const onReceiptConfirm = (ocrData: ConfirmedOcrData) => {
     setShowReceiptScanner(false);
+    if (ocrData.receiptStoragePath) {
+      setPendingReceipt({storagePath: ocrData.receiptStoragePath, fileName: ocrData.receiptFileName});
+    }
     // Pre-fill the add item form with OCR data and open it
     resetForm({
       description: ocrData.merchantName ? `Receipt from ${ocrData.merchantName}` : 'Scanned receipt',
@@ -315,10 +336,18 @@ export default function ExpenseDetailPage() {
                     {formatCurrency(item.amount, item.currency)}
                   </p>
                   {item.receiptFileName && (
-                    <span className="text-xs text-accent-600 flex items-center gap-1">
+                    /* BUG-E1: the filename was rendered as dead text — there was no endpoint
+                       an employee could use to open it (the /files route needs DOCUMENT:VIEW,
+                       which employees do not hold). */
+                    <a
+                      href={`${apiConfig.baseUrl}/expenses/claims/${claimId}/items/${item.id}/receipt`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-accent-600 hover:text-accent-700 underline flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
+                    >
                       <FileText className="w-3 h-3"/>
                       {item.receiptFileName}
-                    </span>
+                    </a>
                   )}
                   {isDraft && isOwner && (
                     <button

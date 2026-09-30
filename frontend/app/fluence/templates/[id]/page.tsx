@@ -59,17 +59,17 @@ export default function TemplateDetailPage() {
   const [showInstantiateModal, setShowInstantiateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_TEMPLATE_READ,
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const {data: template, isLoading} = useFluenceTemplate(templateId, !!templateId);
   const {data: spacesData} = useWikiSpaces(0, 100);
@@ -195,7 +195,7 @@ export default function TemplateDetailPage() {
     });
   }, [template, deleteTemplate, router]);
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   if (isLoading) {
     return (

@@ -157,7 +157,7 @@ function SkeletonLogRow() {
 // ════════════════════════════════════════════════════════════════════
 export default function MyAttendancePage() {
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const [activeTab, setActiveTab] = useState<TabView>('log');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());

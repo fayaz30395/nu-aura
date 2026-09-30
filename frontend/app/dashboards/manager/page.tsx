@@ -92,7 +92,7 @@ const statusBadgeStyles: Record<string, string> = {
 export default function ManagerDashboardPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isReady: permissionsReady, isPermissionReady} = usePermissions();
   const hasManagerAccess = hasPermission(Permissions.EMPLOYEE_VIEW_TEAM);
   const {data: dashboardData, isLoading: loading, error} = useManagerDashboard(
     hasHydrated && isAuthenticated && hasManagerAccess
@@ -116,7 +116,9 @@ export default function ManagerDashboardPage() {
     }
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 
-  if (!hasHydrated || !permissionsReady || !hasManagerAccess) {
+  // BUG-L3: deny needs the user object loaded; permissionsReady (isReady) is true for a
+  // visitor the store considers logged out, when permissions are still empty.
+  if (!hasHydrated || !isPermissionReady || !hasManagerAccess) {
     return null;
   }
 

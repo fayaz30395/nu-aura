@@ -81,7 +81,7 @@ type ScheduledReportFormData = z.infer<typeof scheduledReportFormSchema>;
 export default function ScheduledReportsPage() {
   const router = useRouter();
   const toast = useToast();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const formModalTitleId = useId();
   const deleteModalTitleId = useId();
   const [showModal, setShowModal] = useState(false);

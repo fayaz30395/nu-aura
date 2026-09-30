@@ -35,7 +35,7 @@ type ConfigFormData = z.infer<typeof configFormSchema>;
 export default function PaymentConfigPage() {
   const router = useRouter();
   const {hasHydrated} = useAuth();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
 
   // All hooks must be called unconditionally before any early returns
   const {data: configs = []} = useAllPaymentConfigs();

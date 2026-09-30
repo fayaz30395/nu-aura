@@ -181,7 +181,7 @@ export default function EmployeeDetailPage() {
 
   // Scope guard: EMPLOYEE_VIEW_SELF holders may only view their own profile
   const {user} = useAuth();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
   const canViewAny =
     hasPermission(Permissions.EMPLOYEE_VIEW_ALL) ||
     hasPermission(Permissions.EMPLOYEE_VIEW_DEPARTMENT) ||

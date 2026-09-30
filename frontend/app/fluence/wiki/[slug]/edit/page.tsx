@@ -44,17 +44,17 @@ export default function EditWikiPage() {
   const pageId = params.slug as string;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editorSearchQuery, setEditorSearchQuery] = useState('');
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_WIKI_UPDATE,
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const {data: page, isLoading} = useWikiPage(pageId, !!pageId);
   const {mutate: updateWikiPage} = useUpdateWikiPage();
@@ -104,7 +104,7 @@ export default function EditWikiPage() {
 
   const visibility = watch('visibility');
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   const editorOptions = searchedEmployees.map((emp) => ({
     value: emp.id,

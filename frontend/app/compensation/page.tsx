@@ -84,7 +84,7 @@ const revisionTypeLabels: Record<RevisionType, string> = {
 export default function CompensationPage() {
 
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
 
   // RBAC guard — redirect if user lacks required permission
   useEffect(() => {

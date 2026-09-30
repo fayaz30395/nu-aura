@@ -664,7 +664,8 @@ const BentoHero = memo(function BentoHero({
             </p>
           </div>
           <div className="text-right">
-            <p className="font-mono text-3xl sm:text-4xl font-semibold tabular-nums text-[var(--text-heading)]">
+            <p data-testid="live-time"
+               className="font-mono text-3xl sm:text-4xl font-semibold tabular-nums text-[var(--text-heading)]">
               {currentTime.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})}
             </p>
             <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] mt-1">

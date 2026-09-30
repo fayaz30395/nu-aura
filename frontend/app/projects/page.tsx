@@ -404,7 +404,7 @@ export default function ProjectsPage() {
   const router = useRouter();
   const {user} = useAuth();
   const toast = useToast();
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE);
 
   useEffect(() => {

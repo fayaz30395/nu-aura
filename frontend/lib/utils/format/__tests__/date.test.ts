@@ -25,12 +25,52 @@ describe('format/date', () => {
 
   describe('formatDate', () => {
     it('formats a date string as "MMM d, yyyy"', () => {
-      // Date-only strings parse as local midnight in date-fns
+      // Date-only strings are parsed as LOCAL midnight, not UTC midnight.
       expect(formatDate('2026-05-15')).toBe('May 15, 2026');
     });
 
     it('formats a Date instance', () => {
       expect(formatDate(anchor(5, 15, 2026))).toBe('May 15, 2026');
+    });
+
+    // Regression: `new Date('2026-05-15')` is UTC midnight per spec, which renders
+    // as the previous day for any viewer west of UTC. A stored calendar date must
+    // display as itself in every timezone. Run under TZ=UTC and TZ=America/Sao_Paulo
+    // (and anything east, e.g. Asia/Tokyo) — all must agree.
+    it('renders a date-only string as the same calendar day in any timezone', () => {
+      expect(formatDate('2026-05-15')).toBe('May 15, 2026');
+      expect(formatDate('2026-01-01')).toBe('Jan 1, 2026');
+      expect(formatDate('2026-12-31')).toBe('Dec 31, 2026');
+    });
+
+    it('does not shift a date-only string across a year boundary', () => {
+      // The failure mode this guards: '2026-01-01' becoming 'Dec 31, 2025'.
+      expect(formatDate('2026-01-01')).not.toBe('Dec 31, 2025');
+    });
+
+    it('still honours the instant for strings that carry a time or offset', () => {
+      // These describe a real instant, so native parsing is correct and preserved.
+      const withZ = formatDate('2026-05-15T12:00:00Z');
+      expect(withZ).toMatch(/^May 1[456], 2026$/);
+      expect(formatDate(new Date(2026, 4, 15, 12, 0, 0))).toBe('May 15, 2026');
+    });
+  });
+
+  describe('date-only handling across helpers', () => {
+    it('formatDateShort keeps the calendar day', () => {
+      expect(formatDateShort('2026-05-15')).toBe('May 15');
+    });
+
+    it('formatDateRange keeps both endpoints on their calendar days', () => {
+      expect(formatDateRange('2026-05-15', '2026-05-22')).toBe(
+        'May 15 – May 22, 2026'
+      );
+    });
+
+    it('formatDateRange keeps the year split correct across a boundary', () => {
+      expect(formatDateRange('2025-12-30', '2026-01-03')).toBe(
+        'Dec 30, 2025 – Jan 3, 2026'
+      );
     });
   });
 

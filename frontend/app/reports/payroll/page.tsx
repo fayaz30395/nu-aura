@@ -14,7 +14,7 @@ import {useDownloadPayrollReport} from '@/lib/hooks/queries/useReports';
 export default function PayrollReportsPage() {
 
   const router = useRouter();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
 
   // RBAC guard — redirect if user lacks required permission
   useEffect(() => {

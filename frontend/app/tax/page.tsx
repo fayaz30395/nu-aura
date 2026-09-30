@@ -15,7 +15,7 @@ import type {DeclarationStatus, TaxDeclarationResponse} from '@/lib/types/hrms/t
 export default function TaxOverviewPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasPermission, isReady: permissionsReady} = usePermissions();
+  const {hasPermission, isReady: permissionsReady, isPermissionReady} = usePermissions();
 
   // BUG-L6-003: Page-level permission gate for tax overview
   useEffect(() => {
@@ -86,7 +86,9 @@ export default function TaxOverviewPage() {
   const recentDeclarations = safeDeclarations.slice(0, 5);
 
   // Permission guard
-  if (!hasHydrated || !permissionsReady || !hasPermission(Permissions.STATUTORY_VIEW)) {
+  // BUG-L3: deny needs the user object loaded; permissionsReady (isReady) is true for a
+  // visitor the store considers logged out, when permissions are still empty.
+  if (!hasHydrated || !isPermissionReady || !hasPermission(Permissions.STATUTORY_VIEW)) {
     return null;
   }
 

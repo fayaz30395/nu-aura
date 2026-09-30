@@ -594,8 +594,13 @@ interface UsePermissionsReturn {
   isHR: boolean;
   /** Check if user has manager privileges */
   isManager: boolean;
-  /** Check if the auth state has been hydrated */
+  /** Check if the auth state has been hydrated (safe to RENDER) */
   isReady: boolean;
+  /**
+   * True once the user object is actually loaded (safe to DENY). Pages that redirect on a
+   * failed permission check must use this — see BUG-L3 in the implementation.
+   */
+  isPermissionReady: boolean;
 }
 
 /**
@@ -624,6 +629,18 @@ export function usePermissions(): UsePermissionsReturn {
   // but the user object hasn't loaded yet, keep isReady=false so that PermissionGate,
   // AuthGuard, and page-level checks show a loading state instead of denying access.
   const isReady = hasHydrated && (!isAuthenticated || !!user);
+
+  // BUG-L3: `isReady` is TRUE for a visitor the store considers logged out, because AuthGuard
+  // needs it that way — tightening it to require a user deadlocks AuthGuard's own loading
+  // branch (see components/auth/AuthGuard.tsx:99-102) and every page hangs on
+  // "Session restoring". But a page that DENIES access must not decide on an empty role set:
+  // while `user` is absent, `permissions` is [], so `isReady && !hasPermission(X)` reads as
+  // "denied" and bounces the user to ?denied=1 — the intermittent "Access Restricted" on a
+  // page the same user could open a second later.
+  //
+  // So: `isReady` means "safe to render", `isPermissionReady` means "safe to deny". Any page
+  // that redirects on a failed permission check must gate on THIS flag, not on isReady.
+  const isPermissionReady = hasHydrated && !!user;
 
   // Extract all permission codes from user's roles
   // Normalizes app-prefixed permissions (e.g., "HRMS:EMPLOYEE:READ" -> "EMPLOYEE:READ")
@@ -781,6 +798,7 @@ export function usePermissions(): UsePermissionsReturn {
     isHR,
     isManager,
     isReady,
+    isPermissionReady,
   };
 }
 

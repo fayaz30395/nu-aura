@@ -91,7 +91,7 @@ const VISIBILITY_OPTIONS: {
 export default function SearchPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_WIKI_READ,
@@ -99,10 +99,10 @@ export default function SearchPage() {
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   // ─── Search state ───────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
@@ -189,7 +189,7 @@ export default function SearchPage() {
     inputRef.current?.focus();
   }, []);
 
-  if (!isReady) {
+  if (!isPermissionReady) {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-[calc(100dvh-200px)]">

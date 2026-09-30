@@ -13,15 +13,15 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function ContractTemplatesPage() {
   const router = useRouter();
-  const {hasPermission, isReady} = usePermissions();
+  const {hasPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasPermission(Permissions.CONTRACT_VIEW);
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -30,7 +30,7 @@ export default function ContractTemplatesPage() {
   const {data: templatesData, isLoading, isError} = useTemplates({page, size: 20});
   const deleteMutation = useDeleteTemplate();
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   const templates = templatesData?.content || [];
 

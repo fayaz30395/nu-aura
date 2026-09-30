@@ -73,7 +73,7 @@ type TimeRange = '7d' | '30d' | '90d' | 'custom';
 export default function AnalyticsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyPermission, isReady: permReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permReady} = usePermissions();
   const [timeRange, setTimeRange] = useState<TimeRange>('30d');
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');

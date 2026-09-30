@@ -1,5 +1,9 @@
 /**
- * Tests for usePermissions hook
+ * Tests for usePermissions hook — permission/role extraction, MANAGE hierarchy,
+ * 3-part prefix normalization, and the Permissions/Roles constant contract.
+ * A second suite in ./__tests__/usePermissions.test.ts covers the role-identity
+ * matrix (TENANT_ADMIN vs SYSTEM:ADMIN, TEAM_LEAD/DEPARTMENT_MANAGER) and the
+ * isPermissionReady session-restore states; both run — keep them in sync.
  * Run with: npx vitest run lib/hooks/usePermissions.test.ts
  */
 
@@ -617,6 +621,20 @@ describe('usePermissions', () => {
       const {result} = renderHook(() => usePermissions());
 
       expect(result.current.isReady).toBe(true);
+    });
+
+    // BUG-L3: the safe-to-DENY signal. A page that redirects on a failed permission check must
+    // wait for the user object; `permissions` is [] until then, so denying on isReady alone
+    // bounced legitimate users to ?denied=1.
+    it('should return false for isPermissionReady until the user object loads', () => {
+      mockUseAuth.mockReturnValue({
+        user: null,
+        hasHydrated: true,
+      });
+
+      const {result} = renderHook(() => usePermissions());
+
+      expect(result.current.isPermissionReady).toBe(false);
     });
 
     it('should return false when user exists but not hydrated', () => {

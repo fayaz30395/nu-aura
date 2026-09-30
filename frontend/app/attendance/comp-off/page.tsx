@@ -76,7 +76,7 @@ export default function CompOffPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.ATTENDANCE_VIEW_SELF,
@@ -85,10 +85,10 @@ export default function CompOffPage() {
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const [activeTab, setActiveTab] = useState<'my' | 'pending'>('my');
   const [pendingPage, setPendingPage] = useState(0);
@@ -151,7 +151,7 @@ export default function CompOffPage() {
     },
   });
 
-  if (!isReady) {
+  if (!isPermissionReady) {
     return <CompOffGate message="Preparing comp-off workspace..."/>;
   }
 

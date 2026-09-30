@@ -13,15 +13,15 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 export default function ContractDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const {hasPermission, isReady} = usePermissions();
+  const {hasPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasPermission(Permissions.CONTRACT_VIEW);
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const contractId = params.id as string;
 
@@ -30,7 +30,7 @@ export default function ContractDetailPage() {
   const terminateMutation = useTerminateContract();
   const markActiveMutation = useMarkAsActive();
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   if (isLoading) {
     return (

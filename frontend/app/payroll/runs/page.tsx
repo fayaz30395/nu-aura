@@ -39,7 +39,7 @@ const DeleteConfirmModal = dynamic(
 
 export default function PayrollRunsPage() {
   const router = useRouter();
-  const {hasAnyPermission, isReady: permReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permReady} = usePermissions();
   const canAccessPayrollRuns = hasAnyPermission(
     Permissions.PAYROLL_VIEW_ALL,
     Permissions.PAYROLL_PROCESS,

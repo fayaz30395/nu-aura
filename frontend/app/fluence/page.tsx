@@ -38,7 +38,7 @@ interface ActivityItem {
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function FluencePage() {
   const router = useRouter();
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_WIKI_READ,

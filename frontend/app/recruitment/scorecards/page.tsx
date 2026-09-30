@@ -245,16 +245,16 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
 export default function ScorecardsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
   const [panelTemplate, setPanelTemplate] = useState<ScorecardTemplateResponse | null | 'new'>(null);
 
   const canViewScorecards = hasAnyPermission('SCORECARD:VIEW');
-  const canLoadPage = isReady && canViewScorecards;
+  const canLoadPage = isPermissionReady && canViewScorecards;
 
   const {data: templates, isLoading} = useListTemplates1({query: {enabled: canLoadPage && isAuthenticated && hasHydrated}});
   const list: ScorecardTemplateResponse[] = Array.isArray(templates) ? templates : ((templates as unknown) as {content?: ScorecardTemplateResponse[]})?.content ?? [];
 
-  if (isReady && !canLoadPage) {
+  if (isPermissionReady && !canLoadPage) {
     return (
       <AppLayout>
         <div className="mx-auto w-full max-w-3xl px-6 py-16 text-center space-y-4">

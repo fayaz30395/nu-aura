@@ -23,7 +23,7 @@ export default function MyLeavesPage() {
   const toast = useToast();
   const router = useRouter();
   const {user} = useAuth();
-  const {hasPermission, isReady: permReady} = usePermissions();
+  const {hasPermission, isPermissionReady: permReady} = usePermissions();
 
   // A3: Permission gate — redirect if user lacks LEAVE:VIEW_SELF
   useEffect(() => {

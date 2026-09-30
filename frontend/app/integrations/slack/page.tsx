@@ -48,17 +48,17 @@ type SlackConfigFormData = z.infer<typeof slackConfigSchema>;
 export default function SlackIntegrationPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
   const [copied, setCopied] = useState<string | null>(null);
   const [testResult, setTestResult] = useState<'idle' | 'testing' | 'success' | 'error'>('idle');
 
   const hasAccess = hasAnyPermission(Permissions.SYSTEM_ADMIN, Permissions.INTEGRATION_MANAGE);
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   // Fetch existing Slack config
   const configQuery = useQuery({
@@ -68,7 +68,7 @@ export default function SlackIntegrationPage() {
       const configs = response.data;
       return configs.find((c: SlackConfig) => c.channel === 'SLACK') || null;
     },
-    enabled: isReady && hasAccess,
+    enabled: isPermissionReady && hasAccess,
   });
 
   // Save config mutation
@@ -159,7 +159,7 @@ export default function SlackIntegrationPage() {
 
   const webhookBaseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://your-domain.com';
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   return (
     <AppLayout activeMenuItem="integrations">

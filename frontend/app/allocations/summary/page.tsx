@@ -82,7 +82,7 @@ function AllocationSummaryGate({message}: { message: string }) {
 
 export default function AllocationSummaryPage() {
   const router = useRouter();
-  const {hasAnyPermission, isReady: permissionsReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
   const hasAccess = hasAnyPermission(Permissions.ALLOCATION_VIEW, Permissions.PROJECT_VIEW, Permissions.ALLOCATION_MANAGE);
 
   useEffect(() => {

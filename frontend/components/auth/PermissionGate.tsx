@@ -123,13 +123,20 @@ export function PermissionGate({
     hasAnyRole,
     hasAllRoles,
     isAdmin,
-    isReady,
+    isPermissionReady,
   } = usePermissions();
 
   // Show loading state while auth is hydrating. We render a visible
   // placeholder (not null) so that smoke tests and assistive tech can
   // observe that the page is mounted and waiting on auth.
-  if (!isReady) {
+  //
+  // BUG-L3: this waits for `isPermissionReady`, not `isReady`. `isReady` is TRUE while `user`
+  // is still absent (AuthGuard needs it that way), and at that moment `permissions` is [] —
+  // so every check below evaluates false and this gate renders its `fallback`, which for the
+  // page-level callers is a visible "Access Restricted". Deciding a denial is only safe once
+  // the user object exists. Every current caller sits inside AuthGuard, which already blocks
+  // anonymous visitors, so this cannot strand a public route on the loading placeholder.
+  if (!isPermissionReady) {
     if (showWhileLoading) return children;
     return (
       <div
@@ -188,9 +195,10 @@ export function AdminGate({
   children: ReactNode;
   fallback?: ReactNode;
 }): ReactNode {
-  const {isAdmin, isReady} = usePermissions();
+  // BUG-L3: deny only once the user object is loaded — see PermissionGate above.
+  const {isAdmin, isPermissionReady} = usePermissions();
 
-  if (!isReady) return null;
+  if (!isPermissionReady) return null;
   return isAdmin ? children : fallback;
 }
 
@@ -204,9 +212,10 @@ export function HRGate({
   children: ReactNode;
   fallback?: ReactNode;
 }): ReactNode {
-  const {isHR, isReady} = usePermissions();
+  // BUG-L3: deny only once the user object is loaded — see PermissionGate above.
+  const {isHR, isPermissionReady} = usePermissions();
 
-  if (!isReady) return null;
+  if (!isPermissionReady) return null;
   return isHR ? children : fallback;
 }
 
@@ -220,9 +229,10 @@ export function ManagerGate({
   children: ReactNode;
   fallback?: ReactNode;
 }): ReactNode {
-  const {isManager, isReady} = usePermissions();
+  // BUG-L3: deny only once the user object is loaded — see PermissionGate above.
+  const {isManager, isPermissionReady} = usePermissions();
 
-  if (!isReady) return null;
+  if (!isPermissionReady) return null;
   return isManager ? children : fallback;
 }
 

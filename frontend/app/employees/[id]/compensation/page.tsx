@@ -269,17 +269,17 @@ export default function EmployeeCompensationPage() {
   // RBAC-NEW-01: require COMPENSATION_VIEW (or MANAGE/VIEW_ALL) — redirect to
   // employee profile if the user lacks the permission rather than briefly
   // rendering the salary skeleton before the API returns 403.
-  const {hasPermission, isReady} = usePermissions();
+  const {hasPermission, isPermissionReady} = usePermissions();
   const canViewCompensation =
     hasPermission(Permissions.COMPENSATION_VIEW) ||
     hasPermission(Permissions.COMPENSATION_MANAGE) ||
     hasPermission(Permissions.COMPENSATION_VIEW_ALL);
 
   useEffect(() => {
-    if (isReady && !canViewCompensation) {
+    if (isPermissionReady && !canViewCompensation) {
       router.replace(`/employees/${employeeId}`);
     }
-  }, [isReady, canViewCompensation, router, employeeId]);
+  }, [isPermissionReady, canViewCompensation, router, employeeId]);
   const [newSalary, setNewSalary] = useState('');
   const [newDesignation, setNewDesignation] = useState('');
   const [effectiveDate, setEffectiveDate] = useState('');

@@ -69,17 +69,17 @@ export default function CreateWikiPage() {
   const [publishDrawerOpen, setPublishDrawerOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
-  const {hasAnyPermission, isReady} = usePermissions();
+  const {hasAnyPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasAnyPermission(
     Permissions.KNOWLEDGE_WIKI_CREATE,
   );
 
   useEffect(() => {
-    if (isReady && !hasAccess) {
+    if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
-  }, [isReady, hasAccess, router]);
+  }, [isPermissionReady, hasAccess, router]);
 
   const titleRef = useRef<HTMLTextAreaElement>(null);
   const {mutate: createWikiPage} = useCreateWikiPage();
@@ -148,7 +148,7 @@ export default function CreateWikiPage() {
     []
   );
 
-  if (!isReady || !hasAccess) return null;
+  if (!isPermissionReady || !hasAccess) return null;
 
   const onSaveDraft = async (data: CreateWikiPageInput) => {
     if (!data.content || Object.keys(data.content).length === 0) {

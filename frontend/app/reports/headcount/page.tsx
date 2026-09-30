@@ -1,6 +1,7 @@
 'use client';
 
 import {AppLayout} from '@/components/layout';
+import {Spinner} from '@/components/ui/Spinner';
 import {apiClient} from '@/lib/api/client';
 import {useQuery} from '@tanstack/react-query';
 import {Building2, Download, RefreshCw, TrendingDown, TrendingUp, Users,} from 'lucide-react';
@@ -139,7 +140,7 @@ export default function HeadcountReportPage() {
 
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin h-8 w-8 border-4 border-accent-600 border-t-transparent rounded-full"/>
+            <Spinner size="lg" label="Loading headcount report"/>
           </div>
         ) : (
           <>

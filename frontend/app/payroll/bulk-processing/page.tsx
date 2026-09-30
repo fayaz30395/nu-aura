@@ -8,17 +8,17 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 export default function BulkProcessingPage() {
   const router = useRouter();
-  const {hasPermission, isReady} = usePermissions();
+  const {hasPermission, isPermissionReady} = usePermissions();
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isPermissionReady) return;
     if (!hasPermission(Permissions.PAYROLL_PROCESS)) {
       router.replace('/payroll');
     }
-  }, [isReady, hasPermission, router]);
+  }, [isPermissionReady, hasPermission, router]);
 
   // Render nothing while RBAC state hydrates; the effect above will redirect if unauthorised.
-  if (!isReady || !hasPermission(Permissions.PAYROLL_PROCESS)) {
+  if (!isPermissionReady || !hasPermission(Permissions.PAYROLL_PROCESS)) {
     return null;
   }
 
