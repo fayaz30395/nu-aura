@@ -1,0 +1,422 @@
+<title>Faylo Ledger Map</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  :root {
+    --paper: #eef1f5;
+    --surface: #ffffff;
+    --surface-sunk: #e4e9f0;
+    --ink: #101720;
+    --ink-soft: #566374;
+    --line: #d3dae3;
+    --accent: #0d6b7a;
+    --autonomous: #256b46;
+    --async: #8a5a00;
+    --gate: #9c2f52;
+    --done: #256b46;
+    --open: #8a5a00;
+    --shadow: 0 1px 2px rgba(16, 23, 32, .06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0e131a;
+      --surface: #161d26;
+      --surface-sunk: #1e2733;
+      --ink: #e7edf4;
+      --ink-soft: #97a5b6;
+      --line: #2a3542;
+      --accent: #52c2cf;
+      --autonomous: #62c08c;
+      --async: #d9a441;
+      --gate: #e2799b;
+      --done: #62c08c;
+      --open: #d9a441;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0e131a;
+    --surface: #161d26;
+    --surface-sunk: #1e2733;
+    --ink: #e7edf4;
+    --ink-soft: #97a5b6;
+    --line: #2a3542;
+    --accent: #52c2cf;
+    --autonomous: #62c08c;
+    --async: #d9a441;
+    --gate: #e2799b;
+    --done: #62c08c;
+    --open: #d9a441;
+    --shadow: none;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding-block: 32px 64px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 15px/1.55 "Source Sans 3", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+
+  .masthead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; }
+  h1 {
+    margin: 0;
+    font: 700 clamp(26px, 1.4rem + 2vw, 40px)/1.05 Archivo, system-ui, sans-serif;
+    letter-spacing: -.025em;
+    text-wrap: balance;
+  }
+  .sub { margin: 6px 0 0; color: var(--ink-soft); max-width: 62ch; }
+  .stamp {
+    font: 400 12px/1.4 "IBM Plex Mono", ui-monospace, monospace;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+
+  .totals { display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-end; }
+  .total { display: flex; flex-direction: column; gap: 2px; }
+  .total b {
+    font: 700 30px/1 Archivo, system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.02em;
+  }
+  .total span { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .chip {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    border-radius: 999px;
+    padding: 6px 13px;
+    font: 600 12px/1 "Source Sans 3", sans-serif;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .chip:focus-visible, #q:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #q {
+    flex: 1 1 200px;
+    min-width: 0;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font: 400 14px "Source Sans 3", sans-serif;
+  }
+
+  .epic { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 22px; align-items: start; }
+  .spine {
+    background: var(--surface-sunk);
+    border-left: 3px solid var(--accent);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: sticky;
+    top: 20px;
+  }
+  .eyebrow {
+    font: 500 11px/1 "IBM Plex Mono", monospace;
+    letter-spacing: .12em;
+    color: var(--accent);
+  }
+  .spine h2 { margin: 0; font: 700 21px/1.2 Archivo, sans-serif; letter-spacing: -.015em; text-wrap: balance; }
+  .meter { height: 5px; background: var(--line); }
+  .meter i { display: block; height: 100%; background: var(--done); }
+  .tally {
+    font: 400 13px/1.7 "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+  }
+  .tally b { color: var(--ink); font-weight: 500; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--tier);
+    box-shadow: var(--shadow);
+    padding: 14px 15px 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .card h3 { margin: 0; font: 600 15px/1.35 "Source Sans 3", sans-serif; text-wrap: balance; }
+  .card .id { font: 400 11px/1 "IBM Plex Mono", monospace; color: var(--ink-soft); }
+  .card .branch {
+    font: 400 11px/1.4 "IBM Plex Mono", monospace;
+    color: var(--ink-soft);
+    overflow-wrap: anywhere;
+  }
+  .foot { margin-top: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+  .tier {
+    font: 500 10px/1 "IBM Plex Mono", monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--tier);
+    border: 1px solid var(--tier);
+    padding: 4px 7px;
+  }
+  .state {
+    font: 600 11px/1 "Source Sans 3", sans-serif;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--st);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .state::before { content: ""; width: 7px; height: 7px; background: var(--st); border-radius: 50%; }
+  .acs { font: 400 11px/1 "IBM Plex Mono", monospace; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .hidden { display: none !important; }
+  .empty { color: var(--ink-soft); font-style: italic; }
+
+  .toggles { display: flex; gap: 6px; flex-wrap: wrap; }
+  .toggle {
+    appearance: none;
+    flex: 1 1 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    padding: 5px 8px;
+    font: 500 10px/1 "IBM Plex Mono", monospace;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .toggle::before {
+    content: "";
+    width: 11px;
+    height: 11px;
+    border: 1px solid currentColor;
+    flex: none;
+  }
+  .toggle[aria-pressed="true"] { color: var(--mark); border-color: var(--mark); }
+  .toggle[aria-pressed="true"]::before { background: var(--mark); box-shadow: inset 0 0 0 2px var(--surface); }
+  .toggle[data-state="in-progress"] { --mark: var(--open); }
+  .toggle[data-state="done"] { --mark: var(--done); }
+  .toggle[data-qa] { --mark: var(--accent); flex-basis: 100%; }
+  .toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .toggle:disabled { cursor: default; opacity: .55; }
+  .card[data-moved="true"] .id::after { content: " · edited here"; color: var(--accent); }
+
+  .notice {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 860px) {
+    .epic { grid-template-columns: minmax(0, 1fr); }
+    .spine { position: static; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <div>
+      <h1>Faylo Ledger Map</h1>
+      <p class="sub">Every NU-AURA story Faylo has tracked, grouped by epic and coloured by the autonomy tier that governed its release. Tick a card to move it; everyone on this page sees the change.</p>
+    </div>
+    <div class="stamp" id="stamp"></div>
+  </header>
+
+  <section class="totals" id="totals"></section>
+
+  <section class="controls">
+    <input id="q" type="search" placeholder="Filter by title, id or branch" aria-label="Filter stories">
+    <button class="chip" id="f-open" type="button" aria-pressed="false">Not done only</button>
+    <button class="chip" id="f-qa" type="button" aria-pressed="false">Not QA tested</button>
+    <button class="chip" data-tier="autonomous" type="button" aria-pressed="false">autonomous</button>
+    <button class="chip" data-tier="async-review" type="button" aria-pressed="false">async-review</button>
+    <button class="chip" data-tier="hard-gate" type="button" aria-pressed="false">hard-gate</button>
+  </section>
+
+  <p class="notice" id="notice" hidden></p>
+
+  <main id="map"></main>
+</div>
+
+<script>
+  const DATA = "__BUILD_MAP_DATA__";
+  const TIER = { autonomous: "var(--autonomous)", "async-review": "var(--async)", "hard-gate": "var(--gate)" };
+  const LABEL = { done: "Done", "in-progress": "In progress", open: "Not started" };
+  const stories = DATA.epics.flatMap((e) => e.stories.map((s) => ({ ...s, epicId: e.id })));
+  const byStory = new Map(stories.map((s) => [s.id, s]));
+  const ledgerState = (s) => (s.state === "Done" ? "done" : "open");
+  const edits = new Map(); // story id -> {state, qa} set on this page, overriding the ledger
+  const state = (s) => edits.get(s.id)?.state ?? ledgerState(s);
+  const qa = (s) => edits.get(s.id)?.qa === true;
+
+  const esc = (v) => String(v).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const notice = document.getElementById("notice");
+  const say = (text) => { notice.textContent = text; notice.hidden = !text; };
+
+  document.getElementById("stamp").textContent = "ledger read " + DATA.generated + " · faylo-sdlc/";
+
+  document.getElementById("map").innerHTML = DATA.epics.map((e) => `
+    <section class="epic" data-epic="${esc(e.id)}">
+      <aside class="spine">
+        <div class="eyebrow">${esc(e.id)}</div>
+        <h2>${esc(e.title)}</h2>
+        <div class="meter"><i data-meter style="width:0%"></i></div>
+        <div class="tally" data-tally></div>
+      </aside>
+      <div class="cards">${e.stories.map((s) => `
+        <article class="card" id="card-${esc(s.id)}" style="--tier:${TIER[s.tier] || "var(--ink-soft)"}"
+                 data-story="${esc(s.id)}" data-tier="${esc(s.tier)}"
+                 data-text="${esc((s.title + " " + s.id + " " + (s.branch || "")).toLowerCase())}">
+          <h3>${esc(s.title)}</h3>
+          <div class="id">${esc(s.id)} · ${esc(s.created)}</div>
+          ${s.branch ? `<div class="branch">${esc(s.branch)}</div>` : ""}
+          <div class="foot">
+            <span class="tier">${esc(s.tier)}</span>
+            <span class="acs">${s.ok}/${s.acs} AC</span>
+            <span class="state" data-label></span>
+          </div>
+          <div class="toggles">
+            <button class="toggle" type="button" data-state="in-progress" aria-pressed="false" disabled>In progress</button>
+            <button class="toggle" type="button" data-state="done" aria-pressed="false" disabled>Done</button>
+            <button class="toggle" type="button" data-qa aria-pressed="false" disabled>QA tested</button>
+          </div>
+        </article>`).join("") || '<p class="empty">No stories.</p>'}
+      </div>
+    </section>`).join("");
+
+  function paintCard(s) {
+    const card = document.getElementById("card-" + s.id);
+    if (!card) return;
+    const now = state(s);
+    card.style.setProperty("--st", now === "done" ? "var(--done)" : now === "in-progress" ? "var(--open)" : "var(--ink-soft)");
+    card.dataset.done = String(now === "done");
+    card.dataset.moved = String(now !== ledgerState(s));
+    card.dataset.qa = String(qa(s));
+    card.querySelector("[data-label]").textContent = LABEL[now];
+    for (const b of card.querySelectorAll("[data-state]")) b.setAttribute("aria-pressed", String(b.dataset.state === now));
+    card.querySelector("[data-qa]").setAttribute("aria-pressed", String(qa(s)));
+  }
+
+  function paintEpics() {
+    for (const e of DATA.epics) {
+      const section = document.querySelector(`[data-epic="${e.id}"]`);
+      const done = e.stories.filter((s) => state(s) === "done").length;
+      const wip = e.stories.filter((s) => state(s) === "in-progress").length;
+      const pct = e.stories.length ? Math.round((done / e.stories.length) * 100) : 0;
+      section.querySelector("[data-meter]").style.width = pct + "%";
+      section.querySelector("[data-tally]").innerHTML =
+        `<b>${wip}</b> in progress · <b>${done}</b> done<br><b>${e.stories.length - done - wip}</b> to go · <b>${e.stories.filter(qa).length}</b> QA tested`;
+    }
+    const done = stories.filter((s) => state(s) === "done").length;
+    const wip = stories.filter((s) => state(s) === "in-progress").length;
+    const totals = [
+      ["stories", stories.length],
+      ["done", done],
+      ["in progress", wip],
+      ["to go", stories.length - done - wip],
+      ["qa tested", stories.filter(qa).length],
+      ["criteria verified", stories.reduce((n, s) => n + s.ok, 0) + " / " + stories.reduce((n, s) => n + s.acs, 0)],
+    ];
+    document.getElementById("totals").innerHTML = totals
+      .map(([label, n]) => `<div class="total"><b>${n}</b><span>${label}</span></div>`)
+      .join("");
+  }
+
+  function paintAll() {
+    for (const s of stories) paintCard(s);
+    paintEpics();
+    apply();
+  }
+
+  const q = document.getElementById("q");
+  const openOnly = document.getElementById("f-open");
+  const untestedOnly = document.getElementById("f-qa");
+  const tierChips = [...document.querySelectorAll("[data-tier].chip")];
+
+  function apply() {
+    const text = q.value.trim().toLowerCase();
+    const tiers = tierChips.filter((c) => c.getAttribute("aria-pressed") === "true").map((c) => c.dataset.tier);
+    const wantOpen = openOnly.getAttribute("aria-pressed") === "true";
+    const wantUntested = untestedOnly.getAttribute("aria-pressed") === "true";
+    for (const card of document.querySelectorAll(".card")) {
+      const hit = (!text || card.dataset.text.includes(text))
+        && (!tiers.length || tiers.includes(card.dataset.tier))
+        && (!wantUntested || card.dataset.qa === "false")
+        && (!wantOpen || card.dataset.done === "false");
+      card.classList.toggle("hidden", !hit);
+    }
+    for (const epic of document.querySelectorAll("[data-epic]")) {
+      epic.classList.toggle("hidden", !epic.querySelector(".card:not(.hidden)"));
+    }
+  }
+
+  for (const chip of [...tierChips, openOnly, untestedOnly]) {
+    chip.addEventListener("click", () => {
+      chip.setAttribute("aria-pressed", chip.getAttribute("aria-pressed") === "true" ? "false" : "true");
+      apply();
+    });
+  }
+  q.addEventListener("input", apply);
+
+  paintAll();
+
+  // Shared, persisted moves. Without db the page still reads, straight from the ledger.
+  (async () => {
+    const db = await claude.use("db");
+    if (!db) { say("Read-only view: status changes are not available here."); return; }
+    const editDocs = db.collection("story-state");
+    let writable = true;
+
+    editDocs.onSnapshot((snap) => {
+      edits.clear();
+      for (const doc of snap.docs) {
+        const body = doc.data() ?? {};
+        if (!byStory.has(doc.id)) continue;
+        edits.set(doc.id, { state: LABEL[body.state] ? body.state : undefined, qa: body.qa === true });
+      }
+      paintAll();
+    }, (e) => say("Live updates stopped (" + e.code + "). Reload to resume."));
+
+    for (const button of document.querySelectorAll(".toggle")) {
+      button.disabled = false;
+      button.addEventListener("click", async () => {
+        if (!writable) return;
+        const s = byStory.get(button.closest(".card").dataset.story);
+        const previous = edits.get(s.id);
+        const next = "qa" in button.dataset
+          ? { state: state(s), qa: !qa(s) }
+          : { state: state(s) === button.dataset.state ? "open" : button.dataset.state, qa: qa(s) };
+        edits.set(s.id, next); // optimistic; the snapshot confirms or corrects it
+        paintCard(s);
+        paintEpics();
+        try {
+          await editDocs.doc(s.id).set({ ...next, at: new Date().toISOString() });
+        } catch (e) {
+          if (previous === undefined) edits.delete(s.id); else edits.set(s.id, previous);
+          paintCard(s);
+          paintEpics();
+          if (e.code === "invalid_argument" || e.code === "revoked") {
+            writable = false;
+            for (const b of document.querySelectorAll(".toggle")) b.disabled = true;
+            say("You can view this map but not change it. Ask the owner for edit access.");
+          } else {
+            say("That change did not save (" + e.code + "). Try again.");
+          }
+        }
+      });
+    }
+  })();
+</script>

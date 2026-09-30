@@ -69,7 +69,7 @@
   },
   "US-2FWVEQZADNJD": {
     "all_pass": true,
-    "date": "2026-09-19",
+    "date": "2026-09-24",
     "results": [
       {
         "ac": 1,
@@ -2490,5 +2490,136 @@
       }
     ],
     "story": "US-2G08K1MZJEP4"
+  },
+  "US-2G9V0TF3AXX2": {
+    "all_pass": false,
+    "date": "2026-09-25",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -Dtest=EncryptedStringConverterTest test\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": [
+          "\tat org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)",
+          "01:15:53.270 [main] WARN com.nulogic.common.converter.EncryptedStringConverter -- Encrypted column contains unencrypted value (no IV:ciphertext format). Returning raw value.",
+          "OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
+        ]
+      },
+      {
+        "ac": 2,
+        "kind": "manual",
+        "pass": false
+      }
+    ],
+    "story": "US-2G9V0TF3AXX2"
+  },
+  "US-2G9W1P18V8BT": {
+    "all_pass": true,
+    "date": "2026-09-25",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd backend && mvn -q -Dtest=ArunManagerMigrationTest test\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": [
+          "2026-09-25 01:15:34.460  INFO 15795 --- [           main] c.n.common.config.CacheWarmUpService     : CacheWarmUpService ready. Per-tenant warm-up available via warmCachesForTenant(tenantId).",
+          "01:14:45,166 |-WARN in ch.qos.logback.core.joran.action.ConversionRuleAction - [converterClass] attribute is deprecated and replaced by [class]. See element [conversionRule] near line 8",
+          "OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended"
+        ]
+      }
+    ],
+    "story": "US-2G9W1P18V8BT"
+  },
+  "US-2GBAZCD8C6XB": {
+    "all_pass": false,
+    "date": "2026-09-25",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && PLAYWRIGHT_BASE_URL=http://localhost:3010 npx playwright test --config=playwright.live.config.ts --project=chromium e2e/defect-regressions.spec.ts -g BUG-2 --reporter=line\"",
+        "kind": "shell",
+        "pass": false,
+        "tail": [
+          "\u001b[1A\u001b[2K\u001b[31m  1 failed\u001b[39m",
+          "\u001b[31m    [setup] \u203a e2e/auth.setup.ts:18:6 \u203a authenticate \u001b[2m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[22m\u001b[39m",
+          "\u001b[33m  1 did not run\u001b[39m"
+        ]
+      }
+    ],
+    "story": "US-2GBAZCD8C6XB"
+  },
+  "US-2GBAZQAAESET": {
+    "all_pass": true,
+    "date": "2026-09-25",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx vitest run lib/hooks/usePermissions.test.ts lib/hooks/__tests__/usePermissions.test.ts\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": [
+          "\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m92 passed\u001b[39m\u001b[22m\u001b[90m (92)\u001b[39m",
+          "\u001b[2m   Start at \u001b[22m 11:39:45",
+          "\u001b[2m   Duration \u001b[22m 993ms\u001b[2m (transform 84ms, setup 300ms, collect 95ms, tests 45ms, environment 881ms, prepare 138ms)\u001b[22m"
+        ]
+      },
+      {
+        "ac": 2,
+        "cmd": "bash -c \"cd backend && grep -q \\\"LMS:CERTIFICATE_VIEW\\\" src/main/resources/db/migration/V334__restore_employee_lms_enroll_and_certificate_grants.sql\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": []
+      }
+    ],
+    "story": "US-2GBAZQAAESET"
+  },
+  "US-2GBAZQGXD3AY": {
+    "all_pass": false,
+    "date": "2026-09-25",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && npx vitest run lib/__tests__/queryClient.test.ts\"",
+        "kind": "shell",
+        "pass": true,
+        "tail": [
+          "",
+          "\u001b[90mstderr\u001b[2m | lib/__tests__/queryClient.test.ts",
+          "\u001b[22m\u001b[39m[env] Error: NEXT_PUBLIC_API_URL: Required"
+        ]
+      },
+      {
+        "ac": 2,
+        "cmd": "bash -c \"cd frontend && PLAYWRIGHT_BASE_URL=http://localhost:3010 npx playwright test --config=playwright.live.config.ts --project=chromium e2e/defect-regressions.spec.ts -g BUG-L2 --reporter=line\"",
+        "kind": "shell",
+        "pass": false,
+        "tail": [
+          "\u001b[1A\u001b[2K\u001b[31m  1 failed\u001b[39m",
+          "\u001b[31m    [setup] \u203a e2e/auth.setup.ts:18:6 \u203a authenticate \u001b[2m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[22m\u001b[39m",
+          "\u001b[33m  2 did not run\u001b[39m"
+        ]
+      }
+    ],
+    "story": "US-2GBAZQGXD3AY"
+  },
+  "US-2GBAZQPR4FWQ": {
+    "all_pass": false,
+    "date": "2026-09-25",
+    "results": [
+      {
+        "ac": 1,
+        "cmd": "bash -c \"cd frontend && PLAYWRIGHT_BASE_URL=http://localhost:3010 npx playwright test --config=playwright.live.config.ts --project=chromium e2e/defect-regressions.spec.ts -g \\\"BUG-F1|BUG-E2\\\" --reporter=line\"",
+        "kind": "shell",
+        "pass": false,
+        "tail": [
+          "\u001b[1A\u001b[2K\u001b[31m  1 failed\u001b[39m",
+          "\u001b[31m    [setup] \u203a e2e/auth.setup.ts:18:6 \u203a authenticate \u001b[2m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u001b[22m\u001b[39m",
+          "\u001b[33m  2 did not run\u001b[39m"
+        ]
+      }
+    ],
+    "story": "US-2GBAZQPR4FWQ"
   }
 }

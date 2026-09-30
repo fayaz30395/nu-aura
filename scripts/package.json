@@ -8,7 +8,9 @@
   },
   "scripts": {
     "start": "node orchestrator-os-server.js",
-    "test": "node --test orchestrator-core.test.js orchestrator-client-core.test.js orchestrator-server.smoke.test.js orchestrator-flow.test.js",
+    "validate:workflow": "node nu-aura-workflow-validate.mjs",
+    "generate:workflow": "node nu-aura-workflow-validate.mjs --generate",
+    "test": "node --test orchestrator-core.test.js orchestrator-client-core.test.js orchestrator-server.smoke.test.js orchestrator-flow.test.js nu-aura-workflow-validate.test.mjs",
     "test:e2e": "ln -sfn ../frontend/node_modules node_modules && PLAYWRIGHT_BROWSERS_PATH=\"$HOME/Library/Caches/ms-playwright\" npx playwright test --config playwright.config.ts"
   },
   "engines": {
