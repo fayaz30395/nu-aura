@@ -1,0 +1,411 @@
+{
+  "timestamp": "2026-09-25T20:28:30.999Z",
+  "target": ".",
+  "depth": "standard",
+  "type": "all",
+  "summary": {
+    "critical": 0,
+    "high": 36,
+    "medium": 30,
+    "low": 0,
+    "total": 66
+  },
+  "findings": [
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "docker-compose.prod.yml:45",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/e2e/auth-bruteforce-lockout.spec.ts:23",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/e2e/fixtures/testData.ts:7",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/e2e/fixtures/testData.ts:235",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/e2e/security-deep.spec.ts:996",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/e2e/security-deep.spec.ts:1034",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:14",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:54",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:55",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:66",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:71",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:76",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:81",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:130",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:131",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:144",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:157",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:158",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:159",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:169",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:170",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/__tests__/auth.test.ts:176",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/employee.test.ts:11",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "frontend/lib/validations/employee.test.ts:69",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "infra/deployment/kubernetes/secrets.yaml:28",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "infra/deployment/kubernetes/secrets.yaml:32",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "infra/deployment/kubernetes/secrets.yaml:51",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "infra/deployment/kubernetes/secrets.yaml:66",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "infra/deployment/kubernetes/secrets.yaml:98",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Hardcoded Secret",
+      "location": "scripts/qa/screenshot-all-pages.ts:21",
+      "description": "Hardcoded Password"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "design-import/aura/project/app/DashboardPage.jsx:92",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "design-import-2/aura/project/app/DashboardPage.jsx:92",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "design-import-2/aura/project/app/Primitives.jsx:12",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/app/announcements/page.tsx:606",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/app/careers/page.tsx:94",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/app/dashboard/_components/DashboardModals.tsx:203",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/app/fluence/search/page.tsx:624",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/app/layout.tsx:68",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/app/letters/templates/page.tsx:203",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/app/nu-mail/_components/ComposeModal.tsx:205",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/app/nu-mail/_components/EmailViewer.tsx:163",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "frontend/app/nu-mail/page.tsx:163",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/components/layout/MantineThemeProvider.tsx:30",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/components/layout/NotificationDropdown.tsx:803",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "Eval Usage",
+      "location": "frontend/e2e/accessibility/a11y.spec.ts:52",
+      "description": "eval() can execute arbitrary code"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "SQL Injection",
+      "location": "frontend/e2e/security-deep.spec.ts:1084",
+      "description": "Possible SQL injection"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "SQL Injection",
+      "location": "frontend/e2e/security-deep.spec.ts:1132",
+      "description": "Possible SQL injection"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "SQL Injection",
+      "location": "frontend/e2e/security-deep.spec.ts:1157",
+      "description": "Possible SQL injection"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "Eval Usage",
+      "location": "frontend/e2e/tmp-debug-rbac.spec.ts:43",
+      "description": "eval() can execute arbitrary code"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "Eval Usage",
+      "location": "frontend/e2e/tmp-debug-rbac.spec.ts:44",
+      "description": "eval() can execute arbitrary code"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/lib/utils/sanitize.ts:5",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "React XSS",
+      "location": "frontend/lib/utils/sanitize.ts:12",
+      "description": "React XSS risk"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/agent-os-server.js:215",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/agent-os-server.js:226",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/agent-os-server.js:251",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Command Injection",
+      "location": "scripts/orchestrator-os-server.js:30",
+      "description": "Possible command injection"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Command Injection",
+      "location": "scripts/orchestrator-os-server.js:35",
+      "description": "Possible command injection"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/orchestrator-os-server.js:388",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/orchestrator-os-server.js:397",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/orchestrator-os-server.js:414",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/orchestrator-os-server.js:419",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/orchestrator-os-server.js:426",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/orchestrator-os-server.js:441",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/orchestrator-os-server.js:448",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mMEDIUM\u001b[0m",
+      "type": "innerHTML",
+      "location": "scripts/orchestrator-os-server.js:455",
+      "description": "XSS risk with innerHTML"
+    },
+    {
+      "severity": "\u001b[33mHIGH\u001b[0m",
+      "type": "Command Injection",
+      "location": "scripts/orchestrator-os-server.js:537",
+      "description": "Possible command injection"
+    }
+  ]
+}

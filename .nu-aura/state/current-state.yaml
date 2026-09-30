@@ -1,0 +1,74 @@
+# Nu-Aura — Project State (canonical workflow status + capability results)
+#
+# status: canonical workflow status (see .nu-aura/orchestration/workflow.yaml)
+# capability fields: result vocabulary PASS | FAIL | NOT_RUN | NOT_APPLICABLE | UNKNOWN
+# Never silently convert UNKNOWN into PASS.
+project: nu-aura
+last_updated: "2026-09-30T23:20:00Z"
+last_verified_commit: "798f46c8"
+branch: main
+status: IN_PROGRESS
+work_type: RELEASE
+phase: DISCOVERY
+
+frontend:
+  build: PASS
+  lint: PASS
+  typecheck: PASS
+  unit_tests: NOT_RUN
+  e2e_tests: NOT_RUN
+
+backend:
+  build: NOT_RUN
+  unit_tests: NOT_RUN
+  integration_tests: NOT_RUN
+
+database:
+  migrations: FAIL
+  schema: UNKNOWN
+  rls: UNKNOWN
+  indexes: UNKNOWN
+  constraints: UNKNOWN
+
+security:
+  authentication: UNKNOWN
+  authorization: IN_PROGRESS
+  rbac: IN_PROGRESS
+  tenant_isolation: UNKNOWN
+  secrets: HUMAN_REQUIRED
+  dependency_scan: BLOCKED
+
+infrastructure:
+  vercel: PASS
+  railway: HUMAN_REQUIRED
+  production_database: HUMAN_REQUIRED
+
+quality:
+  regression: NOT_RUN
+  performance: UNKNOWN
+  accessibility: UNKNOWN
+
+release:
+  status: BLOCKED
+  readiness: BLOCKED
+
+blockers:
+  - BLOCKER-001
+  - BLOCKER-002
+  - BLOCKER-003
+  - BLOCKER-004
+  - BLOCKER-006
+  - BLOCKER-007
+
+human_actions_required:
+  - rotate-7-exposed-credentials
+  - app-security-encryption-key-dual-key-migration
+  - host-and-verify-production-backend
+  - verify-production-v316-migration-state
+  - authorize-production-deployment
+  - dr-rto-rpo-decision
+
+warnings:
+  - "frontend typecheck FAIL is caused by a missing generated client (lib/generated is gitignored); run api:generate first."
+  - "main CI Security Scan failure is a runner disk-space flake during Trivy, not a CVE finding."
+  - "Backend suite has historically been run on Java 23 while the project targets Java 21."

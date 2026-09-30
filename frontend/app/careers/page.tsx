@@ -91,7 +91,7 @@ export default async function CareersPage() {
       {jobPostingSchema && jobPostingSchema.length > 0 && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{__html: JSON.stringify(jobPostingSchema)}}
+          dangerouslySetInnerHTML={{__html: JSON.stringify(jobPostingSchema).replace(/</g, '\\u003c')}}
         />
       )}
       <CareersClient initialJobs={jobs} />

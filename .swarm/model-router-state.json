@@ -1,32 +1,71 @@
 {
-  "totalDecisions": 1,
+  "totalDecisions": 24,
   "modelDistribution": {
-    "haiku": 0,
-    "sonnet": 0,
-    "opus": 1,
+    "haiku": 2,
+    "sonnet": 13,
+    "opus": 9,
     "inherit": 0
   },
-  "avgComplexity": 0.2136846153846154,
-  "avgConfidence": 0.49896756408718146,
+  "avgComplexity": 0.20783999967492883,
+  "avgConfidence": 0.650342718500042,
   "circuitBreakerTrips": 0,
-  "lastUpdated": "2026-05-23T19:59:29.224Z",
+  "lastUpdated": "2026-09-25T15:30:43.938Z",
   "learningHistory": [],
+  "version": 2,
   "priors": {
-    "haiku": {
-      "alpha": 1,
-      "beta": 1
+    "low": {
+      "haiku": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "sonnet": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "opus": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "inherit": {
+        "alpha": 1,
+        "beta": 1
+      }
     },
-    "sonnet": {
-      "alpha": 1,
-      "beta": 1
+    "med": {
+      "haiku": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "sonnet": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "opus": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "inherit": {
+        "alpha": 1,
+        "beta": 1
+      }
     },
-    "opus": {
-      "alpha": 1,
-      "beta": 1
-    },
-    "inherit": {
-      "alpha": 1,
-      "beta": 1
+    "high": {
+      "haiku": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "sonnet": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "opus": {
+        "alpha": 1,
+        "beta": 1
+      },
+      "inherit": {
+        "alpha": 1,
+        "beta": 1
+      }
     }
   }
 }

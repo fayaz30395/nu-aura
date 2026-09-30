@@ -17,18 +17,40 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = path.join(process.cwd(), '.claude-flow', 'data');
+function resolveProjectRoot(startDir) {
+  if (process.env.CLAUDE_PROJECT_DIR) {
+    return path.resolve(process.env.CLAUDE_PROJECT_DIR);
+  }
+  let dir = path.resolve(startDir || process.cwd());
+  while (true) {
+    if (fs.existsSync(path.join(dir, '.git')) ||
+        fs.existsSync(path.join(dir, '.claude-flow'))) {
+      return dir;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) return path.resolve(startDir || process.cwd());
+    dir = parent;
+  }
+}
+
+const PROJECT_ROOT = resolveProjectRoot(process.cwd());
+const DATA_DIR = path.join(PROJECT_ROOT, '.claude-flow', 'data');
 const STORE_PATH = path.join(DATA_DIR, 'auto-memory-store.json');
 const GRAPH_PATH = path.join(DATA_DIR, 'graph-state.json');
 const RANKED_PATH = path.join(DATA_DIR, 'ranked-context.json');
 const PENDING_PATH = path.join(DATA_DIR, 'pending-insights.jsonl');
-const SESSION_DIR = path.join(process.cwd(), '.claude-flow', 'sessions');
+const LEGACY_PENDING_PATH = path.join(process.cwd(), '.claude-flow', 'data', 'pending-insights.jsonl');
+const SESSION_DIR = path.join(PROJECT_ROOT, '.claude-flow', 'sessions');
 const SESSION_FILE = path.join(SESSION_DIR, 'current.json');
 
 // ── Safety limits (fixes #1530, #1531) ─────────────────────────────────────
 const MAX_DATA_FILE_SIZE = 10 * 1024 * 1024; // 10 MB — skip files larger than this
 const MAX_GRAPH_NODES = 5000;                 // skip PageRank if graph exceeds this
-const MAX_SIMILAR_EDGES_PER_NODE = 10;        // degree cap for similarity edges (prevents O(n²) graph bloat)
+// #2628: similarity edges used to compare every pair in every category.
+// Keep exact graph behavior for normal stores, but never let a session-end
+// hook enter an unbounded O(n²) pass. Temporal edges remain linear and are
+// always retained when the similarity pass is skipped.
+const MAX_SIMILARITY_COMPARISONS = 100000;
 
 // ── Stop words for trigram matching ──────────────────────────────────────────
 
@@ -47,7 +69,23 @@ const STOP_WORDS = new Set([
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, {recursive: true});
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  // Recover signal written by older helpers under a subdirectory cwd. Keep
+  // the legacy file intact and append only lines not already present.
+  if (path.resolve(LEGACY_PENDING_PATH) !== path.resolve(PENDING_PATH) &&
+      fs.existsSync(LEGACY_PENDING_PATH)) {
+    try {
+      const existing = fs.existsSync(PENDING_PATH)
+        ? new Set(fs.readFileSync(PENDING_PATH, 'utf-8').split('\n').filter(Boolean))
+        : new Set();
+      const recovered = fs.readFileSync(LEGACY_PENDING_PATH, 'utf-8')
+        .split('\n')
+        .filter(line => line && !existing.has(line));
+      if (recovered.length > 0) {
+        fs.appendFileSync(PENDING_PATH, recovered.join('\n') + '\n', 'utf-8');
+      }
+    } catch { /* migration is best-effort; never block hook execution */ }
+  }
 }
 
 function readJSON(filePath) {
@@ -58,22 +96,16 @@ function readJSON(filePath) {
       process.stderr.write("[INTELLIGENCE] WARN: Skipping " + path.basename(filePath) + " (" + Math.round(stat.size / 1048576) + "MB exceeds 10MB limit)\n");
       return null;
     }
-  } catch { /* file may not exist yet */
-  }
+  } catch { /* file may not exist yet */ }
   try {
     if (fs.existsSync(filePath)) return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-  } catch { /* corrupt file — start fresh */
-  }
+  } catch { /* corrupt file — start fresh */ }
   return null;
 }
 
 function writeJSON(filePath, data) {
   ensureDataDir();
-  // Atomic write — concurrent hook processes share these files; plain
-  // writeFileSync interleaves and produces torn/corrupt JSON.
-  const tmp = `${filePath}.${process.pid}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf-8');
-  fs.renameSync(tmp, filePath);
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 function tokenize(text) {
@@ -95,9 +127,7 @@ function trigrams(words) {
 function jaccardSimilarity(setA, setB) {
   if (setA.size === 0 && setB.size === 0) return 0;
   let intersection = 0;
-  for (const item of setA) {
-    if (setB.has(item)) intersection++;
-  }
+  for (const item of setA) { if (setB.has(item)) intersection++; }
   return intersection / (setA.size + setB.size - intersection);
 }
 
@@ -133,12 +163,24 @@ function fingerprintContent(text) {
   let h1 = 0x811c9dc5, h2 = 0xcbf29ce4;
   for (let i = 0; i < norm.length; i++) {
     const c = norm.charCodeAt(i);
-    h1 ^= c;
-    h1 = Math.imul(h1, 0x01000193) >>> 0;
-    h2 ^= c;
-    h2 = Math.imul(h2, 0x100000001b3 & 0xffffffff) >>> 0;
+    h1 ^= c; h1 = Math.imul(h1, 0x01000193) >>> 0;
+    h2 ^= c; h2 = Math.imul(h2, 0x100000001b3 & 0xffffffff) >>> 0;
   }
   return `${h1.toString(16)}_${h2.toString(16)}_${norm.length}`;
+}
+
+// #2920 — aggregate content fingerprint for a whole store, used to detect
+// same-ID content edits (e.g. hand-editing a MEMORY.md section's body while
+// its heading/key, and therefore its generated ID, stays the same). Neither
+// entry count nor ID set changes on a same-ID edit, so any staleness check
+// based only on those two signals misses it; this folds each entry's own
+// content fingerprint into one combined value that does change.
+function storeFingerprint(entries) {
+  if (!entries || !entries.length) return '0';
+  const parts = entries
+    .map((e) => `${e.id || e.key || ''}:${fingerprintContent(e.content || e.summary || e.value || '')}`)
+    .sort();
+  return fingerprintContent(parts.join('|'));
 }
 
 function deduplicateByContent(entries) {
@@ -146,7 +188,14 @@ function deduplicateByContent(entries) {
   const seen = new Map();
   for (const entry of entries) {
     const content = entry.content || entry.summary || entry.value || '';
-    const fp = fingerprintContent(typeof content === 'string' ? content : JSON.stringify(content));
+    const normalizedContent = typeof content === 'string' ? content : JSON.stringify(content);
+    // Content-less records can still represent distinct graph nodes. There is
+    // no content identity to prove they are duplicates, so preserve them.
+    if (!normalizedContent || !normalizedContent.trim()) {
+      seen.set(`__no_content_${seen.size}`, entry);
+      continue;
+    }
+    const fp = fingerprintContent(normalizedContent);
     if (!seen.has(fp)) {
       seen.set(fp, entry);
     } else {
@@ -167,14 +216,12 @@ function sessionGet(key) {
     if (!fs.existsSync(SESSION_FILE)) return null;
     const session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
     return key ? (session.context || {})[key] : session.context;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
 function sessionSet(key, value) {
   try {
-    if (!fs.existsSync(SESSION_DIR)) fs.mkdirSync(SESSION_DIR, {recursive: true});
+    if (!fs.existsSync(SESSION_DIR)) fs.mkdirSync(SESSION_DIR, { recursive: true });
     let session = {};
     if (fs.existsSync(SESSION_FILE)) {
       session = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
@@ -182,12 +229,8 @@ function sessionSet(key, value) {
     if (!session.context) session.context = {};
     session.context[key] = value;
     session.updatedAt = new Date().toISOString();
-    // Atomic write to avoid torn JSON when hooks run concurrently
-    const tmp = `${SESSION_FILE}.${process.pid}.tmp`;
-    fs.writeFileSync(tmp, JSON.stringify(session, null, 2), 'utf-8');
-    fs.renameSync(tmp, SESSION_FILE);
-  } catch { /* best effort */
-  }
+    fs.writeFileSync(SESSION_FILE, JSON.stringify(session, null, 2), 'utf-8');
+  } catch { /* best effort */ }
 }
 
 // ── PageRank ─────────────────────────────────────────────────────────────────
@@ -203,10 +246,7 @@ function computePageRank(nodes, edges, damping, maxIter) {
   // Build adjacency: outgoing edges per node
   const outLinks = {};
   const inLinks = {};
-  for (const id of ids) {
-    outLinks[id] = [];
-    inLinks[id] = [];
-  }
+  for (const id of ids) { outLinks[id] = []; inLinks[id] = []; }
   for (const edge of edges) {
     if (outLinks[edge.sourceId]) outLinks[edge.sourceId].push(edge.targetId);
     if (inLinks[edge.targetId]) inLinks[edge.targetId].push(edge.sourceId);
@@ -278,10 +318,28 @@ function buildEdges(entries) {
     }
   }
 
+  let similarityComparisons = 0;
+  for (const group of Object.values(byCategory)) {
+    similarityComparisons += (group.length * (group.length - 1)) / 2;
+    if (similarityComparisons > MAX_SIMILARITY_COMPARISONS) break;
+  }
+
   // Similarity edges within categories (Jaccard > 0.3).
   // ADR-095 G6 perf: hoist the trigram computation outside the inner
   // loop. Previously we re-tokenized + re-trigrammed group[j] for every
   // i — O(n²) extra work for nothing. Now compute once per entry.
+  // #2628: the old unconditional nested loop blocked session exit for tens
+  // of seconds on accumulated stores. Skip only the quadratic similarity
+  // layer when its deterministic pair count exceeds the budget; the linear
+  // temporal graph above is still complete.
+  if (similarityComparisons > MAX_SIMILARITY_COMPARISONS) {
+    process.stderr.write(
+      `[INTELLIGENCE] WARN: Similarity graph needs >${MAX_SIMILARITY_COMPARISONS} comparisons; ` +
+      'skipping similarity edges (temporal edges retained)\n'
+    );
+    return edges;
+  }
+
   for (const cat of Object.keys(byCategory)) {
     const group = byCategory[cat];
     if (group.length < 2) continue;
@@ -292,13 +350,12 @@ function buildEdges(entries) {
       triCache[i] = trigrams(tokenize(group[i].content || group[i].summary || ''));
     }
 
-    const simCandidates = [];
     for (let i = 0; i < group.length; i++) {
       const triA = triCache[i];
       for (let j = i + 1; j < group.length; j++) {
         const sim = jaccardSimilarity(triA, triCache[j]);
         if (sim > 0.3) {
-          simCandidates.push({
+          edges.push({
             sourceId: group[i].id,
             targetId: group[j].id,
             type: 'similar',
@@ -306,22 +363,6 @@ function buildEdges(entries) {
           });
         }
       }
-    }
-
-    // Degree-capped sparsification: without a cap, a category of N
-    // near-similar entries produces O(N²) edges (measured: 474 nodes ->
-    // 84k edges -> 14MB graph-state.json, which blows the 10MB readJSON
-    // limit and forces a full rebuild every session start). Keep only the
-    // strongest MAX_SIMILAR_EDGES_PER_NODE edges per endpoint.
-    simCandidates.sort((a, b) => b.weight - a.weight);
-    const degree = {};
-    for (const edge of simCandidates) {
-      const dSource = degree[edge.sourceId] || 0;
-      const dTarget = degree[edge.targetId] || 0;
-      if (dSource >= MAX_SIMILAR_EDGES_PER_NODE || dTarget >= MAX_SIMILAR_EDGES_PER_NODE) continue;
-      degree[edge.sourceId] = dSource + 1;
-      degree[edge.targetId] = dTarget + 1;
-      edges.push(edge);
     }
   }
 
@@ -337,7 +378,7 @@ function buildEdges(entries) {
  */
 function bootstrapFromMemoryFiles() {
   const entries = [];
-  const cwd = process.cwd();
+  const cwd = PROJECT_ROOT;
 
   // Search for auto-memory directories
   const candidates = [
@@ -355,19 +396,32 @@ function bootstrapFromMemoryFiles() {
     // For the projects dir, scope to CURRENT project only (not all 51+ dirs)
     if (base.endsWith('projects')) {
       try {
-        const projectSlug = cwd.replace(/^\//, '').replace(/\//g, '-');
+        // Match Claude Code's project-dir slug: every non-alphanumeric char -> '-'
+        // (e.g. "G:\\My Drive\\TJ_Vault" -> "G--My-Drive-TJ-Vault"). The old version
+        // only handled POSIX '/', so on Windows the slug kept ':' and '\\' and never
+        // matched the real <projects>/<slug>/memory dir — bootstrap found nothing (FIX 5).
+        const projectSlug = cwd.replace(/[^a-zA-Z0-9]/g, '-');
         const memDir = path.join(base, projectSlug, 'memory');
         if (fs.existsSync(memDir)) {
           parseMemoryDir(memDir, entries);
         }
-      } catch { /* skip */
-      }
+      } catch { /* skip */ }
     } else if (fs.existsSync(base)) {
       parseMemoryDir(base, entries);
     }
   }
 
   return entries;
+}
+
+// Truncation transparency (FIX 4): mark the cut with an ellipsis and warn under
+// debug, so later reasoning isn't silently built on severed text.
+const CLIP_DEBUG = !!(process.env.RUFLO_DEBUG || process.env.DEBUG);
+function clip(text, max, label) {
+  text = text == null ? '' : String(text);
+  if (text.length <= max) return text;
+  if (CLIP_DEBUG) process.stderr.write(`[INTELLIGENCE] WARN: truncated ${label || 'value'} from ${text.length} to ${max} chars\n`);
+  return text.slice(0, max - 1) + '…';
 }
 
 function parseMemoryDir(dir, entries) {
@@ -391,17 +445,16 @@ function parseMemoryDir(dir, entries) {
         entries.push({
           id,
           key: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50),
-          content: body.slice(0, 500),
+          content: clip(body, 500, 'memory content'),
           summary: title,
           namespace: file === 'MEMORY.md' ? 'core' : file.replace('.md', ''),
           type: 'semantic',
-          metadata: {sourceFile: filePath, bootstrapped: true},
+          metadata: { sourceFile: filePath, bootstrapped: true },
           createdAt: Date.now(),
         });
       }
     }
-  } catch { /* skip unreadable dirs */
-  }
+  } catch { /* skip unreadable dirs */ }
 }
 
 // ── Exported functions ───────────────────────────────────────────────────────
@@ -425,7 +478,7 @@ function init() {
       store = bootstrapped;
       writeJSON(STORE_PATH, store);
     } else {
-      return {nodes: 0, edges: 0, message: 'No memory entries to index'};
+      return { nodes: 0, edges: 0, message: 'No memory entries to index' };
     }
   }
 
@@ -448,8 +501,14 @@ function init() {
     writeJSON(STORE_PATH, deduped);
   }
 
-  // Skip rebuild if graph is fresh and store hasn't changed
-  if (graphState && graphState.nodeCount === deduped.length) {
+  // Skip rebuild if graph is fresh and store hasn't changed. #2920: nodeCount
+  // alone doesn't detect a same-ID content edit (e.g. hand-editing a
+  // MEMORY.md section's body while its heading/key stays the same) — the
+  // count and ID set are unchanged, so a count-only check returns a stale
+  // cache hit and never refreshes ranked-context.json. Require the content
+  // fingerprint to match too.
+  const currentFingerprint = storeFingerprint(deduped);
+  if (graphState && graphState.nodeCount === deduped.length && graphState.contentFingerprint === currentFingerprint) {
     const age = Date.now() - (graphState.updatedAt || 0);
     if (age < 60000) {
       return {
@@ -493,6 +552,7 @@ function init() {
     version: 1,
     updatedAt: Date.now(),
     nodeCount: Object.keys(nodes).length,
+    contentFingerprint: currentFingerprint,
     nodes,
     edges,
     pageRanks,
@@ -560,7 +620,7 @@ function getContext(prompt) {
     const contentMatch = jaccardSimilarity(promptTrigrams, entryTrigrams);
     const score = ALPHA * contentMatch + (1 - ALPHA) * (entry.pageRank || 0);
     if (score >= MIN_THRESHOLD) {
-      scored.push({...entry, score});
+      scored.push({ ...entry, score });
     }
   }
 
@@ -600,15 +660,28 @@ function getContext(prompt) {
  * recordEdit(file) — Called from post-edit. Budget: <2ms.
  * Appends to pending-insights.jsonl.
  */
-function recordEdit(file) {
+function recordEdit(file, success) {
   ensureDataDir();
   const entry = JSON.stringify({
     type: 'edit',
     file: file || 'unknown',
+    // ADR-174: record failures too, not just successes — the learning substrate
+    // needs negative examples. Defaults true; an explicit false is a failed edit.
+    success: success !== false,
     timestamp: Date.now(),
     sessionId: sessionGet('sessionId') || null,
   });
   fs.appendFileSync(PENDING_PATH, entry + '\n', 'utf-8');
+  // Runaway-storage guard: pending-insights is append-only and only drained by
+  // consolidation. If it grows past ~512KB (thousands of un-consolidated edits
+  // — e.g. the daemon never ran), keep only the most recent 2000 lines so it
+  // can never grow unbounded. Cheap (a statSync per edit; rewrite only when over).
+  try {
+    if (fs.statSync(PENDING_PATH).size > 512 * 1024) {
+      const lines = fs.readFileSync(PENDING_PATH, 'utf-8').split('\n').filter(Boolean);
+      if (lines.length > 2000) fs.writeFileSync(PENDING_PATH, lines.slice(-2000).join('\n') + '\n', 'utf-8');
+    }
+  } catch (e) { /* non-fatal */ }
 }
 
 /**
@@ -660,12 +733,17 @@ function consolidate() {
 
   let store = readJSON(STORE_PATH);
   if (!store || !Array.isArray(store)) {
-    return {entries: 0, edges: 0, newEntries: 0, message: 'No store to consolidate'};
+    return { entries: 0, edges: 0, newEntries: 0, message: 'No store to consolidate' };
   }
 
   // Deduplicate store entries by ID before processing (fixes #1518)
   const preDedupCount = store.length;
   store = deduplicateById(store);
+  // #2628: imports assign fresh IDs to repeated MEMORY.md content, so ID
+  // dedup alone never shrinks the store. Consolidate is the session-end path:
+  // content-dedup here before edge construction and persist the compacted
+  // store so subsequent sessions stay bounded.
+  store = deduplicateByContent(store);
 
   // 1. Process pending insights
   let newEntries = 0;
@@ -678,8 +756,7 @@ function consolidate() {
         if (insight.file) {
           editCounts[insight.file] = (editCounts[insight.file] || 0) + 1;
         }
-      } catch { /* skip malformed */
-      }
+      } catch { /* skip malformed */ }
     }
 
     // Create entries for frequently-edited files (3+ edits)
@@ -696,7 +773,7 @@ function consolidate() {
             summary: `Frequently edited: ${path.basename(file)} (${count}x)`,
             namespace: 'insights',
             type: 'procedural',
-            metadata: {sourceFile: file, editCount: count, autoGenerated: true},
+            metadata: { sourceFile: file, editCount: count, autoGenerated: true },
             createdAt: Date.now(),
           });
           newEntries++;
@@ -753,11 +830,16 @@ function consolidate() {
     pageRanks = computePageRank(nodes, edges, 0.85, 30);
   }
 
-  // 6. Write updated graph
+  // 6. Write updated graph. #2920 follow-up: include contentFingerprint so
+  // init()'s cache-hit gate (line ~511) doesn't unconditionally miss on the
+  // very next init after a consolidate — without this, nodeCount alone
+  // matched but contentFingerprint was undefined here vs a real hash in
+  // init()'s own write, forcing a full rebuild every time.
   writeJSON(GRAPH_PATH, {
     version: 1,
     updatedAt: Date.now(),
     nodeCount: Object.keys(nodes).length,
+    contentFingerprint: storeFingerprint(store),
     nodes,
     edges,
     pageRanks,
@@ -791,8 +873,15 @@ function consolidate() {
     entries: rankedEntries,
   });
 
-  // 8. Persist updated store (deduped or with new insight entries)
-  if (newEntries > 0 || store.length < preDedupCount) writeJSON(STORE_PATH, store);
+  // 8. Persist updated store. #2920: this used to skip the write whenever
+  // dedup didn't shrink the array and no insight entries were added — but
+  // that's blind to a same-ID content edit (entry count and ID set both
+  // stay the same, only a field value changes), so an in-memory content
+  // update could be silently dropped instead of persisted. GRAPH_PATH and
+  // RANKED_PATH are rewritten unconditionally just above; writing the
+  // (already deduped, size-bounded per ADR-095 G6) store alongside them
+  // costs nothing near the <500ms budget and removes the whole bug class.
+  writeJSON(STORE_PATH, store);
 
   // 9. Save snapshot for delta tracking
   const updatedGraph = readJSON(GRAPH_PATH);
@@ -890,10 +979,7 @@ function stats(outputJson) {
   if (graph && graph.pageRanks) {
     for (const [id, pr] of Object.entries(graph.pageRanks)) {
       prSum += pr;
-      if (pr > prMax) {
-        prMax = pr;
-        prMaxId = id;
-      }
+      if (pr > prMax) { prMax = pr; prMaxId = id; }
     }
   }
 
@@ -953,18 +1039,18 @@ function stats(outputJson) {
       edgeGrowth: last.edges - first.edges,
       confidenceDrift: lastConfMean - firstConfMean,
       direction: lastConfMean > firstConfMean ? 'improving' :
-        lastConfMean < firstConfMean ? 'declining' : 'stable',
+                 lastConfMean < firstConfMean ? 'declining' : 'stable',
     };
   }
 
   const report = {
-    graph: {nodes, edges, density: +density.toFixed(4)},
+    graph: { nodes, edges, density: +density.toFixed(4) },
     confidence: {
       min: +confMin.toFixed(3), max: +confMax.toFixed(3),
       mean: +confMean.toFixed(3), median: +confMedian.toFixed(3),
     },
-    access: {total: totalAccess, patternsAccessed: accessedCount, patternsNeverAccessed: nodes - accessedCount},
-    pageRank: {sum: +prSum.toFixed(4), topNode: prMaxId, topNodeRank: +prMax.toFixed(4)},
+    access: { total: totalAccess, patternsAccessed: accessedCount, patternsNeverAccessed: nodes - accessedCount },
+    pageRank: { sum: +prSum.toFixed(4), topNode: prMaxId, topNodeRank: +prMax.toFixed(4) },
     edgeTypes,
     pendingInsights: pending,
     snapshots: history.length,
@@ -987,7 +1073,7 @@ function stats(outputJson) {
 
   console.log('  Graph');
   console.log(`    Nodes:    ${nodes}`);
-  console.log(`    Edges:    ${edges} (${Object.entries(edgeTypes).map(([t, c]) => `${c} ${t}`).join(', ') || 'none'})`);
+  console.log(`    Edges:    ${edges} (${Object.entries(edgeTypes).map(([t,c]) => `${c} ${t}`).join(', ') || 'none'})`);
   console.log(`    Density:  ${(density * 100).toFixed(1)}%`);
   console.log('');
 
@@ -1048,7 +1134,16 @@ function stats(outputJson) {
   return report;
 }
 
-module.exports = {init, getContext, recordEdit, feedback, consolidate, stats};
+module.exports = {
+  init,
+  getContext,
+  recordEdit,
+  feedback,
+  consolidate,
+  stats,
+  resolveProjectRoot,
+  projectRoot: PROJECT_ROOT,
+};
 
 // ── CLI entrypoint ──────────────────────────────────────────────────────────
 if (require.main === module) {
@@ -1056,17 +1151,9 @@ if (require.main === module) {
   const jsonFlag = process.argv.includes('--json');
 
   const cmds = {
-    init: () => {
-      const r = init();
-      console.log(JSON.stringify(r));
-    },
-    stats: () => {
-      stats(jsonFlag);
-    },
-    consolidate: () => {
-      const r = consolidate();
-      console.log(JSON.stringify(r));
-    },
+    init: () => { const r = init(); console.log(JSON.stringify(r)); },
+    stats: () => { stats(jsonFlag); },
+    consolidate: () => { const r = consolidate(); console.log(JSON.stringify(r)); },
   };
 
   if (cmd && cmds[cmd]) {

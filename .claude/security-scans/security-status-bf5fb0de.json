@@ -1,0 +1,173 @@
+{
+  "commit": "bf5fb0de",
+  "verified_at": "2026-09-30",
+  "source_scan": ".claude/security-scans/scan-all-standard.json",
+  "source_scan_timestamp": "2026-09-25T20:28:30.999Z",
+  "evidence": ".nu-aura/evidence/bf5fb0de/security-scan-verification.md",
+  "status_legend": ["CLOSED", "FALSE_POSITIVE", "HUMAN_ACTION_REQUIRED", "OPEN", "BLOCKING"],
+  "code_controlled_gate": "PASS",
+  "release_security_gate": "NOT_PASS",
+  "summary": {
+    "total_scan_findings": 66,
+    "closed": 1,
+    "false_positive": 65,
+    "open": 0,
+    "human_action_required": 7,
+    "blocking": 2
+  },
+  "scan_findings": [
+    {
+      "id": "SCAN-001",
+      "type": "React XSS (JSON-LD)",
+      "location": "frontend/app/careers/page.tsx:94",
+      "status": "CLOSED",
+      "detail": "Escaped '<' to \\u003c before injecting JSON.stringify(jobPostingSchema) into a JSON-LD <script> tag to prevent breakout via job title/description containing </script>."
+    },
+    {
+      "id": "SCAN-002..031",
+      "type": "Hardcoded Secret",
+      "location": "docker-compose.prod.yml, infra/deployment/kubernetes/secrets.yaml, frontend/e2e/*, frontend/lib/validations/__tests__/*, scripts/qa/screenshot-all-pages.ts",
+      "count": 30,
+      "status": "FALSE_POSITIVE",
+      "detail": "Test fixtures, placeholder/template values (CHANGEME base64), or env-var references. No literal production secret values present."
+    },
+    {
+      "id": "SCAN-032..040",
+      "type": "React XSS (dangerouslySetInnerHTML)",
+      "location": "frontend/app/announcements/page.tsx, frontend/app/careers/page.tsx, frontend/app/dashboard/_components/DashboardModals.tsx, frontend/app/fluence/search/page.tsx, frontend/app/layout.tsx, frontend/app/letters/templates/page.tsx, frontend/app/nu-mail/_components/ComposeModal.tsx, frontend/app/nu-mail/_components/EmailViewer.tsx, frontend/components/layout/MantineThemeProvider.tsx, frontend/components/layout/NotificationDropdown.tsx",
+      "count": 9,
+      "status": "FALSE_POSITIVE",
+      "detail": "All pass through sanitizeHtml/sanitizeEmailHtml/sanitizeAnnouncementHtml (DOMPurify, allowlisted tags/attrs, FORBID_TAGS script/iframe/object/embed/form/input) or render static/non-user content (theme-script.ts FOUC script, Mantine internal style injection)."
+    },
+    {
+      "id": "SCAN-041..042",
+      "type": "innerHTML (design-import)",
+      "location": "design-import/aura/project/app/DashboardPage.jsx, design-import-2/aura/project/app/Primitives.jsx",
+      "count": 2,
+      "status": "FALSE_POSITIVE",
+      "detail": "Unused design-mockup reference directories, not part of frontend/ build, not deployed. Left untouched per explicit instruction not to delete solely to satisfy the scanner."
+    },
+    {
+      "id": "SCAN-043..045",
+      "type": "Eval Usage",
+      "location": "frontend/e2e/accessibility/a11y.spec.ts:52, frontend/e2e/tmp-debug-rbac.spec.ts:43-44",
+      "count": 3,
+      "status": "FALSE_POSITIVE",
+      "detail": "Playwright page.$eval/$$eval API, not the eval() global."
+    },
+    {
+      "id": "SCAN-046..048",
+      "type": "SQL Injection",
+      "location": "frontend/e2e/security-deep.spec.ts:1084,1132,1157",
+      "count": 3,
+      "status": "FALSE_POSITIVE",
+      "detail": "Security regression tests asserting SQL-injection payloads do NOT succeed (expect(has500).toBe(false), etc.)."
+    },
+    {
+      "id": "SCAN-049..051",
+      "type": "Command Injection",
+      "location": "scripts/orchestrator-os-server.js:30,35,537",
+      "count": 3,
+      "status": "FALSE_POSITIVE",
+      "detail": "execFile/execFileSync called with argument arrays, no shell:true, not shell-interpolated. Not injectable."
+    },
+    {
+      "id": "SCAN-052..066",
+      "type": "innerHTML (dev-tool scripts)",
+      "location": "scripts/agent-os-server.js, scripts/orchestrator-os-server.js",
+      "count": 15,
+      "status": "FALSE_POSITIVE",
+      "detail": "Localhost-only developer tooling (agent orchestration visualizer), not part of the shipped frontend/backend. Dynamic values pass through a local esc() helper (unit-tested in orchestrator-client-core.test.js)."
+    }
+  ],
+  "drift_check": {
+    "performed": true,
+    "new_findings": 2,
+    "new_findings_detail": [
+      {
+        "location": "frontend/app/learning/courses/[id]/play/page.tsx:251",
+        "status": "FALSE_POSITIVE",
+        "detail": "DOMPurify.sanitize(activeContent.textContent) before render."
+      },
+      {
+        "location": "frontend/app/training/catalog/[id]/page.tsx:193",
+        "status": "FALSE_POSITIVE",
+        "detail": "sanitizeHtml() from frontend/lib/utils/sanitize.ts."
+      }
+    ],
+    "new_secrets_found": 0,
+    "new_command_injection_found": 0
+  },
+  "human_action_required": [
+    {
+      "id": "HAR-001",
+      "action": "Rotate JWT_SECRET",
+      "owner": "Platform/infra owner (prod credential holder)",
+      "status": "HUMAN_ACTION_REQUIRED",
+      "severity": "HIGH",
+      "release_impact": "Exposed secret permits forging valid JWTs for any user/role.",
+      "evidence_required": "New secret deployed to Railway env; old sessions invalidated; verified via fresh login."
+    },
+    {
+      "id": "HAR-002",
+      "action": "Rotate APP_SECURITY_ENCRYPTION_KEY (dual-key migration, story US-2G9V0TF3AXX2)",
+      "owner": "Platform/infra owner + DBA",
+      "status": "HUMAN_ACTION_REQUIRED",
+      "severity": "BLOCKING",
+      "release_impact": "Naive rotation without dual-key read/rewrite migration corrupts all AES-256-GCM-encrypted PII at rest (employees bank/IFSC, users.mfa_secret, benefit_dependents national ID/passport, tax_declarations, PF/ESI, payments, webhook/connector config).",
+      "evidence_required": "Dual-key migration executed and verified; decrypt spot-check post-migration."
+    },
+    {
+      "id": "HAR-003",
+      "action": "Rotate DB credentials (SPRING_DATASOURCE_URL/USERNAME/PASSWORD)",
+      "owner": "Platform/infra owner + DBA",
+      "status": "HUMAN_ACTION_REQUIRED",
+      "severity": "BLOCKING",
+      "release_impact": "Exposed DB credentials permit direct data access bypassing the app layer.",
+      "evidence_required": "New NOBYPASSRLS role/password created and verified; old credential revoked; app reconnect verified."
+    },
+    {
+      "id": "HAR-004",
+      "action": "Rotate or decommission MINIO_ROOT_PASSWORD",
+      "owner": "Platform/infra owner",
+      "status": "HUMAN_ACTION_REQUIRED",
+      "severity": "LOW",
+      "release_impact": "Dead service (MinIO confirmed removed) — a decommission ticket should formally close it rather than carrying it forward silently.",
+      "evidence_required": "Confirm decommission or rotate if still live."
+    },
+    {
+      "id": "HAR-005",
+      "action": "Rotate OPENAI_API_KEY (Groq)",
+      "owner": "Platform/infra owner",
+      "status": "HUMAN_ACTION_REQUIRED",
+      "severity": "MEDIUM",
+      "release_impact": "Exposed key permits third-party API spend under this account.",
+      "evidence_required": "New key issued, old key revoked, app env updated, live completion call verified."
+    },
+    {
+      "id": "HAR-006",
+      "action": "Rotate GRAFANA_ADMIN_PASSWORD",
+      "owner": "Platform/infra owner",
+      "status": "HUMAN_ACTION_REQUIRED",
+      "severity": "MEDIUM",
+      "release_impact": "Exposed credential permits dashboard/alerting tampering.",
+      "evidence_required": "New password set, login verified, old password rejected."
+    },
+    {
+      "id": "HAR-007",
+      "action": "Install/wire scripts/security/pre-commit-secret-scan.sh",
+      "owner": "Repo owner / contributors (per-machine local hook)",
+      "status": "HUMAN_ACTION_REQUIRED",
+      "severity": "MEDIUM",
+      "release_impact": "Without it, a new secret can be committed locally before the CI gitleaks secret-scan job catches it on push.",
+      "evidence_required": "Hook chained into .git/hooks/pre-commit (or team hook manager); one verified blocked-commit test run.",
+      "note": "Not auto-applied this session — explicitly reserved as a human action per release-status instruction."
+    }
+  ],
+  "gate_verdict": {
+    "code_controlled_security_gate": "PASS",
+    "release_security_gate": "NOT_PASS",
+    "blocking_reasons": ["HAR-002", "HAR-003"],
+    "do_not_declare_pass_while": "Historical secrets remain active OR the secret-scan hook is unwired."
+  }
+}

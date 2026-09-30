@@ -1,0 +1,109 @@
+# Nu-Aura — Blocker Register (append-only; never delete historical blockers)
+#
+# Each blocker: id, severity (P0-P3), title, description, detected_at,
+# detected_commit, affected_area, status, owner, root_cause, required_action,
+# human_required, verification_required. Canonical statuses only.
+blockers:
+  - id: BLOCKER-001
+    severity: P0
+    title: Permission scopes flattened to ALL at runtime (broken object-level authorization)
+    description: >-
+      JwtAuthenticationFilter stamped every DB-hydrated permission with RoleScope.GLOBAL,
+      discarding role_permissions.scope. Confirmed cross-employee PII leak on leave-requests.
+    detected_at: "2026-09-24"
+    detected_commit: "2b4832cb"
+    affected_area: authorization
+    status: IN_PROGRESS
+    owner: ORCHESTRATOR
+    root_cause: RoleScope.GLOBAL default in JwtAuthenticationFilter (fixed in main commit 3bcb7f31); further hardening on release/v339-security-remediation (d4e316e8).
+    required_action: Execute RBAC regression tests and a live authenticated probe; require 26/26 forbidden denials.
+    human_required: false
+    verification_required: Backend RBAC/IDOR tests green + live RBAC matrix 26/26.
+    notes: Code fix verified present (filter loads real scopes, fails closed to SELF). No execution evidence yet. See .nu-aura/evidence/798f46c8/rbac-blocker-001.md.
+
+  - id: BLOCKER-002
+    severity: P0
+    title: Exposed credentials unrotated (7 credentials, UNKNOWN, live in ~85 refs)
+    description: Committed root .env (introduced d5961fef / 8de12a5f) exposed JWT_SECRET, APP_SECURITY_ENCRYPTION_KEY, Spring datasource URL/user/password, MINIO_ROOT_PASSWORD, OPENAI_API_KEY (Groq), GRAFANA_ADMIN_PASSWORD.
+    detected_at: "2026-09-24"
+    detected_commit: "2b4832cb"
+    affected_area: secrets
+    status: HUMAN_REQUIRED
+    owner: HUMAN
+    root_cause: Secrets committed to git history and reachable from ~85 refs across two remotes.
+    required_action: Rotate JWT_SECRET first, then DB creds, MinIO, Groq, Grafana. APP_SECURITY_ENCRYPTION_KEY requires a dual-key migration (do not rotate naively).
+    human_required: true
+    verification_required: Rotation evidence + secret scan clean on all refs.
+    notes: Rotate-only is recommended; history rewrite not required once values are inert.
+
+  - id: BLOCKER-003
+    severity: P1
+    title: Backend not hosted; production host returns 404
+    description: https://nu-aura-backend.onrender.com/actuator/health -> 404 (probed 2026-09-30).
+    detected_at: "2026-09-30"
+    detected_commit: "798f46c8"
+    affected_area: infrastructure
+    status: HUMAN_REQUIRED
+    owner: HUMAN
+    root_cause: No reachable production/staging backend host.
+    required_action: Provide/host the backend and supply deployment credentials.
+    human_required: true
+    verification_required: Public backend health UP; live cross-role E2E; NOBYPASSRLS RLS proof.
+
+  - id: BLOCKER-004
+    severity: P1
+    title: CI "Security Scan" failing on main (runner disk exhaustion during Trivy)
+    description: Run 36303355757 (main, Security Scan, 2026-09-27) failed; Trivy FATAL "no space left on device" while downloading trivy-java-db.
+    detected_at: "2026-09-30"
+    detected_commit: "798f46c8"
+    affected_area: ci
+    status: DONE
+    owner: DEV
+    root_cause: GitHub runner disk exhaustion during Trivy Java DB download — infrastructure flake, not a product/CVE failure.
+    required_action: Free runner disk before scan (remove unused toolchains/caches) or skip Java DB / use a larger runner; re-run. (DONE)
+    human_required: false
+    verification_required: Security Scan green on the release commit. (DONE)
+    notes: See .nu-aura/evidence/798f46c8/ci-security-scan.md.
+
+  - id: BLOCKER-005
+    severity: P1
+    title: Release reconciliation / dirty working tree
+    description: main @ 798f46c8; release/v339-security-remediation @ 7d481ca3 is ahead by 12 commits. Working tree has ~147 files differing from that branch (product, CI, generated, reports, orchestrator state).
+    detected_at: "2026-09-30"
+    detected_commit: "798f46c8"
+    affected_area: release
+    status: IN_PROGRESS
+    owner: ORCHESTRATOR
+    root_cause: In-flight remediation on a branch plus a large uncommitted local working tree; branch commit d4e316e8 adopted the same uncommitted security batch.
+    required_action: Classify every change; produce a deterministic proposed RC commit scope; surface the commit/merge authorization request.
+    human_required: false
+    verification_required: Deterministic RC commit with clean tree and identical tested content.
+    notes: See .nu-aura/evidence/798f46c8/working-tree-classification.md.
+
+  - id: BLOCKER-006
+    severity: P2
+    title: Flyway version gap (V338–V340 absent locally; V341 untracked)
+    description: Local migration files jump V337 -> V341 (V341 untracked); the release branch carries V337–V340.
+    detected_at: "2026-09-30"
+    detected_commit: "798f46c8"
+    affected_area: database
+    status: IN_PROGRESS
+    owner: DEV
+    root_cause: Candidate/branch migrations not consolidated onto the release line.
+    required_action: Confirm the intended migration set; ensure chain applies cleanly on a virgin DB.
+    human_required: false
+    verification_required: V0->latest clean apply on Testcontainers PG16.
+
+  - id: BLOCKER-007
+    severity: P1
+    title: Production V316 migration checksum drift unverified
+    description: V316 is a forward-only revert; verifying checksum/migration state in production requires Railway access, which is expired.
+    detected_at: "2026-09-24"
+    detected_commit: "2b4832cb"
+    affected_area: database
+    status: HUMAN_REQUIRED
+    owner: HUMAN
+    root_cause: Railway project authentication expired.
+    required_action: Re-authenticate to Railway and verify the applied migration/checksum state before deploy.
+    human_required: true
+    verification_required: Production Flyway schema history matches the release migration set.

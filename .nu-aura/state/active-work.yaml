@@ -1,0 +1,22 @@
+# Nu-Aura — Active Work Queue
+#
+# Every task: unique id, description, one accountable owner, priority,
+# canonical status, dependencies, acceptance criteria.
+# Canonical statuses: BACKLOG | READY | IN_PROGRESS | BLOCKED | HUMAN_REQUIRED
+#                     | VALIDATION | FAILED | ACCEPTED | CANCELLED
+# Owners: ORCHESTRATOR | DEV | QA | SECURITY | RELEASE | HUMAN
+current_task: null
+
+queue: []
+
+# Task schema:
+# - id: NA-001
+#   title: ""
+#   description: ""
+#   owner: DEV
+#   priority: P1
+#   status: BACKLOG
+#   work_type: IMPLEMENTATION
+#   dependencies: []
+#   acceptance_criteria: []
+#   evidence: []

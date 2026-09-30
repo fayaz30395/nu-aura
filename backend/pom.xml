@@ -323,6 +323,16 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- spring-boot-starter-test does not pull this in transitively here, and without it
+             surefire's JUnit5 provider silently discovers zero tests in plain (non-Spring)
+             Jupiter classes: no error, no failure, just "Tests run: 0". Version comes from
+             Spring Boot's dependency-management BOM (matches junit-jupiter). -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
