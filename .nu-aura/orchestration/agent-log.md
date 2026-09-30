@@ -31,3 +31,13 @@ Added BLOCKER-007 (prod V316 checksum drift, Railway auth expired).
 Decision: Record evidence; do not commit/merge without authorization; next gate cycle = generate
 client + real build/tests.
 Evidence: .nu-aura/evidence/798f46c8/*, docs/release/*, docs/security/security-review.md.
+
+Phase: TEST (cycle 1) + RELEASE
+Action: Ran frontend gates with the correct generation step; then executed an authorized
+commit+push of the working tree.
+Result: `API_DOCS_URL=./openapi-snapshot.json npm run api:generate` PASS; `npx tsc --noEmit` PASS;
+`npm run lint` PASS. Committed as 3573e46a and pushed main to both remotes
+(fayaz30395 + Fayaz-Deen), bf5fb0de..3573e46a.
+Decision: Record frontend typecheck/lint PASS; continue with backend compile/tests and the RC
+reconciliation. Push authorized explicitly by the user ("push all").
+Evidence: .nu-aura/evidence/798f46c8/frontend-gates.md; push output bf5fb0de..3573e46a.

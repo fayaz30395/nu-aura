@@ -4,15 +4,15 @@
 # capability fields: result vocabulary PASS | FAIL | NOT_RUN | NOT_APPLICABLE | UNKNOWN
 # Never silently convert UNKNOWN into PASS.
 project: nu-aura
-last_updated: "2026-09-30T23:20:00Z"
-last_verified_commit: "798f46c8"
+last_updated: "2026-09-30T23:35:00Z"
+last_verified_commit: "3573e46a"
 branch: main
 status: IN_PROGRESS
 work_type: RELEASE
 phase: DISCOVERY
 
 frontend:
-  build: PASS
+  build: NOT_RUN
   lint: PASS
   typecheck: PASS
   unit_tests: NOT_RUN
@@ -69,6 +69,7 @@ human_actions_required:
   - dr-rto-rpo-decision
 
 warnings:
-  - "frontend typecheck FAIL is caused by a missing generated client (lib/generated is gitignored); run api:generate first."
+  - "Frontend gates require the local snapshot: run `API_DOCS_URL=./openapi-snapshot.json npm run api:generate` before typecheck/build (plain api:generate defaults to localhost:8080)."
   - "main CI Security Scan failure is a runner disk-space flake during Trivy, not a CVE finding."
+  - "release/v339-security-remediation is 12 commits ahead of the pre-sync main and not merged."
   - "Backend suite has historically been run on Java 23 while the project targets Java 21."
