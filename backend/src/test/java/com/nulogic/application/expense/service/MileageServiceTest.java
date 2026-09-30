@@ -66,6 +66,8 @@ class MileageServiceTest {
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @Mock
     private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    @Mock
+    private ExpenseClaimService expenseClaimService;
     @InjectMocks
     private MileageService mileageService;
 
@@ -468,5 +470,47 @@ class MileageServiceTest {
 
         assertThatThrownBy(() -> mileageService.getEmployeeMileageLogs(otherEmployeeId, pageable))
                 .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+    }
+
+    /**
+     * SEC-E8: {@code createMileageLog} took its {@code employeeId} from the path and never
+     * checked it. The file already had an ownership gate — {@code assertSelfOrBroaderScope} —
+     * but it was wired only to the two read methods, so the reimbursable write was open to any
+     * holder of EXPENSE:CREATE, which is a baseline employee grant. Same shape as SEC-E5 on
+     * expense claims; it now takes the same gate, on the write permission's scope.
+     */
+    @org.junit.jupiter.api.Nested
+    @org.junit.jupiter.api.DisplayName("SEC-E8: mileage write ownership")
+    class MileageWriteAuthorization {
+
+        @Test
+        @org.junit.jupiter.api.DisplayName("a caller denied by the EXPENSE:CREATE scope cannot file mileage for another employee")
+        void deniedScopeCannotCreateForAnotherEmployee() {
+            org.mockito.Mockito.doThrow(new org.springframework.security.access.AccessDeniedException("denied"))
+                    .when(expenseClaimService)
+                    .assertEmployeeAccess(EMPLOYEE_ID, com.nulogic.common.security.Permission.EXPENSE_CREATE);
+
+            assertThatThrownBy(() -> mileageService.createMileageLog(EMPLOYEE_ID, createValidRequest()))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+
+            verify(mileageLogRepository, org.mockito.Mockito.never()).save(any());
+            // The gate must precede the existence probe: an unauthorized caller must not be able
+            // to use this endpoint to learn whether an employee id exists in the tenant.
+            verify(employeeRepository, org.mockito.Mockito.never())
+                    .existsByIdAndTenantId(any(), any());
+        }
+
+        @Test
+        @org.junit.jupiter.api.DisplayName("the gate is consulted with the WRITE permission, not a view permission")
+        void gateUsesTheWritePermission() {
+            when(employeeRepository.existsByIdAndTenantId(EMPLOYEE_ID, TENANT_ID)).thenReturn(true);
+            when(mileagePolicyService.getActivePolicy(TENANT_ID)).thenReturn(createPolicy());
+            when(mileageLogRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+            mileageService.createMileageLog(EMPLOYEE_ID, createValidRequest());
+
+            verify(expenseClaimService)
+                    .assertEmployeeAccess(EMPLOYEE_ID, com.nulogic.common.security.Permission.EXPENSE_CREATE);
+        }
     }
 }

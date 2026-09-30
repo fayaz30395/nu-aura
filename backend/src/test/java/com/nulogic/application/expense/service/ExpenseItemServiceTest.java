@@ -290,7 +290,7 @@ class ExpenseItemServiceTest {
 
         service.openReceipt(claimId, itemId);
 
-        verify(expenseClaimService).assertEmployeeAccess(any(), eq(Permission.EXPENSE_VIEW));
+        verify(expenseClaimService).assertEmployeeReadAccess(any());
     }
 
     @Test
@@ -300,7 +300,7 @@ class ExpenseItemServiceTest {
         when(itemRepository.findByIdAndTenantId(itemId, TENANT_ID))
                 .thenReturn(Optional.of(persistedItem(path, "lunch.pdf")));
         doThrow(new org.springframework.security.access.AccessDeniedException("denied"))
-                .when(expenseClaimService).assertEmployeeAccess(any(), eq(Permission.EXPENSE_VIEW));
+                .when(expenseClaimService).assertEmployeeReadAccess(any());
 
         assertThatThrownBy(() -> service.openReceipt(claimId, itemId))
                 .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
@@ -318,5 +318,105 @@ class ExpenseItemServiceTest {
         assertThatThrownBy(() -> service.updateItem(UUID.randomUUID(), itemId, request()))
                 .isInstanceOf(EntityNotFoundException.class);
         verify(itemRepository, never()).save(any());
+    }
+
+    // SEC-E4 (HIGH, 2026-09-25 remediation): the ownership gate was applied to updateItem,
+    // getItemsByClaimId and openReceipt but NOT to the two sibling mutating paths. addItem
+    // resolved the claim by (claimId, tenantId) alone, and deleteItem did the same by
+    // (itemId, tenantId) while discarding {claimId} entirely.
+    //
+    // The write gate reads EXPENSE:CREATE, not EXPENSE:VIEW: a manager whose VIEW scope is
+    // TEAM must not inherit write reach over a reportee's draft claim from it.
+
+    @Test
+    @DisplayName("SEC-E4: addItem runs the claim-owner gate against the WRITE permission")
+    void addItemChecksClaimOwnership() {
+        service.addItem(claimId, request());
+
+        verify(expenseClaimService).assertEmployeeAccess(any(), eq(Permission.EXPENSE_CREATE));
+    }
+
+    @Test
+    @DisplayName("SEC-E4: a denied owner check stops addItem before anything is persisted")
+    void addItemDeniedScopeDoesNotPersist() {
+        doThrow(new org.springframework.security.access.AccessDeniedException("denied"))
+                .when(expenseClaimService).assertEmployeeAccess(any(), eq(Permission.EXPENSE_CREATE));
+
+        assertThatThrownBy(() -> service.addItem(claimId, request()))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(itemRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("SEC-E4: deleteItem runs the claim-owner gate against the WRITE permission")
+    void deleteItemChecksClaimOwnership() {
+        when(itemRepository.findByIdAndTenantId(itemId, TENANT_ID))
+                .thenReturn(Optional.of(persistedItem(null, null)));
+
+        service.deleteItem(claimId, itemId);
+
+        verify(expenseClaimService).assertEmployeeAccess(any(), eq(Permission.EXPENSE_CREATE));
+        verify(itemRepository).delete(any(ExpenseItem.class));
+    }
+
+    @Test
+    @DisplayName("SEC-E4: a denied owner check stops deleteItem before the row is removed")
+    void deleteItemDeniedScopeDoesNotDelete() {
+        when(itemRepository.findByIdAndTenantId(itemId, TENANT_ID))
+                .thenReturn(Optional.of(persistedItem(null, null)));
+        doThrow(new org.springframework.security.access.AccessDeniedException("denied"))
+                .when(expenseClaimService).assertEmployeeAccess(any(), eq(Permission.EXPENSE_CREATE));
+
+        assertThatThrownBy(() -> service.deleteItem(claimId, itemId))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(itemRepository, never()).delete(any(ExpenseItem.class));
+    }
+
+    @Test
+    @DisplayName("SEC-E3: deleteItem refuses an item that does not belong to the given claim")
+    void deleteItemRejectsClaimMismatch() {
+        when(itemRepository.findByIdAndTenantId(itemId, TENANT_ID))
+                .thenReturn(Optional.of(persistedItem(null, null)));
+
+        assertThatThrownBy(() -> service.deleteItem(UUID.randomUUID(), itemId))
+                .isInstanceOf(EntityNotFoundException.class);
+        verify(itemRepository, never()).delete(any(ExpenseItem.class));
+    }
+
+    @Test
+    @DisplayName("SEC-E3: deleteItem authorization does not depend on {claimId} being supplied")
+    void deleteItemStillGatesWhenClaimIdIsAbsent() {
+        when(itemRepository.findByIdAndTenantId(itemId, TENANT_ID))
+                .thenReturn(Optional.of(persistedItem(null, null)));
+        doThrow(new org.springframework.security.access.AccessDeniedException("denied"))
+                .when(expenseClaimService).assertEmployeeAccess(any(), eq(Permission.EXPENSE_CREATE));
+
+        assertThatThrownBy(() -> service.deleteItem(null, itemId))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(itemRepository, never()).delete(any(ExpenseItem.class));
+    }
+
+    // SEC-E2: the list gate must run on every path, including the claim-missing branch that
+    // the earlier `ifPresent` form silently skipped.
+
+    @Test
+    @DisplayName("SEC-E2: getItemsByClaimId runs the read gate before returning any item")
+    void getItemsByClaimIdChecksClaimOwnership() {
+        when(itemRepository.findAllByExpenseClaimId(claimId)).thenReturn(List.of());
+
+        service.getItemsByClaimId(claimId);
+
+        verify(expenseClaimService).assertEmployeeReadAccess(any());
+    }
+
+    @Test
+    @DisplayName("SEC-E2: a denied read gate returns no items at all")
+    void getItemsByClaimIdDeniedScopeReturnsNothing() {
+        doThrow(new org.springframework.security.access.AccessDeniedException("denied"))
+                .when(expenseClaimService).assertEmployeeReadAccess(any());
+
+        assertThatThrownBy(() -> service.getItemsByClaimId(claimId))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(itemRepository, never()).findAllByExpenseClaimId(any());
     }
 }
