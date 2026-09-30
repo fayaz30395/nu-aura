@@ -27,6 +27,22 @@ function futureDate(daysOffset: number): string {
   return date.toISOString().split('T')[0];
 }
 
+/**
+ * The leave API rejects a range with no working days ("Leave range contains no working
+ * days (weekends/holidays only)"), which is correct product behaviour — but the offsets
+ * below are seeded from the current second, so on some runs they landed on a Sat/Sun and
+ * the self-service half of this RBAC test failed for a calendar reason rather than an
+ * authorization one. Roll forward to the next weekday so the test asserts what it is about.
+ */
+function futureWeekday(daysOffset: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + daysOffset);
+  while (date.getDay() === 0 || date.getDay() === 6) {
+    date.setDate(date.getDate() + 1);
+  }
+  return date.toISOString().split('T')[0];
+}
+
 function expectDenied(response: APIResponse): void {
   expect(
     [401, 403, 404],
@@ -73,7 +89,7 @@ test.describe('Workflow API edge cases @rbac @critical', () => {
     const target = await apiUser(demoUsers.employeeSaran.email, demoUsers.employeeSaran.password);
     const requester = await apiUser(demoUsers.employeeRaj.email, demoUsers.employeeRaj.password);
     const leaveTypeId = await getLeaveTypeId(requester.api);
-    const startDate = futureDate(140 + new Date().getSeconds());
+    const startDate = futureWeekday(140 + new Date().getSeconds());
 
     const spoofResponse = await requester.api.post('leave-requests', {
       headers: csrfHeaders(requester),
@@ -94,8 +110,8 @@ test.describe('Workflow API edge cases @rbac @critical', () => {
       data: {
         employeeId: requester.employee.id,
         leaveTypeId,
-        startDate: futureDate(142 + new Date().getSeconds()),
-        endDate: futureDate(142 + new Date().getSeconds()),
+        startDate: futureWeekday(142 + new Date().getSeconds()),
+        endDate: futureWeekday(142 + new Date().getSeconds()),
         totalDays: 1,
         reason: 'API edge case should allow own employee leave request',
       },

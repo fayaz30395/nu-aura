@@ -236,10 +236,12 @@ test.describe('Attendance Management', () => {
     test('should display team attendance controls', async ({page}) => {
       await attendancePage.navigateToTeamAttendance();
 
-      // The team-attendance page renders an <h1>Team Attendance</h1>; assert it
-      // directly (auto-waits for the cold navigation to render).
+      // The team-attendance page renders an <h1>Team Attendance</h1> AND (once
+      // the table view loads) a card <h3>Team Attendance Records</h3> — both are
+      // accessible headings matching /Team Attendance/i, so an unscoped role
+      // query is a strict-mode violation. Scope to the page's h1 title.
       await expect(
-        page.getByRole('heading', {name: /Team Attendance/i})
+        page.getByRole('heading', {name: /Team Attendance/i, level: 1})
       ).toBeVisible({timeout: 20000});
     });
   });
@@ -250,6 +252,9 @@ test.describe('Attendance Management', () => {
       await page.waitForTimeout(1000);
 
       await expect(page).toHaveScreenshot('attendance-page.png', {
+        // The live clock / today's date re-render every second, so an unmasked
+        // full-page snapshot can never be stable. Mask only those nodes.
+        mask: [page.getByTestId('live-time')],
         maxDiffPixels: 500,
       });
     });
@@ -259,6 +264,7 @@ test.describe('Attendance Management', () => {
       await page.waitForTimeout(1000);
 
       await expect(page).toHaveScreenshot('my-attendance.png', {
+        mask: [page.getByTestId('live-time')],
         maxDiffPixels: 500,
       });
     });

@@ -80,13 +80,30 @@ const roleToDemo: Record<Role, keyof typeof demoUsers | null> = {
   FINANCE_ADMIN: 'hrManager', // jagadeesh per skill creds
 };
 
-async function loginAs(page: Page, role: Role): Promise<boolean> {
+interface LoginResult {
+  ok: boolean;
+  reason?: string;
+}
+
+async function loginAs(page: Page, role: Role): Promise<LoginResult> {
   const key = roleToDemo[role];
-  if (!key) return false;
+  if (!key) return {ok: false, reason: `no demo user mapped for role ${role}`};
   const user = (demoUsers as Record<string, { name: string; email: string; password: string }>)[
     key as string
     ];
-  if (!user) return false;
+  if (!user) return {ok: false, reason: `demo user key "${key}" not found in testData`};
+
+  // Capture the real /auth/login response so a failure reports its HTTP
+  // status + body instead of a bare "AUTH_FAILED" (e.g. password expired
+  // returns 400 with a specific message; bad credentials returns 401).
+  let authResponseStatus: number | undefined;
+  let authResponseBody = '';
+  page.on('response', (response) => {
+    if (response.url().includes('/auth/login') && response.request().method() === 'POST') {
+      authResponseStatus = response.status();
+      response.text().then((body) => { authResponseBody = body; }).catch(() => {});
+    }
+  });
 
   await page.goto('/auth/login', {waitUntil: 'domcontentloaded'});
   // Strategy 1: demo button (DEMO_MODE=true). Try first because it's atomic.
@@ -95,7 +112,7 @@ async function loginAs(page: Page, role: Role): Promise<boolean> {
     await btn.waitFor({state: 'visible', timeout: 5000});
     await btn.click();
     await page.waitForURL(/dashboard/i, {timeout: 30000});
-    return true;
+    return {ok: true};
   } catch {
     // Strategy 2: email/password form fallback.
   }
@@ -104,9 +121,14 @@ async function loginAs(page: Page, role: Role): Promise<boolean> {
     await page.locator('input[type="password"]').first().fill(user.password);
     await page.locator('button[type="submit"]').first().click();
     await page.waitForURL(/dashboard/i, {timeout: 30000});
-    return true;
+    return {ok: true};
   } catch {
-    return false;
+    const inlineError = await page.locator('[role="alert"], .error, .text-red-600, .text-danger')
+      .first().textContent().catch(() => null);
+    const reason = authResponseStatus
+      ? `HTTP ${authResponseStatus} — ${authResponseBody || inlineError || 'no body'}`
+      : (inlineError ?? 'no /auth/login response observed; login form did not navigate to dashboard');
+    return {ok: false, reason};
   }
 }
 
@@ -132,7 +154,8 @@ for (const [role, ucs] of byRole.entries()) {
 
     test.beforeAll(async ({browser}) => {
       const page = await browser.newPage();
-      loggedIn = await loginAs(page, role);
+      const result = await loginAs(page, role);
+      loggedIn = result.ok;
       if (loggedIn) {
         await page
           .context()
@@ -145,6 +168,7 @@ for (const [role, ucs] of byRole.entries()) {
           expected: 'login',
           observed: 'failed',
           status: 'AUTH_FAILED',
+          reason: result.reason ?? 'unknown',
           severity: 'P0',
         });
       }

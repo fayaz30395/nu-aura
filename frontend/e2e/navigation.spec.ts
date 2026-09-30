@@ -30,9 +30,10 @@ test.describe('Navigation and Routing', () => {
       // Click on Dashboard link
       const dashboardLink = page.locator('a[href*="/dashboard"], button:has-text("Dashboard")').first();
       await dashboardLink.click();
-      await page.waitForTimeout(500);
-
-      // Verify URL
+      // Deterministic wait, not a fixed sleep: a cold Next.js dev server compiles a
+      // route on first hit (measured: /leave 23.4s, /attendance 17.4s), so the old
+      // waitForTimeout(1000) asserted the URL before the navigation had committed.
+      await page.waitForURL(new RegExp('/dashboard'), {timeout: 60000});
       expect(page.url()).toContain('/dashboard');
     });
 
@@ -40,9 +41,10 @@ test.describe('Navigation and Routing', () => {
       // Click on Employees link
       const employeesLink = page.locator('a[href*="/employees"], button:has-text("Employees")').first();
       await employeesLink.click();
-      await page.waitForTimeout(1000);
-
-      // Verify URL
+      // Deterministic wait, not a fixed sleep: a cold Next.js dev server compiles a
+      // route on first hit (measured: /leave 23.4s, /attendance 17.4s), so the old
+      // waitForTimeout(1000) asserted the URL before the navigation had committed.
+      await page.waitForURL(new RegExp('/employees'), {timeout: 60000});
       expect(page.url()).toContain('/employees');
     });
 
@@ -50,9 +52,10 @@ test.describe('Navigation and Routing', () => {
       // Click on Leave link
       const leaveLink = page.locator('a[href*="/leave"], button:has-text("Leave")').first();
       await leaveLink.click();
-      await page.waitForTimeout(1000);
-
-      // Verify URL
+      // Deterministic wait, not a fixed sleep: a cold Next.js dev server compiles a
+      // route on first hit (measured: /leave 23.4s, /attendance 17.4s), so the old
+      // waitForTimeout(1000) asserted the URL before the navigation had committed.
+      await page.waitForURL(new RegExp('/leave'), {timeout: 60000});
       expect(page.url()).toContain('/leave');
     });
 
@@ -60,9 +63,10 @@ test.describe('Navigation and Routing', () => {
       // Click on Attendance link
       const attendanceLink = page.locator('a[href*="/attendance"], button:has-text("Attendance")').first();
       await attendanceLink.click();
-      await page.waitForTimeout(1000);
-
-      // Verify URL
+      // Deterministic wait, not a fixed sleep: a cold Next.js dev server compiles a
+      // route on first hit (measured: /leave 23.4s, /attendance 17.4s), so the old
+      // waitForTimeout(1000) asserted the URL before the navigation had committed.
+      await page.waitForURL(new RegExp('/attendance'), {timeout: 60000});
       expect(page.url()).toContain('/attendance');
     });
 
@@ -70,9 +74,10 @@ test.describe('Navigation and Routing', () => {
       // Click on Projects link
       const projectsLink = page.locator('a[href*="/projects"], button:has-text("Projects")').first();
       await projectsLink.click();
-      await page.waitForTimeout(1000);
-
-      // Verify URL
+      // Deterministic wait, not a fixed sleep: a cold Next.js dev server compiles a
+      // route on first hit (measured: /leave 23.4s, /attendance 17.4s), so the old
+      // waitForTimeout(1000) asserted the URL before the navigation had committed.
+      await page.waitForURL(new RegExp('/projects'), {timeout: 60000});
       expect(page.url()).toContain('/projects');
     });
 
@@ -569,6 +574,11 @@ test.describe('Navigation — App-Aware Sidebar', () => {
   test('HRMS routes show HR-specific sidebar items', async ({page}) => {
     await page.goto('/employees');
     await page.waitForLoadState('domcontentloaded');
+    // The NavPanel renders after auth+permissions hydrate; a bare isVisible() sweep
+    // right after domcontentloaded raced it and counted 0. Same pattern already used
+    // by 'sidebar switches context when navigating between app routes' below.
+    await page.locator('nav:visible').locator('a[href*="/employees"], a[href*="/leave"], a[href*="/attendance"]')
+      .first().waitFor({state: 'visible', timeout: 30000});
 
     // HRMS sidebar should show HR modules
     const hrmsItems = [
@@ -589,6 +599,11 @@ test.describe('Navigation — App-Aware Sidebar', () => {
   test('Hire routes show recruitment-specific sidebar items', async ({page}) => {
     await page.goto('/recruitment');
     await page.waitForLoadState('domcontentloaded');
+    // The NavPanel renders after auth+permissions hydrate; a bare isVisible() sweep
+    // right after domcontentloaded raced it and counted 0. Same pattern already used
+    // by 'sidebar switches context when navigating between app routes' below.
+    await page.locator('nav:visible').locator('a[href*="/recruitment"], a[href*="/onboarding"], a[href*="/offboarding"]')
+      .first().waitFor({state: 'visible', timeout: 30000});
 
     // Sidebar should show recruitment items
     const hireItems = [
@@ -610,6 +625,11 @@ test.describe('Navigation — App-Aware Sidebar', () => {
   test('Grow routes show performance-specific sidebar items', async ({page}) => {
     await page.goto('/performance');
     await page.waitForLoadState('domcontentloaded');
+    // The NavPanel renders after auth+permissions hydrate; a bare isVisible() sweep
+    // right after domcontentloaded raced it and counted 0. Same pattern already used
+    // by 'sidebar switches context when navigating between app routes' below.
+    await page.locator('nav:visible').locator('a[href*="/performance"], a[href*="/training"], a[href*="/okr"]')
+      .first().waitFor({state: 'visible', timeout: 30000});
 
     // Sidebar should show performance/training items
     const growItems = [

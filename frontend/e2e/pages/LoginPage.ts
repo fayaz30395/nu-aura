@@ -53,17 +53,38 @@ export class LoginPage extends BasePage {
   async navigate() {
     await this.goto('/auth/login');
     await this.waitForPageLoad();
+    await this.revealEmailForm();
+  }
 
-    const emailVisible = await this.emailInput.isVisible().catch(() => false);
-    if (!emailVisible) {
-      const toggle = this.page.locator(
-        'button:has-text("Email and password"), button:has-text("Sign in with Email")'
-      );
-      if (await toggle.isVisible().catch(() => false)) {
-        await toggle.click();
-        await this.emailInput.waitFor({state: 'visible', timeout: 5000}).catch(() => {});
-      }
+  /**
+   * Ensure the email/password fields are actually present before anyone fills them.
+   *
+   * The page is button-first: the form sits behind an "Email and password" toggle
+   * (login/page.tsx :782-794). The previous implementation branched on
+   * `isVisible()`, which is an INSTANTANEOUS check — while the page was still
+   * hydrating, both the email input and the toggle reported false, so neither
+   * branch ran and control fell through to `fill()`, which then burned its full
+   * 15s timeout. That produced
+   *   `locator.fill: Timeout 15000ms exceeded waiting for locator('input[type="email"]')`
+   * and read as a broken login flow, when the API-backed `loginAs()` helper was
+   * logging in against the same page perfectly well.
+   *
+   * Waiting for EITHER element first removes the race without weakening anything:
+   * a genuinely missing form still fails, just with an honest error.
+   */
+  private async revealEmailForm() {
+    const toggle = this.page.locator(
+      'button:has-text("Email and password"), button:has-text("Sign in with Email")'
+    );
+
+    await this.emailInput.or(toggle).first().waitFor({state: 'visible', timeout: 15000});
+
+    if (await this.emailInput.isVisible().catch(() => false)) {
+      return;
     }
+
+    await toggle.click();
+    await this.emailInput.waitFor({state: 'visible', timeout: 10000});
   }
 
   /**
@@ -75,16 +96,7 @@ export class LoginPage extends BasePage {
    * toggle to expand the form, then fill.
    */
   async login(email: string, password: string, rememberMe: boolean = false) {
-    const emailVisible = await this.emailInput.isVisible().catch(() => false);
-    if (!emailVisible) {
-      const toggle = this.page.locator(
-        'button:has-text("Email and password"), button:has-text("Sign in with Email")'
-      );
-      if (await toggle.isVisible().catch(() => false)) {
-        await toggle.click();
-        await this.emailInput.waitFor({state: 'visible', timeout: 5000});
-      }
-    }
+    await this.revealEmailForm();
 
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);

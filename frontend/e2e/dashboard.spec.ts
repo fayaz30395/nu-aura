@@ -200,6 +200,8 @@ test.describe('Dashboard - Visual Regression', () => {
     await page.waitForTimeout(1000); // Allow animations to complete
 
     await expect(page).toHaveScreenshot('dashboard.png', {
+      // Live clock + today's date: masked so the snapshot is deterministic.
+      mask: [page.getByTestId('live-time')],
       maxDiffPixels: 500,
     });
   });
