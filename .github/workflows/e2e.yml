@@ -66,6 +66,23 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      # Disposable SMTP sink. Required, not cosmetic: spring.mail.host defaults to
+      # smtp.gmail.com:587 (application.yml:175), so with no MAIL_* override the
+      # isolated backend tries to reach Gmail, is refused, and Spring Boot's
+      # auto-configured mail health indicator holds the aggregate /actuator/health
+      # below UP. The gate's readiness loop then times out after 60x5s and the run
+      # dies at "Start backend" — Playwright never launches. Observed in run
+      # 36214717596: 0 of 278 tests attempted.
+      #
+      # This is a CI-only sink that accepts and discards mail. It keeps the health
+      # indicator live and genuinely healthy rather than disabling it, and carries
+      # no credentials of any kind. Production SMTP/Postmark is a separate gate and
+      # is NOT configured here.
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
 
     steps:
       - name: Checkout code
@@ -102,6 +119,17 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: hrms
           SPRING_REDIS_HOST: localhost
           SPRING_REDIS_PORT: '6379'
+          # Point the isolated backend at the disposable SMTP sink above. Without
+          # these the default smtp.gmail.com:587 is unreachable and health never
+          # reaches UP. auth/STARTTLS are off because application.yml hardcodes
+          # them on (:181-184) for real providers and the sink offers neither;
+          # overriding here keeps production configuration untouched.
+          MAIL_HOST: localhost
+          MAIL_PORT: '1025'
+          MAIL_USERNAME: ''
+          MAIL_PASSWORD: ''
+          SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: 'false'
+          SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: 'false'
           FLYWAY_ENABLED: 'true'
           APP_ELASTICSEARCH_ENABLED: 'false'
           # The suite does many legitimate UI logins (per-test beforeEach); the
@@ -151,6 +179,18 @@ jobs:
           # Generate the API client from the committed snapshot (the prebuild
           # step does this) rather than fetching /v3/api-docs from the backend.
           API_DOCS_URL: ./openapi-snapshot.json
+          # Node's default old-space cap on a 64-bit runner is ~2 GB. The Next.js
+          # production build of this app exceeds it: run 36215605204 died here with
+          # "FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out
+          # of memory", the last GCs plateauing at 1898-2021 MB before the build
+          # worker took SIGABRT. Playwright never launched — 0 of 278 tests attempted.
+          #
+          # 4096 MiB is the smallest power-of-two headroom above the observed ~2.1 GB
+          # ceiling and fits a standard GitHub runner (ubuntu-latest has 16 GB).
+          # CI-only: the step's own env, so no application code, Next.js config or
+          # production setting is touched. The identical commit already builds clean
+          # locally, where the default heap is not the constraint.
+          NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
       - name: Start frontend

@@ -5,7 +5,6 @@ import com.nulogic.api.admin.dto.AdminUserResponse;
 import com.nulogic.api.admin.dto.UpdateUserRoleRequest;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
-import com.nulogic.common.security.PermissionCacheEvictor;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.tenant.Tenant;
 import com.nulogic.domain.user.Role;
@@ -55,12 +54,8 @@ class AdminServiceTest {
     private com.nulogic.application.audit.service.AuditLogService auditLogService;
     @Mock
     private WorkflowExecutionRepository workflowExecutionRepository;
-    /**
-     * updateUserRole evicts the authorization cache after commit (see
-     * AdminServiceRoleUpdateCacheEvictionTest for the behavioural assertion).
-     */
     @Mock
-    private PermissionCacheEvictor permissionCacheEvictor;
+    private com.nulogic.common.security.PermissionCacheEvictor permissionCacheEvictor;
 
     @InjectMocks
     private AdminService adminService;

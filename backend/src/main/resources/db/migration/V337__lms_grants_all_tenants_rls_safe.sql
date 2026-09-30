@@ -58,7 +58,7 @@ BEGIN
         FROM roles r
         JOIN (VALUES
                   ('EMPLOYEE',    'SELF'),
-                  ('HR_MANAGER',  'ALL'),
+                  ('MANAGER',     'TEAM'),
                   ('TEAM_LEAD',   'TEAM')
              ) AS grants(role_code, scope) ON grants.role_code = r.code
         CROSS JOIN permissions p

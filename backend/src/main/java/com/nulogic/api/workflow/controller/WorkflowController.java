@@ -41,21 +41,23 @@ public class WorkflowController {
     // definition reads on it exposed that configuration to every employee in the tenant.
     // The frontend was tightened to `isAdmin || canManage` in the same pass, but a hidden button
     // is not an authorization control — the boundary is here. Reads now follow WORKFLOW:MANAGE,
-    // which is exactly the set the UI now renders for (SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN).
+    // Reads now accept WORKFLOW:DEFINITION_VIEW (read-only) or WORKFLOW:MANAGE (authoring), so
+    // HR_MANAGER, MANAGER and RECRUITMENT_ADMIN keep the read-only Builder view they had, while
+    // EMPLOYEE — which holds only WORKFLOW:VIEW — loses it. WRITE endpoints stay MANAGE-only.
     @GetMapping("/definitions/{id}")
-    @RequiresPermission(Permission.WORKFLOW_MANAGE)
+    @RequiresPermission({Permission.WORKFLOW_DEFINITION_VIEW, Permission.WORKFLOW_MANAGE})
     public ResponseEntity<WorkflowDefinitionResponse> getWorkflowDefinition(@PathVariable UUID id) {
         return ResponseEntity.ok(workflowService.getWorkflowDefinition(id));
     }
 
     @GetMapping("/definitions")
-    @RequiresPermission(Permission.WORKFLOW_MANAGE)
+    @RequiresPermission({Permission.WORKFLOW_DEFINITION_VIEW, Permission.WORKFLOW_MANAGE})
     public ResponseEntity<Page<WorkflowDefinitionResponse>> getAllWorkflowDefinitions(Pageable pageable) {
         return ResponseEntity.ok(workflowService.getAllWorkflowDefinitions(pageable));
     }
 
     @GetMapping("/definitions/entity-type/{entityType}")
-    @RequiresPermission(Permission.WORKFLOW_MANAGE)
+    @RequiresPermission({Permission.WORKFLOW_DEFINITION_VIEW, Permission.WORKFLOW_MANAGE})
     public ResponseEntity<List<WorkflowDefinitionResponse>> getWorkflowsByEntityType(
             @PathVariable WorkflowDefinition.EntityType entityType) {
         return ResponseEntity.ok(workflowService.getWorkflowsByEntityType(entityType));

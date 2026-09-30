@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
@@ -150,11 +150,10 @@ export default function WorkflowListPage() {
   const router = useRouter();
   const {hasPermission, isAdmin, isReady} = usePermissions();
   const canManage = isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_MANAGE));
-  // SECURITY: this is the workflow *definition* screen (approval routing config), not the
-  // employee-facing approval inbox. WORKFLOW:VIEW is seeded to EMPLOYEE (they need it for
-  // their own inbox), so gating read access on it exposed every tenant's approval-routing
-  // configuration to every employee. Read follows manage here.
-  const canView = isReady && (isAdmin || canManage);
+  // WORKFLOW_VIEW is the employee approval-inbox grant and must not open the Builder;
+  // read-only access is WORKFLOW_DEFINITION_VIEW. canManage still gates every write control.
+  const canView =
+    isReady && (isAdmin || hasPermission(Permissions.WORKFLOW_DEFINITION_VIEW) || canManage);
 
   // Filters
   const [search, setSearch] = useState('');
@@ -165,29 +164,6 @@ export default function WorkflowListPage() {
 
   // Context menu
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  // BUG-2: the row-actions menu used a `fixed inset-0 z-40` click-outside backdrop rendered
-  // AFTER </PageTransition>. PageTransition is a framer-motion div animating transform/opacity,
-  // so it owns a stacking context and the menu's z-50 could never escape it — the later sibling
-  // backdrop painted on top and swallowed every click on the menu. Closing on a document
-  // listener instead (the pattern already used by ColumnVisibilityToggle/ThemeToggle) removes
-  // the overlay entirely, so there is nothing left to intercept the click.
-  useEffect(() => {
-    if (!menuOpenId) return;
-    function handleClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpenId(null);
-    }
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMenuOpenId(null);
-    }
-    document.addEventListener('mousedown', handleClick);
-    document.addEventListener('keydown', handleKey);
-    return () => {
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('keydown', handleKey);
-    };
-  }, [menuOpenId]);
 
   // Delete confirmation
   const [deleteTarget, setDeleteTarget] = useState<WorkflowDefinitionResponse | null>(null);
@@ -434,7 +410,7 @@ export default function WorkflowListPage() {
                           </span>
                       </td>
                       <td className="px-4 py-4 text-right">
-                        <div className="relative inline-block" ref={menuOpenId === wf.id ? menuRef : undefined}>
+                        <div className="relative inline-block">
                           <button
                             type="button"
                             onClick={(e) => {
@@ -531,6 +507,18 @@ export default function WorkflowListPage() {
         )}
       </div>
     </PageTransition>
+
+      {/* Click outside to close menu */}
+      {menuOpenId && (
+        <div
+          className="fixed inset-0 z-40 cursor-pointer"
+          onClick={() => setMenuOpenId(null)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); setMenuOpenId(null); } }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close actions menu"
+        />
+      )}
 
       {/* Deactivate Confirmation Modal */}
       <Modal isOpen={!!deleteTarget} onClose={() => setDeleteTarget(null)} size="md">

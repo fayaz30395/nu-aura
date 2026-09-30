@@ -398,6 +398,12 @@ public final class Permission {
     public static final String WORKFLOW_VIEW = "WORKFLOW:VIEW";
     public static final String WORKFLOW_CREATE = "WORKFLOW:CREATE";
     public static final String WORKFLOW_MANAGE = "WORKFLOW:MANAGE";
+    /**
+     * Read-only access to workflow DEFINITIONS (the tenant's approval-routing configuration).
+     * Distinct from {@link #WORKFLOW_VIEW}, which is seeded to EMPLOYEE for their own approval
+     * inbox and must never open the routing configuration. Never accepted by a write endpoint.
+     */
+    public static final String WORKFLOW_DEFINITION_VIEW = "WORKFLOW:DEFINITION_VIEW";
     public static final String WORKFLOW_EXECUTE = "WORKFLOW:EXECUTE";
 
     // Platform Administration

@@ -413,6 +413,9 @@ export const Permissions = {
   WORKFLOW_VIEW: 'WORKFLOW:VIEW',
   WORKFLOW_CREATE: 'WORKFLOW:CREATE',
   WORKFLOW_MANAGE: 'WORKFLOW:MANAGE',
+  // Read-only approval-routing configuration. Distinct from WORKFLOW_VIEW, which is an
+  // employee-level grant for their own approval inbox and must not open the Builder.
+  WORKFLOW_DEFINITION_VIEW: 'WORKFLOW:DEFINITION_VIEW',
   WORKFLOW_EXECUTE: 'WORKFLOW:EXECUTE',
 
   // Platform Administration
