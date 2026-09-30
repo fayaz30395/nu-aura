@@ -82,6 +82,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Free disk space
+        run: |
+          docker system prune -af
+          rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
       - name: Build backend image
         run: docker build -f backend/Dockerfile -t nu-aura-backend:scan .
       - name: Build frontend image
