@@ -34,20 +34,28 @@ public class WorkflowController {
         return ResponseEntity.ok(workflowService.createWorkflowDefinition(request));
     }
 
+    // SEC-3 (remediation 2026-09-25): the three definition READS below are the approval-ROUTING
+    // configuration of the tenant — which approver sees which entity, at which step, with which
+    // SLA and escalation target. WORKFLOW:VIEW is seeded to EMPLOYEE (they need it for their own
+    // approval inbox, WorkflowController's instance/approval endpoints below), so gating
+    // definition reads on it exposed that configuration to every employee in the tenant.
+    // The frontend was tightened to `isAdmin || canManage` in the same pass, but a hidden button
+    // is not an authorization control — the boundary is here. Reads now follow WORKFLOW:MANAGE,
+    // which is exactly the set the UI now renders for (SUPER_ADMIN, TENANT_ADMIN, HR_ADMIN).
     @GetMapping("/definitions/{id}")
-    @RequiresPermission("WORKFLOW:VIEW")
+    @RequiresPermission(Permission.WORKFLOW_MANAGE)
     public ResponseEntity<WorkflowDefinitionResponse> getWorkflowDefinition(@PathVariable UUID id) {
         return ResponseEntity.ok(workflowService.getWorkflowDefinition(id));
     }
 
     @GetMapping("/definitions")
-    @RequiresPermission("WORKFLOW:VIEW")
+    @RequiresPermission(Permission.WORKFLOW_MANAGE)
     public ResponseEntity<Page<WorkflowDefinitionResponse>> getAllWorkflowDefinitions(Pageable pageable) {
         return ResponseEntity.ok(workflowService.getAllWorkflowDefinitions(pageable));
     }
 
     @GetMapping("/definitions/entity-type/{entityType}")
-    @RequiresPermission("WORKFLOW:VIEW")
+    @RequiresPermission(Permission.WORKFLOW_MANAGE)
     public ResponseEntity<List<WorkflowDefinitionResponse>> getWorkflowsByEntityType(
             @PathVariable WorkflowDefinition.EntityType entityType) {
         return ResponseEntity.ok(workflowService.getWorkflowsByEntityType(entityType));

@@ -31,7 +31,12 @@ const nextConfig = {
 
   // Image optimization
   images: {
-    formats: ['image/avif', 'image/webp'],
+    // SEC-DEP01: AVIF output is disabled until Next is upgraded past 16.3.2.
+    // GHSA-2xp9-vwfh-vxw4 is an unauthenticated RCE in the Image Optimization API that is only
+    // reachable when the optimizer produces AVIF; this app runs 16.2.7 and the live server was
+    // confirmed emitting `Content-Type: image/avif`. WebP keeps the optimization benefit.
+    // Remove this restriction as part of the Next upgrade, not before.
+    formats: ['image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days

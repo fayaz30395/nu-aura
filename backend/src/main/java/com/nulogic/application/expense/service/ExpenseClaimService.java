@@ -125,6 +125,16 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
     public ExpenseClaimResponse createExpenseClaim(UUID employeeId, ExpenseClaimRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
+        // SEC-E5: `employeeId` is caller-supplied (POST /expenses/employees/{employeeId}) and the
+        // controller's @RequiresPermission(EXPENSE:CREATE) only proves the caller may create SOME
+        // claim, never a claim for THIS employee. EXPENSE:CREATE is a baseline employee grant, so
+        // without this gate any employee could open a DRAFT claim in a colleague's name.
+        // This is the same boundary SEC-E4 closed one layer down in ExpenseItemService.addItem;
+        // gating only the item path left the claim itself open. The check runs before any
+        // persistence, and EXPENSE:CREATE (the write permission) supplies the scope — a broader
+        // VIEW scope must not grant write reach.
+        validateEmployeeAccess(employeeId, Permission.EXPENSE_CREATE);
+
         // Validate employee exists
         if (!employeeRepository.existsByIdAndTenantId(employeeId, tenantId)) {
             throw new EntityNotFoundException("Employee not found: " + employeeId);
@@ -164,7 +174,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
-        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
+        // SEC-E6: write path — the scope comes from EXPENSE:CREATE, the permission the
+        // controller already requires for this endpoint. EXPENSE:VIEW was wrong twice over:
+        // it let a VIEW-only scope mutate, and it denied TENANT_ADMIN, which holds
+        // EXPENSE:VIEW_ALL but not the literal EXPENSE:VIEW (a null scope is a denial).
+        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_CREATE);
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.DRAFT) {
             throw new IllegalStateException("Can only update expense claims in DRAFT status");
@@ -193,7 +207,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
-        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
+        // SEC-E6: write path — the scope comes from EXPENSE:CREATE, the permission the
+        // controller already requires for this endpoint. EXPENSE:VIEW was wrong twice over:
+        // it let a VIEW-only scope mutate, and it denied TENANT_ADMIN, which holds
+        // EXPENSE:VIEW_ALL but not the literal EXPENSE:VIEW (a null scope is a denial).
+        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_CREATE);
 
         claim.submit(tenantTimeService.now(claim.getTenantId()));
         ExpenseClaim saved = expenseClaimRepository.save(claim);
@@ -354,7 +372,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
-        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
+        // SEC-E6: write path — the scope comes from EXPENSE:CREATE, the permission the
+        // controller already requires for this endpoint. EXPENSE:VIEW was wrong twice over:
+        // it let a VIEW-only scope mutate, and it denied TENANT_ADMIN, which holds
+        // EXPENSE:VIEW_ALL but not the literal EXPENSE:VIEW (a null scope is a denial).
+        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_CREATE);
 
         claim.cancel();
         expenseClaimRepository.save(claim);
@@ -368,7 +390,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
-        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
+        // SEC-E6: write path — the scope comes from EXPENSE:CREATE, the permission the
+        // controller already requires for this endpoint. EXPENSE:VIEW was wrong twice over:
+        // it let a VIEW-only scope mutate, and it denied TENANT_ADMIN, which holds
+        // EXPENSE:VIEW_ALL but not the literal EXPENSE:VIEW (a null scope is a denial).
+        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_CREATE);
 
         if (claim.getStatus() != ExpenseClaim.ExpenseStatus.DRAFT) {
             throw new ValidationException("Only DRAFT expense claims can be deleted");
@@ -445,8 +471,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
-        // Validate user has access to this employee's expense claims
-        validateEmployeeAccess(claim.getEmployeeId(), Permission.EXPENSE_VIEW);
+        // SEC-E7: read path — resolve the view permission the caller actually holds instead of
+        // hardcoding EXPENSE:VIEW, which denied TENANT_ADMIN (holds EXPENSE:VIEW_ALL only).
+        // determineViewPermission() only ever returns a permission the caller holds, and that
+        // permission's own scope still governs, so nothing is widened.
+        assertEmployeeReadAccess(claim.getEmployeeId());
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(claim));
     }
@@ -855,6 +884,20 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
      */
     public void assertEmployeeAccess(UUID targetEmployeeId, String permission) {
         validateEmployeeAccess(targetEmployeeId, permission);
+    }
+
+    /**
+     * Read-side ownership gate for callers outside this service (ExpenseItemService).
+     *
+     * <p>Resolves the view permission the caller actually holds before reading its scope.
+     * Hardcoding {@link Permission#EXPENSE_VIEW} denies TENANT_ADMIN, which holds
+     * {@code EXPENSE:VIEW_ALL} but not {@code EXPENSE:VIEW} — {@code getPermissionScope}
+     * returns null for a permission the role does not hold, and a null scope is a denial.
+     * No scope is widened: {@link #determineViewPermission()} only ever returns a permission
+     * the caller already holds, and that permission's own scope still governs.</p>
+     */
+    public void assertEmployeeReadAccess(UUID targetEmployeeId) {
+        validateEmployeeAccess(targetEmployeeId, determineViewPermission());
     }
 
     private void validateEmployeeAccess(UUID targetEmployeeId, String permission) {

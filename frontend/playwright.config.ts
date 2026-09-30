@@ -89,6 +89,17 @@ export default defineConfig({
       testMatch: /.*\.setup\.ts/,
     },
 
+    // Credential-free smoke — deliberately has NO `dependencies: ['setup']`.
+    // If the shared demo password expires (auth.setup.ts fails), every other
+    // project below is skipped by Playwright and the suite reports zero
+    // signal. This project can't go dark that way: it only exercises public
+    // routes and the unauthenticated redirect. See e2e/credential-free.smoke.spec.ts.
+    {
+      name: 'cred-free',
+      use: {...devices['Desktop Chrome']},
+      testMatch: /credential-free\.smoke\.spec\.ts/,
+    },
+
     {
       name: 'chromium',
       use: {

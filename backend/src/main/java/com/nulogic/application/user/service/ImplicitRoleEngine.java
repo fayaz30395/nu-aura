@@ -11,7 +11,6 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.infrastructure.user.repository.ImplicitUserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,8 +31,11 @@ import java.util.*;
  * - Department changes (employee assigned to head/non-head department)
  * - Rule changes (new rule added, existing rule modified)
  *
- * <p>Cache invalidation: When a user's implicit roles change, the Redis permission cache
- * (key: {@code permissions:{tenantId}:{userId}}) is invalidated, forcing re-fetch on next request.
+ * <p>Cache invalidation: when a user's implicit roles change, both authorization cache entries
+ * for that user ({@code permissions:} codes and {@code permissionScopes:} scopes, in the
+ * {@code rolePermissions} cache) are evicted via
+ * {@link com.nulogic.common.security.PermissionCacheEvictor}, forcing a reload on the next
+ * request instead of waiting out the cache TTL.
  */
 @Slf4j
 @Service
@@ -43,7 +45,7 @@ public class ImplicitRoleEngine {
     private final ImplicitRoleRuleRepository ruleRepository;
     private final ImplicitUserRoleRepository implicitUserRoleRepository;
     private final EmployeeRepository employeeRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final com.nulogic.common.security.PermissionCacheEvictor permissionCacheEvictor;
     private final TenantTimeService tenantTimeService;
 
     /**
@@ -148,11 +150,27 @@ public class ImplicitRoleEngine {
             }
         }
 
-        // 8. Invalidate Redis cache
+        // 8. Invalidate the authorization cache for this user.
+        //
+        // This used to be `redisTemplate.delete("permissions:{tenantId}:{userId}")`, a raw key
+        // that never matched anything: CacheConfig sets no prefix override, so Spring stores
+        // these entries as `rolePermissions::permissions:...`. Since
+        // SecurityService.getCachedPermissionScopesForUser became @Cacheable, that miss meant a
+        // deactivated implicit role stayed authoritative for the full 15-minute TTL — the
+        // permission-scope map is what JwtAuthenticationFilter turns into the principal's
+        // authorities. PermissionCacheEvictor goes through the cache abstraction and evicts both
+        // the codes entry and the scopes entry using the same key builders @Cacheable uses.
+        //
+        // The call registers the eviction for AFTER COMMIT; it does not evict here. Step 7 above
+        // deactivates managed entities whose UPDATE flushes at commit, so an eviction at this point
+        // would let a concurrent authorization lookup reload the still-ACTIVE row and re-cache it
+        // for the full TTL — reintroducing the staleness as a race. That matters most in the batch
+        // path: recomputeAll is @Transactional and calls this method on `this`, so self-invocation
+        // means the whole tenant shares ONE transaction that commits after the last user. The
+        // evictor coalesces every request in that transaction into a single synchronization.
+        // Pinned by PermissionCacheEvictorTransactionalTest.
         if (!toAdd.isEmpty() || !toRemove.isEmpty()) {
-            String cacheKey = String.format("permissions:%s:%s", tenantId, userId);
-            redisTemplate.delete(cacheKey);
-            log.debug("Invalidated permission cache for user {} in tenant {}", userId, tenantId);
+            permissionCacheEvictor.evictUserPermissions(tenantId, userId);
         }
 
         // 9. Return result

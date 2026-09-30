@@ -6,6 +6,7 @@ import com.nulogic.application.benefits.service.BenefitStatementPdfService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.benefits.BenefitPlanEnhanced;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,11 +38,44 @@ public class BenefitEnhancedController {
     private final BenefitStatementPdfService benefitStatementPdfService;
 
     /**
-     * RBAC-1 IDOR FIX: Enforces ownership scope on /employee/{employeeId} endpoints.
-     * Mirrors EmployeeController.enforceEmployeeViewScope. A caller holding only
-     * BENEFIT_VIEW_SELF may only access their own employee record; BENEFIT_VIEW
-     * (tenant-wide) and Admin roles may access anyone in the tenant.
-     * SuperAdmin is already bypassed at the @RequiresPermission aspect level.
+     * RBAC-1 IDOR FIX: Enforces ownership scope on the {@code /employee/{employeeId}} endpoints
+     * and on {@code /claims/{claimId}} reads. A caller may read another employee's benefits only
+     * with a genuinely tenant-wide administrative grant; otherwise they may read only their own.
+     *
+     * <p>SEC-B1 (2026-09-25, Option A): as originally written this guard never fired. The
+     * tenant-wide branch was {@link SecurityContext#hasPermission}, which is scope-blind, and
+     * {@code V107__repopulate_role_permissions.sql:88} grants {@code BENEFIT:VIEW} to the baseline
+     * EMPLOYEE role inside the {@code scope='SELF'} block (lines 32-96). So the branch returned
+     * for EVERY authenticated employee, the self-check below it was dead code, and all eight
+     * endpoint families guarded here leaked cross-employee benefits data: enrollments, active
+     * enrollments, claim detail, claim pages, active flex allocation, allocation history, the
+     * benefits summary, and the total-benefits-statement PDF.
+     *
+     * <p>The fix requires the SCOPE, not merely the code:</p>
+     * <ul>
+     *   <li>{@code BENEFIT:VIEW} at {@link RoleScope#ALL} — which is what "tenant-wide" means.
+     *   V107 grants it at ALL to HR_MANAGER (:215) and role …440021 (:280), but to MANAGER (:155)
+     *   and TEAM_LEAD (:97) only at TEAM via the {@code CASE} expression. Those two must not
+     *   reach an arbitrary employee's benefits, and no longer do.</li>
+     *   <li>{@code BENEFIT:MANAGE} at ALL — the benefits-administration grant, which is what
+     *   FINANCE_ADMIN holds (V286:81) without necessarily holding BENEFIT:VIEW at ALL. Checked
+     *   scope-aware for symmetry; every migration seeds MANAGE at ALL today
+     *   (V107:215/:280, V286:81, V289:44, V290:71, V305:37/:215), so this preserves existing
+     *   administrative behaviour rather than widening it, and stays correct if a future migration
+     *   ever seeds MANAGE narrower.</li>
+     * </ul>
+     *
+     * <p>LEGACY NAMING, DEFERRED: {@code BENEFIT:VIEW} being held at SELF scope by the baseline
+     * EMPLOYEE role is a naming/scope mismatch — a code named VIEW (tenant-wide by convention
+     * here) seeded as a self-service grant. The correct long-term shape is for EMPLOYEE to hold
+     * {@code BENEFIT:VIEW_SELF} (which already exists in the catalog, V67:92) instead. That
+     * re-seed is deliberately NOT done in this release: {@code BENEFIT:VIEW} is also consumed by
+     * {@code BenefitEnhancedService:483} via {@code dataScopeService.getScopeSpecification(...)}
+     * and by the list endpoints at {@code :214}/{@code :298}, so removing it from EMPLOYEE would
+     * change their own-data list behaviour and needs its own migration plus rollback plan. Tracked
+     * for the separate security/RBAC release; no migration is introduced here.
+     *
+     * <p>SuperAdmin/TenantAdmin keep their existing explicit bypass.</p>
      */
     private void enforceBenefitViewScope(UUID targetEmployeeId) {
         // SuperAdmin and TenantAdmin bypass all scope checks
@@ -49,12 +83,13 @@ public class BenefitEnhancedController {
             return;
         }
 
-        // BENEFIT_VIEW: tenant-wide benefits administration view
-        if (SecurityContext.hasPermission(Permission.BENEFIT_VIEW)) {
+        // Tenant-wide benefits administration — the SCOPE is the authorization, not the code.
+        if (SecurityContext.hasPermissionAtLeast(Permission.BENEFIT_VIEW, RoleScope.ALL)
+                || SecurityContext.hasPermissionAtLeast(Permission.BENEFIT_MANAGE, RoleScope.ALL)) {
             return;
         }
 
-        // BENEFIT_VIEW_SELF: caller may only access their own record
+        // Self-service: the caller may always read their own benefits.
         UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
         if (currentEmployeeId != null && currentEmployeeId.equals(targetEmployeeId)) {
             return;

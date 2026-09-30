@@ -74,6 +74,39 @@ jobs:
           NEXT_PUBLIC_API_URL: https://api.ci.nu-aura.local/api/v1
           NEXT_PUBLIC_ENABLE_WEBSOCKET: 'true'
 
+  verify-contract:
+    name: faylo verify contract (new stories)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need history so newly-added story files can be identified against the base ref.
+          fetch-depth: 0
+      - name: Set up Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      # Gate only stories ADDED by this PR. The 2026-09-24 verification pass found that
+      # only 1 of 180 existing stories runs a test runner; retrofitting that backlog is a
+      # separate programme of work and must not block delivery. This stops NEW stories
+      # entering the ledger marked verified by a command that cannot fail.
+      - name: Enforce verify contract on stories added by this PR
+        run: |
+          set -euo pipefail
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          ADDED=$(git diff --name-only --diff-filter=A "$BASE" "$HEAD" -- 'faylo-sdlc/stories/*.md' || true)
+          if [ -z "$ADDED" ]; then
+            echo "No new story files in this PR — verify contract not applicable."
+            exit 0
+          fi
+          echo "New story files in this PR:"
+          echo "$ADDED"
+          node scripts/faylo-verify-contract.mjs --strict --files $ADDED
+      - name: Verify-contract backlog report (advisory, never fails)
+        if: always()
+        run: node scripts/faylo-verify-contract.mjs || true
+
   compose-validate:
     name: docker-compose config
     runs-on: ubuntu-latest

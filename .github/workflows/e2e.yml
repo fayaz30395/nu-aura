@@ -211,13 +211,35 @@ jobs:
         # TODO: restore full gate once e2e staleness is rehabbed.
         #   Track: https://github.com/fayaz30395/nu-aura/issues — "Restore full 107-spec E2E gate"
         # Visual-regression baselines are chromium-darwin; CI is linux — keep excluded.
+        # GAP-2 repair (2026-09-25): the gate previously ran 7 spec files of which exactly ONE
+        # (nu-rbac) was security-relevant, while rbac-matrix (68 cases), rbac-employee-boundaries
+        # (21) and workflow-api-edge-cases (4) sat outside it — all three fully green in the
+        # 2026-09-25 full run, so there was no reason for them to be excluded. defect-regressions
+        # pins the product defects fixed in that pass. Specs with known staleness
+        # (rbac-manager-boundaries, rbac-superadmin, auth-comprehensive, security-deep,
+        # rbac-tenant-isolation) are deliberately still OUT: see the remaining-gates matrix.
+        # cred-free has NO `dependencies: ['setup']` by design, so it still runs when the
+        # shared demo password expires and auth.setup.ts fails. It has to be named explicitly:
+        # --project selects, so leaving it out meant the one project that cannot go dark was
+        # never executed by the gate it was added to protect.
+        # It must ALSO be named in the spec list below. Positional arguments are file filters
+        # that Playwright applies to EVERY selected project, and cred-free's testMatch is
+        # /credential-free\.smoke\.spec\.ts/ — so --project=cred-free without
+        # e2e/credential-free.smoke.spec.ts in the list intersects to nothing. That failed
+        # silently: the other projects still matched, so the gate reported success while the
+        # one project that cannot go dark ran 0 tests. Verified with --list before and after.
         run: >-
           npx playwright test --config=playwright.live.config.ts
+          --project=cred-free
           --project=setup --project=chromium --workers=2 --retries=3
           --grep-invert "Visual Regression|snapshot"
           e2e/app-switcher.spec.ts e2e/navigation.spec.ts e2e/dashboard.spec.ts
           e2e/sub-app-smoke.spec.ts e2e/attendance.spec.ts e2e/nu-rbac.spec.ts
           e2e/my-space.spec.ts
+          e2e/defect-regressions.spec.ts
+          e2e/rbac-matrix.spec.ts e2e/rbac-employee-boundaries.spec.ts
+          e2e/workflow-api-edge-cases.spec.ts
+          e2e/credential-free.smoke.spec.ts
 
       - name: Upload Playwright report
         if: always()

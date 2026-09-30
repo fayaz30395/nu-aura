@@ -631,14 +631,44 @@ class WorkflowControllerTest {
                     java.util.Arrays.asList(annotation.value()[0]).contains("WORKFLOW:MANAGE"));
         }
 
+        // SEC-3 (2026-09-25): these three reads used to require WORKFLOW:VIEW, which is seeded
+        // to EMPLOYEE for the approval inbox — so every employee could read the tenant's whole
+        // approval-routing configuration. They now follow WORKFLOW:MANAGE. This test previously
+        // asserted the vulnerable state; it asserts the fixed one, and the two sibling reads are
+        // covered as well so the gap cannot reopen on one endpoint at a time.
+        // Behaviour (not just annotations) is covered by
+        // com.nulogic.integration.WorkflowDefinitionAuthorizationTest.
+
         @Test
-        @DisplayName("getWorkflowDefinition should require WORKFLOW:VIEW")
-        void getDefinitionShouldRequireView() throws Exception {
-            var method = WorkflowController.class.getMethod("getWorkflowDefinition", UUID.class);
+        @DisplayName("getWorkflowDefinition should require WORKFLOW:MANAGE, not WORKFLOW:VIEW")
+        void getDefinitionShouldRequireManage() throws Exception {
+            assertDefinitionReadRequiresManage(
+                    WorkflowController.class.getMethod("getWorkflowDefinition", UUID.class));
+        }
+
+        @Test
+        @DisplayName("getAllWorkflowDefinitions should require WORKFLOW:MANAGE")
+        void listDefinitionsShouldRequireManage() throws Exception {
+            assertDefinitionReadRequiresManage(
+                    WorkflowController.class.getMethod("getAllWorkflowDefinitions", Pageable.class));
+        }
+
+        @Test
+        @DisplayName("getWorkflowsByEntityType should require WORKFLOW:MANAGE")
+        void definitionsByEntityTypeShouldRequireManage() throws Exception {
+            assertDefinitionReadRequiresManage(WorkflowController.class.getMethod(
+                    "getWorkflowsByEntityType", WorkflowDefinition.EntityType.class));
+        }
+
+        private void assertDefinitionReadRequiresManage(java.lang.reflect.Method method) {
             var annotation = method.getAnnotation(RequiresPermission.class);
-            Assertions.assertNotNull(annotation);
-            Assertions.assertTrue(
-                    java.util.Arrays.asList(annotation.value()[0]).contains("WORKFLOW:VIEW"));
+            Assertions.assertNotNull(annotation, method.getName() + " must be permission-gated");
+            var required = java.util.Arrays.asList(annotation.value());
+            Assertions.assertTrue(required.contains(Permission.WORKFLOW_MANAGE),
+                    method.getName() + " must require WORKFLOW:MANAGE but requires " + required);
+            Assertions.assertFalse(required.contains(Permission.WORKFLOW_VIEW),
+                    method.getName() + " must NOT accept WORKFLOW:VIEW — @RequiresPermission is "
+                            + "OR logic, so listing it would restore employee access");
         }
 
         @Test
