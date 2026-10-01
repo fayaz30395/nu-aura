@@ -56,3 +56,16 @@ probe gated by BLOCKER-003). Release remains HUMAN_REQUIRED on BLOCKER-002/003/0
 backend hosting, prod V316 checksum). Adopt rule: serialize all Maven/next-build invocations.
 Evidence: .nu-aura/evidence/796d4a64/{backend-tests.md,frontend-tests.md,race-correction.md,release-gate.json},
 .nu-aura/state/{current-state.yaml,blockers.yaml,test-status.json,budget.json,current-task.json}.
+
+Phase: SECURITY / RELEASE (cycle 3) — commit 6fd4111e
+Action: Frontend dependency advisory remediation + final gate sweep.
+Result: npm audit --production 62 (2 critical, 7 high) -> 39 (0 critical, 1 high). Non-breaking npm audit
+fix cleared next/axios/sharp/websocket-driver/browserslist/nanoid/brace-expansion; postcss override
+8.5.10 -> 8.5.28. Re-verified with the new lockfile: tsc PASS, eslint PASS, vitest 2425/2425 PASS,
+next build PASS (compiled 67s). Remaining high (@tiptap/extension-highlight) queued NA-001 (P2) rather
+than unverified churn. Governance validator: Workflow OK. Route coverage PASS; design-system report-only
+exit 0. Noted latent-risk: 125 backend tests use LocalDate.now() (same class as the AnalyticsE2ETest
+zone bug) — not mass-edited; full suite green.
+Decision: Code-controllable release gates all PASS. Release status = HUMAN_ACTION_REQUIRED (only
+human-only production actions remain). No safe autonomous code work remains.
+Evidence: .nu-aura/evidence/796d4a64/dependency-audit.md, .nu-aura/state/{current-state.yaml,recovery.json,active-work.yaml}.

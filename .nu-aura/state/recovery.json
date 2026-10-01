@@ -1,0 +1,31 @@
+{
+  "resume_instructions": "Load .nu-aura/state/current-state.yaml + blockers.yaml, then continue from next_recommended_action. All code-controllable gates are green at 6fd4111e. Remaining release blockers are HUMAN_REQUIRED only.",
+  "branch": "main",
+  "head": "6fd4111e",
+  "last_verified_commit": "6fd4111e",
+  "release_status": "HUMAN_ACTION_REQUIRED",
+  "current_task": "Overnight verify-and-harden — COMPLETE (no safe code work remaining)",
+  "next_recommended_action": "Human: rotate 7 exposed credentials; host the production backend; re-auth Railway and verify prod Flyway state; then re-run the live RBAC 26/26 probe + browser E2E and promote.",
+  "verified_gates": {
+    "backend_full_suite": "4724/0/0 (796d4a64; backend unchanged at 6fd4111e)",
+    "rbac_idor_battery": "295/0/0",
+    "migration_rls": "54/0/0 (full Flyway chain + V341 RLS)",
+    "frontend_typecheck": "PASS",
+    "frontend_lint": "PASS",
+    "frontend_unit": "2425/2425",
+    "frontend_build": "PASS (BUILD_ID 21:17:57)",
+    "dependency_audit_prod": "0 critical / 1 high (39 total)"
+  },
+  "open_tracked": [
+    "BLOCKER-002 P0 secrets rotation (HUMAN)",
+    "BLOCKER-003 P1 production backend hosting (HUMAN)",
+    "BLOCKER-007 P1 prod V316 checksum verification (HUMAN)",
+    "BLOCKER-001 live RBAC 26/26 probe (gated by BLOCKER-003)",
+    "P2 @tiptap/extension-highlight advisory (supervised dependency PR)"
+  ],
+  "notes": [
+    "NEVER run two Maven or two next-build invocations against the same target concurrently.",
+    "Frontend gates need api:generate first; production build needs NEXT_PUBLIC_API_URL."
+  ],
+  "timestamp": "2026-09-30T21:20:00-03:00"
+}

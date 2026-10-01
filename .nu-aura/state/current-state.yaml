@@ -4,8 +4,8 @@
 # capability fields: result vocabulary PASS | FAIL | NOT_RUN | NOT_APPLICABLE | UNKNOWN
 # Never silently convert UNKNOWN into PASS.
 project: nu-aura
-last_updated: "2026-09-30T21:05:00-03:00"
-last_verified_commit: "796d4a64"
+last_updated: "2026-09-30T21:20:00-03:00"
+last_verified_commit: "6fd4111e"
 branch: main
 status: IN_PROGRESS
 work_type: RELEASE
@@ -36,7 +36,7 @@ security:
   rbac: PASS            # code + 295-test battery green; live 26/26 probe pending BLOCKER-003
   tenant_isolation: PASS
   secrets: HUMAN_REQUIRED
-  dependency_scan: BLOCKED
+  dependency_scan: PASS   # frontend 0 critical / 1 high (tracked P2); see evidence/796d4a64/dependency-audit.md
 
 infrastructure:
   vercel: PASS

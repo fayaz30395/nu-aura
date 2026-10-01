@@ -7,7 +7,20 @@
 # Owners: ORCHESTRATOR | DEV | QA | SECURITY | RELEASE | HUMAN
 current_task: null
 
-queue: []
+queue:
+  - id: NA-001
+    title: "Upgrade @tiptap/* family to clear @tiptap/extension-highlight advisory"
+    description: "@tiptap/extension-highlight (3.22.4-3.30.3) high advisory (proto-pollution / ReDoS in Markdown parsing). Needs a coordinated bump of ~18 @tiptap/* packages past the current ^3.24.0 line."
+    owner: DEV
+    priority: P2
+    status: BACKLOG
+    work_type: SECURITY_REMEDIATION
+    dependencies: []
+    acceptance_criteria:
+      - "npm audit --production shows 0 high/critical in @tiptap/*"
+      - "typecheck + lint + 2425 unit tests + next build all PASS"
+      - "rich-text editor manual smoke passes"
+    evidence: [".nu-aura/evidence/796d4a64/dependency-audit.md"]
 
 # Task schema:
 # - id: NA-001
