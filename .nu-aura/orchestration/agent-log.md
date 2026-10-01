@@ -41,3 +41,18 @@ Result: `API_DOCS_URL=./openapi-snapshot.json npm run api:generate` PASS; `npx t
 Decision: Record frontend typecheck/lint PASS; continue with backend compile/tests and the RC
 reconciliation. Push authorized explicitly by the user ("push all").
 Evidence: .nu-aura/evidence/798f46c8/frontend-gates.md; push output bf5fb0de..3573e46a.
+
+Phase: TEST / QA / REGRESSION (cycle 2) — commit 796d4a64
+Action: Clean sequential verification of the release candidate; corrected a false failure cluster.
+Result: Full backend suite 4724 tests, 0 failures, 0 errors, 2 skipped (BUILD SUCCESS). RBAC/IDOR/security
+battery 295/0/0. Migration/RLS batch 54/0/0 (full Flyway chain on real PG16; V341 RLS correction under a
+non-BYPASSRLS role). Frontend: typecheck/lint PASS, unit 2425/2425 PASS, production build PASS
+(BUILD_ID 21:00). Fixed one genuine TEST_BUG: AnalyticsE2ETest derived expected payroll year/month from
+LocalDate.now() (JVM zone) while the API uses tenantTimeService.today(tenantId) — now zone-independent.
+Corrected the 20:39 failure cluster as ENVIRONMENT_FAILURE (concurrent Maven builds sharing backend/target
+-> NoClassDefFoundError on Lombok builders); re-ran sequentially, all green.
+Decision: BLOCKER-004/005/006 ACCEPTED. BLOCKER-001 moved to VALIDATION (backend evidence met; live 26/26
+probe gated by BLOCKER-003). Release remains HUMAN_REQUIRED on BLOCKER-002/003/007 (credential rotation,
+backend hosting, prod V316 checksum). Adopt rule: serialize all Maven/next-build invocations.
+Evidence: .nu-aura/evidence/796d4a64/{backend-tests.md,frontend-tests.md,race-correction.md,release-gate.json},
+.nu-aura/state/{current-state.yaml,blockers.yaml,test-status.json,budget.json,current-task.json}.

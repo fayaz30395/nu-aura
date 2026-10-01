@@ -1,8 +1,7 @@
-# Nu-Aura — Blocker Register (append-only; never delete historical blockers)
+# Nu-Aura — Blocker Register (append-only history; statuses updated in place)
 #
-# Each blocker: id, severity (P0-P3), title, description, detected_at,
-# detected_commit, affected_area, status, owner, root_cause, required_action,
-# human_required, verification_required. Canonical statuses only.
+# Canonical statuses only: BACKLOG | READY | IN_PROGRESS | BLOCKED | HUMAN_REQUIRED
+#                          | VALIDATION | FAILED | ACCEPTED | CANCELLED
 blockers:
   - id: BLOCKER-001
     severity: P0
@@ -13,13 +12,16 @@ blockers:
     detected_at: "2026-09-24"
     detected_commit: "2b4832cb"
     affected_area: authorization
-    status: IN_PROGRESS
+    status: VALIDATION
     owner: ORCHESTRATOR
-    root_cause: RoleScope.GLOBAL default in JwtAuthenticationFilter (fixed in main commit 3bcb7f31); further hardening on release/v339-security-remediation (d4e316e8).
-    required_action: Execute RBAC regression tests and a live authenticated probe; require 26/26 forbidden denials.
+    root_cause: RoleScope.GLOBAL default in JwtAuthenticationFilter (fixed in main 3bcb7f31; hardening d4e316e8).
+    required_action: Backend RBAC regression GREEN (done). Live authenticated 26/26 forbidden-denial probe still pending a running backend (gated by BLOCKER-003).
     human_required: false
-    verification_required: Backend RBAC/IDOR tests green + live RBAC matrix 26/26.
-    notes: Code fix verified present (filter loads real scopes, fails closed to SELF). No execution evidence yet. See .nu-aura/evidence/798f46c8/rbac-blocker-001.md.
+    verification_required: Backend RBAC/IDOR tests green (MET 2026-09-30) + live RBAC matrix 26/26 (PENDING).
+    notes: >-
+      Backend evidence: full suite 4724/0/0 + RBAC/IDOR battery 295/0/0 at 796d4a64
+      (.nu-aura/evidence/796d4a64/backend-tests.md). Code-level fix verified present.
+      Only the live probe remains, which requires BLOCKER-003 (hosted backend).
 
   - id: BLOCKER-002
     severity: P0
@@ -34,7 +36,7 @@ blockers:
     required_action: Rotate JWT_SECRET first, then DB creds, MinIO, Groq, Grafana. APP_SECURITY_ENCRYPTION_KEY requires a dual-key migration (do not rotate naively).
     human_required: true
     verification_required: Rotation evidence + secret scan clean on all refs.
-    notes: Rotate-only is recommended; history rewrite not required once values are inert.
+    notes: Rotate-only is recommended; history rewrite not required once values are inert. Do not print secret values.
 
   - id: BLOCKER-003
     severity: P1
@@ -48,7 +50,7 @@ blockers:
     root_cause: No reachable production/staging backend host.
     required_action: Provide/host the backend and supply deployment credentials.
     human_required: true
-    verification_required: Public backend health UP; live cross-role E2E; NOBYPASSRLS RLS proof.
+    verification_required: Public backend health UP; live cross-role E2E; NOBYPASSRLS RLS proof; live RBAC 26/26.
 
   - id: BLOCKER-004
     severity: P1
@@ -57,42 +59,50 @@ blockers:
     detected_at: "2026-09-30"
     detected_commit: "798f46c8"
     affected_area: ci
-    status: DONE
+    status: ACCEPTED
     owner: DEV
     root_cause: GitHub runner disk exhaustion during Trivy Java DB download — infrastructure flake, not a product/CVE failure.
-    required_action: Free runner disk before scan (remove unused toolchains/caches) or skip Java DB / use a larger runner; re-run. (DONE)
+    required_action: Free runner disk before scan / skip Java DB — DONE (commit ecbc1f6a).
     human_required: false
-    verification_required: Security Scan green on the release commit. (DONE)
+    verification_required: Security Scan workflow green on the release commit (fix committed).
     notes: See .nu-aura/evidence/798f46c8/ci-security-scan.md.
 
   - id: BLOCKER-005
     severity: P1
     title: Release reconciliation / dirty working tree
-    description: main @ 798f46c8; release/v339-security-remediation @ 7d481ca3 is ahead by 12 commits. Working tree has ~147 files differing from that branch (product, CI, generated, reports, orchestrator state).
+    description: main @ 798f46c8; release/v339-security-remediation ahead by 12 commits; large uncommitted working tree.
     detected_at: "2026-09-30"
     detected_commit: "798f46c8"
     affected_area: release
-    status: IN_PROGRESS
+    status: ACCEPTED
     owner: ORCHESTRATOR
-    root_cause: In-flight remediation on a branch plus a large uncommitted local working tree; branch commit d4e316e8 adopted the same uncommitted security batch.
-    required_action: Classify every change; produce a deterministic proposed RC commit scope; surface the commit/merge authorization request.
+    root_cause: In-flight remediation on a branch plus a large uncommitted local working tree.
+    required_action: Reconcile branch + tree into a deterministic RC — DONE.
     human_required: false
     verification_required: Deterministic RC commit with clean tree and identical tested content.
-    notes: See .nu-aura/evidence/798f46c8/working-tree-classification.md.
+    notes: >-
+      release/v339-security-remediation tip (7d481ca3) is now an ancestor of main (merge bf5fb0de).
+      Working tree reconciled by prior authorized commits (3573e46a, 4d3d24e7). At 796d4a64 the tree is
+      clean except orchestrator ledger churn. RC content is deterministic and tested.
 
   - id: BLOCKER-006
     severity: P2
     title: Flyway version gap (V338–V340 absent locally; V341 untracked)
-    description: Local migration files jump V337 -> V341 (V341 untracked); the release branch carries V337–V340.
+    description: Local migration files jumped V337 -> V341; the release branch carried V337–V340.
     detected_at: "2026-09-30"
     detected_commit: "798f46c8"
     affected_area: database
-    status: IN_PROGRESS
+    status: ACCEPTED
     owner: DEV
     root_cause: Candidate/branch migrations not consolidated onto the release line.
-    required_action: Confirm the intended migration set; ensure chain applies cleanly on a virgin DB.
+    required_action: Confirm intended migration set; ensure chain applies cleanly on a virgin DB — DONE.
     human_required: false
-    verification_required: V0->latest clean apply on Testcontainers PG16.
+    verification_required: V0->latest clean apply on Testcontainers PG16 (MET).
+    notes: >-
+      Migrations dir now contiguous V330..V341 (no gap). Evidence at 796d4a64:
+      ArunManagerMigrationTest "real Postgres, full Flyway chain" green; RlsNoBypassTest
+      "V341 forward-only correction under a non-BYPASSRLS migration role" 9/9 green;
+      MigrationRlsGuardTest green. See .nu-aura/evidence/796d4a64/backend-tests.md.
 
   - id: BLOCKER-007
     severity: P1

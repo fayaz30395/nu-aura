@@ -1,0 +1,27 @@
+{
+  "commit": "796d4a64",
+  "date": "2026-09-30",
+  "backend": {
+    "build": "PASS",
+    "full_suite": { "command": "mvn -o -pl . test", "result": "PASS", "tests": 4724, "failures": 0, "errors": 0, "skipped": 2, "evidence": ".nu-aura/evidence/796d4a64/backend-tests.md" },
+    "rbac_idor_battery": { "result": "PASS", "tests": 295, "classes": 20 },
+    "migration_rls_batch": { "result": "PASS", "tests": 54, "skipped": 2 }
+  },
+  "frontend": {
+    "api_generate": "PASS",
+    "typecheck": "PASS",
+    "lint": "PASS",
+    "unit": { "result": "PASS", "files": 91, "tests": 2425 },
+    "build": { "result": "PASS", "note": "requires NEXT_PUBLIC_API_URL", "build_id_written_at": "2026-09-30T21:00:02-03:00" }
+  },
+  "e2e_backend": {
+    "AnalyticsE2ETest": "PASS (10/10, fixed)",
+    "AttendanceE2ETest": "PASS (15)",
+    "AuthenticationE2ETest": "PASS (13)",
+    "PayrollE2ETest": "PASS",
+    "LeaveRequestE2ETest": "PASS (12)",
+    "ValidationAndLoggingE2ETest": "PASS (24)",
+    "WebSocketNotificationE2ETest": "PASS (17)"
+  },
+  "regression": "PASS"
+}

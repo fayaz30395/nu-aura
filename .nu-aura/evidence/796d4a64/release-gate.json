@@ -1,0 +1,26 @@
+{
+  "commit": "796d4a64",
+  "date": "2026-09-30",
+  "overall": "HUMAN_ACTION_REQUIRED",
+  "overall_reason": "All code-controllable release gates PASS. Remaining release blockers are human-only: exposed-credential rotation (BLOCKER-002), unhosted production backend / live RBAC probe (BLOCKER-003), and production V316 migration checksum verification requiring Railway access (BLOCKER-007).",
+  "gates": {
+    "build": { "result": "PASS", "evidence": "backend mvn test compile + frontend next build (BUILD_ID 21:00)" },
+    "tests_backend": { "result": "PASS", "detail": "4724 run / 0 fail / 0 error / 2 skipped" },
+    "tests_frontend": { "result": "PASS", "detail": "91 files / 2425 tests" },
+    "critical_e2e": { "result": "PASS", "detail": "Auth 13, Attendance 15, Leave 12, Payroll, Validation 24, WebSocket 17, Analytics 10" },
+    "authentication": { "result": "PASS", "detail": "AuthenticationE2ETest green; JwtAuthenticationFilterScopeTest green" },
+    "rbac": { "result": "PASS", "detail": "RBAC/IDOR battery 295 green; scope-flattening fix present and exercised" },
+    "rbac_live_probe": { "result": "HUMAN_REQUIRED", "detail": "26/26 forbidden-denial live matrix needs a running hosted backend (BLOCKER-003)" },
+    "database_migrations": { "result": "PASS", "detail": "full Flyway chain on real PG16 (ArunManagerMigrationTest); V341 RLS correction non-BYPASSRLS (RlsNoBypassTest); MigrationRlsGuardTest green" },
+    "security_code": { "result": "PASS", "detail": "66/66 scanner findings closed/false-positive; JSON-LD escape fix applied (see bf5fb0de evidence)" },
+    "security_secrets": { "result": "HUMAN_REQUIRED", "detail": "7 historical credentials unrotated (BLOCKER-002)" },
+    "regression": { "result": "PASS", "detail": "full backend suite green post-fix" },
+    "configuration": { "result": "PASS", "detail": "frontend release-env gate satisfied with a valid https API URL" },
+    "release_documentation": { "result": "PASS", "detail": "docs/release + docs/security present; this evidence set" }
+  },
+  "unresolved_blockers": {
+    "P0": ["BLOCKER-002 (secrets rotation — HUMAN_REQUIRED)"],
+    "P1": ["BLOCKER-003 (backend hosting — HUMAN_REQUIRED)", "BLOCKER-007 (prod V316 checksum — HUMAN_REQUIRED)"],
+    "P2": []
+  }
+}

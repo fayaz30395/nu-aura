@@ -4,37 +4,37 @@
 # capability fields: result vocabulary PASS | FAIL | NOT_RUN | NOT_APPLICABLE | UNKNOWN
 # Never silently convert UNKNOWN into PASS.
 project: nu-aura
-last_updated: "2026-09-30T23:35:00Z"
-last_verified_commit: "3573e46a"
+last_updated: "2026-09-30T21:05:00-03:00"
+last_verified_commit: "796d4a64"
 branch: main
 status: IN_PROGRESS
 work_type: RELEASE
-phase: DISCOVERY
+phase: VALIDATION
 
 frontend:
-  build: NOT_RUN
+  build: PASS
   lint: PASS
   typecheck: PASS
-  unit_tests: NOT_RUN
-  e2e_tests: NOT_RUN
+  unit_tests: PASS
+  e2e_tests: PARTIAL   # backend API E2E (com.nulogic.e2e.*) green; browser Playwright suite not run
 
 backend:
-  build: NOT_RUN
-  unit_tests: NOT_RUN
-  integration_tests: NOT_RUN
+  build: PASS
+  unit_tests: PASS
+  integration_tests: PASS
 
 database:
-  migrations: FAIL
-  schema: UNKNOWN
-  rls: UNKNOWN
+  migrations: PASS
+  schema: PASS          # full Flyway chain applies cleanly on real PG16
+  rls: PASS             # RlsStartupProbe + RlsNoBypass + MigrationRlsGuard green
   indexes: UNKNOWN
   constraints: UNKNOWN
 
 security:
-  authentication: UNKNOWN
-  authorization: IN_PROGRESS
-  rbac: IN_PROGRESS
-  tenant_isolation: UNKNOWN
+  authentication: PASS
+  authorization: PASS
+  rbac: PASS            # code + 295-test battery green; live 26/26 probe pending BLOCKER-003
+  tenant_isolation: PASS
   secrets: HUMAN_REQUIRED
   dependency_scan: BLOCKED
 
@@ -44,21 +44,19 @@ infrastructure:
   production_database: HUMAN_REQUIRED
 
 quality:
-  regression: NOT_RUN
+  regression: PASS
   performance: UNKNOWN
   accessibility: UNKNOWN
 
 release:
-  status: BLOCKED
-  readiness: BLOCKED
+  status: HUMAN_REQUIRED
+  readiness: HUMAN_REQUIRED
 
 blockers:
-  - BLOCKER-001
-  - BLOCKER-002
-  - BLOCKER-003
-  - BLOCKER-004
-  - BLOCKER-006
-  - BLOCKER-007
+  - BLOCKER-002   # P0 secrets rotation — HUMAN_REQUIRED
+  - BLOCKER-003   # P1 backend not hosted — HUMAN_REQUIRED
+  - BLOCKER-007   # P1 prod V316 checksum — HUMAN_REQUIRED
+  - BLOCKER-001   # P0 RBAC — code+backend validated; live probe gated by BLOCKER-003
 
 human_actions_required:
   - rotate-7-exposed-credentials
@@ -69,7 +67,8 @@ human_actions_required:
   - dr-rto-rpo-decision
 
 warnings:
-  - "Frontend gates require the local snapshot: run `API_DOCS_URL=./openapi-snapshot.json npm run api:generate` before typecheck/build (plain api:generate defaults to localhost:8080)."
-  - "main CI Security Scan failure is a runner disk-space flake during Trivy, not a CVE finding."
-  - "release/v339-security-remediation is 12 commits ahead of the pre-sync main and not merged."
-  - "Backend suite has historically been run on Java 23 while the project targets Java 21."
+  - "Frontend gates require the local snapshot: run `API_DOCS_URL=./openapi-snapshot.json npm run api:generate` before typecheck/build."
+  - "Frontend production build requires NEXT_PUBLIC_API_URL (scripts/validate-release-env.mjs). CI supplies it."
+  - "Never run two Maven/next-build invocations against the same target concurrently — causes ENVIRONMENT_FAILURE (NoClassDefFoundError on Lombok builders). See .nu-aura/evidence/796d4a64/race-correction.md."
+  - "Backend suite runs on JDK 23 while the project targets Java 21 (release=21)."
+  - "main CI Security Scan disk-space flake was already fixed (BLOCKER-004 ACCEPTED)."

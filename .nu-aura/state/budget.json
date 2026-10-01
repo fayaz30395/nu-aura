@@ -1,0 +1,17 @@
+{
+  "policy": {
+    "absolute_max_usd": 30,
+    "target_usd": "10-20",
+    "modes": {
+      "A": "0-15 normal, max 3 agents",
+      "B": "15-20 optimize, max 2 agents",
+      "C": "20-25 critical path, max 2 agents",
+      "D": "25-28 conservation, max 1 agent",
+      "E": "28-30 finalization only"
+    }
+  },
+  "estimated_spend_usd": null,
+  "estimated_spend_note": "No per-call billing telemetry is exposed to the agent runtime. Tracked qualitatively: this run performed targeted shell/gradle/maven/vitest invocations plus a bounded number of model turns. No automated spend counter is available; treat this field as UNKNOWN rather than a fabricated number.",
+  "mode": "A",
+  "updated_at": "2026-09-30T21:05:00-03:00"
+}
