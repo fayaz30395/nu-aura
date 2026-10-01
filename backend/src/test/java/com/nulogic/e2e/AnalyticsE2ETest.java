@@ -6,6 +6,7 @@ import com.nulogic.application.analytics.service.AnalyticsService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.user.RoleScope;
@@ -51,6 +52,8 @@ class AnalyticsE2ETest extends AbstractPostgresIntegrationTest {
     private AnalyticsService analyticsService;
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private TenantTimeService tenantTimeService;
 
     @BeforeEach
     void setUp() {
@@ -204,7 +207,10 @@ class AnalyticsE2ETest extends AbstractPostgresIntegrationTest {
     @WithMockUser(username = "admin@test.com", roles = {"ADMIN"})
     @DisplayName("E2E: Get payroll metrics for current month")
     void getPayrollMetrics_ReturnsCurrentMonthData() throws Exception {
-        LocalDate today = LocalDate.now();
+        // Payroll metrics are computed in the tenant's timezone
+        // (AnalyticsService uses tenantTimeService.today(tenantId)); derive the
+        // expectation from the same source so the assertion is zone-independent.
+        LocalDate today = tenantTimeService.today(TEST_TENANT_ID);
 
         MvcResult result = mockMvc.perform(get(BASE_URL + "/payroll"))
                 .andExpect(status().isOk())
