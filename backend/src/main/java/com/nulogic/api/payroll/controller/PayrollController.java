@@ -199,6 +199,28 @@ public class PayrollController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Dry-run preview of bulk payroll for a subset of employees over a single
+     * pay period. Does not persist payslips or consume pending adjustments.
+     */
+    @PostMapping("/runs/bulk/preview")
+    @RequiresPermission(Permission.PAYROLL_PROCESS)
+    public ResponseEntity<List<BulkPayrollPreviewItem>> previewBulkPayroll(
+            @Valid @RequestBody BulkPayrollRequest request) {
+        return ResponseEntity.ok(payrollRunService.previewBulkPayroll(request));
+    }
+
+    /**
+     * Idempotent bulk process for a subset of employees over a single pay period.
+     * Returns a per-employee result (PROCESSED / ALREADY_PROCESSED / FAILED).
+     */
+    @PostMapping("/runs/bulk/process")
+    @RequiresPermission(value = Permission.PAYROLL_PROCESS, revalidate = true)
+    public ResponseEntity<BulkPayrollProcessResponse> processBulkPayroll(
+            @Valid @RequestBody BulkPayrollRequest request) {
+        return ResponseEntity.ok(payrollRunService.processBulkPayroll(request));
+    }
+
     // ===== Payslip Endpoints =====
 
     @PostMapping("/payslips")

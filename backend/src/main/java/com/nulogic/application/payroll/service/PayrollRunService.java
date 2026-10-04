@@ -1,10 +1,15 @@
 package com.nulogic.application.payroll.service;
 
+import com.nulogic.api.payroll.dto.BulkPayrollPreviewItem;
+import com.nulogic.api.payroll.dto.BulkPayrollProcessItem;
+import com.nulogic.api.payroll.dto.BulkPayrollProcessResponse;
+import com.nulogic.api.payroll.dto.BulkPayrollRequest;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.Holiday;
@@ -40,6 +45,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.List;
 import java.util.Map;
@@ -377,6 +383,36 @@ public class PayrollRunService {
             return 0;
         }
 
+        PeriodContext context = resolvePeriodContext(payrollRun);
+
+        int generated = 0;
+        for (Employee employee : activeEmployees) {
+            if (payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId,
+                    employee.getId(),
+                    payrollRun.getPayPeriodYear(),
+                    payrollRun.getPayPeriodMonth())) {
+                generated++;
+                continue;
+            }
+
+            Payslip payslip = buildPayslipForEmployee(payrollRun, employee, context, true);
+            if (payslip == null) {
+                continue;
+            }
+            payslipRepository.save(payslip);
+            notifyPayslipAvailable(employee.getId(), payrollRun);
+            generated++;
+        }
+        return generated;
+    }
+
+    /**
+     * Period-scoped inputs for payslip computation: working days, holiday set and
+     * the concrete start/end dates derived from a run's (year, month).
+     */
+    private PeriodContext resolvePeriodContext(PayrollRun payrollRun) {
+        UUID tenantId = payrollRun.getTenantId();
         LocalDate periodStart = LocalDate.of(
                 payrollRun.getPayPeriodYear(), payrollRun.getPayPeriodMonth(), 1);
         LocalDate periodEnd = periodStart.with(TemporalAdjusters.lastDayOfMonth());
@@ -392,69 +428,78 @@ public class PayrollRunService {
                 .map(Holiday::getHolidayDate)
                 .collect(Collectors.toSet());
         int workingDays = countWorkingDays(periodStart, periodEnd, holidays);
+        return new PeriodContext(periodStart, periodEnd, holidays, workingDays);
+    }
 
-        int generated = 0;
-        for (Employee employee : activeEmployees) {
-            if (payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
-                    tenantId,
-                    employee.getId(),
-                    payrollRun.getPayPeriodYear(),
-                    payrollRun.getPayPeriodMonth())) {
-                generated++;
-                continue;
-            }
+    /**
+     * Builds a single employee's payslip (totals calculated) from their active
+     * salary structure, reusing the exact leave/present-day/adjustment math of the
+     * full-run path.
+     *
+     * <p>Returns {@code null} when the employee has no active salary structure for
+     * the run's pay date (payslip skipped). When {@code persistAdjustments} is
+     * {@code true} the pending adjustments consumed by the payslip are marked
+     * PROCESSED and persisted; the payslip itself is NOT saved here — callers own
+     * the save (so the preview path can compute without writing).</p>
+     */
+    private Payslip buildPayslipForEmployee(
+            PayrollRun payrollRun, Employee employee, PeriodContext context, boolean persistAdjustments) {
+        UUID tenantId = payrollRun.getTenantId();
 
-            Optional<SalaryStructure> structureOpt = salaryStructureRepository.findActiveByEmployeeIdAndDate(
-                    tenantId, employee.getId(), payrollRun.getPayrollDate());
-            if (structureOpt.isEmpty()) {
-                log.error("Payroll run {}: employee {} (tenant {}) has no active salary structure for {}. " +
-                                "Payslip SKIPPED — assign a salary structure and reprocess.",
-                        payrollRun.getId(), employee.getId(), tenantId, payrollRun.getPayrollDate());
-                continue;
-            }
-            if (structureOpt.isPresent()) {
-                SalaryStructure structure = structureOpt.get();
-
-                // BA-1(a): leave days from approved leave overlapping the period,
-                // present days from attendance records in the period.
-                BigDecimal leaveDays = computeApprovedLeaveDays(
-                        tenantId, employee.getId(), periodStart, periodEnd, holidays);
-                int presentDays = computePresentDays(
-                        tenantId, employee.getId(), periodStart, periodEnd, workingDays, leaveDays);
-
-                Payslip payslip = Payslip.builder()
-                        .payrollRunId(payrollRun.getId())
-                        .employeeId(employee.getId())
-                        .payPeriodMonth(payrollRun.getPayPeriodMonth())
-                        .payPeriodYear(payrollRun.getPayPeriodYear())
-                        .payDate(payrollRun.getPayrollDate())
-                        .basicSalary(defaultAmount(structure.getBasicSalary()))
-                        .hra(defaultAmount(structure.getHra()))
-                        .conveyanceAllowance(defaultAmount(structure.getConveyanceAllowance()))
-                        .medicalAllowance(defaultAmount(structure.getMedicalAllowance()))
-                        .specialAllowance(defaultAmount(structure.getSpecialAllowance()))
-                        .otherAllowances(defaultAmount(structure.getOtherAllowances()))
-                        .providentFund(defaultAmount(structure.getProvidentFund()))
-                        .professionalTax(defaultAmount(structure.getProfessionalTax()))
-                        .incomeTax(defaultAmount(structure.getIncomeTax()))
-                        .otherDeductions(defaultAmount(structure.getOtherDeductions()))
-                        .workingDays(workingDays)
-                        .presentDays(presentDays)
-                        .leaveDays(leaveDays.setScale(0, RoundingMode.HALF_UP).intValue())
-                        .build();
-                payslip.setTenantId(tenantId);
-
-                // BA-1(b): fold unconsumed adjustments (LOP, overtime, expense
-                // reimbursements, bonuses) into the payslip and mark them consumed.
-                applyPendingAdjustments(payslip, payrollRun, employee.getId(), workingDays, periodEnd);
-
-                payslip.calculateTotals();
-                payslipRepository.save(payslip);
-                notifyPayslipAvailable(employee.getId(), payrollRun);
-                generated++;
-            }
+        Optional<SalaryStructure> structureOpt = salaryStructureRepository.findActiveByEmployeeIdAndDate(
+                tenantId, employee.getId(), payrollRun.getPayrollDate());
+        if (structureOpt.isEmpty()) {
+            log.error("Payroll run {}: employee {} (tenant {}) has no active salary structure for {}. " +
+                            "Payslip SKIPPED — assign a salary structure and reprocess.",
+                    payrollRun.getId(), employee.getId(), tenantId, payrollRun.getPayrollDate());
+            return null;
         }
-        return generated;
+        SalaryStructure structure = structureOpt.get();
+
+        // BA-1(a): leave days from approved leave overlapping the period,
+        // present days from attendance records in the period.
+        BigDecimal leaveDays = computeApprovedLeaveDays(
+                tenantId, employee.getId(), context.periodStart(), context.periodEnd(), context.holidays());
+        int presentDays = computePresentDays(
+                tenantId, employee.getId(), context.periodStart(), context.periodEnd(),
+                context.workingDays(), leaveDays);
+
+        Payslip payslip = Payslip.builder()
+                .payrollRunId(payrollRun.getId())
+                .employeeId(employee.getId())
+                .payPeriodMonth(payrollRun.getPayPeriodMonth())
+                .payPeriodYear(payrollRun.getPayPeriodYear())
+                .payDate(payrollRun.getPayrollDate())
+                .basicSalary(defaultAmount(structure.getBasicSalary()))
+                .hra(defaultAmount(structure.getHra()))
+                .conveyanceAllowance(defaultAmount(structure.getConveyanceAllowance()))
+                .medicalAllowance(defaultAmount(structure.getMedicalAllowance()))
+                .specialAllowance(defaultAmount(structure.getSpecialAllowance()))
+                .otherAllowances(defaultAmount(structure.getOtherAllowances()))
+                .providentFund(defaultAmount(structure.getProvidentFund()))
+                .professionalTax(defaultAmount(structure.getProfessionalTax()))
+                .incomeTax(defaultAmount(structure.getIncomeTax()))
+                .otherDeductions(defaultAmount(structure.getOtherDeductions()))
+                .workingDays(context.workingDays())
+                .presentDays(presentDays)
+                .leaveDays(leaveDays.setScale(0, RoundingMode.HALF_UP).intValue())
+                .build();
+        payslip.setTenantId(tenantId);
+
+        // BA-1(b): fold unconsumed adjustments (LOP, overtime, expense
+        // reimbursements, bonuses) into the payslip and mark them consumed.
+        applyPendingAdjustments(payslip, payrollRun, employee.getId(), context.workingDays(),
+                context.periodEnd(), persistAdjustments);
+
+        payslip.calculateTotals();
+        return payslip;
+    }
+
+    private record PeriodContext(
+            LocalDate periodStart,
+            LocalDate periodEnd,
+            Set<LocalDate> holidays,
+            int workingDays) {
     }
 
     /**
@@ -468,7 +513,8 @@ public class PayrollRunService {
      * <p>Must be called before {@link Payslip#calculateTotals()}.</p>
      */
     private void applyPendingAdjustments(
-            Payslip payslip, PayrollRun payrollRun, UUID employeeId, int workingDays, LocalDate periodEnd) {
+            Payslip payslip, PayrollRun payrollRun, UUID employeeId, int workingDays, LocalDate periodEnd,
+            boolean persist) {
         UUID tenantId = payrollRun.getTenantId();
         List<PayrollAdjustment> pendingAdjustments = payrollAdjustmentRepository
                 .findByTenantIdAndEmployeeIdAndStatusAndEffectiveDateLessThanEqual(
@@ -496,7 +542,9 @@ public class PayrollRunService {
             } else {
                 extraEarnings = extraEarnings.add(amount);
             }
-            adjustment.markProcessed(payrollRun.getId(), now);
+            if (persist) {
+                adjustment.markProcessed(payrollRun.getId(), now);
+            }
             log.info("Applied payroll adjustment {} ({} {} → {}) to payslip for employee {} period {}/{}",
                     adjustment.getId(), adjustment.getAdjustmentType(), adjustment.getAmount(), amount,
                     employeeId, payrollRun.getPayPeriodYear(), payrollRun.getPayPeriodMonth());
@@ -507,7 +555,9 @@ public class PayrollRunService {
         if (extraDeductions.signum() != 0) {
             payslip.setOtherDeductions(defaultAmount(payslip.getOtherDeductions()).add(extraDeductions));
         }
-        payrollAdjustmentRepository.saveAll(pendingAdjustments);
+        if (persist) {
+            payrollAdjustmentRepository.saveAll(pendingAdjustments);
+        }
     }
 
     /**
@@ -626,5 +676,185 @@ public class PayrollRunService {
                 null,
                 "Payroll run soft-deleted for period " + payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth()
         );
+    }
+
+    // ==================== BULK PROCESSING ====================
+
+    /**
+     * Dry-run preview of bulk payroll for a subset of employees over a single pay
+     * period. Reuses the exact payslip computation (salary structure, leave/present
+     * days, pending adjustments) of the per-run path, but never persists anything —
+     * pending adjustments are NOT consumed.
+     */
+    @Transactional(readOnly = true)
+    public List<BulkPayrollPreviewItem> previewBulkPayroll(BulkPayrollRequest request) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        validateBulkPeriod(request);
+
+        int year = request.payrollPeriodStart().getYear();
+        int month = request.payrollPeriodStart().getMonthValue();
+        LocalDate paymentDate = request.paymentDate() != null
+                ? request.paymentDate() : request.payrollPeriodEnd();
+
+        PayrollRun run = lightweightRun(tenantId, year, month, paymentDate);
+        PeriodContext context = resolvePeriodContext(run);
+        Map<UUID, Employee> employees = activeEmployeesById(tenantId, request.employeeIds());
+
+        List<BulkPayrollPreviewItem> preview = new ArrayList<>();
+        for (UUID employeeId : request.employeeIds()) {
+            Employee employee = employees.get(employeeId);
+            if (employee == null) {
+                continue;
+            }
+            Payslip payslip = buildPayslipForEmployee(run, employee, context, false);
+            if (payslip == null) {
+                continue;
+            }
+            BigDecimal baseSalary = defaultAmount(payslip.getBasicSalary());
+            BigDecimal grossAmount = defaultAmount(payslip.getGrossSalary());
+            preview.add(new BulkPayrollPreviewItem(
+                    employeeId,
+                    employee.getFullName(),
+                    baseSalary,
+                    grossAmount.subtract(baseSalary),
+                    defaultAmount(payslip.getTotalDeductions()),
+                    grossAmount,
+                    defaultAmount(payslip.getNetSalary())));
+        }
+        return preview;
+    }
+
+    /**
+     * Idempotent bulk process for a subset of employees over a single pay period.
+     * Reuses the existing run-processing computation per employee. Employees whose
+     * payslip already exists for the period are reported ALREADY_PROCESSED; each
+     * employee is isolated so one failure does not abort the batch.
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public BulkPayrollProcessResponse processBulkPayroll(BulkPayrollRequest request) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        validateBulkPeriod(request);
+
+        int year = request.payrollPeriodStart().getYear();
+        int month = request.payrollPeriodStart().getMonthValue();
+        LocalDate paymentDate = request.paymentDate() != null
+                ? request.paymentDate() : request.payrollPeriodEnd();
+
+        PayrollRun run = findOrCreateBulkRun(tenantId, year, month, paymentDate);
+        // Serialize with the async/legacy full-run paths on the same period.
+        payrollPeriodLock.lockPeriod(tenantId, year, month);
+
+        UUID processedBy = SecurityContext.getCurrentUserId();
+        PeriodContext context = resolvePeriodContext(run);
+        Map<UUID, Employee> employees = activeEmployeesById(tenantId, request.employeeIds());
+
+        List<BulkPayrollProcessItem> results = new ArrayList<>();
+        int processed = 0;
+        int alreadyProcessed = 0;
+        int failed = 0;
+
+        for (UUID employeeId : request.employeeIds()) {
+            Employee employee = employees.get(employeeId);
+            if (employee == null) {
+                failed++;
+                results.add(new BulkPayrollProcessItem(employeeId, BulkPayrollProcessItem.Status.FAILED,
+                        "Employee not found or not active for this tenant"));
+                continue;
+            }
+            if (payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, year, month)) {
+                alreadyProcessed++;
+                results.add(new BulkPayrollProcessItem(employeeId,
+                        BulkPayrollProcessItem.Status.ALREADY_PROCESSED, null));
+                continue;
+            }
+            try {
+                Payslip payslip = buildPayslipForEmployee(run, employee, context, true);
+                if (payslip == null) {
+                    failed++;
+                    results.add(new BulkPayrollProcessItem(employeeId, BulkPayrollProcessItem.Status.FAILED,
+                            "No active salary structure for pay date"));
+                    continue;
+                }
+                payslipRepository.save(payslip);
+                notifyPayslipAvailable(employeeId, run);
+                processed++;
+                results.add(new BulkPayrollProcessItem(employeeId, BulkPayrollProcessItem.Status.PROCESSED, null));
+            } catch (Exception e) { // per-employee error boundary: isolate failures so the batch continues
+                log.error("Bulk payroll: employee {} failed for period {}/{}: {}",
+                        employeeId, year, month, e.getMessage(), e);
+                failed++;
+                results.add(new BulkPayrollProcessItem(employeeId, BulkPayrollProcessItem.Status.FAILED,
+                        e.getMessage()));
+            }
+        }
+
+        // Transition the DRAFT run to PROCESSED only if this batch newly computed payslips.
+        if (run.getStatus() == PayrollStatus.DRAFT) {
+            run.setTotalEmployees(processed + alreadyProcessed);
+            run.process(processedBy, tenantTimeService.now(tenantId));
+            payrollRunRepository.save(run);
+            notifyPayrollProcessed(run, processedBy);
+        }
+
+        return new BulkPayrollProcessResponse(run.getId(), processed, failed, alreadyProcessed, results);
+    }
+
+    /**
+     * Validates the bulk request before computation: non-empty employee list,
+     * non-null period bounds, end on/after start, and a single-month span (the
+     * payslip/payroll-run period model is keyed on (year, month)).
+     */
+    private void validateBulkPeriod(BulkPayrollRequest request) {
+        if (request.employeeIds() == null || request.employeeIds().isEmpty()) {
+            throw new IllegalArgumentException("Bulk payroll requires at least one employee");
+        }
+        if (request.payrollPeriodStart() == null || request.payrollPeriodEnd() == null) {
+            throw new IllegalArgumentException("Bulk payroll requires both period start and end dates");
+        }
+        if (request.payrollPeriodEnd().isBefore(request.payrollPeriodStart())) {
+            throw new IllegalArgumentException("Payroll period end date must be on or after the start date");
+        }
+        if (request.payrollPeriodStart().getYear() != request.payrollPeriodEnd().getYear()
+                || !request.payrollPeriodStart().getMonth().equals(request.payrollPeriodEnd().getMonth())) {
+            throw new IllegalArgumentException(
+                    "Bulk payroll runs are limited to a single calendar month; period start and end must be in the same month and year");
+        }
+    }
+
+    private PayrollRun lightweightRun(UUID tenantId, int year, int month, LocalDate paymentDate) {
+        PayrollRun run = new PayrollRun();
+        run.setTenantId(tenantId);
+        run.setPayPeriodYear(year);
+        run.setPayPeriodMonth(month);
+        run.setPayrollDate(paymentDate);
+        run.setStatus(PayrollStatus.DRAFT);
+        return run;
+    }
+
+    private PayrollRun findOrCreateBulkRun(UUID tenantId, int year, int month, LocalDate paymentDate) {
+        return payrollRunRepository.findByTenantIdAndPayPeriodYearAndPayPeriodMonth(tenantId, year, month)
+                .orElseGet(() -> {
+                    PayrollRun run = new PayrollRun();
+                    run.setPayPeriodMonth(month);
+                    run.setPayPeriodYear(year);
+                    run.setPayrollDate(paymentDate);
+                    run.setRemarks(null);
+                    run.setId(null);
+                    run.setTenantId(null);
+                    run.setStatus(PayrollStatus.DRAFT);
+                    run.setProcessedBy(null);
+                    run.setProcessedAt(null);
+                    run.setApprovedBy(null);
+                    run.setApprovedAt(null);
+                    run.setTotalEmployees(null);
+                    return createPayrollRun(run);
+                });
+    }
+
+    private Map<UUID, Employee> activeEmployeesById(UUID tenantId, List<UUID> employeeIds) {
+        return employeeRepository.findAllByIdInAndTenantId(employeeIds, tenantId).stream()
+                .filter(employee -> employee.getStatus() == Employee.EmployeeStatus.ACTIVE)
+                .collect(Collectors.toMap(Employee::getId, employee -> employee));
     }
 }

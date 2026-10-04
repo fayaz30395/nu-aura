@@ -669,39 +669,77 @@ describe('PayrollService', () => {
     });
   });
 
-  // Bulk Processing — CRIT-008: Backend not implemented.
-  // Stubs throw errors; UI is gated via BULK_PROCESSING_AVAILABLE flag.
-  describe('Bulk Processing (stubs — CRIT-008)', () => {
+  // Bulk Processing — wired to POST /payroll/runs/bulk/preview and /bulk/process.
+  describe('Bulk Processing', () => {
     describe('bulkProcessPayroll', () => {
-      it('should throw because backend is not implemented', async () => {
-        await expect(
-          payrollService.bulkProcessPayroll({
-            employeeIds: ['emp-1', 'emp-2'],
-            payrollPeriodStart: '2026-01-01',
-            payrollPeriodEnd: '2026-01-31',
-            paymentDate: '2026-02-01',
-          })
-        ).rejects.toThrow('Bulk payroll processing is not yet available');
+      it('should POST to the bulk process endpoint and return the response body', async () => {
+        const body = {payrollRunId: 'run-123', processedCount: 2, failedCount: 0};
+        mockApiClient.post.mockResolvedValue({data: body});
+
+        const result = await payrollService.bulkProcessPayroll({
+          employeeIds: ['emp-1', 'emp-2'],
+          payrollPeriodStart: '2026-01-01',
+          payrollPeriodEnd: '2026-01-31',
+          paymentDate: '2026-02-01',
+          runName: 'Jan 2026',
+        });
+
+        expect(mockApiClient.post).toHaveBeenCalledWith('/payroll/runs/bulk/process', {
+          employeeIds: ['emp-1', 'emp-2'],
+          payrollPeriodStart: '2026-01-01',
+          payrollPeriodEnd: '2026-01-31',
+          paymentDate: '2026-02-01',
+          runName: 'Jan 2026',
+        });
+        expect(result).toEqual(body);
       });
     });
 
     describe('getBulkProcessingStatus', () => {
-      it('should throw because backend is not implemented', async () => {
-        await expect(
-          payrollService.getBulkProcessingStatus('run-123')
-        ).rejects.toThrow('Bulk processing status is not yet available');
+      it('should read the run status endpoint and map totals', async () => {
+        mockApiClient.get.mockResolvedValue({
+          data: {status: 'PROCESSED', totalEmployees: 5},
+        });
+
+        const result = await payrollService.getBulkProcessingStatus('run-123');
+
+        expect(mockApiClient.get).toHaveBeenCalledWith('/payroll/runs/run-123/status');
+        expect(result).toEqual({
+          status: 'PROCESSED',
+          processedCount: 5,
+          totalCount: 5,
+          errors: [],
+        });
       });
     });
 
     describe('previewBulkProcessing', () => {
-      it('should throw because backend is not implemented', async () => {
-        await expect(
-          payrollService.previewBulkProcessing({
-            employeeIds: ['emp-1'],
-            payrollPeriodStart: '2026-01-01',
-            payrollPeriodEnd: '2026-01-31',
-          })
-        ).rejects.toThrow('Bulk processing preview is not yet available');
+      it('should POST to the bulk preview endpoint and return the preview rows', async () => {
+        const rows = [
+          {
+            employeeId: 'emp-1',
+            employeeName: 'Alice',
+            baseSalary: 50000,
+            totalAllowances: 10000,
+            totalDeductions: 5000,
+            grossAmount: 60000,
+            netAmount: 55000,
+          },
+        ];
+        mockApiClient.post.mockResolvedValue({data: rows});
+
+        const result = await payrollService.previewBulkProcessing({
+          employeeIds: ['emp-1'],
+          payrollPeriodStart: '2026-01-01',
+          payrollPeriodEnd: '2026-01-31',
+        });
+
+        expect(mockApiClient.post).toHaveBeenCalledWith('/payroll/runs/bulk/preview', {
+          employeeIds: ['emp-1'],
+          payrollPeriodStart: '2026-01-01',
+          payrollPeriodEnd: '2026-01-31',
+        });
+        expect(result).toEqual(rows);
       });
     });
   });

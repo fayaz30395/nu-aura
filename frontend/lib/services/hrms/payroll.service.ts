@@ -360,27 +360,38 @@ class PayrollService {
     await apiClient.delete(`/payroll/salary-structures/${id}`);
   }
 
-  // CRIT-008: Backend endpoints for bulk processing not implemented.
-  // These stubs exist so the BulkProcessingWizard component does not crash.
-  // They are feature-flagged in the UI — the wizard shows a "Coming Soon" banner.
-
-  async bulkProcessPayroll(_data: {
+  async bulkProcessPayroll(data: {
     employeeIds: string[];
     payrollPeriodStart: string;
     payrollPeriodEnd: string;
     paymentDate: string;
     runName?: string;
   }): Promise<{ payrollRunId: string; processedCount: number; failedCount: number }> {
-    throw new Error('Bulk payroll processing is not yet available. This feature is under development.');
+    const response = await apiClient.post<{
+      payrollRunId: string;
+      processedCount: number;
+      failedCount: number;
+    }>('/payroll/runs/bulk/process', data);
+    return response.data;
   }
 
-  async getBulkProcessingStatus(_payrollRunId: string): Promise<{
+  async getBulkProcessingStatus(payrollRunId: string): Promise<{
     status: string;
     processedCount: number;
     totalCount: number;
     errors?: Array<{ employeeId: string; error: string }>;
   }> {
-    throw new Error('Bulk processing status is not yet available. This feature is under development.');
+    // The bulk process endpoint is synchronous, so the run's own status reflects
+    // the final outcome. Reuse the existing per-run status endpoint.
+    const response = await apiClient.get<PayrollRunApiResponse>(`/payroll/runs/${payrollRunId}/status`);
+    const run = response.data;
+    const processedCount = toNumber(run.totalEmployees);
+    return {
+      status: run.status ?? 'DRAFT',
+      processedCount,
+      totalCount: processedCount,
+      errors: [],
+    };
   }
 
   // ── Payroll Component Methods ──────────────────────────────────────────────
@@ -430,7 +441,7 @@ class PayrollService {
     await apiClient.post('/payroll/components/recompute-order', {});
   }
 
-  async previewBulkProcessing(_data: {
+  async previewBulkProcessing(data: {
     employeeIds: string[];
     payrollPeriodStart: string;
     payrollPeriodEnd: string;
@@ -443,14 +454,23 @@ class PayrollService {
     grossAmount: number;
     netAmount: number;
   }>> {
-    throw new Error('Bulk processing preview is not yet available. This feature is under development.');
+    const response = await apiClient.post<Array<{
+      employeeId: string;
+      employeeName: string;
+      baseSalary: number;
+      totalAllowances: number;
+      totalDeductions: number;
+      grossAmount: number;
+      netAmount: number;
+    }>>('/payroll/runs/bulk/preview', data);
+    return response.data;
   }
 }
 
 export const payrollService = new PayrollService();
 
 /**
- * CRIT-008: Bulk payroll processing backend endpoints are not yet implemented.
- * Use this flag to gate UI features that depend on bulk processing.
+ * Bulk payroll processing is wired to the backend
+ * (`POST /api/v1/payroll/runs/bulk/preview` and `/bulk/process`).
  */
-export const BULK_PROCESSING_AVAILABLE = false;
+export const BULK_PROCESSING_AVAILABLE = true;
