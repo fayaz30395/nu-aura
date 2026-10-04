@@ -61,6 +61,7 @@ test.describe('@dynamic-route detail pages', () => {
 
   test('/payroll/runs/[id] renders a real payroll run', async ({page}) => {
     const run = await firstListItem(page, '/api/v1/payroll/runs?size=1');
+    // BLOCKED-003: needs live backend — skip when the seeded payroll-runs list is empty.
     test.skip(!run, 'No payroll run exists in this environment (empty list) — cannot resolve a real id.');
     await page.goto(`/payroll/runs/${run!.id}`);
     await expect(page.getByText(String(run!.status), {exact: false}).first()).toBeVisible({timeout: 20000});
@@ -68,6 +69,7 @@ test.describe('@dynamic-route detail pages', () => {
 
   test('/recruitment/candidates/[id] renders a real candidate', async ({page}) => {
     const candidate = await firstListItem(page, '/api/v1/recruitment/candidates?size=1');
+    // BLOCKED-003: needs live backend — skip when the seeded candidates list is empty.
     test.skip(!candidate, 'No candidate exists in this environment (empty list) — cannot resolve a real id.');
     await page.goto(`/recruitment/candidates/${candidate!.id}`);
     await expect(page.getByText(String(candidate!.fullName), {exact: false}).first()).toBeVisible({timeout: 20000});
@@ -75,6 +77,7 @@ test.describe('@dynamic-route detail pages', () => {
 
   test('/learning/courses/[id] renders a real course', async ({page}) => {
     const course = await firstListItem(page, '/api/v1/lms/courses?size=1');
+    // BLOCKED-003: needs live backend — skip when the seeded courses list is empty.
     test.skip(!course, 'No course exists in this environment (empty list) — cannot resolve a real id.');
     await page.goto(`/learning/courses/${course!.id}`);
     await expect(page.getByText(String(course!.title), {exact: false}).first()).toBeVisible({timeout: 20000});
@@ -82,6 +85,7 @@ test.describe('@dynamic-route detail pages', () => {
 
   test('/fluence/wiki/[slug] renders a real wiki page', async ({page}) => {
     const wikiPage = await firstListItem(page, '/api/v1/knowledge/wiki/pages?size=1');
+    // BLOCKED-003: needs live backend — skip when the seeded wiki-pages list is empty.
     test.skip(!wikiPage, 'No wiki page exists in this environment (empty list) — cannot resolve a real id.');
     // Route param is named [slug] but the page actually treats it as the page id.
     await page.goto(`/fluence/wiki/${wikiPage!.id}`);
@@ -90,6 +94,7 @@ test.describe('@dynamic-route detail pages', () => {
 
   test('/fluence/blogs/[slug] renders a real blog post', async ({page}) => {
     const post = await firstListItem(page, '/api/v1/knowledge/blogs?size=1');
+    // BLOCKED-003: needs live backend — skip when the seeded blogs list is empty.
     test.skip(!post, 'No blog post exists in this environment (empty list) — cannot resolve a real id.');
     // Route param is named [slug] but the page actually treats it as the post id.
     await page.goto(`/fluence/blogs/${post!.id}`);
@@ -98,6 +103,7 @@ test.describe('@dynamic-route detail pages', () => {
 
   test('/onboarding/[id] renders a real onboarding process', async ({page}) => {
     const process = await firstListItem(page, '/api/v1/onboarding/processes?size=1');
+    // BLOCKED-003: needs live backend — skip when the seeded onboarding list is empty.
     test.skip(!process, 'No onboarding process exists in this environment (empty list) — cannot resolve a real id.');
     await page.goto(`/onboarding/${process!.id}`);
     await expect(page.getByText(String(process!.employeeName), {exact: false}).first()).toBeVisible({timeout: 20000});
@@ -105,6 +111,7 @@ test.describe('@dynamic-route detail pages', () => {
 
   test('/offboarding/[id] renders a real offboarding process', async ({page}) => {
     const process = await firstListItem(page, '/api/v1/offboarding?size=1');
+    // BLOCKED-003: needs live backend — skip when the seeded offboarding list is empty.
     test.skip(!process, 'No offboarding process exists in this environment (empty list) — cannot resolve a real id.');
     await page.goto(`/offboarding/${process!.id}`);
     await expect(page.getByText(String(process!.employeeName), {exact: false}).first()).toBeVisible({timeout: 20000});
@@ -112,6 +119,7 @@ test.describe('@dynamic-route detail pages', () => {
 
   test('/surveys/[id] renders a real survey', async ({page}) => {
     const survey = await firstListItem(page, '/api/v1/surveys?size=1');
+    // BLOCKED-003: needs live backend — skip when the seeded surveys list is empty.
     test.skip(!survey, 'No survey exists in this environment (empty list) — cannot resolve a real id.');
     await page.goto(`/surveys/${survey!.id}`);
     await expect(page.getByText(String(survey!.title), {exact: false}).first()).toBeVisible({timeout: 20000});

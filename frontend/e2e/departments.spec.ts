@@ -175,6 +175,7 @@ test.describe('Departments — Edit & Delete Actions', () => {
     const editBtn = page.locator('button[aria-label="Edit department"]').first();
     const hasEdit = await editBtn.isVisible().catch(() => false);
     if (!hasEdit) {
+      // BLOCKED-003: needs live backend — no seeded department rows to act on.
       test.skip();
       return;
     }
@@ -186,6 +187,7 @@ test.describe('Departments — Edit & Delete Actions', () => {
     const deleteBtn = page.locator('button[aria-label="Delete department"]').first();
     const hasDelete = await deleteBtn.isVisible().catch(() => false);
     if (!hasDelete) {
+      // BLOCKED-003: needs live backend — no seeded department rows to act on.
       test.skip();
       return;
     }
@@ -197,6 +199,7 @@ test.describe('Departments — Edit & Delete Actions', () => {
     const deleteBtn = page.locator('button[aria-label="Delete department"]').first();
     const hasDelete = await deleteBtn.isVisible().catch(() => false);
     if (!hasDelete) {
+      // BLOCKED-003: needs live backend — no seeded department rows to act on.
       test.skip();
       return;
     }
@@ -212,6 +215,7 @@ test.describe('Departments — Edit & Delete Actions', () => {
       .first();
     const hasToggle = await toggleBtn.isVisible().catch(() => false);
     if (!hasToggle) {
+      // BLOCKED-003: needs live backend — no seeded department rows to act on.
       test.skip();
       return;
     }

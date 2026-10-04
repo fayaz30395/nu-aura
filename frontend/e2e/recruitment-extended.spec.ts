@@ -103,6 +103,7 @@ test.describe('Careers Page', () => {
       expect(isModalVisible).toBe(true);
     } else {
       // No jobs available — acceptable state
+      // BLOCKED-003: needs live backend
       test.skip();
     }
   });
@@ -127,6 +128,7 @@ test.describe('Careers Page', () => {
         await expect(fullNameLabel).toBeVisible({timeout: 8000});
       }
     } else {
+      // BLOCKED-003: needs live backend
       test.skip();
     }
   });
@@ -157,6 +159,7 @@ test.describe('Careers Page', () => {
         await expect(errorText).toBeVisible({timeout: 5000});
       }
     } else {
+      // BLOCKED-003: needs live backend
       test.skip();
     }
   });

@@ -178,6 +178,7 @@ for (const [role, ucs] of byRole.entries()) {
     for (const uc of slice) {
       test(uc.id, async ({browser}) => {
         if (!loggedIn) {
+          // BLOCKED-003: needs live backend — demo login failed, no session to assert against.
           test.skip();
           return;
         }

@@ -121,6 +121,7 @@ test.describe('RBAC actions: MY SPACE self-service buttons @rbac @actions @criti
         .isVisible({timeout: 5000})
         .catch(() => false);
       if (leaveSurfaceUnavailable) {
+        // BLOCKED-003: needs live backend — demo account has no linked employee profile.
         test.skip(true, 'Leave self-service surface is unavailable in current auth/bootstrap state');
       }
 

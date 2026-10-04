@@ -189,6 +189,7 @@ test.describe('Settings - Security / MFA', () => {
         });
       } else {
         // MFA already enabled — skip this test path gracefully
+        // BLOCKED-003: needs live backend
         test.skip();
       }
     });
@@ -205,6 +206,7 @@ test.describe('Settings - Security / MFA', () => {
           page.locator('input[inputmode="numeric"], input[placeholder="000000"]')
         ).toBeVisible({timeout: 5000});
       } else {
+        // BLOCKED-003: needs live backend
         test.skip();
       }
     });
@@ -227,6 +229,7 @@ test.describe('Settings - Security / MFA', () => {
           page.locator('text=Only numbers allowed, text=Code must be 6 digits').first()
         ).toBeVisible({timeout: 5000});
       } else {
+        // BLOCKED-003: needs live backend
         test.skip();
       }
     });
@@ -246,6 +249,7 @@ test.describe('Settings - Security / MFA', () => {
           page.locator('text=Code must be 6 digits')
         ).toBeVisible({timeout: 5000});
       } else {
+        // BLOCKED-003: needs live backend
         test.skip();
       }
     });
@@ -266,6 +270,7 @@ test.describe('Settings - Security / MFA', () => {
         await expect(codeInput).not.toBeVisible({timeout: 3000});
         await expect(disableBtn).toBeVisible({timeout: 3000});
       } else {
+        // BLOCKED-003: needs live backend
         test.skip();
       }
     });

@@ -241,7 +241,7 @@ test.describe('Approvals Inbox', () => {
     const firstItem = page.locator('table tbody tr').first();
     const hasFirstItem = await firstItem.isVisible({timeout: 5000}).catch(() => false);
     if (!hasFirstItem) {
-      // No items — skip without failing
+      // BLOCKED-003: needs live backend — no seeded inbox items.
       test.skip();
       return;
     }
@@ -340,6 +340,7 @@ test.describe('Approvals — RBAC', () => {
     const firstRow = page.locator('table tbody tr').first();
     const hasItem = await firstRow.isVisible({timeout: 5000}).catch(() => false);
     if (!hasItem) {
+      // BLOCKED-003: needs live backend — no seeded inbox items.
       test.skip();
       return;
     }
@@ -349,6 +350,7 @@ test.describe('Approvals — RBAC', () => {
     const rejectBtn = page.locator('button:has-text("Reject")').first();
     const hasReject = await rejectBtn.isVisible({timeout: 5000}).catch(() => false);
     if (!hasReject) {
+      // BLOCKED-003: needs live backend — no seeded approval item exposes a Reject action.
       test.skip();
       return;
     }
@@ -471,6 +473,7 @@ test.describe('Workflows', () => {
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
     if (!hasRow) {
+      // BLOCKED-003: needs live backend — no seeded workflow rows.
       test.skip();
       return;
     }
@@ -487,6 +490,7 @@ test.describe('Workflows', () => {
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
     if (!hasRow) {
+      // BLOCKED-003: needs live backend — no seeded workflow rows.
       test.skip();
       return;
     }
@@ -506,6 +510,7 @@ test.describe('Workflows', () => {
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
     if (!hasRow) {
+      // BLOCKED-003: needs live backend — no seeded workflow rows.
       test.skip();
       return;
     }
@@ -563,6 +568,7 @@ test.describe('Workflow Detail', () => {
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
     if (!hasRow) {
+      // BLOCKED-003: needs live backend — no seeded workflow rows.
       test.skip();
       return;
     }
@@ -580,6 +586,7 @@ test.describe('Workflow Detail', () => {
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
     if (!hasRow) {
+      // BLOCKED-003: needs live backend — no seeded workflow rows.
       test.skip();
       return;
     }
@@ -604,6 +611,7 @@ test.describe('Workflow Detail', () => {
     const firstRow = page.locator('table tbody tr').first();
     const hasRow = await firstRow.isVisible({timeout: 8000}).catch(() => false);
     if (!hasRow) {
+      // BLOCKED-003: needs live backend — no seeded workflow rows.
       test.skip();
       return;
     }
@@ -648,6 +656,7 @@ test.describe('Workflow Detail', () => {
     const addStepBtn = page.locator('button:has-text("Add Step"), button:has-text("Add Approval Step")').first();
     const hasAddStep = await addStepBtn.isVisible({timeout: 8000}).catch(() => false);
     if (!hasAddStep) {
+      // BLOCKED-003: needs live backend — workflow builder form not rendered.
       test.skip();
       return;
     }
@@ -734,6 +743,7 @@ test.describe('Employee Change Requests', () => {
 
     const outcome = await waitForChangeRequestList(page);
     if (outcome === 'empty') {
+      // BLOCKED-003: needs live backend — no seeded change requests.
       test.skip();
       return;
     }
@@ -753,6 +763,7 @@ test.describe('Employee Change Requests', () => {
 
     const outcome = await waitForChangeRequestList(page);
     if (outcome === 'empty') {
+      // BLOCKED-003: needs live backend — no seeded change requests.
       test.skip();
       return;
     }
@@ -765,6 +776,7 @@ test.describe('Employee Change Requests', () => {
     const approveBtn = page.locator('button:has-text("Approve")').first();
     const hasApprove = await approveBtn.isVisible({timeout: 5000}).catch(() => false);
     if (!hasApprove) {
+      // BLOCKED-003: needs live backend — no seeded change request exposes an Approve action.
       test.skip();
       return;
     }
@@ -781,6 +793,7 @@ test.describe('Employee Change Requests', () => {
 
     const outcome = await waitForChangeRequestList(page);
     if (outcome === 'empty') {
+      // BLOCKED-003: needs live backend — no seeded change requests.
       test.skip();
       return;
     }
@@ -792,6 +805,7 @@ test.describe('Employee Change Requests', () => {
     const rejectBtn = page.locator('button:has-text("Reject")').first();
     const hasReject = await rejectBtn.isVisible({timeout: 5000}).catch(() => false);
     if (!hasReject) {
+      // BLOCKED-003: needs live backend — no seeded approval item exposes a Reject action.
       test.skip();
       return;
     }
@@ -837,6 +851,7 @@ test.describe('Employee Change Requests', () => {
     const backBtn = page.locator('button:has-text("← Back"), a:has-text("Back"), button:has-text("Back")').first();
     const hasBack = await backBtn.isVisible({timeout: ROUTE_READY_TIMEOUT}).catch(() => false);
     if (!hasBack) {
+      // BLOCKED-003: needs live backend — page shell (back control) not rendered.
       test.skip();
       return;
     }
@@ -891,7 +906,7 @@ test.describe('E-Signature', () => {
       resolveDelay = r;
     });
 
-    await page.route('**/api/v1/esign/public/**', async (route) => {
+    await page.route('**/api/v1/esignature/external/**', async (route) => {
       await delayPromise;
       await route.continue();
     });
@@ -938,7 +953,7 @@ test.describe('E-Signature', () => {
 
   test('email verification step renders input for signer email when token is valid', async ({page}) => {
     // Mock the API to return a valid token response
-    await page.route('**/api/v1/esign/public/**', (route) => {
+    await page.route('**/api/v1/esignature/external/**', (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -962,7 +977,7 @@ test.describe('E-Signature', () => {
   });
 
   test('email verification rejects wrong email with an error message', async ({page}) => {
-    await page.route('**/api/v1/esign/public/**', (route) => {
+    await page.route('**/api/v1/esignature/external/**', (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -981,11 +996,7 @@ test.describe('E-Signature', () => {
     await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.locator('input[type="email"], input[placeholder*="email" i]').first();
-    const hasInput = await emailInput.isVisible({timeout: 10000}).catch(() => false);
-    if (!hasInput) {
-      test.skip();
-      return;
-    }
+    await expect(emailInput).toBeVisible({timeout: 10000});
 
     await emailInput.fill('wrong.person@example.com');
 
@@ -997,7 +1008,7 @@ test.describe('E-Signature', () => {
   });
 
   test('sign step shows drawn / typed signature method tabs', async ({page}) => {
-    await page.route('**/api/v1/esign/public/**', (route) => {
+    await page.route('**/api/v1/esignature/external/**', (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -1016,11 +1027,7 @@ test.describe('E-Signature', () => {
     await page.waitForLoadState('domcontentloaded');
 
     const emailInput = page.locator('input[type="email"], input[placeholder*="email" i]').first();
-    const hasInput = await emailInput.isVisible({timeout: 10000}).catch(() => false);
-    if (!hasInput) {
-      test.skip();
-      return;
-    }
+    await expect(emailInput).toBeVisible({timeout: 10000});
 
     await emailInput.fill('signer@example.com');
     const verifyBtn = page.locator('button:has-text("Verify"), button:has-text("Continue"), button:has-text("Next")').first();
@@ -1037,7 +1044,7 @@ test.describe('E-Signature', () => {
   });
 
   test('already processed document shows Document Already Signed or Document Declined state', async ({page}) => {
-    await page.route('**/api/v1/esign/public/**', (route) => {
+    await page.route('**/api/v1/esignature/external/**', (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -1060,7 +1067,7 @@ test.describe('E-Signature', () => {
   });
 
   test('sign page title contains the document title when valid', async ({page}) => {
-    await page.route('**/api/v1/esign/public/**', (route) => {
+    await page.route('**/api/v1/esignature/external/**', (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',

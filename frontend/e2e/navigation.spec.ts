@@ -322,6 +322,9 @@ test.describe('Navigation and Routing', () => {
       const sidebarToggle = page.locator('button[aria-label="Toggle navigation panel"]').first();
       const hasToggle = await sidebarToggle.isVisible().catch(() => false);
       if (!hasToggle) {
+        // BLOCKED-003: needs live backend — the NavPanel toggle only renders inside the
+        // authenticated Aura shell at desktop widths; whether it appears cannot be
+        // verified by inspection, so skip when the live app omits it.
         test.skip(true, 'Panel toggle not available in this viewport');
         return;
       }

@@ -204,8 +204,9 @@ test.describe('MY SPACE - My Attendance', () => {
           page.locator('textarea#regularization-reason, textarea[id*="regularization"]')
         ).toBeVisible({timeout: 5000});
       } else {
-        // If button not available (no checked-in record today), skip gracefully
-        test.skip();
+        // BLOCKED-003: needs live backend — "Request Regularization" only renders when
+        // a seeded check-in record exists for today; empty attendance ⇒ no modal to open.
+        test.skip(true, 'No check-in record today — regularization button unavailable');
       }
     });
 
@@ -223,7 +224,9 @@ test.describe('MY SPACE - My Attendance', () => {
           .filter({hasText: /Submit Request/i});
         await expect(submitBtn).toBeDisabled({timeout: 5000});
       } else {
-        test.skip();
+        // BLOCKED-003: needs live backend — regularization modal requires a seeded
+        // check-in record for today; empty attendance ⇒ no submit button to assert.
+        test.skip(true, 'No check-in record today — regularization button unavailable');
       }
     });
   });

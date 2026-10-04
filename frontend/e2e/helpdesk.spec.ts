@@ -266,6 +266,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('ticket detail page shows Back to Tickets link', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system — skip detail tests');
 
     await expect(page.locator('button:has-text("Back to Tickets")')).toBeVisible();
@@ -273,6 +274,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('ticket detail shows subject as h1', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('h1')).toBeVisible();
@@ -280,6 +282,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('ticket number and priority badge are visible', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     // Ticket number (mono text) and badge
@@ -288,6 +291,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('Description section is visible', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('text=Description').first()).toBeVisible();
@@ -295,6 +299,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('Comments section is visible with count', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('text=Comments').first()).toBeVisible();
@@ -302,6 +307,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('add comment textarea is present', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('textarea[placeholder="Add a comment..."]')).toBeVisible();
@@ -309,6 +315,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('Send Reply button is visible', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('button:has-text("Send Reply")')).toBeVisible();
@@ -316,6 +323,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('Details metadata panel shows Requester label', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('text=Requester').first()).toBeVisible();
@@ -325,6 +333,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('admin sees Delete ticket button (SYSTEM_ADMIN permission)', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     await expect(page.locator('button:has-text("Delete")')).toBeVisible();
@@ -332,6 +341,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('Back to Tickets navigates back to list', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     await page.locator('button:has-text("Back to Tickets")').click();
@@ -342,6 +352,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('comment form shows empty comment validation', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     // Try submitting empty comment
@@ -351,6 +362,7 @@ test.describe('Helpdesk Ticket Detail (/helpdesk/tickets/[id])', () => {
 
   test('SLA Metrics panel is visible if metrics are available', async ({page}) => {
     const hasTickets = await openFirstTicket(page);
+    // BLOCKED-003: needs live backend
     test.skip(!hasTickets, 'No tickets in system');
 
     // SLA Metrics is shown when the backend returns metric data

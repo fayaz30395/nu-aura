@@ -25,6 +25,7 @@ const BAD_PASSWORD = 'definitely-wrong-password';
 test.describe('Auth — Brute-Force Lockout @security @regression', () => {
 
   test('LOCKOUT-01: 6th failed login returns 423 Locked', async ({request}) => {
+    // BLOCKED-003: needs live backend
     test.skip(
       !process.env.CI_HAS_REDIS,
       'AccountLockoutService requires Redis — set CI_HAS_REDIS=1 to enable this test'
@@ -60,6 +61,7 @@ test.describe('Auth — Brute-Force Lockout @security @regression', () => {
   });
 
   test('LOCKOUT-02: lockout UI surfaces a clear message on the login page', async ({page}) => {
+    // BLOCKED-003: needs live backend
     test.skip(
       !process.env.CI_HAS_REDIS,
       'AccountLockoutService requires Redis — set CI_HAS_REDIS=1 to enable this test'
