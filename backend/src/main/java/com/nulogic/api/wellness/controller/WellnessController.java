@@ -34,6 +34,10 @@ public class WellnessController {
     @Operation(summary = "Get wellness dashboard for current user")
     public ResponseEntity<WellnessDashboard> getDashboard() {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new com.nulogic.common.exception.BusinessException(
+                    "No employee record is associated with the current user. Contact HR to link your account.");
+        }
         return ResponseEntity.ok(wellnessService.getDashboard(employeeId));
     }
 
@@ -106,6 +110,10 @@ public class WellnessController {
             @RequestParam(required = false) UUID teamId,
             @RequestParam(required = false) String teamName) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new com.nulogic.common.exception.BusinessException(
+                    "No employee record is associated with the current user. Contact HR to link your account.");
+        }
         log.info("Employee {} joining challenge {}", employeeId, challengeId);
         wellnessService.joinChallenge(challengeId, employeeId, teamId, teamName);
         return ResponseEntity.ok().build();
@@ -116,6 +124,10 @@ public class WellnessController {
     @Operation(summary = "Leave a challenge")
     public ResponseEntity<Void> leaveChallenge(@PathVariable UUID challengeId) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new com.nulogic.common.exception.BusinessException(
+                    "No employee record is associated with the current user. Contact HR to link your account.");
+        }
         log.info("Employee {} leaving challenge {}", employeeId, challengeId);
         wellnessService.leaveChallenge(challengeId, employeeId);
         return ResponseEntity.ok().build();
@@ -128,6 +140,10 @@ public class WellnessController {
     @Operation(summary = "Log a health metric")
     public ResponseEntity<HealthLogDto> logHealth(@Valid @RequestBody HealthLogDto request) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new com.nulogic.common.exception.BusinessException(
+                    "No employee record is associated with the current user. Contact HR to link your account.");
+        }
         log.info("Employee {} logging health metric: {}", employeeId, request.getMetricType());
         return ResponseEntity.ok(wellnessService.logHealth(employeeId, request));
     }
@@ -139,6 +155,10 @@ public class WellnessController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new com.nulogic.common.exception.BusinessException(
+                    "No employee record is associated with the current user. Contact HR to link your account.");
+        }
         return ResponseEntity.ok(wellnessService.getHealthLogs(employeeId, startDate, endDate));
     }
 
@@ -149,6 +169,10 @@ public class WellnessController {
     @Operation(summary = "Get current user's wellness points")
     public ResponseEntity<WellnessPointsDto> getMyPoints() {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new com.nulogic.common.exception.BusinessException(
+                    "No employee record is associated with the current user. Contact HR to link your account.");
+        }
         return ResponseEntity.ok(wellnessService.getMyPoints(employeeId));
     }
 

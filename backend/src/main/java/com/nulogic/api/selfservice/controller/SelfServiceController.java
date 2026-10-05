@@ -181,6 +181,10 @@ public class SelfServiceController {
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
     public ResponseEntity<SelfServiceDashboardResponse> getDashboard() {
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            throw new com.nulogic.common.exception.BusinessException(
+                    "No employee record is associated with the current user. Contact HR to link your account.");
+        }
         return ResponseEntity.ok(selfServiceService.getDashboard(employeeId));
     }
 
