@@ -10,6 +10,9 @@ import {BenefitPlan, BenefitPlanRequest, BenefitType} from '@/lib/types/hrms/ben
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useAllBenefitPlans, useCreateBenefitPlan, useUpdateBenefitPlan} from '@/lib/hooks/queries';
 import {getLocalDateString} from '@/lib/utils/dateUtils';
@@ -228,14 +231,14 @@ export default function BenefitPlansManagementPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="plan-code" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Plan Code *</label>
-                  <input id="plan-code" type="text" {...form.register('planCode')} className="input-aura" placeholder="HLTH-01"/>
+                  <Input id="plan-code" type="text" {...form.register('planCode')} placeholder="HLTH-01"/>
                   {form.formState.errors.planCode && (
                     <p className="mt-1 text-xs text-danger-500">{form.formState.errors.planCode.message}</p>
                   )}
                 </div>
                 <div>
                   <label htmlFor="plan-name" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Plan Name *</label>
-                  <input id="plan-name" type="text" {...form.register('planName')} className="input-aura" placeholder="Gold Health Plan"/>
+                  <Input id="plan-name" type="text" {...form.register('planName')} placeholder="Gold Health Plan"/>
                   {form.formState.errors.planName && (
                     <p className="mt-1 text-xs text-danger-500">{form.formState.errors.planName.message}</p>
                   )}
@@ -244,69 +247,70 @@ export default function BenefitPlansManagementPage() {
 
               <div>
                 <label htmlFor="plan-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Description</label>
-                <textarea id="plan-description" {...form.register('description')} rows={2} className="input-aura" placeholder="Brief description of this plan..."/>
+                <Textarea id="plan-description" {...form.register('description')} rows={2} placeholder="Brief description of this plan..."/>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="plan-benefit-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Benefit Type *</label>
-                  <select id="plan-benefit-type" {...form.register('benefitType')} className="input-aura">
+                  <Select id="plan-benefit-type" {...form.register('benefitType')}>
                     {benefitTypes.map((type) => (
                       <option key={type} value={type}>{type}</option>
                     ))}
-                  </select>
+                  </Select>
                 </div>
                 <div>
                   <label htmlFor="plan-coverage-amount" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Coverage Amount</label>
-                  <input id="plan-coverage-amount" type="number" step="1" min="0" {...form.register('coverageAmount')} className="input-aura"/>
+                  <Input id="plan-coverage-amount" type="number" step="1" min="0" {...form.register('coverageAmount')}/>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="plan-employee-contribution" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employee Contribution</label>
-                  <input id="plan-employee-contribution" type="number" step="1" min="0" {...form.register('employeeContribution')} className="input-aura"/>
+                  <Input id="plan-employee-contribution" type="number" step="1" min="0" {...form.register('employeeContribution')}/>
                 </div>
                 <div>
                   <label htmlFor="plan-employer-contribution" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Employer Contribution</label>
-                  <input id="plan-employer-contribution" type="number" step="1" min="0" {...form.register('employerContribution')} className="input-aura"/>
+                  <Input id="plan-employer-contribution" type="number" step="1" min="0" {...form.register('employerContribution')}/>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="plan-effective-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Effective Date *</label>
-                  <input id="plan-effective-date" type="date" {...form.register('effectiveDate')} className="input-aura"/>
+                  <Input id="plan-effective-date" type="date" {...form.register('effectiveDate')}/>
                   {form.formState.errors.effectiveDate && (
                     <p className="mt-1 text-xs text-danger-500">{form.formState.errors.effectiveDate.message}</p>
                   )}
                 </div>
                 <div>
                   <label htmlFor="plan-expiry-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Expiry Date</label>
-                  <input id="plan-expiry-date" type="date" {...form.register('expiryDate')} className="input-aura"/>
+                  <Input id="plan-expiry-date" type="date" {...form.register('expiryDate')}/>
                 </div>
               </div>
 
               <div>
                 <label htmlFor="plan-eligibility" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Eligibility Criteria</label>
-                <input id="plan-eligibility" type="text" {...form.register('eligibilityCriteria')} className="input-aura" placeholder="e.g. Grade L3 and above"/>
+                <Input id="plan-eligibility" type="text" {...form.register('eligibilityCriteria')} placeholder="e.g. Grade L3 and above"/>
               </div>
 
-              {/* ponytail: enrollment window fields land once backend exposes
-                  enrollmentWindowStart/End on BenefitPlanRequest/Response
-                  (see US-2FZK4F7NT000) — slot reserved, disabled until then. */}
+              {/* ponytail: enrollment window fields surface once this view is
+                  migrated to the enhanced benefits API — BenefitPlanEnhancedRequest
+                  /Response already expose enrollmentWindowStart/End. Slot stays
+                  reserved + disabled until then (see US-2FZK4F7NT000). */}
               <fieldset className="border-t pt-4" disabled>
                 <legend className="text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Open Enrollment Window <span className="text-body-muted">(coming soon — pending backend support)</span>
+                  Open Enrollment Window <span className="text-body-muted">(supported by the enhanced benefits API)</span>
                 </legend>
                 <div className="grid grid-cols-2 gap-4 opacity-50">
                   <div>
                     <label htmlFor="plan-enrollment-window-start" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Window Start</label>
-                    <input id="plan-enrollment-window-start" type="date" className="input-aura" disabled/>
+                    <Input id="plan-enrollment-window-start" type="date" disabled/>
                   </div>
                   <div>
                     <label htmlFor="plan-enrollment-window-end" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Window End</label>
-                    <input id="plan-enrollment-window-end" type="date" className="input-aura" disabled/>
+                    <Input id="plan-enrollment-window-end" type="date" disabled/>
                   </div>
                 </div>
               </fieldset>

@@ -24,10 +24,12 @@ import {
   Webhook,
   XCircle,
 } from 'lucide-react';
+import {Checkbox} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Textarea} from '@/components/ui/Textarea';
 import {Label} from '@/components/ui/Label';
 import {Badge} from '@/components/ui/Badge';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -302,10 +304,10 @@ function CreateWebhookPanel({onClose, onCreated}: {onClose: () => void; onCreate
 
         <div className="space-y-1.5">
           <Label htmlFor="wh-headers">Custom Headers (JSON)</Label>
-          <textarea
+          <Textarea
             id="wh-headers"
             {...register('customHeaders')}
-            className="input-aura text-xs font-mono w-full min-h-[60px] resize-y"
+            className="text-xs font-mono min-h-[60px] resize-y"
             placeholder={'{"X-My-Header": "value"}'}
           />
           {errors.customHeaders && <p className="text-xs text-danger-500">{errors.customHeaders.message}</p>}
@@ -343,16 +345,16 @@ function CreateWebhookPanel({onClose, onCreated}: {onClose: () => void; onCreate
                       {events.map(event => {
                         const checked = field.value.includes(event) || field.value.includes(WebhookResponseEventsItem.ALL);
                         return (
-                          <label key={event} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-[var(--bg-secondary)] cursor-pointer">
-                            <input type="checkbox" checked={checked} className="w-3.5 h-3.5 accent-accent-600"
-                              onChange={e => {
-                                const next = e.target.checked
-                                  ? [...field.value.filter(v => v !== WebhookResponseEventsItem.ALL), event]
-                                  : field.value.filter(v => v !== event);
-                                field.onChange(next);
-                              }}/>
-                            <span className="text-xs text-[var(--text-secondary)] font-mono">{event}</span>
-                          </label>
+                          <Checkbox key={event} size="xs"
+                            label={<span className="text-xs text-[var(--text-secondary)] font-mono">{event}</span>}
+                            checked={checked}
+                            className="px-2 py-1 rounded hover:bg-[var(--bg-secondary)]"
+                            onChange={e => {
+                              const next = e.currentTarget.checked
+                                ? [...field.value.filter(v => v !== WebhookResponseEventsItem.ALL), event]
+                                : field.value.filter(v => v !== event);
+                              field.onChange(next);
+                            }}/>
                         );
                       })}
                     </div>

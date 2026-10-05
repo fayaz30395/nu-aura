@@ -121,8 +121,7 @@ function AiChatContent() {
               onKeyDown={handleKeyDown}
               placeholder="Ask about your knowledge base… (Shift+Enter for newline)"
               rows={1}
-              className="flex-1 resize-none bg-transparent text-sm text-[var(--text-1)] placeholder:text-[var(--text-muted)] focus:outline-none leading-relaxed"
-              style={{maxHeight: '160px'}}
+              className="flex-1 resize-none bg-transparent text-sm text-[var(--text-1)] placeholder:text-[var(--text-muted)] focus:outline-none leading-relaxed max-h-[160px]"
               disabled={isStreaming}
               aria-label="Chat message"
             />

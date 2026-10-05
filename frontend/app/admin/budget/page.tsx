@@ -18,6 +18,8 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {Badge} from '@/components/ui/Badge';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -286,27 +288,27 @@ function CreateBudgetPanel({onClose}: {onClose: () => void}) {
             </div>
             <div>
               <label htmlFor="budget-currency" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Currency</label>
-              <select id="budget-currency" value={form.currency} onChange={e => set('currency', e.target.value)} className="input-aura w-full h-8 text-sm">
+              <Select id="budget-currency" value={form.currency} onChange={e => set('currency', e.target.value)} className="h-8 text-sm">
                 <option value="USD">USD</option>
                 <option value="INR">INR</option>
                 <option value="EUR">EUR</option>
                 <option value="GBP">GBP</option>
-              </select>
+              </Select>
             </div>
           </div>
           <div>
             <label htmlFor="budget-department" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Department *</label>
-            <select
+            <Select
               id="budget-department"
               value={form.departmentId}
               onChange={e => set('departmentId', e.target.value)}
-              className="input-aura w-full h-8 text-sm"
+              className="h-8 text-sm"
             >
               <option value="">Select department...</option>
               {depts.map((d: {id?: string; name?: string}) => (
                 <option key={d.id} value={d.id ?? ''}>{d.name}</option>
               ))}
-            </select>
+            </Select>
           </div>
           <div>
             <label htmlFor="budget-total" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Total Budget *</label>
@@ -324,7 +326,7 @@ function CreateBudgetPanel({onClose}: {onClose: () => void}) {
           </div>
           <div>
             <label htmlFor="budget-notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Notes</label>
-            <textarea id="budget-notes" value={form.notes} onChange={e => set('notes', e.target.value)} rows={3} className="input-aura w-full text-sm resize-none" placeholder="Optional context..."/>
+            <Textarea id="budget-notes" value={form.notes} onChange={e => set('notes', e.target.value)} rows={3} className="resize-none" placeholder="Optional context..."/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}
           <div className="flex gap-2 pt-2">
@@ -384,18 +386,18 @@ export default function BudgetPlanningPage() {
                 <BarChart3 className="w-4 h-4 text-[var(--text-muted)]"/>
                 Budgets
               </CardTitle>
-              <select
+              <Select
                 aria-label="Filter by status"
                 value={statusFilter}
                 onChange={e => setStatusFilter(e.target.value)}
-                className="input-aura text-xs h-8 pr-6 py-0"
+                className="text-xs h-8"
               >
                 <option value="">All Status</option>
                 <option value="DRAFT">Draft</option>
                 <option value="PENDING_APPROVAL">Pending Approval</option>
                 <option value="APPROVED">Approved</option>
                 <option value="REJECTED">Rejected</option>
-              </select>
+              </Select>
             </div>
           </CardHeader>
           <CardContent className="space-y-2 p-4">

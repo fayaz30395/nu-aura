@@ -2,11 +2,14 @@
 
 import React, {useState} from 'react';
 import {ClipboardList, Plus, X} from 'lucide-react';
+import {Checkbox} from '@mantine/core';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
@@ -114,27 +117,27 @@ function CreateSurveyPanel({onClose}: {onClose: () => void}) {
           </div>
           <div>
             <label htmlFor="pulse-survey-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea id="pulse-survey-description" value={form.description} onChange={e => set('description', e.target.value)}
-              rows={2} className="input-aura w-full text-sm resize-none" placeholder="Purpose of this survey..."/>
+            <Textarea id="pulse-survey-description" value={form.description} onChange={e => set('description', e.target.value)}
+              rows={2} className="resize-none" placeholder="Purpose of this survey..."/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label htmlFor="pulse-survey-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
-              <select id="pulse-survey-type" value={form.surveyType} onChange={e => set('surveyType', e.target.value)}
-                className="input-aura w-full h-8 text-sm">
+              <Select id="pulse-survey-type" value={form.surveyType} onChange={e => set('surveyType', e.target.value)}
+                className="h-8 text-sm">
                 {Object.values(PulseSurveyRequestSurveyType).map(t => (
                   <option key={t} value={t}>{TYPE_LABELS[t] ?? t}</option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <label htmlFor="pulse-survey-frequency" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Frequency</label>
-              <select id="pulse-survey-frequency" value={form.frequency} onChange={e => set('frequency', e.target.value)}
-                className="input-aura w-full h-8 text-sm">
+              <Select id="pulse-survey-frequency" value={form.frequency} onChange={e => set('frequency', e.target.value)}
+                className="h-8 text-sm">
                 {Object.values(PulseSurveyRequestFrequency).map(f => (
                   <option key={f} value={f}>{FREQ_LABELS[f] ?? f}</option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -148,14 +151,8 @@ function CreateSurveyPanel({onClose}: {onClose: () => void}) {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
-              <input type="checkbox" checked={form.isAnonymous} onChange={e => set('isAnonymous', e.target.checked)} className="w-3 h-3"/>
-              Anonymous
-            </label>
-            <label className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
-              <input type="checkbox" checked={form.isMandatory} onChange={e => set('isMandatory', e.target.checked)} className="w-3 h-3"/>
-              Mandatory
-            </label>
+            <Checkbox size="xs" label="Anonymous" checked={form.isAnonymous} onChange={e => set('isAnonymous', e.currentTarget.checked)}/>
+            <Checkbox size="xs" label="Mandatory" checked={form.isMandatory} onChange={e => set('isMandatory', e.currentTarget.checked)}/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}
           <div className="flex gap-2 pt-2">

@@ -7,6 +7,8 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
@@ -153,11 +155,11 @@ function InvoicePanel({
             </div>
             <div>
               <label htmlFor="invoice-status" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
-              <select id="invoice-status" value={form.status} onChange={e => set('status', e.target.value)} className="input-aura w-full h-8 text-sm">
+              <Select id="invoice-status" value={form.status} onChange={e => set('status', e.target.value)} className="h-8 text-sm">
                 {Object.values(PSAInvoiceStatus).map(s => (
                   <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -202,7 +204,7 @@ function InvoicePanel({
           ) : null}
           <div>
             <label htmlFor="invoice-notes" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Notes</label>
-            <textarea id="invoice-notes" value={form.notes} onChange={e => set('notes', e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional notes..."/>
+            <Textarea id="invoice-notes" value={form.notes} onChange={e => set('notes', e.target.value)} rows={2} className="resize-none" placeholder="Optional notes..."/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}
           <div className="flex gap-2 pt-2">

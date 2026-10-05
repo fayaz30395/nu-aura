@@ -30,7 +30,7 @@ function MessageBubble({ message }: { message: ChatMessage }) {
         maw="80%"
         bg={isUser ? 'blue.0' : 'gray.0'}
       >
-        <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>
+        <Text size="sm" className="whitespace-pre-wrap">
           {message.content}
           {message.isStreaming && !message.content && <Text span c="dimmed">…</Text>}
         </Text>

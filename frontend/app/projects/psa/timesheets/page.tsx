@@ -2,11 +2,14 @@
 
 import React, {useState} from 'react';
 import {Clock, Plus, X} from 'lucide-react';
+import {Checkbox} from '@mantine/core';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
@@ -177,12 +180,12 @@ function AddEntryPanel({
           </div>
           <div>
             <label htmlFor="timesheet-entry-activity" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Activity</label>
-            <select id="timesheet-entry-activity" value={form.activityType} onChange={e => set('activityType', e.target.value)}
-              className="input-aura w-full h-8 text-sm">
+            <Select id="timesheet-entry-activity" value={form.activityType} onChange={e => set('activityType', e.target.value)}
+              className="h-8 text-sm">
               {Object.values(PSATimeEntryActivityType).map(t => (
                 <option key={t} value={t}>{ACTIVITY_LABELS[t] ?? t}</option>
               ))}
-            </select>
+            </Select>
           </div>
           <div>
             <label htmlFor="timesheet-entry-project-id" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Project ID</label>
@@ -196,20 +199,12 @@ function AddEntryPanel({
           </div>
           <div>
             <label htmlFor="timesheet-entry-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea id="timesheet-entry-description" value={form.workDescription} onChange={e => set('workDescription', e.target.value)}
-              rows={2} className="input-aura w-full text-sm resize-none" placeholder="What did you work on?"/>
+            <Textarea id="timesheet-entry-description" value={form.workDescription} onChange={e => set('workDescription', e.target.value)}
+              rows={2} className="resize-none" placeholder="What did you work on?"/>
           </div>
           <div className="flex items-center gap-4">
-            <label className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
-              <input type="checkbox" checked={form.isBillable} onChange={e => set('isBillable', e.target.checked)}
-                className="w-3 h-3"/>
-              Billable
-            </label>
-            <label className="flex items-center gap-1.5 text-xs text-[var(--text-secondary)] cursor-pointer">
-              <input type="checkbox" checked={form.isOvertime} onChange={e => set('isOvertime', e.target.checked)}
-                className="w-3 h-3"/>
-              Overtime
-            </label>
+            <Checkbox size="xs" label="Billable" checked={form.isBillable} onChange={e => set('isBillable', e.currentTarget.checked)}/>
+            <Checkbox size="xs" label="Overtime" checked={form.isOvertime} onChange={e => set('isOvertime', e.currentTarget.checked)}/>
           </div>
           {error && <p className="text-xs text-danger-600">{error}</p>}
           <div className="flex gap-2 pt-2">

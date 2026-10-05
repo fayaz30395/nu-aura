@@ -141,15 +141,15 @@ export default function SecurityPage() {
   const complianceFeatures = [
     {
       title: 'Data Subject Rights',
-      description: 'Coming Soon. Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
+      description: 'Self-service DSR intake is live. File Article 15 (access), 17 (erasure), and 20 (portability) requests and track their status from your account.',
     },
     {
       title: 'Data Portability',
-      description: 'Coming Soon. Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
+      description: 'Article 20 portability requests are supported. Administrators can fulfil requests with an automated machine-readable export delivered within the 30-day statutory window.',
     },
     {
       title: 'Right to Erasure',
-      description: 'Coming Soon. Data Subject Rights endpoints (Article 15/17/20) are on the platform roadmap. Tenants can submit manual DSR requests via support@nulogic.io.',
+      description: 'Article 17 erasure requests are supported. Cascading erasure across employee, payroll, attendance, and audit records is coordinated with our operations team.',
     },
     {
       title: 'Data Processing Agreements',

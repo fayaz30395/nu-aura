@@ -7,6 +7,8 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
@@ -108,27 +110,27 @@ function CreateTaskPanel({
           </div>
           <div>
             <label htmlFor="task-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea id="task-description" value={form.description} onChange={e => set('description', e.target.value)}
-              rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional details..."/>
+            <Textarea id="task-description" value={form.description} onChange={e => set('description', e.target.value)}
+              rows={2} className="resize-none" placeholder="Optional details..."/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label htmlFor="task-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Type</label>
-              <select id="task-type" value={form.type} onChange={e => set('type', e.target.value)}
-                className="input-aura w-full h-8 text-sm">
+              <Select id="task-type" value={form.type} onChange={e => set('type', e.target.value)}
+                className="h-8 text-sm">
                 {Object.values(CreateRequestType).map(t => (
                   <option key={t} value={t}>{TYPE_LABELS[t] ?? t}</option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <label htmlFor="task-priority" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Priority</label>
-              <select id="task-priority" value={form.priority} onChange={e => set('priority', e.target.value)}
-                className="input-aura w-full h-8 text-sm">
+              <Select id="task-priority" value={form.priority} onChange={e => set('priority', e.target.value)}
+                className="h-8 text-sm">
                 {Object.values(CreateRequestPriority).map(p => (
                   <option key={p} value={p}>{PRIORITY_LABELS[p] ?? p}</option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">

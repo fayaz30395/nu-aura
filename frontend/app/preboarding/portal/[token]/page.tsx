@@ -10,6 +10,7 @@ import {publicApiClient} from '@/lib/api/public-client';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Textarea} from '@/components/ui/Textarea';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate} from '@/lib/utils/format/date';
 
@@ -317,9 +318,8 @@ export default function PreboardingPortalPage() {
                 </div>
                 <div>
                   <label htmlFor="preboarding-address" className="block text-sm font-medium mb-1">Address *</label>
-                  <textarea
+                  <Textarea
                     id="preboarding-address"
-                    className="w-full px-4 py-2 border rounded-lg dark:bg-[var(--bg-secondary)] dark:border-[var(--border-main)]"
                     rows={2}
                     {...registerPersonalInfo('address')}
                   />

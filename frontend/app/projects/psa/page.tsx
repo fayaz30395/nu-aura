@@ -7,6 +7,8 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
+import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
@@ -155,35 +157,35 @@ function ProjectPanel({
             </div>
             <div>
               <label htmlFor="psa-project-status" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Status</label>
-              <select
+              <Select
                 id="psa-project-status"
                 value={form.status}
                 onChange={e => set('status', e.target.value)}
-                className="input-aura w-full h-8 text-sm"
+                className="h-8 text-sm"
               >
                 {Object.values(PSAProjectStatus).map(s => (
                   <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
           <div>
             <label htmlFor="psa-project-description" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Description</label>
-            <textarea id="psa-project-description" value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="input-aura w-full text-sm resize-none" placeholder="Optional description..."/>
+            <Textarea id="psa-project-description" value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="resize-none" placeholder="Optional description..."/>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label htmlFor="psa-project-billing-type" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Billing Type</label>
-              <select
+              <Select
                 id="psa-project-billing-type"
                 value={form.billingType}
                 onChange={e => set('billingType', e.target.value)}
-                className="input-aura w-full h-8 text-sm"
+                className="h-8 text-sm"
               >
                 {Object.values(PSAProjectBillingType).map(b => (
                   <option key={b} value={b}>{BILLING_LABELS[b]}</option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <label htmlFor="psa-project-billing-rate" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Billing Rate/hr</label>
