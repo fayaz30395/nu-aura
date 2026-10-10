@@ -474,6 +474,11 @@ function json(res, code, o) { res.writeHead(code, { 'Content-Type': 'application
 function body(req) { return new Promise(r => { let d = ''; req.on('data', c => d += c); req.on('end', () => r(d)); }); }
 
 const server = http.createServer(async (req, res) => {
+  // Security: dev tool that spawns agents. Reject DNS-rebinding (foreign Host) and cross-site (foreign Origin) requests.
+  const LOCAL = /^(localhost|127\.0\.0\.1)(:\d+)?$/;
+  if (!LOCAL.test(req.headers.host || '') || (req.headers.origin && !LOCAL.test(req.headers.origin.replace(/^https?:\/\//, '')))) {
+    res.writeHead(403, { 'Content-Type': 'text/plain' }); return res.end('forbidden');
+  }
   const p = new URL(req.url, `http://localhost:${PORT}`).pathname;
   if (p === '/' || p === '/index.html') { res.writeHead(200, { 'Content-Type': 'text/html' }); return res.end(livePage()); }
   if (p === '/replay' || p === '/sim') {  // one server serves every UI
@@ -528,7 +533,7 @@ server.on('error', e => {
   if (e.code === 'EADDRINUSE') { console.error(`\n  ✗ port ${PORT} is in use. Set ORCH_OS_PORT=<free port> and retry.\n`); process.exit(1); }
   throw e;
 });
-server.listen(PORT, () => {
+server.listen(PORT, '127.0.0.1', () => {
   console.log(`\n  NU-AURA Orchestrator OS — LIVE`);
   console.log(`  ▸ http://localhost:${PORT}`);
   console.log(`  ▸ worktree-isolated edit mode · read-only sandbox · ${MAX_CALLS_PER_RUN}-call ceiling · persisted replay\n`);

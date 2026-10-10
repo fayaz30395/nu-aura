@@ -268,6 +268,11 @@ function json(res, code, obj) { res.writeHead(code, { 'Content-Type': 'applicati
 function readBody(req) { return new Promise(r => { let d = ''; req.on('data', c => d += c); req.on('end', () => r(d)); }); }
 
 const server = http.createServer(async (req, res) => {
+  // Security: dev tool that spawns agents. Reject DNS-rebinding (foreign Host) and cross-site (foreign Origin) requests.
+  const LOCAL = /^(localhost|127\.0\.0\.1)(:\d+)?$/;
+  if (!LOCAL.test(req.headers.host || '') || (req.headers.origin && !LOCAL.test(req.headers.origin.replace(/^https?:\/\//, '')))) {
+    res.writeHead(403, { 'Content-Type': 'text/plain' }); return res.end('forbidden');
+  }
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const p = url.pathname;
 
@@ -309,7 +314,7 @@ const server = http.createServer(async (req, res) => {
   res.writeHead(404); res.end('not found');
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, '127.0.0.1', () => {
   console.log(`\n  NU-AURA Agent OS — live control plane`);
   console.log(`  ▸ http://localhost:${PORT}`);
   console.log(`  ▸ backend: ${BE}  ·  ${AGENTS.filter(a=>a.kind==='qa').length} QA + ${AGENTS.filter(a=>a.kind==='ai').length} Claude agents\n`);
