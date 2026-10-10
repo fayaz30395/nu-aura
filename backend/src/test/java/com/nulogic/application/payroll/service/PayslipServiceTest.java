@@ -2,8 +2,12 @@ package com.nulogic.application.payroll.service;
 
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.common.security.DataScopeService;
+import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.domain.payroll.PayrollRun;
+import com.nulogic.domain.payroll.PayrollRun.PayrollStatus;
 import com.nulogic.domain.payroll.Payslip;
+import com.nulogic.infrastructure.payroll.repository.PayrollRunRepository;
 import com.nulogic.infrastructure.payroll.repository.PayslipRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +46,8 @@ class PayslipServiceTest {
     private StatutoryDeductionService statutoryDeductionService;
     @Mock
     private DataScopeService dataScopeService;
+    @Mock
+    private PayrollRunRepository payrollRunRepository;
     @InjectMocks
     private PayslipService payslipService;
     private UUID tenantId;
@@ -202,6 +208,123 @@ class PayslipServiceTest {
 
             assertThatThrownBy(() -> payslipService.updatePayslip(payslipId, payslip))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("Release Gating Tests")
+    class ReleaseGatingTests {
+
+        @Test
+        @DisplayName("Self-service single read hides payslip from PROCESSED run")
+        void hidesPayslipFromProcessedRun() {
+            UUID payslipId = payslip.getId();
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.of(payslip));
+            when(payrollRunRepository.findByIdAndTenantId(payrollRunId, tenantId))
+                    .thenReturn(Optional.of(runWithStatus(PayrollStatus.PROCESSED)));
+
+            assertThatThrownBy(() -> payslipService.getReleasedPayslipById(payslipId))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("Self-service single read shows payslip from APPROVED run")
+        void showsPayslipFromApprovedRun() {
+            UUID payslipId = payslip.getId();
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.of(payslip));
+            when(payrollRunRepository.findByIdAndTenantId(payrollRunId, tenantId))
+                    .thenReturn(Optional.of(runWithStatus(PayrollStatus.APPROVED)));
+
+            assertThat(payslipService.getReleasedPayslipById(payslipId)).isSameAs(payslip);
+        }
+
+        @Test
+        @DisplayName("Self-service single read shows payslip from LOCKED run")
+        void showsPayslipFromLockedRun() {
+            UUID payslipId = payslip.getId();
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.of(payslip));
+            when(payrollRunRepository.findByIdAndTenantId(payrollRunId, tenantId))
+                    .thenReturn(Optional.of(runWithStatus(PayrollStatus.LOCKED)));
+
+            assertThat(payslipService.getReleasedPayslipById(payslipId)).isSameAs(payslip);
+        }
+
+        @Test
+        @DisplayName("Self-service read hides payslip with no payroll run")
+        void hidesPayslipWithoutRun() {
+            UUID payslipId = payslip.getId();
+            payslip.setPayrollRunId(null);
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.of(payslip));
+
+            assertThatThrownBy(() -> payslipService.getReleasedPayslipById(payslipId))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("Self-service period read hides payslip from PROCESSED run")
+        void hidesPeriodPayslipFromProcessedRun() {
+            when(payslipRepository.findByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 1)).thenReturn(Optional.of(payslip));
+            when(payrollRunRepository.findByIdAndTenantId(payrollRunId, tenantId))
+                    .thenReturn(Optional.of(runWithStatus(PayrollStatus.PROCESSED)));
+
+            assertThatThrownBy(() -> payslipService.getReleasedPayslipByEmployeeAndPeriod(employeeId, 2025, 1))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("Self-service list queries only APPROVED and LOCKED runs")
+        void listUsesReleasedStatuses() {
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Payslip> page = new PageImpl<>(List.of(payslip));
+            when(payslipRepository.findReleasedByEmployeeIdOrderByPeriodDesc(
+                    tenantId, employeeId, List.of(PayrollStatus.APPROVED, PayrollStatus.LOCKED), pageable))
+                    .thenReturn(page);
+
+            Page<Payslip> result = payslipService.getReleasedPayslipsByEmployeeId(employeeId, pageable);
+
+            assertThat(result.getContent()).containsExactly(payslip);
+        }
+
+        @Test
+        @DisplayName("Self-service year list queries only APPROVED and LOCKED runs")
+        void yearListUsesReleasedStatuses() {
+            when(payslipRepository.findReleasedByEmployeeAndYear(
+                    tenantId, employeeId, 2025, List.of(PayrollStatus.APPROVED, PayrollStatus.LOCKED)))
+                    .thenReturn(List.of(payslip));
+
+            assertThat(payslipService.getReleasedPayslipsByEmployeeAndYear(employeeId, 2025))
+                    .containsExactly(payslip);
+        }
+
+        @Test
+        @DisplayName("Self-service reads of a missing payslip are not-found, same as unreleased")
+        void missingPayslipIsNotFound() {
+            UUID missingId = UUID.randomUUID();
+            when(payslipRepository.findByIdAndTenantId(missingId, tenantId)).thenReturn(Optional.empty());
+            when(payslipRepository.findByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 2)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> payslipService.getReleasedPayslipById(missingId))
+                    .isInstanceOf(ResourceNotFoundException.class);
+            assertThatThrownBy(() -> payslipService.getReleasedPayslipByEmployeeAndPeriod(employeeId, 2025, 2))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+
+        @Test
+        @DisplayName("Full-scope read ignores run status")
+        void fullScopeReadIgnoresRunStatus() {
+            UUID payslipId = payslip.getId();
+            when(payslipRepository.findByIdAndTenantId(payslipId, tenantId)).thenReturn(Optional.of(payslip));
+
+            assertThat(payslipService.getPayslipById(payslipId)).isSameAs(payslip);
+            verifyNoInteractions(payrollRunRepository);
+        }
+
+        private PayrollRun runWithStatus(PayrollStatus status) {
+            PayrollRun run = new PayrollRun();
+            run.setStatus(status);
+            return run;
         }
     }
 

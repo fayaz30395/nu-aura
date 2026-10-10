@@ -304,7 +304,9 @@ public class PayrollController {
             Pageable pageable) {
         String permission = determineViewPermission();
         validateEmployeeAccess(employeeId, permission);
-        Page<Payslip> payslips = payslipService.getPayslipsByEmployeeId(employeeId, pageable);
+        Page<Payslip> payslips = !PayslipService.canViewUnreleased()
+                ? payslipService.getReleasedPayslipsByEmployeeId(employeeId, pageable)
+                : payslipService.getPayslipsByEmployeeId(employeeId, pageable);
         return ResponseEntity.ok(payslips);
     }
 
@@ -316,7 +318,9 @@ public class PayrollController {
             @RequestParam Integer month) {
         String permission = determineViewPermission();
         validateEmployeeAccess(employeeId, permission);
-        Payslip payslip = payslipService.getPayslipByEmployeeAndPeriod(employeeId, year, month);
+        Payslip payslip = !PayslipService.canViewUnreleased()
+                ? payslipService.getReleasedPayslipByEmployeeAndPeriod(employeeId, year, month)
+                : payslipService.getPayslipByEmployeeAndPeriod(employeeId, year, month);
         return ResponseEntity.ok(payslip);
     }
 
@@ -327,7 +331,9 @@ public class PayrollController {
             @PathVariable Integer year) {
         String permission = determineViewPermission();
         validateEmployeeAccess(employeeId, permission);
-        List<Payslip> payslips = payslipService.getPayslipsByEmployeeAndYear(employeeId, year);
+        List<Payslip> payslips = !PayslipService.canViewUnreleased()
+                ? payslipService.getReleasedPayslipsByEmployeeAndYear(employeeId, year)
+                : payslipService.getPayslipsByEmployeeAndYear(employeeId, year);
         return ResponseEntity.ok(payslips);
     }
 
@@ -359,8 +365,10 @@ public class PayrollController {
     @GetMapping("/payslips/{id}/pdf")
     @RequiresPermission({Permission.PAYROLL_VIEW_ALL, Permission.PAYROLL_VIEW_SELF})
     public ResponseEntity<byte[]> downloadPayslipPdf(@PathVariable UUID id) throws DocumentException {
-        Payslip payslip = payslipService.getPayslipById(id);
         String permission = determineViewPermission();
+        Payslip payslip = !PayslipService.canViewUnreleased()
+                ? payslipService.getReleasedPayslipById(id)
+                : payslipService.getPayslipById(id);
         validateEmployeeAccess(payslip.getEmployeeId(), permission);
         byte[] pdfBytes = payslipPdfService.generatePayslipPdf(id);
         return ResponseEntity.ok()
@@ -377,6 +385,9 @@ public class PayrollController {
             @RequestParam Integer month) throws DocumentException {
         String permission = determineViewPermission();
         validateEmployeeAccess(employeeId, permission);
+        if (!PayslipService.canViewUnreleased()) {
+            payslipService.getReleasedPayslipByEmployeeAndPeriod(employeeId, year, month);
+        }
         byte[] pdfBytes = payslipPdfService.generatePayslipPdf(employeeId, year, month);
         String monthStr = String.format("%02d", month);
         return ResponseEntity.ok()

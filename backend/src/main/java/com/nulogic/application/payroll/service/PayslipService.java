@@ -7,11 +7,15 @@ import com.nulogic.application.payroll.strategy.StatutoryCalculator.StatutoryCal
 import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
 import com.nulogic.application.payroll.strategy.StatutoryResult;
 import com.nulogic.common.security.DataScopeService;
+import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
+import com.nulogic.domain.payroll.PayrollRun.PayrollStatus;
 import com.nulogic.domain.payroll.Payslip;
+import com.nulogic.infrastructure.payroll.repository.PayrollRunRepository;
 import com.nulogic.infrastructure.payroll.repository.PayslipRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +36,11 @@ import java.util.UUID;
 @Transactional
 public class PayslipService {
 
+    /** Payroll run statuses whose payslips employees may see (single policy for all self-service reads). */
+    public static final List<PayrollStatus> RELEASED_STATUSES =List.of(PayrollStatus.APPROVED, PayrollStatus.LOCKED);
+
     private final PayslipRepository payslipRepository;
+    private final PayrollRunRepository payrollRunRepository;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
     private final DataScopeService dataScopeService;
@@ -139,6 +147,58 @@ public class PayslipService {
     public List<Payslip> getPayslipsByEmployeeAndYear(UUID employeeId, Integer year) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, year);
+    }
+
+    /**
+     * Who may see payslips of runs that are not yet released: super admins (same bypass as
+     * the payroll access check) and holders of PAYROLL_VIEW_ALL. Everyone else is self-view
+     * and limited to released (APPROVED/LOCKED) runs.
+     */
+    public static boolean canViewUnreleased() {
+        return SecurityContext.isSuperAdmin()
+                || SecurityContext.getPermissionScope(Permission.PAYROLL_VIEW_ALL) != null;
+    }
+
+    /**
+     * Self-service single read: a payslip is visible only once its payroll run is APPROVED or LOCKED.
+     * Missing and unreleased payslips are indistinguishable: both are not-found (HTTP 404).
+     */
+    @Transactional(readOnly = true)
+    public Payslip getReleasedPayslipById(UUID id) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return payslipRepository.findByIdAndTenantId(id, tenantId)
+                .filter(this::isReleased)
+                .orElseThrow(() -> new ResourceNotFoundException("Payslip", "id", id));
+    }
+
+    @Transactional(readOnly = true)
+    public Payslip getReleasedPayslipByEmployeeAndPeriod(UUID employeeId, Integer year, Integer month) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return payslipRepository.findByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                        tenantId, employeeId, year, month)
+                .filter(this::isReleased)
+                .orElseThrow(() -> new ResourceNotFoundException("Payslip", "period", year + "-" + month));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Payslip> getReleasedPayslipsByEmployeeId(UUID employeeId, Pageable pageable) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return payslipRepository.findReleasedByEmployeeIdOrderByPeriodDesc(
+                tenantId, employeeId, RELEASED_STATUSES, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Payslip> getReleasedPayslipsByEmployeeAndYear(UUID employeeId, Integer year) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return payslipRepository.findReleasedByEmployeeAndYear(tenantId, employeeId, year, RELEASED_STATUSES);
+    }
+
+    private boolean isReleased(Payslip payslip) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return payslip.getPayrollRunId() != null
+                && payrollRunRepository.findByIdAndTenantId(payslip.getPayrollRunId(), tenantId)
+                        .map(run -> RELEASED_STATUSES.contains(run.getStatus()))
+                        .orElse(false);
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)

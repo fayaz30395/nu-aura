@@ -1,5 +1,6 @@
 package com.nulogic.infrastructure.payroll.repository;
 
+import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.payroll.Payslip;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -197,6 +198,30 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID>, JpaSpec
             @Param("tenantId") UUID tenantId,
             @Param("month") Integer month,
             @Param("year") Integer year
+    );
+
+    /**
+     * Self-service reads: payslips whose payroll run is in one of the released statuses.
+     */
+    @Query("SELECT p FROM Payslip p WHERE p.tenantId = :tenantId AND p.employeeId = :employeeId " +
+            "AND p.payrollRunId IN (SELECT r.id FROM PayrollRun r WHERE r.tenantId = :tenantId AND r.status IN :statuses) " +
+            "ORDER BY p.payPeriodYear DESC, p.payPeriodMonth DESC")
+    Page<Payslip> findReleasedByEmployeeIdOrderByPeriodDesc(
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId,
+            @Param("statuses") Collection<PayrollRun.PayrollStatus> statuses,
+            Pageable pageable
+    );
+
+    @Query("SELECT p FROM Payslip p WHERE p.tenantId = :tenantId AND p.employeeId = :employeeId " +
+            "AND p.payPeriodYear = :year " +
+            "AND p.payrollRunId IN (SELECT r.id FROM PayrollRun r WHERE r.tenantId = :tenantId AND r.status IN :statuses) " +
+            "ORDER BY p.payPeriodMonth DESC")
+    List<Payslip> findReleasedByEmployeeAndYear(
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId,
+            @Param("year") Integer year,
+            @Param("statuses") Collection<PayrollRun.PayrollStatus> statuses
     );
 
     /**

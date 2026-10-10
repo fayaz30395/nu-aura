@@ -3,6 +3,7 @@ package com.nulogic.application.analytics.service;
 import com.nulogic.api.analytics.dto.EmployeeDashboardResponse;
 import com.nulogic.api.analytics.dto.EmployeeDashboardResponse.*;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.application.payroll.service.PayslipService;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -133,9 +134,12 @@ public class EmployeeDashboardService {
         YearMonth lastMonth = YearMonth.now().minusMonths(1);
         BigDecimal lastSalary = BigDecimal.ZERO;
         try {
-            lastSalary = payslipRepository.findNetSalaryByEmployeeIdAndYearAndMonth(
-                    tenantId, employeeId, lastMonth.getYear(), lastMonth.getMonthValue());
-            if (lastSalary == null) lastSalary = BigDecimal.ZERO;
+            lastSalary = payslipsForYear(tenantId, employeeId, lastMonth.getYear()).stream()
+                    .filter(p -> p.getPayPeriodMonth() != null && p.getPayPeriodMonth() == lastMonth.getMonthValue())
+                    .map(Payslip::getNetSalary)
+                    .filter(java.util.Objects::nonNull)
+                    .findFirst()
+                    .orElse(BigDecimal.ZERO);
         } catch (Exception e) { // Intentional broad catch — analytics query error boundary
             log.debug("Could not fetch last month payslip for employee {}: {}", employeeId, e.getMessage());
         }
@@ -351,6 +355,18 @@ public class EmployeeDashboardService {
                 .build();
     }
 
+    /**
+     * Payslips feeding every dashboard payroll figure. Same policy as the payslip endpoints:
+     * callers without PAYROLL_VIEW_ALL only see payslips of released (APPROVED/LOCKED) payroll runs.
+     */
+    private List<Payslip> payslipsForYear(UUID tenantId, UUID employeeId, int year) {
+        if (PayslipService.canViewUnreleased()) {
+            return payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, year);
+        }
+        return payslipRepository.findReleasedByEmployeeAndYear(
+                tenantId, employeeId, year, PayslipService.RELEASED_STATUSES);
+    }
+
     private PayrollSummary buildPayrollSummary(UUID tenantId, UUID employeeId) {
         YearMonth currentMonth = YearMonth.now();
         YearMonth lastMonth = currentMonth.minusMonths(1);
@@ -359,7 +375,7 @@ public class EmployeeDashboardService {
         // Single query: fetch all payslips for current year (eliminates N+1)
         List<Payslip> currentYearPayslips;
         try {
-            currentYearPayslips = payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, currentYear);
+            currentYearPayslips = payslipsForYear(tenantId, employeeId, currentYear);
         } catch (Exception e) { // Intentional broad catch — analytics query error boundary
             log.warn("Could not fetch payslip data for year {}: {}", currentYear, e.getMessage());
             currentYearPayslips = new ArrayList<>();
@@ -368,7 +384,7 @@ public class EmployeeDashboardService {
         // Also fetch previous year payslips for the 6-month pay trend (if trend crosses year boundary)
         List<Payslip> previousYearPayslips;
         try {
-            previousYearPayslips = payslipRepository.findByEmployeeIdAndYear(tenantId, employeeId, currentYear - 1);
+            previousYearPayslips = payslipsForYear(tenantId, employeeId, currentYear - 1);
         } catch (Exception e) { // Intentional broad catch — analytics query error boundary
             log.warn("Could not fetch payslip data for year {}: {}", currentYear - 1, e.getMessage());
             previousYearPayslips = new ArrayList<>();
