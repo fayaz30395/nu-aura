@@ -8,6 +8,7 @@ import {
   PayrollRun,
   PayrollRunRequest,
   Payslip,
+  PayslipReleaseStatus,
   PayslipRequest,
   RunPayslip,
   SalaryStructure,
@@ -181,6 +182,35 @@ class PayrollService {
     const response = await apiClient.get<Page<Payslip>>('/payroll/payslips', {
       params: {page, size},
     });
+    return response.data;
+  }
+
+  // Page-specific variants typed with the real API shape (RunPayslip). The shared functions around them
+  // are left unchanged because other pages still depend on their older typing.
+  async getMyPayslips(
+    employeeId: string,
+    page: number = 0,
+    size: number = 20
+  ): Promise<Page<RunPayslip>> {
+    const response = await apiClient.get<Page<RunPayslip>>(
+      `/payroll/payslips/employee/${employeeId}`,
+      {params: {page, size}}
+    );
+    return response.data;
+  }
+
+  async getAllRunPayslips(page: number = 0, size: number = 20): Promise<Page<RunPayslip>> {
+    const response = await apiClient.get<Page<RunPayslip>>('/payroll/payslips', {
+      params: {page, size},
+    });
+    return response.data;
+  }
+
+  async getPayslipReleaseStatus(employeeId: string, year: number): Promise<PayslipReleaseStatus[]> {
+    const response = await apiClient.get<PayslipReleaseStatus[]>(
+      `/payroll/payslips/employee/${employeeId}/release-status`,
+      {params: {year}}
+    );
     return response.data;
   }
 

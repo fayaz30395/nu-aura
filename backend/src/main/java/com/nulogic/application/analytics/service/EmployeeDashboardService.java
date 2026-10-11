@@ -1,6 +1,7 @@
 package com.nulogic.application.analytics.service;
 
 import com.nulogic.api.analytics.dto.EmployeeDashboardResponse;
+import com.nulogic.api.payroll.dto.PayslipReleaseStatusResponse;
 import com.nulogic.api.analytics.dto.EmployeeDashboardResponse.*;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.application.payroll.service.PayslipService;
@@ -48,6 +49,7 @@ public class EmployeeDashboardService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final PayslipRepository payslipRepository;
+    private final PayslipService payslipService;
     private final HolidayRepository holidayRepository;
     private final com.nulogic.application.attendance.service.TenantAttendanceConfigService tenantAttendanceConfigService;
     private final TenantTimeService tenantTimeService;
@@ -356,6 +358,31 @@ public class EmployeeDashboardService {
     }
 
     /**
+     * Status of the last month's payslip. RELEASED confirms only that the payroll run was released
+     * (APPROVED/LOCKED); it is not payment. No payment record exists for standard payslips, so PAID is never
+     * returned. NOT_RELEASED: no run, or the run is not released. NOT_AVAILABLE: the status cannot be
+     * established (for example the run is released but the employee has no payslip, or the lookup failed).
+     * No payment date is set either, because none is recorded.
+     */
+    private String lastMonthPayslipStatus(UUID employeeId, YearMonth month) {
+        try {
+            PayslipReleaseStatusResponse entry = payslipService.getReleaseStatus(employeeId, month.getYear())
+                    .get(month.getMonthValue() - 1);
+            return switch (entry.reason()) {
+                case RELEASED -> "RELEASED";
+                case NOT_RELEASED -> "NOT_RELEASED";
+                case NO_PAYSLIP -> payslipService.getRunStatusForPeriod(month.getYear(), month.getMonthValue())
+                        .map(status -> PayslipService.RELEASED_STATUSES.contains(status)
+                                ? "NOT_AVAILABLE" : "NOT_RELEASED")
+                        .orElse("NOT_RELEASED");
+            };
+        } catch (Exception e) { // Intentional broad catch — analytics status must not fail the dashboard
+            log.warn("Could not establish payslip status for employee {}: {}", employeeId, e.getMessage());
+            return "NOT_AVAILABLE";
+        }
+    }
+
+    /**
      * Payslips feeding every dashboard payroll figure. Same policy as the payslip endpoints:
      * callers without PAYROLL_VIEW_ALL only see payslips of released (APPROVED/LOCKED) payroll runs.
      */
@@ -455,8 +482,7 @@ public class EmployeeDashboardService {
                 .netSalary(lastNet)
                 .deductions(lastDeductions)
                 .taxes(lastTaxes)
-                .paymentDate(lastMonth.atEndOfMonth())
-                .payslipStatus("PAID")
+                .payslipStatus(lastMonthPayslipStatus(employeeId, lastMonth))
                 .ytdGross(ytdGross)
                 .ytdNet(ytdNet)
                 .ytdDeductions(ytdDeductions)

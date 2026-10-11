@@ -217,8 +217,10 @@ public class EmployeeDashboardResponse {
         private BigDecimal netSalary;
         private BigDecimal deductions;
         private BigDecimal taxes;
+        /** Always null: no confirmed payment date is recorded for standard payslips. */
         private LocalDate paymentDate;
-        private String payslipStatus; // GENERATED, PAID
+        /** RELEASED (run released, not payment), NOT_RELEASED, or NOT_AVAILABLE. Never PAID. */
+        private String payslipStatus;
 
         // YTD Summary
         private BigDecimal ytdGross;

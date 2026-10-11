@@ -1,6 +1,8 @@
 package com.nulogic.application.analytics.service;
 
 import com.nulogic.api.analytics.dto.EmployeeDashboardResponse;
+import com.nulogic.api.payroll.dto.PayslipReleaseStatusResponse;
+import com.nulogic.api.payroll.dto.PayslipReleaseStatusResponse.Reason;
 import com.nulogic.application.attendance.service.TenantAttendanceConfigService;
 import com.nulogic.application.payroll.service.PayslipService;
 import com.nulogic.common.security.Permission;
@@ -35,6 +37,7 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,6 +70,7 @@ class EmployeeDashboardServiceReleaseGatingTest {
     @Mock private HolidayRepository holidayRepository;
     @Mock private TenantAttendanceConfigService tenantAttendanceConfigService;
     @Mock private TenantTimeService tenantTimeService;
+    @Mock private PayslipService payslipService;
 
     @InjectMocks private EmployeeDashboardService service;
 
@@ -197,5 +201,93 @@ class EmployeeDashboardServiceReleaseGatingTest {
         assertThat(response.getQuickStats().getLastMonthSalary()).isEqualByComparingTo(UNRELEASED_NET);
         assertThat(response.getPayroll().getNetSalary()).isEqualByComparingTo(UNRELEASED_NET);
         verify(payslipRepository, never()).findReleasedByEmployeeAndYear(any(), any(), anyInt(), any());
+    }
+
+    // ---- dashboard payslipStatus / paymentDate semantics (never PAID; release is not payment) ----
+
+    private static List<PayslipReleaseStatusResponse> twelveMonths(int month, Reason reason) {
+        return IntStream.rangeClosed(1, 12)
+                .mapToObj(m -> m == month
+                        ? new PayslipReleaseStatusResponse(m, reason == Reason.RELEASED, reason)
+                        : new PayslipReleaseStatusResponse(m, false, Reason.NO_PAYSLIP))
+                .toList();
+    }
+
+    private String lastMonthStatus() {
+        EmployeeDashboardResponse response = service.getEmployeeDashboard(employeeId);
+        assertThat(response.getPayroll().getPaymentDate()).as("no confirmed payment date exists").isNull();
+        return response.getPayroll().getPayslipStatus();
+    }
+
+    @Test
+    @DisplayName("status RELEASED when the last month's payslip belongs to a released run")
+    void status_released() {
+        when(payslipService.getReleaseStatus(any(), eq(lastMonth.getYear())))
+                .thenReturn(twelveMonths(lastMonth.getMonthValue(), Reason.RELEASED));
+
+        assertThat(lastMonthStatus()).isEqualTo("RELEASED");
+    }
+
+    @Test
+    @DisplayName("status NOT_RELEASED when the payslip exists but its run is not released")
+    void status_notReleasedWhenRunNotReleased() {
+        when(payslipService.getReleaseStatus(any(), eq(lastMonth.getYear())))
+                .thenReturn(twelveMonths(lastMonth.getMonthValue(), Reason.NOT_RELEASED));
+
+        assertThat(lastMonthStatus()).isEqualTo("NOT_RELEASED");
+    }
+
+    @Test
+    @DisplayName("status NOT_RELEASED when no payroll run exists for the period")
+    void status_notReleasedWhenNoRun() {
+        when(payslipService.getReleaseStatus(any(), eq(lastMonth.getYear())))
+                .thenReturn(twelveMonths(lastMonth.getMonthValue(), Reason.NO_PAYSLIP));
+        when(payslipService.getRunStatusForPeriod(lastMonth.getYear(), lastMonth.getMonthValue()))
+                .thenReturn(Optional.empty());
+
+        assertThat(lastMonthStatus()).isEqualTo("NOT_RELEASED");
+    }
+
+    @Test
+    @DisplayName("status NOT_RELEASED when the period's run exists but is not released")
+    void status_notReleasedWhenRunExistsUnreleasedAndNoPayslip() {
+        when(payslipService.getReleaseStatus(any(), eq(lastMonth.getYear())))
+                .thenReturn(twelveMonths(lastMonth.getMonthValue(), Reason.NO_PAYSLIP));
+        when(payslipService.getRunStatusForPeriod(lastMonth.getYear(), lastMonth.getMonthValue()))
+                .thenReturn(Optional.of(PayrollStatus.PROCESSED));
+
+        assertThat(lastMonthStatus()).isEqualTo("NOT_RELEASED");
+    }
+
+    @Test
+    @DisplayName("status NOT_AVAILABLE when the run is released but the employee has no payslip (not applicable)")
+    void status_notAvailableWhenReleasedRunWithoutPayslip() {
+        when(payslipService.getReleaseStatus(any(), eq(lastMonth.getYear())))
+                .thenReturn(twelveMonths(lastMonth.getMonthValue(), Reason.NO_PAYSLIP));
+        when(payslipService.getRunStatusForPeriod(lastMonth.getYear(), lastMonth.getMonthValue()))
+                .thenReturn(Optional.of(PayrollStatus.APPROVED));
+
+        assertThat(lastMonthStatus()).isEqualTo("NOT_AVAILABLE");
+    }
+
+    @Test
+    @DisplayName("status NOT_AVAILABLE when release information cannot be established")
+    void status_notAvailableOnFailure() {
+        when(payslipService.getReleaseStatus(any(), anyInt())).thenThrow(new IllegalStateException("boom"));
+
+        assertThat(lastMonthStatus()).isEqualTo("NOT_AVAILABLE");
+    }
+
+    @Test
+    @DisplayName("PAID is never emitted: approval or lock does not prove payment")
+    void status_neverPaid() {
+        for (Reason reason : Reason.values()) {
+            when(payslipService.getReleaseStatus(any(), anyInt()))
+                    .thenReturn(twelveMonths(lastMonth.getMonthValue(), reason));
+            when(payslipService.getRunStatusForPeriod(anyInt(), anyInt()))
+                    .thenReturn(Optional.of(PayrollStatus.LOCKED));
+
+            assertThat(lastMonthStatus()).isNotEqualTo("PAID");
+        }
     }
 }

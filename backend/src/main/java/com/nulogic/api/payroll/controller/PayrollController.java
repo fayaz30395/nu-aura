@@ -337,6 +337,23 @@ public class PayrollController {
         return ResponseEntity.ok(payslips);
     }
 
+    /**
+     * Per-month release state of an employee's payslips (no amounts). Same access rule as the other payslip
+     * reads: self for PAYROLL_VIEW_SELF, scope-checked for PAYROLL_VIEW_ALL, super admin allowed.
+     */
+    @GetMapping("/payslips/employee/{employeeId}/release-status")
+    @RequiresPermission({Permission.PAYROLL_VIEW_ALL, Permission.PAYROLL_VIEW_SELF})
+    public ResponseEntity<List<PayslipReleaseStatusResponse>> getPayslipReleaseStatus(
+            @PathVariable UUID employeeId,
+            @RequestParam Integer year) {
+        if (year == null || year < 2000 || year > 2100) {
+            throw new IllegalArgumentException("year must be between 2000 and 2100");
+        }
+        String permission = determineViewPermission();
+        validateEmployeeAccess(employeeId, permission);
+        return ResponseEntity.ok(payslipService.getReleaseStatus(employeeId, year));
+    }
+
     @GetMapping("/payslips/run/{payrollRunId}")
     @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
     public ResponseEntity<List<Payslip>> getPayslipsByPayrollRun(@PathVariable UUID payrollRunId) {

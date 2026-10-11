@@ -26,6 +26,12 @@ export const payrollKeys = {
   payslipsById: (id: string) => [...payrollKeys.payslipsDetail(), id] as const,
   payslipsByEmployee: (employeeId: string, page: number, size: number) =>
     [...payrollKeys.payslips(), 'employee', {employeeId, page, size}] as const,
+  myPayslips: (employeeId: string, page: number, size: number) =>
+    [...payrollKeys.payslips(), 'mine', {employeeId, page, size}] as const,
+  allRunPayslips: (page: number, size: number) =>
+    [...payrollKeys.payslips(), 'all-run', {page, size}] as const,
+  payslipReleaseStatus: (employeeId: string, year: number) =>
+    [...payrollKeys.payslips(), 'release-status', {employeeId, year}] as const,
   payslipsByRun: (payrollRunId: string, page: number, size: number) =>
     [...payrollKeys.payslips(), 'run', {payrollRunId, page, size}] as const,
   structures: () => [...payrollKeys.all, 'structures'] as const,
@@ -232,6 +238,55 @@ export function usePayslipsByEmployee(
     staleTime: 2 * 60 * 1000,
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+  });
+}
+
+/**
+ * The signed-in employee's payslips, typed with the real API shape (RunPayslip).
+ */
+export function useMyPayslips(
+  employeeId: string,
+  page: number = 0,
+  size: number = 20,
+  enabled: boolean = true
+) {
+  return useQuery({
+    queryKey: payrollKeys.myPayslips(employeeId, page, size),
+    queryFn: () => payrollService.getMyPayslips(employeeId, page, size),
+    enabled: enabled && !!employeeId,
+    staleTime: 2 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+  });
+}
+
+/**
+ * All payslips (admin view), typed with the real API shape (RunPayslip).
+ */
+export function useAllRunPayslips(page: number = 0, size: number = 20, enabled: boolean = true) {
+  return useQuery({
+    queryKey: payrollKeys.allRunPayslips(page, size),
+    queryFn: () => payrollService.getAllRunPayslips(page, size),
+    enabled,
+    staleTime: 2 * 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+  });
+}
+
+/**
+ * Per-month release state of an employee's payslips for a year (no amounts). Does not retry on 4xx.
+ */
+export function usePayslipReleaseStatus(employeeId: string, year: number, enabled: boolean = true) {
+  return useQuery({
+    queryKey: payrollKeys.payslipReleaseStatus(employeeId, year),
+    queryFn: () => payrollService.getPayslipReleaseStatus(employeeId, year),
+    enabled: enabled && !!employeeId,
+    staleTime: 60 * 1000,
+    retry: (failureCount, error) => {
+      const code = (error as { response?: { status?: number } })?.response?.status;
+      return !(code && code >= 400 && code < 500) && failureCount < 2;
+    },
   });
 }
 

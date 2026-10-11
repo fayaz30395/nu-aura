@@ -225,6 +225,19 @@ public interface PayslipRepository extends JpaRepository<Payslip, UUID>, JpaSpec
     );
 
     /**
+     * Release-status endpoint: month and run status of an employee's payslips in a year. Reads no amounts.
+     * The run is joined tenant-scoped; a missing run yields a null status.
+     */
+    @Query("SELECT p.payPeriodMonth, r.status FROM Payslip p " +
+            "LEFT JOIN PayrollRun r ON r.id = p.payrollRunId AND r.tenantId = :tenantId " +
+            "WHERE p.tenantId = :tenantId AND p.employeeId = :employeeId AND p.payPeriodYear = :year")
+    List<Object[]> findMonthAndRunStatusByEmployeeAndYear(
+            @Param("tenantId") UUID tenantId,
+            @Param("employeeId") UUID employeeId,
+            @Param("year") Integer year
+    );
+
+    /**
      * F1.2-wiring: Returns the gross salary from the most recent payslip for an employee
      * whose pay period falls at or before the given ESI contribution-period start date.
      *

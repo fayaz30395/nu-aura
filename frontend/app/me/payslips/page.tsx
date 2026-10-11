@@ -7,8 +7,14 @@ import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion'
 import {Card, CardContent} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {useDownloadPayslipPdf, usePayslips, usePayslipsByEmployee} from '@/lib/hooks/queries/usePayroll';
-import {Payslip} from '@/lib/types/hrms/payroll';
+import {
+  useAllRunPayslips,
+  useDownloadPayslipPdf,
+  useMyPayslips,
+  usePayslipReleaseStatus,
+} from '@/lib/hooks/queries/usePayroll';
+import {Callout} from '@/components/ui/Callout';
+import {PayslipView, toPayslipView} from './payslipView';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
 import {Stat} from '@/components/ui/Stat';
@@ -31,18 +37,36 @@ export default function MyPayslipsPage() {
   });
 
   // React Query hooks
-  const employeePayslipsQuery = usePayslipsByEmployee(
+  const employeePayslipsQuery = useMyPayslips(
     user?.employeeId || '',
     0,
     100,
     hasHydrated && !!user?.employeeId && !isAdminView
   );
 
-  const allPayslipsQuery = usePayslips(0, 100, undefined, undefined, hasHydrated && isAdminView);
+  const allPayslipsQuery = useAllRunPayslips(0, 100, hasHydrated && isAdminView);
 
   // Determine which data to use
   const {data: payslipsData, isLoading, isError: isQueryError} = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
-  const payslips = payslipsData?.content ?? [];
+  const payslips = (payslipsData?.content ?? []).map(toPayslipView);
+
+  // Release state is per employee and per year, so it is only requested in the self view. "All Years" falls
+  // back to the current year: it can show that some payslips are unavailable, but never a count.
+  const currentYear = new Date().getFullYear();
+  const releaseStatusQuery = usePayslipReleaseStatus(
+    user?.employeeId || '',
+    selectedYear || currentYear,
+    hasHydrated && !!user?.employeeId && !isAdminView
+  );
+  const releaseMonths = releaseStatusQuery.data;
+  const notReleasedCount = !isAdminView && releaseMonths && releaseMonths.length === 12
+    ? releaseMonths.filter((m) => m.reason === 'NOT_RELEASED').length
+    : 0;
+  const releaseNote = notReleasedCount === 0
+    ? null
+    : selectedYear === 0
+      ? 'Some payslips are not yet available. Your totals include released periods only.'
+      : `${notReleasedCount} ${notReleasedCount === 1 ? 'period is' : 'periods are'} not yet released. Your totals include released periods only.`;
 
   const toggleView = () => {
     if (isAdmin && user?.employeeId) {
@@ -59,7 +83,7 @@ export default function MyPayslipsPage() {
 
   const downloadMutation = useDownloadPayslipPdf();
 
-  const downloadPayslipPDF = async (payslip: Payslip) => {
+  const downloadPayslipPDF = async (payslip: PayslipView) => {
     try {
       setDownloadingId(payslip.id);
 
@@ -70,7 +94,7 @@ export default function MyPayslipsPage() {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `Payslip_${formatMonthYear(payslip.paymentDate).replace(' ', '_')}.pdf`;
+      link.download = `Payslip_${formatMonthYear(payslip.periodDate).replace(' ', '_')}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -86,19 +110,17 @@ export default function MyPayslipsPage() {
   };
 
   // Create years array first (including "All" option represented by 0)
-  const availableYears = payslips.length > 0
-    ? Array.from(new Set(payslips.map((p) => new Date(p.paymentDate).getFullYear()))).sort((a, b) => b - a)
-    : [new Date().getFullYear()];
+  // The current year is always offered, so a year whose payslips are all unreleased does not vanish from the filter.
+  const availableYears = Array.from(new Set([currentYear, ...payslips.map((p) => p.year)])).sort((a, b) => b - a);
 
   const filteredPayslips = payslips.filter((payslip) => {
-    const payslipYear = new Date(payslip.paymentDate).getFullYear();
     // If selectedYear is 0, show all years; otherwise filter by year
-    const matchesYear = selectedYear === 0 || payslipYear === selectedYear;
+    const matchesYear = selectedYear === 0 || payslip.year === selectedYear;
+    const query = searchQuery.toLowerCase();
     const matchesSearch =
       searchQuery === '' ||
-      formatMonthYear(payslip.paymentDate).toLowerCase().includes(searchQuery.toLowerCase()) ||
-      payslip.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (isAdminView && payslip.employeeName?.toLowerCase().includes(searchQuery.toLowerCase()));
+      formatMonthYear(payslip.periodDate).toLowerCase().includes(query) ||
+      (isAdminView && !!payslip.employeeName?.toLowerCase().includes(query));
     return matchesYear && matchesSearch;
   });
 
@@ -235,6 +257,13 @@ export default function MyPayslipsPage() {
           </Card>
         </Reveal>
 
+        {/* Unreleased periods are explicit, not silently missing from the totals */}
+        {releaseNote && (
+          <div role="status">
+            <Callout tone="info">{releaseNote}</Callout>
+          </div>
+        )}
+
         {/* Filters */}
         <Reveal>
         <Card className="card-aura">
@@ -244,8 +273,8 @@ export default function MyPayslipsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                 <input
                   type="text"
-                  aria-label={isAdminView ? "Search by employee name, month, or status..." : "Search payslips..."}
-                  placeholder={isAdminView ? "Search by employee name, month, or status..." : "Search payslips..."}
+                  aria-label={isAdminView ? "Search by employee name or month..." : "Search payslips..."}
+                  placeholder={isAdminView ? "Search by employee name or month..." : "Search payslips..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="input-aura w-full pl-10 pr-4 py-2 rounded-lg"
@@ -323,24 +352,17 @@ export default function MyPayslipsPage() {
                             </p>
                           )}
                           <h3 className="text-xl font-semibold text-[var(--text-primary)]">
-                            {formatMonthYear(payslip.paymentDate)}
+                            {formatMonthYear(payslip.periodDate)}
                           </h3>
                           <p className="text-body-secondary mt-1">
-                            Payment Date: {formatDate(payslip.paymentDate)}
+                            Pay Date: {formatDate(payslip.payDate)}
                           </p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span
-                              className={`badge-status ${
-                                payslip.status === 'PAID'
-                                  ? 'status-success'
-                                  : payslip.status === 'FINALIZED'
-                                    ? 'status-info'
-                                    : 'status-warning'
-                              }`}
-                            >
-                              {payslip.status}
-                            </span>
-                          </div>
+                          {/* Everything the self view receives is released. Release is not payment, so no PAID. */}
+                          {!isAdminView && (
+                            <div className="flex items-center gap-2 mt-2">
+                              <span className="badge-status status-info">Released</span>
+                            </div>
+                          )}
                         </div>
                       </div>
 
@@ -378,7 +400,7 @@ export default function MyPayslipsPage() {
                     </div>
 
                     {/* Breakdown */}
-                    {(payslip.allowanceDetails || payslip.deductionDetails) && (
+                    {(payslip.allowanceDetails.length > 0 || payslip.deductionDetails.length > 0) && (
                       <div className="mt-4 pt-4 border-t border-[var(--border-main)]">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {/* Earnings */}

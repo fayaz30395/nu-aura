@@ -69,6 +69,16 @@ export interface PayslipRequest {
   status?: 'DRAFT' | 'FINALIZED' | 'PAID' | 'PENDING';
 }
 
+/** Why a month is or is not released (matches the backend PayslipReleaseStatusResponse.Reason). */
+export type PayslipReleaseReason = 'RELEASED' | 'NOT_RELEASED' | 'NO_PAYSLIP';
+
+/** Release state of one month's payslip. Carries no amounts. Release is not payment. */
+export interface PayslipReleaseStatus {
+  month: number;
+  released: boolean;
+  reason: PayslipReleaseReason;
+}
+
 /**
  * Raw payslip row as returned by the backend payslip endpoints
  * (mirrors the Payslip JPA entity — distinct from the legacy UI `Payslip` shape).

@@ -1,5 +1,6 @@
 package com.nulogic.application.payroll.service;
 
+import com.nulogic.api.payroll.dto.PayslipReleaseStatusResponse;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.payroll.dto.StatutoryDeductions;
 import com.nulogic.application.payroll.strategy.StatutoryCalculator;
@@ -13,6 +14,7 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
+import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.payroll.PayrollRun.PayrollStatus;
 import com.nulogic.domain.payroll.Payslip;
 import com.nulogic.infrastructure.payroll.repository.PayrollRunRepository;
@@ -26,9 +28,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -191,6 +196,45 @@ public class PayslipService {
     public List<Payslip> getReleasedPayslipsByEmployeeAndYear(UUID employeeId, Integer year) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return payslipRepository.findReleasedByEmployeeAndYear(tenantId, employeeId, year, RELEASED_STATUSES);
+    }
+
+    /**
+     * Per-month release state of an employee's payslips for a year, always 12 entries. A month without this
+     * employee's payslip (including a month with no payroll run) is reported unreleased as NO_PAYSLIP.
+     * Reads only month and run status, never amounts.
+     */
+    @Transactional(readOnly = true)
+    public List<PayslipReleaseStatusResponse> getReleaseStatus(UUID employeeId, Integer year) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        Map<Integer, PayslipReleaseStatusResponse.Reason> byMonth = new HashMap<>();
+        for (Object[] row : payslipRepository.findMonthAndRunStatusByEmployeeAndYear(tenantId, employeeId, year)) {
+            int month = ((Number) row[0]).intValue();
+            PayrollStatus runStatus = (PayrollStatus) row[1];
+            PayslipReleaseStatusResponse.Reason reason = runStatus != null && RELEASED_STATUSES.contains(runStatus)
+                    ? PayslipReleaseStatusResponse.Reason.RELEASED
+                    : PayslipReleaseStatusResponse.Reason.NOT_RELEASED;
+            // Defensive: if two payslips ever share a month, a released one wins.
+            byMonth.merge(month, reason, (a, b) -> a == PayslipReleaseStatusResponse.Reason.RELEASED
+                    || b == PayslipReleaseStatusResponse.Reason.RELEASED
+                    ? PayslipReleaseStatusResponse.Reason.RELEASED
+                    : PayslipReleaseStatusResponse.Reason.NOT_RELEASED);
+        }
+        return IntStream.rangeClosed(1, 12)
+                .mapToObj(month -> {
+                    PayslipReleaseStatusResponse.Reason reason =
+                            byMonth.getOrDefault(month, PayslipReleaseStatusResponse.Reason.NO_PAYSLIP);
+                    return new PayslipReleaseStatusResponse(
+                            month, reason == PayslipReleaseStatusResponse.Reason.RELEASED, reason);
+                })
+                .toList();
+    }
+
+    /** Status of the tenant's payroll run for a period, if a run exists. Tenant scoped. */
+    @Transactional(readOnly = true)
+    public Optional<PayrollStatus> getRunStatusForPeriod(Integer year, Integer month) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        return payrollRunRepository.findByTenantIdAndPayPeriodYearAndPayPeriodMonth(tenantId, year, month)
+                .map(PayrollRun::getStatus);
     }
 
     private boolean isReleased(Payslip payslip) {
