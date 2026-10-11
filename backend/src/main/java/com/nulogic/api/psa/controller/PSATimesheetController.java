@@ -1,12 +1,12 @@
 package com.nulogic.api.psa.controller;
 
+import com.nulogic.api.psa.dto.PSATimeEntryRequest;
 import com.nulogic.application.psa.service.PSAService;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.psa.PSATimeEntry;
 import com.nulogic.domain.psa.PSATimesheet;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +58,12 @@ public class PSATimesheetController {
 
     @PostMapping("/{id}/approve")
     @RequiresPermission(TIMESHEET_APPROVE)
-    public ResponseEntity<PSATimesheet> approveTimesheet(@PathVariable UUID id, @NotNull @Valid @RequestBody UUID approverId) {
-        return psaService.approveTimesheet(id, approverId)
+    public ResponseEntity<PSATimesheet> approveTimesheet(
+            @PathVariable UUID id,
+            // Legacy clients still send {"approverId": ...}; it is accepted and ignored — the
+            // approver is always the authenticated caller.
+            @RequestBody(required = false) String ignoredLegacyBody) {
+        return psaService.approveTimesheet(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -74,8 +78,8 @@ public class PSATimesheetController {
 
     @PostMapping("/{id}/entries")
     @RequiresPermission(TIMESHEET_SUBMIT)
-    public ResponseEntity<PSATimeEntry> addTimeEntry(@PathVariable UUID id, @Valid @RequestBody PSATimeEntry entry) {
-        return ResponseEntity.ok(psaService.addTimeEntry(id, entry));
+    public ResponseEntity<PSATimeEntry> addTimeEntry(@PathVariable UUID id, @Valid @RequestBody PSATimeEntryRequest request) {
+        return ResponseEntity.ok(psaService.addTimeEntry(id, request));
     }
 
     @GetMapping("/{id}/entries")

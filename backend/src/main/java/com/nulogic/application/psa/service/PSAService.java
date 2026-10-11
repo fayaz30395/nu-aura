@@ -1,9 +1,13 @@
 package com.nulogic.application.psa.service;
 
+import com.nulogic.api.psa.dto.PSATimeEntryRequest;
+import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.psa.PSAInvoice;
 import com.nulogic.domain.psa.PSAProject;
 import com.nulogic.domain.psa.PSAProjectAllocation;
@@ -18,14 +22,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -49,6 +56,11 @@ public class PSAService {
     private final PSATimeEntryRepository timeEntryRepository;
     private final PSAInvoiceRepository invoiceRepository;
     private final TenantTimeService tenantTimeService;
+
+    private static final Set<PSATimesheet.TimesheetStatus> EDITABLE_STATUSES =
+            EnumSet.of(PSATimesheet.TimesheetStatus.DRAFT, PSATimesheet.TimesheetStatus.REJECTED);
+    private static final Set<PSATimesheet.TimesheetStatus> DECIDABLE_STATUSES =
+            EnumSet.of(PSATimesheet.TimesheetStatus.SUBMITTED);
 
     // ==================== Project Operations ====================
 
@@ -264,6 +276,7 @@ public class PSAService {
     public List<PSATimesheet> getEmployeeTimesheets(UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.debug("Retrieving timesheets for employee {} in tenant {}", employeeId, tenantId);
+        assertCanAccessEmployee(employeeId);
 
         return timesheetRepository.findByTenantIdAndEmployeeIdOrderByWeekStartDateDesc(tenantId, employeeId);
     }
@@ -279,7 +292,9 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.debug("Retrieving timesheet {} for tenant {}", id, tenantId);
 
-        return timesheetRepository.findByIdAndTenantId(id, tenantId);
+        Optional<PSATimesheet> timesheet = timesheetRepository.findByIdAndTenantId(id, tenantId);
+        timesheet.ifPresent(ts -> assertCanAccessEmployee(ts.getEmployeeId()));
+        return timesheet;
     }
 
     /**
@@ -295,6 +310,8 @@ public class PSAService {
 
         return timesheetRepository.findByIdAndTenantId(id, tenantId)
                 .map(ts -> {
+                    assertCanAccessEmployee(ts.getEmployeeId());
+                    requireStatus(ts, EDITABLE_STATUSES, "submitted");
                     ts.setStatus(PSATimesheet.TimesheetStatus.SUBMITTED);
                     ts.setSubmittedAt(tenantTimeService.now(tenantId));
                     return timesheetRepository.save(ts);
@@ -302,19 +319,22 @@ public class PSAService {
     }
 
     /**
-     * Approves a submitted timesheet.
+     * Approves a submitted timesheet. The approver is always the authenticated caller; it is
+     * never taken from the request.
      *
-     * @param id         the timesheet ID
-     * @param approverId the ID of the approving user
+     * @param id the timesheet ID
      * @return Optional containing the approved timesheet if found
      */
     @Transactional
-    public Optional<PSATimesheet> approveTimesheet(UUID id, UUID approverId) {
+    public Optional<PSATimesheet> approveTimesheet(UUID id) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID approverId = resolveApproverId();
         log.info("Approving timesheet {} by approver {} for tenant {}", id, approverId, tenantId);
 
         return timesheetRepository.findByIdAndTenantId(id, tenantId)
                 .map(ts -> {
+                    assertCanDecideOn(ts.getEmployeeId());
+                    requireStatus(ts, DECIDABLE_STATUSES, "approved");
                     ts.setStatus(PSATimesheet.TimesheetStatus.APPROVED);
                     ts.setApprovedAt(tenantTimeService.now(tenantId));
                     ts.setApprovedBy(approverId);
@@ -336,6 +356,8 @@ public class PSAService {
 
         return timesheetRepository.findByIdAndTenantId(id, tenantId)
                 .map(ts -> {
+                    assertCanDecideOn(ts.getEmployeeId());
+                    requireStatus(ts, DECIDABLE_STATUSES, "rejected");
                     ts.setStatus(PSATimesheet.TimesheetStatus.REJECTED);
                     ts.setRejectionReason(reason);
                     return timesheetRepository.save(ts);
@@ -346,17 +368,39 @@ public class PSAService {
      * Adds a time entry to a timesheet.
      *
      * @param timesheetId the timesheet ID
-     * @param entry       the time entry to add
+     * @param request     the user-editable entry fields
      * @return the created time entry with generated ID and tenant ID set
+     * @throws ResourceNotFoundException if the timesheet does not exist in the current tenant
+     * @throws IllegalStateException     if the timesheet is no longer editable
      */
     @Transactional
-    public PSATimeEntry addTimeEntry(UUID timesheetId, PSATimeEntry entry) {
+    public PSATimeEntry addTimeEntry(UUID timesheetId, PSATimeEntryRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Adding time entry to timesheet {} for tenant {}", timesheetId, tenantId);
 
-        entry.setId(UUID.randomUUID());
-        entry.setTenantId(tenantId);
-        entry.setTimesheetId(timesheetId);
+        PSATimesheet timesheet = requireAccessibleTimesheet(timesheetId, tenantId);
+        if (!EDITABLE_STATUSES.contains(timesheet.getStatus())) {
+            throw new IllegalStateException(
+                    "Timesheet " + timesheetId + " is " + timesheet.getStatus() + " and can no longer be edited");
+        }
+        if (!projectRepository.existsByIdAndTenantId(request.projectId(), tenantId)) {
+            throw new ValidationException("Project not found: " + request.projectId());
+        }
+
+        PSATimeEntry entry = PSATimeEntry.builder()
+                .id(UUID.randomUUID())
+                .tenantId(tenantId)
+                .timesheetId(timesheet.getId())
+                .employeeId(timesheet.getEmployeeId())
+                .projectId(request.projectId())
+                .taskId(request.taskId())
+                .entryDate(request.entryDate())
+                .hours(request.hours())
+                .isBillable(Boolean.TRUE.equals(request.isBillable()))
+                .workDescription(request.workDescription())
+                .activityType(request.activityType())
+                .isOvertime(request.isOvertime())
+                .build();
 
         return timeEntryRepository.save(entry);
     }
@@ -366,13 +410,87 @@ public class PSAService {
      *
      * @param timesheetId the timesheet ID
      * @return list of time entries for the timesheet, ordered by entry date ascending
+     * @throws ResourceNotFoundException if the timesheet does not exist in the current tenant
      */
     @Transactional(readOnly = true)
     public List<PSATimeEntry> getTimesheetEntries(UUID timesheetId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.debug("Retrieving time entries for timesheet {} in tenant {}", timesheetId, tenantId);
 
-        return timeEntryRepository.findByTimesheetIdOrderByEntryDateAsc(timesheetId);
+        requireAccessibleTimesheet(timesheetId, tenantId);
+        return timeEntryRepository.findByTenantIdAndTimesheetIdOrderByEntryDateAsc(tenantId, timesheetId);
+    }
+
+    // ==================== Timesheet Access Control ====================
+
+    private static void requireStatus(PSATimesheet timesheet, Set<PSATimesheet.TimesheetStatus> allowed, String action) {
+        if (!allowed.contains(timesheet.getStatus())) {
+            throw new IllegalStateException(
+                    "Timesheet " + timesheet.getId() + " is " + timesheet.getStatus() + " and cannot be " + action);
+        }
+    }
+
+    private PSATimesheet requireAccessibleTimesheet(UUID timesheetId, UUID tenantId) {
+        PSATimesheet timesheet = timesheetRepository.findByIdAndTenantId(timesheetId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Timesheet not found: " + timesheetId));
+        assertCanAccessEmployee(timesheet.getEmployeeId());
+        return timesheet;
+    }
+
+    /** Owner, a manager in the owner's reporting chain, or a caller with tenant-wide timesheet scope. */
+    private void assertCanAccessEmployee(UUID employeeId) {
+        if (hasTenantWideTimesheetScope()) {
+            return;
+        }
+        UUID currentEmployeeId = requireCurrentEmployeeId();
+        if (currentEmployeeId.equals(employeeId) || isManagerOf(employeeId)) {
+            return;
+        }
+        throw new AccessDeniedException("Cannot access another employee's timesheet");
+    }
+
+    /** Approve/reject: same rule as {@link #assertCanAccessEmployee} minus self. */
+    private void assertCanDecideOn(UUID employeeId) {
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(employeeId)) {
+            throw new AccessDeniedException("Cannot approve or reject your own timesheet");
+        }
+        if (hasTenantWideTimesheetScope() || isManagerOf(employeeId)) {
+            return;
+        }
+        throw new AccessDeniedException("Only the employee's manager or HR can approve or reject this timesheet");
+    }
+
+    private boolean hasTenantWideTimesheetScope() {
+        return SecurityContext.isSuperAdmin()
+                || SecurityContext.isHRManager()
+                || SecurityContext.hasPermissionAtLeast(Permission.TIMESHEET_APPROVE, RoleScope.ALL)
+                || SecurityContext.hasPermissionAtLeast(Permission.PROJECT_MANAGE, RoleScope.ALL);
+    }
+
+    private boolean isManagerOf(UUID employeeId) {
+        return employeeId != null
+                && SecurityContext.getCurrentEmployeeId() != null
+                && SecurityContext.getAllReporteeIds().contains(employeeId);
+    }
+
+    private UUID requireCurrentEmployeeId() {
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId == null) {
+            throw new AccessDeniedException("Current user is not linked to an employee");
+        }
+        return currentEmployeeId;
+    }
+
+    private UUID resolveApproverId() {
+        UUID approverId = SecurityContext.getCurrentEmployeeId();
+        if (approverId == null) {
+            approverId = SecurityContext.getCurrentUserId();
+        }
+        if (approverId == null) {
+            throw new AccessDeniedException("Cannot determine the approving user");
+        }
+        return approverId;
     }
 
     // ==================== Invoice Operations ====================

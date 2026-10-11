@@ -12,6 +12,8 @@ import java.util.UUID;
 public interface PSATimeEntryRepository extends JpaRepository<PSATimeEntry, UUID> {
     List<PSATimeEntry> findByTimesheetIdOrderByEntryDateAsc(UUID timesheetId);
 
+    List<PSATimeEntry> findByTenantIdAndTimesheetIdOrderByEntryDateAsc(UUID tenantId, UUID timesheetId);
+
     List<PSATimeEntry> findByProjectId(UUID projectId);
 
     @Query("SELECT SUM(e.hours) FROM PSATimeEntry e WHERE e.timesheetId = :timesheetId AND e.isBillable = true")
