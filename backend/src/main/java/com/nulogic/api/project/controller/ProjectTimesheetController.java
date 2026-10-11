@@ -353,6 +353,7 @@ public class ProjectTimesheetController {
     public ResponseEntity<BigDecimal> calculateOvertimeForDate(
             @Parameter(description = "Employee UUID") @PathVariable UUID employeeId,
             @Parameter(description = "Work date (ISO)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate workDate) {
+        reportService.assertCanAccessEmployee(employeeId);
         return ResponseEntity.ok(projectTimesheetService.calculateOvertimeForDate(employeeId, workDate));
     }
 }

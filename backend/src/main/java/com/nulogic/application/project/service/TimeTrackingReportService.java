@@ -1,5 +1,7 @@
 package com.nulogic.application.project.service;
 
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.project.TimeEntry;
 import com.nulogic.infrastructure.project.repository.ProjectTimeEntryRepository;
@@ -8,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +33,24 @@ public class TimeTrackingReportService {
     private final ProjectTimeEntryRepository timeEntryRepository;
 
     /**
+     * Same rule as {@code ProjectTimesheetService.assertCanAccessEmployee}: callers without
+     * PROJECT_MANAGE / TIMESHEET_APPROVE (or SuperAdmin) may only read their own time data.
+     */
+    public void assertCanAccessEmployee(UUID employeeId) {
+        if (SecurityContext.isSuperAdmin()
+                || SecurityContext.hasAnyPermission(Permission.PROJECT_MANAGE, Permission.TIMESHEET_APPROVE)) {
+            return;
+        }
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId == null) {
+            throw new AccessDeniedException("Current user is not linked to an employee");
+        }
+        if (!currentEmployeeId.equals(employeeId)) {
+            throw new AccessDeniedException("Cannot access another employee's time entry");
+        }
+    }
+
+    /**
      * Generate time summary report for an employee
      */
     @Transactional(readOnly = true)
@@ -38,6 +59,7 @@ public class TimeTrackingReportService {
             LocalDate startDate,
             LocalDate endDate
     ) {
+        assertCanAccessEmployee(employeeId);
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Generating time summary for employee {} from {} to {}", employeeId, startDate, endDate);
 
@@ -53,6 +75,7 @@ public class TimeTrackingReportService {
      */
     @Transactional(readOnly = true)
     public WeeklyTimeReport getWeeklyTimeReport(UUID employeeId, LocalDate weekStartDate) {
+        assertCanAccessEmployee(employeeId);
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate weekEndDate = weekStartDate.plusDays(6);
 
@@ -70,6 +93,7 @@ public class TimeTrackingReportService {
      */
     @Transactional(readOnly = true)
     public MonthlyTimeReport getMonthlyTimeReport(UUID employeeId, int year, int month) {
+        assertCanAccessEmployee(employeeId);
         UUID tenantId = TenantContext.getCurrentTenant();
         LocalDate startDate = LocalDate.of(year, month, 1);
         LocalDate endDate = startDate.with(TemporalAdjusters.lastDayOfMonth());

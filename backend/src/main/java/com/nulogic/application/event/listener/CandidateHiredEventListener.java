@@ -130,8 +130,7 @@ public class CandidateHiredEventListener {
                             .isActive(true)
                             .build();
                     salaryStructureRepository.save(structure);
-                    log.info("Initial salary structure created for employee {} (CTC {} {} = basic {} + hra {} + special {})",
-                            employeeId, totalCtc, tenantCurrency, basic, hra, special);
+                    log.info("Initial salary structure created for employee {}", employeeId);
 
                     SalaryRevision revision = SalaryRevision.builder()
                             .tenantId(tenantId)

@@ -424,8 +424,7 @@ public class CompensationService {
         revision.setPayrollProcessed(false); // Will be set true by payroll batch job
         revision = revisionRepository.save(revision);
 
-        log.info("Applied salary revision {} for employee {}. New salary: {} {}",
-                revisionId, revision.getEmployeeId(), revision.getNewSalary(), revision.getCurrency());
+        log.info("Applied salary revision {} for employee {}", revisionId, revision.getEmployeeId());
 
         return enrichRevisionResponse(revision);
     }

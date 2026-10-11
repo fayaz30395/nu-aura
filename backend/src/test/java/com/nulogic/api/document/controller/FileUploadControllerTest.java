@@ -124,19 +124,89 @@ class FileUploadControllerTest {
             when(fileStorageService.uploadFile(any(), eq("documents"), eq(ENTITY_ID)))
                     .thenReturn(result);
 
-            mockMvc.perform(multipart("/api/v1/files/upload")
-                            .file(file)
-                            .param("category", "documents")
-                            .param("entityId", ENTITY_ID.toString()))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.objectName").value(objectName))
-                    .andExpect(jsonPath("$.originalFilename").value("resume.pdf"))
-                    .andExpect(jsonPath("$.contentType").value(MediaType.APPLICATION_PDF_VALUE))
-                    .andExpect(jsonPath("$.size").value(11))
-                    .andExpect(jsonPath("$.downloadUrl").exists());
+            // Audit #5: employee-scoped categories now enforce scope; caller is the target employee.
+            try (MockedStatic<SecurityContext> securityContextMock = mockStatic(SecurityContext.class)) {
+                securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(ENTITY_ID);
+
+                mockMvc.perform(multipart("/api/v1/files/upload")
+                                .file(file)
+                                .param("category", "documents")
+                                .param("entityId", ENTITY_ID.toString()))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.objectName").value(objectName))
+                        .andExpect(jsonPath("$.originalFilename").value("resume.pdf"))
+                        .andExpect(jsonPath("$.contentType").value(MediaType.APPLICATION_PDF_VALUE))
+                        .andExpect(jsonPath("$.size").value(11))
+                        .andExpect(jsonPath("$.downloadUrl").exists());
+            }
 
             verify(fileStorageService).uploadFile(any(), eq("documents"), eq(ENTITY_ID));
             verify(fileStorageService, never()).getDownloadUrl(anyString());
+        }
+
+        @Test
+        @DisplayName("POST /upload — audit #5: documents for another employee is forbidden")
+        void uploadFile_DocumentsForForeignEmployee_Forbidden() throws Exception {
+            MockMultipartFile file = new MockMultipartFile(
+                    "file", "x.pdf", MediaType.APPLICATION_PDF_VALUE, "x".getBytes());
+
+            try (MockedStatic<SecurityContext> securityContextMock = mockStatic(SecurityContext.class)) {
+                securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(UUID.randomUUID());
+                securityContextMock.when(SecurityContext::getAllReporteeIds).thenReturn(java.util.Set.of());
+
+                mockMvc.perform(multipart("/api/v1/files/upload")
+                                .file(file)
+                                .param("category", FileStorageService.CATEGORY_DOCUMENTS)
+                                .param("entityId", ENTITY_ID.toString()))
+                        .andExpect(status().isForbidden());
+            }
+
+            verify(fileStorageService, never()).uploadFile(any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("POST /upload — audit #5: payslips forbidden without payroll permission, even for self")
+        void uploadFile_PayslipsWithoutPayrollPermission_Forbidden() throws Exception {
+            MockMultipartFile file = new MockMultipartFile(
+                    "file", "payslip.pdf", MediaType.APPLICATION_PDF_VALUE, "x".getBytes());
+
+            try (MockedStatic<SecurityContext> securityContextMock = mockStatic(SecurityContext.class)) {
+                securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(ENTITY_ID);
+                securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+
+                mockMvc.perform(multipart("/api/v1/files/upload")
+                                .file(file)
+                                .param("category", FileStorageService.CATEGORY_PAYSLIPS)
+                                .param("entityId", ENTITY_ID.toString()))
+                        .andExpect(status().isForbidden());
+            }
+
+            verify(fileStorageService, never()).uploadFile(any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("POST /upload — audit #5: payroll processor may upload payslips")
+        void uploadFile_PayslipsWithPayrollPermission_Ok() throws Exception {
+            MockMultipartFile file = new MockMultipartFile(
+                    "file", "payslip.pdf", MediaType.APPLICATION_PDF_VALUE, "x".getBytes());
+            String objectName = TENANT_ID + "/payslips/" + ENTITY_ID + "/payslip.pdf";
+            FileUploadResult result = buildUploadResult(objectName, "payslip.pdf",
+                    MediaType.APPLICATION_PDF_VALUE, 1L, FileStorageService.CATEGORY_PAYSLIPS, ENTITY_ID);
+            when(fileStorageService.uploadFile(any(), eq(FileStorageService.CATEGORY_PAYSLIPS), eq(ENTITY_ID)))
+                    .thenReturn(result);
+
+            try (MockedStatic<SecurityContext> securityContextMock = mockStatic(SecurityContext.class)) {
+                securityContextMock.when(() -> SecurityContext.hasPermission(Permission.PAYROLL_PROCESS))
+                        .thenReturn(true);
+
+                mockMvc.perform(multipart("/api/v1/files/upload")
+                                .file(file)
+                                .param("category", FileStorageService.CATEGORY_PAYSLIPS)
+                                .param("entityId", ENTITY_ID.toString()))
+                        .andExpect(status().isOk());
+            }
+
+            verify(fileStorageService).uploadFile(any(), eq(FileStorageService.CATEGORY_PAYSLIPS), eq(ENTITY_ID));
         }
 
         @Test

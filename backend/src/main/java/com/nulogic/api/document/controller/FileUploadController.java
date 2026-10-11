@@ -48,6 +48,15 @@ public class FileUploadController {
             @RequestParam("category") String category,
             @RequestParam("entityId") UUID entityId) {
 
+        if (FileStorageService.CATEGORY_PAYSLIPS.equals(category)) {
+            if (!canUploadPayslips()) {
+                throw new org.springframework.security.access.AccessDeniedException(
+                        "You are not authorized to upload payslips");
+            }
+        } else if (EMPLOYEE_SCOPED_CATEGORIES.contains(category)) {
+            enforceEmployeeUploadScope(entityId);
+        }
+
         FileUploadResult result = fileStorageService.uploadFile(file, category, entityId);
 
         return ResponseEntity.ok(FileUploadResponse.builder()
@@ -259,6 +268,12 @@ public class FileUploadController {
                     throw new org.springframework.security.access.AccessDeniedException(
                             "You are not authorized to access this employee's sensitive documents");
                 });
+    }
+
+    /** Payslips are payroll-generated; only admins or payroll processors may place them via the generic endpoint. */
+    private boolean canUploadPayslips() {
+        return SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()
+                || SecurityContext.hasPermission(Permission.PAYROLL_PROCESS);
     }
 
     /** True when the caller may see this employee's sensitive documents: self or HR/admin. */

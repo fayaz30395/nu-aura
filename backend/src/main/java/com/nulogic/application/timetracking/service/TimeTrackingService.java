@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -130,29 +131,30 @@ public class TimeTrackingService {
     @Transactional
     public TimeEntryDto approveEntry(UUID entryId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        TimeEntry entry = loadForDecision(entryId, tenantId, "approve");
+        return TimeEntryDto.fromEntity(applyApproval(entry, tenantId));
+    }
+
+    @Transactional
+    public List<TimeEntryDto> approveMultiple(List<UUID> entryIds) {
+        UUID tenantId = TenantContext.getCurrentTenant();
+        List<TimeEntry> entries = entryIds.stream()
+                .map(id -> loadForDecision(id, tenantId, "approve"))
+                .collect(Collectors.toList());
+        return entries.stream()
+                .map(entry -> TimeEntryDto.fromEntity(applyApproval(entry, tenantId)))
+                .collect(Collectors.toList());
+    }
+
+    private TimeEntry applyApproval(TimeEntry entry, UUID tenantId) {
         UUID approverId = SecurityContext.getCurrentUserId();
-
-        TimeEntry entry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
-
-        if (entry.getStatus() != TimeEntryStatus.SUBMITTED) {
-            throw new IllegalStateException("Cannot approve entry in status: " + entry.getStatus());
-        }
-
         entry.setStatus(TimeEntryStatus.APPROVED);
         entry.setApprovedBy(approverId);
         entry.setApprovedDate(tenantTimeService.today(tenantId));
 
         TimeEntry saved = timeEntryRepository.save(entry);
         log.info("Time entry approved: {} by {}", saved.getId(), approverId);
-        return TimeEntryDto.fromEntity(saved);
-    }
-
-    @Transactional
-    public List<TimeEntryDto> approveMultiple(List<UUID> entryIds) {
-        return entryIds.stream()
-                .map(this::approveEntry)
-                .collect(Collectors.toList());
+        return saved;
     }
 
     @Transactional
@@ -160,12 +162,7 @@ public class TimeTrackingService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID approverId = SecurityContext.getCurrentUserId();
 
-        TimeEntry entry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
-
-        if (entry.getStatus() != TimeEntryStatus.SUBMITTED) {
-            throw new IllegalStateException("Cannot reject entry in status: " + entry.getStatus());
-        }
+        TimeEntry entry = loadForDecision(entryId, tenantId, "reject");
 
         entry.setStatus(TimeEntryStatus.REJECTED);
         entry.setApprovedBy(approverId);
@@ -271,6 +268,35 @@ public class TimeTrackingService {
                 "totalBillableHours", billableHours != null ? billableHours : BigDecimal.ZERO,
                 "totalBillingAmount", billingAmount != null ? billingAmount : BigDecimal.ZERO
         );
+    }
+
+    private TimeEntry loadForDecision(UUID entryId, UUID tenantId, String action) {
+        TimeEntry entry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanDecideEntry(entry);
+        if (entry.getStatus() != TimeEntryStatus.SUBMITTED) {
+            throw new IllegalStateException("Cannot " + action + " entry in status: " + entry.getStatus());
+        }
+        return entry;
+    }
+
+    /**
+     * Segregation of duties: nobody decides their own entry. Otherwise the approver must be
+     * in the employee's reporting line, unless they hold tenant-wide HR/admin authority.
+     */
+    private void assertCanDecideEntry(TimeEntry entry) {
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId != null && currentEmployeeId.equals(entry.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot approve or reject your own time entry");
+        }
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin() || SecurityContext.isHRManager()
+                || SecurityContext.hasPermission(com.nulogic.common.security.Permission.TIME_TRACKING_MANAGE)) {
+            return;
+        }
+        Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
+        if (reporteeIds == null || !reporteeIds.contains(entry.getEmployeeId())) {
+            throw new AccessDeniedException("Only the employee's manager can approve or reject this time entry");
+        }
     }
 
     private void assertCanAccessOwnEntry(TimeEntry entry) {

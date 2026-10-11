@@ -18,7 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +37,8 @@ class TimeTrackingServiceTest {
     private static MockedStatic<SecurityContext> securityContextMock;
     @Mock
     private TimeEntryRepository timeEntryRepository;
+    @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
     @InjectMocks
     private TimeTrackingService timeTrackingService;
     private UUID tenantId;
@@ -399,6 +403,99 @@ class TimeTrackingServiceTest {
                     .hasMessageContaining("Time entry not found");
 
             verify(timeEntryRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Approve/Reject authorization (audit #7)")
+    class ApprovalAuthorizationTests {
+
+        private UUID managerEmployeeId;
+
+        @BeforeEach
+        void setUpApprover() {
+            managerEmployeeId = UUID.randomUUID();
+            securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(managerEmployeeId);
+            securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(UUID.randomUUID());
+            securityContextMock.when(SecurityContext::isSuperAdmin).thenReturn(false);
+            securityContextMock.when(SecurityContext::isTenantAdmin).thenReturn(false);
+            securityContextMock.when(SecurityContext::isHRManager).thenReturn(false);
+            securityContextMock.when(() -> SecurityContext.hasPermission(any())).thenReturn(false);
+            securityContextMock.when(SecurityContext::getAllReporteeIds).thenReturn(Set.of(employeeId));
+            testTimeEntry.setStatus(TimeEntryStatus.SUBMITTED);
+        }
+
+        @AfterEach
+        void resetSecurityStubs() {
+            securityContextMock.reset();
+        }
+
+        private TimeEntry submittedEntryFor(UUID owner) {
+            TimeEntry e = TimeEntry.builder().id(UUID.randomUUID()).employeeId(owner)
+                    .status(TimeEntryStatus.SUBMITTED).build();
+            e.setTenantId(tenantId);
+            when(timeEntryRepository.findByIdAndTenantId(e.getId(), tenantId)).thenReturn(Optional.of(e));
+            return e;
+        }
+
+        @Test
+        @DisplayName("Manager approves a direct report's entry")
+        void managerApprovesReportEntry() {
+            when(timeEntryRepository.findByIdAndTenantId(entryId, tenantId)).thenReturn(Optional.of(testTimeEntry));
+            when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            TimeEntryDto result = timeTrackingService.approveEntry(entryId);
+
+            assertThat(result.getStatus()).isEqualTo(TimeEntryStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("Self-approval is rejected even for HR")
+        void selfApprovalRejected() {
+            securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
+            securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+            when(timeEntryRepository.findByIdAndTenantId(entryId, tenantId)).thenReturn(Optional.of(testTimeEntry));
+
+            assertThatThrownBy(() -> timeTrackingService.approveEntry(entryId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThatThrownBy(() -> timeTrackingService.rejectEntry(entryId, "no"))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            verify(timeEntryRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Non-report entry is rejected for a team lead")
+        void nonReportEntryRejected() {
+            TimeEntry foreign = submittedEntryFor(UUID.randomUUID());
+
+            assertThatThrownBy(() -> timeTrackingService.approveEntry(foreign.getId()))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThatThrownBy(() -> timeTrackingService.rejectEntry(foreign.getId(), "no"))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            verify(timeEntryRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("HR may approve a non-report's entry")
+        void hrApprovesAnyEntry() {
+            securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+            TimeEntry foreign = submittedEntryFor(UUID.randomUUID());
+            when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            assertThat(timeTrackingService.approveEntry(foreign.getId()).getStatus())
+                    .isEqualTo(TimeEntryStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("Bulk approval with one bad id mutates nothing")
+        void bulkApprovalFailsAtomically() {
+            when(timeEntryRepository.findByIdAndTenantId(entryId, tenantId)).thenReturn(Optional.of(testTimeEntry));
+            TimeEntry foreign = submittedEntryFor(UUID.randomUUID());
+
+            assertThatThrownBy(() -> timeTrackingService.approveMultiple(List.of(entryId, foreign.getId())))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            verify(timeEntryRepository, never()).save(any());
+            assertThat(testTimeEntry.getStatus()).isEqualTo(TimeEntryStatus.SUBMITTED);
         }
     }
 }
