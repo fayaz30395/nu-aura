@@ -1,6 +1,7 @@
 package com.nulogic.application.helpdesk.service;
 
 import com.nulogic.api.helpdesk.dto.*;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -270,25 +272,29 @@ public class HelpdeskService {
     @Transactional
     public TicketCommentResponse addComment(TicketCommentRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        log.info("Adding comment to ticket {} by {} in tenant {}",
-                request.getTicketId(), request.getCommenterId(), tenantId);
+        UUID callerId = requireCallerEmployeeId();
+        log.info("Adding comment to ticket {} by {} in tenant {}", request.getTicketId(), callerId, tenantId);
 
-        // Verify ticket exists
-        ticketRepository.findByIdAndTenantId(request.getTicketId(), tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+        Ticket ticket = loadAccessibleTicket(request.getTicketId(), tenantId);
+
+        boolean internal = Boolean.TRUE.equals(request.getIsInternal());
+        if (internal && !canSeeInternalComments(ticket)) {
+            throw new AccessDeniedException("Only helpdesk agents may post internal comments");
+        }
 
         // Verify commenter exists within tenant (use exists check to avoid loading encrypted fields)
-        if (!employeeRepository.existsByIdAndTenantId(request.getCommenterId(), tenantId)) {
+        if (!employeeRepository.existsByIdAndTenantId(callerId, tenantId)) {
             throw new IllegalArgumentException("Commenter not found");
         }
 
         TicketComment comment = new TicketComment();
         comment.setId(UUID.randomUUID());
         comment.setTenantId(tenantId);
-        comment.setTicketId(request.getTicketId());
-        comment.setCommenterId(request.getCommenterId());
+        comment.setTicketId(ticket.getId());
+        // The author is always the authenticated caller; any commenterId in the body is ignored.
+        comment.setCommenterId(callerId);
         comment.setComment(request.getComment());
-        comment.setIsInternal(request.getIsInternal() != null ? request.getIsInternal() : false);
+        comment.setIsInternal(internal);
         comment.setAttachmentUrls(request.getAttachmentUrls());
 
         TicketComment savedComment = ticketCommentRepository.save(comment);
@@ -302,9 +308,19 @@ public class HelpdeskService {
 
         TicketComment comment = ticketCommentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+        assertCanModifyComment(comment);
 
+        if (request.getIsInternal() != null) {
+            if (Boolean.TRUE.equals(request.getIsInternal())) {
+                Ticket ticket = ticketRepository.findByIdAndTenantId(comment.getTicketId(), tenantId)
+                        .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+                if (!canSeeInternalComments(ticket)) {
+                    throw new AccessDeniedException("Only helpdesk agents may mark comments as internal");
+                }
+            }
+            comment.setIsInternal(request.getIsInternal());
+        }
         comment.setComment(request.getComment());
-        comment.setIsInternal(request.getIsInternal());
         comment.setAttachmentUrls(request.getAttachmentUrls());
 
         TicketComment updatedComment = ticketCommentRepository.save(comment);
@@ -314,9 +330,12 @@ public class HelpdeskService {
     @Transactional(readOnly = true)
     public List<TicketCommentResponse> getCommentsByTicket(UUID ticketId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        List<TicketComment> comments = ticketCommentRepository.findByTenantIdAndTicketId(tenantId, ticketId);
-        String ticketNumber = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
-                .map(Ticket::getTicketNumber).orElse(null);
+        Ticket ticket = loadAccessibleTicket(ticketId, tenantId);
+        boolean includeInternal = canSeeInternalComments(ticket);
+        List<TicketComment> comments = ticketCommentRepository.findByTenantIdAndTicketId(tenantId, ticketId).stream()
+                .filter(c -> includeInternal || !Boolean.TRUE.equals(c.getIsInternal()))
+                .collect(Collectors.toList());
+        String ticketNumber = ticket.getTicketNumber();
         Set<UUID> commenterIds = comments.stream().map(TicketComment::getCommenterId)
                 .filter(Objects::nonNull).collect(Collectors.toSet());
         Map<UUID, String> nameMap = buildEmployeeNameMap(commenterIds, tenantId);
@@ -330,6 +349,7 @@ public class HelpdeskService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         TicketComment comment = ticketCommentRepository.findByIdAndTenantId(commentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Comment not found"));
+        assertCanModifyComment(comment);
         ticketCommentRepository.delete(comment);
     }
 
@@ -403,6 +423,68 @@ public class HelpdeskService {
         TicketCategory category = ticketCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
         ticketCategoryRepository.delete(category);
+    }
+
+    // ==================== Comment Access Control ====================
+
+    /**
+     * Same agent definition as HelpdeskController.isHelpdeskAgent: tenant-wide helpdesk triage rights.
+     */
+    private boolean isHelpdeskAgent() {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()) return true;
+        if (SecurityContext.hasPermission(Permission.HELPDESK_TICKET_MANAGE)) return true;
+        return SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL);
+    }
+
+    private UUID requireCallerEmployeeId() {
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        if (self == null) {
+            throw new AccessDeniedException("Authentication required");
+        }
+        return self;
+    }
+
+    private Ticket loadAccessibleTicket(UUID ticketId, UUID tenantId) {
+        Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+        assertCanAccessTicket(ticket);
+        return ticket;
+    }
+
+    /**
+     * Mirrors HelpdeskController.enforceTicketOwnershipCheck: agent, reporter, assignee,
+     * or a manager of the reporter (VIEW_TEAM).
+     */
+    private void assertCanAccessTicket(Ticket ticket) {
+        if (isHelpdeskAgent()) return;
+        UUID self = requireCallerEmployeeId();
+        if (self.equals(ticket.getEmployeeId())) return;
+        if (self.equals(ticket.getAssignedTo())) return;
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)
+                && SecurityContext.getAllReporteeIds().contains(ticket.getEmployeeId())) {
+            return;
+        }
+        throw new AccessDeniedException("You are not authorized to access this ticket");
+    }
+
+    /**
+     * Internal comments are visible to agents and to the working assignee, but never to the
+     * requester (even when the requester is also the assignee).
+     */
+    private boolean canSeeInternalComments(Ticket ticket) {
+        if (isHelpdeskAgent()) return true;
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        return self != null
+                && self.equals(ticket.getAssignedTo())
+                && !self.equals(ticket.getEmployeeId());
+    }
+
+    private void assertCanModifyComment(TicketComment comment) {
+        if (isHelpdeskAgent()) return;
+        UUID self = requireCallerEmployeeId();
+        if (!self.equals(comment.getCommenterId())) {
+            throw new AccessDeniedException("Only the comment author or a helpdesk admin may modify this comment");
+        }
     }
 
     // ==================== Helper Methods ====================

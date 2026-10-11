@@ -1,6 +1,8 @@
 package com.nulogic.application.engagement.service;
 
 import com.nulogic.api.engagement.dto.OneOnOneMeetingRequest;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.engagement.MeetingActionItem;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,6 +93,7 @@ public class OneOnOneMeetingService {
         UUID tenantId = TenantContext.getCurrentTenant();
         OneOnOneMeeting meeting = meetingRepository.findByIdAndTenantId(meetingId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Meeting not found: " + meetingId));
+        assertParticipant(meeting);
 
         if (meeting.getStatus() == MeetingStatus.COMPLETED || meeting.getStatus() == MeetingStatus.CANCELLED) {
             throw new IllegalStateException("Cannot update completed or cancelled meeting");
@@ -110,7 +114,9 @@ public class OneOnOneMeetingService {
 
     @Transactional(readOnly = true)
     public Optional<OneOnOneMeeting> getMeetingById(UUID meetingId) {
-        return meetingRepository.findByIdAndTenantId(meetingId, TenantContext.getCurrentTenant());
+        Optional<OneOnOneMeeting> meeting = meetingRepository.findByIdAndTenantId(meetingId, TenantContext.getCurrentTenant());
+        meeting.ifPresent(this::assertParticipant);
+        return meeting;
     }
 
     @Transactional(readOnly = true)
@@ -144,8 +150,7 @@ public class OneOnOneMeetingService {
     @Transactional
     public OneOnOneMeeting startMeeting(UUID meetingId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        OneOnOneMeeting meeting = meetingRepository.findByIdAndTenantId(meetingId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+        OneOnOneMeeting meeting = loadMeetingForParticipant(meetingId, tenantId);
 
         meeting.setStatus(MeetingStatus.IN_PROGRESS);
         meeting.setActualStartTime(tenantTimeService.now(tenantId));
@@ -157,8 +162,7 @@ public class OneOnOneMeetingService {
     @Transactional
     public OneOnOneMeeting completeMeeting(UUID meetingId, String summary) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        OneOnOneMeeting meeting = meetingRepository.findByIdAndTenantId(meetingId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+        OneOnOneMeeting meeting = loadMeetingForParticipant(meetingId, tenantId);
 
         meeting.setStatus(MeetingStatus.COMPLETED);
         meeting.setActualEndTime(tenantTimeService.now(tenantId));
@@ -171,8 +175,7 @@ public class OneOnOneMeetingService {
     @Transactional
     public OneOnOneMeeting cancelMeeting(UUID meetingId, UUID cancelledBy, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        OneOnOneMeeting meeting = meetingRepository.findByIdAndTenantId(meetingId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+        OneOnOneMeeting meeting = loadMeetingForParticipant(meetingId, tenantId);
 
         meeting.setStatus(MeetingStatus.CANCELLED);
         meeting.setCancelledAt(tenantTimeService.now(tenantId));
@@ -186,8 +189,7 @@ public class OneOnOneMeetingService {
     @Transactional
     public OneOnOneMeeting rescheduleMeeting(UUID meetingId, LocalDate newDate, java.time.LocalTime newTime) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        OneOnOneMeeting oldMeeting = meetingRepository.findByIdAndTenantId(meetingId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+        OneOnOneMeeting oldMeeting = loadMeetingForParticipant(meetingId, tenantId);
 
         // Mark old meeting as rescheduled
         oldMeeting.setStatus(MeetingStatus.RESCHEDULED);
@@ -219,10 +221,19 @@ public class OneOnOneMeetingService {
     // ==================== Notes & Feedback ====================
 
     @Transactional
-    public OneOnOneMeeting updateNotes(UUID meetingId, String sharedNotes, String privateNotes, boolean isManager) {
+    public OneOnOneMeeting updateNotes(UUID meetingId, String sharedNotes, String privateNotes) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OneOnOneMeeting meeting = meetingRepository.findByIdAndTenantId(meetingId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Meeting not found"));
+
+        // Notes are written only by the two participants; HR oversight is read-only here so a
+        // non-participant can never overwrite either side's notes.
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        boolean isManager = callerId != null && callerId.equals(meeting.getManagerId());
+        boolean isEmployee = callerId != null && callerId.equals(meeting.getEmployeeId());
+        if (!isManager && !isEmployee) {
+            throw new AccessDeniedException("Only meeting participants may update notes");
+        }
 
         if (sharedNotes != null) {
             meeting.setSharedNotes(sharedNotes);
@@ -288,11 +299,13 @@ public class OneOnOneMeetingService {
     @Transactional
     public MeetingAgendaItem addAgendaItem(UUID meetingId, OneOnOneMeetingRequest.AgendaItemRequest request,
                                            AddedBy addedBy, UUID addedById) {
+        loadMeetingForParticipant(meetingId, TenantContext.getCurrentTenant());
         return createAgendaItem(meetingId, request, addedBy, addedById, null);
     }
 
     @Transactional(readOnly = true)
     public List<MeetingAgendaItem> getAgendaItems(UUID meetingId) {
+        loadMeetingForParticipant(meetingId, TenantContext.getCurrentTenant());
         return agendaRepository.findAllByMeetingIdOrderByItemOrder(meetingId);
     }
 
@@ -302,10 +315,9 @@ public class OneOnOneMeetingService {
         // IDOR fix: verify the parent meeting belongs to the current tenant before
         // touching any of its agenda items. Without this check any authenticated user
         // could mark an agenda item in a different tenant as discussed by guessing the UUID.
-        meetingRepository.findByIdAndTenantId(meetingId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+        loadMeetingForParticipant(meetingId, tenantId);
 
-        MeetingAgendaItem item = agendaRepository.findByIdAndMeetingId(itemId, meetingId)
+        MeetingAgendaItem item = agendaRepository.findByIdAndMeetingIdAndTenantId(itemId, meetingId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Agenda item not found"));
 
         item.setIsDiscussed(true);
@@ -316,7 +328,9 @@ public class OneOnOneMeetingService {
 
     @Transactional
     public void deleteAgendaItem(UUID meetingId, UUID itemId) {
-        MeetingAgendaItem item = agendaRepository.findByIdAndMeetingId(itemId, meetingId)
+        UUID tenantId = TenantContext.getCurrentTenant();
+        loadMeetingForParticipant(meetingId, tenantId);
+        MeetingAgendaItem item = agendaRepository.findByIdAndMeetingIdAndTenantId(itemId, meetingId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Agenda item not found"));
         agendaRepository.delete(item);
     }
@@ -328,6 +342,7 @@ public class OneOnOneMeetingService {
                                               UUID assigneeId, MeetingActionItem.AssigneeRole role,
                                               LocalDate dueDate, MeetingActionItem.Priority priority) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        loadMeetingForParticipant(meetingId, tenantId);
 
         MeetingActionItem action = MeetingActionItem.builder()
                 .meetingId(meetingId)
@@ -349,6 +364,7 @@ public class OneOnOneMeetingService {
 
     @Transactional(readOnly = true)
     public List<MeetingActionItem> getActionItems(UUID meetingId) {
+        loadMeetingForParticipant(meetingId, TenantContext.getCurrentTenant());
         return actionRepository.findAllByMeetingId(meetingId);
     }
 
@@ -368,6 +384,7 @@ public class OneOnOneMeetingService {
         UUID tenantId = TenantContext.getCurrentTenant();
         MeetingActionItem action = actionRepository.findByIdAndTenantId(actionId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Action item not found"));
+        loadMeetingForParticipant(action.getMeetingId(), tenantId);
 
         action.setStatus(status);
         if (status == ActionStatus.COMPLETED) {
@@ -452,6 +469,29 @@ public class OneOnOneMeetingService {
     }
 
     // ==================== Private Helpers ====================
+
+    private OneOnOneMeeting loadMeetingForParticipant(UUID meetingId, UUID tenantId) {
+        OneOnOneMeeting meeting = meetingRepository.findByIdAndTenantId(meetingId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Meeting not found"));
+        assertParticipant(meeting);
+        return meeting;
+    }
+
+    /**
+     * Caller must be the meeting's manager or employee, or hold MEETING_MANAGE (HR-wide
+     * engagement oversight; SuperAdmin passes via the SYSTEM_ADMIN bypass in hasPermission).
+     */
+    private void assertParticipant(OneOnOneMeeting meeting) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.hasPermission(Permission.MEETING_MANAGE)) {
+            return;
+        }
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        if (callerId != null
+                && (callerId.equals(meeting.getManagerId()) || callerId.equals(meeting.getEmployeeId()))) {
+            return;
+        }
+        throw new AccessDeniedException("You are not a participant in this meeting");
+    }
 
     private void createRecurringInstances(OneOnOneMeeting parent) {
         if (parent.getRecurrencePattern() == null || parent.getRecurrenceEndDate() == null) {

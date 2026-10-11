@@ -144,15 +144,10 @@ public class OneOnOneMeetingController {
     public ResponseEntity<OneOnOneMeetingResponse> updateNotes(
             @PathVariable UUID meetingId,
             @Valid @RequestBody Map<String, String> body) {
-        UUID userId = SecurityContext.getCurrentEmployeeId();
-        OneOnOneMeeting meeting = meetingService.getMeetingById(meetingId)
-                .orElseThrow(() -> new RuntimeException("Meeting not found"));
-
-        boolean isManager = meeting.getManagerId().equals(userId);
         String sharedNotes = body.get("sharedNotes");
         String privateNotes = body.get("privateNotes");
 
-        meeting = meetingService.updateNotes(meetingId, sharedNotes, privateNotes, isManager);
+        OneOnOneMeeting meeting = meetingService.updateNotes(meetingId, sharedNotes, privateNotes);
         return ResponseEntity.ok(buildResponse(meeting));
     }
 

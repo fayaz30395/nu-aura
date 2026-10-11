@@ -19,6 +19,8 @@ public interface MeetingAgendaItemRepository extends JpaRepository<MeetingAgenda
 
     Optional<MeetingAgendaItem> findByIdAndMeetingId(UUID id, UUID meetingId);
 
+    Optional<MeetingAgendaItem> findByIdAndMeetingIdAndTenantId(UUID id, UUID meetingId, UUID tenantId);
+
     @Query("SELECT COALESCE(MAX(a.itemOrder), 0) FROM MeetingAgendaItem a WHERE a.meetingId = :meetingId")
     Integer getMaxItemOrder(@Param("meetingId") UUID meetingId);
 
