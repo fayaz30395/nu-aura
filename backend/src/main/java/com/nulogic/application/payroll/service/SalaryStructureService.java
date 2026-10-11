@@ -37,6 +37,10 @@ public class SalaryStructureService {
             throw new IllegalArgumentException("Salary structure already exists for this employee and date");
         }
 
+        if (!Boolean.FALSE.equals(salaryStructure.getIsActive()) && salaryStructure.getEffectiveDate() != null) {
+            closePriorActiveStructures(tenantId, salaryStructure.getEmployeeId(), salaryStructure.getEffectiveDate());
+        }
+
         SalaryStructure saved = salaryStructureRepository.save(salaryStructure);
 
         auditLogService.logAction(
@@ -54,6 +58,23 @@ public class SalaryStructureService {
         );
 
         return saved;
+    }
+
+    /**
+     * End-dates still-open active structures that started before the new one. They stay
+     * isActive=true so payroll for earlier periods still resolves them by date.
+     */
+    private void closePriorActiveStructures(UUID tenantId, UUID employeeId, LocalDate newEffectiveDate) {
+        LocalDate closeDate = newEffectiveDate.minusDays(1);
+        for (SalaryStructure prior : salaryStructureRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId)) {
+            if (Boolean.TRUE.equals(prior.getIsActive())
+                    && prior.getEffectiveDate() != null
+                    && prior.getEffectiveDate().isBefore(newEffectiveDate)
+                    && (prior.getEndDate() == null || prior.getEndDate().isAfter(closeDate))) {
+                prior.setEndDate(closeDate);
+                salaryStructureRepository.save(prior);
+            }
+        }
     }
 
     @Transactional

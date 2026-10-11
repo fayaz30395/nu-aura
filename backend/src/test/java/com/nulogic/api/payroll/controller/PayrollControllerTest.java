@@ -1,6 +1,7 @@
 package com.nulogic.api.payroll.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletException;
 import com.nulogic.application.payroll.service.PayrollRunService;
 import com.nulogic.application.payroll.service.PayslipPdfService;
 import com.nulogic.application.payroll.service.PayslipService;
@@ -32,6 +33,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -43,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -443,16 +446,84 @@ class PayrollControllerTest {
         }
 
         @Test
-        @DisplayName("Should get payslip by ID")
+        @DisplayName("Should get payslip by ID for payroll admin with ALL scope")
         void shouldGetPayslipById() throws Exception {
             when(payslipService.getPayslipById(eq(payslipId)))
                     .thenReturn(payslip);
 
-            mockMvc.perform(get("/api/v1/payroll/payslips/{id}", payslipId))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(payslipId.toString()));
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(() -> SecurityContext.getPermissionScope(anyString())).thenReturn(RoleScope.ALL);
+                sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(UUID.randomUUID());
 
-            verify(payslipService).getPayslipById(eq(payslipId));
+                mockMvc.perform(get("/api/v1/payroll/payslips/{id}", payslipId))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.id").value(payslipId.toString()));
+
+                verify(payslipService).getPayslipById(eq(payslipId));
+            }
+        }
+
+        @Test
+        @DisplayName("Self-scope owner can read own released payslip by ID")
+        void ownerCanReadOwnPayslip() throws Exception {
+            when(payslipService.getReleasedPayslipById(eq(payslipId))).thenReturn(payslip);
+
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
+
+                mockMvc.perform(get("/api/v1/payroll/payslips/{id}", payslipId))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.id").value(payslipId.toString()));
+
+                verify(payslipService, never()).getPayslipById(any());
+            }
+        }
+
+        @Test
+        @DisplayName("Self-scope non-owner is denied another employee's payslip by ID")
+        void nonOwnerCannotReadPayslip() {
+            when(payslipService.getReleasedPayslipById(eq(payslipId))).thenReturn(payslip);
+
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(UUID.randomUUID());
+
+                ServletException ex = assertThrows(ServletException.class, () ->
+                        mockMvc.perform(get("/api/v1/payroll/payslips/{id}", payslipId)));
+                assertThat(ex.getCause()).isInstanceOf(AccessDeniedException.class);
+            }
+        }
+
+        @Test
+        @DisplayName("Run payslip listing allowed for ALL-scope payroll viewer")
+        void runListingAllowedForAllScope() throws Exception {
+            when(payslipService.getPayslipsByPayrollRun(eq(payrollRunId))).thenReturn(List.of(payslip));
+
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(() -> SecurityContext.getPermissionScope(anyString())).thenReturn(RoleScope.ALL);
+
+                mockMvc.perform(get("/api/v1/payroll/payslips/run/{id}", payrollRunId))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.length()").value(1));
+            }
+        }
+
+        @Test
+        @DisplayName("Run payslip listings denied for narrower (department) scope")
+        void runListingDeniedForNarrowScope() {
+            try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+                sc.when(() -> SecurityContext.getPermissionScope(anyString())).thenReturn(RoleScope.DEPARTMENT);
+
+                ServletException list = assertThrows(ServletException.class, () ->
+                        mockMvc.perform(get("/api/v1/payroll/payslips/run/{id}", payrollRunId)));
+                assertThat(list.getCause()).isInstanceOf(AccessDeniedException.class);
+
+                ServletException paged = assertThrows(ServletException.class, () ->
+                        mockMvc.perform(get("/api/v1/payroll/payslips/run/{id}/paged", payrollRunId)));
+                assertThat(paged.getCause()).isInstanceOf(AccessDeniedException.class);
+
+                verify(payslipService, never()).getPayslipsByPayrollRun(any());
+                verify(payslipService, never()).getPayslipsByPayrollRunPaged(any(), any());
+            }
         }
 
         @Test

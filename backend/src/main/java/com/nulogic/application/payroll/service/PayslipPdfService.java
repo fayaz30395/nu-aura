@@ -390,9 +390,11 @@ public class PayslipPdfService {
         return "XXXXXX" + pan.substring(pan.length() - 4);
     }
 
-    private String convertToWords(BigDecimal amount) {
+    String convertToWords(BigDecimal amount) {
         if (amount == null)
             return "Zero Rupees Only";
+        if (amount.signum() < 0)
+            return "Minus " + convertToWords(amount.abs());
 
         long rupees = amount.longValue();
         int paise = amount.remainder(BigDecimal.ONE).multiply(BigDecimal.valueOf(100)).intValue();

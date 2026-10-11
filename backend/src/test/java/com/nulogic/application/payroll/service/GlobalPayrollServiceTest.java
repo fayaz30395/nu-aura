@@ -1,6 +1,7 @@
 package com.nulogic.application.payroll.service;
 
 import com.nulogic.api.payroll.dto.CurrencyDto;
+import com.nulogic.api.payroll.dto.EmployeePayrollRecordDto;
 import com.nulogic.api.payroll.dto.ExchangeRateDto;
 import com.nulogic.api.payroll.dto.GlobalPayrollRunDto;
 import com.nulogic.api.payroll.dto.PayrollLocationDto;
@@ -12,6 +13,8 @@ import com.nulogic.domain.payroll.*;
 import com.nulogic.infrastructure.payroll.repository.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -513,7 +516,29 @@ class GlobalPayrollServiceTest {
             // Then
             assertThat(result).isNotNull();
             assertThat(result.getEmployeeCount()).isEqualTo(1);
+            assertThat(result.getTotalGrossBase()).isEqualByComparingTo("5500");
+            assertThat(result.getTotalDeductionsBase()).isEqualByComparingTo("1000");
+            assertThat(result.getTotalNetBase()).isEqualByComparingTo("4500");
+            assertThat(result.getTotalEmployerCostBase()).isEqualByComparingTo("5500");
             verify(payrollRunRepository, atLeast(2)).save(any(GlobalPayrollRun.class));
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = GlobalPayrollRun.PayrollRunStatus.class, names = {"APPROVED", "PAID", "CANCELLED"})
+        @DisplayName("Should reject adding employees to an approved/paid/cancelled run")
+        void shouldRejectAddingEmployeeToLockedRun(GlobalPayrollRun.PayrollRunStatus status) {
+            UUID runId = UUID.randomUUID();
+            GlobalPayrollRun run = createTestPayrollRun(runId, status);
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(run));
+
+            EmployeePayrollRecordDto request = EmployeePayrollRecordDto.builder()
+                    .employeeId(UUID.randomUUID())
+                    .build();
+
+            assertThatThrownBy(() -> globalPayrollService.addEmployeeToPayroll(runId, request))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining(status.name());
+            verify(recordRepository, never()).save(any(EmployeePayrollRecord.class));
         }
 
         @Test

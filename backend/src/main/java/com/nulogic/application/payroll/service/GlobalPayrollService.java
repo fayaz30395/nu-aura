@@ -276,7 +276,10 @@ public class GlobalPayrollService {
                 record.setExchangeRate(rate);
                 record.setRateDate(rateDate);
 
-                // Aggregate (totals are calculated in @PrePersist/@PreUpdate during saveAll below)
+                // Base-currency totals depend on the rate just set; the @PreUpdate hook only
+                // runs at flush, which is too late for the run-level aggregation below.
+                record.calculateTotals();
+
                 if (record.getGrossPayBase() != null)
                     totalGross = totalGross.add(record.getGrossPayBase());
                 if (record.getTotalDeductionsBase() != null)
@@ -399,6 +402,13 @@ public class GlobalPayrollService {
 
         GlobalPayrollRun run = payrollRunRepository.findByIdAndTenantId(runId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found: " + runId));
+
+        GlobalPayrollRun.PayrollRunStatus status = run.getStatus();
+        if (status == GlobalPayrollRun.PayrollRunStatus.APPROVED
+                || status == GlobalPayrollRun.PayrollRunStatus.PAID
+                || status == GlobalPayrollRun.PayrollRunStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot add employees to a payroll run in " + status + " status");
+        }
 
         EmployeePayrollRecord record = EmployeePayrollRecord.builder()
                 .payrollRun(run)

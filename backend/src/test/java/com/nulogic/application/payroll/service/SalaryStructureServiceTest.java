@@ -103,6 +103,39 @@ class SalaryStructureServiceTest {
         }
 
         @Test
+        @DisplayName("Should end-date prior open active structure when creating a newer one")
+        void shouldClosePriorActiveStructure() {
+            SalaryStructure prior = SalaryStructure.builder()
+                    .employeeId(employeeId)
+                    .effectiveDate(LocalDate.of(2024, 1, 1))
+                    .basicSalary(new BigDecimal("40000"))
+                    .isActive(true)
+                    .build();
+            prior.setId(UUID.randomUUID());
+            SalaryStructure alreadyClosed = SalaryStructure.builder()
+                    .employeeId(employeeId)
+                    .effectiveDate(LocalDate.of(2023, 1, 1))
+                    .endDate(LocalDate.of(2023, 12, 31))
+                    .basicSalary(new BigDecimal("30000"))
+                    .isActive(true)
+                    .build();
+            when(salaryStructureRepository.existsByTenantIdAndEmployeeIdAndEffectiveDate(
+                    any(), any(), any())).thenReturn(false);
+            when(salaryStructureRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId))
+                    .thenReturn(List.of(prior, alreadyClosed));
+            when(salaryStructureRepository.save(any(SalaryStructure.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            salaryStructureService.createSalaryStructure(salaryStructure);
+
+            assertThat(prior.getEndDate()).isEqualTo(LocalDate.of(2024, 12, 31));
+            assertThat(prior.getIsActive()).isTrue();
+            assertThat(alreadyClosed.getEndDate()).isEqualTo(LocalDate.of(2023, 12, 31));
+            verify(salaryStructureRepository).save(prior);
+            verify(salaryStructureRepository, never()).save(alreadyClosed);
+        }
+
+        @Test
         @DisplayName("Should throw exception when salary structure already exists")
         void shouldThrowExceptionWhenSalaryStructureExists() {
             when(salaryStructureRepository.existsByTenantIdAndEmployeeIdAndEffectiveDate(

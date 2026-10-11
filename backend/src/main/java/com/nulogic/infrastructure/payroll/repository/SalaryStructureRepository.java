@@ -2,6 +2,7 @@ package com.nulogic.infrastructure.payroll.repository;
 
 import com.nulogic.domain.payroll.SalaryStructure;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,13 +27,26 @@ public interface SalaryStructureRepository extends JpaRepository<SalaryStructure
     Page<SalaryStructure> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 
     @Query("SELECT s FROM SalaryStructure s WHERE s.tenantId = :tenantId AND s.employeeId = :employeeId " +
-            "AND s.effectiveDate <= :date AND s.isActive = true " +
-            "ORDER BY s.effectiveDate DESC")
-    Optional<SalaryStructure> findActiveByEmployeeIdAndDate(
+            "AND s.effectiveDate <= :date AND (s.endDate IS NULL OR s.endDate >= :date) " +
+            "AND s.isActive = true " +
+            "ORDER BY s.effectiveDate DESC, s.createdAt DESC")
+    List<SalaryStructure> findActiveCandidatesByEmployeeIdAndDate(
             @Param("tenantId") UUID tenantId,
             @Param("employeeId") UUID employeeId,
-            @Param("date") LocalDate date
+            @Param("date") LocalDate date,
+            Pageable pageable
     );
+
+    /**
+     * Latest active structure effective on {@code date}. Multiple overlapping active
+     * structures must not throw IncorrectResultSizeDataAccessException, so this is
+     * capped to the first row of the ordered candidate list.
+     */
+    default Optional<SalaryStructure> findActiveByEmployeeIdAndDate(UUID tenantId, UUID employeeId, LocalDate date) {
+        return findActiveCandidatesByEmployeeIdAndDate(tenantId, employeeId, date, PageRequest.of(0, 1))
+                .stream()
+                .findFirst();
+    }
 
     /**
      * Find the latest active salary structure for an employee.

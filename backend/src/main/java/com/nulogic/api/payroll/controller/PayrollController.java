@@ -284,9 +284,13 @@ public class PayrollController {
     }
 
     @GetMapping("/payslips/{id}")
-    @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
+    @RequiresPermission({Permission.PAYROLL_VIEW_ALL, Permission.PAYROLL_VIEW_SELF})
     public ResponseEntity<Payslip> getPayslip(@PathVariable UUID id) {
-        Payslip payslip = payslipService.getPayslipById(id);
+        String permission = determineViewPermission();
+        Payslip payslip = !PayslipService.canViewUnreleased()
+                ? payslipService.getReleasedPayslipById(id)
+                : payslipService.getPayslipById(id);
+        validateEmployeeAccess(payslip.getEmployeeId(), permission);
         return ResponseEntity.ok(payslip);
     }
 
@@ -357,6 +361,7 @@ public class PayrollController {
     @GetMapping("/payslips/run/{payrollRunId}")
     @RequiresPermission(Permission.PAYROLL_VIEW_ALL)
     public ResponseEntity<List<Payslip>> getPayslipsByPayrollRun(@PathVariable UUID payrollRunId) {
+        requireAllScopePayrollView();
         List<Payslip> payslips = payslipService.getPayslipsByPayrollRun(payrollRunId);
         return ResponseEntity.ok(payslips);
     }
@@ -366,6 +371,7 @@ public class PayrollController {
     public ResponseEntity<Page<Payslip>> getPayslipsByPayrollRunPaged(
             @PathVariable UUID payrollRunId,
             Pageable pageable) {
+        requireAllScopePayrollView();
         Page<Payslip> payslips = payslipService.getPayslipsByPayrollRunPaged(payrollRunId, pageable);
         return ResponseEntity.ok(payslips);
     }
@@ -639,6 +645,19 @@ public class PayrollController {
             return Permission.PAYROLL_VIEW_ALL;
         }
         return Permission.PAYROLL_VIEW_SELF;
+    }
+
+    /**
+     * Run-wide payslip listings span every employee in the run, so a narrower
+     * (location/department/team/custom) PAYROLL_VIEW_ALL scope is not enough.
+     */
+    private void requireAllScopePayrollView() {
+        if (SecurityContext.isSuperAdmin()) {
+            return;
+        }
+        if (SecurityContext.getPermissionScope(Permission.PAYROLL_VIEW_ALL) != RoleScope.ALL) {
+            throw new AccessDeniedException("You do not have permission to view payslips for the entire payroll run");
+        }
     }
 
     /**
