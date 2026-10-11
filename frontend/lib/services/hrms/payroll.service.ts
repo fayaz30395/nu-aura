@@ -17,6 +17,40 @@ import {
 
 type NumericApiValue = number | string | null | undefined;
 
+/**
+ * Blob downloads deliver error bodies as Blobs, so `response.data.message` is undefined.
+ * Parse a JSON error body back into `response.data` (and the error message) so callers
+ * can keep reading `err.response.data.message`.
+ */
+function readBlobText(blob: Blob): Promise<string> {
+  if (typeof blob.text === 'function') return blob.text();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ''));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsText(blob);
+  });
+}
+
+async function rethrowWithBlobErrorMessage(err: unknown): Promise<never> {
+  const response = (err as { response?: { data?: unknown } } | null)?.response;
+  if (response && response.data instanceof Blob) {
+    try {
+      const parsed: unknown = JSON.parse(await readBlobText(response.data));
+      if (parsed && typeof parsed === 'object') {
+        response.data = parsed;
+        const message = (parsed as { message?: unknown }).message;
+        if (typeof message === 'string' && message && err instanceof Error) {
+          err.message = message;
+        }
+      }
+    } catch {
+      // Non-JSON error body: rethrow the original error unchanged.
+    }
+  }
+  throw err;
+}
+
 interface PayrollRunApiResponse
   extends Partial<Omit<PayrollRun, 'totalEmployees' | 'totalGrossAmount' | 'totalDeductions' | 'totalNetAmount'>> {
   payPeriodMonth?: number | null;
@@ -316,17 +350,21 @@ class PayrollService {
 
   // Payslip PDF Downloads
   async downloadPayslipPdf(payslipId: string): Promise<Blob> {
-    const response = await apiClient.get<Blob>(`/payroll/payslips/${payslipId}/pdf`, {
-      responseType: 'blob',
-    });
+    const response = await apiClient
+      .get<Blob>(`/payroll/payslips/${payslipId}/pdf`, {
+        responseType: 'blob',
+      })
+      .catch(rethrowWithBlobErrorMessage);
     return response.data;
   }
 
   async downloadPayslipPdfByPeriod(employeeId: string, year: number, month: number): Promise<Blob> {
-    const response = await apiClient.get<Blob>(`/payroll/payslips/employee/${employeeId}/period/pdf`, {
-      params: {year, month},
-      responseType: 'blob',
-    });
+    const response = await apiClient
+      .get<Blob>(`/payroll/payslips/employee/${employeeId}/period/pdf`, {
+        params: {year, month},
+        responseType: 'blob',
+      })
+      .catch(rethrowWithBlobErrorMessage);
     return response.data;
   }
 

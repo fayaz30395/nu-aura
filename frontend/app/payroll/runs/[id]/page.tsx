@@ -10,6 +10,7 @@ import {PageTransition} from '@/components/motion';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Button} from '@/components/ui/Button';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {
@@ -31,6 +32,23 @@ const PAYSLIP_STATE_BY_RUN_STATUS: Record<PayrollRunStatus, string> = {
   PROCESSED: 'Generated',
   APPROVED: 'Approved',
   LOCKED: 'Locked',
+};
+
+type ConfirmableAction = 'approve' | 'lock';
+
+const CONFIRM_COPY: Record<ConfirmableAction, { title: string; message: string; confirmText: string; failure: string }> = {
+  approve: {
+    title: 'Approve payroll run?',
+    message: 'Approving releases payslips to employees.',
+    confirmText: 'Approve',
+    failure: 'Failed to approve payroll run',
+  },
+  lock: {
+    title: 'Lock payroll run?',
+    message: 'Locking is permanent. Payslips in a locked run cannot be changed.',
+    confirmText: 'Lock run',
+    failure: 'Failed to lock payroll run',
+  },
 };
 
 function apiErrorMessage(err: unknown, fallback: string): string {
@@ -57,6 +75,7 @@ export default function PayrollRunDetailPage() {
   }, [permReady, hasPermission, router]);
 
   const [error, setError] = useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState<ConfirmableAction | null>(null);
 
   const runQuery = usePayrollRun(runId);
   const payslipsQuery = useRunPayslipDetails(runId);
@@ -88,6 +107,18 @@ export default function PayrollRunDetailPage() {
     setError(null);
     mutate(runId, {
       onError: (err: unknown) => setError(apiErrorMessage(err, failureMessage)),
+    });
+  };
+
+  const confirmMutation = confirmAction === 'lock' ? lockMutation : approveMutation;
+
+  const handleConfirmAction = () => {
+    if (!confirmAction) return;
+    const failureMessage = CONFIRM_COPY[confirmAction].failure;
+    setError(null);
+    confirmMutation.mutate(runId, {
+      onError: (err: unknown) => setError(apiErrorMessage(err, failureMessage)),
+      onSettled: () => setConfirmAction(null),
     });
   };
 
@@ -220,12 +251,7 @@ export default function PayrollRunDetailPage() {
                           variant="primary"
                           leftIcon={<CheckCircle className="h-4 w-4"/>}
                           disabled={actionPending}
-                          onClick={() =>
-                            runAction(
-                              (id, opts) => approveMutation.mutate(id, opts),
-                              'Failed to approve payroll run'
-                            )
-                          }
+                          onClick={() => setConfirmAction('approve')}
                         >
                           Approve run
                         </Button>
@@ -237,12 +263,7 @@ export default function PayrollRunDetailPage() {
                           variant="primary"
                           leftIcon={<Lock className="h-4 w-4"/>}
                           disabled={actionPending}
-                          onClick={() =>
-                            runAction(
-                              (id, opts) => lockMutation.mutate(id, opts),
-                              'Failed to lock payroll run'
-                            )
-                          }
+                          onClick={() => setConfirmAction('lock')}
                         >
                           Lock run
                         </Button>
@@ -355,6 +376,18 @@ export default function PayrollRunDetailPage() {
             )}
           </div>
         </PageTransition>
+        {confirmAction && (
+          <ConfirmDialog
+            isOpen
+            onClose={() => setConfirmAction(null)}
+            onConfirm={handleConfirmAction}
+            title={CONFIRM_COPY[confirmAction].title}
+            message={CONFIRM_COPY[confirmAction].message}
+            confirmText={CONFIRM_COPY[confirmAction].confirmText}
+            type={confirmAction === 'lock' ? 'warning' : 'info'}
+            loading={confirmMutation.isPending}
+          />
+        )}
       </PermissionGate>
     </AppLayout>
   );

@@ -40,18 +40,23 @@ function PayslipsPageContent() {
   const totalPages = response?.totalPages || 0;
   const totalElements = response?.totalElements || 0;
 
+  const downloadPayslipFile = async (payslip: Payslip) => {
+    const blob = await payrollService.downloadPayslipPdf(payslip.id);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `payslip-${payslip.employeeName}-${payslip.paymentDate}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
   const handleDownloadPdf = async (payslip: Payslip) => {
     try {
       setDownloadLoading(true);
-      const blob = await payrollService.downloadPayslipPdf(payslip.id);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `payslip-${payslip.employeeName}-${payslip.paymentDate}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      setDownloadError(null);
+      await downloadPayslipFile(payslip);
     } catch (err: unknown) {
       setDownloadError((err as {
         response?: { data?: { message?: string } }
@@ -62,15 +67,22 @@ function PayslipsPageContent() {
   };
 
   const handleBulkDownload = async () => {
+    const targets = filteredPayslips;
+    let failures = 0;
     try {
       setDownloadLoading(true);
       setDownloadError(null);
-      for (const payslip of filteredPayslips) {
-        await handleDownloadPdf(payslip);
+      for (const payslip of targets) {
+        try {
+          await downloadPayslipFile(payslip);
+        } catch {
+          failures += 1;
+        }
         await new Promise(resolve => setTimeout(resolve, 200));
       }
-    } catch {
-      setDownloadError('Failed to download some payslips');
+      if (failures > 0) {
+        setDownloadError(`${failures} of ${targets.length} payslips failed to download`);
+      }
     } finally {
       setDownloadLoading(false);
     }

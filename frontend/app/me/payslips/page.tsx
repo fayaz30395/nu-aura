@@ -7,6 +7,7 @@ import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion'
 import {Card, CardContent} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {useAuth} from '@/lib/hooks/useAuth';
+import {Roles} from '@/lib/hooks/usePermissions';
 import {
   useAllRunPayslips,
   useDownloadPayslipPdf,
@@ -23,6 +24,16 @@ import {formatDate as formatDateCanonical, formatMonthYear as formatMonthYearCan
 
 const log = createLogger('PayslipsPage');
 
+const PAYSLIP_ADMIN_ROLES: readonly string[] = [
+  Roles.SUPER_ADMIN,
+  Roles.TENANT_ADMIN,
+  Roles.HR_ADMIN,
+  Roles.HR_MANAGER,
+  Roles.HR_EXECUTIVE,
+  Roles.FINANCE_ADMIN,
+  Roles.PAYROLL_ADMIN,
+];
+
 export default function MyPayslipsPage() {
   const {user, hasHydrated} = useAuth();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -31,9 +42,9 @@ export default function MyPayslipsPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Check if user is admin/HR — role codes have no ROLE_ prefix in NU-AURA
-  const isAdmin = !user?.employeeId || user?.roles?.some(role => {
+  const isAdmin = !!user?.roles?.some(role => {
     const code = typeof role === 'string' ? role : (role?.code || '');
-    return ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_MANAGER', 'HR_EXECUTIVE', 'PAYROLL_ADMIN'].includes(code);
+    return PAYSLIP_ADMIN_ROLES.includes(code);
   });
 
   // React Query hooks
@@ -47,7 +58,12 @@ export default function MyPayslipsPage() {
   const allPayslipsQuery = useAllRunPayslips(0, 100, hasHydrated && isAdminView);
 
   // Determine which data to use
-  const {data: payslipsData, isLoading, isError: isQueryError} = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
+  const activeQuery = isAdminView ? allPayslipsQuery : employeePayslipsQuery;
+  const {data: payslipsData, isError: isQueryError} = activeQuery;
+  // A disabled query reports isLoading=false in React Query v5; isPending stays true until it has data.
+  // Users without an employee profile never enable the self query, so they skip the skeleton.
+  const queryEnabled = isAdminView || !!user?.employeeId;
+  const isLoading = !hasHydrated || (queryEnabled && activeQuery.isPending);
   const payslips = (payslipsData?.content ?? []).map(toPayslipView);
 
   // Release state is per employee and per year, so it is only requested in the self view. "All Years" falls
@@ -128,6 +144,7 @@ export default function MyPayslipsPage() {
 
   const yearlyTotal = filteredPayslips.reduce((sum, p) => sum + p.netAmount, 0);
   const yearlyAverage = filteredPayslips.length > 0 ? yearlyTotal / filteredPayslips.length : 0;
+  const yearLabel = selectedYear === 0 ? 'All Years' : String(selectedYear);
 
   if (isLoading) {
     return (
@@ -228,7 +245,7 @@ export default function MyPayslipsPage() {
             <CardContent className="pt-6">
               <div className="row-between">
                 <Stat
-                  label={isAdminView ? `Total Payout (${selectedYear})` : `Total Earnings (${selectedYear})`}
+                  label={isAdminView ? `Total Payout (${yearLabel})` : `Total Earnings (${yearLabel})`}
                   value={formatCurrency(yearlyTotal)}
                   tone="success"
                 />
@@ -329,7 +346,7 @@ export default function MyPayslipsPage() {
                 title="No Payslips Found"
                 description={searchQuery
                   ? 'Try adjusting your search criteria'
-                  : `No payslips available for ${selectedYear}`}
+                  : `No payslips available for ${yearLabel}`}
               />
             </CardContent>
           </Card>
