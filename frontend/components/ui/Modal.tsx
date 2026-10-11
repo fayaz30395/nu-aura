@@ -51,12 +51,16 @@ const Modal: React.FC<ModalProps> = ({
   const generatedId = useId();
   const titleId = `modal-title-${generatedId}`;
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  // Callers commonly pass an inline onClose; reading it through a ref keeps the
+  // open/close effect from re-running (and stealing focus) on every parent render.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const {pick} = useReducedMotionSafe();
 
   // QA-003: Focus trap — trap Tab/Shift+Tab within modal
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'Escape' && closeOnEscape) {
-      onClose();
+      onCloseRef.current();
       return;
     }
 
@@ -79,13 +83,20 @@ const Modal: React.FC<ModalProps> = ({
         firstElement.focus();
       }
     }
-  }, [closeOnEscape, onClose]);
+  }, [closeOnEscape]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, handleKeyDown]);
 
   useEffect(() => {
     if (isOpen) {
       // Save current focus to restore later
       previousFocusRef.current = document.activeElement as HTMLElement;
-      document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
 
       // Auto-focus first focusable element in modal, skipping the header
@@ -103,12 +114,11 @@ const Modal: React.FC<ModalProps> = ({
     }
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
       // Restore focus to the element that triggered the modal
       previousFocusRef.current?.focus();
     };
-  }, [isOpen, handleKeyDown]);
+  }, [isOpen]);
 
   const sizeClasses = {
     sm: 'max-w-sm',
@@ -184,7 +194,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
             {children}
           </h2>
         ) : (
-          children
+          <div id={titleId}>{children}</div>
         )}
       </div>
       {showCloseButton && onClose && (

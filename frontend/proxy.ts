@@ -227,16 +227,20 @@ function matchesPattern(path: string, patterns: string[]): boolean {
  * Check if the path is a public route
  */
 function isPublicRoute(path: string): boolean {
-  // Exact matches for public routes
-  if (PUBLIC_ROUTES.includes(path)) {
-    return true;
-  }
+  // '/' must only match the root itself — matchesPattern would treat it as a
+  // prefix of every path.
+  if (path === '/') return true;
+  return matchesPattern(path, PUBLIC_ROUTES.filter((route) => route !== '/'));
+}
 
-  // Check if it starts with any public route pattern
-  return PUBLIC_ROUTES.some((route) => {
-    if (route === '/') return path === '/';
-    return path.startsWith(route);
-  });
+/**
+ * Build a login redirect that preserves where the user was headed.
+ */
+function loginRedirectUrl(request: NextRequest): URL {
+  const loginUrl = new URL('/auth/login', request.url);
+  const {pathname, search} = request.nextUrl;
+  loginUrl.searchParams.set('returnUrl', pathname + search);
+  return loginUrl;
 }
 
 /**
@@ -462,8 +466,7 @@ export function proxy(request: NextRequest) {
     }
     // DEF-27: Deny-by-default — no tokens at all → redirect to login.
     // This covers both known authenticated routes AND unknown/future routes.
-    const loginUrl = new URL('/auth/login', request.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(loginRedirectUrl(request));
   }
 
   // DEF-29: Decode JWT and check expiry
@@ -478,8 +481,7 @@ export function proxy(request: NextRequest) {
 
     // No refresh token — truly expired session, redirect to login
     if (isAuthenticatedRoute(pathname) || !isPublicRoute(pathname)) {
-      const loginUrl = new URL('/auth/login', request.url);
-      return NextResponse.redirect(loginUrl);
+      return NextResponse.redirect(loginRedirectUrl(request));
     }
     return allowWithSecurity(request, nonce);
   }

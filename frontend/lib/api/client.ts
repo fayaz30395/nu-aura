@@ -205,7 +205,8 @@ class ApiClient {
   getPermissive<T>(url: string, config?: AxiosRequestConfig) {
     return this.client.get<T>(this.normalizeUrl(url), {
       ...config,
-      validateStatus: (s: number) => s < 500,
+      // 401 must stay an error so the refresh interceptor runs.
+      validateStatus: (s: number) => s < 500 && s !== 401,
     });
   }
 
@@ -244,7 +245,11 @@ class ApiClient {
     }, REDIRECT_DEBOUNCE_MS);
 
     if (typeof window !== 'undefined') {
-      window.location.href = '/auth/login?reason=expired';
+      const {pathname, search} = window.location;
+      const returnUrl = pathname.startsWith('/auth/')
+        ? ''
+        : `&returnUrl=${encodeURIComponent(pathname + search)}`;
+      window.location.href = `/auth/login?reason=expired${returnUrl}`;
     }
   }
 

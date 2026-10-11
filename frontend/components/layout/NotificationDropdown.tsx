@@ -406,8 +406,11 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
         data-testid="notification-dropdown"
         className="notification-dropdown absolute right-0 mt-2 w-80 sm:w-96 rounded-xl glass-midnight animate-fade-in-down overflow-hidden z-50">
         {/* Tabs */}
-        <div className="flex border-b border-[var(--dropdown-divider)]">
+        <div className="flex border-b border-[var(--dropdown-divider)]" role="tablist" aria-label="Notification sources">
           <button
+            type="button"
+            role="tab"
+            aria-selected={notificationTab === 'google'}
             data-testid="notification-tab-google"
             onClick={() => setNotificationTab('google')}
             className={cn(
@@ -426,6 +429,9 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
             )}
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={notificationTab === 'system'}
             data-testid="notification-tab-system"
             onClick={() => setNotificationTab('system')}
             className={cn(
@@ -473,35 +479,36 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
               ) : (
                 <div className="divide-y divide-surface-100 dark:divide-surface-800" role="list" aria-label="Google notifications">
                   {googleNotifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      role="listitem"
-                      onClick={() => handleGoogleNotificationClick(notification)}
-                      className={cn(
-                        "flex gap-4 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
-                        getNotificationBg(notification.type)
-                      )}
-                    >
-                      <div
-                        className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center flex-shrink-0 shadow-[var(--shadow-card)]">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-surface-900 dark:text-surface-100 truncate">
-                          {notification.title}
-                        </p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <p className="text-xs text-surface-500 dark:text-surface-300 truncate">
-                            {notification.subtitle}
-                          </p>
-                          {notification.hasVideo && (
-                            <Video className="h-3 w-3 text-accent-500 flex-shrink-0"/>
-                          )}
+                    <div key={notification.id} role="listitem">
+                      <button
+                        type="button"
+                        onClick={() => handleGoogleNotificationClick(notification)}
+                        className={cn(
+                          "flex w-full text-left gap-4 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring-primary)]",
+                          getNotificationBg(notification.type)
+                        )}
+                      >
+                        <div
+                          className="w-8 h-8 rounded-lg bg-[var(--bg-input)] flex items-center justify-center flex-shrink-0 shadow-[var(--shadow-card)]">
+                          {getNotificationIcon(notification.type)}
                         </div>
-                      </div>
-                      <span className="text-xs text-surface-400 flex-shrink-0">
-                        {notification.type === 'calendar' ? notification.subtitle : formatRelativeTime(notification.timestamp)}
-                      </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-surface-900 dark:text-surface-100 truncate">
+                            {notification.title}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <p className="text-xs text-surface-500 dark:text-surface-300 truncate">
+                              {notification.subtitle}
+                            </p>
+                            {notification.hasVideo && (
+                              <Video className="h-3 w-3 text-accent-500 flex-shrink-0"/>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-xs text-surface-400 flex-shrink-0">
+                          {notification.type === 'calendar' ? notification.subtitle : formatRelativeTime(notification.timestamp)}
+                        </span>
+                      </button>
                     </div>
                   ))}
                   {/* Quick Links */}
@@ -572,61 +579,66 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                       key={`ws-${index}`}
                       role="listitem"
                       data-testid="realtime-notification-item"
-                      onClick={() => {
-                        wsMarkAsRead(index);
-                        onClose();
-                        router.push(getNotificationRoute(notification));
-                      }}
-                      className="flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-accent-50/50 dark:bg-accent-900/10"
                     >
-                      <div
-                        className="flex-shrink-0 w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                        {getSystemNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className="text-sm font-semibold text-surface-900 dark:text-surface-50 truncate">{notification.title}</p>
-                        <p
-                          className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">{notification.message}</p>
-                        <p className="text-xs text-surface-500 mt-1">
-                          {formatDistanceToNow(notification.timestamp ?? Date.now(), {addSuffix: true})}
-                        </p>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          wsMarkAsRead(index);
+                          onClose();
+                          router.push(getNotificationRoute(notification));
+                        }}
+                        className="flex w-full text-left gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer bg-accent-50/50 dark:bg-accent-900/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring-primary)]"
+                      >
+                        <div
+                          className="flex-shrink-0 w-8 h-8 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+                          {getSystemNotificationIcon(notification.type)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className="text-sm font-semibold text-surface-900 dark:text-surface-50 truncate">{notification.title}</p>
+                          <p
+                            className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">{notification.message}</p>
+                          <p className="text-xs text-surface-500 mt-1">
+                            {formatDistanceToNow(notification.timestamp ?? Date.now(), {addSuffix: true})}
+                          </p>
+                        </div>
+                      </button>
                     </div>
                   ))}
                   {persistedNotifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      role="listitem"
-                      onClick={() => {
-                        if (!notification.isRead) markReadMutation.mutate(notification.id);
-                        onClose();
-                        if (notification.actionUrl) router.push(notification.actionUrl);
-                      }}
-                      className={cn(
-                        "flex gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer",
-                        !notification.isRead && "bg-accent-50/50 dark:bg-accent-900/10"
-                      )}
-                    >
-                      <div className={cn(
-                        "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center",
-                        !notification.isRead ? "bg-accent-100 dark:bg-accent-900/30" : "bg-surface-100 dark:bg-surface-800"
-                      )}>
-                        {getSystemNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className={cn(
-                          "text-sm font-medium text-surface-900 dark:text-surface-50 truncate",
-                          !notification.isRead && "font-semibold"
+                    <div key={notification.id} role="listitem">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!notification.isRead) markReadMutation.mutate(notification.id);
+                          onClose();
+                          if (notification.actionUrl) router.push(notification.actionUrl);
+                        }}
+                        className={cn(
+                          "flex w-full text-left gap-2 p-4 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring-primary)]",
+                          !notification.isRead && "bg-accent-50/50 dark:bg-accent-900/10"
+                        )}
+                      >
+                        <div className={cn(
+                          "flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center",
+                          !notification.isRead ? "bg-accent-100 dark:bg-accent-900/30" : "bg-surface-100 dark:bg-surface-800"
                         )}>
-                          {notification.title}
-                        </p>
-                        <p
-                          className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">{notification.message}</p>
-                        <p className="text-xs text-surface-500 mt-1">
-                          {formatDistanceToNow(new Date(notification.createdAt), {addSuffix: true})}
-                        </p>
-                      </div>
+                          {getSystemNotificationIcon(notification.type)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className={cn(
+                            "text-sm font-medium text-surface-900 dark:text-surface-50 truncate",
+                            !notification.isRead && "font-semibold"
+                          )}>
+                            {notification.title}
+                          </p>
+                          <p
+                            className="text-sm text-surface-600 dark:text-surface-300 mt-0.5 line-clamp-2">{notification.message}</p>
+                          <p className="text-xs text-surface-500 mt-1">
+                            {formatDistanceToNow(new Date(notification.createdAt), {addSuffix: true})}
+                          </p>
+                        </div>
+                      </button>
                     </div>
                   ))}
                 </div>
