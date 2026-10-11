@@ -1,5 +1,7 @@
 package com.nulogic.application.payroll.service;
 
+import com.nulogic.api.payroll.dto.BulkPayrollProcessResponse;
+import com.nulogic.api.payroll.dto.BulkPayrollRequest;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
 import com.nulogic.common.exception.BusinessException;
@@ -757,6 +759,128 @@ class PayrollRunServiceTest {
             assertThatThrownBy(() -> payrollRunService.approvePayrollRun(runId, userId))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("processed payroll runs can be approved");
+        }
+    }
+
+    @Nested
+    @DisplayName("Released / in-flight run guards")
+    class RunStatusGuardTests {
+
+        @Test
+        @DisplayName("Update rejects APPROVED and PROCESSING runs")
+        void updateRejectsApprovedAndProcessingRuns() {
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(payrollRun));
+
+            for (PayrollStatus status : List.of(PayrollStatus.APPROVED, PayrollStatus.PROCESSING)) {
+                payrollRun.setStatus(status);
+                assertThatThrownBy(() -> payrollRunService.updatePayrollRun(runId, PayrollRun.builder().build()))
+                        .isInstanceOf(IllegalStateException.class)
+                        .hasMessageContaining("Cannot update " + status.name().toLowerCase());
+            }
+            verify(payrollRunRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Update allows a PROCESSED run")
+        void updateAllowsProcessedRun() {
+            UUID runId = payrollRun.getId();
+            payrollRun.setStatus(PayrollStatus.PROCESSED);
+            PayrollRun updateData = PayrollRun.builder()
+                    .payPeriodYear(2025).payPeriodMonth(1)
+                    .payrollDate(LocalDate.of(2025, 1, 30)).remarks("Corrected").build();
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            assertThat(payrollRunService.updatePayrollRun(runId, updateData).getRemarks()).isEqualTo("Corrected");
+        }
+
+        @Test
+        @DisplayName("Delete rejects a non-DRAFT (PROCESSED) run")
+        void deleteRejectsProcessedRun() {
+            UUID runId = payrollRun.getId();
+            payrollRun.setStatus(PayrollStatus.PROCESSED);
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId)).thenReturn(Optional.of(payrollRun));
+
+            assertThatThrownBy(() -> payrollRunService.deletePayrollRun(runId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("only DRAFT payroll runs can be deleted");
+            assertThat(payrollRun.isDeleted()).isFalse();
+            verify(payrollRunRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Bulk processing rejects reusing an APPROVED run for the period")
+        void bulkRejectsReleasedRun() {
+            payrollRun.setStatus(PayrollStatus.APPROVED);
+            when(payrollRunRepository.findByTenantIdAndPayPeriodYearAndPayPeriodMonth(tenantId, 2025, 1))
+                    .thenReturn(Optional.of(payrollRun));
+            BulkPayrollRequest request = new BulkPayrollRequest(List.of(UUID.randomUUID()),
+                    LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31), null, null);
+
+            assertThatThrownBy(() -> payrollRunService.processBulkPayroll(request))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("approved");
+            verify(payslipRepository, never()).save(any());
+            verify(payrollRunRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Bulk processing reuses an unreleased (PROCESSED) run for the period")
+        void bulkReusesUnreleasedRun() {
+            payrollRun.setStatus(PayrollStatus.PROCESSED);
+            UUID employeeId = UUID.randomUUID();
+            when(payrollRunRepository.findByTenantIdAndPayPeriodYearAndPayPeriodMonth(tenantId, 2025, 1))
+                    .thenReturn(Optional.of(payrollRun));
+            when(employeeRepository.findAllByIdInAndTenantId(List.of(employeeId), tenantId)).thenReturn(List.of());
+            BulkPayrollRequest request = new BulkPayrollRequest(List.of(employeeId),
+                    LocalDate.of(2025, 1, 1), LocalDate.of(2025, 1, 31), null, null);
+
+            BulkPayrollProcessResponse response = payrollRunService.processBulkPayroll(request);
+
+            assertThat(response.payrollRunId()).isEqualTo(payrollRun.getId());
+            verify(payrollRunRepository, never()).findByTenantIdAndPeriodForUpdate(any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("completeProcessing transitions a PROCESSING run to PROCESSED")
+        void completeProcessingFromProcessing() {
+            UUID runId = payrollRun.getId();
+            payrollRun.setStatus(PayrollStatus.PROCESSING);
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)).thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            assertThat(payrollRunService.completeProcessing(runId, userId).getStatus())
+                    .isEqualTo(PayrollStatus.PROCESSED);
+        }
+
+        @Test
+        @DisplayName("completeProcessing is a no-op for already finished runs (redelivered event)")
+        void completeProcessingIdempotentWhenProcessed() {
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)).thenReturn(Optional.of(payrollRun));
+
+            for (PayrollStatus status : List.of(PayrollStatus.PROCESSED, PayrollStatus.APPROVED, PayrollStatus.LOCKED)) {
+                payrollRun.setStatus(status);
+                assertThat(payrollRunService.completeProcessing(runId, userId)).isSameAs(payrollRun);
+            }
+            verify(payrollRunRepository, never()).save(any());
+            verify(payslipRepository, never()).save(any());
+            verifyNoInteractions(payrollPeriodLock, auditLogService);
+        }
+
+        @Test
+        @DisplayName("completeProcessing rejects DRAFT runs without generating payslips")
+        void completeProcessingRejectsOtherStatuses() {
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId)).thenReturn(Optional.of(payrollRun));
+
+            payrollRun.setStatus(PayrollStatus.DRAFT);
+            assertThatThrownBy(() -> payrollRunService.completeProcessing(runId, userId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("only PROCESSING payroll runs can be completed");
+            verify(employeeRepository, never()).findByTenantId(any());
+            verify(payrollRunRepository, never()).save(any());
         }
     }
 }

@@ -30,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -70,6 +72,17 @@ public class PayslipService {
             throw new IllegalArgumentException("Payslip already exists for this employee and period");
         }
 
+        Optional<PayrollRun> run = findRun(payslip.getPayrollRunId(), tenantId);
+        run.ifPresent(r -> {
+            assertNotReleased(r, "create a payslip in");
+            if (!Objects.equals(r.getPayPeriodYear(), payslip.getPayPeriodYear())
+                    || !Objects.equals(r.getPayPeriodMonth(), payslip.getPayPeriodMonth())) {
+                throw new IllegalArgumentException("Payslip period " + payslip.getPayPeriodYear() + "/"
+                        + payslip.getPayPeriodMonth() + " does not match payroll run period "
+                        + r.getPayPeriodYear() + "/" + r.getPayPeriodMonth());
+            }
+        });
+
         payslip.calculateTotals();
         return payslipRepository.save(payslip);
     }
@@ -80,6 +93,13 @@ public class PayslipService {
 
         Payslip payslip = payslipRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found"));
+
+        findRun(payslip.getPayrollRunId(), tenantId).ifPresent(r -> assertNotReleased(r, "update a payslip of"));
+        if (payslipData.getPayrollRunId() != null
+                && !payslipData.getPayrollRunId().equals(payslip.getPayrollRunId())) {
+            findRun(payslipData.getPayrollRunId(), tenantId)
+                    .ifPresent(r -> assertNotReleased(r, "move a payslip into"));
+        }
 
         payslip.setPayrollRunId(payslipData.getPayrollRunId());
         payslip.setEmployeeId(payslipData.getEmployeeId());
@@ -245,9 +265,25 @@ public class PayslipService {
                         .orElse(false);
     }
 
+    private Optional<PayrollRun> findRun(UUID payrollRunId, UUID tenantId) {
+        return payrollRunId == null
+                ? Optional.empty()
+                : payrollRunRepository.findByIdAndTenantId(payrollRunId, tenantId);
+    }
+
+    /** Payslips of released (APPROVED/LOCKED) runs are immutable. */
+    private static void assertNotReleased(PayrollRun run, String action) {
+        if (RELEASED_STATUSES.contains(run.getStatus())) {
+            throw new IllegalStateException("Cannot " + action + " a "
+                    + run.getStatus().name().toLowerCase(Locale.ROOT) + " payroll run");
+        }
+    }
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deletePayslip(UUID id) {
         Payslip payslip = getPayslipById(id);
+        findRun(payslip.getPayrollRunId(), payslip.getTenantId())
+                .ifPresent(r -> assertNotReleased(r, "delete a payslip of"));
         payslip.softDelete();
         payslipRepository.save(payslip);
 
@@ -280,6 +316,8 @@ public class PayslipService {
 
         Payslip payslip = payslipRepository.findByIdAndTenantId(payslipId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Payslip not found: " + payslipId));
+        findRun(payslip.getPayrollRunId(), tenantId)
+                .ifPresent(r -> assertNotReleased(r, "apply statutory deductions to a payslip of"));
 
         // S10-B: route via the strategy factory so non-IN tenants can plug in their own
         // calculators. For IN the IndianStatutoryCalculator delegates to the legacy

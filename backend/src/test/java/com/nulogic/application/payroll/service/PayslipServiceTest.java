@@ -1,6 +1,11 @@
 package com.nulogic.application.payroll.service;
 
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.application.payroll.dto.StatutoryDeductions;
+import com.nulogic.application.payroll.strategy.StatutoryCalculator;
+import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
+import com.nulogic.application.payroll.strategy.StatutoryResult;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
@@ -48,6 +53,10 @@ class PayslipServiceTest {
     private DataScopeService dataScopeService;
     @Mock
     private PayrollRunRepository payrollRunRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
+    @Mock
+    private StatutoryCalculatorFactory statutoryCalculatorFactory;
     @InjectMocks
     private PayslipService payslipService;
     private UUID tenantId;
@@ -472,6 +481,158 @@ class PayslipServiceTest {
 
             assertThatThrownBy(() -> payslipService.deletePayslip(invalidId))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("Released Run Immutability Tests")
+    class ReleasedRunImmutabilityTests {
+
+        private PayrollRun run(PayrollStatus status, int year, int month) {
+            PayrollRun run = new PayrollRun();
+            run.setStatus(status);
+            run.setPayPeriodYear(year);
+            run.setPayPeriodMonth(month);
+            return run;
+        }
+
+        private void stubRun(UUID runId, PayrollStatus status) {
+            when(payrollRunRepository.findByIdAndTenantId(runId, tenantId))
+                    .thenReturn(Optional.of(run(status, 2025, 1)));
+        }
+
+        @Test
+        @DisplayName("Create rejects a payslip targeting an APPROVED run")
+        void createRejectsReleasedRun() {
+            when(payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 1)).thenReturn(false);
+            stubRun(payrollRunId, PayrollStatus.APPROVED);
+
+            assertThatThrownBy(() -> payslipService.createPayslip(payslip))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("approved payroll run");
+            verify(payslipRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Create rejects a payslip whose period differs from its run's period")
+        void createRejectsPeriodMismatch() {
+            when(payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 1)).thenReturn(false);
+            when(payrollRunRepository.findByIdAndTenantId(payrollRunId, tenantId))
+                    .thenReturn(Optional.of(run(PayrollStatus.DRAFT, 2025, 2)));
+
+            assertThatThrownBy(() -> payslipService.createPayslip(payslip))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("does not match payroll run period");
+            verify(payslipRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Create allows a payslip in an unreleased run of the same period")
+        void createAllowsUnreleasedRun() {
+            when(payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 1)).thenReturn(false);
+            stubRun(payrollRunId, PayrollStatus.PROCESSED);
+            when(payslipRepository.save(any(Payslip.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            assertThat(payslipService.createPayslip(payslip)).isSameAs(payslip);
+        }
+
+        @Test
+        @DisplayName("Update rejects a payslip whose current run is LOCKED")
+        void updateRejectsCurrentReleasedRun() {
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubRun(payrollRunId, PayrollStatus.LOCKED);
+
+            assertThatThrownBy(() -> payslipService.updatePayslip(payslip.getId(), payslip))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("locked payroll run");
+            verify(payslipRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Update rejects moving a payslip into an APPROVED run")
+        void updateRejectsMoveIntoReleasedRun() {
+            UUID targetRunId = UUID.randomUUID();
+            Payslip data = Payslip.builder().payrollRunId(targetRunId).employeeId(employeeId)
+                    .payPeriodYear(2025).payPeriodMonth(1).build();
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubRun(payrollRunId, PayrollStatus.DRAFT);
+            stubRun(targetRunId, PayrollStatus.APPROVED);
+
+            assertThatThrownBy(() -> payslipService.updatePayslip(payslip.getId(), data))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("move a payslip into");
+            verify(payslipRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Update allows a payslip of a PROCESSED run")
+        void updateAllowsUnreleasedRun() {
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubRun(payrollRunId, PayrollStatus.PROCESSED);
+            when(payslipRepository.save(any(Payslip.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            assertThat(payslipService.updatePayslip(payslip.getId(), payslip)).isSameAs(payslip);
+        }
+
+        @Test
+        @DisplayName("Delete rejects a payslip of an APPROVED run")
+        void deleteRejectsReleasedRun() {
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubRun(payrollRunId, PayrollStatus.APPROVED);
+
+            assertThatThrownBy(() -> payslipService.deletePayslip(payslip.getId()))
+                    .isInstanceOf(IllegalStateException.class);
+            assertThat(payslip.isDeleted()).isFalse();
+            verify(payslipRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Delete allows a payslip of a DRAFT run")
+        void deleteAllowsUnreleasedRun() {
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubRun(payrollRunId, PayrollStatus.DRAFT);
+            when(payslipRepository.save(any(Payslip.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            payslipService.deletePayslip(payslip.getId());
+
+            assertThat(payslip.isDeleted()).isTrue();
+        }
+
+        @Test
+        @DisplayName("Statutory apply rejects a payslip of a LOCKED run")
+        void statutoryRejectsReleasedRun() {
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubRun(payrollRunId, PayrollStatus.LOCKED);
+            payslipService.setStatutoryCalculatorFactory(statutoryCalculatorFactory);
+
+            assertThatThrownBy(() -> payslipService.applyStatutoryDeductions(payslip.getId(), "Karnataka"))
+                    .isInstanceOf(IllegalStateException.class);
+            verifyNoInteractions(statutoryCalculatorFactory);
+            verify(payslipRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Statutory apply allows a payslip of a PROCESSED run")
+        void statutoryAllowsUnreleasedRun() {
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubRun(payrollRunId, PayrollStatus.PROCESSED);
+            StatutoryCalculator calculator = mock(StatutoryCalculator.class);
+            StatutoryResult result = mock(StatutoryResult.class);
+            StatutoryDeductions deductions = StatutoryDeductions.builder()
+                    .employeePf(BigDecimal.ZERO).employerPf(BigDecimal.ZERO)
+                    .employeeEsi(BigDecimal.ZERO).employerEsi(BigDecimal.ZERO)
+                    .professionalTax(BigDecimal.ZERO).tdsMonthly(BigDecimal.ZERO)
+                    .build();
+            when(statutoryCalculatorFactory.forTenant(tenantId)).thenReturn(calculator);
+            when(calculator.calculate(any())).thenReturn(result);
+            when(result.legacyIndiaView()).thenReturn(deductions);
+            payslipService.setStatutoryCalculatorFactory(statutoryCalculatorFactory);
+
+            assertThat(payslipService.applyStatutoryDeductions(payslip.getId(), "Karnataka")).isSameAs(deductions);
+            verify(payslipRepository).save(payslip);
         }
     }
 }

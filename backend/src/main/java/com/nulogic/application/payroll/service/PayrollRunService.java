@@ -118,8 +118,9 @@ public class PayrollRunService {
         PayrollRun payrollRun = payrollRunRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
 
-        if (payrollRun.getStatus() == PayrollStatus.LOCKED) {
-            throw new IllegalStateException("Cannot update locked payroll run");
+        if (payrollRun.getStatus() == PayrollStatus.PROCESSING
+                || PayslipService.RELEASED_STATUSES.contains(payrollRun.getStatus())) {
+            throw new IllegalStateException("Cannot update " + statusLabel(payrollRun) + " payroll run");
         }
 
         // DATA-6: changing the period must not collide with another run for the
@@ -242,6 +243,16 @@ public class PayrollRunService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public PayrollRun completeProcessing(UUID id, UUID processedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
+        if (payrollRun.getStatus() == PayrollStatus.PROCESSED
+                || PayslipService.RELEASED_STATUSES.contains(payrollRun.getStatus())) {
+            // Redelivered event for a run that already finished: acknowledge without recomputing.
+            log.warn("Payroll run {} is already {}; ignoring duplicate completion request", id, payrollRun.getStatus());
+            return payrollRun;
+        }
+        if (payrollRun.getStatus() != PayrollStatus.PROCESSING) {
+            throw new IllegalStateException("Cannot complete processing of " + statusLabel(payrollRun)
+                    + " payroll run; only PROCESSING payroll runs can be completed");
+        }
         // T1-04: period-wide advisory lock so any other code path that might
         // be computing payslips for (tenant, year, month) — legacy sync call,
         // ad-hoc replay, retried delivery on a different consumer instance —
@@ -660,8 +671,9 @@ public class PayrollRunService {
     public void deletePayrollRun(UUID id) {
         PayrollRun payrollRun = getPayrollRunById(id);
 
-        if (payrollRun.getStatus() == PayrollStatus.LOCKED) {
-            throw new IllegalStateException("Cannot delete locked payroll run");
+        if (payrollRun.getStatus() != PayrollStatus.DRAFT) {
+            throw new IllegalStateException("Cannot delete " + statusLabel(payrollRun)
+                    + " payroll run; only DRAFT payroll runs can be deleted");
         }
 
         payrollRun.softDelete();
@@ -832,8 +844,20 @@ public class PayrollRunService {
         return run;
     }
 
+    private static String statusLabel(PayrollRun payrollRun) {
+        return payrollRun.getStatus().name().toLowerCase(Locale.ROOT);
+    }
+
     private PayrollRun findOrCreateBulkRun(UUID tenantId, int year, int month, LocalDate paymentDate) {
-        return payrollRunRepository.findByTenantIdAndPayPeriodYearAndPayPeriodMonth(tenantId, year, month)
+        Optional<PayrollRun> existing =
+                payrollRunRepository.findByTenantIdAndPayPeriodYearAndPayPeriodMonth(tenantId, year, month);
+        existing.filter(run -> PayslipService.RELEASED_STATUSES.contains(run.getStatus()))
+                .ifPresent(run -> {
+                    throw new IllegalStateException("Cannot bulk-process payroll for " + year + "/" + month
+                            + ": the payroll run for this period is " + statusLabel(run)
+                            + " and its payslips can no longer be changed");
+                });
+        return existing
                 .orElseGet(() -> {
                     PayrollRun run = new PayrollRun();
                     run.setPayPeriodMonth(month);
