@@ -239,10 +239,24 @@ public class JwtTokenProvider {
                 return false;
             }
 
+            if (isRevokedForTenant(claims, issuedAt)) {
+                return false;
+            }
+
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
             return false;
         }
+    }
+
+    /**
+     * M-C4: honour the tenant-wide "revoked before" marker written by
+     * {@link TokenBlacklistService#revokeAllTokensForTenant} (e.g. on tenant suspension).
+     */
+    private boolean isRevokedForTenant(Claims claims, Date issuedAt) {
+        String tenantId = claims.get("tenantId", String.class);
+        return tenantId != null && issuedAt != null
+                && tokenBlacklistService.isTenantTokenRevokedBefore(UUID.fromString(tenantId), issuedAt.toInstant());
     }
 
     /**
@@ -279,6 +293,10 @@ public class JwtTokenProvider {
             Date issuedAt = claims.getIssuedAt();
             if (userId != null && issuedAt != null &&
                     tokenBlacklistService.isTokenRevokedByTimestamp(userId, issuedAt)) {
+                return false;
+            }
+
+            if (isRevokedForTenant(claims, issuedAt)) {
                 return false;
             }
 
@@ -383,6 +401,15 @@ public class JwtTokenProvider {
         Claims claims = getClaims(token);
         List<String> roles = claims.get("roles", List.class);
         return roles != null ? new HashSet<>(roles) : Collections.emptySet();
+    }
+
+    /**
+     * Whether the token carries a {@code roles} claim at all (possibly empty).
+     * Every access-token generator in this class always writes it, so its absence
+     * marks a token this application did not mint through a supported path.
+     */
+    public boolean hasRolesClaim(String token) {
+        return getClaims(token).containsKey("roles");
     }
 
     /**

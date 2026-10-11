@@ -40,6 +40,9 @@ class UserAnonymizerTest {
     @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
 
+    @Mock
+    private com.nulogic.common.security.UserAuthStatusCache userAuthStatusCache;
+
     @InjectMocks
     private UserAnonymizer anonymizer;
 
@@ -80,6 +83,7 @@ class UserAnonymizerTest {
         String originalEmail = anonymizer.anonymize(USER_ID, TENANT_ID);
 
         assertThat(originalEmail).isEqualTo("alice@example.com");
+        verify(userAuthStatusCache).evict(TENANT_ID, USER_ID);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(captor.capture());

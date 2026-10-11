@@ -294,6 +294,101 @@ class JwtTokenProviderTest {
         }
     }
 
+    @Nested
+    @DisplayName("validateToken — tenant-wide revocation (M-C4)")
+    class TenantRevocationTests {
+
+        private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate =
+                org.mockito.Mockito.mock(org.springframework.data.redis.core.StringRedisTemplate.class);
+        @SuppressWarnings("unchecked")
+        private final org.springframework.data.redis.core.ValueOperations<String, String> valueOps =
+                org.mockito.Mockito.mock(org.springframework.data.redis.core.ValueOperations.class);
+        private JwtTokenProvider provider;
+
+        @BeforeEach
+        void setUpRealBlacklist() {
+            when(redisTemplate.opsForValue()).thenReturn(valueOps);
+            provider = new JwtTokenProvider(new TokenBlacklistService(redisTemplate));
+            ReflectionTestUtils.setField(provider, "jwtSecret", VALID_SECRET);
+            ReflectionTestUtils.setField(provider, "jwtExpiration", EXPIRATION_MS);
+            ReflectionTestUtils.setField(provider, "refreshTokenExpiration", REFRESH_EXPIRATION_MS);
+        }
+
+        @Test
+        @DisplayName("Token issued before the tenant revocation marker is rejected")
+        void tokenIssuedBeforeTenantRevocationIsRejected() {
+            UUID tenantId = UUID.randomUUID();
+            String token = buildValidToken(UUID.randomUUID(), tenantId);
+            long revokedAt = provider.getIssuedAtFromToken(token).getTime() + 5_000L;
+            when(valueOps.get("revoked_before_tenant:" + tenantId)).thenReturn(String.valueOf(revokedAt));
+
+            assertThat(provider.validateToken(token)).isFalse();
+        }
+
+        @Test
+        @DisplayName("Token issued after the tenant revocation marker stays valid")
+        void tokenIssuedAfterTenantRevocationIsValid() {
+            UUID tenantId = UUID.randomUUID();
+            String token = buildValidToken(UUID.randomUUID(), tenantId);
+            long revokedAt = provider.getIssuedAtFromToken(token).getTime() - 60_000L;
+            when(valueOps.get("revoked_before_tenant:" + tenantId)).thenReturn(String.valueOf(revokedAt));
+
+            assertThat(provider.validateToken(token)).isTrue();
+        }
+
+        @Test
+        @DisplayName("Revocation of another tenant does not affect this tenant's token")
+        void otherTenantRevocationIgnored() {
+            String token = buildValidToken(UUID.randomUUID(), UUID.randomUUID());
+
+            assertThat(provider.validateToken(token)).isTrue();
+        }
+
+        @Test
+        @DisplayName("Refresh token issued before the tenant revocation marker is rejected")
+        void refreshTokenIssuedBeforeTenantRevocationIsRejected() {
+            UUID tenantId = UUID.randomUUID();
+            String refresh = provider.generateRefreshToken("user@example.com", tenantId, UUID.randomUUID());
+            long revokedAt = provider.getIssuedAtFromToken(refresh).getTime() + 5_000L;
+            when(valueOps.get("revoked_before_tenant:" + tenantId)).thenReturn(String.valueOf(revokedAt));
+
+            assertThat(provider.validateRefreshToken(refresh)).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("hasRolesClaim (#14)")
+    class RolesClaimTests {
+
+        @Test
+        @DisplayName("Token with roles claim (even empty) reports it")
+        void tokenWithRolesClaim() {
+            assertThat(tokenProvider.hasRolesClaim(buildValidToken(UUID.randomUUID(), UUID.randomUUID()))).isTrue();
+
+            Date now = new Date();
+            String emptyRoles = Jwts.builder()
+                    .issuer(ISSUER).audience().add(AUDIENCE).and()
+                    .subject("user@example.com")
+                    .claim("roles", List.of())
+                    .issuedAt(now).expiration(new Date(now.getTime() + EXPIRATION_MS))
+                    .signWith(signingKey()).compact();
+            assertThat(tokenProvider.hasRolesClaim(emptyRoles)).isTrue();
+        }
+
+        @Test
+        @DisplayName("Token without roles claim reports its absence")
+        void tokenWithoutRolesClaim() {
+            Date now = new Date();
+            String noRoles = Jwts.builder()
+                    .issuer(ISSUER).audience().add(AUDIENCE).and()
+                    .subject("user@example.com")
+                    .claim("type", "access")
+                    .issuedAt(now).expiration(new Date(now.getTime() + EXPIRATION_MS))
+                    .signWith(signingKey()).compact();
+            assertThat(tokenProvider.hasRolesClaim(noRoles)).isFalse();
+        }
+    }
+
     // -----------------------------------------------------------------------
     // validateJwtSecret startup guard tests
     // -----------------------------------------------------------------------

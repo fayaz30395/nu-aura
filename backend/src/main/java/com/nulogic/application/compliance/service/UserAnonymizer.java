@@ -1,5 +1,6 @@
 package com.nulogic.application.compliance.service;
 
+import com.nulogic.common.security.UserAuthStatusCache;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.user.repository.UserRepository;
@@ -91,6 +92,7 @@ public class UserAnonymizer {
 
     private final UserRepository userRepository;
     private final TenantTimeService tenantTimeService;
+    private final UserAuthStatusCache userAuthStatusCache;
     private final SecureRandom secureRandom = new SecureRandom();
 
     /**
@@ -161,6 +163,7 @@ public class UserAnonymizer {
         // keep the read flow in the audit logger (which runs on a different
         // @Async thread) seeing the committed row, not the L1 cache copy.
         userRepository.save(user);
+        userAuthStatusCache.evict(tenantId, userId);
 
         log.info("UserAnonymizer: anonymised user {} in tenant {} — status=INACTIVE, "
                 + "PII fields wiped, anonymized_at stamped", userId, tenantId);

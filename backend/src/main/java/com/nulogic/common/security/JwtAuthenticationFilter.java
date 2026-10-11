@@ -5,7 +5,6 @@ import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.tenant.Tenant;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.tenant.repository.TenantStatusCache;
-import com.nulogic.infrastructure.user.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,10 +40,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // PERF (wave-3 2.1): cached lookup so the per-request tenant-status check is
     // served from Redis instead of hitting PostgreSQL on every authenticated call.
     private final TenantStatusCache tenantStatusCache;
-    // SEC (S10-E): used for the GDPR-Art.17 anonymised-principal guard below.
-    // Only the {@code anonymized_at} column is selected, so this check is a
-    // single index seek per request rather than a full user hydration.
-    private final UserRepository userRepository;
+    // SEC (S10-E): GDPR-Art.17 / deactivated-principal guard. 30s Redis-cached
+    // verdict, so a DB read happens at most once per user per TTL window.
+    private final UserAuthStatusCache userAuthStatusCache;
 
     /**
      * SEC: Bearer header fallback is OFF by default. When false (prod default),
@@ -60,18 +58,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                    ScopeContextService scopeContextService,
                                    SecurityService securityService,
                                    TenantStatusCache tenantStatusCache,
-                                   UserRepository userRepository) {
+                                   UserAuthStatusCache userAuthStatusCache) {
         this.tokenProvider = tokenProvider;
         this.userDetailsService = userDetailsService;
         this.employeeRepository = employeeRepository;
         this.scopeContextService = scopeContextService;
         this.securityService = securityService;
         this.tenantStatusCache = tenantStatusCache;
-        // S10-E left this field unwired in the constructor — without an
-        // assignment the file fails javac's "final field might not have been
-        // initialized" check and the whole module won't compile. Constructor
-        // injection mirrors the other repositories above.
-        this.userRepository = userRepository;
+        this.userAuthStatusCache = userAuthStatusCache;
     }
 
     @Override
@@ -82,6 +76,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+                // SEC (#14): every access-token generator writes a "roles" claim. A token
+                // without one would previously fall into the legacy branch below and get
+                // GLOBAL scope on every permission, so it is treated as invalid instead.
+                if (!tokenProvider.hasRolesClaim(jwt)) {
+                    throw new RejectedPrincipalException("token has no roles claim");
+                }
+
                 String username = tokenProvider.getUsernameFromToken(jwt);
                 UUID tenantId = tokenProvider.getTenantIdFromToken(jwt);
 
@@ -116,6 +117,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // it regardless of later auth failures.
                 if (tenantId != null) {
                     TenantContext.setCurrentTenant(tenantId);
+                }
+
+                // SEC (S10-E): reject deactivated / anonymised (GDPR Art. 17)
+                // principals before their access token expires. Runs after TenantContext
+                // is set because the users table is under strict RLS. Impersonation tokens
+                // are skipped: the impersonator's row lives in their home tenant, which RLS
+                // hides under the target tenant; those tokens are 15-min and separately
+                // revocable via impersonationJti.
+                if (!tokenProvider.isImpersonationToken(jwt)) {
+                    UUID principalUserId = tokenProvider.getUserIdFromToken(jwt);
+                    if (!userAuthStatusCache.isActive(tenantId, principalUserId)) {
+                        throw new RejectedPrincipalException(
+                                "user " + principalUserId + " is not active or has been anonymised");
+                    }
                 }
 
                 // Try to get NU Platform app-aware claims from token
@@ -272,6 +287,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             username, appCode, roles, permissionScopes.keySet());
                 }
             }
+        } catch (RejectedPrincipalException ex) {
+            // Same outcome as an invalid token: continue unauthenticated, so protected
+            // endpoints answer 401 via the authentication entry point.
+            log.warn("Rejecting JWT from IP {} path {}: {}",
+                    request.getRemoteAddr(), request.getRequestURI(), ex.getMessage());
+            SecurityContextHolder.clearContext();
+            TenantContext.clear();
         } catch (JwtException | UsernameNotFoundException | IllegalArgumentException ex) {
             logger.error("Could not set user authentication in security context", ex);
         }
@@ -282,6 +304,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Clear SecurityContext ThreadLocal after request completes
             SecurityContext.clear();
             TenantContext.clear();
+        }
+    }
+
+    private static final class RejectedPrincipalException extends RuntimeException {
+        RejectedPrincipalException(String message) {
+            super(message, null, false, false);
         }
     }
 
