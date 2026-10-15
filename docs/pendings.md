@@ -93,6 +93,12 @@ this batch (4319 tests, 3 pre-existing/environmental failures unrelated to this 
 - [x] **Wiki approval enforcement** — done (`US-2FYDT45QRKY5`): page-publish flow now checks
       `isApprovalRequired`, sets PENDING_APPROVAL, adds approve/reject endpoints.
 - [x] **360-feedback peer nomination** — done (`US-2FYDT4BEB1G7`): nomination hook + UI wired.
+  - **Correction 2026-10-13:** the employee-side endpoint exists (`Feedback360Controller`,
+    `POST /feedback360/cycles/{cycleId}/requests`), but its authorization was unscoped: any
+    holder could nominate any subject and reviewer. Scoping is in the working tree
+    (`Feedback360Service.nominateReviewer`: actor must be the subject, the subject's manager, or
+    hold `FEEDBACK_360:MANAGE`; tenant and cycle-state checks; duplicates rejected). It was
+    uncommitted at the time of the check.
 - [x] **Competing 360-feedback implementation** — resolved: `CalibrationMatrix.tsx` +
       `FeedbackRequestForm`/`FeedbackResponseForm.tsx` confirmed dead, deleted (`US-2FYDXEMGD2V1`).
 - [ ] **Fluence ActivityFeed wiring** — `ActivityFeed.tsx` (complete, actively maintained)
@@ -113,6 +119,12 @@ this batch (4319 tests, 3 pre-existing/environmental failures unrelated to this 
       calls `payrollService` directly instead, and the whole feature is gated off by
       `BULK_PROCESSING_AVAILABLE = false` in `payroll.service.ts:456`. Deliberate, not a bug —
       flagging in case someone wants to revisit flipping the flag.
+      - **Correction 2026-10-13:** the `false` gate above is wrong. `BULK_PROCESSING_AVAILABLE` is
+        `true` at `frontend/lib/services/hrms/payroll.service.ts:544` (not `false` at `:456`), and
+        `BulkProcessingWizard.tsx:184` renders the feature when it is true. No backend
+        `BULK_PROCESSING` flag exists; `/runs/bulk/preview|process` are gated only by
+        `PAYROLL_PROCESS`. Do not rely on any flag-gating story. Whether the unused hooks in
+        `usePayroll.ts` are dead code is still unverified.
 - [ ] **Expense-advance + compensation-cycle hook clusters** — ~80 individually-unused hooks
       found across `useExpenses`/`useCompensation`/etc; the expense-advance lifecycle
       (`useCreateExpenseAdvance`/`useApproveExpenseAdvance`/`useDisburseExpenseAdvance`/
@@ -140,6 +152,12 @@ this batch (4319 tests, 3 pre-existing/environmental failures unrelated to this 
       `IntegrationEventRouterTest`, `AssetManagementControllerTest`,
       `NotificationControllerTest`, `RoleControllerTest`, `AdminServiceTest`) — needs a call:
       fix and re-enable, or delete. Dead weight either way until decided.
+  - **Correction 2026-10-13:** re-verified by grep before any action. Only one backend test
+    carries `@Disabled` (`backend/src/test/java/com/nulogic/integration/RlsNoBypassTest.java`), and
+    none of the 10 classes listed above is annotated as skipped. Three of the names have no
+    matching file (`TenantScopingArchitectureTest`, `DocuSignApiClientTest`,
+    `AnalyticsControllerTest`). The "inert since the rename" premise is not proven. Re-scope
+    before acting.
 
 ## ✅ Done this workstream
 

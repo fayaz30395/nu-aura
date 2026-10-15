@@ -1,0 +1,99 @@
+{
+  "items": [
+    {
+      "id": "row-level-security",
+      "status": "fixed",
+      "evidence": "PASS: 324/324 tenant_id tables RLS+FORCE+restrictive policy on clean PG16 apply; outbox_events intentional exception"
+    },
+    {
+      "id": "stop-idor-bugs",
+      "status": "pending",
+      "evidence": "PARTIAL: Fixed travel req/expense, letters, F&F edit freeze with tests; exit clearances, onboarding, esign, training etc. unreviewed/open"
+    },
+    {
+      "id": "never-trust-the-frontend",
+      "status": "pending",
+      "evidence": "PARTIAL: Fixed travel expense employee/approver, F&F employeeId; exit clearance and several status DTOs still client-driven"
+    },
+    {
+      "id": "auth-on-every-api-route",
+      "status": "fixed",
+      "evidence": "PASS: SecurityConfig.java:189-251 explicit permitAll + anyRequest().authenticated(); RbacAnnotationCoverageTest passes; whitelisted controllers' non-public methods all gated; PermissionAspect.java:92 rejects empty annotation. Risks noted: PreboardingController.java:103, PlatformController.java:162"
+    },
+    {
+      "id": "hide-admin-pages-properly",
+      "status": "fixed",
+      "evidence": "FIXED: proxy.ts:467 default-deny + admin role gate; AuthGuard + routes.ts:43-154 gate all app/admin pages (catch-all = SYSTEM_ADMIN); added missing /settings/security/api-keys SYSTEM_ADMIN config (routes.ts) + test routes.test.ts; backend admin APIs enforce SYSTEM_ADMIN/ROLE_MANAGE/AUDIT_VIEW; 175 vitest pass"
+    },
+    {
+      "id": "rate-limiting",
+      "status": "fixed",
+      "evidence": "FIXED: PUBLIC 20/min bucket for public portals; AUTH/PUBLIC keyed by IP (garbage-header rotation bypass closed); RateLimitingFilterTest 4 pass. Open: render profile lacks forward-headers-strategy; biometric per-key not keyed"
+    },
+    {
+      "id": "captcha-on-public-forms",
+      "status": "pending",
+      "evidence": "FAIL: reCAPTCHA only on password login after 3 failures (AuthService, prod enabled). None on careers/offers/preboarding; DSR authenticated only. Stopgap per-IP PUBLIC bucket; recommend CaptchaService.verify on public POSTs (decision needed)"
+    },
+    {
+      "id": "lock-down-cors",
+      "status": "fixed",
+      "evidence": "PASS: SecurityConfig.corsConfigurationSource explicit origins, throws on empty/wildcard, explicit allowed headers; prod/render https defaults"
+    },
+    {
+      "id": "security-headers",
+      "status": "fixed",
+      "evidence": "PASS: SecurityHeadersFilter + SecurityConfig CSP on backend; next.config.js headers + proxy.ts CSP/HSTS on Next"
+    },
+    {
+      "id": "https-everywhere",
+      "status": "pending",
+      "evidence": "PARTIAL: cookie.secure true, HSTS, no http URLs in prod/render; render yml missing server.forward-headers-strategy (prod has framework)"
+    },
+    {
+      "id": "sanitize-user-input",
+      "status": "pending",
+      "evidence": "PARTIAL: PASS: 469/487 @RequestBody are @Valid (rest are signed webhooks/legacy); ValidationAdvice XSS/SQLi denylist; FE every dangerouslySetInnerHTML wrapped by DOMPurify (frontend/lib/utils/sanitize.ts, learning play page:118, fluence/search:624); Tiptap Link isAllowedUri (ContentViewer.tsx:48); export formula guard ExportService.java:218, CustomReportService.csvEscape, ExcelExportService.neutralizeFormula, CellValueSanitizer on imports. PARTIAL: no server-side HTML sanitization of stored rich text, denylist-only"
+    },
+    {
+      "id": "parameterized-queries",
+      "status": "fixed",
+      "evidence": "FIXED: All @Query/native/jdbcTemplate/FluenceContentRetriever.java:213-250 use bind params; no user string concat in SQL. M-6 sort stripping already in WikiPageService:228, KnowledgeSearchService:44, MultiChannelNotificationService:130. Defect: native findInboxForUser (StepExecutionRepository:156) fed client Pageable via ApprovalsController:54/WorkflowController:175; fixed in WorkflowService.java ~994 + test WorkflowServiceTest"
+    },
+    {
+      "id": "check-file-upload-types",
+      "status": "fixed",
+      "evidence": "PASS: FileStorageService.java: type allowlist+per-type size caps validateFile ~417, magic bytes detectMimeType ~470 (ZIP only for OOXML), sanitizeOriginalFilename:574, extension allowlist getFileExtension:596, category allowlist, objectName server-generated (tenant/category/entity/ts_uuid), AV scan scanForMalware fail-closed in prod (M-7); all upload endpoints route through it or parse-only imports; download FileUploadController:149-180 octet-stream + attachment + sanitized filename; multipart cap 10MB application.yml:171. Minor: text/plain magic weak (not exploitable given download headers)"
+    },
+    {
+      "id": "log-admin-actions",
+      "status": "fixed",
+      "evidence": "FIXED: AuditLogService.logAction actor fallback; ReportController.buildResponse audit; tests pass"
+    },
+    {
+      "id": "debug-mode-off-in-prod",
+      "status": "fixed",
+      "evidence": "FIXED: application-render.yml springdoc disabled; application-prod.yml:206-220; default profile dev application.yml:17 Open: SPRING_PROFILES_ACTIVE defaults to dev."
+    },
+    {
+      "id": "private-storage-buckets",
+      "status": "fixed",
+      "evidence": "PASS: GoogleDriveStorageProvider.getDownloadUrl throws; FileUploadController.assertTenantOwns:234"
+    },
+    {
+      "id": "update-vulnerable-packages",
+      "status": "pending",
+      "evidence": "PARTIAL: npm audit --omit=dev: 2 moderate (exceljs, uuid), 0 high/crit. Full: 30 (3 crit: orval, tinypool, vitest; 19 high, dev-tooling). Backend not scanned with versions plugin; bucket4j 8.10.1, jjwt/poi/openpdf via properties, no upgrades done"
+    },
+    {
+      "id": "verify-webhook-signatures",
+      "status": "fixed",
+      "evidence": "FIXED: SlackCommandService: bypass only for default/dev/local/test profiles, bad timestamp returns false; SlackSignatureVerificationTest 4 pass, 61 related tests pass. Open: Slack body re-read after @RequestParam likely empty (no caching wrapper); DocuSign HMAC compared as hex (DocuSign sends base64) and has no replay window Open: Slack body-cache and DocuSign base64 may reject valid callbacks (fail-closed)."
+    },
+    {
+      "id": "claude-security-review",
+      "status": "fixed",
+      "evidence": "PASS: Reviewed SecurityConfig/CsrfDoubleSubmitFilter diff (CSRF skip narrowed to exact machine paths, good), no new unannotated endpoints or e.getMessage leaks into responses found"
+    }
+  ]
+}

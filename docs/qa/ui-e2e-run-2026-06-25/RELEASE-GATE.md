@@ -1,5 +1,12 @@
 # NU-AURA Release Gate — 2026-06-25 (rev 2)
 
+> **Historical record, annotated 2026-10-13.** This UI gate run is superseded. Do not use its
+> GO verdict as the current release status. The current security verdict is NOT_PASS in
+> `docs/security/gate-status-2026-10-10.md`, and remediation status is tracked in
+> `docs/pendings.md`. Later findings include the Flyway migration rewrite in `6ffccf49` and the
+> 2026-10-13 authorization and CSRF findings. Statements below such as "Flyway HEAD (prod) V315"
+> and "pending `railway up`" describe 2026-06-25 and are not current.
+
 ## Verdict: ✅ GO
 
 **Score: 100 / 100**
