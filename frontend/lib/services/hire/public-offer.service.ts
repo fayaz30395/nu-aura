@@ -27,11 +27,13 @@ export interface AcceptOfferRequest {
   email: string;
   confirmedJoiningDate?: string;
   signatureData?: string;
+  captchaToken?: string;
 }
 
 export interface DeclineOfferRequest {
   email: string;
   declineReason?: string;
+  captchaToken?: string;
 }
 
 class PublicOfferService {

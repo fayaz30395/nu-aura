@@ -13,6 +13,7 @@ import {Input} from '@/components/ui/Input';
 import {Textarea} from '@/components/ui/Textarea';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate} from '@/lib/utils/format/date';
+import {getRecaptchaToken} from '@/lib/utils/recaptcha';
 
 const log = createLogger('PreboardingPortalPage');
 
@@ -96,10 +97,11 @@ export default function PreboardingPortalPage() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('documentType', docType);
+      const captchaToken = await getRecaptchaToken('preboarding_document');
       const response = await publicApiClient.post<PreboardingData>(
         `/preboarding/portal/${token}/documents`,
         formData,
-        {headers: {'Content-Type': 'multipart/form-data'}},
+        {headers: {'Content-Type': 'multipart/form-data', ...(captchaToken && {'X-Captcha-Token': captchaToken})}},
       );
       setData(response.data);
     } catch (err) {
@@ -151,7 +153,10 @@ export default function PreboardingPortalPage() {
   const savePersonalInfo = async (formData: PersonalInfoFormData) => {
     setSaving(true);
     try {
-      const response = await publicApiClient.put<PreboardingData>(`/preboarding/portal/${token}/personal-info`, formData);
+      const response = await publicApiClient.put<PreboardingData>(`/preboarding/portal/${token}/personal-info`, {
+        ...formData,
+        captchaToken: await getRecaptchaToken('preboarding_personal'),
+      });
       setData(response.data);
       setActiveStep(1);
     } catch (err) {
@@ -181,7 +186,10 @@ export default function PreboardingPortalPage() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {bankAccountNumberConfirm: _confirm, ...payload} = formData;
     try {
-      const response = await publicApiClient.put<PreboardingData>(`/preboarding/portal/${token}/bank-details`, payload);
+      const response = await publicApiClient.put<PreboardingData>(`/preboarding/portal/${token}/bank-details`, {
+        ...payload,
+        captchaToken: await getRecaptchaToken('preboarding_bank'),
+      });
       setData(response.data);
       setActiveStep(2);
     } catch (err) {
@@ -194,7 +202,10 @@ export default function PreboardingPortalPage() {
   const signOfferLetter = async () => {
     setSaving(true);
     try {
-      const response = await publicApiClient.post<PreboardingData>(`/preboarding/portal/${token}/sign-offer`);
+      const captchaToken = await getRecaptchaToken('preboarding_sign');
+      const response = await publicApiClient.post<PreboardingData>(`/preboarding/portal/${token}/sign-offer`, undefined, {
+        headers: {...(captchaToken && {'X-Captcha-Token': captchaToken})},
+      });
       setData(response.data);
     } catch (err) {
       log.error('Failed to sign offer letter:', err);

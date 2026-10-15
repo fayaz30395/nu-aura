@@ -361,7 +361,7 @@ function buildCsp(request: NextRequest, nonce: string): string {
       // SEC: explicit img-src allowlist (was 'https:' wildcard — too permissive, allowed exfil to any HTTPS host)
       "img-src 'self' data: blob: https://lh3.googleusercontent.com https://*.amazonaws.com https://*.cloudfront.net https://storage.googleapis.com https://media.licdn.com https://ui-avatars.com https://drive.google.com",
       "font-src 'self' https://fonts.gstatic.com",
-      "frame-src 'self' https://docs.google.com https://accounts.google.com",
+      "frame-src 'self' https://docs.google.com https://accounts.google.com https://www.google.com/recaptcha/",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",

@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {publicApiClient} from '@/lib/api/public-client';
+import {getRecaptchaToken} from '@/lib/utils/recaptcha';
 import {type CareersFilters, usePublicJobs} from '@/lib/hooks/queries/useCareers';
 import {
   AlertCircle,
@@ -287,6 +288,9 @@ const ApplicationModal: React.FC<{
       if (resumeFile) {
         formDataObj.append('resume', resumeFile);
       }
+
+      const captchaToken = await getRecaptchaToken('careers_apply');
+      if (captchaToken) formDataObj.append('captchaToken', captchaToken);
 
       await publicApiClient.post('/careers/apply', formDataObj);
 
