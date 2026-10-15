@@ -373,6 +373,32 @@ class HelpdeskSLAServiceTest {
     }
 
     @Test
+    void acknowledgeOwnEscalation_addressee_acknowledges() {
+        UUID addressee = UUID.randomUUID();
+        when(escalationRepository.findUnacknowledgedForUser(tenantId, addressee))
+                .thenReturn(List.of(testEscalation));
+        when(escalationRepository.findByIdAndTenantId(escalationId, tenantId))
+                .thenReturn(Optional.of(testEscalation));
+        when(escalationRepository.save(any(TicketEscalation.class))).thenReturn(testEscalation);
+
+        helpdeskSLAService.acknowledgeOwnEscalation(tenantId, escalationId, addressee);
+
+        assertEquals(addressee, testEscalation.getAcknowledgedBy());
+    }
+
+    @Test
+    void acknowledgeOwnEscalation_nonAddressee_denied_and_not_mutated() {
+        UUID stranger = UUID.randomUUID();
+        when(escalationRepository.findUnacknowledgedForUser(tenantId, stranger)).thenReturn(List.of());
+
+        assertThrows(org.springframework.security.access.AccessDeniedException.class,
+                () -> helpdeskSLAService.acknowledgeOwnEscalation(tenantId, escalationId, stranger));
+
+        assertNull(testEscalation.getAcknowledgedBy());
+        verify(escalationRepository, never()).save(any(TicketEscalation.class));
+    }
+
+    @Test
     void getEscalationsForTicket_Success() {
         when(escalationRepository.findAllByTicketIdOrderByEscalatedAtDesc(ticketId))
                 .thenReturn(List.of(testEscalation));

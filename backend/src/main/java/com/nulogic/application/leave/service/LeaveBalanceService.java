@@ -414,6 +414,8 @@ public class LeaveBalanceService {
         UUID tenantId = TenantContext.getCurrentTenant();
         int toYear = fromYear + 1;
         int count = 0;
+        // Idempotency key reuses the accrual ledger (accrual_period is varchar(7)): "CF-2025".
+        String periodKey = "CF-" + fromYear;
 
         List<LeaveBalance> allBalances = leaveBalanceRepository.findAllByTenantIdAndYear(tenantId, fromYear);
 
@@ -438,6 +440,20 @@ public class LeaveBalanceService {
                     && carryAmount.compareTo(leaveType.getMaxCarryForwardDays()) > 0) {
                 carryAmount = leaveType.getMaxCarryForwardDays();
             }
+
+            // Re-run guard: ledger row per (employee, leave type, from-year) blocks a second credit.
+            if (leaveAccrualLedgerRepository.existsByTenantIdAndEmployeeIdAndLeaveTypeIdAndAccrualPeriod(
+                    tenantId, oldBalance.getEmployeeId(), oldBalance.getLeaveTypeId(), periodKey)) {
+                continue;
+            }
+            LeaveAccrualLedger ledgerEntry = LeaveAccrualLedger.builder()
+                    .employeeId(oldBalance.getEmployeeId())
+                    .leaveTypeId(oldBalance.getLeaveTypeId())
+                    .accrualPeriod(periodKey)
+                    .amount(carryAmount)
+                    .build();
+            ledgerEntry.setTenantId(tenantId);
+            leaveAccrualLedgerRepository.saveAndFlush(ledgerEntry);
 
             // Create or update next year's balance — entity is managed after this call;
             // mutations below are flushed by JPA dirty-checking at transaction commit.

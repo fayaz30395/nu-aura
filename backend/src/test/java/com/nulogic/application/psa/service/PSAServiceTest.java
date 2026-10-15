@@ -7,6 +7,7 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.psa.PSAInvoice;
 import com.nulogic.domain.psa.PSAProject;
 import com.nulogic.domain.psa.PSAProjectAllocation;
 import com.nulogic.domain.psa.PSATimeEntry;
@@ -34,6 +35,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +47,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -66,6 +69,8 @@ class PSAServiceTest {
     private PSATimeEntryRepository timeEntryRepository;
     @Mock
     private PSAInvoiceRepository invoiceRepository;
+    @Mock
+    private com.nulogic.infrastructure.project.repository.ProjectTimeEntryRepository projectTimeEntryRepository;
     @Mock
     private TenantTimeService tenantTimeService;
 
@@ -292,6 +297,8 @@ class PSAServiceTest {
         void addTimeEntry_ownDraft_derivesServerFields() {
             timesheetOf(callerId, PSATimesheet.TimesheetStatus.DRAFT);
             when(projectRepository.existsByIdAndTenantId(projectId, tenantId)).thenReturn(true);
+            when(allocationRepository.existsByTenantIdAndProjectIdAndEmployeeIdAndIsActiveTrue(
+                    tenantId, projectId, callerId)).thenReturn(true);
             when(timeEntryRepository.save(any(PSATimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
 
             PSATimeEntry saved = psaService.addTimeEntry(timesheetId, entryRequest());
@@ -303,6 +310,109 @@ class PSAServiceTest {
             assertThat(saved.getProjectId()).isEqualTo(projectId);
             assertThat(saved.getHours()).isEqualTo(8.0);
             assertThat(saved.getIsBillable()).isTrue();
+        }
+
+
+        @Test
+        @DisplayName("addTimeEntry rejects an employee who is not allocated to the project")
+        void addTimeEntry_notAllocated_rejected() {
+            timesheetOf(callerId, PSATimesheet.TimesheetStatus.DRAFT);
+            when(projectRepository.existsByIdAndTenantId(projectId, tenantId)).thenReturn(true);
+            when(allocationRepository.existsByTenantIdAndProjectIdAndEmployeeIdAndIsActiveTrue(
+                    tenantId, projectId, callerId)).thenReturn(false);
+
+            assertThatThrownBy(() -> psaService.addTimeEntry(timesheetId, entryRequest()))
+                    .isInstanceOf(ValidationException.class);
+            verify(timeEntryRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("addTimeEntry rejects an entry date outside the timesheet week")
+        void addTimeEntry_dateOutsideWeek_rejected() {
+            PSATimesheet ts = timesheetOf(callerId, PSATimesheet.TimesheetStatus.DRAFT);
+            ts.setWeekStartDate(LocalDate.of(2026, 1, 12));
+            ts.setWeekEndDate(LocalDate.of(2026, 1, 18));
+            when(projectRepository.existsByIdAndTenantId(projectId, tenantId)).thenReturn(true);
+
+            assertThatThrownBy(() -> psaService.addTimeEntry(timesheetId, entryRequest())) // 2026-01-05
+                    .isInstanceOf(ValidationException.class)
+                    .hasMessageContaining("outside the timesheet week");
+            verify(timeEntryRepository, never()).save(any());
+            verify(timesheetRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("addTimeEntry recomputes timesheet totals from persisted entries, ignoring client totals")
+        void addTimeEntry_recomputesTotals() {
+            PSATimesheet ts = timesheetOf(callerId, PSATimesheet.TimesheetStatus.DRAFT);
+            ts.setWeekStartDate(LocalDate.of(2026, 1, 5));
+            ts.setWeekEndDate(LocalDate.of(2026, 1, 11));
+            ts.setTotalHours(999.0); // forged
+            when(projectRepository.existsByIdAndTenantId(projectId, tenantId)).thenReturn(true);
+            when(allocationRepository.existsByTenantIdAndProjectIdAndEmployeeIdAndIsActiveTrue(
+                    tenantId, projectId, callerId)).thenReturn(true);
+            when(timeEntryRepository.save(any(PSATimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(timeEntryRepository.findByTenantIdAndTimesheetIdOrderByEntryDateAsc(tenantId, timesheetId))
+                    .thenReturn(List.of(
+                            PSATimeEntry.builder().hours(8.0).isBillable(true).build(),
+                            PSATimeEntry.builder().hours(2.0).isBillable(false).build()));
+
+            psaService.addTimeEntry(timesheetId, entryRequest());
+
+            assertThat(ts.getTotalHours()).isEqualTo(10.0);
+            assertThat(ts.getBillableHours()).isEqualTo(8.0);
+            assertThat(ts.getNonBillableHours()).isEqualTo(2.0);
+            verify(timesheetRepository).save(ts);
+        }
+
+        @Test
+        @DisplayName("submitTimesheet recomputes totals from persisted entries")
+        void submitTimesheet_recomputesTotals() {
+            PSATimesheet ts = timesheetOf(callerId, PSATimesheet.TimesheetStatus.DRAFT);
+            ts.setTotalHours(500.0);
+            ts.setBillableHours(500.0);
+            when(tenantTimeService.now(tenantId)).thenReturn(java.time.LocalDateTime.of(2026, 1, 1, 9, 0));
+            when(timesheetRepository.save(any(PSATimesheet.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(timeEntryRepository.findByTenantIdAndTimesheetIdOrderByEntryDateAsc(tenantId, timesheetId))
+                    .thenReturn(List.of(PSATimeEntry.builder().hours(6.0).isBillable(true).build()));
+
+            PSATimesheet submitted = psaService.submitTimesheet(timesheetId).orElseThrow();
+
+            assertThat(submitted.getTotalHours()).isEqualTo(6.0);
+            assertThat(submitted.getBillableHours()).isEqualTo(6.0);
+            assertThat(submitted.getNonBillableHours()).isEqualTo(0.0);
+        }
+
+        @Test
+        @DisplayName("rejectTimesheet records the rejecting actor and time")
+        void rejectTimesheet_recordsActor() {
+            PSATimesheet ts = timesheetOf(otherEmployeeId, PSATimesheet.TimesheetStatus.SUBMITTED);
+            callerManages(otherEmployeeId);
+            when(tenantTimeService.now(tenantId)).thenReturn(java.time.LocalDateTime.of(2026, 1, 1, 9, 0));
+            when(timesheetRepository.save(any(PSATimesheet.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            PSATimesheet rejected = psaService.rejectTimesheet(timesheetId, "fix hours").orElseThrow();
+
+            assertThat(rejected.getStatus()).isEqualTo(PSATimesheet.TimesheetStatus.REJECTED);
+            assertThat(rejected.getApprovedBy()).isEqualTo(callerId);
+            assertThat(rejected.getApprovedAt()).isNotNull();
+            assertThat(rejected.getRejectionReason()).isEqualTo("fix hours");
+        }
+
+        @Test
+        @DisplayName("createTimesheet discards client-supplied totals and decision fields")
+        void createTimesheet_discardsClientTotals() {
+            PSATimesheet in = PSATimesheet.builder().employeeId(callerId)
+                    .totalHours(80.0).billableHours(80.0).approvedBy(otherEmployeeId)
+                    .status(PSATimesheet.TimesheetStatus.APPROVED).build();
+            when(timesheetRepository.save(any(PSATimesheet.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            PSATimesheet saved = psaService.createTimesheet(in);
+
+            assertThat(saved.getStatus()).isEqualTo(PSATimesheet.TimesheetStatus.DRAFT);
+            assertThat(saved.getTotalHours()).isZero();
+            assertThat(saved.getBillableHours()).isZero();
+            assertThat(saved.getApprovedBy()).isNull();
         }
 
         @Test
@@ -439,6 +549,140 @@ class PSAServiceTest {
             assertThatThrownBy(() -> psaService.rejectTimesheet(timesheetId, "nope"))
                     .isInstanceOf(AccessDeniedException.class);
             verify(timesheetRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Invoice lifecycle")
+    class InvoiceLifecycle {
+
+        private UUID invoiceId;
+
+        @BeforeEach
+        void setUpInvoice() {
+            invoiceId = UUID.randomUUID();
+            lenient().when(invoiceRepository.save(any(PSAInvoice.class))).thenAnswer(i -> i.getArgument(0));
+        }
+
+        private PSAInvoice invoiceIn(PSAInvoice.InvoiceStatus status) {
+            PSAInvoice inv = PSAInvoice.builder().id(invoiceId).tenantId(tenantId).status(status)
+                    .billableAmount(new BigDecimal("100.00")).taxAmount(new BigDecimal("10.00"))
+                    .totalAmount(new BigDecimal("110.00")).build();
+            when(invoiceRepository.findByIdAndTenantIdForUpdate(invoiceId, tenantId)).thenReturn(Optional.of(inv));
+            return inv;
+        }
+
+        @Test
+        @DisplayName("approveInvoice moves DRAFT to SENT")
+        void approve_draft_sent() {
+            invoiceIn(PSAInvoice.InvoiceStatus.DRAFT);
+
+            assertThat(psaService.approveInvoice(invoiceId).orElseThrow().getStatus())
+                    .isEqualTo(PSAInvoice.InvoiceStatus.SENT);
+        }
+
+        @Test
+        @DisplayName("approveInvoice refuses every non-DRAFT status and saves nothing")
+        void approve_nonDraft_conflict() {
+            PSAInvoice inv = invoiceIn(PSAInvoice.InvoiceStatus.SENT);
+            for (PSAInvoice.InvoiceStatus s : new PSAInvoice.InvoiceStatus[]{
+                    PSAInvoice.InvoiceStatus.SENT, PSAInvoice.InvoiceStatus.PAID,
+                    PSAInvoice.InvoiceStatus.CANCELLED, PSAInvoice.InvoiceStatus.OVERDUE,
+                    PSAInvoice.InvoiceStatus.PARTIALLY_PAID}) {
+                inv.setStatus(s);
+                assertThatThrownBy(() -> psaService.approveInvoice(invoiceId))
+                        .isInstanceOf(IllegalStateException.class);
+            }
+            verify(invoiceRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("updateInvoice cannot touch a non-DRAFT invoice")
+        void update_nonDraft_conflict() {
+            invoiceIn(PSAInvoice.InvoiceStatus.PAID);
+
+            assertThatThrownBy(() -> psaService.updateInvoice(invoiceId,
+                    PSAInvoice.builder().billableAmount(BigDecimal.ONE).build()))
+                    .isInstanceOf(IllegalStateException.class);
+            verify(invoiceRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("updateInvoice ignores payload status/paid/project fields and recomputes the total")
+        void update_draft_ignoresProtectedFields() {
+            PSAInvoice existing = invoiceIn(PSAInvoice.InvoiceStatus.DRAFT);
+            UUID realProject = UUID.randomUUID();
+            existing.setProjectId(realProject);
+            PSAInvoice payload = PSAInvoice.builder()
+                    .status(PSAInvoice.InvoiceStatus.PAID)
+                    .paidAt(java.time.LocalDateTime.now())
+                    .projectId(UUID.randomUUID())
+                    .tenantId(UUID.randomUUID())
+                    .billableAmount(new BigDecimal("200.00"))
+                    .taxAmount(new BigDecimal("20.00"))
+                    .notes("n").build();
+            when(projectTimeEntryRepository.existsByTenantIdAndInvoiceId(tenantId, invoiceId)).thenReturn(false);
+
+            PSAInvoice saved = psaService.updateInvoice(invoiceId, payload).orElseThrow();
+
+            assertThat(saved.getStatus()).isEqualTo(PSAInvoice.InvoiceStatus.DRAFT);
+            assertThat(saved.getPaidAt()).isNull();
+            assertThat(saved.getProjectId()).isEqualTo(realProject);
+            assertThat(saved.getTenantId()).isEqualTo(tenantId);
+            assertThat(saved.getTotalAmount()).isEqualByComparingTo("220.00");
+            assertThat(saved.getNotes()).isEqualTo("n");
+        }
+
+        @Test
+        @DisplayName("updateInvoice keeps the billable amount of an invoice generated from time entries")
+        void update_generatedInvoice_amountLocked() {
+            invoiceIn(PSAInvoice.InvoiceStatus.DRAFT);
+            when(projectTimeEntryRepository.existsByTenantIdAndInvoiceId(tenantId, invoiceId)).thenReturn(true);
+
+            PSAInvoice saved = psaService.updateInvoice(invoiceId,
+                    PSAInvoice.builder().billableAmount(new BigDecimal("1.00")).build()).orElseThrow();
+
+            assertThat(saved.getBillableAmount()).isEqualByComparingTo("100.00");
+        }
+
+        @Test
+        @DisplayName("updateInvoice is empty for an invoice outside the tenant")
+        void update_otherTenant_empty() {
+            when(invoiceRepository.findByIdAndTenantIdForUpdate(invoiceId, tenantId)).thenReturn(Optional.empty());
+
+            assertThat(psaService.updateInvoice(invoiceId, PSAInvoice.builder().build())).isEmpty();
+            verify(invoiceRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("createInvoice forces DRAFT, clears paid state and computes the total server-side")
+        void create_forcesDraft() {
+            PSAInvoice in = PSAInvoice.builder()
+                    .status(PSAInvoice.InvoiceStatus.PAID)
+                    .paidAt(java.time.LocalDateTime.now())
+                    .billableAmount(new BigDecimal("50.00"))
+                    .taxAmount(new BigDecimal("5.00"))
+                    .totalAmount(new BigDecimal("1.00")).build();
+            when(tenantTimeService.today(tenantId)).thenReturn(LocalDate.of(2026, 2, 3));
+
+            PSAInvoice saved = psaService.createInvoice(in);
+
+            assertThat(saved.getStatus()).isEqualTo(PSAInvoice.InvoiceStatus.DRAFT);
+            assertThat(saved.getPaidAt()).isNull();
+            assertThat(saved.getTotalAmount()).isEqualByComparingTo("55.00");
+            assertThat(saved.getTenantId()).isEqualTo(tenantId);
+            assertThat(saved.getInvoiceDate()).isEqualTo(LocalDate.of(2026, 2, 3));
+        }
+
+        @Test
+        @DisplayName("createInvoice rejects a missing or negative billable amount")
+        void create_invalidAmount_rejected() {
+            assertThatThrownBy(() -> psaService.createInvoice(PSAInvoice.builder().build()))
+                    .isInstanceOf(ValidationException.class);
+            assertThatThrownBy(() -> psaService.createInvoice(
+                    PSAInvoice.builder().billableAmount(new BigDecimal("-1")).build()))
+                    .isInstanceOf(ValidationException.class);
+            verify(invoiceRepository, never()).save(any());
         }
     }
 }

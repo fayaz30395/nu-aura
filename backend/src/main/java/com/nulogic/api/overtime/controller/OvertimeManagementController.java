@@ -6,7 +6,6 @@ import com.nulogic.api.overtime.dto.OvertimeRecordResponse;
 import com.nulogic.application.overtime.service.OvertimeManagementService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
-import com.nulogic.common.security.SecurityContext;
 import com.nulogic.domain.overtime.CompTimeBalance;
 import com.nulogic.domain.overtime.CompTimeTransaction;
 import jakarta.validation.Valid;
@@ -47,7 +46,6 @@ public class OvertimeManagementController {
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     public ResponseEntity<OvertimeRecordResponse> createOvertimeRecord(
             @Valid @RequestBody OvertimeRecordRequest request) {
-        log.info("Creating overtime record for employee: {}", request.getEmployeeId());
         OvertimeRecordResponse response = overtimeManagementService.createOvertimeRecord(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -57,11 +55,9 @@ public class OvertimeManagementController {
     public ResponseEntity<OvertimeRecordResponse> approveOrRejectOvertime(
             @PathVariable UUID recordId,
             @Valid @RequestBody OvertimeApprovalRequest request) {
-        UUID approverId = SecurityContext.getCurrentEmployeeId() != null
-                ? SecurityContext.getCurrentEmployeeId() : SecurityContext.getCurrentUserId();
-        log.info("Processing approval for overtime record: {} by approver: {}", recordId, approverId);
+        log.info("Processing approval for overtime record: {}", recordId);
         OvertimeRecordResponse response = overtimeManagementService
-                .approveOrRejectOvertime(recordId, approverId, request);
+                .approveOrRejectOvertime(recordId, request);
         return ResponseEntity.ok(response);
     }
 

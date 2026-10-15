@@ -3,6 +3,7 @@ package com.nulogic.application.attendance.service;
 import com.nulogic.common.config.AttendanceConfigProperties;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.logging.Audited;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
@@ -51,6 +52,7 @@ public class CompOffService {
     private final LeaveTypeRepository leaveTypeRepository;
     private final AttendanceConfigProperties config;
     private final TenantTimeService tenantTimeService;
+    private final AttendanceActorScope actorScope;
 
     // ========== Accrual ==========
 
@@ -60,8 +62,10 @@ public class CompOffService {
      */
     @Transactional
     @Audited(action = AuditAction.CREATE, entityType = "COMP_OFF_REQUEST", description = "Created comp-off request")
-    public CompOffRequest requestCompOff(UUID employeeId, LocalDate attendanceDate, String reason) {
+    public CompOffRequest requestCompOff(LocalDate attendanceDate, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        // Comp-off is always requested for the authenticated employee, never a body-supplied one
+        UUID employeeId = actorScope.requireActor();
 
         AttendanceRecord record = attendanceRecordRepository
                 .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, attendanceDate, tenantId)
@@ -107,11 +111,12 @@ public class CompOffService {
      */
     @Transactional
     @Audited(action = AuditAction.APPROVE, entityType = "COMP_OFF_REQUEST", description = "Approved comp-off request and credited leave")
-    public CompOffRequest approveCompOff(UUID requestId, UUID approverId, String note) {
+    public CompOffRequest approveCompOff(UUID requestId, String note) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
         CompOffRequest request = compOffRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("CompOff request not found: " + requestId));
+        UUID approverId = actorScope.requireApprovalAccess(request.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
 
         if (request.getStatus() != CompOffRequest.CompOffStatus.PENDING) {
             throw new IllegalStateException("Request is not in PENDING state: " + request.getStatus());
@@ -137,11 +142,12 @@ public class CompOffService {
      */
     @Transactional
     @Audited(action = AuditAction.REJECT, entityType = "COMP_OFF_REQUEST", description = "Rejected comp-off request")
-    public CompOffRequest rejectCompOff(UUID requestId, UUID approverId, String note) {
+    public CompOffRequest rejectCompOff(UUID requestId, String note) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
         CompOffRequest request = compOffRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("CompOff request not found: " + requestId));
+        UUID approverId = actorScope.requireApprovalAccess(request.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
 
         if (request.getStatus() != CompOffRequest.CompOffStatus.PENDING) {
             throw new IllegalStateException("Request is not in PENDING state: " + request.getStatus());
@@ -162,19 +168,24 @@ public class CompOffService {
     @Transactional(readOnly = true)
     public Page<CompOffRequest> getEmployeeCompOffHistory(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        actorScope.requireViewAccess(employeeId);
         return compOffRequestRepository.findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<CompOffRequest> getPendingRequests(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return compOffRequestRepository.findAllByTenantIdAndStatus(
-                tenantId, CompOffRequest.CompOffStatus.PENDING, pageable);
+        // Scope is part of the query, so every page is full and the total counts only what the approver may see
+        return compOffRequestRepository.findAll((root, query, cb) -> cb.and(
+                cb.equal(root.get("tenantId"), tenantId),
+                cb.equal(root.get("status"), CompOffRequest.CompOffStatus.PENDING),
+                actorScope.approvable(Permission.ATTENDANCE_APPROVE, root.get("employeeId"), query, cb)), pageable);
     }
 
     @Transactional(readOnly = true)
     public List<CompOffRequest> getMyPendingRequests(UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        actorScope.requireViewAccess(employeeId);
         return compOffRequestRepository.findPendingByEmployee(tenantId, employeeId);
     }
 

@@ -135,7 +135,7 @@ public class LoanController {
             @Parameter(description = "Loan UUID") @PathVariable UUID id,
             @Valid @RequestBody RecordRepaymentRequest request
     ) {
-        return ResponseEntity.ok(loanService.recordRepayment(id, request.getAmount()));
+        return ResponseEntity.ok(loanService.recordRepayment(id, request.getAmount(), request.getReferenceNumber(), request.getPaymentDate()));
     }
 
     @PostMapping("/{id}/cancel")

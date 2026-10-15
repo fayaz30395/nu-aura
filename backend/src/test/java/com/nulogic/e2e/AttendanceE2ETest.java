@@ -2,6 +2,7 @@ package com.nulogic.e2e;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.application.attendance.service.AttendanceRecordService;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
@@ -58,6 +59,8 @@ class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
     private ObjectMapper objectMapper;
     @Autowired
     private AttendanceRecordService attendanceRecordService;
+    @Autowired
+    private TenantTimeService tenantTimeService;
     @Autowired
     private AttendanceRecordRepository attendanceRecordRepository;
     @Autowired
@@ -434,18 +437,20 @@ class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
     @Test
     @Order(10)
     @WithMockUser(username = "employee@test.com", roles = {"EMPLOYEE"})
-    @DisplayName("E2E: Check-in with explicit attendanceDate")
+    @DisplayName("E2E: Check-in ignores client-supplied attendanceDate and uses tenant date")
     void checkIn_WithAttendanceDate_Success() throws Exception {
         Employee tzEmployee = createTestEmployee("TZ_EMP");
         UUID tzEmployeeId = tzEmployee.getId();
 
         try {
-            LocalDate today = LocalDate.now();
+            // Web punches use the server's tenant clock; derive the expected date from the same source.
+            LocalDate today = tenantTimeService.today(TEST_TENANT_ID);
             Map<String, Object> checkInRequest = new HashMap<>();
             checkInRequest.put("employeeId", tzEmployeeId.toString());
             checkInRequest.put("source", "WEB");
-            checkInRequest.put("attendanceDate", today.toString());
-            checkInRequest.put("checkInTime", LocalDateTime.now().toString());
+            // Client-supplied date/time must be ignored (cannot backdate a punch)
+            checkInRequest.put("attendanceDate", today.minusDays(5).toString());
+            checkInRequest.put("checkInTime", LocalDateTime.now().minusDays(5).toString());
 
             mockMvc.perform(post(BASE_URL + "/check-in")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -473,7 +478,8 @@ class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
         UUID cycleEmployeeId = cycleEmployee.getId();
 
         try {
-            LocalDate today = LocalDate.now();
+            // Web punches use the server's tenant clock; derive the expected date from the same source.
+            LocalDate today = tenantTimeService.today(TEST_TENANT_ID);
 
             // Check-in
             Map<String, Object> checkInRequest = new HashMap<>();
@@ -527,7 +533,8 @@ class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
         UUID multiEmployeeId = multiEmployee.getId();
 
         try {
-            LocalDate today = LocalDate.now();
+            // Web punches use the server's tenant clock; derive the expected date from the same source.
+            LocalDate today = tenantTimeService.today(TEST_TENANT_ID);
 
             // First cycle - morning session
             Map<String, Object> request1 = new HashMap<>();
@@ -582,7 +589,8 @@ class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
         UUID closeEmployeeId = closeEmployee.getId();
 
         try {
-            LocalDate today = LocalDate.now();
+            // Web punches use the server's tenant clock; derive the expected date from the same source.
+            LocalDate today = tenantTimeService.today(TEST_TENANT_ID);
 
             // Check-in
             Map<String, Object> request = new HashMap<>();
@@ -640,7 +648,8 @@ class AttendanceE2ETest extends AbstractPostgresIntegrationTest {
         UUID myTimeEmployeeId = myTimeEmployee.getId();
 
         try {
-            LocalDate today = LocalDate.now();
+            // Web punches use the server's tenant clock; derive the expected date from the same source.
+            LocalDate today = tenantTimeService.today(TEST_TENANT_ID);
 
             // Create check-in
             Map<String, Object> request = new HashMap<>();

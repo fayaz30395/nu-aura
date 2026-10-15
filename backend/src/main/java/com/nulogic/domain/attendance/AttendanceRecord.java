@@ -322,8 +322,8 @@ public class AttendanceRecord extends TenantAware {
         if (rejectionReason != null && !rejectionReason.isEmpty()) {
             this.regularizationReason = this.regularizationReason + " [REJECTED: " + rejectionReason + "]";
         }
-        // Revert to absent status since regularization was rejected
-        this.status = AttendanceStatus.ABSENT;
+        // Rejected: no punches means absent; real punches stay valid (the service restores the prior status)
+        this.status = this.checkInTime == null ? AttendanceStatus.ABSENT : AttendanceStatus.PRESENT;
     }
 
     /**

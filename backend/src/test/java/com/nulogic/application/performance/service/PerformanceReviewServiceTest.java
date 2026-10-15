@@ -101,6 +101,16 @@ class PerformanceReviewServiceTest {
                 .thenReturn(java.time.LocalDateTime.now());
     }
 
+    private void actAs(UUID employeeIdOfCaller) {
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeIdOfCaller, Collections.emptySet(), Collections.emptyMap());
+    }
+
+    private void actAsHr(UUID employeeIdOfCaller) {
+        SecurityContext.setCurrentUser(UUID.randomUUID(), employeeIdOfCaller, Collections.emptySet(),
+                java.util.Map.of(com.nulogic.common.security.Permission.CALIBRATION_MANAGE,
+                        com.nulogic.domain.user.RoleScope.ALL));
+    }
+
     @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
@@ -223,6 +233,7 @@ class PerformanceReviewServiceTest {
             ReviewRequest request = new ReviewRequest();
             request.setOverallRating(new BigDecimal("4.8"));
             request.setManagerComments("Updated comments");
+            actAs(reviewerId); // MANAGER review: only the assigned reviewer may edit it
 
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -362,6 +373,9 @@ class PerformanceReviewServiceTest {
         @Test
         @DisplayName("Should submit review successfully")
         void shouldSubmitReviewSuccessfully() {
+            actAs(reviewerId); // MANAGER review: only the assigned reviewer may submit it
+            reviewCycle.setStatus(ReviewCycle.CycleStatus.MANAGER_REVIEW);
+            when(reviewCycleRepository.findByIdAndTenantId(reviewCycleId, tenantId)).thenReturn(Optional.of(reviewCycle));
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -476,6 +490,7 @@ class PerformanceReviewServiceTest {
             competency.setId(UUID.randomUUID());
             competency.setCreatedAt(LocalDateTime.now());
 
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
             when(competencyRepository.findAllByTenantIdAndReviewId(tenantId, reviewId))
                     .thenReturn(List.of(competency));
 
@@ -483,6 +498,135 @@ class PerformanceReviewServiceTest {
 
             assertThat(result).hasSize(1);
             assertThat(result.get(0).getCompetencyName()).isEqualTo("Leadership");
+        }
+    }
+
+    @Nested
+    @DisplayName("Review authorization (IDOR / stage)")
+    class ReviewAuthzTests {
+
+        @Test
+        @DisplayName("updateReview denied for the subject on a MANAGER review, no mutation")
+        void updateDeniedForSubjectOnManagerReview() {
+            ReviewRequest request = new ReviewRequest();
+            request.setOverallRating(new BigDecimal("1.0"));
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+
+            assertThatThrownBy(() -> performanceReviewService.updateReview(reviewId, request))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+
+            assertThat(review.getOverallRating()).isEqualTo(new BigDecimal("4.5"));
+            verify(reviewRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("updateReview denied for an unrelated employee")
+        void updateDeniedForStranger() {
+            actAs(UUID.randomUUID());
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+
+            assertThatThrownBy(() -> performanceReviewService.updateReview(reviewId, new ReviewRequest()))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            verify(reviewRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("updateReview: the assigned reviewer cannot reassign the review to another employee")
+        void updateReviewerCannotReassign() {
+            actAs(reviewerId);
+            ReviewRequest request = new ReviewRequest();
+            request.setEmployeeId(UUID.randomUUID());
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+
+            assertThatThrownBy(() -> performanceReviewService.updateReview(reviewId, request))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThat(review.getEmployeeId()).isEqualTo(employeeId);
+            verify(reviewRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("updateReview: the reviewer cannot edit a COMPLETED review")
+        void updateFinalisedReviewBlocked() {
+            actAs(reviewerId);
+            review.setStatus(PerformanceReview.ReviewStatus.COMPLETED);
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+
+            assertThatThrownBy(() -> performanceReviewService.updateReview(reviewId, new ReviewRequest()))
+                    .isInstanceOf(IllegalStateException.class);
+            verify(reviewRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("updateReview: HR authority may update any review")
+        void updateAllowedForHr() {
+            actAsHr(UUID.randomUUID());
+            ReviewRequest request = new ReviewRequest();
+            request.setManagerComments("HR edit");
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+            when(reviewRepository.save(any(PerformanceReview.class))).thenAnswer(i -> i.getArgument(0));
+
+            assertThat(performanceReviewService.updateReview(reviewId, request).getManagerComments()).isEqualTo("HR edit");
+        }
+
+        @Test
+        @DisplayName("submitReview denied for the subject of a MANAGER review, status unchanged")
+        void submitDeniedForSubject() {
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+
+            assertThatThrownBy(() -> performanceReviewService.submitReview(reviewId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThat(review.getStatus()).isEqualTo(PerformanceReview.ReviewStatus.DRAFT);
+            verify(reviewRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("submitReview rejected when the cycle is not in the matching stage")
+        void submitRejectedInWrongStage() {
+            actAs(reviewerId);
+            reviewCycle.setStatus(ReviewCycle.CycleStatus.SELF_ASSESSMENT);
+            when(reviewCycleRepository.findByIdAndTenantId(reviewCycleId, tenantId)).thenReturn(Optional.of(reviewCycle));
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+
+            assertThatThrownBy(() -> performanceReviewService.submitReview(reviewId))
+                    .isInstanceOf(IllegalStateException.class);
+            verify(reviewRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("getCompetencies denied for an unrelated employee, nothing read from competency table")
+        void competenciesDeniedForStranger() {
+            actAs(UUID.randomUUID());
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+
+            assertThatThrownBy(() -> performanceReviewService.getCompetencies(reviewId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            verify(competencyRepository, never()).findAllByTenantIdAndReviewId(any(), any());
+        }
+
+        @Test
+        @DisplayName("getPendingReviews allowed for the reviewer themself")
+        void pendingAllowedForSelf() {
+            actAs(reviewerId);
+            when(reviewRepository.findPendingReviews(tenantId, reviewerId)).thenReturn(List.of(review));
+            when(employeeRepository.findAllById(any())).thenReturn(List.of(employee, reviewer));
+            when(reviewCycleRepository.findAllById(any())).thenReturn(List.of(reviewCycle));
+
+            assertThat(performanceReviewService.getPendingReviews(reviewerId)).hasSize(1);
+        }
+
+        @Test
+        @DisplayName("getPendingReviews denied when another reviewer's employee is out of the caller's scope")
+        void pendingDeniedOutOfScope() {
+            UUID other = UUID.randomUUID();
+            when(employeeRepository.exists(ArgumentMatchers.<Specification<Employee>>any()))
+                    .thenReturn(true)    // target exists
+                    .thenReturn(false);  // but not in scope
+            when(dataScopeService.getScopeSpecification(com.nulogic.common.security.Permission.REVIEW_VIEW))
+                    .thenReturn((root, query, cb) -> cb.conjunction());
+
+            assertThatThrownBy(() -> performanceReviewService.getPendingReviews(other))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            verify(reviewRepository, never()).findPendingReviews(any(), any());
         }
     }
 }

@@ -7,8 +7,12 @@ import com.nulogic.api.recruitment.dto.ScorecardTemplateResponse;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.recruitment.Applicant;
+import com.nulogic.domain.recruitment.Interview;
 import com.nulogic.domain.recruitment.InterviewScorecard;
 import com.nulogic.domain.recruitment.ScorecardTemplate;
+import com.nulogic.infrastructure.recruitment.repository.ApplicantRepository;
+import com.nulogic.infrastructure.recruitment.repository.InterviewRepository;
 import com.nulogic.infrastructure.recruitment.repository.InterviewScorecardRepository;
 import com.nulogic.infrastructure.recruitment.repository.ScorecardTemplateCriterionRepository;
 import com.nulogic.infrastructure.recruitment.repository.ScorecardTemplateRepository;
@@ -18,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
@@ -48,6 +53,10 @@ class ScorecardServiceTest {
     private InterviewScorecardRepository scorecardRepository;
     @Mock
     private TenantTimeService tenantTimeService;
+    @Mock
+    private InterviewRepository interviewRepository;
+    @Mock
+    private ApplicantRepository applicantRepository;
     @InjectMocks
     private ScorecardService scorecardService;
 
@@ -137,10 +146,40 @@ class ScorecardServiceTest {
     @DisplayName("Submit Scorecard")
     class SubmitScorecardTests {
 
+        private Interview interview(UUID interviewId, UUID assignedInterviewer, UUID candidateId, UUID jobId) {
+            Interview i = new Interview();
+            i.setId(interviewId);
+            i.setTenantId(tenantId);
+            i.setInterviewerId(assignedInterviewer);
+            i.setCandidateId(candidateId);
+            i.setJobOpeningId(jobId);
+            return i;
+        }
+
+        private ScorecardSubmissionRequest request(UUID interviewId, UUID applicantId, UUID jobId) {
+            ScorecardSubmissionRequest request = new ScorecardSubmissionRequest();
+            request.setInterviewId(interviewId);
+            request.setApplicantId(applicantId);
+            request.setJobOpeningId(jobId);
+            request.setOverallRating(4);
+            request.setRecommendation(InterviewScorecard.Recommendation.YES);
+            return request;
+        }
+
         @Test
         @DisplayName("Should submit a scorecard with the current interviewer stamped as submitter")
         void shouldSubmitScorecard() {
             UUID interviewId = UUID.randomUUID();
+            UUID candidateId = UUID.randomUUID();
+            UUID jobId = UUID.randomUUID();
+            UUID applicantId = UUID.randomUUID();
+            Applicant applicant = new Applicant();
+            applicant.setTenantId(tenantId);
+            applicant.setCandidateId(candidateId);
+            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId))
+                    .thenReturn(Optional.of(interview(interviewId, interviewerId, candidateId, jobId)));
+            when(applicantRepository.findById(applicantId)).thenReturn(Optional.of(applicant));
+            when(scorecardRepository.findByTenantIdAndInterviewId(tenantId, interviewId)).thenReturn(List.of());
             when(scorecardRepository.save(any(InterviewScorecard.class)))
                     .thenAnswer(inv -> {
                         InterviewScorecard sc = inv.getArgument(0);
@@ -148,19 +187,97 @@ class ScorecardServiceTest {
                         return sc;
                     });
 
-            ScorecardSubmissionRequest request = new ScorecardSubmissionRequest();
-            request.setInterviewId(interviewId);
-            request.setApplicantId(UUID.randomUUID());
-            request.setJobOpeningId(UUID.randomUUID());
-            request.setOverallRating(4);
-            request.setRecommendation(InterviewScorecard.Recommendation.YES);
-
-            ScorecardSubmissionResponse result = scorecardService.submitScorecard(null, request);
+            ScorecardSubmissionResponse result =
+                    scorecardService.submitScorecard(null, request(interviewId, applicantId, jobId));
 
             assertThat(result.getInterviewId()).isEqualTo(interviewId);
             assertThat(result.getInterviewerId()).isEqualTo(interviewerId);
             assertThat(result.getStatus()).isEqualTo(InterviewScorecard.ScorecardStatus.SUBMITTED);
             assertThat(result.getSubmittedAt()).isEqualTo(now);
+        }
+
+        @Test
+        @DisplayName("Should reject an interview that is not in the tenant, saving nothing")
+        void shouldRejectForeignTenantInterview() {
+            UUID interviewId = UUID.randomUUID();
+            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> scorecardService.submitScorecard(null, request(interviewId, null, null)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Interview not found");
+            verify(scorecardRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should reject a caller who is not the assigned interviewer, saving nothing")
+        void shouldRejectNonInterviewer() {
+            UUID interviewId = UUID.randomUUID();
+            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId))
+                    .thenReturn(Optional.of(interview(interviewId, UUID.randomUUID(), UUID.randomUUID(), null)));
+
+            assertThatThrownBy(() -> scorecardService.submitScorecard(null, request(interviewId, null, null)))
+                    .isInstanceOf(AccessDeniedException.class);
+            verify(scorecardRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should reject an applicant from another tenant or another candidate")
+        void shouldRejectMismatchedApplicant() {
+            UUID interviewId = UUID.randomUUID();
+            UUID candidateId = UUID.randomUUID();
+            UUID applicantId = UUID.randomUUID();
+            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId))
+                    .thenReturn(Optional.of(interview(interviewId, interviewerId, candidateId, null)));
+            Applicant foreign = new Applicant();
+            foreign.setTenantId(UUID.randomUUID());
+            foreign.setCandidateId(candidateId);
+            when(applicantRepository.findById(applicantId)).thenReturn(Optional.of(foreign));
+
+            assertThatThrownBy(() -> scorecardService.submitScorecard(null, request(interviewId, applicantId, null)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Applicant not found");
+
+            Applicant other = new Applicant();
+            other.setTenantId(tenantId);
+            other.setCandidateId(UUID.randomUUID());
+            when(applicantRepository.findById(applicantId)).thenReturn(Optional.of(other));
+            assertThatThrownBy(() -> scorecardService.submitScorecard(null, request(interviewId, applicantId, null)))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("does not match");
+            verify(scorecardRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should reject a job opening that differs from the interview's")
+        void shouldRejectMismatchedJob() {
+            UUID interviewId = UUID.randomUUID();
+            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId))
+                    .thenReturn(Optional.of(interview(interviewId, interviewerId, UUID.randomUUID(), UUID.randomUUID())));
+
+            assertThatThrownBy(() -> scorecardService.submitScorecard(null,
+                    request(interviewId, null, UUID.randomUUID())))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("Job opening");
+            verify(scorecardRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("Should block a duplicate submission by the same interviewer")
+        void shouldBlockDuplicate() {
+            UUID interviewId = UUID.randomUUID();
+            when(interviewRepository.findByIdAndTenantId(interviewId, tenantId))
+                    .thenReturn(Optional.of(interview(interviewId, interviewerId, UUID.randomUUID(), null)));
+            InterviewScorecard existing = InterviewScorecard.builder()
+                    .interviewerId(interviewerId)
+                    .status(InterviewScorecard.ScorecardStatus.SUBMITTED)
+                    .build();
+            when(scorecardRepository.findByTenantIdAndInterviewId(tenantId, interviewId))
+                    .thenReturn(List.of(existing));
+
+            assertThatThrownBy(() -> scorecardService.submitScorecard(null, request(interviewId, null, null)))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("already submitted");
+            verify(scorecardRepository, never()).save(any());
         }
 
         @Test

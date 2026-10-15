@@ -17,6 +17,7 @@ import com.nulogic.infrastructure.attendance.repository.AttendanceRecordReposito
 import com.nulogic.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveRequestRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
+import com.nulogic.infrastructure.user.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,7 @@ import java.util.stream.Collectors;
 public class ScheduledReportExecutionJob {
 
     private final ScheduledReportService scheduledReportService;
+    private final UserRepository userRepository;
     private final ReportGenerationService reportGenerationService;
     private final ReportExecutionRepository reportExecutionRepository;
     private final JavaMailSender mailSender;
@@ -382,6 +384,11 @@ public class ScheduledReportExecutionJob {
         String body = buildEmailBody(scheduledReport, reportResult);
 
         for (String recipientEmail : recipients) {
+            // Defence in depth: stored recipients may predate the tenant-only rule.
+            if (!userRepository.existsByEmailAndTenantId(recipientEmail.trim(), scheduledReport.getTenantId())) {
+                log.warn("Skipping non-tenant recipient for scheduled report {}", scheduledReport.getId());
+                continue;
+            }
             try {
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

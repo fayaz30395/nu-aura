@@ -31,6 +31,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -179,6 +180,100 @@ class BiometricIntegrationServiceTest {
         assertThat(result.getEmployeeId()).isEqualTo(EMPLOYEE_ID);
         assertThat(result.getProcessedStatus()).isEqualTo(BiometricPunchLog.ProcessedStatus.PENDING);
         verify(punchLogRepository).save(any(BiometricPunchLog.class));
+    }
+
+    // ─── Device-bound API key / batch cap ───────────────────────────────────
+
+    private BiometricDevice deviceA() {
+        BiometricDevice d = BiometricDevice.builder().deviceName("A").serialNumber("ZK-001").isActive(true).build();
+        d.setId(DEVICE_ID);
+        d.setTenantId(TENANT_ID);
+        return d;
+    }
+
+    private BiometricPunchRequest punchFor(String serial) {
+        return BiometricPunchRequest.builder().deviceSerialNumber(serial).employeeIdentifier("EMP-001")
+                .punchTime(LocalDateTime.now()).punchType(BiometricPunchLog.PunchType.IN).build();
+    }
+
+    @Test
+    void receivePunch_keyBoundToOtherDevice_isRejectedWithoutMutation() {
+        when(deviceRepository.findBySerialNumberAndTenantIdAndIsDeletedFalse("ZK-001", TENANT_ID))
+                .thenReturn(Optional.of(deviceA()));
+
+        assertThatThrownBy(() -> service.receivePunch(TENANT_ID, UUID.randomUUID(), punchFor("ZK-001")))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(deviceRepository, never()).save(any());
+        verify(punchLogRepository, never()).save(any());
+    }
+
+    @Test
+    void receivePunch_keyBoundToSameDevice_isAccepted() {
+        when(deviceRepository.findBySerialNumberAndTenantIdAndIsDeletedFalse("ZK-001", TENANT_ID))
+                .thenReturn(Optional.of(deviceA()));
+        when(deviceRepository.save(any(BiometricDevice.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(punchLogRepository.save(any(BiometricPunchLog.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        BiometricPunchLog result = service.receivePunch(TENANT_ID, DEVICE_ID, punchFor("ZK-001"));
+
+        assertThat(result).isNotNull();
+        verify(punchLogRepository).save(any(BiometricPunchLog.class));
+    }
+
+    @Test
+    void receiveBatchPunches_keyBoundToOtherDevice_rejectsWholeBatch() {
+        when(deviceRepository.findBySerialNumberAndTenantIdAndIsDeletedFalse("ZK-001", TENANT_ID))
+                .thenReturn(Optional.of(deviceA()));
+        var batch = new com.nulogic.api.attendance.dto.BiometricBatchPunchRequest(List.of(punchFor("ZK-001")));
+
+        assertThatThrownBy(() -> service.receiveBatchPunches(TENANT_ID, UUID.randomUUID(), batch))
+                .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        verify(punchLogRepository, never()).save(any());
+    }
+
+    @Test
+    void receiveBatchPunches_overCap_isRejected() {
+        var punches = java.util.Collections.nCopies(501, punchFor("ZK-001"));
+        var batch = new com.nulogic.api.attendance.dto.BiometricBatchPunchRequest(punches);
+
+        assertThatThrownBy(() -> service.receiveBatchPunches(TENANT_ID, null, batch))
+                .isInstanceOf(IllegalArgumentException.class);
+        verify(deviceRepository, never()).findBySerialNumberAndTenantIdAndIsDeletedFalse(any(), any());
+    }
+
+    @Test
+    void receivePunch_uuidIdentifierFromAnotherTenant_isNotResolved() {
+        BiometricDevice device = BiometricDevice.builder()
+                .deviceName("Test")
+                .serialNumber("ZK-001")
+                .isActive(true)
+                .build();
+        device.setId(DEVICE_ID);
+        device.setTenantId(TENANT_ID);
+        UUID foreignEmployee = UUID.randomUUID();
+
+        BiometricPunchRequest request = BiometricPunchRequest.builder()
+                .deviceSerialNumber("ZK-001")
+                .employeeIdentifier(foreignEmployee.toString())
+                .punchTime(LocalDateTime.now())
+                .punchType(BiometricPunchLog.PunchType.IN)
+                .build();
+
+        when(deviceRepository.findBySerialNumberAndTenantIdAndIsDeletedFalse("ZK-001", TENANT_ID))
+                .thenReturn(Optional.of(device));
+        when(deviceRepository.save(any(BiometricDevice.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+        // exists in some other tenant, not in this one
+        when(employeeRepository.existsByIdAndTenantId(foreignEmployee, TENANT_ID)).thenReturn(false);
+        when(employeeRepository.findByEmployeeCodeAndTenantId(foreignEmployee.toString(), TENANT_ID))
+                .thenReturn(Optional.empty());
+        when(punchLogRepository.save(any(BiometricPunchLog.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
+
+        BiometricPunchLog result = service.receivePunch(TENANT_ID, request);
+
+        assertThat(result.getEmployeeId()).isNull();
+        verify(employeeRepository, never()).existsById(any());
     }
 
     @Test

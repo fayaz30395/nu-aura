@@ -154,7 +154,8 @@ public class BiometricDeviceController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        BiometricPunchLog punch = biometricService.receivePunch(validatedKey.getTenantId(), request);
+        BiometricPunchLog punch = biometricService.receivePunch(
+                validatedKey.getTenantId(), validatedKey.getDeviceId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(biometricService.toPunchResponse(punch));
     }
 
@@ -177,7 +178,7 @@ public class BiometricDeviceController {
         }
 
         List<BiometricPunchLog> results = biometricService.receiveBatchPunches(
-                validatedKey.getTenantId(), request);
+                validatedKey.getTenantId(), validatedKey.getDeviceId(), request);
 
         long accepted = results.stream()
                 .filter(r -> r.getProcessedStatus() != BiometricPunchLog.ProcessedStatus.FAILED)

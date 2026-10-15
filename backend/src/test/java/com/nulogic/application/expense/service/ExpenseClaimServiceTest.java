@@ -64,6 +64,8 @@ class ExpenseClaimServiceTest {
     private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
     @Mock
     private org.springframework.beans.factory.ObjectProvider<ExpenseClaimService> selfProvider;
+    @Mock
+    private com.nulogic.infrastructure.payroll.repository.PayrollAdjustmentRepository payrollAdjustmentRepository;
     @InjectMocks
     private ExpenseClaimService expenseClaimService;
     private UUID tenantId;
@@ -485,6 +487,42 @@ class ExpenseClaimServiceTest {
             assertThat(result).isNotNull();
             verify(expenseClaimRepository).save(any(ExpenseClaim.class));
         }
+
+        @Test
+        @DisplayName("Should withdraw the pending payroll reimbursement when paying directly")
+        void shouldCancelPendingPayrollAdjustmentWhenPaidDirectly() {
+            expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.APPROVED);
+            com.nulogic.domain.payroll.PayrollAdjustment pending = com.nulogic.domain.payroll.PayrollAdjustment.builder()
+                    .status(com.nulogic.domain.payroll.PayrollAdjustment.AdjustmentStatus.PENDING).build();
+            when(expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)).thenReturn(Optional.of(expenseClaim));
+            when(expenseClaimRepository.save(any(ExpenseClaim.class))).thenAnswer(i -> i.getArgument(0));
+            when(employeeRepository.findByIdAndTenantId(any(), any())).thenReturn(Optional.of(employee));
+            when(payrollAdjustmentRepository.findByTenantIdAndSourceModuleAndSourceId(tenantId, "EXPENSE", claimId))
+                    .thenReturn(List.of(pending));
+
+            expenseClaimService.markAsPaid(claimId, LocalDate.of(2025, 1, 25), "PAY-1");
+
+            assertThat(pending.getStatus())
+                    .isEqualTo(com.nulogic.domain.payroll.PayrollAdjustment.AdjustmentStatus.CANCELLED);
+        }
+
+        @Test
+        @DisplayName("Should refuse direct payment when payroll already reimbursed the claim")
+        void shouldRefuseDirectPaymentAfterPayrollReimbursement() {
+            expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.APPROVED);
+            com.nulogic.domain.payroll.PayrollAdjustment processed = com.nulogic.domain.payroll.PayrollAdjustment.builder()
+                    .status(com.nulogic.domain.payroll.PayrollAdjustment.AdjustmentStatus.PROCESSED).build();
+            when(expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)).thenReturn(Optional.of(expenseClaim));
+            when(payrollAdjustmentRepository.findByTenantIdAndSourceModuleAndSourceId(tenantId, "EXPENSE", claimId))
+                    .thenReturn(List.of(processed));
+
+            assertThatThrownBy(() -> expenseClaimService.markAsPaid(claimId, LocalDate.of(2025, 1, 25), "PAY-1"))
+                    .isInstanceOf(BusinessException.class)
+                    .hasMessageContaining("already been reimbursed through payroll");
+
+            assertThat(expenseClaim.getStatus()).isEqualTo(ExpenseClaim.ExpenseStatus.APPROVED);
+            verify(expenseClaimRepository, never()).save(any(ExpenseClaim.class));
+        }
     }
 
     @Nested
@@ -670,6 +708,36 @@ class ExpenseClaimServiceTest {
                     .hasMessageContaining("Expense claim not found for approval callback");
 
             verify(expenseClaimRepository, never()).save(any(ExpenseClaim.class));
+        }
+
+        @Test
+        @DisplayName("Workflow approval publishes ExpenseApprovedEvent exactly once")
+        void workflowApprovalPublishesEventOnce() {
+            expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.PENDING_APPROVAL);
+            expenseClaim.setCategory(ExpenseClaim.ExpenseCategory.TRAVEL);
+            when(expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)).thenReturn(Optional.of(expenseClaim));
+            when(employeeRepository.findByIdAndTenantId(any(), any())).thenReturn(Optional.of(employee));
+
+            expenseClaimService.onApproved(tenantId, claimId, approverId);
+
+            org.mockito.ArgumentCaptor<com.nulogic.domain.event.expense.ExpenseApprovedEvent> captor =
+                    org.mockito.ArgumentCaptor.forClass(com.nulogic.domain.event.expense.ExpenseApprovedEvent.class);
+            verify(domainEventPublisher, times(1)).publish(captor.capture());
+            assertThat(captor.getValue().getEmployeeId()).isEqualTo(employeeId);
+            assertThat(captor.getValue().getTenantId()).isEqualTo(tenantId);
+            assertThat(expenseClaim.getStatus()).isEqualTo(ExpenseClaim.ExpenseStatus.APPROVED);
+        }
+
+        @Test
+        @DisplayName("Workflow approval of a non-pending claim publishes nothing")
+        void workflowApprovalOfNonPendingClaimPublishesNothing() {
+            expenseClaim.setStatus(ExpenseClaim.ExpenseStatus.APPROVED);
+            when(expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)).thenReturn(Optional.of(expenseClaim));
+
+            assertThatThrownBy(() -> expenseClaimService.onApproved(tenantId, claimId, approverId))
+                    .isInstanceOf(BusinessException.class);
+
+            verify(domainEventPublisher, never()).publish(any());
         }
     }
 

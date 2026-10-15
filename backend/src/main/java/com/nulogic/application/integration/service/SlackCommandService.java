@@ -88,6 +88,13 @@ public class SlackCommandService {
         }
     }
 
+    boolean isLocalProfile() {
+        return activeProfile != null && java.util.Arrays.stream(activeProfile.split(","))
+                .map(String::trim)
+                .allMatch(p -> p.equalsIgnoreCase("default") || p.equalsIgnoreCase("dev")
+                        || p.equalsIgnoreCase("local") || p.equalsIgnoreCase("test"));
+    }
+
     /**
      * Verifies the Slack request signature using the signing secret.
      *
@@ -95,8 +102,12 @@ public class SlackCommandService {
      */
     public boolean verifySlackSignature(HttpServletRequest request) {
         if (signingSecret == null || signingSecret.isEmpty()) {
-            // Prod path is blocked at @PostConstruct, so reaching here implies non-prod.
-            // Emit the dev-bypass warning exactly once per process to avoid log noise.
+            // Fail closed unless the active profile is explicitly a local/dev/test one
+            // (non-"prod" deploy profiles such as "render" must not skip verification).
+            if (!isLocalProfile()) {
+                log.error("Slack signing secret not configured — rejecting request (profile={})", activeProfile);
+                return false;
+            }
             if (devBypassWarned.compareAndSet(false, true)) {
                 log.warn("Slack signing secret not configured — skipping verification in dev mode (profile={})",
                         activeProfile);
@@ -112,7 +123,12 @@ public class SlackCommandService {
         }
 
         // Reject requests older than 5 minutes (replay attack protection)
-        long requestTimestamp = Long.parseLong(timestamp);
+        long requestTimestamp;
+        try {
+            requestTimestamp = Long.parseLong(timestamp.trim());
+        } catch (NumberFormatException e) {
+            return false;
+        }
         if (Math.abs(Instant.now().getEpochSecond() - requestTimestamp) > MAX_TIMESTAMP_DIFF_SECONDS) {
             log.warn("Slack request timestamp too old: {}", timestamp);
             return false;

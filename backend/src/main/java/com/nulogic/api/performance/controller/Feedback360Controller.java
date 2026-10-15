@@ -164,16 +164,7 @@ public class Feedback360Controller {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID nominatedBy = SecurityContext.getCurrentEmployeeId();
 
-        Feedback360Request feedbackReq = Feedback360Request.builder()
-                .cycleId(cycleId)
-                .subjectEmployeeId(subjectEmployeeId)
-                .reviewerId(reviewerId)
-                .reviewerType(reviewerType)
-                .nominatedBy(nominatedBy)
-                .build();
-        feedbackReq.setTenantId(tenantId);
-
-        feedback360Service.createRequest(feedbackReq);
+        feedback360Service.nominateReviewer(tenantId, cycleId, subjectEmployeeId, reviewerId, reviewerType, nominatedBy);
         return ResponseEntity.ok().build();
     }
 
@@ -211,16 +202,10 @@ public class Feedback360Controller {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID reviewerId = SecurityContext.getCurrentEmployeeId();
 
-        // Get the feedback request to get subject and cycle info
-        Feedback360Request feedbackRequest = feedback360Service.getRequestById(tenantId, request.getRequestId())
-                .orElseThrow(() -> new jakarta.persistence.EntityNotFoundException("Feedback request not found: " + request.getRequestId()));
-
+        // Subject, cycle and reviewer type are derived server-side from the stored request.
         Feedback360Response response = Feedback360Response.builder()
                 .requestId(request.getRequestId())
-                .cycleId(feedbackRequest.getCycleId())
-                .subjectEmployeeId(feedbackRequest.getSubjectEmployeeId())
                 .reviewerId(reviewerId)
-                .reviewerType(feedbackRequest.getReviewerType())
                 .isDraft(request.getIsDraft() != null ? request.getIsDraft() : true)
                 .overallRating(request.getOverallRating())
                 .communicationRating(request.getCommunicationRating())
@@ -244,7 +229,7 @@ public class Feedback360Controller {
             response.setSubmittedAt(tenantTimeService.now(tenantId));
         }
 
-        feedback360Service.createOrUpdateResponse(response);
+        feedback360Service.submitReviewerResponse(tenantId, reviewerId, response);
         return ResponseEntity.ok().build();
     }
 
@@ -255,11 +240,11 @@ public class Feedback360Controller {
         UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
         return feedback360Service.getResponseByRequest(tenantId, requestId)
                 .map(response -> {
+                    // Reviewer-only: the subject must never receive raw responses (reviewer identity);
+                    // they see only the HR-shared summary via /my-summaries.
                     boolean isReviewer = response.getReviewerId() != null
                             && response.getReviewerId().equals(currentEmployeeId);
-                    boolean isSubject = response.getSubjectEmployeeId() != null
-                            && response.getSubjectEmployeeId().equals(currentEmployeeId);
-                    if (!isReviewer && !isSubject) {
+                    if (!isReviewer) {
                         throw new org.springframework.security.access.AccessDeniedException(
                                 "Not authorized to view this feedback response");
                     }

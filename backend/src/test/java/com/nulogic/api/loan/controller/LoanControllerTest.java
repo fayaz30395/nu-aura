@@ -426,7 +426,7 @@ class LoanControllerTest {
                     .paidAmount(new BigDecimal("5000.00"))
                     .build();
 
-            when(loanService.recordRepayment(eq(loanId), eq(new BigDecimal("5000.00"))))
+            when(loanService.recordRepayment(eq(loanId), eq(new BigDecimal("5000.00")), any(), any()))
                     .thenReturn(updatedLoan);
 
             mockMvc.perform(post(BASE_URL + "/{id}/repayment", loanId)
@@ -435,7 +435,7 @@ class LoanControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("ACTIVE"));
 
-            verify(loanService).recordRepayment(eq(loanId), eq(new BigDecimal("5000.00")));
+            verify(loanService).recordRepayment(eq(loanId), eq(new BigDecimal("5000.00")), any(), any());
         }
 
         @Test

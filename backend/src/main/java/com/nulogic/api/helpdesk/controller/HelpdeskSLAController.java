@@ -1,6 +1,7 @@
 package com.nulogic.api.helpdesk.controller;
 
 import com.nulogic.application.helpdesk.service.HelpdeskSLAService;
+import com.nulogic.application.helpdesk.service.HelpdeskService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
@@ -12,6 +13,8 @@ import com.nulogic.domain.helpdesk.TicketEscalation.EscalationReason;
 import com.nulogic.domain.helpdesk.TicketMetrics;
 import com.nulogic.domain.helpdesk.TicketSLA;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +34,7 @@ import java.util.UUID;
 public class HelpdeskSLAController {
 
     private final HelpdeskSLAService slaService;
+    private final HelpdeskService helpdeskService;
     private final TenantTimeService tenantTimeService;
 
     // ========== SLA Policies ==========
@@ -123,6 +127,7 @@ public class HelpdeskSLAController {
             @RequestParam EscalationReason reason,
             @Size(max = 1000) @RequestParam(required = false) String notes) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        helpdeskService.requireEscalationAccess(ticketId, escalatedTo);
         UUID escalatedFrom = SecurityContext.getCurrentEmployeeId();
 
         TicketEscalation escalation = slaService.escalateTicket(
@@ -133,6 +138,7 @@ public class HelpdeskSLAController {
     @GetMapping("/escalations/ticket/{ticketId}")
     @RequiresPermission(Permission.HELPDESK_TICKET_VIEW)
     public ResponseEntity<List<TicketEscalation>> getTicketEscalations(@PathVariable UUID ticketId) {
+        helpdeskService.requireTicketHandlerAccess(ticketId);
         List<TicketEscalation> escalations = slaService.getEscalationsForTicket(ticketId);
         return ResponseEntity.ok(escalations);
     }
@@ -151,7 +157,7 @@ public class HelpdeskSLAController {
     public ResponseEntity<Void> acknowledgeEscalation(@PathVariable UUID escalationId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentEmployeeId();
-        slaService.acknowledgeEscalation(tenantId, escalationId, userId);
+        slaService.acknowledgeOwnEscalation(tenantId, escalationId, userId);
         return ResponseEntity.ok().build();
     }
 
@@ -160,6 +166,7 @@ public class HelpdeskSLAController {
     @GetMapping("/metrics/{ticketId}")
     @RequiresPermission(Permission.HELPDESK_TICKET_VIEW)
     public ResponseEntity<TicketMetrics> getTicketMetrics(@PathVariable UUID ticketId) {
+        helpdeskService.requireTicketHandlerAccess(ticketId);
         UUID tenantId = TenantContext.getCurrentTenant();
         return slaService.getMetrics(tenantId, ticketId)
                 .map(ResponseEntity::ok)
@@ -170,9 +177,10 @@ public class HelpdeskSLAController {
     @RequiresPermission(Permission.EMPLOYEE_VIEW_SELF)
     public ResponseEntity<Void> submitCSAT(
             @PathVariable UUID ticketId,
-            @RequestParam Integer rating,
-            @RequestParam(required = false) String feedback) {
+            @RequestParam @Min(1) @Max(5) Integer rating,
+            @Size(max = 2000) @RequestParam(required = false) String feedback) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        helpdeskService.requireTicketOwner(ticketId);
         slaService.recordCSAT(tenantId, ticketId, rating, feedback);
         return ResponseEntity.ok().build();
     }

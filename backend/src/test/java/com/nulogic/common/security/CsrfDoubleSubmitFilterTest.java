@@ -130,4 +130,40 @@ class CsrfDoubleSubmitFilterTest {
         assertThat(res.getStatus()).isEqualTo(403);
         assertThat(chain.getRequest()).isNull();
     }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {
+            "/api/v1/biometric/devices", "/api/v1/biometric/devices/123", "/api/v1/biometric/punch/reprocess",
+            "/api/v1/biometric/api-keys", "/api/webhooks", "/api/webhooks/123/activate",
+            "/api/v1/integrations/docusign/envelopes/1/void", "/api/v1/integrations/docusign/template-mappings",
+            "/api/v1/integrations/slack/other"})
+    @DisplayName("cookie-authenticated admin routes under machine prefixes are CSRF-checked")
+    void adminRoutesUnderMachinePrefixesAreFiltered(String uri) throws Exception {
+        MockHttpServletRequest req = statefulRequest(uri);
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        MockFilterChain chain = new MockFilterChain();
+
+        filter.doFilter(req, res, chain);
+
+        assertThat(res.getStatus()).isEqualTo(403);
+        assertThat(chain.getRequest()).isNull();
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(strings = {
+            "/api/v1/biometric/punch", "/api/v1/biometric/punch/batch",
+            "/api/v1/integrations/docusign/webhook", "/api/v1/integrations/slack/commands",
+            "/api/v1/integrations/slack/interactions", "/api/v1/integrations/slack/events",
+            "/api/v1/payments/webhooks/stripe"})
+    @DisplayName("genuine machine webhook endpoints still skip the CSRF filter")
+    void machineEndpointsStillSkipCsrf(String uri) throws Exception {
+        MockHttpServletRequest req = request("POST", uri);
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        MockFilterChain chain = new MockFilterChain();
+
+        filter.doFilter(req, res, chain);
+
+        assertThat(res.getStatus()).isEqualTo(200);
+        assertThat(chain.getRequest()).isNotNull();
+    }
 }

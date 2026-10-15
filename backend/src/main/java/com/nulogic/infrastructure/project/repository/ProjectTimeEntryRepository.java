@@ -5,9 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import jakarta.persistence.LockModeType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -50,6 +53,9 @@ public interface ProjectTimeEntryRepository extends JpaRepository<TimeEntry, UUI
                                           @Param("employeeId") UUID employeeId,
                                           @Param("date") LocalDate date);
 
+    // PESSIMISTIC_WRITE (SELECT ... FOR UPDATE): concurrent invoice runs serialize on the rows, so
+    // the loser re-evaluates "invoice_id IS NULL" after the winner commits and finds nothing to bill.
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT te FROM ProjectTimeEntry te WHERE te.tenantId = :tenantId AND te.projectId = :projectId " +
             "AND te.status = 'APPROVED' AND te.isBillable = true AND te.invoiceId IS NULL " +
             "AND te.workDate BETWEEN :periodStart AND :periodEnd")
@@ -57,4 +63,6 @@ public interface ProjectTimeEntryRepository extends JpaRepository<TimeEntry, UUI
                                                   @Param("projectId") UUID projectId,
                                                   @Param("periodStart") LocalDate periodStart,
                                                   @Param("periodEnd") LocalDate periodEnd);
+
+    boolean existsByTenantIdAndInvoiceId(UUID tenantId, UUID invoiceId);
 }

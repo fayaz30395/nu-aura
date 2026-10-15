@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.lms.dto.*;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.lms.*;
 import com.nulogic.infrastructure.lms.repository.*;
@@ -90,6 +91,12 @@ public class QuizAssessmentService {
         // Verify and load attempt
         QuizAttempt attempt = attemptRepository.findByIdAndTenantId(attemptId, tenantId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found"));
+
+        // attempts belong to the employee who started them
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId == null || !currentEmployeeId.equals(attempt.getEmployeeId())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attempt not found");
+        }
 
         if (!attempt.getStatus().equals(QuizAttempt.AttemptStatus.IN_PROGRESS)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Attempt is not in progress");

@@ -559,6 +559,12 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     requiresAuth: true,
   },
 
+  // API keys page is SYSTEM_ADMIN-only (mirrors backend ApiKeyController); more specific than /settings
+  {
+    path: '/settings/security/api-keys',
+    anyPermission: [Permissions.SYSTEM_ADMIN],
+  },
+
   // Settings - user settings, accessible to all authenticated users
   {
     path: '/settings',

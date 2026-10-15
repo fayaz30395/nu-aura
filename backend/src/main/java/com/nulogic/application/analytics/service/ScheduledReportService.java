@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.analytics.dto.ScheduledReportRequest;
 import com.nulogic.api.analytics.dto.ScheduledReportResponse;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.exception.ValidationException;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.analytics.ReportDefinition;
@@ -14,10 +17,12 @@ import com.nulogic.infrastructure.analytics.repository.ReportDefinitionRepositor
 import com.nulogic.infrastructure.analytics.repository.ScheduledReportRepository;
 import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,10 +54,12 @@ public class ScheduledReportService {
     private final DepartmentRepository departmentRepository;
     private final ObjectMapper objectMapper;
     private final TenantTimeService tenantTimeService;
+    private final UserRepository userRepository;
 
     @Transactional
     public ScheduledReportResponse createScheduledReport(ScheduledReportRequest request, UUID createdBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        authorizeSchedule(request, tenantId);
         UUID reportDefinitionId = resolveReportDefinitionId(request, tenantId);
 
         ScheduledReport report = ScheduledReport.builder()
@@ -86,6 +93,7 @@ public class ScheduledReportService {
         ScheduledReport report = scheduledReportRepository.findByIdAndTenantId(reportId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Scheduled report not found: " + reportId));
 
+        authorizeSchedule(request, tenantId);
         // Update reportDefinitionId if reportType or reportDefinitionId changed
         UUID reportDefinitionId = resolveReportDefinitionId(request, tenantId);
         report.setReportDefinitionId(reportDefinitionId);
@@ -206,6 +214,31 @@ public class ScheduledReportService {
     // ==================== Helper Methods ====================
 
     /**
+     * REPORT_CREATE alone must not let a caller mail payroll data: payroll schedules also need the
+     * data-level PAYROLL:VIEW_ALL, and recipients are limited to users of this tenant so a report
+     * can never be exfiltrated to an external address (policy for allow-listing external
+     * recipients is undefined, so none are permitted).
+     */
+    private void requirePayrollPermissionIf(boolean payroll) {
+        if (payroll && !SecurityContext.hasPermission(Permission.PAYROLL_VIEW_ALL)) {
+            throw new AccessDeniedException("Scheduling a payroll report requires payroll view permission");
+        }
+    }
+
+    private void authorizeSchedule(ScheduledReportRequest request, UUID tenantId) {
+        boolean payroll = request.getReportType() != null
+                && request.getReportType().toUpperCase().contains("PAYROLL");
+        requirePayrollPermissionIf(payroll);
+        if (request.getRecipients() != null) {
+            for (String recipient : request.getRecipients()) {
+                if (recipient == null || !userRepository.existsByEmailAndTenantId(recipient.trim(), tenantId)) {
+                    throw new ValidationException("Report recipients must be users of this tenant");
+                }
+            }
+        }
+    }
+
+    /**
      * Resolve the reportDefinitionId from the request.
      * Priority:
      * 1. Use explicit reportDefinitionId if provided
@@ -219,6 +252,7 @@ public class ScheduledReportService {
                     .findByIdAndTenantId(request.getReportDefinitionId(), tenantId)
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Report definition not found: " + request.getReportDefinitionId()));
+            requirePayrollPermissionIf(definition.getCategory() == ReportDefinition.ReportCategory.PAYROLL);
             log.debug("Using explicit reportDefinitionId: {}", request.getReportDefinitionId());
             return definition.getId();
         }

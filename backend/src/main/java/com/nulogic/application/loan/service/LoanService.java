@@ -12,8 +12,10 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.loan.EmployeeLoan;
 import com.nulogic.domain.loan.EmployeeLoan.LoanStatus;
+import com.nulogic.domain.loan.LoanRepayment;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.loan.repository.EmployeeLoanRepository;
+import com.nulogic.infrastructure.loan.repository.LoanRepaymentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -36,11 +38,14 @@ public class LoanService implements ApprovalCallbackHandler {
     private final WorkflowService workflowService;
     private final TenantTimeService tenantTimeService;
     private final AuditLogService auditLogService;
+    private final LoanRepaymentRepository loanRepaymentRepository;
 
     public LoanService(EmployeeLoanRepository loanRepository,
                        @Lazy WorkflowService workflowService,
                        TenantTimeService tenantTimeService,
-                       AuditLogService auditLogService) {
+                       AuditLogService auditLogService,
+                       LoanRepaymentRepository loanRepaymentRepository) {
+        this.loanRepaymentRepository = loanRepaymentRepository;
         this.loanRepository = loanRepository;
         this.workflowService = workflowService;
         this.tenantTimeService = tenantTimeService;
@@ -203,6 +208,19 @@ public class LoanService implements ApprovalCallbackHandler {
     }
 
     public EmployeeLoanDto recordRepayment(UUID loanId, BigDecimal amount) {
+        return recordRepayment(loanId, amount, null, null);
+    }
+
+    /**
+     * Records a manual repayment. When {@code referenceNumber} is supplied it is the idempotency
+     * key per loan: a replay with the same reference returns the loan unchanged instead of
+     * deducting twice. Without a reference replays cannot be detected (no unique key exists).
+     */
+    public EmployeeLoanDto recordRepayment(UUID loanId, BigDecimal amount, String referenceNumber,
+                                           LocalDate paymentDate) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Repayment amount must be positive");
+        }
         UUID tenantId = TenantContext.requireCurrentTenant();
 
         EmployeeLoan loan = loanRepository.findByIdAndTenantId(loanId, tenantId)
@@ -212,6 +230,14 @@ public class LoanService implements ApprovalCallbackHandler {
 
         if (loan.getStatus() != LoanStatus.ACTIVE && loan.getStatus() != LoanStatus.DISBURSED) {
             throw new IllegalStateException("Cannot record repayment for loan in status: " + loan.getStatus());
+        }
+
+        String reference = referenceNumber != null && !referenceNumber.isBlank() ? referenceNumber.trim() : null;
+        if (reference != null && loanRepaymentRepository
+                .existsByTenantIdAndLoanIdAndPaymentReference(tenantId, loanId, reference)) {
+            log.info("Repayment with reference {} already recorded for loan {} — ignoring replay",
+                    reference, loan.getLoanNumber());
+            return EmployeeLoanDto.fromEntity(loan);
         }
 
         BigDecimal newOutstanding = loan.getOutstandingAmount().subtract(amount);
@@ -227,6 +253,19 @@ public class LoanService implements ApprovalCallbackHandler {
         }
 
         EmployeeLoan saved = loanRepository.save(loan);
+
+        LoanRepayment ledgerEntry = LoanRepayment.builder()
+                .loanId(saved.getId())
+                .employeeId(saved.getEmployeeId())
+                .paymentDate(paymentDate != null ? paymentDate : tenantTimeService.today(tenantId))
+                .paidAmount(amount)
+                .totalAmount(amount)
+                .outstandingAfterPayment(saved.getOutstandingAmount())
+                .status(LoanRepayment.RepaymentStatus.PAID)
+                .paymentReference(reference)
+                .build();
+        ledgerEntry.setTenantId(tenantId);
+        loanRepaymentRepository.save(ledgerEntry);
 
         try {
             auditLogService.logAction("EMPLOYEE_LOAN", saved.getId(), AuditAction.STATUS_CHANGE, null, null, "Loan repayment recorded: " + saved.getLoanNumber() + ", amount: " + amount + ", outstanding: " + saved.getOutstandingAmount());

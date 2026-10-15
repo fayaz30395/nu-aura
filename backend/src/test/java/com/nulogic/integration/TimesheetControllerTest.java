@@ -8,11 +8,13 @@ import com.nulogic.config.AbstractPostgresIntegrationTest;
 import com.nulogic.config.TestSecurityConfig;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.project.Project;
+import com.nulogic.domain.project.ProjectMember;
 import com.nulogic.domain.project.TimeEntry;
 import com.nulogic.domain.user.AuthProvider;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
+import com.nulogic.infrastructure.project.repository.HrmsProjectMemberRepository;
 import com.nulogic.infrastructure.project.repository.HrmsProjectRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,6 +65,8 @@ class TimesheetControllerTest extends AbstractPostgresIntegrationTest {
     EmployeeRepository employeeRepository;
     @Autowired
     HrmsProjectRepository projectRepository;
+    @Autowired
+    HrmsProjectMemberRepository projectMemberRepository;
     private UUID userId;
     private UUID employeeId;
     private UUID projectId;
@@ -95,15 +99,8 @@ class TimesheetControllerTest extends AbstractPostgresIntegrationTest {
         emp.setTenantId(TENANT_ID);
         employeeId = employeeRepository.save(emp).getId();
 
-        Project project = Project.builder()
-                .projectCode("PRJ-" + UUID.randomUUID().toString().substring(0, 6))
-                .name("Test Project")
-                .startDate(LocalDate.now().minusDays(30))
-                .status(Project.ProjectStatus.IN_PROGRESS)
-                .priority(Project.Priority.MEDIUM)
-                .build();
-        project.setTenantId(TENANT_ID);
-        projectId = projectRepository.save(project).getId();
+        projectId = projectRepository.save(buildProject()).getId();
+        addMember(projectId, employeeId, true, new BigDecimal("100.00"));
 
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
@@ -123,7 +120,38 @@ class TimesheetControllerTest extends AbstractPostgresIntegrationTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.hoursWorked").value(8.0))
-                .andExpect(jsonPath("$.employeeId").value(employeeId.toString()));
+                .andExpect(jsonPath("$.employeeId").value(employeeId.toString()))
+                .andExpect(jsonPath("$.status").value("DRAFT"))
+                .andExpect(jsonPath("$.billingRate").value(100.00));
+    }
+
+    @Test
+    @DisplayName("ucTimeA1b_clientSuppliedStatusAndRate_areIgnored")
+    void ucTimeA1b_clientSuppliedStatusAndRate_areIgnored() throws Exception {
+        TimeEntryRequest request = buildValidTimeEntryRequest(2.0);
+        request.setStatus(TimeEntry.TimeEntryStatus.APPROVED);
+        request.setBillingRate(new BigDecimal("9999.00"));
+
+        mockMvc.perform(post(BASE_URL + "/entries")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("DRAFT"))
+                .andExpect(jsonPath("$.billingRate").value(100.00));
+    }
+
+    @Test
+    @DisplayName("ucTimeA1c_nonMember_isRejected")
+    void ucTimeA1c_nonMember_isRejected() throws Exception {
+        UUID otherProject = projectRepository.save(buildProject()).getId();
+
+        TimeEntryRequest request = buildValidTimeEntryRequest(2.0);
+        request.setProjectId(otherProject);
+
+        mockMvc.perform(post(BASE_URL + "/entries")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -207,6 +235,31 @@ class TimesheetControllerTest extends AbstractPostgresIntegrationTest {
     }
 
     // ============================= Helpers =============================
+
+    private Project buildProject() {
+        Project project = Project.builder()
+                .projectCode("PRJ-" + UUID.randomUUID().toString().substring(0, 6))
+                .name("Test Project")
+                .startDate(LocalDate.now().minusDays(30))
+                .status(Project.ProjectStatus.IN_PROGRESS)
+                .priority(Project.Priority.MEDIUM)
+                .build();
+        project.setTenantId(TENANT_ID);
+        return project;
+    }
+
+    private void addMember(UUID project, UUID employee, boolean active, BigDecimal rate) {
+        ProjectMember m = new ProjectMember();
+        m.setId(UUID.randomUUID());
+        m.setTenantId(TENANT_ID);
+        m.setProjectId(project);
+        m.setEmployeeId(employee);
+        m.setRole(ProjectMember.ProjectRole.DEVELOPER);
+        m.setBillingRate(rate);
+        m.setStartDate(LocalDate.now().minusDays(30));
+        m.setIsActive(active);
+        projectMemberRepository.save(m);
+    }
 
     private TimeEntryRequest buildValidTimeEntryRequest(double hours) {
         return TimeEntryRequest.builder()

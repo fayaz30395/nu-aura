@@ -26,5 +26,8 @@ public interface PayrollAdjustmentRepository extends JpaRepository<PayrollAdjust
     List<PayrollAdjustment> findByTenantIdAndStatus(
             UUID tenantId, PayrollAdjustment.AdjustmentStatus status);
 
+    List<PayrollAdjustment> findByTenantIdAndSourceModuleAndSourceId(
+            UUID tenantId, String sourceModule, UUID sourceId);
+
     Page<PayrollAdjustment> findByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 }

@@ -130,7 +130,16 @@ class TravelServiceTest extends AbstractPostgresIntegrationTest {
         mockMvc.perform(post(BASE_URL + "/requests/{id}/submit", requestId))
                 .andExpect(status().isOk());
 
-        // Approve the request
+        // Self-approval is rejected, and leaves the request unapproved
+        mockMvc.perform(post(BASE_URL + "/requests/{id}/approve", requestId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of("comments", "self"))))
+                .andExpect(status().isForbidden());
+
+        // A different approver (admin scope) can approve
+        SecurityContext.setCurrentUser(USER_ID, UUID.randomUUID(), Set.of("SUPER_ADMIN"),
+                Map.of(Permission.SYSTEM_ADMIN, RoleScope.ALL));
+        SecurityContext.setCurrentTenantId(TENANT_ID);
         mockMvc.perform(post(BASE_URL + "/requests/{id}/approve", requestId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of("comments", "Approved for client visit"))))

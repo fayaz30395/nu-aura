@@ -3,10 +3,14 @@ package com.nulogic.application.travel.service;
 import com.nulogic.api.travel.dto.CreateTravelExpenseRequest;
 import com.nulogic.api.travel.dto.TravelExpenseDto;
 import com.nulogic.common.exception.ValidationException;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.travel.TravelExpense;
 import com.nulogic.domain.travel.TravelExpense.ExpenseStatus;
+import com.nulogic.domain.travel.TravelRequest;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.infrastructure.travel.repository.TravelExpenseRepository;
 import com.nulogic.infrastructure.travel.repository.TravelRequestRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,13 +46,13 @@ public class TravelExpenseService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         // Validate travel request exists
-        travelRequestRepository.findByIdAndTenantId(request.getTravelRequestId(), tenantId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Travel request not found: " + request.getTravelRequestId()));
+        TravelRequest travelRequest = requireRequest(request.getTravelRequestId(), tenantId);
+        // The expense belongs to the travelling employee; the body's employeeId is never trusted.
+        assertOwnerOrTenantWide(travelRequest.getEmployeeId());
 
         TravelExpense expense = TravelExpense.builder()
                 .travelRequestId(request.getTravelRequestId())
-                .employeeId(request.getEmployeeId())
+                .employeeId(travelRequest.getEmployeeId())
                 .expenseType(request.getExpenseType())
                 .description(request.getDescription())
                 .expenseDate(request.getExpenseDate())
@@ -72,6 +77,7 @@ public class TravelExpenseService {
 
         TravelExpense expense = travelExpenseRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel expense not found: " + id));
+        assertOwnerOrTenantWide(expense.getEmployeeId());
 
         if (expense.getStatus() != ExpenseStatus.PENDING) {
             throw new ValidationException("Only PENDING expenses can be updated");
@@ -97,12 +103,14 @@ public class TravelExpenseService {
         UUID tenantId = TenantContext.getCurrentTenant();
         TravelExpense expense = travelExpenseRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel expense not found: " + id));
+        assertCanView(expense.getEmployeeId());
         return toDto(expense);
     }
 
     @Transactional(readOnly = true)
     public Page<TravelExpenseDto> getByTravelRequest(UUID travelRequestId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanView(requireRequest(travelRequestId, tenantId).getEmployeeId());
         List<TravelExpenseDto> expenses = travelExpenseRepository
                 .findByTravelRequestIdAndTenantId(travelRequestId, tenantId)
                 .stream()
@@ -114,16 +122,21 @@ public class TravelExpenseService {
     @Transactional(readOnly = true)
     public Page<TravelExpenseDto> getByEmployee(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanView(employeeId);
         return travelExpenseRepository.findByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
                 .map(this::toDto);
     }
 
     @Transactional
-    public TravelExpenseDto approveExpense(UUID id, UUID approverId, BigDecimal approvedAmount, String comments) {
+    public TravelExpenseDto approveExpense(UUID id, BigDecimal approvedAmount, String comments) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         TravelExpense expense = travelExpenseRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel expense not found: " + id));
+        UUID approverId = assertCanDecideOn(expense);
+        if (approvedAmount != null && approvedAmount.compareTo(expense.getAmount()) > 0) {
+            throw new ValidationException("Approved amount cannot exceed the claimed amount");
+        }
 
         expense.setStatus(ExpenseStatus.APPROVED);
         expense.setApprovedBy(approverId);
@@ -139,11 +152,12 @@ public class TravelExpenseService {
     }
 
     @Transactional
-    public TravelExpenseDto rejectExpense(UUID id, UUID approverId, String reason) {
+    public TravelExpenseDto rejectExpense(UUID id, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         TravelExpense expense = travelExpenseRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel expense not found: " + id));
+        UUID approverId = assertCanDecideOn(expense);
 
         expense.setStatus(ExpenseStatus.REJECTED);
         expense.setApprovedBy(approverId);
@@ -161,6 +175,7 @@ public class TravelExpenseService {
 
         TravelExpense expense = travelExpenseRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel expense not found: " + id));
+        assertOwnerOrTenantWide(expense.getEmployeeId());
 
         if (expense.getStatus() != ExpenseStatus.PENDING) {
             throw new ValidationException("Only PENDING expenses can be deleted");
@@ -175,9 +190,7 @@ public class TravelExpenseService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         // Validate travel request exists
-        travelRequestRepository.findByIdAndTenantId(travelRequestId, tenantId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Travel request not found: " + travelRequestId));
+        assertCanView(requireRequest(travelRequestId, tenantId).getEmployeeId());
 
         BigDecimal totalExpenses = travelExpenseRepository.getTotalExpensesByRequest(travelRequestId);
         BigDecimal totalApproved = travelExpenseRepository.getTotalApprovedByRequest(travelRequestId);
@@ -201,6 +214,63 @@ public class TravelExpenseService {
                 .count());
 
         return summary;
+    }
+
+    // ======================== Access control ========================
+
+    private TravelRequest requireRequest(UUID travelRequestId, UUID tenantId) {
+        return travelRequestRepository.findByIdAndTenantId(travelRequestId, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Travel request not found: " + travelRequestId));
+    }
+
+    private boolean hasTenantWideTravelScope() {
+        return SecurityContext.isSuperAdmin()
+                || SecurityContext.isHRManager()
+                || SecurityContext.hasPermissionAtLeast(Permission.TRAVEL_MANAGE, RoleScope.ALL)
+                || SecurityContext.hasPermissionAtLeast(Permission.TRAVEL_VIEW_ALL, RoleScope.ALL);
+    }
+
+    private boolean isSelf(UUID employeeId) {
+        UUID current = SecurityContext.getCurrentEmployeeId();
+        return current != null && current.equals(employeeId);
+    }
+
+    private boolean isManagerOf(UUID employeeId) {
+        return employeeId != null && SecurityContext.getCurrentEmployeeId() != null
+                && SecurityContext.getAllReporteeIds().contains(employeeId);
+    }
+
+    private void assertOwnerOrTenantWide(UUID employeeId) {
+        if (!isSelf(employeeId) && !hasTenantWideTravelScope()) {
+            throw new AccessDeniedException("Cannot access another employee's travel expense");
+        }
+    }
+
+    private void assertCanView(UUID employeeId) {
+        if (!isSelf(employeeId) && !hasTenantWideTravelScope() && !isManagerOf(employeeId)) {
+            throw new AccessDeniedException("Cannot access another employee's travel expense");
+        }
+    }
+
+    /** Returns the authenticated approver; the body-supplied approverId is never used. */
+    private UUID assertCanDecideOn(TravelExpense expense) {
+        if (isSelf(expense.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot approve or reject your own travel expense");
+        }
+        if (!hasTenantWideTravelScope() && !isManagerOf(expense.getEmployeeId())) {
+            throw new AccessDeniedException("Only the employee's manager or HR can decide this travel expense");
+        }
+        if (expense.getStatus() != ExpenseStatus.PENDING && expense.getStatus() != ExpenseStatus.SUBMITTED) {
+            throw new ValidationException("Only PENDING or SUBMITTED expenses can be approved or rejected");
+        }
+        UUID approver = SecurityContext.getCurrentEmployeeId();
+        if (approver == null) {
+            approver = SecurityContext.getCurrentUserId();
+        }
+        if (approver == null) {
+            throw new AccessDeniedException("Cannot determine the approving user");
+        }
+        return approver;
     }
 
     private TravelExpenseDto toDto(TravelExpense entity) {

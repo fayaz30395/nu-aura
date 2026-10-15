@@ -13,6 +13,7 @@ import com.nulogic.domain.psa.PSAProject;
 import com.nulogic.domain.psa.PSAProjectAllocation;
 import com.nulogic.domain.psa.PSATimeEntry;
 import com.nulogic.domain.psa.PSATimesheet;
+import com.nulogic.infrastructure.project.repository.ProjectTimeEntryRepository;
 import com.nulogic.infrastructure.psa.repository.PSAInvoiceRepository;
 import com.nulogic.infrastructure.psa.repository.PSAProjectAllocationRepository;
 import com.nulogic.infrastructure.psa.repository.PSAProjectRepository;
@@ -55,6 +56,7 @@ public class PSAService {
     private final PSATimesheetRepository timesheetRepository;
     private final PSATimeEntryRepository timeEntryRepository;
     private final PSAInvoiceRepository invoiceRepository;
+    private final ProjectTimeEntryRepository projectTimeEntryRepository;
     private final TenantTimeService tenantTimeService;
 
     private static final Set<PSATimesheet.TimesheetStatus> EDITABLE_STATUSES =
@@ -250,6 +252,14 @@ public class PSAService {
         timesheet.setId(UUID.randomUUID());
         timesheet.setTenantId(tenantId);
         timesheet.setStatus(PSATimesheet.TimesheetStatus.DRAFT);
+        // Totals are derived from persisted entries; client-supplied values are discarded.
+        timesheet.setTotalHours(0.0);
+        timesheet.setBillableHours(0.0);
+        timesheet.setNonBillableHours(0.0);
+        timesheet.setSubmittedAt(null);
+        timesheet.setApprovedAt(null);
+        timesheet.setApprovedBy(null);
+        timesheet.setRejectionReason(null);
 
         // SEC-IV1: employeeId arrived on the request body, so any holder of TIMESHEET:SUBMIT
         // could file (and submit) billable time AS another employee. The owner is a fact about
@@ -312,8 +322,11 @@ public class PSAService {
                 .map(ts -> {
                     assertCanAccessEmployee(ts.getEmployeeId());
                     requireStatus(ts, EDITABLE_STATUSES, "submitted");
+                    recomputeTotals(ts, tenantId);
                     ts.setStatus(PSATimesheet.TimesheetStatus.SUBMITTED);
                     ts.setSubmittedAt(tenantTimeService.now(tenantId));
+                    ts.setApprovedAt(null);
+                    ts.setApprovedBy(null);
                     return timesheetRepository.save(ts);
                 });
     }
@@ -352,7 +365,8 @@ public class PSAService {
     @Transactional
     public Optional<PSATimesheet> rejectTimesheet(UUID id, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        log.info("Rejecting timesheet {} with reason for tenant {}", id, tenantId);
+        UUID rejecterId = resolveApproverId();
+        log.info("Rejecting timesheet {} by {} for tenant {}", id, rejecterId, tenantId);
 
         return timesheetRepository.findByIdAndTenantId(id, tenantId)
                 .map(ts -> {
@@ -360,6 +374,9 @@ public class PSAService {
                     requireStatus(ts, DECIDABLE_STATUSES, "rejected");
                     ts.setStatus(PSATimesheet.TimesheetStatus.REJECTED);
                     ts.setRejectionReason(reason);
+                    // ponytail: no rejected_by column (needs migration); the decision actor/time reuse approvedBy/At.
+                    ts.setApprovedBy(rejecterId);
+                    ts.setApprovedAt(tenantTimeService.now(tenantId));
                     return timesheetRepository.save(ts);
                 });
     }
@@ -386,6 +403,17 @@ public class PSAService {
         if (!projectRepository.existsByIdAndTenantId(request.projectId(), tenantId)) {
             throw new ValidationException("Project not found: " + request.projectId());
         }
+        if (timesheet.getWeekStartDate() != null && timesheet.getWeekEndDate() != null
+                && (request.entryDate().isBefore(timesheet.getWeekStartDate())
+                || request.entryDate().isAfter(timesheet.getWeekEndDate()))) {
+            throw new ValidationException("Entry date " + request.entryDate()
+                    + " is outside the timesheet week " + timesheet.getWeekStartDate()
+                    + " to " + timesheet.getWeekEndDate());
+        }
+        if (!allocationRepository.existsByTenantIdAndProjectIdAndEmployeeIdAndIsActiveTrue(
+                tenantId, request.projectId(), timesheet.getEmployeeId())) {
+            throw new ValidationException("Employee is not allocated to project " + request.projectId());
+        }
 
         PSATimeEntry entry = PSATimeEntry.builder()
                 .id(UUID.randomUUID())
@@ -402,7 +430,22 @@ public class PSAService {
                 .isOvertime(request.isOvertime())
                 .build();
 
-        return timeEntryRepository.save(entry);
+        PSATimeEntry saved = timeEntryRepository.save(entry);
+        recomputeTotals(timesheet, tenantId);
+        timesheetRepository.save(timesheet);
+        return saved;
+    }
+
+    /** Totals are always derived from persisted entries, never trusted from the client. */
+    private void recomputeTotals(PSATimesheet timesheet, UUID tenantId) {
+        List<PSATimeEntry> entries =
+                timeEntryRepository.findByTenantIdAndTimesheetIdOrderByEntryDateAsc(tenantId, timesheet.getId());
+        double total = entries.stream().mapToDouble(e -> e.getHours() != null ? e.getHours() : 0.0).sum();
+        double billable = entries.stream().filter(e -> Boolean.TRUE.equals(e.getIsBillable()))
+                .mapToDouble(e -> e.getHours() != null ? e.getHours() : 0.0).sum();
+        timesheet.setTotalHours(total);
+        timesheet.setBillableHours(billable);
+        timesheet.setNonBillableHours(total - billable);
     }
 
     /**
@@ -506,8 +549,26 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Creating PSA invoice for project {} in tenant {}", invoice.getProjectId(), tenantId);
 
+        if (invoice.getBillableAmount() == null || invoice.getBillableAmount().signum() < 0) {
+            throw new ValidationException("billableAmount is required and must not be negative");
+        }
+        BigDecimal tax = invoice.getTaxAmount() != null ? invoice.getTaxAmount() : BigDecimal.ZERO;
+        if (tax.signum() < 0) {
+            throw new ValidationException("taxAmount must not be negative");
+        }
+
+        // Lifecycle/audit fields are server-owned: a manually created invoice is always a DRAFT.
         invoice.setId(UUID.randomUUID());
         invoice.setTenantId(tenantId);
+        invoice.setStatus(PSAInvoice.InvoiceStatus.DRAFT);
+        invoice.setPaidAt(null);
+        invoice.setTaxAmount(tax);
+        invoice.setTotalAmount(invoice.getBillableAmount().add(tax));
+        invoice.setCreatedBy(SecurityContext.getCurrentUserId());
+        invoice.setUpdatedBy(null);
+        if (invoice.getInvoiceDate() == null) {
+            invoice.setInvoiceDate(tenantTimeService.today(tenantId));
+        }
 
         return invoiceRepository.save(invoice);
     }
@@ -569,7 +630,10 @@ public class PSAService {
     }
 
     /**
-     * Updates an existing invoice.
+     * Updates a DRAFT invoice. Only descriptive fields (dates, notes, tax) are editable; status,
+     * paid state, project/client, period and audit fields are never taken from the payload. Amounts
+     * of an invoice generated from time entries are locked; manual (deprecated-path) invoices keep
+     * an editable billable amount until they are approved.
      *
      * @param id      the invoice ID to update
      * @param invoice the updated invoice data
@@ -580,16 +644,38 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Updating invoice {} for tenant {}", id, tenantId);
 
-        return invoiceRepository.findByIdAndTenantId(id, tenantId)
+        return invoiceRepository.findByIdAndTenantIdForUpdate(id, tenantId)
                 .map(existing -> {
-                    invoice.setId(id);
-                    invoice.setTenantId(existing.getTenantId());
-                    return invoiceRepository.save(invoice);
+                    requireInvoiceStatus(existing, PSAInvoice.InvoiceStatus.DRAFT, "edited");
+                    if (invoice.getInvoiceDate() != null) {
+                        existing.setInvoiceDate(invoice.getInvoiceDate());
+                    }
+                    existing.setDueDate(invoice.getDueDate());
+                    existing.setNotes(invoice.getNotes());
+
+                    boolean generated = projectTimeEntryRepository.existsByTenantIdAndInvoiceId(tenantId, id);
+                    if (!generated && invoice.getBillableAmount() != null) {
+                        if (invoice.getBillableAmount().signum() < 0) {
+                            throw new ValidationException("billableAmount must not be negative");
+                        }
+                        existing.setBillableAmount(invoice.getBillableAmount());
+                    }
+                    if (invoice.getTaxAmount() != null) {
+                        if (invoice.getTaxAmount().signum() < 0) {
+                            throw new ValidationException("taxAmount must not be negative");
+                        }
+                        existing.setTaxAmount(invoice.getTaxAmount());
+                    }
+                    BigDecimal tax = existing.getTaxAmount() != null ? existing.getTaxAmount() : BigDecimal.ZERO;
+                    existing.setTotalAmount(existing.getBillableAmount().add(tax));
+                    existing.setUpdatedBy(SecurityContext.getCurrentUserId());
+                    return invoiceRepository.save(existing);
                 });
     }
 
     /**
-     * Approves an invoice and updates its status to SENT.
+     * Approves a DRAFT invoice and moves it to SENT. Any other status is a conflict (no re-approval,
+     * no resurrecting PAID/CANCELLED invoices).
      *
      * @param id the invoice ID
      * @return Optional containing the approved invoice if found
@@ -599,10 +685,19 @@ public class PSAService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         log.info("Approving invoice {} for tenant {}", id, tenantId);
 
-        return invoiceRepository.findByIdAndTenantId(id, tenantId)
+        return invoiceRepository.findByIdAndTenantIdForUpdate(id, tenantId)
                 .map(inv -> {
+                    requireInvoiceStatus(inv, PSAInvoice.InvoiceStatus.DRAFT, "approved");
                     inv.setStatus(PSAInvoice.InvoiceStatus.SENT);
+                    inv.setUpdatedBy(SecurityContext.getCurrentUserId());
                     return invoiceRepository.save(inv);
                 });
+    }
+
+    private static void requireInvoiceStatus(PSAInvoice invoice, PSAInvoice.InvoiceStatus required, String action) {
+        if (invoice.getStatus() != required) {
+            throw new IllegalStateException(
+                    "Invoice " + invoice.getId() + " is " + invoice.getStatus() + " and cannot be " + action);
+        }
     }
 }

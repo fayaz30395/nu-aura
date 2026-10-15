@@ -1,6 +1,8 @@
 package com.nulogic.application.project.service;
 
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.project.Project;
 import com.nulogic.domain.project.TimeEntry;
 import com.nulogic.domain.psa.PSAInvoice;
@@ -24,7 +26,9 @@ import java.util.UUID;
  * Generates a PSAInvoice from approved, billable, unbilled {@link TimeEntry} rows on the
  * shared HRMS {@link Project}, then flips those rows to BILLED. Idempotent: a time entry
  * is only picked up once (invoiceId IS NULL), so re-running for the same project/period
- * after a successful generation finds nothing left to bill.
+ * after a successful generation finds nothing left to bill. The eligible rows are read
+ * under a pessimistic write lock and marked BILLED in the same transaction, so concurrent
+ * runs cannot double-bill an entry.
  */
 @Service
 @RequiredArgsConstructor
@@ -37,9 +41,13 @@ public class ProjectInvoiceGenerationService {
     private final HrmsProjectRepository projectRepository;
     private final ProjectTimeEntryRepository timeEntryRepository;
     private final PSAInvoiceRepository invoiceRepository;
+    private final TenantTimeService tenantTimeService;
 
     public PSAInvoice generateInvoice(UUID projectId, LocalDate periodStart, LocalDate periodEnd) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        if (periodStart == null || periodEnd == null || periodEnd.isBefore(periodStart)) {
+            throw new IllegalArgumentException("A valid billing period is required (periodStart <= periodEnd)");
+        }
 
         Project project = projectRepository.findByIdAndTenantId(projectId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found: " + projectId));
@@ -51,6 +59,14 @@ public class ProjectInvoiceGenerationService {
             throw new IllegalStateException(
                     "No approved, billable, unbilled time entries for project " + projectId
                             + " between " + periodStart + " and " + periodEnd);
+        }
+
+        // Defence in depth: the query already filters, but a row must still be APPROVED + unbilled
+        // once we hold its lock, or nothing is billed.
+        for (TimeEntry entry : billableEntries) {
+            if (entry.getStatus() != TimeEntry.TimeEntryStatus.APPROVED || entry.getInvoiceId() != null) {
+                throw new IllegalStateException("Time entry " + entry.getId() + " is not billable");
+            }
         }
 
         BigDecimal totalHours = BigDecimal.ZERO;
@@ -71,7 +87,7 @@ public class ProjectInvoiceGenerationService {
                 .invoiceNumber(generateInvoiceNumber(project, periodStart))
                 .projectId(projectId)
                 .clientId(project.getClientId())
-                .invoiceDate(LocalDate.now())
+                .invoiceDate(tenantTimeService.today(tenantId))
                 .billingPeriodStart(periodStart)
                 .billingPeriodEnd(periodEnd)
                 .totalHours(totalHours.doubleValue())
@@ -79,6 +95,7 @@ public class ProjectInvoiceGenerationService {
                 .taxAmount(BigDecimal.ZERO)
                 .totalAmount(billableAmount)
                 .status(PSAInvoice.InvoiceStatus.DRAFT)
+                .createdBy(SecurityContext.getCurrentUserId())
                 .build();
         invoice = invoiceRepository.save(invoice);
 

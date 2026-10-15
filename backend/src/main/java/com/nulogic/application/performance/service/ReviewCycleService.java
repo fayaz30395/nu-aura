@@ -2,6 +2,8 @@ package com.nulogic.application.performance.service;
 
 import com.nulogic.application.notification.service.WebSocketNotificationService;
 import com.nulogic.application.performance.dto.*;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
@@ -13,6 +15,7 @@ import com.nulogic.infrastructure.performance.repository.ReviewCycleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -122,6 +125,14 @@ public class ReviewCycleService {
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
+
+        // State guard: only a launched cycle can be completed (not PLANNING/DRAFT, already COMPLETED or CANCELLED).
+        if (cycle.getStatus() == ReviewCycle.CycleStatus.PLANNING
+                || cycle.getStatus() == ReviewCycle.CycleStatus.DRAFT
+                || cycle.getStatus() == ReviewCycle.CycleStatus.COMPLETED
+                || cycle.getStatus() == ReviewCycle.CycleStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot complete a cycle in status: " + cycle.getStatus());
+        }
 
         cycle.setStatus(ReviewCycle.CycleStatus.COMPLETED);
 
@@ -291,6 +302,19 @@ public class ReviewCycleService {
         PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
+        // Only the subject may submit their own self-assessment, once, while the cycle is in the self stage.
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        if (callerId == null
+                || review.getReviewType() != PerformanceReview.ReviewType.SELF
+                || !callerId.equals(review.getEmployeeId())) {
+            log.warn("SECURITY: employee {} denied self-assessment on review {}", callerId, reviewId);
+            throw new AccessDeniedException("Access denied");
+        }
+        assertCycleStage(review, tenantId, ReviewCycle.CycleStatus.ACTIVE, ReviewCycle.CycleStatus.SELF_ASSESSMENT);
+        if (review.getStatus() != PerformanceReview.ReviewStatus.DRAFT) {
+            throw new IllegalStateException("Self-assessment already submitted. Current status: " + review.getStatus());
+        }
+
         if (request.getCompetencyRatings() != null && !request.getCompetencyRatings().isEmpty()) {
             int avg = (int) Math.round(request.getCompetencyRatings().stream()
                     .mapToInt(SelfAssessmentRequest.CompetencyRatingItem::getRating)
@@ -317,10 +341,29 @@ public class ReviewCycleService {
         PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
+        // Only the assigned reviewer (never the subject) may submit the manager review, once, in the manager stage.
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        if (callerId == null
+                || review.getReviewType() != PerformanceReview.ReviewType.MANAGER
+                || !callerId.equals(review.getReviewerId())
+                || callerId.equals(review.getEmployeeId())) {
+            log.warn("SECURITY: employee {} denied manager review on review {}", callerId, reviewId);
+            throw new AccessDeniedException("Access denied");
+        }
+        assertCycleStage(review, tenantId, ReviewCycle.CycleStatus.MANAGER_REVIEW);
+        if (review.getStatus() != PerformanceReview.ReviewStatus.DRAFT
+                && review.getStatus() != PerformanceReview.ReviewStatus.SUBMITTED) {
+            throw new IllegalStateException("Manager review already submitted. Current status: " + review.getStatus());
+        }
+
         review.setManagerRating(request.getOverallRating());
         review.setIncrementRecommendation(request.getIncrementRecommendation());
         review.setPromotionRecommended(request.getPromotionRecommended());
         review.setManagerComments(request.getComments());
+        // The status graph has no DRAFT -> IN_REVIEW edge; step through SUBMITTED.
+        if (review.getStatus() == PerformanceReview.ReviewStatus.DRAFT) {
+            review.transitionTo(PerformanceReview.ReviewStatus.SUBMITTED);
+        }
         review.transitionTo(PerformanceReview.ReviewStatus.IN_REVIEW);
 
         performanceReviewRepository.save(review);
@@ -333,8 +376,11 @@ public class ReviewCycleService {
     public void updateCalibrationRating(UUID reviewId, Integer finalRating) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
+        requireCalibrationAuthority(Permission.CALIBRATION_MANAGE);
+
         PerformanceReview review = performanceReviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
+        assertCycleStage(review, tenantId, ReviewCycle.CycleStatus.CALIBRATION);
 
         if (finalRating < 1 || finalRating > 5) {
             throw new IllegalArgumentException("Final rating must be between 1 and 5");
@@ -350,6 +396,9 @@ public class ReviewCycleService {
     @Transactional(readOnly = true)
     public CalibrationResponse getCalibration(UUID cycleId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+
+        // REVIEW:VIEW is held by every employee; calibration exposes everyone's ratings.
+        requireCalibrationAuthority(Permission.CALIBRATION_VIEW);
 
         ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(cycleId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
@@ -410,6 +459,26 @@ public class ReviewCycleService {
                 .distribution(distribution)
                 .employees(employees)
                 .build();
+    }
+
+    private void requireCalibrationAuthority(String permission) {
+        if (!SecurityContext.hasPermission(permission)) {
+            log.warn("SECURITY: employee {} denied calibration access ({})",
+                    SecurityContext.getCurrentEmployeeId(), permission);
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
+    /** Review must belong to a cycle currently in one of {@code allowed}; cycle-less (ad hoc) reviews are not stage-gated. */
+    private void assertCycleStage(PerformanceReview review, UUID tenantId, ReviewCycle.CycleStatus... allowed) {
+        if (review.getReviewCycleId() == null) {
+            return;
+        }
+        ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(review.getReviewCycleId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_CYCLE_NOT_FOUND));
+        if (!Arrays.asList(allowed).contains(cycle.getStatus())) {
+            throw new IllegalStateException("Action not allowed while the review cycle is in status: " + cycle.getStatus());
+        }
     }
 
     @Transactional

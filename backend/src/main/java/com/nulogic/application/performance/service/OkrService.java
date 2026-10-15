@@ -1,5 +1,7 @@
 package com.nulogic.application.performance.service;
 
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.performance.KeyResult;
@@ -15,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +39,83 @@ public class OkrService {
     private final com.nulogic.application.notification.service.WebSocketNotificationService webSocketNotificationService;
 
     // ================== Objectives ==================
+
+    // ================== Ownership guards ==================
+    // OKR:UPDATE/DELETE are held by every employee; tenant isolation alone lets any holder edit anyone's
+    // OKRs. Writes require the objective owner (or, for key results, the KR owner) or OKR:VIEW_ALL admins.
+
+    private boolean hasOkrAdminAccess() {
+        return SecurityContext.hasPermission(Permission.OKR_VIEW_ALL);
+    }
+
+    public void assertCanModifyObjective(Objective objective) {
+        UUID caller = SecurityContext.getCurrentEmployeeId();
+        if (hasOkrAdminAccess() || (caller != null && caller.equals(objective.getOwnerId()))) {
+            return;
+        }
+        log.warn("SECURITY: employee {} denied write on objective {} (owner={})", caller, objective.getId(), objective.getOwnerId());
+        throw new AccessDeniedException("Access denied");
+    }
+
+    /** Looks the objective up in the current tenant and applies {@link #assertCanModifyObjective(Objective)}. */
+    public Objective requireModifiableObjective(UUID tenantId, UUID objectiveId) {
+        Objective objective = objectiveRepository.findByIdAndTenantId(objectiveId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Objective not found: " + objectiveId));
+        assertCanModifyObjective(objective);
+        return objective;
+    }
+
+    public void assertCanModifyKeyResult(UUID tenantId, KeyResult keyResult) {
+        UUID caller = SecurityContext.getCurrentEmployeeId();
+        if (hasOkrAdminAccess() || (caller != null && caller.equals(keyResult.getOwnerId()))) {
+            return;
+        }
+        requireModifiableObjective(tenantId, keyResult.getObjectiveId());
+    }
+
+    /** A check-in must target an objective the caller may modify and, if given, a key result that belongs to it. */
+    public void assertCanCheckIn(UUID tenantId, UUID objectiveId, UUID keyResultId) {
+        requireModifiableObjective(tenantId, objectiveId);
+        if (keyResultId != null) {
+            KeyResult keyResult = keyResultRepository.findByIdAndTenantId(keyResultId, tenantId)
+                    .filter(kr -> objectiveId.equals(kr.getObjectiveId()))
+                    .orElseThrow(() -> new IllegalArgumentException("Key result not found for this objective"));
+            assertCanModifyKeyResult(tenantId, keyResult);
+        }
+    }
+
+    /** A KR may only be assigned to someone other than the caller by an OKR admin, and only within the tenant. */
+    public UUID resolveKeyResultOwner(UUID tenantId, UUID requestedOwnerId) {
+        UUID caller = SecurityContext.getCurrentEmployeeId();
+        if (requestedOwnerId == null || requestedOwnerId.equals(caller)) {
+            return caller;
+        }
+        if (!hasOkrAdminAccess()) {
+            throw new AccessDeniedException("Only OKR administrators can assign key results to another employee");
+        }
+        employeeRepository.findByIdAndTenantId(requestedOwnerId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Key result owner not found"));
+        return requestedOwnerId;
+    }
+
+    /** Approver may not approve their own objective, and must be an OKR admin or the owner's line manager. */
+    public void assertCanApproveObjective(Objective objective, UUID approverId) {
+        if (approverId == null || approverId.equals(objective.getOwnerId())) {
+            throw new AccessDeniedException("Cannot approve your own objective");
+        }
+        if (hasOkrAdminAccess()) {
+            return;
+        }
+        boolean isLineManager = objective.getOwnerId() != null
+                && (SecurityContext.getAllReporteeIds().contains(objective.getOwnerId())
+                || employeeRepository.findByIdAndTenantId(objective.getOwnerId(), objective.getTenantId())
+                .map(e -> approverId.equals(e.getManagerId())).orElse(false));
+        if (!isLineManager) {
+            log.warn("SECURITY: employee {} denied approval of objective {}", approverId, objective.getId());
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
 
     @Transactional
     public Objective createObjective(Objective objective) {

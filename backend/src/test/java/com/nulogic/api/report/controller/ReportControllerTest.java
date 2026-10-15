@@ -62,6 +62,9 @@ class ReportControllerTest {
     private TenantTimeService tenantTimeService;
 
     @MockitoBean
+    private com.nulogic.application.audit.service.AuditLogService auditLogService;
+
+    @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
@@ -113,6 +116,9 @@ class ReportControllerTest {
                     .andExpect(header().exists("Content-Disposition"));
 
             verify(reportService).generateEmployeeDirectoryReport(any(ReportRequest.class));
+            verify(auditLogService).logAction(org.mockito.ArgumentMatchers.eq("REPORT"), any(UUID.class),
+                    org.mockito.ArgumentMatchers.eq(com.nulogic.domain.audit.AuditLog.AuditAction.EXPORT),
+                    org.mockito.ArgumentMatchers.isNull(), any(), org.mockito.ArgumentMatchers.anyString());
         }
 
         @Test
@@ -481,14 +487,15 @@ class ReportControllerTest {
         }
 
         @Test
-        @DisplayName("generatePayrollReport should have REPORT_CREATE permission")
+        @DisplayName("generatePayrollReport should require REPORT_CREATE and PAYROLL_VIEW_ALL")
         void payrollReportShouldRequireReportCreate() throws Exception {
             var method = ReportController.class.getMethod(
                     "generatePayrollReport", ReportRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation,
                     "generatePayrollReport must have @RequiresPermission");
-            Assertions.assertEquals(Permission.REPORT_CREATE, annotation.value()[0]);
+            Assertions.assertArrayEquals(
+                    new String[]{Permission.REPORT_CREATE, Permission.PAYROLL_VIEW_ALL}, annotation.allOf());
         }
 
         @Test

@@ -134,8 +134,13 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             return;
         }
 
-        String clientId = resolveClientId(request);
         DistributedRateLimiter.RateLimitType rateLimitType = determineRateLimitType(requestUri);
+        // AUTH and PUBLIC routes are unauthenticated: Authorization/cookie/X-API-Key values are
+        // unvalidated here, so keying on them lets a caller mint a fresh bucket per request by
+        // rotating a garbage header. Always key these by client IP.
+        boolean ipOnly = rateLimitType == DistributedRateLimiter.RateLimitType.AUTH
+                || rateLimitType == DistributedRateLimiter.RateLimitType.PUBLIC;
+        String clientId = ipOnly ? "ip:" + getClientIp(request) : resolveClientId(request);
 
         // Try distributed (Redis) rate limiting first, fall back to in-memory
         RateLimitCheckResult result = checkRateLimit(clientId, rateLimitType);
@@ -168,6 +173,14 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         // tight AUTH bucket (5/min) instead of the generic API bucket (100/min).
         if (uri.startsWith("/api/v1/tenants/register")) {
             return DistributedRateLimiter.RateLimitType.AUTH;
+        }
+        // Token-based public portals (candidate offers, careers, preboarding, exit interview,
+        // external e-sign) previously fell into the generic 100/min API bucket.
+        if (uri.startsWith("/api/v1/public/")
+                || uri.startsWith("/api/v1/preboarding/portal")
+                || uri.startsWith("/api/v1/exit/interview/public")
+                || uri.startsWith("/api/v1/esignature/external")) {
+            return DistributedRateLimiter.RateLimitType.PUBLIC;
         }
         if (uri.contains("/export") || uri.contains("/report") || uri.contains("/download")) {
             return DistributedRateLimiter.RateLimitType.EXPORT;
@@ -423,6 +436,7 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         // regardless of the generic per-minute config and the authenticated/apikey
         // multipliers, otherwise an outage silently relaxes brute-force / DoS protection.
         if (type == DistributedRateLimiter.RateLimitType.AUTH
+                || type == DistributedRateLimiter.RateLimitType.PUBLIC
                 || type == DistributedRateLimiter.RateLimitType.EXPORT) {
             int limit = type.getLimit();
             Duration window = Duration.ofSeconds(type.getWindowSeconds());

@@ -5,6 +5,7 @@ import com.nulogic.api.employee.dto.CreateEmploymentChangeRequest;
 import com.nulogic.api.employee.dto.EmploymentChangeRequestDto;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -50,6 +51,8 @@ public class EmploymentChangeRequestService {
         // Get the employee
         Employee employee = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        assertNoManagerCycle(employee.getId(), request.getNewManagerId(), tenantId);
 
         // Check for existing pending requests for this employee
         List<EmploymentChangeRequest> pendingRequests = changeRequestRepository
@@ -135,6 +138,7 @@ public class EmploymentChangeRequestService {
     @Transactional(readOnly = true)
     public Page<EmploymentChangeRequestDto> getChangeRequestsByEmployee(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanViewEmployeeRequests(employeeId);
         return changeRequestRepository.findAllByEmployeeIdAndTenantId(employeeId, tenantId, pageable)
                 .map(entity -> enrichDto(EmploymentChangeRequestDto.fromEntity(entity)));
     }
@@ -147,6 +151,7 @@ public class EmploymentChangeRequestService {
         UUID tenantId = TenantContext.getCurrentTenant();
         EmploymentChangeRequest request = changeRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Change request not found"));
+        assertCanViewEmployeeRequests(request.getEmployeeId());
         return enrichDto(EmploymentChangeRequestDto.fromEntity(request));
     }
 
@@ -165,9 +170,25 @@ public class EmploymentChangeRequestService {
             throw new BusinessException("Only pending requests can be approved");
         }
 
+        // Maker-checker: approver may be neither the requester nor the employee being changed
+        if (changeRequest.getRequesterId().equals(approverId)
+                || changeRequest.getEmployeeId().equals(SecurityContext.getCurrentEmployeeId())) {
+            throw new BusinessException("You cannot approve a change request you raised or that concerns you");
+        }
+
+        // effectiveDate is honoured: changes are applied immediately on approval, so a future-dated
+        // request cannot be approved yet (no scheduler applies deferred changes).
+        if (changeRequest.getEffectiveDate() != null
+                && changeRequest.getEffectiveDate().isAfter(tenantTimeService.today(tenantId))) {
+            throw new BusinessException("Change request is effective from "
+                    + changeRequest.getEffectiveDate() + " and cannot be approved before that date");
+        }
+
         // Get the employee to apply changes
         Employee employee = employeeRepository.findByIdAndTenantId(changeRequest.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+
+        assertNoManagerCycle(employee.getId(), changeRequest.getNewManagerId(), tenantId);
 
         // Apply the changes
         if (changeRequest.getNewDesignation() != null) {
@@ -268,6 +289,30 @@ public class EmploymentChangeRequestService {
     public Long countPendingRequests() {
         UUID tenantId = TenantContext.getCurrentTenant();
         return changeRequestRepository.countPendingRequests(tenantId);
+    }
+
+    /** Own requests, direct/indirect reportees, or VIEW_ALL. */
+    private void assertCanViewEmployeeRequests(UUID employeeId) {
+        if (SecurityContext.hasPermission(Permission.EMPLOYMENT_CHANGE_VIEW_ALL)) {
+            return;
+        }
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        if (employeeId.equals(self) || SecurityContext.getAllReporteeIds().contains(employeeId)) {
+            return;
+        }
+        throw new org.springframework.security.access.AccessDeniedException("Not authorised to view this employee's change requests");
+    }
+
+    /** Rejects a new manager that is the employee or reports (transitively) to the employee. */
+    private void assertNoManagerCycle(UUID employeeId, UUID newManagerId, UUID tenantId) {
+        UUID cursor = newManagerId;
+        for (int depth = 0; cursor != null && depth < 50; depth++) {
+            if (cursor.equals(employeeId)) {
+                throw new BusinessException("Invalid manager: would create a circular reporting line");
+            }
+            cursor = employeeRepository.findByIdAndTenantId(cursor, tenantId)
+                    .map(Employee::getManagerId).orElse(null);
+        }
     }
 
     /**

@@ -75,14 +75,21 @@ public class OkrController {
                 .build();
         objective.setTenantId(tenantId);
 
+        // Resolve/authorise nested key-result owners before anything is persisted.
+        List<UUID> keyResultOwners = request.getKeyResults() == null ? List.of()
+                : request.getKeyResults().stream()
+                .map(kr -> okrService.resolveKeyResultOwner(tenantId, kr.getOwnerId()))
+                .collect(Collectors.toList());
+
         Objective saved = okrService.createObjective(objective);
 
         // Create key results if provided
         if (request.getKeyResults() != null && !request.getKeyResults().isEmpty()) {
-            for (KeyResultRequest krRequest : request.getKeyResults()) {
+            for (int i = 0; i < request.getKeyResults().size(); i++) {
+                KeyResultRequest krRequest = request.getKeyResults().get(i);
                 KeyResult keyResult = KeyResult.builder()
                         .objectiveId(saved.getId())
-                        .ownerId(krRequest.getOwnerId() != null ? krRequest.getOwnerId() : employeeId)
+                        .ownerId(keyResultOwners.get(i))
                         .title(krRequest.getTitle())
                         .description(krRequest.getDescription())
                         .measurementType(krRequest.getMeasurementType())
@@ -187,6 +194,7 @@ public class OkrController {
 
         return okrService.getObjectiveById(tenantId, id)
                 .map(existing -> {
+                    okrService.assertCanModifyObjective(existing);
                     existing.setTitle(request.getTitle());
                     existing.setDescription(request.getDescription());
                     existing.setStartDate(request.getStartDate());
@@ -225,6 +233,7 @@ public class OkrController {
 
         return okrService.getObjectiveById(tenantId, id)
                 .map(existing -> {
+                    okrService.assertCanModifyObjective(existing);
                     existing.setStatus(status);
                     existing.setUpdatedAt(tenantTimeService.now(tenantId));
                     Objective updated = okrService.updateObjective(existing);
@@ -249,6 +258,7 @@ public class OkrController {
 
         return okrService.getObjectiveById(tenantId, id)
                 .map(existing -> {
+                    okrService.assertCanApproveObjective(existing, approverId);
                     existing.setStatus(ObjectiveStatus.ACTIVE);
                     existing.setApprovedBy(approverId);
                     existing.setUpdatedAt(tenantTimeService.now(tenantId));
@@ -270,6 +280,7 @@ public class OkrController {
     public ResponseEntity<Void> deleteObjective(
             @Parameter(description = "Objective UUID") @PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        okrService.getObjectiveById(tenantId, id).ifPresent(okrService::assertCanModifyObjective);
         okrService.deleteObjective(tenantId, id);
         return ResponseEntity.noContent().build();
     }
@@ -290,11 +301,11 @@ public class OkrController {
             @Parameter(description = "Objective UUID") @PathVariable UUID objectiveId,
             @Valid @RequestBody KeyResultRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        okrService.requireModifiableObjective(tenantId, objectiveId);
 
         KeyResult keyResult = KeyResult.builder()
                 .objectiveId(objectiveId)
-                .ownerId(request.getOwnerId() != null ? request.getOwnerId() : employeeId)
+                .ownerId(okrService.resolveKeyResultOwner(tenantId, request.getOwnerId()))
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .measurementType(request.getMeasurementType())
@@ -347,6 +358,7 @@ public class OkrController {
 
         return okrService.getKeyResultById(tenantId, id)
                 .map(existing -> {
+                    okrService.assertCanModifyKeyResult(tenantId, existing);
                     existing.setTitle(request.getTitle());
                     existing.setDescription(request.getDescription());
                     if (request.getMeasurementType() != null) {
@@ -383,6 +395,7 @@ public class OkrController {
 
         return okrService.getKeyResultById(tenantId, id)
                 .map(existing -> {
+                    okrService.assertCanModifyKeyResult(tenantId, existing);
                     BigDecimal previousValue = existing.getCurrentValue();
                     BigDecimal previousProgress = existing.getProgressPercentage();
 
@@ -428,6 +441,8 @@ public class OkrController {
     public ResponseEntity<Void> deleteKeyResult(
             @Parameter(description = "Key result UUID") @PathVariable UUID id) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        okrService.getKeyResultById(tenantId, id)
+                .ifPresent(kr -> okrService.assertCanModifyKeyResult(tenantId, kr));
         okrService.deleteKeyResult(tenantId, id);
         return ResponseEntity.noContent().build();
     }
@@ -446,6 +461,8 @@ public class OkrController {
     public ResponseEntity<CheckInResponse> createCheckIn(@Valid @RequestBody CheckInRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
+
+        okrService.assertCanCheckIn(tenantId, request.getObjectiveId(), request.getKeyResultId());
 
         OkrCheckIn checkIn = OkrCheckIn.builder()
                 .objectiveId(request.getObjectiveId())

@@ -11,6 +11,7 @@ import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Department;
@@ -318,6 +319,7 @@ public class LetterService {
         UUID tenantId = TenantContext.getCurrentTenant();
         GeneratedLetter entity = letterRepository.findByIdAndTenantId(letterId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letterId));
+        assertCanReadLetter(entity);
         return enrichLetterResponse(GeneratedLetterResponse.fromEntity(entity), tenantId);
     }
 
@@ -336,6 +338,14 @@ public class LetterService {
     @Transactional(readOnly = true)
     public Page<GeneratedLetterResponse> getLettersByEmployee(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!hasLetterManagementAccess()) {
+            // Employees may only list their own letters, and only once issued.
+            assertIsCurrentEmployee(employeeId);
+            List<GeneratedLetterResponse> own = letterRepository.findIssuedLettersForEmployee(employeeId, tenantId).stream()
+                    .map(e -> enrichLetterResponse(GeneratedLetterResponse.fromEntity(e), tenantId))
+                    .toList();
+            return new org.springframework.data.domain.PageImpl<>(own, pageable, own.size());
+        }
         return letterRepository.findByEmployeeId(employeeId, tenantId, pageable)
                 .map(e -> enrichLetterResponse(GeneratedLetterResponse.fromEntity(e), tenantId));
     }
@@ -343,6 +353,9 @@ public class LetterService {
     @Transactional(readOnly = true)
     public List<GeneratedLetterResponse> getIssuedLettersForEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!hasLetterManagementAccess()) {
+            assertIsCurrentEmployee(employeeId);
+        }
         return letterRepository.findIssuedLettersForEmployee(employeeId, tenantId).stream()
                 .map(e -> enrichLetterResponse(GeneratedLetterResponse.fromEntity(e), tenantId))
                 .toList();
@@ -386,6 +399,9 @@ public class LetterService {
 
         if (entity.getStatus() != LetterStatus.PENDING_APPROVAL) {
             throw new BusinessException("Letter is not pending approval");
+        }
+        if (approverId != null && approverId.equals(entity.getEmployeeId())) {
+            throw new org.springframework.security.access.AccessDeniedException("Cannot approve your own letter");
         }
 
         entity.approve(approverId, comments, tenantTimeService.now(tenantId));
@@ -535,6 +551,30 @@ public class LetterService {
     }
 
     // ==================== Helper Methods ====================
+
+    private boolean hasLetterManagementAccess() {
+        return SecurityContext.isSuperAdmin() || SecurityContext.isHRManager()
+                || SecurityContext.hasAnyPermission(Permission.LETTER_TEMPLATE_VIEW, Permission.LETTER_GENERATE,
+                Permission.LETTER_APPROVE, Permission.LETTER_ISSUE);
+    }
+
+    private void assertIsCurrentEmployee(UUID employeeId) {
+        UUID current = SecurityContext.getCurrentEmployeeId();
+        if (current == null || !current.equals(employeeId)) {
+            throw new org.springframework.security.access.AccessDeniedException("Cannot access another employee's letters");
+        }
+    }
+
+    /** HR/letter managers read any letter; an employee reads only their own, and only once issued. */
+    private void assertCanReadLetter(GeneratedLetter letter) {
+        if (hasLetterManagementAccess()) {
+            return;
+        }
+        assertIsCurrentEmployee(letter.getEmployeeId());
+        if (letter.getStatus() != LetterStatus.ISSUED) {
+            throw new ResourceNotFoundException(LETTER_NOT_FOUND_PREFIX + letter.getId());
+        }
+    }
 
     private String processTemplate(String template, Employee employee, Map<String, String> customValues, UUID tenantId) {
         String result = template;

@@ -6,6 +6,7 @@ import com.nulogic.api.workflow.dto.WorkflowExecutionRequest;
 import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.exception.ValidationException;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -14,10 +15,12 @@ import com.nulogic.domain.travel.TravelRequest.TravelStatus;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.travel.repository.TravelRequestRepository;
+import com.nulogic.domain.user.RoleScope;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,6 +98,8 @@ public class TravelService implements ApprovalCallbackHandler {
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
 
+        assertOwnerOrTenantWide(travelRequest);
+
         if (travelRequest.getStatus() != TravelStatus.DRAFT && travelRequest.getStatus() != TravelStatus.REJECTED) {
             throw new IllegalStateException("Cannot update request in status: " + travelRequest.getStatus());
         }
@@ -134,6 +139,8 @@ public class TravelService implements ApprovalCallbackHandler {
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
 
+        assertOwnerOrTenantWide(travelRequest);
+
         if (travelRequest.getStatus() != TravelStatus.DRAFT && travelRequest.getStatus() != TravelStatus.REJECTED) {
             throw new IllegalStateException("Cannot submit request in status: " + travelRequest.getStatus());
         }
@@ -158,6 +165,8 @@ public class TravelService implements ApprovalCallbackHandler {
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
 
+        assertCanDecideOn(travelRequest);
+
         if (travelRequest.getStatus() != TravelStatus.SUBMITTED && travelRequest.getStatus() != TravelStatus.PENDING_APPROVAL) {
             throw new IllegalStateException("Cannot approve request in status: " + travelRequest.getStatus());
         }
@@ -180,6 +189,8 @@ public class TravelService implements ApprovalCallbackHandler {
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
 
+        assertCanDecideOn(travelRequest);
+
         if (travelRequest.getStatus() != TravelStatus.SUBMITTED && travelRequest.getStatus() != TravelStatus.PENDING_APPROVAL) {
             throw new IllegalStateException("Cannot reject request in status: " + travelRequest.getStatus());
         }
@@ -201,6 +212,8 @@ public class TravelService implements ApprovalCallbackHandler {
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
 
+        assertOwnerOrTenantWide(travelRequest);
+
         if (travelRequest.getStatus() == TravelStatus.COMPLETED || travelRequest.getStatus() == TravelStatus.CANCELLED) {
             throw new IllegalStateException("Cannot cancel request in status: " + travelRequest.getStatus());
         }
@@ -219,6 +232,8 @@ public class TravelService implements ApprovalCallbackHandler {
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Travel request not found: " + requestId));
 
+        assertOwnerOrTenantWide(travelRequest);
+
         if (travelRequest.getStatus() != TravelStatus.DRAFT) {
             throw new ValidationException("Only DRAFT travel requests can be deleted");
         }
@@ -232,6 +247,7 @@ public class TravelService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.requireCurrentTenant();
         TravelRequest travelRequest = travelRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel request not found"));
+        assertCanView(travelRequest);
         return TravelRequestDto.fromEntity(travelRequest, getEmployeeFullName(travelRequest.getEmployeeId(), tenantId));
     }
 
@@ -326,6 +342,46 @@ public class TravelService implements ApprovalCallbackHandler {
         travelRequest.setApprovedDate(tenantTimeService.today(tenantId));
         travelRequest.setRejectionReason(reason);
         travelRequestRepository.save(travelRequest);
+    }
+
+    // ======================== Access control ========================
+
+    private boolean isOwner(TravelRequest request) {
+        UUID current = SecurityContext.getCurrentEmployeeId();
+        return current != null && current.equals(request.getEmployeeId());
+    }
+
+    private boolean hasTenantWideTravelScope() {
+        return SecurityContext.isSuperAdmin()
+                || SecurityContext.isHRManager()
+                || SecurityContext.hasPermissionAtLeast(Permission.TRAVEL_MANAGE, RoleScope.ALL)
+                || SecurityContext.hasPermissionAtLeast(Permission.TRAVEL_VIEW_ALL, RoleScope.ALL);
+    }
+
+    private boolean isManagerOf(UUID employeeId) {
+        return employeeId != null && SecurityContext.getCurrentEmployeeId() != null
+                && SecurityContext.getAllReporteeIds().contains(employeeId);
+    }
+
+    private void assertOwnerOrTenantWide(TravelRequest request) {
+        if (!isOwner(request) && !hasTenantWideTravelScope()) {
+            throw new AccessDeniedException("Cannot access another employee's travel request");
+        }
+    }
+
+    private void assertCanView(TravelRequest request) {
+        if (!isOwner(request) && !hasTenantWideTravelScope() && !isManagerOf(request.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot access another employee's travel request");
+        }
+    }
+
+    private void assertCanDecideOn(TravelRequest request) {
+        if (isOwner(request)) {
+            throw new AccessDeniedException("Cannot approve or reject your own travel request");
+        }
+        if (!hasTenantWideTravelScope() && !isManagerOf(request.getEmployeeId())) {
+            throw new AccessDeniedException("Only the employee's manager or HR can decide this travel request");
+        }
     }
 
     private String getEmployeeFullName(UUID employeeId, UUID tenantId) {

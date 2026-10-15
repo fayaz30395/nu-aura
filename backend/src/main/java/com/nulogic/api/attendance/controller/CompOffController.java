@@ -59,9 +59,7 @@ public class CompOffController {
     @RequiresPermission(Permission.ATTENDANCE_REGULARIZE)
     public ResponseEntity<CompOffRequest> requestCompOff(
             @Valid @RequestBody CompOffRequestDto dto) {
-        log.info("Comp-off request for employee={} date={}", dto.getEmployeeId(), dto.getAttendanceDate());
-        CompOffRequest request = compOffService.requestCompOff(
-                dto.getEmployeeId(), dto.getAttendanceDate(), dto.getReason());
+        CompOffRequest request = compOffService.requestCompOff(dto.getAttendanceDate(), dto.getReason());
         return ResponseEntity.status(HttpStatus.CREATED).body(request);
     }
 
@@ -126,7 +124,7 @@ public class CompOffController {
             @Parameter(description = "Comp-off request UUID") @PathVariable UUID requestId,
             @Valid @RequestBody ReviewDto dto) {
         log.info("Approving comp-off request {}", requestId);
-        return ResponseEntity.ok(compOffService.approveCompOff(requestId, dto.getReviewerId(), dto.getNote()));
+        return ResponseEntity.ok(compOffService.approveCompOff(requestId, dto.getNote()));
     }
 
     @Operation(summary = "Reject a comp-off request",
@@ -143,7 +141,7 @@ public class CompOffController {
             @Parameter(description = "Comp-off request UUID") @PathVariable UUID requestId,
             @Valid @RequestBody ReviewDto dto) {
         log.info("Rejecting comp-off request {}", requestId);
-        return ResponseEntity.ok(compOffService.rejectCompOff(requestId, dto.getReviewerId(), dto.getNote()));
+        return ResponseEntity.ok(compOffService.rejectCompOff(requestId, dto.getNote()));
     }
 
     // ========== DTOs ==========
@@ -151,8 +149,7 @@ public class CompOffController {
     @Data
     @Schema(description = "Request payload for creating a comp-off request")
     public static class CompOffRequestDto {
-        @NotNull
-        @Schema(description = "Employee requesting comp-off", example = "550e8400-e29b-41d4-a716-446655440000")
+        @Schema(description = "Ignored: comp-off is always requested for the authenticated employee")
         private UUID employeeId;
 
         @NotNull
@@ -167,8 +164,7 @@ public class CompOffController {
     @Data
     @Schema(description = "Request payload for approving or rejecting a comp-off request")
     public static class ReviewDto {
-        @NotNull
-        @Schema(description = "UUID of the reviewer (manager/HR)", example = "550e8400-e29b-41d4-a716-446655440001")
+        @Schema(description = "Ignored: the reviewer is always the authenticated employee")
         private UUID reviewerId;
 
         @Schema(description = "Optional note from reviewer", example = "Approved as per project requirements")

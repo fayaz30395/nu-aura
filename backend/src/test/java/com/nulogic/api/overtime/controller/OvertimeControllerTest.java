@@ -215,7 +215,7 @@ class OvertimeControllerTest {
                     .build();
 
             when(overtimeManagementService.approveOrRejectOvertime(
-                    eq(RECORD_ID), any(), any(OvertimeApprovalRequest.class)))
+                    eq(RECORD_ID), any(OvertimeApprovalRequest.class)))
                     .thenReturn(buildOvertimeResponse("APPROVED"));
 
             mockMvc.perform(post("/api/v1/overtime/{recordId}/approve", RECORD_ID)
@@ -227,7 +227,7 @@ class OvertimeControllerTest {
                     .andExpect(jsonPath("$.status").value("APPROVED"));
 
             verify(overtimeManagementService).approveOrRejectOvertime(
-                    eq(RECORD_ID), any(), any(OvertimeApprovalRequest.class));
+                    eq(RECORD_ID), any(OvertimeApprovalRequest.class));
         }
 
         @Test
@@ -239,7 +239,7 @@ class OvertimeControllerTest {
                     .build();
 
             when(overtimeManagementService.approveOrRejectOvertime(
-                    eq(RECORD_ID), any(), any(OvertimeApprovalRequest.class)))
+                    eq(RECORD_ID), any(OvertimeApprovalRequest.class)))
                     .thenReturn(buildOvertimeResponse("REJECTED"));
 
             mockMvc.perform(post("/api/v1/overtime/{recordId}/approve", RECORD_ID)

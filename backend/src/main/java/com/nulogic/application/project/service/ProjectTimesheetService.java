@@ -15,9 +15,11 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.project.ProjectMember;
 import com.nulogic.domain.project.TimeEntry;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.project.repository.HrmsProjectMemberRepository;
+import com.nulogic.infrastructure.project.repository.HrmsProjectRepository;
 import com.nulogic.infrastructure.project.repository.ProjectTimeEntryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -41,6 +43,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
     private final ProjectTimeEntryRepository timeEntryRepository;
     private final HrmsProjectMemberRepository projectMemberRepository;
+    private final HrmsProjectRepository projectRepository;
     private final EmployeeRepository employeeRepository;
     private final TimeEntryValidator timeEntryValidator;
     private final WorkflowService workflowService;
@@ -48,12 +51,14 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
 
     public ProjectTimesheetService(ProjectTimeEntryRepository timeEntryRepository,
                                    HrmsProjectMemberRepository projectMemberRepository,
+                                   HrmsProjectRepository projectRepository,
                                    EmployeeRepository employeeRepository,
                                    TimeEntryValidator timeEntryValidator,
                                    @org.springframework.context.annotation.Lazy WorkflowService workflowService,
                                    TenantTimeService tenantTimeService) {
         this.timeEntryRepository = timeEntryRepository;
         this.projectMemberRepository = projectMemberRepository;
+        this.projectRepository = projectRepository;
         this.employeeRepository = employeeRepository;
         this.timeEntryValidator = timeEntryValidator;
         this.workflowService = workflowService;
@@ -69,7 +74,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         log.info("Creating time entry for employee {} on project {} for date {}",
                 employeeId, request.getProjectId(), request.getWorkDate());
 
-        // Validate time entry
+        // Validate time entry. The billing rate is never client-supplied (see below).
         TimeEntryValidator.TimeEntryValidationRequest validationRequest =
                 new TimeEntryValidator.TimeEntryValidationRequest(
                         employeeId,
@@ -77,7 +82,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
                         request.getWorkDate(),
                         request.getHoursWorked(),
                         request.getIsBillable(),
-                        request.getBillingRate()
+                        null
                 );
         List<String> validationErrors = timeEntryValidator.validate(validationRequest, tenantId, null);
         if (!validationErrors.isEmpty()) {
@@ -87,6 +92,9 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         // Verify employee exists
         employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+
+        // The employee must be an active member of the project (tenant-scoped lookup).
+        ProjectMember member = requireActiveMember(tenantId, request.getProjectId(), employeeId);
 
         TimeEntry timeEntry = new TimeEntry();
         timeEntry.setId(UUID.randomUUID());
@@ -99,22 +107,9 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         timeEntry.setTaskName(request.getTaskName());
         timeEntry.setEntryType(request.getEntryType() != null ? request.getEntryType() : TimeEntry.EntryType.REGULAR);
         timeEntry.setIsBillable(request.getIsBillable() != null ? request.getIsBillable() : true);
-        timeEntry.setStatus(request.getStatus() != null ? request.getStatus() : TimeEntry.TimeEntryStatus.DRAFT);
-
-        // Set billing rate from request or from project member
-        if (request.getBillingRate() != null) {
-            timeEntry.setBillingRate(request.getBillingRate());
-        } else if (timeEntry.getIsBillable()) {
-            projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
-                            tenantId, request.getProjectId(), employeeId)
-                    .ifPresent(member -> timeEntry.setBillingRate(member.getBillingRate()));
-        }
-
-        // Calculate billed amount if billable
-        if (timeEntry.getIsBillable() && timeEntry.getBillingRate() != null) {
-            BigDecimal billedAmount = timeEntry.getHoursWorked().multiply(timeEntry.getBillingRate());
-            timeEntry.setBilledAmount(billedAmount);
-        }
+        // Status is workflow state, never client input: new entries always start as DRAFT.
+        timeEntry.setStatus(TimeEntry.TimeEntryStatus.DRAFT);
+        applyServerBillingRate(timeEntry, member);
 
         TimeEntry savedEntry = timeEntryRepository.save(timeEntry);
         return mapToTimeEntryResponse(savedEntry);
@@ -142,7 +137,7 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
                         request.getWorkDate(),
                         request.getHoursWorked(),
                         request.getIsBillable(),
-                        request.getBillingRate()
+                        null
                 );
         List<String> validationErrors = timeEntryValidator.validate(validationRequest, tenantId, entryId);
         if (!validationErrors.isEmpty()) {
@@ -155,15 +150,9 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
         timeEntry.setTaskName(request.getTaskName());
         timeEntry.setEntryType(request.getEntryType());
         timeEntry.setIsBillable(request.getIsBillable());
-        timeEntry.setBillingRate(request.getBillingRate());
-
-        // Recalculate billed amount
-        if (timeEntry.getIsBillable() && timeEntry.getBillingRate() != null) {
-            BigDecimal billedAmount = timeEntry.getHoursWorked().multiply(timeEntry.getBillingRate());
-            timeEntry.setBilledAmount(billedAmount);
-        } else {
-            timeEntry.setBilledAmount(null);
-        }
+        // Rate comes from the project member record, never from the request.
+        applyServerBillingRate(timeEntry, projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
+                tenantId, timeEntry.getProjectId(), timeEntry.getEmployeeId()).orElse(null));
 
         TimeEntry updatedEntry = timeEntryRepository.save(timeEntry);
         return mapToTimeEntryResponse(updatedEntry);
@@ -197,10 +186,13 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     @Transactional
     public TimeEntryResponse approveTimeEntry(UUID entryId, UUID approverId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        // The actor is always the authenticated caller; the approverId argument is not trusted.
+        approverId = resolveActorId();
         log.info("Approving time entry {} by approver {}", entryId, approverId);
 
         TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanDecideOn(timeEntry, tenantId);
 
         if (timeEntry.getStatus() != TimeEntry.TimeEntryStatus.SUBMITTED) {
             throw new IllegalStateException("Only submitted time entries can be approved");
@@ -217,10 +209,13 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
     @Transactional
     public TimeEntryResponse rejectTimeEntry(UUID entryId, UUID approverId, String reason) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        // The actor is always the authenticated caller; the approverId argument is not trusted.
+        approverId = resolveActorId();
         log.info("Rejecting time entry {} by approver {}", entryId, approverId);
 
         TimeEntry timeEntry = timeEntryRepository.findByIdAndTenantId(entryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Time entry not found"));
+        assertCanDecideOn(timeEntry, tenantId);
 
         if (timeEntry.getStatus() != TimeEntry.TimeEntryStatus.SUBMITTED) {
             throw new IllegalStateException("Only submitted time entries can be rejected");
@@ -443,6 +438,10 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
             return;
         }
 
+        if (approvedBy != null && approvedBy.equals(timeEntry.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot approve your own time entry");
+        }
+
         timeEntry.setStatus(TimeEntry.TimeEntryStatus.APPROVED);
         timeEntry.setApprovedBy(approvedBy);
         timeEntry.setApprovedAt(tenantTimeService.now(tenantId));
@@ -494,6 +493,72 @@ public class ProjectTimesheetService implements ApprovalCallbackHandler {
             log.warn("Could not start approval workflow for timesheet entry {}: {}",
                     timeEntry.getId(), e.getMessage());
         }
+    }
+
+    // ==================== Billing / Approval Authority ====================
+
+    private ProjectMember requireActiveMember(UUID tenantId, UUID projectId, UUID employeeId) {
+        return projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(tenantId, projectId, employeeId)
+                .filter(m -> Boolean.TRUE.equals(m.getIsActive()))
+                .orElseThrow(() -> new IllegalArgumentException("Employee is not an active member of this project"));
+    }
+
+    /** Rate comes from the member record only; billed amount is derived from it. */
+    private void applyServerBillingRate(TimeEntry entry, ProjectMember member) {
+        BigDecimal rate = Boolean.TRUE.equals(entry.getIsBillable()) && member != null
+                ? member.getBillingRate() : null;
+        entry.setBillingRate(rate);
+        entry.setBilledAmount(rate != null ? entry.getHoursWorked().multiply(rate) : null);
+    }
+
+    private UUID resolveActorId() {
+        UUID actorId = SecurityContext.getCurrentEmployeeId();
+        if (actorId == null) {
+            actorId = SecurityContext.getCurrentUserId();
+        }
+        if (actorId == null) {
+            throw new AccessDeniedException("Cannot determine the approving user");
+        }
+        return actorId;
+    }
+
+    /**
+     * Approve/reject authority: never the entry owner; otherwise the owner's manager, the
+     * project manager, a project member flagged canApproveTime, or a caller with tenant-wide scope.
+     */
+    private void assertCanDecideOn(TimeEntry entry, UUID tenantId) {
+        UUID callerEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (callerEmployeeId != null && callerEmployeeId.equals(entry.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot approve or reject your own time entry");
+        }
+        if (hasTenantWideApprovalScope()
+                || (callerEmployeeId != null && SecurityContext.getAllReporteeIds().contains(entry.getEmployeeId()))
+                || isProjectApprover(entry, tenantId, callerEmployeeId)) {
+            return;
+        }
+        throw new AccessDeniedException(
+                "Only the employee's manager, the project manager or HR can approve or reject this time entry");
+    }
+
+    private boolean hasTenantWideApprovalScope() {
+        return SecurityContext.isSuperAdmin()
+                || SecurityContext.isHRManager()
+                || SecurityContext.hasPermissionAtLeast(Permission.TIMESHEET_APPROVE, RoleScope.ALL)
+                || SecurityContext.hasPermissionAtLeast(Permission.PROJECT_MANAGE, RoleScope.ALL);
+    }
+
+    private boolean isProjectApprover(TimeEntry entry, UUID tenantId, UUID callerEmployeeId) {
+        if (callerEmployeeId == null) {
+            return false;
+        }
+        boolean isProjectManager = projectRepository.findByIdAndTenantId(entry.getProjectId(), tenantId)
+                .map(p -> callerEmployeeId.equals(p.getProjectManagerId()))
+                .orElse(false);
+        return isProjectManager
+                || projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
+                        tenantId, entry.getProjectId(), callerEmployeeId)
+                .map(m -> Boolean.TRUE.equals(m.getIsActive()) && Boolean.TRUE.equals(m.getCanApproveTime()))
+                .orElse(false);
     }
 
     // ==================== Helper Methods ====================

@@ -103,8 +103,9 @@ public class AttendanceRecordService {
 
         log.debug("Processing check-in for employee {} on date {} at {}", employeeId, checkInDate, actualCheckInTime);
 
+        // Row lock serializes concurrent punches on an existing record (first punch of the day: see repository note)
         AttendanceRecord record = attendanceRecordRepository
-                .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, checkInDate, tenantId)
+                .findForUpdateByEmployeeIdAndAttendanceDateAndTenantId(employeeId, checkInDate, tenantId)
                 .orElseGet(() -> {
                     log.info("Creating new attendance record for employee {} on {}", employeeId, checkInDate);
                     AttendanceRecord newRecord = AttendanceRecord.builder()
@@ -473,6 +474,13 @@ public class AttendanceRecordService {
                                                         java.time.LocalDateTime checkInTime, java.time.LocalDateTime checkOutTime, String reason) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
+        if (checkInTime != null && !checkInTime.toLocalDate().equals(date)) {
+            throw new IllegalArgumentException("Requested check-in must be on the regularization date");
+        }
+        if (checkInTime != null && checkOutTime != null && checkOutTime.isBefore(checkInTime)) {
+            throw new IllegalArgumentException("Requested check-out must not be before check-in");
+        }
+
         AttendanceRecord record = attendanceRecordRepository
                 .findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, date, tenantId)
                 .orElseGet(() -> {
@@ -484,11 +492,8 @@ public class AttendanceRecordService {
                     return stub;
                 });
 
-        // Set the desired times the employee is requesting (manager will review on approval)
-        if (checkInTime != null) record.setCheckInTime(checkInTime);
-        if (checkOutTime != null) record.setCheckOutTime(checkOutTime);
-
-        record.requestRegularization(reason);
+        // The live punches stay untouched until approval; the requested times travel with the request.
+        flagForRegularization(record, reason, checkInTime, checkOutTime);
         return attendanceRecordRepository.save(record);
     }
 
@@ -498,7 +503,7 @@ public class AttendanceRecordService {
         AttendanceRecord record = attendanceRecordRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
-        record.requestRegularization(reason);
+        flagForRegularization(record, reason, null, null);
         return attendanceRecordRepository.save(record);
     }
 
@@ -508,6 +513,20 @@ public class AttendanceRecordService {
 
         AttendanceRecord record = attendanceRecordRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
+
+        requirePendingRegularization(record);
+
+        // Apply the times requested at submission only now that an approver has accepted them
+        RegularizationRequestMarker marker = RegularizationRequestMarker.parse(record.getRegularizationReason());
+        if (marker.checkIn() != null) record.setCheckInTime(marker.checkIn());
+        if (marker.checkOut() != null) record.setCheckOutTime(marker.checkOut());
+        if (marker.checkIn() != null || marker.checkOut() != null) {
+            if (record.getCheckInTime() != null && record.getCheckOutTime() != null
+                    && record.getCheckOutTime().isBefore(record.getCheckInTime())) {
+                throw new IllegalStateException("Requested check-out is before the check-in; reject and resubmit");
+            }
+            record.calculateWorkDuration(tenantTimeService.zoneFor(tenantId));
+        }
 
         record.approveRegularization(approverId, tenantTimeService.now(record.getTenantId()));
         AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
@@ -734,13 +753,65 @@ public class AttendanceRecordService {
         AttendanceRecord record = attendanceRecordRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(ATTENDANCE_RECORD_NOT_FOUND));
 
+        requirePendingRegularization(record);
+
+        RegularizationRequestMarker marker = RegularizationRequestMarker.parse(record.getRegularizationReason());
         record.rejectRegularization(rejectorId, reason, tenantTimeService.now(record.getTenantId()));
+        // The live punches were never changed, so a record that had real punches goes back to its prior status
+        if (record.getCheckInTime() != null && marker.previousStatus() != null) {
+            record.setStatus(marker.previousStatus());
+        }
         log.info("Regularization rejected for record {} by {}", id, rejectorId);
         AttendanceRecord savedRecord = attendanceRecordRepository.save(record);
 
         notifyRegularizationRejected(savedRecord, reason);
 
         return savedRecord;
+    }
+
+    // ===================== Regularization helpers =====================
+
+    private void requirePendingRegularization(AttendanceRecord record) {
+        if (record.getStatus() != AttendanceRecord.AttendanceStatus.PENDING_REGULARIZATION) {
+            throw new IllegalStateException("Attendance record is not pending regularization");
+        }
+    }
+
+    private void flagForRegularization(AttendanceRecord record, String reason,
+                                       LocalDateTime requestedIn, LocalDateTime requestedOut) {
+        if (record.getStatus() == AttendanceRecord.AttendanceStatus.PENDING_REGULARIZATION) {
+            throw new IllegalStateException("A regularization request is already pending for this record");
+        }
+        record.requestRegularization(
+                (reason != null ? reason : "") + new RegularizationRequestMarker(record.getStatus(), requestedIn, requestedOut).render());
+    }
+
+    /**
+     * Requested punch times and the pre-request status, carried as a trailing token on the
+     * regularization reason because attendance_records has no columns for them (a schema change
+     * is out of scope here). Without a marker, approval changes nothing but the status.
+     */
+    record RegularizationRequestMarker(AttendanceRecord.AttendanceStatus previousStatus,
+                                       LocalDateTime checkIn, LocalDateTime checkOut) {
+        private static final java.util.regex.Pattern PATTERN = java.util.regex.Pattern.compile(
+                "\\[REG prev=(\\S+) in=(\\S+) out=(\\S+)]\\s*$");
+
+        String render() {
+            return " [REG prev=" + (previousStatus != null ? previousStatus.name() : "-")
+                    + " in=" + (checkIn != null ? checkIn : "-")
+                    + " out=" + (checkOut != null ? checkOut : "-") + "]";
+        }
+
+        static RegularizationRequestMarker parse(String reason) {
+            java.util.regex.Matcher m = reason != null ? PATTERN.matcher(reason) : null;
+            if (m == null || !m.find()) {
+                return new RegularizationRequestMarker(null, null, null);
+            }
+            return new RegularizationRequestMarker(
+                    "-".equals(m.group(1)) ? null : AttendanceRecord.AttendanceStatus.valueOf(m.group(1)),
+                    "-".equals(m.group(2)) ? null : LocalDateTime.parse(m.group(2)),
+                    "-".equals(m.group(3)) ? null : LocalDateTime.parse(m.group(3)));
+        }
     }
 
     // ===================== Notification Helpers =====================

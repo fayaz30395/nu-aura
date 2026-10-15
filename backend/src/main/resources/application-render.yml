@@ -155,6 +155,15 @@ server:
     include-binding-errors: never
     include-exception: false
 
+# Match prod: Render/Railway is internet-facing, so no API schema or Swagger UI
+# (SecurityConfig already gates them to SUPER_ADMIN; this removes them entirely).
+springdoc:
+  show-actuator: false
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
 app:
   payments:
     # Enable payments module by default in Render profile.

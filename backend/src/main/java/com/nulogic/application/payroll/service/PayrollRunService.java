@@ -72,6 +72,7 @@ public class PayrollRunService {
     private final com.nulogic.common.util.TenantTimeService tenantTimeService;
     private final PayrollAdjustmentRepository payrollAdjustmentRepository;
     private final WebSocketNotificationService webSocketNotificationService;
+    private final PayslipReleaseNotifier payslipReleaseNotifier;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final HolidayRepository holidayRepository;
     private final LeaveRequestRepository leaveRequestRepository;
@@ -333,7 +334,10 @@ public class PayrollRunService {
     public PayrollRun approvePayrollRun(UUID id, UUID approvedBy) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
         payrollRun.approve(approvedBy, tenantTimeService.now(payrollRun.getTenantId()));
-        return payrollRunRepository.save(payrollRun);
+        PayrollRun saved = payrollRunRepository.save(payrollRun);
+        auditRunTransition(saved, PayrollStatus.APPROVED, "Payroll run approved (payslips released)");
+        notifyPayslipsReleasedAfterCommit(saved);
+        return saved;
     }
 
     /**
@@ -349,7 +353,9 @@ public class PayrollRunService {
     public PayrollRun lockPayrollRun(UUID id) {
         PayrollRun payrollRun = getPayrollRunForUpdate(id);
         payrollRun.lock();
-        return payrollRunRepository.save(payrollRun);
+        PayrollRun saved = payrollRunRepository.save(payrollRun);
+        auditRunTransition(saved, PayrollStatus.LOCKED, "Payroll run locked");
+        return saved;
     }
 
     /**
@@ -364,13 +370,42 @@ public class PayrollRunService {
                 .orElseThrow(() -> new ResourceNotFoundException("Payroll run not found"));
     }
 
-    private void notifyPayslipAvailable(UUID employeeId, PayrollRun payrollRun) {
+    /**
+     * Notify employees only once the run is released (APPROVED), and only after the approving
+     * transaction commits, so a rollback never leaves phantom notifications.
+     */
+    private void notifyPayslipsReleasedAfterCommit(PayrollRun run) {
+        UUID tenantId = run.getTenantId();
+        if (!org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
+            payslipReleaseNotifier.notifyReleased(run, tenantId);
+            return;
+        }
+        org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                new org.springframework.transaction.support.TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        try {
+                            payslipReleaseNotifier.notifyReleased(run, tenantId);
+                        } catch (RuntimeException e) {
+                            log.warn("Payslip release notification failed for run {}: {}", run.getId(), e.getMessage());
+                        }
+                    }
+                });
+    }
+
+    private void auditRunTransition(PayrollRun run, PayrollStatus status, String description) {
         try {
-            String monthName = Month.of(payrollRun.getPayPeriodMonth()).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-            webSocketNotificationService.notifyPayslipAvailable(
-                    employeeId, monthName, String.valueOf(payrollRun.getPayPeriodYear()));
+            auditLogService.logAction(
+                    "PAYROLL_RUN",
+                    run.getId(),
+                    AuditAction.UPDATE,
+                    Map.of(
+                            "status", status.name(),
+                            "period", run.getPayPeriodYear() + "-" + run.getPayPeriodMonth()),
+                    null,
+                    description + " for period " + run.getPayPeriodYear() + "/" + run.getPayPeriodMonth());
         } catch (RuntimeException e) {
-            log.warn("Failed to send payslip-available notification for employee {}: {}", employeeId, e.getMessage());
+            log.warn("Failed to audit payroll run {} transition to {}: {}", run.getId(), status, e.getMessage());
         }
     }
 
@@ -412,7 +447,6 @@ public class PayrollRunService {
                 continue;
             }
             payslipRepository.save(payslip);
-            notifyPayslipAvailable(employee.getId(), payrollRun);
             generated++;
         }
         return generated;
@@ -789,7 +823,6 @@ public class PayrollRunService {
                     continue;
                 }
                 payslipRepository.save(payslip);
-                notifyPayslipAvailable(employeeId, run);
                 processed++;
                 results.add(new BulkPayrollProcessItem(employeeId, BulkPayrollProcessItem.Status.PROCESSED, null));
             } catch (Exception e) { // per-employee error boundary: isolate failures so the batch continues
@@ -808,6 +841,17 @@ public class PayrollRunService {
             payrollRunRepository.save(run);
             notifyPayrollProcessed(run, processedBy);
         }
+        auditLogService.logAction(
+                "PAYROLL_RUN",
+                run.getId(),
+                AuditAction.UPDATE,
+                Map.of("operation", "BULK_PROCESS",
+                        "period", year + "-" + month,
+                        "processed", processed,
+                        "failed", failed,
+                        "alreadyProcessed", alreadyProcessed),
+                null,
+                "Bulk payroll processed for period " + year + "/" + month);
 
         return new BulkPayrollProcessResponse(run.getId(), processed, failed, alreadyProcessed, results);
     }

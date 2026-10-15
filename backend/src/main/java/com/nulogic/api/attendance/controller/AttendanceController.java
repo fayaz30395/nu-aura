@@ -2,9 +2,9 @@ package com.nulogic.api.attendance.controller;
 
 import com.nulogic.api.attendance.dto.*;
 import com.nulogic.api.attendance.mapper.AttendanceResponseMapper;
+import com.nulogic.application.attendance.service.AttendanceActorScope;
 import com.nulogic.application.attendance.service.AttendanceImportService;
 import com.nulogic.application.attendance.service.AttendanceRecordService;
-import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
@@ -12,7 +12,6 @@ import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.AttendanceTimeEntry;
-import com.nulogic.domain.employee.Employee;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,7 +36,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -56,7 +54,7 @@ public class AttendanceController {
     private final AttendanceRecordService attendanceService;
     private final AttendanceImportService attendanceImportService;
     private final com.nulogic.common.security.DataScopeService dataScopeService;
-    private final EmployeeService employeeService;
+    private final AttendanceActorScope actorScope;
     private final TenantTimeService tenantTimeService;
     private final AttendanceResponseMapper attendanceResponseMapper;
 
@@ -72,7 +70,9 @@ public class AttendanceController {
     })
     public ResponseEntity<AttendanceResponse> checkIn(@Valid @RequestBody CheckInRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : tenantTimeService.now(tenantId);
+        // Punch time and date are always server-side (tenant zone); client-supplied values are ignored
+        // so a punch cannot be backdated or forged.
+        LocalDateTime checkInTime = tenantTimeService.now(tenantId);
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
         AttendanceRecord record = attendanceService.checkIn(
                 employeeId,
@@ -80,7 +80,7 @@ public class AttendanceController {
                 request.getSource(),
                 request.getLocation(),
                 request.getIp(),
-                request.getAttendanceDate() // Pass client's local date to handle timezone differences
+                null // attendance date derives from the server-side punch time
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(record));
     }
@@ -95,8 +95,7 @@ public class AttendanceController {
     })
     public ResponseEntity<AttendanceResponse> checkOut(@Valid @RequestBody CheckOutRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
-                : tenantTimeService.now(tenantId);
+        LocalDateTime checkOutTime = tenantTimeService.now(tenantId);
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
         AttendanceRecord record = attendanceService.checkOut(
                 employeeId,
@@ -104,7 +103,7 @@ public class AttendanceController {
                 request.getSource(),
                 request.getLocation(),
                 request.getIp(),
-                request.getAttendanceDate() // Pass client's local date to handle timezone differences
+                null // attendance date derives from the server-side punch time
         );
         return ResponseEntity.ok(toResponse(record));
     }
@@ -119,7 +118,7 @@ public class AttendanceController {
             @ApiResponse(responseCode = "403", description = "Not authorized")
     })
     public ResponseEntity<AttendanceResponse> getTodayAttendance() {
-        UUID employeeId = requireCurrentEmployeeId();
+        UUID employeeId = actorScope.requireActor();
         UUID tenantId = TenantContext.requireCurrentTenant();
         return attendanceService.getTodayAttendance(employeeId)
                 .map(record -> ResponseEntity.ok(toResponse(record)))
@@ -153,7 +152,7 @@ public class AttendanceController {
             @Parameter(description = "Start date (ISO format, defaults to 30 days ago)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @Parameter(description = "End date (ISO format, defaults to today)") @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Pageable pageable) {
-        UUID employeeId = requireCurrentEmployeeId();
+        UUID employeeId = actorScope.requireActor();
         UUID tenantId = TenantContext.requireCurrentTenant();
         LocalDate effectiveEnd = (endDate != null) ? endDate : tenantTimeService.today(tenantId);
         LocalDate effectiveStart = (startDate != null) ? startDate : effectiveEnd.minusDays(30);
@@ -167,7 +166,7 @@ public class AttendanceController {
     @ApiResponse(responseCode = "200", description = "Time entries retrieved successfully")
     public ResponseEntity<List<TimeEntryResponse>> getMyTimeEntries(
             @Parameter(description = "Date (ISO format)") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        UUID employeeId = requireCurrentEmployeeId();
+        UUID employeeId = actorScope.requireActor();
         List<AttendanceTimeEntry> entries = attendanceService.getTimeEntriesForDate(employeeId, date);
         return ResponseEntity.ok(entries.stream().map(this::toTimeEntryResponse).collect(Collectors.toList()));
     }
@@ -179,7 +178,9 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     public ResponseEntity<TimeEntryResponse> multiCheckIn(@Valid @RequestBody MultiCheckInRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        LocalDateTime checkInTime = request.getCheckInTime() != null ? request.getCheckInTime() : tenantTimeService.now(tenantId);
+        // Punch time and date are always server-side (tenant zone); client-supplied values are ignored
+        // so a punch cannot be backdated or forged.
+        LocalDateTime checkInTime = tenantTimeService.now(tenantId);
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
         AttendanceTimeEntry entry = attendanceService.multiCheckIn(
                 employeeId,
@@ -196,8 +197,7 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_MARK)
     public ResponseEntity<TimeEntryResponse> multiCheckOut(@Valid @RequestBody MultiCheckOutRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
-                : tenantTimeService.now(tenantId);
+        LocalDateTime checkOutTime = tenantTimeService.now(tenantId);
         UUID employeeId = resolveEmployeeId(request.getEmployeeId(), Permission.ATTENDANCE_MARK);
         AttendanceTimeEntry entry = attendanceService.multiCheckOut(
                 employeeId,
@@ -214,7 +214,7 @@ public class AttendanceController {
     public ResponseEntity<List<TimeEntryResponse>> getTimeEntries(@PathVariable UUID attendanceRecordId) {
         AttendanceRecord record = attendanceService.getAttendanceRecordById(attendanceRecordId);
         String permission = determineViewPermission();
-        validateEmployeeAccess(record.getEmployeeId(), permission);
+        actorScope.requireAccess(record.getEmployeeId(), permission);
         List<AttendanceTimeEntry> entries = attendanceService.getTimeEntries(attendanceRecordId);
         return ResponseEntity.ok(entries.stream().map(this::toTimeEntryResponse).collect(Collectors.toList()));
     }
@@ -225,7 +225,7 @@ public class AttendanceController {
             @PathVariable UUID employeeId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         String permission = determineViewPermission();
-        validateEmployeeAccess(employeeId, permission);
+        actorScope.requireAccess(employeeId, permission);
         List<AttendanceTimeEntry> entries = attendanceService.getTimeEntriesForDate(employeeId, date);
         return ResponseEntity.ok(entries.stream().map(this::toTimeEntryResponse).collect(Collectors.toList()));
     }
@@ -250,8 +250,7 @@ public class AttendanceController {
     @RequiresPermission(Permission.ATTENDANCE_VIEW_ALL)
     public ResponseEntity<BulkAttendanceResponse> bulkCheckOut(@Valid @RequestBody BulkCheckOutRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        LocalDateTime checkOutTime = request.getCheckOutTime() != null ? request.getCheckOutTime()
-                : tenantTimeService.now(tenantId);
+        LocalDateTime checkOutTime = tenantTimeService.now(tenantId);
         AttendanceRecordService.BulkResult result = attendanceService.bulkCheckOut(
                 request.getEmployeeIds(),
                 checkOutTime,
@@ -272,7 +271,7 @@ public class AttendanceController {
             @PathVariable UUID employeeId,
             Pageable pageable) {
         String permission = determineViewPermission();
-        validateEmployeeAccess(employeeId, permission);
+        actorScope.requireAccess(employeeId, permission);
         Page<AttendanceRecord> records = attendanceService.getAttendanceByEmployee(employeeId, pageable);
         return ResponseEntity.ok(records.map(this::toResponse));
     }
@@ -288,7 +287,7 @@ public class AttendanceController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Pageable pageable) {
         String permission = determineViewPermission();
-        validateEmployeeAccess(employeeId, permission);
+        actorScope.requireAccess(employeeId, permission);
         Page<AttendanceRecord> records = attendanceService.getAttendanceByDateRange(employeeId, startDate, endDate, pageable);
         return ResponseEntity.ok(records.map(this::toResponse));
     }
@@ -335,9 +334,9 @@ public class AttendanceController {
             @Valid @RequestBody RegularizationRequest request) {
         UUID employeeId = request.getEmployeeId() != null
                 ? request.getEmployeeId()
-                : requireCurrentEmployeeId();
+                : actorScope.requireActor();
         if (request.getEmployeeId() != null) {
-            validateEmployeeAccess(employeeId, Permission.ATTENDANCE_REGULARIZE);
+            actorScope.requireAccess(employeeId, Permission.ATTENDANCE_REGULARIZE);
         }
         AttendanceRecord record = attendanceService.submitRegularizationRequest(
                 employeeId, request.getDate(),
@@ -358,7 +357,7 @@ public class AttendanceController {
             @Parameter(description = "Attendance record UUID") @PathVariable UUID id,
             @Parameter(description = "Reason for regularization") @NotBlank @Size(max = 1000) @RequestParam String reason) {
         AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
-        validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_REGULARIZE);
+        actorScope.requireAccess(existing.getEmployeeId(), Permission.ATTENDANCE_REGULARIZE);
         AttendanceRecord updated = attendanceService.requestRegularization(id, reason);
         return ResponseEntity.ok(toResponse(updated));
     }
@@ -374,8 +373,8 @@ public class AttendanceController {
     public ResponseEntity<AttendanceResponse> approveRegularization(
             @Parameter(description = "Attendance record UUID") @PathVariable UUID id) {
         AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
-        validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
-        UUID approverId = requireCurrentEmployeeId();
+        validateApprovalAccess(existing.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
+        UUID approverId = actorScope.requireActor();
         AttendanceRecord record = attendanceService.approveRegularization(id, approverId);
         return ResponseEntity.ok(toResponse(record));
     }
@@ -392,8 +391,8 @@ public class AttendanceController {
             @Parameter(description = "Attendance record UUID") @PathVariable UUID id,
             @Parameter(description = "Rejection reason (optional)") @Size(max = 1000) @RequestParam(required = false, defaultValue = "") String reason) {
         AttendanceRecord existing = attendanceService.getAttendanceRecordById(id);
-        validateEmployeeAccess(existing.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
-        UUID rejectorId = requireCurrentEmployeeId();
+        actorScope.requireAccess(existing.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
+        UUID rejectorId = actorScope.requireActor();
         AttendanceRecord record = attendanceService.rejectRegularization(id, rejectorId, reason);
         return ResponseEntity.ok(toResponse(record));
     }
@@ -581,19 +580,11 @@ public class AttendanceController {
 
     // ===================== Scope Enforcement Helpers =====================
 
-    private UUID requireCurrentEmployeeId() {
-        UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        if (employeeId == null) {
-            throw new AccessDeniedException("No employee context available");
-        }
-        return employeeId;
-    }
-
     private UUID resolveEmployeeId(UUID requestedEmployeeId, String permission) {
         if (requestedEmployeeId == null) {
-            return requireCurrentEmployeeId();
+            return actorScope.requireActor();
         }
-        validateEmployeeAccess(requestedEmployeeId, permission);
+        actorScope.requireAccess(requestedEmployeeId, permission);
         return requestedEmployeeId;
     }
 
@@ -616,116 +607,17 @@ public class AttendanceController {
         return Permission.ATTENDANCE_VIEW_SELF;
     }
 
-    private void validateEmployeeAccess(UUID targetEmployeeId, String permission) {
-        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
-
-        if (SecurityContext.isSuperAdmin()) {
-            return;
+    /**
+     * Approval variant of {@link AttendanceActorScope#requireAccess}: the TEAM/CUSTOM/SELF branches there admit the
+     * caller's own id, which would let an approver approve their own regularization. Self-approval is
+     * refused unless the caller is a super admin or holds ALL scope.
+     */
+    private void validateApprovalAccess(UUID targetEmployeeId, String permission) {
+        if (targetEmployeeId.equals(SecurityContext.getCurrentEmployeeId())
+                && !SecurityContext.isSuperAdmin()
+                && SecurityContext.getPermissionScope(permission) != com.nulogic.domain.user.RoleScope.ALL) {
+            throw new AccessDeniedException("You cannot approve your own attendance regularization");
         }
-
-        com.nulogic.domain.user.RoleScope scope = SecurityContext.getPermissionScope(permission);
-        if (scope == null) {
-            throw new AccessDeniedException("No access to attendance records");
-        }
-
-        switch (scope) {
-            case ALL:
-                return;
-            case LOCATION:
-                if (isEmployeeInUserLocations(targetEmployeeId)) {
-                    return;
-                }
-                break;
-            case DEPARTMENT:
-                if (isEmployeeInUserDepartment(targetEmployeeId)) {
-                    return;
-                }
-                break;
-            case TEAM:
-                if (targetEmployeeId.equals(currentEmployeeId) || isReportee(targetEmployeeId)) {
-                    return;
-                }
-                break;
-            case SELF:
-                if (targetEmployeeId.equals(currentEmployeeId)) {
-                    return;
-                }
-                break;
-            case CUSTOM:
-                if (targetEmployeeId.equals(currentEmployeeId) || isInCustomTargets(targetEmployeeId, permission)) {
-                    return;
-                }
-                break;
-        }
-
-        throw new AccessDeniedException("You do not have permission to access this employee's attendance");
-    }
-
-    private boolean isReportee(UUID employeeId) {
-        Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
-        return reporteeIds != null && reporteeIds.contains(employeeId);
-    }
-
-    private boolean isEmployeeInUserLocations(UUID employeeId) {
-        Set<UUID> locationIds = SecurityContext.getCurrentLocationIds();
-        if (locationIds == null || locationIds.isEmpty()) {
-            return false;
-        }
-        UUID tenantId = TenantContext.getCurrentTenant();
-        try {
-            Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
-            return emp.getOfficeLocationId() != null && locationIds.contains(emp.getOfficeLocationId());
-        } catch (Exception e) { // Intentional broad catch — controller error boundary
-            return false;
-        }
-    }
-
-    private boolean isEmployeeInUserDepartment(UUID employeeId) {
-        UUID departmentId = SecurityContext.getCurrentDepartmentId();
-        if (departmentId == null) {
-            return false;
-        }
-        UUID tenantId = TenantContext.getCurrentTenant();
-        try {
-            Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
-            return departmentId.equals(emp.getDepartmentId());
-        } catch (Exception e) { // Intentional broad catch — controller error boundary
-            return false;
-        }
-    }
-
-    private boolean isInCustomTargets(UUID employeeId, String permission) {
-        Set<UUID> customEmployeeIds = SecurityContext.getCustomEmployeeIds(permission);
-        if (customEmployeeIds != null && customEmployeeIds.contains(employeeId)) {
-            return true;
-        }
-
-        Set<UUID> customDepartmentIds = SecurityContext.getCustomDepartmentIds(permission);
-        if (customDepartmentIds != null && !customDepartmentIds.isEmpty()) {
-            UUID tenantId = TenantContext.getCurrentTenant();
-            try {
-                Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
-                if (emp.getDepartmentId() != null && customDepartmentIds.contains(emp.getDepartmentId())) {
-                    return true;
-                }
-            } catch (Exception e) { // Intentional broad catch — controller error boundary
-                log.debug("Department scope check failed for employee {}: {}", employeeId, e.getMessage());
-            }
-        }
-
-        Set<UUID> customLocationIds = SecurityContext.getCustomLocationIds(permission);
-        if (customLocationIds != null && !customLocationIds.isEmpty()) {
-            UUID tenantId = TenantContext.getCurrentTenant();
-            try {
-                Employee emp = employeeService.getByIdAndTenant(employeeId, tenantId);
-                if (emp.getOfficeLocationId() != null && customLocationIds.contains(emp.getOfficeLocationId())) {
-                    return true;
-                }
-            } catch (Exception e) { // Intentional broad catch — controller error boundary
-                log.debug("Location scope check failed for employee {}: {}", employeeId, e.getMessage());
-            }
-        }
-
-        return false;
+        actorScope.requireAccess(targetEmployeeId, permission);
     }
 }

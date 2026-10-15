@@ -7,10 +7,16 @@ import com.nulogic.api.survey.dto.*;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.attendance.OfficeLocation;
+import com.nulogic.domain.employee.Department;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.survey.*;
 import com.nulogic.domain.survey.SurveyResponse.ResponseStatus;
 import com.nulogic.domain.survey.SurveyResponse.SentimentLevel;
 import com.nulogic.domain.user.User;
+import com.nulogic.infrastructure.attendance.repository.OfficeLocationRepository;
+import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.survey.repository.*;
 import com.nulogic.infrastructure.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +45,18 @@ public class SurveyAnalyticsService {
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
+    private final OfficeLocationRepository officeLocationRepository;
+
+    /**
+     * Fewest completed responses for which results of an ANONYMOUS survey are reported (conservative default;
+     * the real threshold is a pending business decision).
+     */
+    static final int MIN_ANONYMOUS_GROUP_SIZE = 5;
+
+    @org.springframework.beans.factory.annotation.Value("${app.security.encryption.key:}")
+    private String respondentPseudonymKey;
 
     // ==================== Question Management ====================
 
@@ -96,39 +114,58 @@ public class SurveyAnalyticsService {
         Survey survey = surveyRepository.findByIdAndTenantId(request.getSurveyId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 
-        // RBAC-8 FIX: for non-anonymous surveys always resolve employee from the security
-        // context so a caller cannot spoof a response on behalf of another employee.
-        // Anonymous surveys leave employeeId null (anonymousId is used instead).
-        UUID resolvedEmployeeId = survey.getIsAnonymous()
-                ? null
-                : SecurityContext.getCurrentEmployeeId();
+        if (survey.getStatus() != Survey.SurveyStatus.ACTIVE) {
+            throw new IllegalStateException("Survey is not currently active");
+        }
+        LocalDateTime now = tenantTimeService.now(tenantId);
+        if ((survey.getStartDate() != null && now.isBefore(survey.getStartDate()))
+                || (survey.getEndDate() != null && now.isAfter(survey.getEndDate()))) {
+            throw new IllegalStateException("Survey is not currently open for responses");
+        }
 
-        // Check if already submitted (for non-anonymous)
-        if (resolvedEmployeeId != null) {
-            Optional<SurveyResponse> existing = responseRepository.findByEmployeeAndSurvey(
-                    tenantId, resolvedEmployeeId, request.getSurveyId());
-            if (existing.isPresent() && existing.get().getStatus() == ResponseStatus.COMPLETED) {
-                throw new IllegalStateException("Response already submitted for this survey");
-            }
+        // Respondent is always the authenticated employee; never client-supplied.
+        UUID callerEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (callerEmployeeId == null) {
+            throw new IllegalStateException("An employee profile is required to respond to a survey");
+        }
+        boolean anonymous = Boolean.TRUE.equals(survey.getIsAnonymous());
+        UUID resolvedEmployeeId = anonymous ? null : callerEmployeeId;
+        // Anonymous: deterministic keyed pseudonym => one response per employee without storing identity.
+        String anonymousId = anonymous ? anonymousRespondentId(tenantId, survey.getId(), callerEmployeeId) : null;
+
+        Optional<SurveyResponse> existing = anonymous
+                ? responseRepository.findByAnonymousIdAndSurvey(tenantId, anonymousId, request.getSurveyId())
+                : responseRepository.findByEmployeeAndSurvey(tenantId, resolvedEmployeeId, request.getSurveyId());
+        if (existing.isPresent() && existing.get().getStatus() == ResponseStatus.COMPLETED) {
+            throw new IllegalStateException("Response already submitted for this survey");
         }
 
         // S11-M: tenant-local submission timestamp — resolved via TenantTimeService and reused for
         // the response builder and every per-answer "answeredAt" so the whole submission shares one
         // consistent instant in the tenant's zone.
-        LocalDateTime submittedAt = tenantTimeService.now(tenantId);
+        LocalDateTime submittedAt = now;
+
+        // Demographics come from the server-side employee record, never from the request body.
+        Employee respondent = employeeRepository.findByIdAndTenantId(callerEmployeeId, tenantId).orElse(null);
 
         SurveyResponse response = SurveyResponse.builder()
                 .survey(survey)
                 .tenantId(tenantId)
                 .employeeId(resolvedEmployeeId)
-                .anonymousId(survey.getIsAnonymous() ? generateAnonymousId() : null)
+                .anonymousId(anonymousId)
                 .status(ResponseStatus.COMPLETED)
                 .startedAt(submittedAt)
                 .submittedAt(submittedAt)
-                .department(request.getDepartment())
-                .location(request.getLocation())
-                .grade(request.getGrade())
-                .tenureMonths(request.getTenureMonths())
+                .department(respondent == null || respondent.getDepartmentId() == null ? null
+                        : departmentRepository.findByIdAndTenantId(respondent.getDepartmentId(), tenantId)
+                        .map(Department::getName).orElse(null))
+                .location(respondent == null || respondent.getOfficeLocationId() == null ? null
+                        : officeLocationRepository.findByIdAndTenantId(respondent.getOfficeLocationId(), tenantId)
+                        .map(OfficeLocation::getLocationName).orElse(null))
+                .grade(respondent == null || respondent.getLevel() == null ? null : respondent.getLevel().name())
+                .tenureMonths(respondent == null || respondent.getJoiningDate() == null ? null
+                        : (int) java.time.temporal.ChronoUnit.MONTHS.between(respondent.getJoiningDate(),
+                        tenantTimeService.today(tenantId)))
                 .build();
 
         // Process answers
@@ -141,6 +178,7 @@ public class SurveyAnalyticsService {
                 .collect(Collectors.toMap(SurveyQuestion::getId, q -> q));
 
         List<SurveyAnswer> answers = new ArrayList<>();
+        Set<UUID> answeredQuestionIds = new HashSet<>();
         double totalEngagement = 0;
         double totalSentiment = 0;
         int engagementCount = 0;
@@ -150,7 +188,11 @@ public class SurveyAnalyticsService {
         for (SubmitResponseRequest.AnswerRequest answerReq : request.getAnswers()) {
             // IDOR protection maintained: questionMap is populated from tenant-scoped bulk fetch
             SurveyQuestion question = Optional.ofNullable(questionMap.get(answerReq.getQuestionId()))
+                    .filter(q -> q.getSurvey() != null && survey.getId().equals(q.getSurvey().getId()))
                     .orElseThrow(() -> new IllegalArgumentException("Question not found: " + answerReq.getQuestionId()));
+            if (!answeredQuestionIds.add(answerReq.getQuestionId())) {
+                throw new IllegalArgumentException("Duplicate answer for question: " + answerReq.getQuestionId());
+            }
 
             SurveyAnswer answer = new SurveyAnswer();
             answer.setQuestion(question);
@@ -348,6 +390,11 @@ public class SurveyAnalyticsService {
     @Transactional(readOnly = true)
     public List<EngagementScoreDto> getDepartmentScores(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        Survey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
+        if (belowAnonymityThreshold(survey)) {
+            return List.of();
+        }
         return engagementScoreRepository.findBySurvey(tenantId, surveyId).stream()
                 .filter(s -> s.getScoreLevel() == EngagementScore.ScoreLevel.DEPARTMENT)
                 .map(this::mapToEngagementDto)
@@ -521,6 +568,11 @@ public class SurveyAnalyticsService {
 
     // ==================== Analytics Summary ====================
 
+    private boolean belowAnonymityThreshold(Survey survey) {
+        return Boolean.TRUE.equals(survey.getIsAnonymous())
+                && responseRepository.countCompletedResponses(survey.getId()) < MIN_ANONYMOUS_GROUP_SIZE;
+    }
+
     @Transactional(readOnly = true)
     public SurveyAnalyticsSummary getSurveyAnalytics(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -538,6 +590,10 @@ public class SurveyAnalyticsService {
         // Response metrics
         summary.setTotalResponses(survey.getTotalResponses());
         summary.setCompletedResponses(responses.size());
+        if (Boolean.TRUE.equals(survey.getIsAnonymous()) && responses.size() < MIN_ANONYMOUS_GROUP_SIZE) {
+            // too few respondents to report scores without risking re-identification
+            return summary;
+        }
         summary.setPartialResponses((int) responseRepository.countBySurveyIdAndStatus(surveyId, ResponseStatus.PARTIAL));
         summary.setCompletionRate(survey.getTotalResponses() > 0 ?
                 (responses.size() * 100.0) / survey.getTotalResponses() : 0);
@@ -636,8 +692,20 @@ public class SurveyAnalyticsService {
 
     // ==================== Helper Methods ====================
 
-    private String generateAnonymousId() {
-        return "ANON-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    private String anonymousRespondentId(UUID tenantId, UUID surveyId, UUID employeeId) {
+        if (respondentPseudonymKey == null || respondentPseudonymKey.isBlank()) {
+            throw new IllegalStateException("Anonymous survey pseudonym key is not configured");
+        }
+        try {
+            javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
+            mac.init(new javax.crypto.spec.SecretKeySpec(
+                    respondentPseudonymKey.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] h = mac.doFinal(("survey|" + tenantId + "|" + surveyId + "|" + employeeId)
+                    .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return "ANON-" + java.util.HexFormat.of().formatHex(h, 0, 16).toUpperCase();
+        } catch (java.security.GeneralSecurityException e) {
+            throw new IllegalStateException("Unable to derive respondent id", e);
+        }
     }
 
     private EngagementScore.ScoreType mapSurveyType(Survey.SurveyType surveyType) {

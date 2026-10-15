@@ -1,6 +1,7 @@
 package com.nulogic.application.project.service;
 
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.project.Project;
 import com.nulogic.domain.project.TimeEntry;
 import com.nulogic.domain.psa.PSAInvoice;
@@ -41,6 +42,8 @@ class ProjectInvoiceGenerationServiceTest {
     private ProjectTimeEntryRepository timeEntryRepository;
     @Mock
     private PSAInvoiceRepository invoiceRepository;
+    @Mock
+    private TenantTimeService tenantTimeService;
 
     private ProjectInvoiceGenerationService service;
     private final UUID tenantId = UUID.randomUUID();
@@ -60,8 +63,10 @@ class ProjectInvoiceGenerationServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new ProjectInvoiceGenerationService(projectRepository, timeEntryRepository, invoiceRepository);
+        service = new ProjectInvoiceGenerationService(projectRepository, timeEntryRepository, invoiceRepository,
+                tenantTimeService);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        lenient().when(tenantTimeService.today(tenantId)).thenReturn(LocalDate.of(2026, 2, 3));
     }
 
     private Project project() {
@@ -103,6 +108,7 @@ class ProjectInvoiceGenerationServiceTest {
         assertThat(invoice.getTotalHours()).isEqualTo(12.0);
         assertThat(invoice.getBillableAmount()).isEqualByComparingTo("800.00");
         assertThat(invoice.getStatus()).isEqualTo(PSAInvoice.InvoiceStatus.DRAFT);
+        assertThat(invoice.getInvoiceDate()).isEqualTo(LocalDate.of(2026, 2, 3)); // tenant time, not JVM time
 
         assertThat(e1.getStatus()).isEqualTo(TimeEntry.TimeEntryStatus.BILLED);
         assertThat(e1.getInvoiceId()).isEqualTo(invoice.getId());
@@ -132,5 +138,46 @@ class ProjectInvoiceGenerationServiceTest {
                 .isInstanceOf(IllegalStateException.class);
 
         verify(invoiceRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("refuses a row that is no longer APPROVED/unbilled once locked, and bills nothing")
+    void rowNotBillable_aborts() {
+        when(projectRepository.findByIdAndTenantId(projectId, tenantId)).thenReturn(Optional.of(project()));
+        TimeEntry alreadyBilled = entry(BigDecimal.valueOf(8), BigDecimal.valueOf(50));
+        alreadyBilled.setInvoiceId(UUID.randomUUID());
+        TimeEntry draft = entry(BigDecimal.valueOf(8), BigDecimal.valueOf(50));
+        draft.setStatus(TimeEntry.TimeEntryStatus.DRAFT);
+        when(timeEntryRepository.findUnbilledApprovedForPeriod(tenantId, projectId, periodStart, periodEnd))
+                .thenReturn(List.of(alreadyBilled))
+                .thenReturn(List.of(draft));
+
+        assertThatThrownBy(() -> service.generateInvoice(projectId, periodStart, periodEnd))
+                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> service.generateInvoice(projectId, periodStart, periodEnd))
+                .isInstanceOf(IllegalStateException.class);
+
+        verify(invoiceRepository, never()).save(any());
+        verify(timeEntryRepository, never()).saveAll(any());
+    }
+
+    @Test
+    @DisplayName("rejects an inverted or missing billing period before touching any data")
+    void invalidPeriod_rejected() {
+        assertThatThrownBy(() -> service.generateInvoice(projectId, periodEnd, periodStart))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> service.generateInvoice(projectId, null, periodEnd))
+                .isInstanceOf(IllegalArgumentException.class);
+        verifyNoInteractions(projectRepository, timeEntryRepository, invoiceRepository);
+    }
+
+    @Test
+    @DisplayName("the eligible-entries query takes a pessimistic write lock so concurrent runs cannot double-bill")
+    void eligibleEntriesQuery_isRowLocked() throws NoSuchMethodException {
+        jakarta.persistence.LockModeType mode = ProjectTimeEntryRepository.class
+                .getMethod("findUnbilledApprovedForPeriod", UUID.class, UUID.class, LocalDate.class, LocalDate.class)
+                .getAnnotation(org.springframework.data.jpa.repository.Lock.class).value();
+
+        assertThat(mode).isEqualTo(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
     }
 }

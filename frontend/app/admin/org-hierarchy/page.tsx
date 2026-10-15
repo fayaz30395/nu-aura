@@ -6,7 +6,8 @@ import {Employee} from '@/lib/types/hrms/employee';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {getInitials} from '@/lib/utils';
-import {useEmployees} from '@/lib/hooks/queries/useEmployees';
+import {useQuery} from '@tanstack/react-query';
+import {employeeService} from '@/lib/services/hrms/employee.service';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Users} from 'lucide-react';
 
@@ -45,6 +46,22 @@ const buildEmployeeTree = (employees: Employee[]): EmployeeNode[] => {
   return rootEmployees;
 };
 
+// Backend clamps page size to 100, so a single large request silently truncates the chart.
+const ORG_PAGE_SIZE = 100;
+
+const fetchAllEmployees = async (): Promise<Employee[]> => {
+  const byId = new Map<string, Employee>();
+  let page = 0;
+  let totalPages = 1;
+  while (page < totalPages) {
+    const res = await employeeService.getAllEmployees(page, ORG_PAGE_SIZE, 'createdAt', 'ASC');
+    res.content.forEach(emp => byId.set(emp.id, emp));
+    totalPages = res.totalPages;
+    page += 1;
+  }
+  return Array.from(byId.values());
+};
+
 export default function OrgHierarchyPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
@@ -54,8 +71,12 @@ export default function OrgHierarchyPage() {
   const [hierarchy, setHierarchy] = useState<EmployeeNode[]>([]);
 
   // React Query hook
-  const {data: employeesData, isLoading, error} = useEmployees(0, 1000);
-  const employees = useMemo(() => employeesData?.content || [], [employeesData?.content]);
+  const {data: employeesData, isLoading, error} = useQuery({
+    queryKey: ['employees', 'org-hierarchy-all'],
+    queryFn: fetchAllEmployees,
+    staleTime: 2 * 60 * 1000,
+  });
+  const employees = useMemo(() => employeesData || [], [employeesData]);
   const loading = isLoading;
 
   // Build hierarchy when employees data changes

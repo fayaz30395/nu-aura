@@ -7,13 +7,16 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.expense.ExpenseAdvance;
+import com.nulogic.domain.expense.ExpenseClaim;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.expense.repository.ExpenseAdvanceRepository;
+import com.nulogic.infrastructure.expense.repository.ExpenseClaimRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +31,7 @@ public class ExpenseAdvanceService {
     private final EmployeeRepository employeeRepository;
     private final TenantTimeService tenantTimeService;
     private final ExpenseClaimService expenseClaimService;
+    private final ExpenseClaimRepository expenseClaimRepository;
 
     @Transactional
     public ExpenseAdvanceResponse createAdvance(UUID employeeId, ExpenseAdvanceRequest request) {
@@ -93,6 +97,19 @@ public class ExpenseAdvanceService {
 
         ExpenseAdvance advance = advanceRepository.findByIdAndTenantId(advanceId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense advance not found: " + advanceId));
+
+        // Caller must be allowed to act on the advance holder, and the settling claim must be a
+        // live claim of the same employee in this tenant (tenant-scoped lookup).
+        expenseClaimService.assertEmployeeAccess(advance.getEmployeeId(), Permission.EXPENSE_CREATE);
+        ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
+        if (!advance.getEmployeeId().equals(claim.getEmployeeId())) {
+            throw new AccessDeniedException("Expense claim does not belong to the advance holder");
+        }
+        if (claim.getStatus() == ExpenseClaim.ExpenseStatus.DRAFT
+                || claim.getStatus() == ExpenseClaim.ExpenseStatus.REJECTED) {
+            throw new IllegalStateException("Advance can only be settled against a submitted or approved claim");
+        }
 
         advance.settle(claimId, tenantTimeService.now(advance.getTenantId()));
         ExpenseAdvance saved = advanceRepository.save(advance);

@@ -3,6 +3,7 @@ package com.nulogic.application.overtime.service;
 import com.nulogic.api.overtime.dto.OvertimeApprovalRequest;
 import com.nulogic.api.overtime.dto.OvertimeRecordRequest;
 import com.nulogic.api.overtime.dto.OvertimeRecordResponse;
+import com.nulogic.application.attendance.service.AttendanceActorScope;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.application.notification.service.NotificationService;
@@ -10,6 +11,7 @@ import com.nulogic.application.notification.service.WebSocketNotificationService
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
@@ -30,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,11 +64,31 @@ public class OvertimeManagementService {
     private final WebSocketNotificationService webSocketNotificationService;
     private final NotificationService notificationService;
     private final TenantTimeService tenantTimeService;
+    private final AttendanceActorScope actorScope;
 
     @Transactional
     public OvertimeRecordResponse createOvertimeRecord(OvertimeRecordRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        log.info("Creating overtime record for employee: {}", request.getEmployeeId());
+        UUID actorId = actorScope.requireActor();
+        UUID employeeId = request.getEmployeeId() != null ? request.getEmployeeId() : actorId;
+        boolean onBehalf = !employeeId.equals(actorId);
+        log.info("Creating overtime record for employee: {}", employeeId);
+
+        // Recording for someone else is an approver action, scoped to that employee
+        if (onBehalf) {
+            actorScope.requireApprovalAccess(employeeId, Permission.ATTENDANCE_APPROVE);
+            if (!employeeRepository.existsByIdAndTenantId(employeeId, tenantId)) {
+                throw new ResourceNotFoundException("Employee not found: " + employeeId);
+            }
+        }
+        // Pre-approval is an approval decision: only an approver recording for another employee may make it
+        boolean preApproved = Boolean.TRUE.equals(request.getIsPreApproved());
+        if (preApproved && !onBehalf) {
+            throw new AccessDeniedException("Only an approver can pre-approve overtime for another employee");
+        }
+        if (request.getOvertimeHours().signum() <= 0) {
+            throw new ValidationException("Overtime hours must be greater than zero");
+        }
 
         // Get overtime policy
         OvertimePolicy policy = overtimePolicyRepository.findDefaultPolicy(tenantId)
@@ -82,7 +105,7 @@ public class OvertimeManagementService {
 
         // Determine status based on policy and pre-approval
         OvertimeRecord.OvertimeStatus status;
-        if (request.getIsPreApproved() != null && request.getIsPreApproved()) {
+        if (preApproved) {
             status = OvertimeRecord.OvertimeStatus.APPROVED;
         } else if (!policy.needsApproval(request.getOvertimeHours())) {
             status = OvertimeRecord.OvertimeStatus.APPROVED;
@@ -92,7 +115,7 @@ public class OvertimeManagementService {
 
         OvertimeRecord record = OvertimeRecord.builder()
                 .tenantId(tenantId)
-                .employeeId(request.getEmployeeId())
+                .employeeId(employeeId)
                 .overtimeDate(request.getOvertimeDate())
                 .shiftId(request.getShiftId())
                 .regularHours(request.getRegularHours())
@@ -102,7 +125,9 @@ public class OvertimeManagementService {
                 .multiplier(multiplier)
                 .effectiveHours(effectiveHours)
                 .status(status)
-                .isPreApproved(request.getIsPreApproved())
+                .isPreApproved(preApproved)
+                .approvedBy(preApproved ? actorId : null)
+                .approvedAt(preApproved ? tenantTimeService.now(tenantId) : null)
                 .notes(request.getNotes())
                 .autoCalculated(true)
                 .build();
@@ -110,7 +135,7 @@ public class OvertimeManagementService {
         record = overtimeRecordRepository.save(record);
 
         try {
-            auditLogService.logAction("OVERTIME_RECORD", record.getId(), AuditAction.CREATE, null, null, "Overtime record created for employee " + request.getEmployeeId());
+            auditLogService.logAction("OVERTIME_RECORD", record.getId(), AuditAction.CREATE, null, null, "Overtime record created for employee " + employeeId);
         } catch (Exception e) {
             log.warn("Audit log failed for overtime create: {}", e.getMessage());
         }
@@ -119,11 +144,11 @@ public class OvertimeManagementService {
     }
 
     @Transactional
-    public OvertimeRecordResponse approveOrRejectOvertime(UUID recordId, UUID approverId,
-                                                          OvertimeApprovalRequest request) {
+    public OvertimeRecordResponse approveOrRejectOvertime(UUID recordId, OvertimeApprovalRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         OvertimeRecord record = overtimeRecordRepository.findByIdAndTenantId(recordId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Overtime record not found"));
+        UUID approverId = actorScope.requireApprovalAccess(record.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
 
         if (record.getStatus() != OvertimeRecord.OvertimeStatus.PENDING) {
             throw new BusinessException("Only pending overtime records can be approved/rejected");
@@ -173,12 +198,14 @@ public class OvertimeManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         OvertimeRecord record = overtimeRecordRepository.findByIdAndTenantId(recordId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Overtime record not found"));
+        actorScope.requireViewAccess(record.getEmployeeId());
         return mapToResponse(record);
     }
 
     @Transactional(readOnly = true)
     public Page<OvertimeRecordResponse> getEmployeeOvertimeRecords(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        actorScope.requireViewAccess(employeeId);
         Page<OvertimeRecord> records = overtimeRecordRepository
                 .findAllByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
         OvertimeNameCaches caches = buildOvertimeNameCaches(records.getContent());
@@ -188,7 +215,11 @@ public class OvertimeManagementService {
     @Transactional(readOnly = true)
     public Page<OvertimeRecordResponse> getPendingOvertimeRecords(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        Page<OvertimeRecord> records = overtimeRecordRepository.findPendingRecords(tenantId, pageable);
+        // scoped in SQL like the by-id view guard: full pages, total counts only visible rows
+        Page<OvertimeRecord> records = overtimeRecordRepository.findAll((root, query, cb) -> cb.and(
+                cb.equal(root.get("tenantId"), tenantId),
+                cb.equal(root.get("status"), OvertimeRecord.OvertimeStatus.PENDING),
+                actorScope.viewable(root.get("employeeId"), query, cb)), pageable);
         OvertimeNameCaches caches = buildOvertimeNameCaches(records.getContent());
         return records.map(r -> mapToResponse(r, caches));
     }
@@ -196,7 +227,9 @@ public class OvertimeManagementService {
     @Transactional(readOnly = true)
     public Page<OvertimeRecordResponse> getAllOvertimeRecords(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        Page<OvertimeRecord> records = overtimeRecordRepository.findAllByTenantId(tenantId, pageable);
+        Page<OvertimeRecord> records = overtimeRecordRepository.findAll((root, query, cb) -> cb.and(
+                cb.equal(root.get("tenantId"), tenantId),
+                actorScope.viewable(root.get("employeeId"), query, cb)), pageable);
         OvertimeNameCaches caches = buildOvertimeNameCaches(records.getContent());
         return records.map(r -> mapToResponse(r, caches));
     }
@@ -206,6 +239,9 @@ public class OvertimeManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         OvertimeRecord record = overtimeRecordRepository.findByIdAndTenantId(recordId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Overtime record not found"));
+        if (!actorScope.requireActor().equals(record.getEmployeeId())) {
+            actorScope.requireApprovalAccess(record.getEmployeeId(), Permission.ATTENDANCE_APPROVE);
+        }
 
         if (!record.canBeModified()) {
             throw new BusinessException("Cannot delete overtime record that is already processed");
@@ -220,6 +256,7 @@ public class OvertimeManagementService {
     @Transactional(readOnly = true)
     public CompTimeBalance getCompTimeBalance(UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        actorScope.requireViewAccess(employeeId);
         int fiscalYear = tenantTimeService.today(tenantId).getYear();
         return compTimeBalanceRepository.findByTenantIdAndEmployeeIdAndFiscalYear(tenantId, employeeId, fiscalYear)
                 .orElse(null);
@@ -228,6 +265,7 @@ public class OvertimeManagementService {
     @Transactional(readOnly = true)
     public BigDecimal getTotalCompTimeBalance(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        actorScope.requireViewAccess(employeeId);
         BigDecimal total = compTimeBalanceRepository.getTotalBalance(tenantId, employeeId);
         return total != null ? total : BigDecimal.ZERO;
     }
@@ -235,6 +273,9 @@ public class OvertimeManagementService {
     public void accrueCompTime(UUID employeeId, BigDecimal hours, UUID overtimeRecordId,
                                java.time.LocalDate overtimeDate) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        // ponytail: accrual stays discretionary (no link to an approved overtime record); scope + no self-credit only
+        actorScope.requireApprovalAccess(employeeId, Permission.ATTENDANCE_APPROVE);
+        requirePositiveHours(hours);
         int fiscalYear = tenantTimeService.today(tenantId).getYear();
 
         CompTimeBalance balance = compTimeBalanceRepository
@@ -260,6 +301,8 @@ public class OvertimeManagementService {
 
     public void useCompTime(UUID employeeId, BigDecimal hours, UUID leaveRequestId, java.time.LocalDate usageDate) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        actorScope.requireApprovalAccess(employeeId, Permission.ATTENDANCE_APPROVE);
+        requirePositiveHours(hours);
 
         List<CompTimeBalance> balances = compTimeBalanceRepository.findActiveBalances(tenantId, employeeId);
         if (balances.isEmpty()) {
@@ -302,7 +345,14 @@ public class OvertimeManagementService {
     public List<CompTimeTransaction> getCompTimeHistory(UUID employeeId,
                                                         java.time.LocalDate startDate, java.time.LocalDate endDate) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        actorScope.requireViewAccess(employeeId);
         return compTimeTransactionRepository.findByEmployeeAndDateRange(tenantId, employeeId, startDate, endDate);
+    }
+
+    private void requirePositiveHours(BigDecimal hours) {
+        if (hours == null || hours.signum() <= 0) {
+            throw new ValidationException("Hours must be greater than zero");
+        }
     }
 
     private CompTimeBalance createCompTimeBalance(UUID tenantId, UUID employeeId, int fiscalYear) {

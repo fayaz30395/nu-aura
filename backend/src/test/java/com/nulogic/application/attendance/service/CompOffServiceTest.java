@@ -1,6 +1,7 @@
 package com.nulogic.application.attendance.service;
 
 import com.nulogic.common.config.AttendanceConfigProperties;
+import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
@@ -12,6 +13,7 @@ import com.nulogic.infrastructure.attendance.repository.CompOffRequestRepository
 import com.nulogic.infrastructure.leave.repository.LeaveBalanceRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.access.AccessDeniedException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -50,6 +52,8 @@ class CompOffServiceTest {
     private TenantTimeService tenantTimeService;
     @Mock
     private AttendanceConfigProperties config;
+    @Mock
+    private AttendanceActorScope actorScope;
     @InjectMocks
     private CompOffService compOffService;
 
@@ -74,6 +78,8 @@ class CompOffServiceTest {
         attendanceDate = LocalDate.of(2025, 3, 15);
 
         lenient().when(config.getCompOff()).thenReturn(new AttendanceConfigProperties.CompOff());
+        // The acting employee comes from the authenticated context, never from the caller's arguments
+        lenient().when(actorScope.requireActor()).thenReturn(employeeId);
 
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
     }
@@ -103,7 +109,7 @@ class CompOffServiceTest {
             when(compOffRequestRepository.save(any(CompOffRequest.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
 
-            CompOffRequest result = compOffService.requestCompOff(employeeId, attendanceDate, "weekend go-live");
+            CompOffRequest result = compOffService.requestCompOff(attendanceDate, "weekend go-live");
 
             assertThat(result.getStatus()).isEqualTo(CompOffRequest.CompOffStatus.PENDING);
             assertThat(result.getCompOffDays()).isEqualByComparingTo(new BigDecimal("1.0"));
@@ -122,7 +128,7 @@ class CompOffServiceTest {
             when(compOffRequestRepository.save(any(CompOffRequest.class)))
                     .thenAnswer(inv -> inv.getArgument(0));
 
-            CompOffRequest result = compOffService.requestCompOff(employeeId, attendanceDate, "late release");
+            CompOffRequest result = compOffService.requestCompOff(attendanceDate, "late release");
 
             assertThat(result.getCompOffDays()).isEqualByComparingTo(new BigDecimal("0.5"));
         }
@@ -133,7 +139,7 @@ class CompOffServiceTest {
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, attendanceDate, tenantId))
                     .thenReturn(Optional.of(overtimeRecord(30)));
 
-            assertThatThrownBy(() -> compOffService.requestCompOff(employeeId, attendanceDate, "not enough"))
+            assertThatThrownBy(() -> compOffService.requestCompOff(attendanceDate, "not enough"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("below the minimum");
             verify(compOffRequestRepository, never()).save(any(CompOffRequest.class));
@@ -147,7 +153,7 @@ class CompOffServiceTest {
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, attendanceDate, tenantId))
                     .thenReturn(Optional.of(record));
 
-            assertThatThrownBy(() -> compOffService.requestCompOff(employeeId, attendanceDate, "no OT"))
+            assertThatThrownBy(() -> compOffService.requestCompOff(attendanceDate, "no OT"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("No overtime");
         }
@@ -158,7 +164,7 @@ class CompOffServiceTest {
             when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, attendanceDate, tenantId))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> compOffService.requestCompOff(employeeId, attendanceDate, "missing"))
+            assertThatThrownBy(() -> compOffService.requestCompOff(attendanceDate, "missing"))
                     .isInstanceOf(EntityNotFoundException.class)
                     .hasMessageContaining("Attendance record not found");
         }
@@ -180,7 +186,7 @@ class CompOffServiceTest {
             when(compOffRequestRepository.findByTenantIdAndEmployeeIdAndAttendanceDate(tenantId, employeeId, attendanceDate))
                     .thenReturn(Optional.of(existing));
 
-            CompOffRequest result = compOffService.requestCompOff(employeeId, attendanceDate, "again");
+            CompOffRequest result = compOffService.requestCompOff(attendanceDate, "again");
 
             assertThat(result).isSameAs(existing);
             verify(compOffRequestRepository, never()).save(any(CompOffRequest.class));
@@ -222,6 +228,7 @@ class CompOffServiceTest {
 
             when(compOffRequestRepository.findByIdAndTenantId(request.getId(), tenantId))
                     .thenReturn(Optional.of(request));
+            when(actorScope.requireApprovalAccess(employeeId, Permission.ATTENDANCE_APPROVE)).thenReturn(approverId);
             when(leaveTypeRepository.findByLeaveCodeAndTenantId("COMP_OFF", tenantId))
                     .thenReturn(Optional.of(compOffType));
             when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYearAndTenantId(
@@ -232,7 +239,7 @@ class CompOffServiceTest {
             when(leaveBalanceRepository.save(any(LeaveBalance.class))).thenAnswer(inv -> inv.getArgument(0));
             when(compOffRequestRepository.save(any(CompOffRequest.class))).thenAnswer(inv -> inv.getArgument(0));
 
-            CompOffRequest result = compOffService.approveCompOff(request.getId(), approverId, "approved");
+            CompOffRequest result = compOffService.approveCompOff(request.getId(), "approved");
 
             assertThat(result.getStatus()).isEqualTo(CompOffRequest.CompOffStatus.CREDITED);
             assertThat(result.getReviewedBy()).isEqualTo(approverId);
@@ -254,7 +261,7 @@ class CompOffServiceTest {
             when(compOffRequestRepository.findByIdAndTenantId(request.getId(), tenantId))
                     .thenReturn(Optional.of(request));
 
-            assertThatThrownBy(() -> compOffService.approveCompOff(request.getId(), UUID.randomUUID(), "note"))
+            assertThatThrownBy(() -> compOffService.approveCompOff(request.getId(), "note"))
                     .isInstanceOf(IllegalStateException.class)
                     .hasMessageContaining("not in PENDING state");
             verify(leaveBalanceRepository, never()).save(any(LeaveBalance.class));
@@ -279,14 +286,103 @@ class CompOffServiceTest {
 
             when(compOffRequestRepository.findByIdAndTenantId(request.getId(), tenantId))
                     .thenReturn(Optional.of(request));
+            when(actorScope.requireApprovalAccess(employeeId, Permission.ATTENDANCE_APPROVE)).thenReturn(approverId);
             when(tenantTimeService.now(tenantId)).thenReturn(LocalDateTime.now());
             when(compOffRequestRepository.save(any(CompOffRequest.class))).thenAnswer(inv -> inv.getArgument(0));
 
-            CompOffRequest result = compOffService.rejectCompOff(request.getId(), approverId, "not eligible");
+            CompOffRequest result = compOffService.rejectCompOff(request.getId(), "not eligible");
 
             assertThat(result.getStatus()).isEqualTo(CompOffRequest.CompOffStatus.REJECTED);
             assertThat(result.getReviewedBy()).isEqualTo(approverId);
             verify(leaveBalanceRepository, never()).save(any(LeaveBalance.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("Authorization")
+    class AuthorizationTests {
+
+        private CompOffRequest pendingRequest() {
+            CompOffRequest request = CompOffRequest.builder()
+                    .tenantId(tenantId)
+                    .employeeId(employeeId)
+                    .attendanceDate(attendanceDate)
+                    .compOffDays(BigDecimal.ONE)
+                    .status(CompOffRequest.CompOffStatus.PENDING)
+                    .build();
+            request.setId(UUID.randomUUID());
+            return request;
+        }
+
+        @Test
+        @DisplayName("Approval outside the approver's scope credits nothing and leaves the request PENDING")
+        void approveOutOfScopeLeavesNoMutation() {
+            CompOffRequest request = pendingRequest();
+            when(compOffRequestRepository.findByIdAndTenantId(request.getId(), tenantId))
+                    .thenReturn(Optional.of(request));
+            when(actorScope.requireApprovalAccess(employeeId, Permission.ATTENDANCE_APPROVE))
+                    .thenThrow(new AccessDeniedException("out of scope"));
+
+            assertThatThrownBy(() -> compOffService.approveCompOff(request.getId(), "note"))
+                    .isInstanceOf(AccessDeniedException.class);
+
+            assertThat(request.getStatus()).isEqualTo(CompOffRequest.CompOffStatus.PENDING);
+            verify(leaveBalanceRepository, never()).save(any(LeaveBalance.class));
+            verify(compOffRequestRepository, never()).save(any(CompOffRequest.class));
+        }
+
+        @Test
+        @DisplayName("Self-approval is refused and leaves the request PENDING")
+        void selfApprovalRefused() {
+            CompOffRequest request = pendingRequest();
+            when(compOffRequestRepository.findByIdAndTenantId(request.getId(), tenantId))
+                    .thenReturn(Optional.of(request));
+            when(actorScope.requireApprovalAccess(employeeId, Permission.ATTENDANCE_APPROVE))
+                    .thenThrow(new AccessDeniedException("You cannot approve your own request"));
+
+            assertThatThrownBy(() -> compOffService.rejectCompOff(request.getId(), "note"))
+                    .isInstanceOf(AccessDeniedException.class);
+
+            assertThat(request.getStatus()).isEqualTo(CompOffRequest.CompOffStatus.PENDING);
+            verify(compOffRequestRepository, never()).save(any(CompOffRequest.class));
+        }
+
+        @Test
+        @DisplayName("Request is raised for the authenticated employee and stamped with that actor")
+        void requestUsesAuthenticatedActor() {
+            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, attendanceDate, tenantId))
+                    .thenReturn(Optional.of(overtimeRecord(480)));
+            when(compOffRequestRepository.existsByTenantIdAndEmployeeIdAndAttendanceDate(tenantId, employeeId, attendanceDate))
+                    .thenReturn(false);
+            when(compOffRequestRepository.save(any(CompOffRequest.class)))
+                    .thenAnswer(inv -> inv.getArgument(0));
+
+            CompOffRequest result = compOffService.requestCompOff(attendanceDate, "go-live");
+
+            assertThat(result.getEmployeeId()).isEqualTo(employeeId);
+            assertThat(result.getRequestedBy()).isEqualTo(employeeId);
+        }
+
+        @Test
+        @DisplayName("Another employee's history is refused when outside view scope")
+        void historyOfOtherEmployeeRefused() {
+            UUID other = UUID.randomUUID();
+            doThrow(new AccessDeniedException("no access")).when(actorScope).requireViewAccess(other);
+
+            assertThatThrownBy(() -> compOffService.getEmployeeCompOffHistory(other,
+                    org.springframework.data.domain.Pageable.unpaged()))
+                    .isInstanceOf(AccessDeniedException.class);
+            verify(compOffRequestRepository, never()).findAllByTenantIdAndEmployeeId(any(), any(), any());
+        }
+
+        @Test
+        @DisplayName("Another employee's pending requests are refused when outside view scope")
+        void pendingOfOtherEmployeeRefused() {
+            UUID other = UUID.randomUUID();
+            doThrow(new AccessDeniedException("no access")).when(actorScope).requireViewAccess(other);
+
+            assertThatThrownBy(() -> compOffService.getMyPendingRequests(other))
+                    .isInstanceOf(AccessDeniedException.class);
         }
     }
 }

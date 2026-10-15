@@ -35,6 +35,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PulseSurveyService {
 
+    /**
+     * Smallest number of submitted responses for which per-question / aggregate results of an ANONYMOUS survey
+     * are reported. Conservative default; the actual threshold is a business decision (pending).
+     */
+    static final int MIN_ANONYMOUS_GROUP_SIZE = 5;
+
+    @org.springframework.beans.factory.annotation.Value("${app.security.encryption.key:}")
+    private String respondentPseudonymKey;
+
     private final PulseSurveyRepository surveyRepository;
     private final PulseSurveyQuestionRepository questionRepository;
     private final PulseSurveyResponseRepository responseRepository;
@@ -306,9 +315,36 @@ public class PulseSurveyService {
 
     // ==================== Survey Response ====================
 
+    /**
+     * Key under which a respondent's single response is stored and de-duplicated. Non-anonymous surveys use the
+     * employee id; anonymous surveys use a keyed one-way pseudonym (HMAC of tenant+survey+employee) so the stored
+     * value cannot be joined to an employee, yet the same employee always maps to the same key for this survey.
+     */
+    private UUID respondentKey(PulseSurvey survey, UUID tenantId, UUID employeeId) {
+        if (!Boolean.TRUE.equals(survey.getIsAnonymous())) {
+            return employeeId;
+        }
+        if (respondentPseudonymKey == null || respondentPseudonymKey.isBlank()) {
+            throw new IllegalStateException("Anonymous survey pseudonym key is not configured");
+        }
+        try {
+            javax.crypto.Mac mac = javax.crypto.Mac.getInstance("HmacSHA256");
+            mac.init(new javax.crypto.spec.SecretKeySpec(
+                    respondentPseudonymKey.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));
+            byte[] h = mac.doFinal(("pulse|" + tenantId + "|" + survey.getId() + "|" + employeeId)
+                    .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return UUID.nameUUIDFromBytes(h);
+        } catch (java.security.GeneralSecurityException e) {
+            throw new IllegalStateException("Unable to derive respondent key", e);
+        }
+    }
+
     @Transactional
     public com.nulogic.domain.engagement.PulseSurveyResponse startSurveyResponse(UUID surveyId, UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (employeeId == null) {
+            throw new BusinessException("An employee profile is required to respond to a survey");
+        }
 
         // Check if survey is active
         PulseSurvey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
@@ -318,9 +354,11 @@ public class PulseSurveyService {
             throw new IllegalStateException("Survey is not currently active");
         }
 
+        UUID respondentKey = respondentKey(survey, tenantId, employeeId);
+
         // Check for existing response
         Optional<com.nulogic.domain.engagement.PulseSurveyResponse> existing =
-                responseRepository.findBySurveyIdAndEmployeeId(surveyId, employeeId);
+                responseRepository.findBySurveyIdAndEmployeeId(surveyId, respondentKey);
         if (existing.isPresent()) {
             return existing.get();
         }
@@ -328,7 +366,7 @@ public class PulseSurveyService {
         com.nulogic.domain.engagement.PulseSurveyResponse response =
                 com.nulogic.domain.engagement.PulseSurveyResponse.builder()
                         .surveyId(surveyId)
-                        .employeeId(survey.getIsAnonymous() ? null : employeeId)
+                        .employeeId(respondentKey)
                         .status(com.nulogic.domain.engagement.PulseSurveyResponse.ResponseStatus.IN_PROGRESS)
                         .startedAt(tenantTimeService.now(tenantId))
                         .build();
@@ -344,9 +382,23 @@ public class PulseSurveyService {
             SurveySubmissionRequest request, UUID employeeId, String ipAddress) {
         UUID tenantId = TenantContext.getCurrentTenant();
 
-        com.nulogic.domain.engagement.PulseSurveyResponse response = responseRepository
-                .findBySurveyIdAndEmployeeId(request.getSurveyId(), employeeId)
-                .orElseGet(() -> startSurveyResponse(request.getSurveyId(), employeeId));
+        // startSurveyResponse validates tenant, ACTIVE window and returns the caller's single response
+        com.nulogic.domain.engagement.PulseSurveyResponse response =
+                startSurveyResponse(request.getSurveyId(), employeeId);
+        if (response.getStatus() == com.nulogic.domain.engagement.PulseSurveyResponse.ResponseStatus.SUBMITTED) {
+            throw new IllegalStateException("Survey response already submitted");
+        }
+        PulseSurvey survey = surveyRepository.findByIdAndTenantId(request.getSurveyId(), tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("Survey not found: " + request.getSurveyId()));
+
+        Set<UUID> validQuestionIds = questionRepository.findAllBySurveyIdAndIsActiveTrue(request.getSurveyId())
+                .stream().map(PulseSurveyQuestion::getId).collect(Collectors.toSet());
+        Set<UUID> seenQuestionIds = new HashSet<>();
+        for (SurveySubmissionRequest.AnswerRequest a : request.getAnswers()) {
+            if (!validQuestionIds.contains(a.getQuestionId()) || !seenQuestionIds.add(a.getQuestionId())) {
+                throw new BusinessException("Invalid or duplicate question in submission");
+            }
+        }
 
         // Save answers
         double totalScore = 0;
@@ -388,8 +440,11 @@ public class PulseSurveyService {
         response.setStatus(com.nulogic.domain.engagement.PulseSurveyResponse.ResponseStatus.SUBMITTED);
         response.setSubmittedAt(tenantTimeService.now(tenantId));
         response.setTimeSpentSeconds(request.getTimeSpentSeconds());
-        response.setDeviceType(request.getDeviceType());
-        response.setIpAddress(ipAddress);
+        if (!Boolean.TRUE.equals(survey.getIsAnonymous())) {
+            // anonymous responses must not carry identifying metadata
+            response.setDeviceType(request.getDeviceType());
+            response.setIpAddress(ipAddress);
+        }
 
         if (scoredQuestions > 0) {
             response.setOverallScore(totalScore / scoredQuestions);
@@ -398,13 +453,11 @@ public class PulseSurveyService {
         response = responseRepository.save(response);
 
         // Update survey response count
-        surveyRepository.findById(request.getSurveyId()).ifPresent(survey -> {
-            Long count = responseRepository.countBySurveyIdAndStatus(
-                    request.getSurveyId(),
-                    com.nulogic.domain.engagement.PulseSurveyResponse.ResponseStatus.SUBMITTED);
-            survey.setTotalResponses(count.intValue());
-            surveyRepository.save(survey);
-        });
+        Long count = responseRepository.countBySurveyIdAndStatus(
+                request.getSurveyId(),
+                com.nulogic.domain.engagement.PulseSurveyResponse.ResponseStatus.SUBMITTED);
+        survey.setTotalResponses(count.intValue());
+        surveyRepository.save(survey);
 
         log.info("Submitted survey response for survey: {} by employee: {}",
                 request.getSurveyId(), employeeId);
@@ -520,6 +573,15 @@ public class PulseSurveyService {
         analytics.put("submittedCount", submitted);
         analytics.put("inProgressCount", inProgress);
         analytics.put("pendingCount", invited);
+
+        if (Boolean.TRUE.equals(survey.getIsAnonymous()) && submitted < MIN_ANONYMOUS_GROUP_SIZE) {
+            // too few respondents to report without risking re-identification
+            analytics.remove("averageScore");
+            analytics.put("suppressed", true);
+            analytics.put("minimumGroupSize", MIN_ANONYMOUS_GROUP_SIZE);
+            analytics.put("questionAnalytics", List.of());
+            return analytics;
+        }
 
         // Average time spent
         Double avgTime = responseRepository.getAverageTimeSpentBySurveyId(surveyId);

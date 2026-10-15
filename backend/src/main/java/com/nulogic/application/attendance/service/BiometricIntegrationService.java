@@ -3,6 +3,7 @@ package com.nulogic.application.attendance.service;
 import com.nulogic.api.attendance.dto.*;
 import com.nulogic.application.attendance.adapter.BiometricAdapter;
 import com.nulogic.common.security.TenantContext;
+import org.springframework.security.access.AccessDeniedException;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.BiometricApiKey;
@@ -37,6 +38,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class BiometricIntegrationService {
+
+    static final int MAX_BATCH_PUNCHES = 500;
 
     /**
      * Deduplication window in minutes — punches from same employee within this window are ignored
@@ -153,11 +156,24 @@ public class BiometricIntegrationService {
      */
     @Transactional
     public BiometricPunchLog receivePunch(UUID tenantId, BiometricPunchRequest request) {
+        return receivePunch(tenantId, null, request);
+    }
+
+    /**
+     * @param keyDeviceId device the API key is bound to (null = tenant-wide key)
+     * @throws AccessDeniedException if the key is device-bound and the punch targets another device
+     */
+    @Transactional
+    public BiometricPunchLog receivePunch(UUID tenantId, UUID keyDeviceId, BiometricPunchRequest request) {
         // Resolve device
         BiometricDevice device = deviceRepository
                 .findBySerialNumberAndTenantIdAndIsDeletedFalse(request.getDeviceSerialNumber(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Unknown device serial: " + request.getDeviceSerialNumber()));
+
+        if (keyDeviceId != null && !keyDeviceId.equals(device.getId())) {
+            throw new AccessDeniedException("API key is not valid for this device");
+        }
 
         if (!device.getIsActive()) {
             throw new IllegalStateException("Device is deactivated: " + device.getSerialNumber());
@@ -194,11 +210,17 @@ public class BiometricIntegrationService {
      * Receive a batch of punches from a device.
      */
     @Transactional
-    public List<BiometricPunchLog> receiveBatchPunches(UUID tenantId, BiometricBatchPunchRequest request) {
+    public List<BiometricPunchLog> receiveBatchPunches(UUID tenantId, UUID keyDeviceId,
+                                                       BiometricBatchPunchRequest request) {
+        if (request.getPunches().size() > MAX_BATCH_PUNCHES) {
+            throw new IllegalArgumentException("Maximum " + MAX_BATCH_PUNCHES + " punches per batch");
+        }
         List<BiometricPunchLog> results = new ArrayList<>();
         for (BiometricPunchRequest punch : request.getPunches()) {
             try {
-                results.add(receivePunch(tenantId, punch));
+                results.add(receivePunch(tenantId, keyDeviceId, punch));
+            } catch (AccessDeniedException e) {
+                throw e; // device-scope violation rejects (and rolls back) the whole batch
             } catch (Exception e) { // Intentional broad catch — attendance processing error boundary
                 log.error("Failed to process punch for employee '{}': {}",
                         punch.getEmployeeIdentifier(), e.getMessage());
@@ -538,7 +560,7 @@ public class BiometricIntegrationService {
         // Try to parse as UUID first
         try {
             UUID candidateId = UUID.fromString(employeeIdentifier);
-            if (employeeRepository.existsById(candidateId)) {
+            if (employeeRepository.existsByIdAndTenantId(candidateId, tenantId)) {
                 return candidateId;
             }
         } catch (IllegalArgumentException ignored) {

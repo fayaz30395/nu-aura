@@ -254,6 +254,29 @@ class WorkflowServiceTest {
         }
 
         @Test
+        @DisplayName("should strip client sort before the native inbox query (ORDER BY injection)")
+        void shouldStripClientSortBeforeNativeQuery() {
+            // Given
+            Pageable hostile = PageRequest.of(2, 15, org.springframework.data.domain.Sort.by("assigned_at; DROP TABLE users--"));
+            Pageable expected = PageRequest.of(2, 15);
+            when(stepExecutionRepository.findInboxForUser(
+                    eq(TENANT_ID), eq(USER_ID), eq("PENDING"),
+                    isNull(), isNull(), isNull(), isNull(), eq(expected)))
+                    .thenReturn(new PageImpl<>(Collections.emptyList(), expected, 0));
+
+            // When
+            workflowService.getApprovalInbox(null, null, null, null, null, hostile);
+
+            // Then - repository only ever sees the unsorted page (page/size preserved)
+            verify(stepExecutionRepository).findInboxForUser(
+                    TENANT_ID, USER_ID, "PENDING", null, null, null, null, expected);
+            org.mockito.ArgumentCaptor<Pageable> captor = org.mockito.ArgumentCaptor.forClass(Pageable.class);
+            verify(stepExecutionRepository).findInboxForUser(
+                    any(), any(), any(), any(), any(), any(), any(), captor.capture());
+            assertThat(captor.getValue().getSort().isSorted()).isFalse();
+        }
+
+        @Test
         @DisplayName("should pass null status when ALL is requested")
         void shouldPassNullStatusWhenAllRequested() {
             // Given

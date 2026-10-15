@@ -34,14 +34,14 @@ public class LeaveTypeController {
     private final LeaveTypeMapper leaveTypeMapper;
 
     @PostMapping
-    @RequiresPermission(Permission.LEAVE_APPROVE)
+    @RequiresPermission(Permission.LEAVE_TYPE_MANAGE)
     @Operation(summary = "Create leave type",
             description = "Define a new leave type with accrual policy and applicability rules (admin only)")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Leave type created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid request data"),
             @ApiResponse(responseCode = "401", description = "Unauthenticated"),
-            @ApiResponse(responseCode = "403", description = "Forbidden — requires LEAVE:APPROVE permission")
+            @ApiResponse(responseCode = "403", description = "Forbidden — requires LEAVE_TYPE:MANAGE permission")
     })
     public ResponseEntity<LeaveTypeResponse> createLeaveType(@Valid @RequestBody LeaveTypeRequest request) {
         // T3-10: MapStruct mapper enforces the mass-assignment ignore-list at compile time
@@ -52,7 +52,7 @@ public class LeaveTypeController {
     }
 
     @PutMapping("/{id}")
-    @RequiresPermission(Permission.LEAVE_APPROVE)
+    @RequiresPermission(Permission.LEAVE_TYPE_MANAGE)
     @Operation(summary = "Update leave type",
             description = "Update an existing leave type definition; sensitive identifiers cannot be mutated")
     @ApiResponses({
@@ -103,7 +103,7 @@ public class LeaveTypeController {
     }
 
     @PatchMapping("/{id}/activate")
-    @RequiresPermission(Permission.LEAVE_APPROVE)
+    @RequiresPermission(Permission.LEAVE_TYPE_MANAGE)
     @Operation(summary = "Activate leave type", description = "Re-enable a previously deactivated leave type")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Leave type activated successfully"),
@@ -117,7 +117,7 @@ public class LeaveTypeController {
     }
 
     @PatchMapping("/{id}/deactivate")
-    @RequiresPermission(Permission.LEAVE_APPROVE)
+    @RequiresPermission(Permission.LEAVE_TYPE_MANAGE)
     @Operation(summary = "Deactivate leave type",
             description = "Disable a leave type from new requests (existing balances retained)")
     @ApiResponses({
@@ -132,7 +132,7 @@ public class LeaveTypeController {
     }
 
     @DeleteMapping("/{id}")
-    @RequiresPermission(Permission.LEAVE_APPROVE)
+    @RequiresPermission(Permission.LEAVE_TYPE_MANAGE)
     @Operation(summary = "Delete leave type", description = "Soft-delete a leave type (admin only)")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Leave type deleted successfully"),

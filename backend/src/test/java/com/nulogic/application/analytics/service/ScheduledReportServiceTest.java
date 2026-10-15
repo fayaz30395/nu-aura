@@ -56,6 +56,8 @@ class ScheduledReportServiceTest {
     private ObjectMapper objectMapper;
     @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private com.nulogic.infrastructure.user.repository.UserRepository userRepository;
     @InjectMocks
     private ScheduledReportService scheduledReportService;
     private UUID tenantId;
@@ -85,6 +87,7 @@ class ScheduledReportServiceTest {
         createdBy = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+        lenient().when(userRepository.existsByEmailAndTenantId("test@example.com", tenantId)).thenReturn(true);
 
         // Setup ObjectMapper mock with TypeFactory
         TypeFactory typeFactory = mock(TypeFactory.class);
@@ -102,6 +105,64 @@ class ScheduledReportServiceTest {
         // Mock deserialization
         lenient().when(objectMapper.readValue(anyString(), eq(collectionType))).thenReturn(List.of("test@example.com"));
         lenient().when(objectMapper.readValue(anyString(), eq(mapType))).thenReturn(Map.of("reportType", "ANALYTICS", "exportFormat", "EXCEL"));
+    }
+
+    // ==================== Authorization Tests ====================
+
+    @org.junit.jupiter.api.Nested
+    @DisplayName("Schedule authorization")
+    class ScheduleAuthorizationTests {
+
+        @Test
+        @DisplayName("payroll schedule is denied without PAYROLL:VIEW_ALL and persists nothing")
+        void payrollScheduleDeniedWithoutPayrollPermission() {
+            try (MockedStatic<com.nulogic.common.security.SecurityContext> sc =
+                         mockStatic(com.nulogic.common.security.SecurityContext.class)) {
+                sc.when(() -> com.nulogic.common.security.SecurityContext
+                        .hasPermission(com.nulogic.common.security.Permission.PAYROLL_VIEW_ALL)).thenReturn(false);
+                ScheduledReportRequest request = createRequest(Frequency.DAILY, null, null, LocalTime.of(9, 0));
+                request.setReportType("PAYROLL");
+
+                org.assertj.core.api.Assertions.assertThatThrownBy(
+                                () -> scheduledReportService.createScheduledReport(request, createdBy))
+                        .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+
+                verify(scheduledReportRepository, never()).save(any(ScheduledReport.class));
+            }
+        }
+
+        @Test
+        @DisplayName("payroll schedule is allowed with PAYROLL:VIEW_ALL")
+        void payrollScheduleAllowedWithPayrollPermission() {
+            try (MockedStatic<com.nulogic.common.security.SecurityContext> sc =
+                         mockStatic(com.nulogic.common.security.SecurityContext.class)) {
+                sc.when(() -> com.nulogic.common.security.SecurityContext
+                        .hasPermission(com.nulogic.common.security.Permission.PAYROLL_VIEW_ALL)).thenReturn(true);
+                ScheduledReportRequest request = createRequest(Frequency.DAILY, null, null, LocalTime.of(9, 0));
+                request.setReportType("PAYROLL");
+                when(reportDefinitionRepository.findActiveByReportCodeIgnoreCase(any(), any()))
+                        .thenReturn(Optional.empty());
+                when(scheduledReportRepository.save(any(ScheduledReport.class))).thenAnswer(i -> i.getArgument(0));
+
+                scheduledReportService.createScheduledReport(request, createdBy);
+
+                verify(scheduledReportRepository).save(any(ScheduledReport.class));
+            }
+        }
+
+        @Test
+        @DisplayName("recipients outside the tenant are rejected and nothing is persisted")
+        void externalRecipientRejected() {
+            ScheduledReportRequest request = createRequest(Frequency.DAILY, null, null, LocalTime.of(9, 0));
+            request.setRecipients(List.of("outsider@evil.example"));
+            when(userRepository.existsByEmailAndTenantId("outsider@evil.example", tenantId)).thenReturn(false);
+
+            org.assertj.core.api.Assertions.assertThatThrownBy(
+                            () -> scheduledReportService.createScheduledReport(request, createdBy))
+                    .isInstanceOf(com.nulogic.common.exception.ValidationException.class);
+
+            verify(scheduledReportRepository, never()).save(any(ScheduledReport.class));
+        }
     }
 
     // ==================== nextRunAt Calculation Tests ====================

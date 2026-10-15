@@ -32,6 +32,15 @@ import java.util.Set;
 @Component
 public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
 
+    private static final Set<String> NON_BROWSER_EXACT_PATHS = Set.of(
+            "/api/v1/biometric/punch",
+            "/api/v1/biometric/punch/batch",
+            "/api/v1/integrations/docusign/webhook",
+            "/api/v1/integrations/slack/commands",
+            "/api/v1/integrations/slack/interactions",
+            "/api/v1/integrations/slack/events");
+
+
     private static final String CSRF_COOKIE_NAME = CookieConfig.CSRF_TOKEN_COOKIE;
     private static final String CSRF_HEADER_NAME = "X-XSRF-TOKEN";
     private static final Set<String> SAFE_METHODS = Set.of("GET", "HEAD", "OPTIONS", "TRACE");
@@ -95,15 +104,13 @@ public class CsrfDoubleSubmitFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         // Only skip the filter entirely for non-browser paths that will never
         // need CSRF cookies: webhooks, actuator, WebSocket, SAML, dedicated external APIs.
+        // Exact machine endpoints only (mirror SecurityConfig permitAll); cookie-authenticated
+        // admin routes under the same prefixes (biometric devices, webhook mgmt) stay CSRF-checked.
         return path.startsWith("/actuator/") ||
-                path.startsWith("/api/v1/webhooks/") ||
-                path.startsWith("/api/webhooks/") ||
                 path.startsWith("/api/v1/external/") ||
-                path.startsWith("/api/v1/integrations/docusign/") ||
-                path.startsWith("/api/v1/integrations/slack/") ||
+                NON_BROWSER_EXACT_PATHS.contains(path) ||
                 path.startsWith("/api/v1/payments/webhooks/") ||
                 path.startsWith("/api/v1/esignature/external/") ||
-                path.startsWith("/api/v1/biometric/") ||
                 path.startsWith("/ws/") ||
                 path.startsWith("/saml2/") ||
                 path.startsWith("/login/saml2/") ||

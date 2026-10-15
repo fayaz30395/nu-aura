@@ -31,6 +31,7 @@ public class ReportController {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final ReportService reportService;
     private final TenantTimeService tenantTimeService;
+    private final com.nulogic.application.audit.service.AuditLogService auditLogService;
 
     @PostMapping("/employee-directory")
     @RequiresPermission(Permission.REPORT_CREATE)
@@ -75,7 +76,7 @@ public class ReportController {
     }
 
     @PostMapping("/payroll")
-    @RequiresPermission(Permission.REPORT_CREATE)
+    @RequiresPermission(allOf = {Permission.REPORT_CREATE, Permission.PAYROLL_VIEW_ALL})
     public ResponseEntity<byte[]> generatePayrollReport(
             @Valid @RequestBody ReportRequest request
     ) throws IOException, DocumentException {
@@ -106,6 +107,11 @@ public class ReportController {
         }
 
         UUID tenantId = TenantContext.requireCurrentTenant();
+        // Data export: record actor (from SecurityContext) + tenant; entityId is the tenant.
+        auditLogService.logAction("REPORT", tenantId,
+                com.nulogic.domain.audit.AuditLog.AuditAction.EXPORT, null,
+                java.util.Map.of("report", reportName, "format", format.name()),
+                "Report exported: " + reportName);
         String timestamp = tenantTimeService.today(tenantId).format(DATE_FORMATTER);
         String filename;
         MediaType contentType;

@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -151,6 +152,17 @@ public class HelpdeskSLAService {
                     escalationRepository.save(escalation);
                     log.info("Acknowledged escalation: {}", escalationId);
                 });
+    }
+
+    /** Acknowledge on behalf of a caller: only the escalation's addressee (still unacknowledged) may do so. */
+    @Transactional
+    public void acknowledgeOwnEscalation(UUID tenantId, UUID escalationId, UUID userId) {
+        boolean addressedToUser = escalationRepository.findUnacknowledgedForUser(tenantId, userId).stream()
+                .anyMatch(e -> escalationId.equals(e.getId()));
+        if (!addressedToUser) {
+            throw new AccessDeniedException("Escalation is not addressed to you");
+        }
+        acknowledgeEscalation(tenantId, escalationId, userId);
     }
 
     @Transactional(readOnly = true)

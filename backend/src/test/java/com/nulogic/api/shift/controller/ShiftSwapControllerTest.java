@@ -96,7 +96,6 @@ class ShiftSwapControllerTest {
             ShiftSwapRequest result = buildSwapRequest(ShiftSwapRequest.SwapStatus.PENDING);
 
             when(shiftSwapService.submitSwapRequest(
-                    eq(REQUESTER_ID),
                     eq(REQUESTER_ASSIGNMENT_ID),
                     any(LocalDate.class),
                     eq(TARGET_ID),
@@ -115,7 +114,6 @@ class ShiftSwapControllerTest {
                     .andExpect(jsonPath("$.requesterEmployeeId").value(REQUESTER_ID.toString()));
 
             verify(shiftSwapService).submitSwapRequest(
-                    eq(REQUESTER_ID),
                     eq(REQUESTER_ASSIGNMENT_ID),
                     any(LocalDate.class),
                     eq(TARGET_ID),
@@ -139,7 +137,7 @@ class ShiftSwapControllerTest {
             dto.setEmployeeId(TARGET_ID);
 
             ShiftSwapRequest accepted = buildSwapRequest(ShiftSwapRequest.SwapStatus.TARGET_ACCEPTED);
-            when(shiftSwapService.acceptByTarget(REQUEST_ID, TARGET_ID)).thenReturn(accepted);
+            when(shiftSwapService.acceptByTarget(REQUEST_ID)).thenReturn(accepted);
 
             mockMvc.perform(post("/api/v1/shift-swaps/{requestId}/accept", REQUEST_ID)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -148,7 +146,7 @@ class ShiftSwapControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(REQUEST_ID.toString()));
 
-            verify(shiftSwapService).acceptByTarget(REQUEST_ID, TARGET_ID);
+            verify(shiftSwapService).acceptByTarget(REQUEST_ID);
         }
 
         @Test
@@ -158,7 +156,7 @@ class ShiftSwapControllerTest {
             dto.setEmployeeId(TARGET_ID);
 
             ShiftSwapRequest declined = buildSwapRequest(ShiftSwapRequest.SwapStatus.TARGET_DECLINED);
-            when(shiftSwapService.declineByTarget(REQUEST_ID, TARGET_ID)).thenReturn(declined);
+            when(shiftSwapService.declineByTarget(REQUEST_ID)).thenReturn(declined);
 
             mockMvc.perform(post("/api/v1/shift-swaps/{requestId}/decline", REQUEST_ID)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -166,7 +164,7 @@ class ShiftSwapControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
 
-            verify(shiftSwapService).declineByTarget(REQUEST_ID, TARGET_ID);
+            verify(shiftSwapService).declineByTarget(REQUEST_ID);
         }
 
         @Test
@@ -176,7 +174,7 @@ class ShiftSwapControllerTest {
             dto.setEmployeeId(REQUESTER_ID);
 
             ShiftSwapRequest cancelled = buildSwapRequest(ShiftSwapRequest.SwapStatus.CANCELLED);
-            when(shiftSwapService.cancelRequest(REQUEST_ID, REQUESTER_ID)).thenReturn(cancelled);
+            when(shiftSwapService.cancelRequest(REQUEST_ID)).thenReturn(cancelled);
 
             mockMvc.perform(post("/api/v1/shift-swaps/{requestId}/cancel", REQUEST_ID)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -184,7 +182,7 @@ class ShiftSwapControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
 
-            verify(shiftSwapService).cancelRequest(REQUEST_ID, REQUESTER_ID);
+            verify(shiftSwapService).cancelRequest(REQUEST_ID);
         }
 
         @Test
@@ -269,7 +267,7 @@ class ShiftSwapControllerTest {
             dto.setReason(null);
 
             ShiftSwapRequest approved = buildSwapRequest(ShiftSwapRequest.SwapStatus.APPROVED);
-            when(shiftSwapService.approveByManager(REQUEST_ID, MANAGER_ID)).thenReturn(approved);
+            when(shiftSwapService.approveByManager(REQUEST_ID)).thenReturn(approved);
 
             mockMvc.perform(post("/api/v1/shift-swaps/{requestId}/approve", REQUEST_ID)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -278,7 +276,7 @@ class ShiftSwapControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(REQUEST_ID.toString()));
 
-            verify(shiftSwapService).approveByManager(REQUEST_ID, MANAGER_ID);
+            verify(shiftSwapService).approveByManager(REQUEST_ID);
         }
 
         @Test
@@ -289,7 +287,7 @@ class ShiftSwapControllerTest {
             dto.setReason("Operational requirements");
 
             ShiftSwapRequest rejected = buildSwapRequest(ShiftSwapRequest.SwapStatus.REJECTED);
-            when(shiftSwapService.rejectByManager(REQUEST_ID, MANAGER_ID, "Operational requirements"))
+            when(shiftSwapService.rejectByManager(REQUEST_ID, "Operational requirements"))
                     .thenReturn(rejected);
 
             mockMvc.perform(post("/api/v1/shift-swaps/{requestId}/reject", REQUEST_ID)
@@ -298,7 +296,7 @@ class ShiftSwapControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
 
-            verify(shiftSwapService).rejectByManager(REQUEST_ID, MANAGER_ID, "Operational requirements");
+            verify(shiftSwapService).rejectByManager(REQUEST_ID, "Operational requirements");
         }
     }
 

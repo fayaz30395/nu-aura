@@ -70,7 +70,7 @@ class BiometricDeviceControllerTest {
                 .build();
 
         when(biometricService.validateApiKey(apiKey)).thenReturn(Optional.of(validKey));
-        when(biometricService.receivePunch(TENANT_ID, request)).thenReturn(punchLog);
+        when(biometricService.receivePunch(TENANT_ID, null, request)).thenReturn(punchLog);
         when(biometricService.toPunchResponse(punchLog)).thenReturn(punchResponse);
 
         ResponseEntity<BiometricPunchResponse> response = controller.receivePunch(apiKey, request);
@@ -95,7 +95,7 @@ class BiometricDeviceControllerTest {
         ResponseEntity<BiometricPunchResponse> response = controller.receivePunch(apiKey, request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-        verify(biometricService, never()).receivePunch(any(), any());
+        verify(biometricService, never()).receivePunch(any(), any(), any());
     }
 
     @Test

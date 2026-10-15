@@ -1,7 +1,10 @@
 package com.nulogic.application.performance.service;
 
 import com.nulogic.application.performance.dto.*;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.performance.PIPCheckIn;
 import com.nulogic.domain.performance.PerformanceImprovementPlan;
 import com.nulogic.domain.performance.PerformanceImprovementPlan.PIPStatus;
@@ -11,6 +14,7 @@ import com.nulogic.infrastructure.performance.repository.PIPRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,13 +58,73 @@ public class PIPService {
         }
     }
 
+    /** Same org-wide predicate PIPController.getById already applies to a single PIP. */
+    private boolean hasOrgWidePipAccess() {
+        return SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin() || SecurityContext.isHRManager()
+                || SecurityContext.hasPermission(Permission.PIP_MANAGE)
+                || SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL);
+    }
+
+    private void assertCanListForEmployee(UUID employeeId) {
+        if (hasOrgWidePipAccess()) {
+            return;
+        }
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        if (self != null && (self.equals(employeeId) || SecurityContext.getAllReporteeIds().contains(employeeId))) {
+            return;
+        }
+        throw new AccessDeniedException("You are not authorized to view PIPs for this employee");
+    }
+
+    private void assertCanListForManager(UUID managerId) {
+        if (hasOrgWidePipAccess()) {
+            return;
+        }
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        if (self == null || !self.equals(managerId)) {
+            throw new AccessDeniedException("You are not authorized to view another manager's PIPs");
+        }
+    }
+
+    /** The PIP's own employee must never write to or close their own plan. */
+    private void assertNotOwnPip(PerformanceImprovementPlan pip) {
+        UUID self = SecurityContext.getCurrentEmployeeId();
+        if (self != null && self.equals(pip.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot modify your own PIP");
+        }
+    }
+
     @Transactional
     public PIPResponse create(CreatePIPRequest req) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID actorId = SecurityContext.getCurrentEmployeeId();
+
+        Employee subject = employeeRepository.findByIdAndTenantId(req.getEmployeeId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        if (actorId == null || actorId.equals(req.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot create a PIP for yourself");
+        }
+        UUID managerId;
+        if (hasOrgWidePipAccess()) {
+            managerId = req.getManagerId();
+            employeeRepository.findByIdAndTenantId(managerId, tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
+        } else {
+            // A line manager may only raise a PIP for their own reportee, and is recorded as its manager
+            // (the body-supplied managerId is not trusted).
+            if (!actorId.equals(subject.getManagerId()) && !SecurityContext.getAllReporteeIds().contains(subject.getId())) {
+                log.warn("SECURITY: employee {} denied PIP create for non-reportee {}", actorId, subject.getId());
+                throw new AccessDeniedException("You can only create a PIP for your own reportees");
+            }
+            managerId = actorId;
+        }
+        if (managerId.equals(req.getEmployeeId())) {
+            throw new IllegalArgumentException("Employee cannot be their own PIP manager");
+        }
 
         PerformanceImprovementPlan pip = PerformanceImprovementPlan.builder()
                 .employeeId(req.getEmployeeId())
-                .managerId(req.getManagerId())
+                .managerId(managerId)
                 .startDate(req.getStartDate())
                 .endDate(req.getEndDate())
                 .reason(req.getReason())
@@ -83,6 +147,7 @@ public class PIPService {
         PerformanceImprovementPlan pip = pipRepository.findByIdAndTenantId(pipId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(PIP_NOT_FOUND));
 
+        assertNotOwnPip(pip);
         if (pip.getStatus() != PIPStatus.ACTIVE) {
             throw new IllegalStateException("Cannot record check-in for a non-active PIP");
         }
@@ -108,8 +173,12 @@ public class PIPService {
         PerformanceImprovementPlan pip = pipRepository.findByIdAndTenantId(pipId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(PIP_NOT_FOUND));
 
+        assertNotOwnPip(pip);
         if (req.getFinalStatus() == PIPStatus.ACTIVE) {
             throw new IllegalArgumentException("Cannot close a PIP with status ACTIVE");
+        }
+        if (pip.getStatus() != PIPStatus.ACTIVE && pip.getStatus() != PIPStatus.EXTENDED) {
+            throw new IllegalStateException("PIP is already closed with status " + pip.getStatus());
         }
 
         pip.setStatus(req.getFinalStatus());
@@ -131,6 +200,7 @@ public class PIPService {
     @Transactional(readOnly = true)
     public List<PIPResponse> getForEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanListForEmployee(employeeId);
         List<PerformanceImprovementPlan> pips = pipRepository.findByTenantIdAndEmployeeId(tenantId, employeeId);
         Map<UUID, String> nameCache = buildNameCache(pips);
         return pips.stream()
@@ -141,6 +211,7 @@ public class PIPService {
     @Transactional(readOnly = true)
     public Page<PIPResponse> getForEmployee(UUID employeeId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanListForEmployee(employeeId);
         Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantIdAndEmployeeId(tenantId, employeeId, pageable);
         Map<UUID, String> nameCache = buildNameCache(pipsPage.getContent());
         return pipsPage.map(p -> mapToResponse(p, false, nameCache));
@@ -149,6 +220,7 @@ public class PIPService {
     @Transactional(readOnly = true)
     public List<PIPResponse> getForManager(UUID managerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanListForManager(managerId);
         List<PerformanceImprovementPlan> pips = pipRepository.findByTenantIdAndManagerId(tenantId, managerId);
         Map<UUID, String> nameCache = buildNameCache(pips);
         return pips.stream()
@@ -159,6 +231,7 @@ public class PIPService {
     @Transactional(readOnly = true)
     public Page<PIPResponse> getForManager(UUID managerId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanListForManager(managerId);
         Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantIdAndManagerId(tenantId, managerId, pageable);
         Map<UUID, String> nameCache = buildNameCache(pipsPage.getContent());
         return pipsPage.map(p -> mapToResponse(p, false, nameCache));
@@ -166,6 +239,9 @@ public class PIPService {
 
     @Transactional(readOnly = true)
     public List<PIPResponse> getAll() {
+        if (!hasOrgWidePipAccess()) {
+            return getForManager(SecurityContext.getCurrentEmployeeId());
+        }
         UUID tenantId = TenantContext.getCurrentTenant();
         List<PerformanceImprovementPlan> pips = pipRepository.findByTenantId(tenantId);
         Map<UUID, String> nameCache = buildNameCache(pips);
@@ -176,6 +252,9 @@ public class PIPService {
 
     @Transactional(readOnly = true)
     public Page<PIPResponse> getAll(Pageable pageable) {
+        if (!hasOrgWidePipAccess()) {
+            return getForManager(SecurityContext.getCurrentEmployeeId(), pageable);
+        }
         UUID tenantId = TenantContext.getCurrentTenant();
         Page<PerformanceImprovementPlan> pipsPage = pipRepository.findByTenantId(tenantId, pageable);
         Map<UUID, String> nameCache = buildNameCache(pipsPage.getContent());

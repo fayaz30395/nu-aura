@@ -112,4 +112,67 @@ class ExitManagementServiceSettlementConsolidationTest {
         verify(fnfCalculationService).approve(exitProcessId);
         assertThat(response.getStatus()).isEqualTo(FullAndFinalSettlement.SettlementStatus.APPROVED);
     }
+
+    @Test
+    @DisplayName("createSettlement takes the employee from the exit process, not the request body")
+    void createSettlementIgnoresBodyEmployee() {
+        UUID realEmployee = UUID.randomUUID();
+        com.nulogic.domain.exit.ExitProcess process = new com.nulogic.domain.exit.ExitProcess();
+        process.setEmployeeId(realEmployee);
+        when(exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.of(process));
+        when(settlementRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.empty());
+        when(settlementRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        FullAndFinalSettlementRequest request = new FullAndFinalSettlementRequest();
+        request.setExitProcessId(exitProcessId);
+        request.setEmployeeId(UUID.randomUUID());
+
+        try {
+            service.createSettlement(request);
+        } catch (RuntimeException ignored) {
+            // response mapping may need collaborators not under test; the persisted row is what matters
+        }
+        verify(settlementRepository).save(org.mockito.ArgumentMatchers.argThat(
+                (FullAndFinalSettlement st) -> realEmployee.equals(st.getEmployeeId())));
+    }
+
+    @Test
+    @DisplayName("createSettlement for an unknown exit process persists nothing")
+    void createSettlementUnknownProcessRejected() {
+        when(settlementRepository.findByExitProcessIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.empty());
+        when(exitProcessRepository.findByIdAndTenantId(exitProcessId, tenantId)).thenReturn(Optional.empty());
+        FullAndFinalSettlementRequest request = new FullAndFinalSettlementRequest();
+        request.setExitProcessId(exitProcessId);
+
+        assertThatThrownBy(() -> service.createSettlement(request)).isInstanceOf(IllegalArgumentException.class);
+        verify(settlementRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("updateSettlement is rejected once the settlement is PAID; submit only from DRAFT")
+    void settlementFrozenAfterApproval() {
+        FullAndFinalSettlement paid = new FullAndFinalSettlement();
+        paid.setStatus(FullAndFinalSettlement.SettlementStatus.PAID);
+        when(settlementRepository.findByIdAndTenantId(settlementId, tenantId)).thenReturn(Optional.of(paid));
+
+        assertThatThrownBy(() -> service.updateSettlement(settlementId, new FullAndFinalSettlementRequest()))
+                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> service.submitForApproval(settlementId)).isInstanceOf(IllegalStateException.class);
+        verify(settlementRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("updateSettlement still works while DRAFT")
+    void draftSettlementEditable() {
+        FullAndFinalSettlement draft = new FullAndFinalSettlement();
+        draft.setStatus(FullAndFinalSettlement.SettlementStatus.DRAFT);
+        when(settlementRepository.findByIdAndTenantId(settlementId, tenantId)).thenReturn(Optional.of(draft));
+        when(settlementRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        try {
+            service.updateSettlement(settlementId, new FullAndFinalSettlementRequest());
+        } catch (RuntimeException ignored) {
+            // response mapping collaborators are out of scope
+        }
+        verify(settlementRepository).save(draft);
+    }
 }

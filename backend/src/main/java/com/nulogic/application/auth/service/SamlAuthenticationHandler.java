@@ -167,7 +167,7 @@ public class SamlAuthenticationHandler {
 
         // Assign default role if configured
         if (idp.getDefaultRoleId() != null) {
-            roleRepository.findById(idp.getDefaultRoleId()).ifPresent(role -> {
+            roleRepository.findByIdAndTenantIdWithPermissions(idp.getDefaultRoleId(), tenantId).ifPresent(role -> {
                 newUser.getRoles().add(role);
             });
         }

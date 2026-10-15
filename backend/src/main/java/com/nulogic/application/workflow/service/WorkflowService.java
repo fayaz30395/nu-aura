@@ -991,8 +991,11 @@ public class WorkflowService {
         String statusStr = stepStatus != null ? stepStatus.name() : null;
         String entityTypeStr = entityType != null ? entityType.name() : null;
 
+        // The native inbox query hardcodes ORDER BY; strip any client sort so Spring Data
+        // cannot append a client-supplied column verbatim onto the native SQL (ORDER BY injection).
+        Pageable unsorted = org.springframework.data.domain.PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         Page<StepExecution> steps = stepExecutionRepository.findInboxForUser(
-                tenantId, currentUser, statusStr, entityTypeStr, fromDate, toDate, searchTerm, pageable);
+                tenantId, currentUser, statusStr, entityTypeStr, fromDate, toDate, searchTerm, unsorted);
 
         // BUG-003 FIX: Filter out steps with null workflowExecution to prevent NPE
         List<WorkflowExecutionResponse> responses = steps.getContent().stream()

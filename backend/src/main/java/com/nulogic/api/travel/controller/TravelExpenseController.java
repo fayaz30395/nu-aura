@@ -81,10 +81,9 @@ public class TravelExpenseController {
             @Valid @RequestBody(required = false) TravelExpenseApprovalRequest request
     ) {
         // L-10.1 fix: typed body, bounded fields — no raw Map<String, Object> mass-assignment.
-        UUID approverId = request != null ? request.getApproverId() : null;
+        // The approver is the authenticated caller; a body approverId is ignored.
         return ResponseEntity.ok(travelExpenseService.approveExpense(
                 id,
-                approverId,
                 request != null ? request.getApprovedAmount() : null,
                 request != null ? request.getComments() : null));
     }
@@ -97,9 +96,8 @@ public class TravelExpenseController {
             @Valid @RequestBody(required = false) TravelExpenseRejectionRequest request
     ) {
         // L-10.1 fix: typed body, bounded fields — no raw Map<String, String> mass-assignment.
-        UUID approverId = request != null ? request.getApproverId() : null;
         String reason = request != null ? request.getReason() : null;
-        return ResponseEntity.ok(travelExpenseService.rejectExpense(id, approverId, reason));
+        return ResponseEntity.ok(travelExpenseService.rejectExpense(id, reason));
     }
 
     @DeleteMapping("/{id}")

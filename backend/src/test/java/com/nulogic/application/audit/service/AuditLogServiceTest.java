@@ -179,6 +179,28 @@ class AuditLogServiceTest {
         }
 
         @Test
+        @DisplayName("Pre-auth LOGIN uses the account as actor instead of a null actor")
+        void shouldUseAccountAsActorForPreAuthLogin() {
+            securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(null);
+
+            auditLogService.logAction("USER", entityId, AuditAction.LOGIN, null, null, "Successful login");
+
+            ArgumentCaptor<AuditLog> c = ArgumentCaptor.forClass(AuditLog.class);
+            verify(auditLogRepository).save(c.capture());
+            assertThat(c.getValue().getActorId()).isEqualTo(entityId);
+        }
+
+        @Test
+        @DisplayName("Non-login action with no actor is skipped, never saved with a null actor")
+        void shouldSkipWhenNoActorResolvable() {
+            securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(null);
+
+            auditLogService.logAction("EMPLOYEE", entityId, AuditAction.DELETE);
+
+            verify(auditLogRepository, never()).save(any(AuditLog.class));
+        }
+
+        @Test
         @DisplayName("Should handle JSON serialization exception")
         void shouldHandleJsonSerializationException() throws Exception {
             // Arrange

@@ -339,6 +339,21 @@ class LeaveRequestServiceTest {
         }
 
         @Test
+        @DisplayName("HR manager cannot approve own leave; request stays PENDING")
+        void shouldBlockSelfApprovalEvenForHrManager() {
+            UUID requestId = leaveRequest.getId();
+            when(leaveRequestRepository.findByIdAndTenantId(requestId, tenantId))
+                    .thenReturn(Optional.of(leaveRequest));
+            securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+
+            assertThatThrownBy(() -> leaveRequestService.approveLeaveRequest(requestId, employeeId))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("own leave");
+            assertThat(leaveRequest.getStatus()).isEqualTo(LeaveRequest.LeaveRequestStatus.PENDING);
+            verify(leaveRequestRepository, never()).save(any(LeaveRequest.class));
+        }
+
+        @Test
         @DisplayName("D1a: SUPER_ADMIN can reject a PENDING request without being the manager")
         void shouldAllowSuperAdminToRejectWithoutBeingManager() {
             UUID requestId = leaveRequest.getId();

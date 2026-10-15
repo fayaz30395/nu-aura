@@ -81,6 +81,21 @@ public class PreboardingService {
             throw new BusinessException("This pre-boarding has been cancelled");
         }
 
+        if (candidate.getStatus() == PreboardingStatus.CONVERTED) {
+            throw new BusinessException("Access link has expired");
+        }
+
+        return candidate;
+    }
+
+    /**
+     * Token for a write action: single-use, i.e. dead once pre-boarding is COMPLETED (or CONVERTED).
+     */
+    private PreboardingCandidate getEditableByAccessToken(String accessToken) {
+        PreboardingCandidate candidate = getByAccessToken(accessToken);
+        if (candidate.getStatus() == PreboardingStatus.COMPLETED) {
+            throw new BusinessException("Pre-boarding is already completed; this link can no longer be used to make changes");
+        }
         return candidate;
     }
 
@@ -93,7 +108,7 @@ public class PreboardingService {
                                                    String postalCode, String country, String phoneNumber,
                                                    String emergencyContactNumber, String emergencyContactName) {
 
-        PreboardingCandidate candidate = getByAccessToken(accessToken);
+        PreboardingCandidate candidate = getEditableByAccessToken(accessToken);
 
         candidate.setDateOfBirth(dateOfBirth);
         candidate.setAddress(address);
@@ -120,7 +135,7 @@ public class PreboardingService {
     public PreboardingCandidate updateBankDetails(String accessToken,
                                                   String bankAccountNumber, String bankName, String bankIfscCode, String taxId) {
 
-        PreboardingCandidate candidate = getByAccessToken(accessToken);
+        PreboardingCandidate candidate = getEditableByAccessToken(accessToken);
 
         candidate.setBankAccountNumber(bankAccountNumber);
         candidate.setBankName(bankName);
@@ -140,7 +155,7 @@ public class PreboardingService {
      */
     @Transactional
     public PreboardingCandidate markDocumentUploaded(String accessToken, String documentType) {
-        PreboardingCandidate candidate = getByAccessToken(accessToken);
+        PreboardingCandidate candidate = getEditableByAccessToken(accessToken);
 
         switch (documentType.toLowerCase()) {
             case "photo" -> candidate.setPhotoUploaded(true);
@@ -163,7 +178,7 @@ public class PreboardingService {
      */
     @Transactional
     public PreboardingCandidate signOfferLetter(String accessToken) {
-        PreboardingCandidate candidate = getByAccessToken(accessToken);
+        PreboardingCandidate candidate = getEditableByAccessToken(accessToken);
         candidate.setOfferLetterSigned(true);
 
         if (candidate.getStatus() == PreboardingStatus.INVITED) {

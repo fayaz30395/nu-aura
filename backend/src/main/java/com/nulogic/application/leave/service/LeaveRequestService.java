@@ -425,6 +425,10 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
      * admins too.
      */
     private void validateApproverIsManager(UUID employeeId, UUID approverId, UUID tenantId) {
+        // Nobody (including HR/admin bypass roles) may decide their own leave.
+        if (employeeId.equals(approverId)) {
+            throw new IllegalArgumentException("You cannot approve or reject your own leave request");
+        }
         if (SecurityContext.isHRManager() || SecurityContext.hasRole(RoleHierarchy.HR_ADMIN)) {
             return;
         }

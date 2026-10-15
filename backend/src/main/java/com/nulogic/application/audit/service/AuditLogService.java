@@ -63,6 +63,16 @@ public class AuditLogService {
     ) {
         try {
             UUID actorId = SecurityContext.getCurrentUserId();
+            // Pre-authentication events (login/logout/MFA) run with no SecurityContext user;
+            // audit_logs.actor_id is NOT NULL, so the account itself is the actor.
+            if (actorId == null && "USER".equals(entityType)
+                    && (action == AuditAction.LOGIN || action == AuditAction.LOGOUT)) {
+                actorId = entityId;
+            }
+            if (actorId == null) {
+                log.warn("Skipping audit event {} {}: no actor resolvable", action, entityType);
+                return;
+            }
 
             // FIX (wave-3 2.3): {@link TenantAwareTaskDecorator} now snapshots
             // RequestAttributes from the calling thread and re-attaches them on

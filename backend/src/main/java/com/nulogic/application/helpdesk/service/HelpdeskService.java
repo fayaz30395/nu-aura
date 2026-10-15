@@ -43,51 +43,39 @@ public class HelpdeskService {
     public TicketResponse createTicket(TicketRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 
-        // BUG-P1-010 FIX: Auto-resolve employeeId from SecurityContext when not provided
-        UUID employeeId = request.getEmployeeId();
-        if (employeeId == null) {
-            employeeId = SecurityContext.getCurrentEmployeeId();
-            if (employeeId == null) {
-                throw new IllegalArgumentException("Employee ID is required");
-            }
-            request.setEmployeeId(employeeId);
-        }
-
-        log.info("Creating ticket for employee {} in tenant {}", request.getEmployeeId(), tenantId);
+        // The requester is always the authenticated caller; employeeId/status/assignee/lifecycle
+        // timestamps/dueDate in the body are client-supplied and deliberately ignored.
+        UUID employeeId = requireCallerEmployeeId();
+        log.info("Creating ticket for employee {} in tenant {}", employeeId, tenantId);
 
         // Verify employee exists within tenant (use exists check to avoid loading encrypted fields)
-        if (!employeeRepository.existsByIdAndTenantId(request.getEmployeeId(), tenantId)) {
+        if (!employeeRepository.existsByIdAndTenantId(employeeId, tenantId)) {
             throw new IllegalArgumentException("Employee not found");
+        }
+
+        TicketCategory category = null;
+        if (request.getCategoryId() != null) {
+            category = ticketCategoryRepository.findByIdAndTenantId(request.getCategoryId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
         }
 
         Ticket ticket = new Ticket();
         ticket.setId(UUID.randomUUID());
         ticket.setTenantId(tenantId);
         ticket.setTicketNumber(generateTicketNumber(tenantId));
-        ticket.setEmployeeId(request.getEmployeeId());
+        ticket.setEmployeeId(employeeId);
         ticket.setCategoryId(request.getCategoryId());
         ticket.setSubject(request.getSubject());
         ticket.setDescription(request.getDescription());
         ticket.setPriority(request.getPriority() != null ? request.getPriority() : Ticket.TicketPriority.MEDIUM);
-        ticket.setStatus(request.getStatus() != null ? request.getStatus() : Ticket.TicketStatus.OPEN);
-        ticket.setAssignedTo(request.getAssignedTo());
-        ticket.setAssignedAt(request.getAssignedAt());
-        ticket.setResolvedAt(request.getResolvedAt());
-        ticket.setClosedAt(request.getClosedAt());
-        ticket.setResolutionNotes(request.getResolutionNotes());
-        ticket.setDueDate(request.getDueDate());
+        ticket.setStatus(Ticket.TicketStatus.OPEN);
         ticket.setTags(request.getTags());
         ticket.setAttachmentUrls(request.getAttachmentUrls());
 
-        // Calculate due date based on category SLA if not provided
-        if (ticket.getDueDate() == null && request.getCategoryId() != null) {
-            ticketCategoryRepository.findByIdAndTenantId(request.getCategoryId(), tenantId)
-                    .ifPresent(category -> {
-                        if (category.getSlaHours() != null) {
-                            // S12-B: tenant-local SLA due-date for helpdesk ticket — resolved via TenantTimeService.
-                            ticket.setDueDate(tenantTimeService.now(tenantId).plusHours(category.getSlaHours()));
-                        }
-                    });
+        // Due date is server-derived from the category SLA
+        if (category != null && category.getSlaHours() != null) {
+            // S12-B: tenant-local SLA due-date for helpdesk ticket — resolved via TenantTimeService.
+            ticket.setDueDate(tenantTimeService.now(tenantId).plusHours(category.getSlaHours()));
         }
 
         Ticket savedTicket = ticketRepository.save(ticket);
@@ -101,18 +89,22 @@ public class HelpdeskService {
 
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+        assertCanHandleTicket(ticket);
 
+        if (request.getCategoryId() != null && !request.getCategoryId().equals(ticket.getCategoryId())) {
+            ticketCategoryRepository.findByIdAndTenantId(request.getCategoryId(), tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        }
+        // Reassignment goes through assignTicket (HELPDESK_TICKET_ASSIGN); lifecycle timestamps and
+        // dueDate are server-set, so assignedTo/assignedAt/resolvedAt/closedAt/dueDate are ignored here.
+        applyStatus(ticket, request.getStatus(), tenantId);
         ticket.setCategoryId(request.getCategoryId());
         ticket.setSubject(request.getSubject());
         ticket.setDescription(request.getDescription());
-        ticket.setPriority(request.getPriority());
-        ticket.setStatus(request.getStatus());
-        ticket.setAssignedTo(request.getAssignedTo());
-        ticket.setAssignedAt(request.getAssignedAt());
-        ticket.setResolvedAt(request.getResolvedAt());
-        ticket.setClosedAt(request.getClosedAt());
+        if (request.getPriority() != null) {
+            ticket.setPriority(request.getPriority());
+        }
         ticket.setResolutionNotes(request.getResolutionNotes());
-        ticket.setDueDate(request.getDueDate());
         ticket.setTags(request.getTags());
         ticket.setAttachmentUrls(request.getAttachmentUrls());
 
@@ -127,15 +119,8 @@ public class HelpdeskService {
 
         Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
-
-        ticket.setStatus(status);
-
-        // Auto-set timestamps based on status
-        if (status == Ticket.TicketStatus.RESOLVED && ticket.getResolvedAt() == null) {
-            ticket.setResolvedAt(tenantTimeService.now(tenantId));
-        } else if (status == Ticket.TicketStatus.CLOSED && ticket.getClosedAt() == null) {
-            ticket.setClosedAt(tenantTimeService.now(tenantId));
-        }
+        assertCanHandleTicket(ticket);
+        applyStatus(ticket, status, tenantId);
 
         Ticket updatedTicket = ticketRepository.save(ticket);
         return mapToTicketResponse(updatedTicket);
@@ -423,6 +408,75 @@ public class HelpdeskService {
         TicketCategory category = ticketCategoryRepository.findByIdAndTenantId(categoryId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
         ticketCategoryRepository.delete(category);
+    }
+
+    // ==================== Ticket State / Access Guards ====================
+
+    private static final Map<Ticket.TicketStatus, Set<Ticket.TicketStatus>> ALLOWED_TRANSITIONS = Map.of(
+            Ticket.TicketStatus.OPEN, EnumSet.of(Ticket.TicketStatus.IN_PROGRESS,
+                    Ticket.TicketStatus.WAITING_FOR_RESPONSE, Ticket.TicketStatus.RESOLVED, Ticket.TicketStatus.CANCELLED),
+            Ticket.TicketStatus.IN_PROGRESS, EnumSet.of(Ticket.TicketStatus.OPEN,
+                    Ticket.TicketStatus.WAITING_FOR_RESPONSE, Ticket.TicketStatus.RESOLVED, Ticket.TicketStatus.CANCELLED),
+            Ticket.TicketStatus.WAITING_FOR_RESPONSE, EnumSet.of(Ticket.TicketStatus.OPEN,
+                    Ticket.TicketStatus.IN_PROGRESS, Ticket.TicketStatus.RESOLVED, Ticket.TicketStatus.CANCELLED),
+            // RESOLVED -> OPEN/IN_PROGRESS is a reopen; CLOSED and CANCELLED are terminal
+            Ticket.TicketStatus.RESOLVED, EnumSet.of(Ticket.TicketStatus.CLOSED,
+                    Ticket.TicketStatus.OPEN, Ticket.TicketStatus.IN_PROGRESS),
+            Ticket.TicketStatus.CLOSED, EnumSet.noneOf(Ticket.TicketStatus.class),
+            Ticket.TicketStatus.CANCELLED, EnumSet.noneOf(Ticket.TicketStatus.class));
+
+    /** Validates the transition and stamps lifecycle timestamps server-side. No-op for null/unchanged status. */
+    private void applyStatus(Ticket ticket, Ticket.TicketStatus target, UUID tenantId) {
+        Ticket.TicketStatus current = ticket.getStatus();
+        if (target == null || target == current) return;
+        if (!ALLOWED_TRANSITIONS.getOrDefault(current, Set.of()).contains(target)) {
+            throw new IllegalStateException("Illegal ticket status transition: " + current + " -> " + target);
+        }
+        ticket.setStatus(target);
+        if (target == Ticket.TicketStatus.RESOLVED) {
+            ticket.setResolvedAt(tenantTimeService.now(tenantId));
+        } else if (target == Ticket.TicketStatus.CLOSED) {
+            ticket.setClosedAt(tenantTimeService.now(tenantId));
+        } else if (current == Ticket.TicketStatus.RESOLVED) {
+            ticket.setResolvedAt(null); // reopened
+        }
+    }
+
+    /** Agents and the current assignee may work a ticket; the requester alone may not. */
+    private void assertCanHandleTicket(Ticket ticket) {
+        if (isHelpdeskAgent()) return;
+        UUID self = requireCallerEmployeeId();
+        if (!self.equals(ticket.getAssignedTo())) {
+            throw new AccessDeniedException("Only a helpdesk agent or the ticket assignee may do this");
+        }
+    }
+
+    /** Ticket-level guard for SLA escalation/metrics endpoints; returns normally only for agent or assignee. */
+    @Transactional(readOnly = true)
+    public void requireTicketHandlerAccess(UUID ticketId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        assertCanHandleTicket(ticketRepository.findByIdAndTenantId(ticketId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found")));
+    }
+
+    /** Guard for escalating a ticket: caller handles the ticket and the target is an in-tenant employee. */
+    @Transactional(readOnly = true)
+    public void requireEscalationAccess(UUID ticketId, UUID escalatedTo) {
+        requireTicketHandlerAccess(ticketId);
+        if (!employeeRepository.existsByIdAndTenantId(escalatedTo, TenantContext.requireCurrentTenant())) {
+            throw new IllegalArgumentException("Escalation target not found");
+        }
+    }
+
+    /** CSAT guard: only the employee who raised the ticket may rate it. */
+    @Transactional(readOnly = true)
+    public void requireTicketOwner(UUID ticketId) {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        Ticket ticket = ticketRepository.findByIdAndTenantId(ticketId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+        if (!requireCallerEmployeeId().equals(ticket.getEmployeeId())) {
+            throw new AccessDeniedException("Only the ticket requester may rate this ticket");
+        }
     }
 
     // ==================== Comment Access Control ====================

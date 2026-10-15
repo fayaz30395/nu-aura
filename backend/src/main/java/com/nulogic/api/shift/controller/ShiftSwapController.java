@@ -39,9 +39,8 @@ public class ShiftSwapController {
     @RequiresPermission(Permission.ATTENDANCE_REGULARIZE)
     public ResponseEntity<ShiftSwapRequest> submitRequest(
             @Valid @RequestBody SwapRequestDto dto) {
-        log.info("Shift swap request from employee {}", dto.getRequesterEmployeeId());
+        // Requester identity comes from the authenticated session, never from the body.
         ShiftSwapRequest result = shiftSwapService.submitSwapRequest(
-                dto.getRequesterEmployeeId(),
                 dto.getRequesterAssignmentId(),
                 dto.getRequesterShiftDate(),
                 dto.getTargetEmployeeId(),
@@ -57,7 +56,7 @@ public class ShiftSwapController {
     public ResponseEntity<ShiftSwapRequest> acceptRequest(
             @PathVariable UUID requestId,
             @Valid @RequestBody TargetResponseDto dto) {
-        return ResponseEntity.ok(shiftSwapService.acceptByTarget(requestId, dto.getEmployeeId()));
+        return ResponseEntity.ok(shiftSwapService.acceptByTarget(requestId));
     }
 
     @PostMapping("/{requestId}/decline")
@@ -65,7 +64,7 @@ public class ShiftSwapController {
     public ResponseEntity<ShiftSwapRequest> declineRequest(
             @PathVariable UUID requestId,
             @Valid @RequestBody TargetResponseDto dto) {
-        return ResponseEntity.ok(shiftSwapService.declineByTarget(requestId, dto.getEmployeeId()));
+        return ResponseEntity.ok(shiftSwapService.declineByTarget(requestId));
     }
 
     @PostMapping("/{requestId}/cancel")
@@ -73,7 +72,7 @@ public class ShiftSwapController {
     public ResponseEntity<ShiftSwapRequest> cancelRequest(
             @PathVariable UUID requestId,
             @Valid @RequestBody TargetResponseDto dto) {
-        return ResponseEntity.ok(shiftSwapService.cancelRequest(requestId, dto.getEmployeeId()));
+        return ResponseEntity.ok(shiftSwapService.cancelRequest(requestId));
     }
 
     @GetMapping("/my-requests/{employeeId}")
@@ -114,8 +113,7 @@ public class ShiftSwapController {
     public ResponseEntity<ShiftSwapRequest> approve(
             @PathVariable UUID requestId,
             @Valid @RequestBody ManagerActionDto dto) {
-        log.info("Manager {} approving shift swap {}", dto.getManagerId(), requestId);
-        return ResponseEntity.ok(shiftSwapService.approveByManager(requestId, dto.getManagerId()));
+        return ResponseEntity.ok(shiftSwapService.approveByManager(requestId));
     }
 
     @PostMapping("/{requestId}/reject")
@@ -123,15 +121,14 @@ public class ShiftSwapController {
     public ResponseEntity<ShiftSwapRequest> reject(
             @PathVariable UUID requestId,
             @Valid @RequestBody ManagerActionDto dto) {
-        log.info("Manager {} rejecting shift swap {}", dto.getManagerId(), requestId);
-        return ResponseEntity.ok(shiftSwapService.rejectByManager(requestId, dto.getManagerId(), dto.getReason()));
+        return ResponseEntity.ok(shiftSwapService.rejectByManager(requestId, dto.getReason()));
     }
 
     // ========== DTOs ==========
 
     @Data
     public static class SwapRequestDto {
-        @NotNull
+        /** Ignored: the requester is always the authenticated employee. Kept for client compatibility. */
         private UUID requesterEmployeeId;
         @NotNull
         private UUID requesterAssignmentId;
@@ -149,13 +146,13 @@ public class ShiftSwapController {
 
     @Data
     public static class TargetResponseDto {
-        @NotNull
+        /** Ignored: the acting employee is always the authenticated employee. Kept for client compatibility. */
         private UUID employeeId;
     }
 
     @Data
     public static class ManagerActionDto {
-        @NotNull
+        /** Ignored: the approver is always the authenticated employee. Kept for client compatibility. */
         private UUID managerId;
         private String reason;
     }

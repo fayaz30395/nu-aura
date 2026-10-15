@@ -7,8 +7,12 @@ import com.nulogic.domain.performance.Feedback360Request.RequestStatus;
 import com.nulogic.domain.performance.Feedback360Request.ReviewerType;
 import com.nulogic.domain.performance.Feedback360Response;
 import com.nulogic.domain.performance.Feedback360Summary;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.employee.Employee;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.performance.repository.Feedback360CycleRepository;
 import com.nulogic.infrastructure.performance.repository.Feedback360RequestRepository;
 import com.nulogic.infrastructure.performance.repository.Feedback360ResponseRepository;
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +40,7 @@ public class Feedback360Service {
     private final Feedback360ResponseRepository responseRepository;
     private final Feedback360SummaryRepository summaryRepository;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * Resolve "now" in the tenant's local zone. Prefers the entity's tenantId when
@@ -136,6 +142,116 @@ public class Feedback360Service {
         log.info("Creating 360 feedback request for subject: {} reviewer: {}",
                 request.getSubjectEmployeeId(), request.getReviewerId());
         return requestRepository.save(request);
+    }
+
+    /**
+     * Authorised nomination: the nominator is the authenticated actor (never client-supplied) and must be
+     * the subject, the subject's manager, or hold FEEDBACK_360:MANAGE. Subject/reviewer/cycle are tenant-validated,
+     * the cycle must accept nominations, duplicates are rejected and approval is never self-granted.
+     */
+    @Transactional
+    public Feedback360Request nominateReviewer(UUID tenantId, UUID cycleId, UUID subjectId, UUID reviewerId,
+                                               ReviewerType reviewerType, UUID actorId) {
+        Feedback360Cycle cycle = cycleRepository.findByIdAndTenantId(cycleId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Feedback cycle not found: " + cycleId));
+        Employee subject = employeeRepository.findByIdAndTenantId(subjectId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Subject employee not found"));
+        employeeRepository.findByIdAndTenantId(reviewerId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Reviewer not found"));
+
+        boolean hrAuthority = SecurityContext.hasPermission(Permission.FEEDBACK_360_MANAGE);
+        boolean permitted = hrAuthority || (actorId != null
+                && (actorId.equals(subjectId) || actorId.equals(subject.getManagerId())));
+        if (!permitted) {
+            log.warn("SECURITY: employee {} denied 360 nomination for subject {}", actorId, subjectId);
+            throw new AccessDeniedException("Access denied");
+        }
+
+        CycleStatus status = cycle.getStatus();
+        boolean open = status == CycleStatus.NOMINATION_OPEN || status == CycleStatus.IN_PROGRESS;
+        if (status == CycleStatus.CLOSED || status == CycleStatus.REVIEW_COMPLETE || (!open && !hrAuthority)) {
+            throw new IllegalStateException("Cycle is not accepting nominations. Current status: " + status);
+        }
+        if ((reviewerType == ReviewerType.SELF) != subjectId.equals(reviewerId)) {
+            throw new IllegalArgumentException("Reviewer must be the subject for SELF reviews and only for SELF reviews");
+        }
+        boolean duplicate = requestRepository.findRequestsForSubject(tenantId, subjectId, cycleId).stream()
+                .anyMatch(r -> reviewerId.equals(r.getReviewerId()));
+        if (duplicate) {
+            throw new IllegalStateException("Reviewer already nominated for this subject in this cycle");
+        }
+
+        Feedback360Request request = Feedback360Request.builder()
+                .cycleId(cycleId)
+                .subjectEmployeeId(subjectId)
+                .reviewerId(reviewerId)
+                .reviewerType(reviewerType)
+                .nominatedBy(actorId)
+                .nominationApproved(false)
+                .build();
+        request.setTenantId(tenantId);
+        return createRequest(request);
+    }
+
+    /**
+     * Authorised response submission: only the request's assigned reviewer may respond, only while the cycle is
+     * in progress, never after a final submission. Subject/cycle/reviewer-type come from the stored request,
+     * and a saved draft is updated in place instead of creating a second row.
+     */
+    @Transactional
+    public Feedback360Response submitReviewerResponse(UUID tenantId, UUID actorId, Feedback360Response incoming) {
+        Feedback360Request request = requestRepository.findByIdAndTenantId(incoming.getRequestId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Feedback request not found: " + incoming.getRequestId()));
+        if (actorId == null || !actorId.equals(request.getReviewerId())) {
+            log.warn("SECURITY: employee {} denied 360 response on request {}", actorId, request.getId());
+            throw new AccessDeniedException("Access denied");
+        }
+        if (request.getStatus() == RequestStatus.SUBMITTED || request.getStatus() == RequestStatus.DECLINED) {
+            throw new IllegalStateException("Feedback request is already " + request.getStatus());
+        }
+        Feedback360Cycle cycle = cycleRepository.findByIdAndTenantId(request.getCycleId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Feedback cycle not found: " + request.getCycleId()));
+        if (cycle.getStatus() != CycleStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Cycle is not collecting responses. Current status: " + cycle.getStatus());
+        }
+
+        incoming.setCycleId(request.getCycleId());
+        incoming.setSubjectEmployeeId(request.getSubjectEmployeeId());
+        incoming.setReviewerId(request.getReviewerId());
+        incoming.setReviewerType(request.getReviewerType());
+        incoming.setTenantId(tenantId);
+
+        Feedback360Response target = incoming;
+        Optional<Feedback360Response> existing = responseRepository.findByRequestIdAndTenantId(request.getId(), tenantId);
+        if (existing.isPresent()) {
+            Feedback360Response draft = existing.get();
+            if (!Boolean.TRUE.equals(draft.getIsDraft())) {
+                throw new IllegalStateException("A response was already submitted for this request");
+            }
+            copyAnswers(incoming, draft);
+            target = draft;
+        }
+        return createOrUpdateResponse(target);
+    }
+
+    private void copyAnswers(Feedback360Response from, Feedback360Response to) {
+        to.setIsDraft(from.getIsDraft());
+        to.setSubmittedAt(from.getSubmittedAt());
+        to.setOverallRating(from.getOverallRating());
+        to.setCommunicationRating(from.getCommunicationRating());
+        to.setTeamworkRating(from.getTeamworkRating());
+        to.setLeadershipRating(from.getLeadershipRating());
+        to.setProblemSolvingRating(from.getProblemSolvingRating());
+        to.setTechnicalSkillsRating(from.getTechnicalSkillsRating());
+        to.setAdaptabilityRating(from.getAdaptabilityRating());
+        to.setWorkQualityRating(from.getWorkQualityRating());
+        to.setTimeManagementRating(from.getTimeManagementRating());
+        to.setStrengths(from.getStrengths());
+        to.setAreasForImprovement(from.getAreasForImprovement());
+        to.setAdditionalComments(from.getAdditionalComments());
+        to.setSpecificExamples(from.getSpecificExamples());
+        to.setDevelopmentSuggestions(from.getDevelopmentSuggestions());
+        to.setCustomResponses(from.getCustomResponses());
     }
 
     @Transactional

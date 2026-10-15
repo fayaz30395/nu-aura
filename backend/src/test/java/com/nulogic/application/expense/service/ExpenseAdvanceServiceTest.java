@@ -63,6 +63,8 @@ class ExpenseAdvanceServiceTest {
     @Mock
     private ExpenseClaimService expenseClaimService;
 
+    @Mock
+    private com.nulogic.infrastructure.expense.repository.ExpenseClaimRepository expenseClaimRepository;
     @InjectMocks
     private ExpenseAdvanceService service;
 
@@ -120,5 +122,89 @@ class ExpenseAdvanceServiceTest {
         service.createAdvance(TARGET_EMPLOYEE_ID, request());
 
         verify(expenseClaimService).assertEmployeeAccess(TARGET_EMPLOYEE_ID, Permission.EXPENSE_CREATE);
+    }
+
+    // ---- settleAdvance ownership / tenant checks ----
+
+    private ExpenseAdvance disbursedAdvance(UUID advanceId) {
+        ExpenseAdvance advance = ExpenseAdvance.builder()
+                .employeeId(TARGET_EMPLOYEE_ID)
+                .amount(new BigDecimal("5000.00"))
+                .status(ExpenseAdvance.AdvanceStatus.DISBURSED)
+                .build();
+        advance.setId(advanceId);
+        advance.setTenantId(TENANT_ID);
+        return advance;
+    }
+
+    private com.nulogic.domain.expense.ExpenseClaim claimOf(UUID employeeId,
+                                                           com.nulogic.domain.expense.ExpenseClaim.ExpenseStatus status) {
+        return com.nulogic.domain.expense.ExpenseClaim.builder().employeeId(employeeId).status(status).build();
+    }
+
+    @Test
+    @DisplayName("settling against another employee's claim is denied and the advance stays DISBURSED")
+    void settleWithForeignClaimDenied() {
+        UUID advanceId = UUID.randomUUID();
+        UUID claimId = UUID.randomUUID();
+        ExpenseAdvance advance = disbursedAdvance(advanceId);
+        when(advanceRepository.findByIdAndTenantId(advanceId, TENANT_ID)).thenReturn(java.util.Optional.of(advance));
+        when(expenseClaimRepository.findByIdAndTenantId(claimId, TENANT_ID)).thenReturn(java.util.Optional.of(
+                claimOf(UUID.randomUUID(), com.nulogic.domain.expense.ExpenseClaim.ExpenseStatus.APPROVED)));
+
+        assertThatThrownBy(() -> service.settleAdvance(advanceId, claimId))
+                .isInstanceOf(AccessDeniedException.class);
+
+        org.assertj.core.api.Assertions.assertThat(advance.getStatus())
+                .isEqualTo(ExpenseAdvance.AdvanceStatus.DISBURSED);
+        verify(advanceRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("settling against a claim from another tenant (not found in tenant) is rejected")
+    void settleWithCrossTenantClaimRejected() {
+        UUID advanceId = UUID.randomUUID();
+        UUID claimId = UUID.randomUUID();
+        when(advanceRepository.findByIdAndTenantId(advanceId, TENANT_ID))
+                .thenReturn(java.util.Optional.of(disbursedAdvance(advanceId)));
+        when(expenseClaimRepository.findByIdAndTenantId(claimId, TENANT_ID)).thenReturn(java.util.Optional.empty());
+
+        assertThatThrownBy(() -> service.settleAdvance(advanceId, claimId))
+                .isInstanceOf(jakarta.persistence.EntityNotFoundException.class);
+
+        verify(advanceRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("caller denied by EXPENSE:CREATE scope for the advance holder cannot settle")
+    void settleDeniedByScope() {
+        UUID advanceId = UUID.randomUUID();
+        when(advanceRepository.findByIdAndTenantId(advanceId, TENANT_ID))
+                .thenReturn(java.util.Optional.of(disbursedAdvance(advanceId)));
+        doThrow(new AccessDeniedException("denied")).when(expenseClaimService)
+                .assertEmployeeAccess(TARGET_EMPLOYEE_ID, Permission.EXPENSE_CREATE);
+
+        assertThatThrownBy(() -> service.settleAdvance(advanceId, UUID.randomUUID()))
+                .isInstanceOf(AccessDeniedException.class);
+
+        verify(advanceRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("settling with the holder's own approved claim succeeds")
+    void settleWithOwnClaimSucceeds() {
+        UUID advanceId = UUID.randomUUID();
+        UUID claimId = UUID.randomUUID();
+        ExpenseAdvance advance = disbursedAdvance(advanceId);
+        when(advanceRepository.findByIdAndTenantId(advanceId, TENANT_ID)).thenReturn(java.util.Optional.of(advance));
+        when(expenseClaimRepository.findByIdAndTenantId(claimId, TENANT_ID)).thenReturn(java.util.Optional.of(
+                claimOf(TARGET_EMPLOYEE_ID, com.nulogic.domain.expense.ExpenseClaim.ExpenseStatus.APPROVED)));
+        when(advanceRepository.save(any(ExpenseAdvance.class))).thenAnswer(i -> i.getArgument(0));
+
+        service.settleAdvance(advanceId, claimId);
+
+        org.assertj.core.api.Assertions.assertThat(advance.getStatus())
+                .isEqualTo(ExpenseAdvance.AdvanceStatus.SETTLED);
+        org.assertj.core.api.Assertions.assertThat(advance.getSettlementClaimId()).isEqualTo(claimId);
     }
 }

@@ -103,7 +103,6 @@ class CompOffControllerTest {
             CompOffRequest created = buildCompOffRequest(CompOffStatus.PENDING);
 
             when(compOffService.requestCompOff(
-                    eq(EMPLOYEE_ID),
                     any(LocalDate.class),
                     anyString()))
                     .thenReturn(created);
@@ -117,7 +116,6 @@ class CompOffControllerTest {
                     .andExpect(jsonPath("$.status").value("PENDING"));
 
             verify(compOffService).requestCompOff(
-                    eq(EMPLOYEE_ID),
                     any(LocalDate.class),
                     anyString());
         }
@@ -127,7 +125,7 @@ class CompOffControllerTest {
         void requestCompOff_duplicateDate_propagatesException() throws Exception {
             CompOffController.CompOffRequestDto dto = buildCompOffRequestDto();
 
-            when(compOffService.requestCompOff(any(), any(), any()))
+            when(compOffService.requestCompOff(any(), any()))
                     .thenThrow(new IllegalStateException("Comp-off request already exists for this date"));
 
             mockMvc.perform(post("/api/v1/comp-off/request")
@@ -228,7 +226,6 @@ class CompOffControllerTest {
 
             when(compOffService.approveCompOff(
                     eq(REQUEST_ID),
-                    eq(REVIEWER_ID),
                     eq("Approved as per project requirements")))
                     .thenReturn(approved);
 
@@ -241,7 +238,6 @@ class CompOffControllerTest {
 
             verify(compOffService).approveCompOff(
                     eq(REQUEST_ID),
-                    eq(REVIEWER_ID),
                     eq("Approved as per project requirements"));
         }
 
@@ -257,7 +253,6 @@ class CompOffControllerTest {
 
             when(compOffService.rejectCompOff(
                     eq(REQUEST_ID),
-                    eq(REVIEWER_ID),
                     eq("Overtime below threshold")))
                     .thenReturn(rejected);
 
@@ -270,7 +265,6 @@ class CompOffControllerTest {
 
             verify(compOffService).rejectCompOff(
                     eq(REQUEST_ID),
-                    eq(REVIEWER_ID),
                     eq("Overtime below threshold"));
         }
 
@@ -279,7 +273,7 @@ class CompOffControllerTest {
         void approve_notPendingState_propagatesException() throws Exception {
             CompOffController.ReviewDto dto = buildReviewDto();
 
-            when(compOffService.approveCompOff(any(), any(), any()))
+            when(compOffService.approveCompOff(any(), any()))
                     .thenThrow(new IllegalStateException("Request is not in PENDING state"));
 
             mockMvc.perform(post("/api/v1/comp-off/{requestId}/approve", REQUEST_ID)

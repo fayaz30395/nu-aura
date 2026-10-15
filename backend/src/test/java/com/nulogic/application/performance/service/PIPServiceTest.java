@@ -1,7 +1,11 @@
 package com.nulogic.application.performance.service;
 
 import com.nulogic.application.performance.dto.*;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.domain.employee.Employee;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.performance.PIPCheckIn;
 import com.nulogic.domain.performance.PerformanceImprovementPlan;
 import com.nulogic.domain.performance.PerformanceImprovementPlan.PIPStatus;
@@ -9,6 +13,7 @@ import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.performance.repository.PIPCheckInRepository;
 import com.nulogic.infrastructure.performance.repository.PIPRepository;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +30,9 @@ import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,6 +77,16 @@ class PIPServiceTest {
         service = new PIPService(pipRepository, checkInRepository, employeeRepository, webSocketNotificationService);
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         when(employeeRepository.findAllById(any())).thenReturn(List.of());
+        // Run as an HR actor (PIP:MANAGE => org-wide access) so the pre-existing mutation-path tests
+        // exercise the happy path; authz denials live in PIPServiceAuthzTest.
+        SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of("HR_MANAGER"),
+                Map.of(Permission.PIP_MANAGE, RoleScope.ALL));
+        when(employeeRepository.findByIdAndTenantId(any(), any())).thenReturn(Optional.of(new Employee()));
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContext.clear();
     }
 
     private PerformanceImprovementPlan activePip() {

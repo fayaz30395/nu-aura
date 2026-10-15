@@ -47,6 +47,8 @@ class LeaveBalanceEncashmentCarryForwardTest {
     private LeaveBalanceRepository leaveBalanceRepository;
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
+    @Mock
+    private com.nulogic.infrastructure.leave.repository.LeaveAccrualLedgerRepository leaveAccrualLedgerRepository;
     @InjectMocks
     private LeaveBalanceService leaveBalanceService;
 
@@ -229,6 +231,31 @@ class LeaveBalanceEncashmentCarryForwardTest {
         assertThat(nextBalance.getOpeningBalance()).isEqualByComparingTo(new BigDecimal("8"));
         verify(leaveBalanceRepository, times(1))
                 .findForUpdate(employeeId, leaveTypeId, 2025, tenantId);
+    }
+
+    @Test
+    @DisplayName("carryForwardBalances - second run does not double-credit")
+    void carryForwardBalances_rerunIsIdempotent() {
+        LeaveBalance oldBalance = buildOldBalance(new BigDecimal("8"));
+        LeaveBalance nextBalance = buildNextYearBalance();
+        LeaveType leaveType = LeaveType.builder().leaveName("Annual Leave").isCarryForwardAllowed(true).build();
+        leaveType.setId(leaveTypeId);
+        leaveType.setTenantId(tenantId);
+        when(leaveBalanceRepository.findAllByTenantIdAndYear(tenantId, 2024)).thenReturn(List.of(oldBalance));
+        when(leaveTypeRepository.findAllByTenantId(tenantId)).thenReturn(List.of(leaveType));
+        when(leaveBalanceRepository.findForUpdate(employeeId, leaveTypeId, 2025, tenantId))
+                .thenReturn(Optional.of(nextBalance));
+        // first call: not yet in ledger; second call: ledger row exists
+        when(leaveAccrualLedgerRepository.existsByTenantIdAndEmployeeIdAndLeaveTypeIdAndAccrualPeriod(
+                tenantId, employeeId, leaveTypeId, "CF-2024")).thenReturn(false, true);
+
+        int first = leaveBalanceService.carryForwardBalances(2024);
+        int second = leaveBalanceService.carryForwardBalances(2024);
+
+        assertThat(first).isEqualTo(1);
+        assertThat(second).isZero();
+        assertThat(nextBalance.getOpeningBalance()).isEqualByComparingTo(new BigDecimal("8"));
+        verify(leaveAccrualLedgerRepository, times(1)).saveAndFlush(any());
     }
 
     @Test

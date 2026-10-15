@@ -34,6 +34,13 @@ public interface SurveyResponseRepository extends JpaRepository<SurveyResponse, 
             @Param("employeeId") UUID employeeId,
             @Param("surveyId") UUID surveyId);
 
+    @Query("SELECT r FROM SurveyResponse r WHERE r.tenantId = :tenantId " +
+            "AND r.anonymousId = :anonymousId AND r.survey.id = :surveyId")
+    Optional<SurveyResponse> findByAnonymousIdAndSurvey(
+            @Param("tenantId") UUID tenantId,
+            @Param("anonymousId") String anonymousId,
+            @Param("surveyId") UUID surveyId);
+
     @Query("SELECT COUNT(r) FROM SurveyResponse r WHERE r.survey.id = :surveyId " +
             "AND r.status = 'COMPLETED'")
     long countCompletedResponses(@Param("surveyId") UUID surveyId);

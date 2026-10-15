@@ -85,6 +85,14 @@ class PerformanceReviewControllerTest extends AbstractPostgresIntegrationTest {
         SecurityContext.setCurrentTenantId(TENANT_ID);
     }
 
+    /** PIP rules forbid acting on one's own PIP, so PIP flows run as the reviewer, not the subject. */
+    private void actAsReviewer() {
+        Map<String, RoleScope> permissions = new HashMap<>();
+        permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        SecurityContext.setCurrentUser(UUID.randomUUID(), USER_ID, Set.of("SUPER_ADMIN"), permissions);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+    }
+
     private Employee persistEmployee(String prefix) {
         User user = User.builder()
                 .email(prefix.toLowerCase() + "-review-test-" + UUID.randomUUID() + "@example.com")
@@ -331,6 +339,7 @@ class PerformanceReviewControllerTest extends AbstractPostgresIntegrationTest {
     @Test
     @DisplayName("UC-GROW-012 happy: PIP initiation with manager and HR returns 201")
     void ucGrow012_pipInitiation_returns201() throws Exception {
+        actAsReviewer();
         CreatePIPRequest req = CreatePIPRequest.builder()
                 .employeeId(EMPLOYEE_ID)
                 .managerId(USER_ID)
@@ -372,6 +381,7 @@ class PerformanceReviewControllerTest extends AbstractPostgresIntegrationTest {
     @Test
     @DisplayName("UC-GROW-013 happy: PIP check-in returns 201 milestone logged")
     void ucGrow013_pipProgressUpdate_returns201() throws Exception {
+        actAsReviewer();
         // First create a PIP
         CreatePIPRequest pipReq = CreatePIPRequest.builder()
                 .employeeId(EMPLOYEE_ID)
@@ -402,6 +412,65 @@ class PerformanceReviewControllerTest extends AbstractPostgresIntegrationTest {
                         .content(objectMapper.writeValueAsString(checkIn)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.progressNotes").value("Meeting goals this week"));
+    }
+
+    @Test
+    @DisplayName("UC-GROW-012 negative: line manager without org-wide access cannot raise PIP for non-reportee (403)")
+    void ucGrow012_pipForNonReportee_returns403() throws Exception {
+        Employee outsider = persistEmployee("OUT");
+        Map<String, RoleScope> perms = new HashMap<>();
+        perms.put(Permission.PIP_CREATE, RoleScope.TEAM);
+        SecurityContext.setCurrentUser(UUID.randomUUID(), outsider.getId(), Set.of("MANAGER"), perms);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+
+        CreatePIPRequest req = CreatePIPRequest.builder()
+                .employeeId(EMPLOYEE_ID)
+                .managerId(outsider.getId())
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusMonths(3))
+                .reason("Not my reportee")
+                .build();
+
+        mockMvc.perform(post(PIP_BASE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("UC-GROW-013 negative: the PIP's own employee cannot record a check-in (403)")
+    void ucGrow013_ownPipCheckIn_returns403() throws Exception {
+        actAsReviewer();
+        CreatePIPRequest pipReq = CreatePIPRequest.builder()
+                .employeeId(EMPLOYEE_ID)
+                .managerId(USER_ID)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusMonths(3))
+                .reason("Own PIP")
+                .checkInFrequency("WEEKLY")
+                .build();
+        MvcResult pipResult = mockMvc.perform(post(PIP_BASE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pipReq)))
+                .andExpect(status().isCreated())
+                .andReturn();
+        String pipId = objectMapper.readTree(pipResult.getResponse().getContentAsString()).get("id").asText();
+
+        // Switch to the PIP subject (still holds PIP:MANAGE via SUPER_ADMIN, but must not touch own plan)
+        Map<String, RoleScope> perms = new HashMap<>();
+        perms.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
+        SecurityContext.setCurrentUser(UUID.randomUUID(), EMPLOYEE_ID, Set.of("SUPER_ADMIN"), perms);
+        SecurityContext.setCurrentTenantId(TENANT_ID);
+
+        PIPCheckInRequest checkIn = PIPCheckInRequest.builder()
+                .checkInDate(LocalDate.now())
+                .progressNotes("Self check-in")
+                .build();
+
+        mockMvc.perform(post(PIP_BASE + "/{id}/check-in", UUID.fromString(pipId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(checkIn)))
+                .andExpect(status().isForbidden());
     }
 
     // ─────────────────────────────────────────────────────────

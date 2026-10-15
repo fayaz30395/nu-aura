@@ -19,6 +19,8 @@ import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.expense.ExpenseApprovedEvent;
 import com.nulogic.domain.expense.ExpenseClaim;
+import com.nulogic.domain.payroll.PayrollAdjustment;
+import com.nulogic.infrastructure.payroll.repository.PayrollAdjustmentRepository;
 import com.nulogic.domain.user.RoleScope;
 import com.nulogic.domain.workflow.WorkflowDefinition;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -74,6 +76,7 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
                     "ON CONFLICT(tenant_id, year_month) DO UPDATE SET current_value = expense_claim_sequence.current_value + 1 " +
                     "RETURNING current_value";
     private final ExpenseClaimRepository expenseClaimRepository;
+    private final PayrollAdjustmentRepository payrollAdjustmentRepository;
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final DataScopeService dataScopeService;
@@ -105,7 +108,9 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             NotificationService notificationService,
             JdbcTemplate jdbcTemplate,
             com.nulogic.common.util.TenantTimeService tenantTimeService,
-            org.springframework.beans.factory.ObjectProvider<ExpenseClaimService> selfProvider) {
+            org.springframework.beans.factory.ObjectProvider<ExpenseClaimService> selfProvider,
+            PayrollAdjustmentRepository payrollAdjustmentRepository) {
+        this.payrollAdjustmentRepository = payrollAdjustmentRepository;
         this.expenseClaimRepository = expenseClaimRepository;
         this.employeeRepository = employeeRepository;
         this.userRepository = userRepository;
@@ -251,14 +256,21 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
             log.warn("Audit log failed for expense claim approve: {}", e.getMessage());
         }
 
-        // FIX-002: Publish event for payroll to add expense reimbursement earning
-        domainEventPublisher.publish(ExpenseApprovedEvent.of(
-                this, tenantId, saved.getId(),
-                saved.getEmployeeId(), approverEmployeeId,
-                saved.getAmount(), saved.getCurrency(),
-                saved.getClaimNumber(), saved.getCategory().name()));
+        publishExpenseApproved(tenantId, saved, approverEmployeeId);
 
         return enrichResponse(ExpenseClaimResponse.fromEntity(saved));
+    }
+
+    /**
+     * FIX-002: Publish event for payroll to add expense reimbursement earning. Single publish
+     * point shared by the direct and workflow approval paths so each approval emits it once.
+     */
+    private void publishExpenseApproved(UUID tenantId, ExpenseClaim claim, UUID approverEmployeeId) {
+        domainEventPublisher.publish(ExpenseApprovedEvent.of(
+                this, tenantId, claim.getId(),
+                claim.getEmployeeId(), approverEmployeeId,
+                claim.getAmount(), claim.getCurrency(),
+                claim.getClaimNumber(), claim.getCategory().name()));
     }
 
     @Transactional
@@ -352,7 +364,21 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
         ExpenseClaim claim = expenseClaimRepository.findByIdAndTenantId(claimId, tenantId)
                 .orElseThrow(() -> new EntityNotFoundException("Expense claim not found: " + claimId));
 
+        // A claim is reimbursed EITHER through payroll OR directly, never both. Approval already
+        // queued a payroll adjustment: if payroll consumed it the claim is already paid out; if it
+        // is still pending, withdraw it before paying directly.
+        List<PayrollAdjustment> payrollAdjustments = payrollAdjustmentRepository
+                .findByTenantIdAndSourceModuleAndSourceId(tenantId, "EXPENSE", claimId);
+        if (payrollAdjustments.stream().anyMatch(a -> a.getStatus() == PayrollAdjustment.AdjustmentStatus.PROCESSED)) {
+            throw new BusinessException("Expense claim " + claim.getClaimNumber()
+                    + " has already been reimbursed through payroll and cannot be marked as paid");
+        }
+
         claim.markAsPaid(paymentDate, paymentReference);
+        payrollAdjustments.stream()
+                .filter(a -> a.getStatus() == PayrollAdjustment.AdjustmentStatus.PENDING)
+                .forEach(a -> a.setStatus(PayrollAdjustment.AdjustmentStatus.CANCELLED));
+        payrollAdjustmentRepository.saveAll(payrollAdjustments);
         ExpenseClaim saved = expenseClaimRepository.save(claim);
         log.info("Marked expense claim as paid: {}", saved.getClaimNumber());
 
@@ -721,6 +747,11 @@ public class ExpenseClaimService implements ApprovalCallbackHandler {
 
         claim.approve(approvedBy, tenantTimeService.now(claim.getTenantId()));
         expenseClaimRepository.save(claim);
+
+        UUID approverEmployeeId = employeeRepository.findByUserIdAndTenantId(approvedBy, tenantId)
+                .map(Employee::getId)
+                .orElse(approvedBy);
+        publishExpenseApproved(tenantId, claim, approverEmployeeId);
 
         // Send notifications to the requesting employee
         notifyExpenseApproved(claim);

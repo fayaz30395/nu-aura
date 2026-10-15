@@ -70,7 +70,10 @@ public class ExitManagementService {
         exitProcess.setReasonForLeaving(request.getReasonForLeaving());
         exitProcess.setNewCompany(request.getNewCompany());
         exitProcess.setNewDesignation(request.getNewDesignation());
-        exitProcess.setStatus(request.getStatus() != null ? request.getStatus() : ExitProcess.ExitStatus.INITIATED);
+        if (request.getStatus() != null && request.getStatus() != ExitProcess.ExitStatus.INITIATED) {
+            throw new IllegalStateException("A new exit process must start as INITIATED");
+        }
+        exitProcess.setStatus(ExitProcess.ExitStatus.INITIATED);
         exitProcess.setRehireEligible(request.getRehireEligible());
         exitProcess.setExitInterviewScheduled(request.getExitInterviewScheduled());
         exitProcess.setExitInterviewDate(request.getExitInterviewDate());
@@ -101,7 +104,10 @@ public class ExitManagementService {
         exitProcess.setReasonForLeaving(request.getReasonForLeaving());
         exitProcess.setNewCompany(request.getNewCompany());
         exitProcess.setNewDesignation(request.getNewDesignation());
-        exitProcess.setStatus(request.getStatus());
+        ExitProcess.ExitStatus previousStatus = exitProcess.getStatus();
+        if (request.getStatus() != null) {
+            applyStatusTransition(exitProcess, request.getStatus(), tenantId);
+        }
         exitProcess.setRehireEligible(request.getRehireEligible());
         exitProcess.setExitInterviewScheduled(request.getExitInterviewScheduled());
         exitProcess.setExitInterviewDate(request.getExitInterviewDate());
@@ -114,7 +120,8 @@ public class ExitManagementService {
 
         ExitProcess updatedProcess = exitProcessRepository.save(exitProcess);
 
-        if (request.getStatus() == ExitProcess.ExitStatus.COMPLETED) {
+        if (updatedProcess.getStatus() == ExitProcess.ExitStatus.COMPLETED
+                && previousStatus != ExitProcess.ExitStatus.COMPLETED) {
             publishOffboardedEvent(updatedProcess, tenantId);
         }
 
@@ -129,15 +136,51 @@ public class ExitManagementService {
         ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(processId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(EXIT_PROCESS_NOT_FOUND));
 
-        exitProcess.setStatus(status);
+        ExitProcess.ExitStatus previousStatus = exitProcess.getStatus();
+        applyStatusTransition(exitProcess, status, tenantId);
 
         ExitProcess updatedProcess = exitProcessRepository.save(exitProcess);
 
-        if (status == ExitProcess.ExitStatus.COMPLETED) {
+        if (status == ExitProcess.ExitStatus.COMPLETED && previousStatus != ExitProcess.ExitStatus.COMPLETED) {
             publishOffboardedEvent(updatedProcess, tenantId);
         }
 
         return mapToExitProcessResponse(updatedProcess);
+    }
+
+    /**
+     * Minimal exit state machine. COMPLETED and CANCELLED are terminal; COMPLETED is only
+     * reachable from CLEARANCE_PENDING and only when no clearance is still PENDING/REJECTED.
+     */
+    private void applyStatusTransition(ExitProcess process, ExitProcess.ExitStatus target, UUID tenantId) {
+        ExitProcess.ExitStatus current = process.getStatus();
+        if (current == target) {
+            return;
+        }
+        boolean allowed = switch (current) {
+            case INITIATED -> target == ExitProcess.ExitStatus.IN_PROGRESS
+                    || target == ExitProcess.ExitStatus.CLEARANCE_PENDING
+                    || target == ExitProcess.ExitStatus.CANCELLED;
+            case IN_PROGRESS -> target == ExitProcess.ExitStatus.CLEARANCE_PENDING
+                    || target == ExitProcess.ExitStatus.CANCELLED;
+            case CLEARANCE_PENDING -> target == ExitProcess.ExitStatus.IN_PROGRESS
+                    || target == ExitProcess.ExitStatus.COMPLETED
+                    || target == ExitProcess.ExitStatus.CANCELLED;
+            case COMPLETED, CANCELLED -> false;
+        };
+        if (!allowed) {
+            throw new IllegalStateException("Invalid exit status transition: " + current + " -> " + target);
+        }
+        if (target == ExitProcess.ExitStatus.COMPLETED) {
+            boolean openClearance = exitClearanceRepository
+                    .findByTenantIdAndExitProcessId(tenantId, process.getId()).stream()
+                    .anyMatch(c -> c.getStatus() == ExitClearance.ClearanceStatus.PENDING
+                            || c.getStatus() == ExitClearance.ClearanceStatus.REJECTED);
+            if (openClearance) {
+                throw new IllegalStateException("Cannot complete exit: clearances are still pending or rejected");
+            }
+        }
+        process.setStatus(target);
     }
 
     @Transactional(readOnly = true)
@@ -499,8 +542,11 @@ public class ExitManagementService {
 
         FullAndFinalSettlement settlement = new FullAndFinalSettlement();
         settlement.setTenantId(tenantId);
+        // The settled employee is the exit process's employee; the body's employeeId is never trusted.
+        ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(request.getExitProcessId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Exit process not found: " + request.getExitProcessId()));
         settlement.setExitProcessId(request.getExitProcessId());
-        settlement.setEmployeeId(request.getEmployeeId());
+        settlement.setEmployeeId(exitProcess.getEmployeeId());
 
         // Earnings
         if (request.getPendingSalary() != null) settlement.setPendingSalary(request.getPendingSalary());
@@ -540,6 +586,12 @@ public class ExitManagementService {
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
+        // Amounts are frozen once the settlement leaves DRAFT/PENDING_APPROVAL (approved, paid, cancelled).
+        if (settlement.getStatus() != FullAndFinalSettlement.SettlementStatus.DRAFT
+                && settlement.getStatus() != FullAndFinalSettlement.SettlementStatus.PENDING_APPROVAL) {
+            throw new IllegalStateException("Settlement in status " + settlement.getStatus() + " can no longer be edited");
+        }
+
         // Update earnings
         if (request.getPendingSalary() != null) settlement.setPendingSalary(request.getPendingSalary());
         if (request.getLeaveEncashment() != null) settlement.setLeaveEncashment(request.getLeaveEncashment());
@@ -576,6 +628,9 @@ public class ExitManagementService {
         FullAndFinalSettlement settlement = settlementRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SETTLEMENT_NOT_FOUND));
 
+        if (settlement.getStatus() != FullAndFinalSettlement.SettlementStatus.DRAFT) {
+            throw new IllegalStateException("Only DRAFT settlements can be submitted for approval");
+        }
         settlement.setStatus(FullAndFinalSettlement.SettlementStatus.PENDING_APPROVAL);
         return mapToSettlementResponse(settlementRepository.save(settlement));
     }

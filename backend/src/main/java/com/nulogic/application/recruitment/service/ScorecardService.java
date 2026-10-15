@@ -7,15 +7,20 @@ import com.nulogic.api.recruitment.dto.ScorecardTemplateResponse;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.recruitment.Applicant;
+import com.nulogic.domain.recruitment.Interview;
 import com.nulogic.domain.recruitment.InterviewScorecard;
 import com.nulogic.domain.recruitment.ScorecardCriterion;
 import com.nulogic.domain.recruitment.ScorecardTemplate;
 import com.nulogic.domain.recruitment.ScorecardTemplateCriterion;
+import com.nulogic.infrastructure.recruitment.repository.ApplicantRepository;
+import com.nulogic.infrastructure.recruitment.repository.InterviewRepository;
 import com.nulogic.infrastructure.recruitment.repository.InterviewScorecardRepository;
 import com.nulogic.infrastructure.recruitment.repository.ScorecardTemplateCriterionRepository;
 import com.nulogic.infrastructure.recruitment.repository.ScorecardTemplateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +42,8 @@ public class ScorecardService {
     private final ScorecardTemplateCriterionRepository criterionRepository;
     private final InterviewScorecardRepository scorecardRepository;
     private final TenantTimeService tenantTimeService;
+    private final InterviewRepository interviewRepository;
+    private final ApplicantRepository applicantRepository;
 
     // ==================== Template CRUD ====================
 
@@ -141,6 +148,9 @@ public class ScorecardService {
     public ScorecardSubmissionResponse submitScorecard(UUID templateId, ScorecardSubmissionRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         UUID interviewerId = SecurityContext.getCurrentEmployeeId();
+        if (interviewerId == null) {
+            throw new AccessDeniedException("Only the assigned interviewer can submit a scorecard");
+        }
         log.info("Submitting scorecard for interview {} by interviewer {} in tenant {}",
                 request.getInterviewId(), interviewerId, tenantId);
 
@@ -150,12 +160,14 @@ public class ScorecardService {
                     .orElseThrow(() -> new IllegalArgumentException(TEMPLATE_NOT_FOUND));
         }
 
+        validateSubmission(tenantId, interviewerId, request);
+
         InterviewScorecard scorecard = InterviewScorecard.builder()
                 .tenantId(tenantId)
                 .interviewId(request.getInterviewId())
                 .applicantId(request.getApplicantId())
                 .jobOpeningId(request.getJobOpeningId())
-                .interviewerId(interviewerId != null ? interviewerId : SecurityContext.getCurrentUserId())
+                .interviewerId(interviewerId)
                 .templateId(templateId)
                 .overallRating(request.getOverallRating())
                 .recommendation(request.getRecommendation())
@@ -188,6 +200,38 @@ public class ScorecardService {
         }
 
         return mapScorecardToResponse(saved);
+    }
+
+    /**
+     * Interview, applicant and job must belong to the tenant and be mutually consistent; the caller must be the
+     * interview's assigned interviewer; one submitted scorecard per interviewer per interview.
+     */
+    private void validateSubmission(UUID tenantId, UUID interviewerId, ScorecardSubmissionRequest request) {
+        if (request.getInterviewId() == null) {
+            throw new IllegalArgumentException("Interview is required");
+        }
+        Interview interview = interviewRepository.findByIdAndTenantId(request.getInterviewId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Interview not found"));
+        if (!interviewerId.equals(interview.getInterviewerId())) {
+            throw new AccessDeniedException("Only the assigned interviewer can submit a scorecard");
+        }
+        if (request.getJobOpeningId() != null && !request.getJobOpeningId().equals(interview.getJobOpeningId())) {
+            throw new IllegalArgumentException("Job opening does not match the interview");
+        }
+        if (request.getApplicantId() != null) {
+            Applicant applicant = applicantRepository.findById(request.getApplicantId())
+                    .filter(a -> tenantId.equals(a.getTenantId()))
+                    .orElseThrow(() -> new IllegalArgumentException("Applicant not found"));
+            if (!applicant.getCandidateId().equals(interview.getCandidateId())) {
+                throw new IllegalArgumentException("Applicant does not match the interview");
+            }
+        }
+        boolean duplicate = scorecardRepository.findByTenantIdAndInterviewId(tenantId, interview.getId()).stream()
+                .anyMatch(sc -> interviewerId.equals(sc.getInterviewerId())
+                        && sc.getStatus() == InterviewScorecard.ScorecardStatus.SUBMITTED);
+        if (duplicate) {
+            throw new IllegalStateException("Scorecard already submitted for this interview");
+        }
     }
 
     // ==================== Mappers ====================

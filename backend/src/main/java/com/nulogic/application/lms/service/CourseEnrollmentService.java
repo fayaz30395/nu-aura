@@ -2,9 +2,11 @@ package com.nulogic.application.lms.service;
 
 import com.nulogic.api.lms.dto.CompletionStatsResponse;
 import com.nulogic.common.exception.ResourceNotFoundException;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.lms.CourseEnrollment;
 import com.nulogic.domain.lms.CourseEnrollment.EnrollmentStatus;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.lms.repository.CourseEnrollmentRepository;
 import com.nulogic.infrastructure.lms.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,12 +33,20 @@ public class CourseEnrollmentService {
     private final CourseEnrollmentRepository enrollmentRepository;
     private final CourseRepository courseRepository;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * Enroll an employee in a course. If an enrollment already exists, returns
      * the existing one rather than creating a duplicate (idempotent).
      */
     public CourseEnrollment enroll(UUID tenantId, UUID courseId, UUID employeeId, UUID enrolledBy) {
+        // self-enrol, or HR/admin/LMS manager/manager of the target
+        LmsAccessPolicy.requireSelfOrManager(employeeId, true);
+        courseRepository.findByIdAndTenantId(courseId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found: " + courseId));
+        employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + employeeId));
+
         Optional<CourseEnrollment> existing =
                 enrollmentRepository.findByCourseIdAndEmployeeIdAndTenantId(courseId, employeeId, tenantId);
         if (existing.isPresent()) {
@@ -65,7 +75,7 @@ public class CourseEnrollmentService {
     }
 
     /**
-     * Update the progress percentage of an enrollment directly.
+     * Update the progress percentage of an enrollment directly (enrollee only).
      * Transitions status to IN_PROGRESS when progress > 0, and to COMPLETED
      * when progressPercent reaches 100.
      */
@@ -77,6 +87,12 @@ public class CourseEnrollmentService {
 
         CourseEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Enrollment not found: " + enrollmentId));
+
+        // only the enrollee updates their own progress
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (currentEmployeeId == null || !currentEmployeeId.equals(enrollment.getEmployeeId())) {
+            throw new ResourceNotFoundException("Enrollment not found: " + enrollmentId);
+        }
 
         enrollment.setProgressPercentage(BigDecimal.valueOf(progressPercent));
         enrollment.setLastAccessedAt(tenantTimeService.now(tenantId));

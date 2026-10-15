@@ -5,9 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import jakarta.persistence.LockModeType;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,6 +25,18 @@ public interface AttendanceRecordRepository
 
     Optional<AttendanceRecord> findByEmployeeIdAndAttendanceDateAndTenantId(
             UUID employeeId, LocalDate attendanceDate, UUID tenantId);
+
+    /**
+     * Row-locking variant (SELECT ... FOR UPDATE) used by check-in so concurrent punches for the same
+     * employee/day serialize on an existing record. Needs a writable transaction. The first punch of a
+     * day has no row to lock; closing that needs a unique (tenant, employee, date) constraint (migration).
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT a FROM AttendanceRecord a WHERE a.employeeId = :employeeId "
+            + "AND a.attendanceDate = :attendanceDate AND a.tenantId = :tenantId")
+    Optional<AttendanceRecord> findForUpdateByEmployeeIdAndAttendanceDateAndTenantId(
+            @Param("employeeId") UUID employeeId, @Param("attendanceDate") LocalDate attendanceDate,
+            @Param("tenantId") UUID tenantId);
 
     List<AttendanceRecord> findByEmployeeIdInAndAttendanceDateAndTenantId(
             java.util.Collection<UUID> employeeIds, LocalDate attendanceDate, UUID tenantId);

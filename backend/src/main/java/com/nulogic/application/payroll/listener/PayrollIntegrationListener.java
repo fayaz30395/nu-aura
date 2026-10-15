@@ -74,6 +74,14 @@ public class PayrollIntegrationListener {
         log.info("Expense claim {} approved for employee {} — creating reimbursement adjustment",
                 event.getClaimNumber(), event.getEmployeeId());
 
+        // Exactly-once: a re-published approval must not create a second reimbursement.
+        if (!adjustmentRepository.findByTenantIdAndSourceModuleAndSourceId(
+                event.getTenantId(), "EXPENSE", event.getAggregateId()).isEmpty()) {
+            log.warn("Reimbursement adjustment already exists for expense claim {} — skipping duplicate",
+                    event.getClaimNumber());
+            return;
+        }
+
         PayrollAdjustment adjustment = PayrollAdjustment.builder()
                 .tenantId(event.getTenantId())
                 .employeeId(event.getEmployeeId())

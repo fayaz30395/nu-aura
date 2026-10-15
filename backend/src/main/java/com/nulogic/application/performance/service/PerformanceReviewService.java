@@ -16,6 +16,7 @@ import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.event.performance.PerformanceReviewCompletedEvent;
 import com.nulogic.domain.performance.PerformanceReview;
 import com.nulogic.domain.performance.ReviewCompetency;
+import com.nulogic.domain.performance.ReviewCycle;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.performance.repository.PerformanceReviewRepository;
 import com.nulogic.infrastructure.performance.repository.ReviewCompetencyRepository;
@@ -105,6 +106,23 @@ public class PerformanceReviewService {
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
 
+        assertCanActOnReview(review);
+        if (!hasHrAuthority()) {
+            // Only HR may re-assign a review, change its type/cycle, or force its status.
+            boolean reassigns = (request.getEmployeeId() != null && !request.getEmployeeId().equals(review.getEmployeeId()))
+                    || (request.getReviewerId() != null && !request.getReviewerId().equals(review.getReviewerId()))
+                    || (request.getReviewCycleId() != null && !request.getReviewCycleId().equals(review.getReviewCycleId()))
+                    || (request.getReviewType() != null && request.getReviewType() != review.getReviewType())
+                    || (request.getStatus() != null && request.getStatus() != review.getStatus());
+            if (reassigns) {
+                throw new AccessDeniedException("Only HR can change review assignment, type, cycle or status");
+            }
+            if (review.getStatus() == PerformanceReview.ReviewStatus.COMPLETED
+                    || review.getStatus() == PerformanceReview.ReviewStatus.ACKNOWLEDGED) {
+                throw new IllegalStateException("Cannot edit a finalised review. Current status: " + review.getStatus());
+            }
+        }
+
         // IDOR fix: validate incoming foreign-key IDs belong to the current tenant.
         if (request.getEmployeeId() != null) {
             employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
@@ -181,6 +199,55 @@ public class PerformanceReviewService {
         throw new AccessDeniedException("Access denied");
     }
 
+    /** HR calibration authority (also true for system admins via SecurityContext). */
+    private boolean hasHrAuthority() {
+        return SecurityContext.hasPermission(Permission.CALIBRATION_MANAGE);
+    }
+
+    /**
+     * Write guard: the subject acts on their own SELF review; the assigned reviewer (never the
+     * subject) acts on every other review type; HR authority may act on any review.
+     */
+    private void assertCanActOnReview(PerformanceReview review) {
+        if (hasHrAuthority()) {
+            return;
+        }
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        boolean allowed = callerId != null && (review.getReviewType() == PerformanceReview.ReviewType.SELF
+                ? callerId.equals(review.getEmployeeId())
+                : callerId.equals(review.getReviewerId()) && !callerId.equals(review.getEmployeeId()));
+        if (!allowed) {
+            log.warn("SECURITY: employee {} denied write on review {} (subject={}, reviewer={})",
+                    callerId, review.getId(), review.getEmployeeId(), review.getReviewerId());
+            throw new AccessDeniedException("Access denied");
+        }
+    }
+
+    /** Submission is only valid in the cycle stage matching the review type; cycle-less reviews are not gated. */
+    private void assertCycleStageForSubmit(PerformanceReview review, UUID tenantId) {
+        if (review.getReviewCycleId() == null) {
+            return;
+        }
+        ReviewCycle cycle = reviewCycleRepository.findByIdAndTenantId(review.getReviewCycleId(), tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Review cycle not found"));
+        boolean selfStage = cycle.getStatus() == ReviewCycle.CycleStatus.ACTIVE
+                || cycle.getStatus() == ReviewCycle.CycleStatus.SELF_ASSESSMENT;
+        boolean ok = review.getReviewType() == PerformanceReview.ReviewType.SELF
+                ? selfStage
+                : cycle.getStatus() == ReviewCycle.CycleStatus.MANAGER_REVIEW;
+        if (!ok) {
+            throw new IllegalStateException("Review cannot be submitted while the cycle is in status: " + cycle.getStatus());
+        }
+    }
+
+    /** A reviewer's pending list is readable by that reviewer, or by callers whose REVIEW:VIEW scope covers them. */
+    private void assertCanListPending(UUID reviewerId, UUID tenantId) {
+        if (reviewerId != null && reviewerId.equals(SecurityContext.getCurrentEmployeeId())) {
+            return;
+        }
+        assertEmployeeInScope(reviewerId, tenantId);
+    }
+
     // SEC: row-level scope enforcement (audit gap — was tenant-only, no LOCATION/DEPARTMENT/
     // TEAM filtering). A TEAM-scoped manager now sees only their team's reviews instead of
     // every review in the tenant. This is the fix, not a regression.
@@ -234,6 +301,7 @@ public class PerformanceReviewService {
     @Transactional(readOnly = true)
     public List<ReviewResponse> getPendingReviews(UUID reviewerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanListPending(reviewerId, tenantId);
 
         List<PerformanceReview> reviews = reviewRepository.findPendingReviews(tenantId, reviewerId);
         return mapReviewList(reviews);
@@ -242,6 +310,7 @@ public class PerformanceReviewService {
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getPendingReviewsPaged(UUID reviewerId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanListPending(reviewerId, tenantId);
         return mapReviewPage(reviewRepository.findPendingReviews(tenantId, reviewerId, pageable));
     }
 
@@ -251,6 +320,9 @@ public class PerformanceReviewService {
 
         PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
+
+        assertCanActOnReview(review);
+        assertCycleStageForSubmit(review, tenantId);
 
         review.transitionTo(PerformanceReview.ReviewStatus.SUBMITTED);
         review.setSubmittedAt(tenantTimeService.now(tenantId));
@@ -333,6 +405,10 @@ public class PerformanceReviewService {
     @Transactional(readOnly = true)
     public List<CompetencyResponse> getCompetencies(UUID reviewId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+
+        PerformanceReview review = reviewRepository.findByIdAndTenantId(reviewId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException(REVIEW_NOT_FOUND));
+        assertCanViewReview(review);
 
         List<ReviewCompetency> competencies = competencyRepository.findAllByTenantIdAndReviewId(tenantId, reviewId);
         return competencies.stream()

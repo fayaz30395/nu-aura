@@ -68,7 +68,7 @@ public class SamlConfigurationService {
             throw new BusinessException("SAML configuration already exists for this tenant. Use update instead.");
         }
 
-        validateRequest(request);
+        validateRequest(tenantId, request);
 
         SamlIdentityProvider idp = SamlIdentityProvider.builder()
                 .tenantId(tenantId)
@@ -108,7 +108,7 @@ public class SamlConfigurationService {
         SamlIdentityProvider idp = samlIdpRepository.findByTenantId(tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("SamlIdentityProvider", "tenantId", tenantId.toString()));
 
-        validateRequest(request);
+        validateRequest(tenantId, request);
 
         idp.setName(request.getName());
         idp.setEntityId(request.getEntityId());
@@ -236,7 +236,7 @@ public class SamlConfigurationService {
 
     // ==================== Internal Helpers ====================
 
-    private void validateRequest(SamlConfigRequest request) {
+    private void validateRequest(UUID tenantId, SamlConfigRequest request) {
         // Validate SSO URL format
         try {
             URI.create(request.getSsoUrl());
@@ -288,9 +288,9 @@ public class SamlConfigurationService {
             }
         }
 
-        // Validate default role exists if provided
+        // Validate default role exists in THIS tenant (a foreign-tenant role id must not be accepted)
         if (request.getDefaultRoleId() != null) {
-            if (!roleRepository.existsById(request.getDefaultRoleId())) {
+            if (roleRepository.findByIdAndTenantIdWithPermissions(request.getDefaultRoleId(), tenantId).isEmpty()) {
                 throw new BusinessException("Default role not found: " + request.getDefaultRoleId());
             }
         }
@@ -373,7 +373,7 @@ public class SamlConfigurationService {
     private SamlConfigResponse toResponse(SamlIdentityProvider idp) {
         String roleName = null;
         if (idp.getDefaultRoleId() != null) {
-            roleName = roleRepository.findById(idp.getDefaultRoleId())
+            roleName = roleRepository.findByIdAndTenantIdWithPermissions(idp.getDefaultRoleId(), idp.getTenantId())
                     .map(Role::getName)
                     .orElse(null);
         }

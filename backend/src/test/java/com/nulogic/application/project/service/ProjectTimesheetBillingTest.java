@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -88,6 +89,20 @@ class ProjectTimesheetBillingTest {
         securityContext.when(() -> SecurityContext.hasAnyPermission(any())).thenReturn(false);
     }
 
+    private ProjectMember member(BigDecimal rate, boolean active) {
+        ProjectMember member = new ProjectMember();
+        member.setId(UUID.randomUUID());
+        member.setTenantId(tenantId);
+        member.setProjectId(projectId);
+        member.setEmployeeId(employeeId);
+        member.setRole(ProjectMember.ProjectRole.DEVELOPER);
+        member.setBillingRate(rate);
+        member.setStartDate(LocalDate.now().minusMonths(1));
+        member.setIsActive(active);
+        member.setCanApproveTime(false);
+        return member;
+    }
+
     @AfterEach
     void tearDown() {
         if (securityContext != null) {
@@ -96,7 +111,7 @@ class ProjectTimesheetBillingTest {
     }
 
     @Test
-    @DisplayName("Billable entry with 8 hours at 2000/hr should produce billed_amount = 16000")
+    @DisplayName("Billable entry with 8 hours at the member's 2000/hr should produce billed_amount = 16000")
     void shouldCalculateBilledAmountForExplicitRate() {
         try (MockedStatic<TenantContext> tenantContext = mockStatic(TenantContext.class)) {
             tenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
@@ -110,12 +125,14 @@ class ProjectTimesheetBillingTest {
                     .taskName("TASK-001")
                     .entryType(TimeEntry.EntryType.REGULAR)
                     .isBillable(true)
-                    .billingRate(new BigDecimal("2000.00"))
+                    .billingRate(new BigDecimal("999999.00")) // client-supplied rate must be ignored
                     .build();
 
             when(timeEntryValidator.validate(any(), eq(tenantId), isNull()))
                     .thenReturn(Collections.emptyList());
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+            when(projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
+                    tenantId, projectId, employeeId)).thenReturn(Optional.of(member(new BigDecimal("2000.00"), true)));
             when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
 
             TimeEntryResponse response = projectTimesheetService.createTimeEntry(request);
@@ -153,6 +170,8 @@ class ProjectTimesheetBillingTest {
             when(timeEntryValidator.validate(any(), eq(tenantId), isNull()))
                     .thenReturn(Collections.emptyList());
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+            when(projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
+                    tenantId, projectId, employeeId)).thenReturn(Optional.of(member(new BigDecimal("1500.00"), true)));
             when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
 
             TimeEntryResponse response = projectTimesheetService.createTimeEntry(request);
@@ -220,8 +239,8 @@ class ProjectTimesheetBillingTest {
     }
 
     @Test
-    @DisplayName("Billable entry with no explicit rate and no project member should have null billed_amount")
-    void shouldHaveNullBilledAmountWhenNoRateAvailable() {
+    @DisplayName("Billable entry without a project member record is rejected and nothing is saved")
+    void shouldRejectEntryWhenEmployeeIsNotAProjectMember() {
         try (MockedStatic<TenantContext> tenantContext = mockStatic(TenantContext.class)) {
             tenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
 
@@ -230,11 +249,8 @@ class ProjectTimesheetBillingTest {
                     .employeeId(employeeId)
                     .workDate(LocalDate.now().minusDays(1))
                     .hoursWorked(new BigDecimal("4.00"))
-                    .description("Ad-hoc support")
-                    .taskName("SUPPORT-001")
                     .entryType(TimeEntry.EntryType.SUPPORT)
                     .isBillable(true)
-                    .billingRate(null)
                     .build();
 
             when(timeEntryValidator.validate(any(), eq(tenantId), isNull()))
@@ -242,13 +258,60 @@ class ProjectTimesheetBillingTest {
             when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
             when(projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(
                     tenantId, projectId, employeeId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> projectTimesheetService.createTimeEntry(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("not an active member");
+            verify(timeEntryRepository, never()).save(any());
+        }
+    }
+
+    @Test
+    @DisplayName("Entry for an inactive project member is rejected")
+    void shouldRejectEntryForInactiveMember() {
+        try (MockedStatic<TenantContext> tenantContext = mockStatic(TenantContext.class)) {
+            tenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            TimeEntryRequest request = TimeEntryRequest.builder()
+                    .projectId(projectId).employeeId(employeeId)
+                    .workDate(LocalDate.now().minusDays(1)).hoursWorked(new BigDecimal("4.00"))
+                    .isBillable(true).build();
+            when(timeEntryValidator.validate(any(), eq(tenantId), isNull())).thenReturn(Collections.emptyList());
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+            when(projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(tenantId, projectId, employeeId))
+                    .thenReturn(Optional.of(member(new BigDecimal("1500.00"), false)));
+
+            assertThatThrownBy(() -> projectTimesheetService.createTimeEntry(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+            verify(timeEntryRepository, never()).save(any());
+        }
+    }
+
+    @Test
+    @DisplayName("Client-supplied APPROVED status and rate are ignored: entry is saved as DRAFT at the member rate")
+    void shouldIgnoreClientSuppliedStatusAndRate() {
+        try (MockedStatic<TenantContext> tenantContext = mockStatic(TenantContext.class)) {
+            tenantContext.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            TimeEntryRequest request = TimeEntryRequest.builder()
+                    .projectId(projectId).employeeId(employeeId)
+                    .workDate(LocalDate.now().minusDays(1)).hoursWorked(new BigDecimal("2.00"))
+                    .isBillable(true)
+                    .billingRate(new BigDecimal("5000.00"))
+                    .status(TimeEntry.TimeEntryStatus.APPROVED)
+                    .build();
+            when(timeEntryValidator.validate(any(), eq(tenantId), isNull())).thenReturn(Collections.emptyList());
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
+            when(projectMemberRepository.findByTenantIdAndProjectIdAndEmployeeId(tenantId, projectId, employeeId))
+                    .thenReturn(Optional.of(member(new BigDecimal("100.00"), true)));
             when(timeEntryRepository.save(any(TimeEntry.class))).thenAnswer(inv -> inv.getArgument(0));
 
-            TimeEntryResponse response = projectTimesheetService.createTimeEntry(request);
+            projectTimesheetService.createTimeEntry(request);
 
-            assertThat(response.getIsBillable()).isTrue();
-            assertThat(response.getBillingRate()).isNull();
-            assertThat(response.getBilledAmount()).isNull();
+            ArgumentCaptor<TimeEntry> captor = ArgumentCaptor.forClass(TimeEntry.class);
+            verify(timeEntryRepository).save(captor.capture());
+            assertThat(captor.getValue().getStatus()).isEqualTo(TimeEntry.TimeEntryStatus.DRAFT);
+            assertThat(captor.getValue().getBillingRate()).isEqualByComparingTo("100.00");
+            assertThat(captor.getValue().getBilledAmount()).isEqualByComparingTo("200.00");
+            assertThat(captor.getValue().getApprovedBy()).isNull();
         }
     }
 }

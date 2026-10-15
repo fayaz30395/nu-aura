@@ -404,7 +404,8 @@ public class DistributedRateLimiter {
         EXPORT("ratelimit:export:", 5, 300),       // 5 requests per 5 minutes
         WALL("ratelimit:wall:", 30, 60),           // 30 requests per minute
         UPLOAD("ratelimit:upload:", 20, 60),       // 20 uploads per minute
-        WEBHOOK("ratelimit:webhook:", 50, 60);     // 50 webhook operations per minute
+        WEBHOOK("ratelimit:webhook:", 50, 60),     // 50 webhook operations per minute
+        PUBLIC("ratelimit:public:", 20, 60);       // 20 unauthenticated public/portal requests per minute per IP
 
         private final String prefix;
         private final int limit;

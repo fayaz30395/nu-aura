@@ -76,6 +76,8 @@ class PayrollRunServiceTest {
     private LeaveRequestRepository leaveRequestRepository;
     @Mock
     private StatutoryCalculatorFactory statutoryCalculatorFactory;
+    @Mock
+    private PayslipReleaseNotifier payslipReleaseNotifier;
     @InjectMocks
     private PayrollRunService payrollRunService;
     private UUID tenantId;
@@ -524,6 +526,50 @@ class PayrollRunServiceTest {
 
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(PayrollStatus.APPROVED);
+            verify(payslipReleaseNotifier, times(1)).notifyReleased(result, tenantId);
+            verify(auditLogService).logAction(eq("PAYROLL_RUN"), eq(runId), any(), any(), any(), anyString());
+        }
+
+        @Test
+        @DisplayName("Should not notify (or save) when approving a run that is not PROCESSED")
+        void shouldNotNotifyWhenApprovalRejected() {
+            UUID runId = payrollRun.getId();
+            payrollRun.setStatus(PayrollStatus.DRAFT);
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+
+            assertThatThrownBy(() -> payrollRunService.approvePayrollRun(runId, userId))
+                    .isInstanceOf(IllegalStateException.class);
+
+            verify(payslipReleaseNotifier, never()).notifyReleased(any(), any());
+            verify(payrollRunRepository, never()).save(any(PayrollRun.class));
+        }
+
+        @Test
+        @DisplayName("Processing a run does not notify employees (payslips are not yet released)")
+        void processingDoesNotNotifyEmployees() {
+            UUID runId = payrollRun.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(i -> i.getArgument(0));
+
+            payrollRunService.processPayrollRun(runId, userId);
+
+            verify(payslipReleaseNotifier, never()).notifyReleased(any(), any());
+        }
+
+        @Test
+        @DisplayName("Should audit run lock")
+        void shouldAuditRunLock() {
+            UUID runId = payrollRun.getId();
+            payrollRun.setStatus(PayrollStatus.APPROVED);
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(i -> i.getArgument(0));
+
+            payrollRunService.lockPayrollRun(runId);
+
+            verify(auditLogService).logAction(eq("PAYROLL_RUN"), eq(runId), any(), any(), any(), anyString());
         }
     }
 

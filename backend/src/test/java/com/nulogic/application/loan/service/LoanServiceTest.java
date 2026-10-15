@@ -47,6 +47,8 @@ class LoanServiceTest {
     private WorkflowService workflowService;
     @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private com.nulogic.infrastructure.loan.repository.LoanRepaymentRepository loanRepaymentRepository;
     @InjectMocks
     private LoanService loanService;
     private UUID tenantId;
@@ -272,6 +274,47 @@ class LoanServiceTest {
 
         assertThatThrownBy(() -> loanService.recordRepayment(loanId, new BigDecimal("5000")))
                 .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    @DisplayName("recordRepayment - replay with same reference is ignored (idempotent)")
+    void recordRepayment_replayWithSameReferenceIgnored() {
+        EmployeeLoan loan = buildLoan(LoanStatus.ACTIVE);
+        BigDecimal before = loan.getOutstandingAmount();
+        when(loanRepository.findByIdAndTenantId(loanId, tenantId)).thenReturn(Optional.of(loan));
+        when(loanRepaymentRepository.existsByTenantIdAndLoanIdAndPaymentReference(tenantId, loanId, "UTR-1"))
+                .thenReturn(true);
+
+        loanService.recordRepayment(loanId, new BigDecimal("10000"), "UTR-1", null);
+
+        assertThat(loan.getOutstandingAmount()).isEqualByComparingTo(before);
+        verify(loanRepository, never()).save(any(EmployeeLoan.class));
+        verify(loanRepaymentRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("recordRepayment - first use of a reference writes a ledger row once")
+    void recordRepayment_firstReferenceWritesLedger() {
+        EmployeeLoan loan = buildLoan(LoanStatus.ACTIVE);
+        BigDecimal before = loan.getOutstandingAmount();
+        when(loanRepository.findByIdAndTenantId(loanId, tenantId)).thenReturn(Optional.of(loan));
+        when(loanRepository.save(any(EmployeeLoan.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(loanRepaymentRepository.existsByTenantIdAndLoanIdAndPaymentReference(tenantId, loanId, "UTR-2"))
+                .thenReturn(false);
+
+        loanService.recordRepayment(loanId, new BigDecimal("10000"), "UTR-2", null);
+
+        assertThat(loan.getOutstandingAmount()).isEqualByComparingTo(before.subtract(new BigDecimal("10000")));
+        verify(loanRepaymentRepository, times(1)).save(any());
+    }
+
+    @Test
+    @DisplayName("recordRepayment - non-positive amount rejected without mutation")
+    void recordRepayment_nonPositiveRejected() {
+        assertThatThrownBy(() -> loanService.recordRepayment(loanId, new BigDecimal("-5"), null, null))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        verify(loanRepository, never()).save(any(EmployeeLoan.class));
     }
 
     // ==================== cancelLoan ====================

@@ -104,6 +104,12 @@ class AttendanceRecordServiceTest {
         // zone), so stub a deterministic zone here — otherwise atZone(null) NPEs ("zone").
         lenient().when(tenantTimeService.zoneFor(any())).thenReturn(ZoneId.of("UTC"));
 
+        // checkIn reads through the row-locking finder; delegate to the plain finder so each test's
+        // existing stubbing keeps describing the record state.
+        lenient().when(attendanceRecordRepository.findForUpdateByEmployeeIdAndAttendanceDateAndTenantId(any(), any(), any()))
+                .thenAnswer(inv -> attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(
+                        inv.getArgument(0), inv.getArgument(1), inv.getArgument(2)));
+
         // Setup config defaults
         when(config.getMaxLookbackDays()).thenReturn(2);
         when(config.getMaxOvernightShiftHours()).thenReturn(16);
@@ -671,6 +677,119 @@ class AttendanceRecordServiceTest {
             assertThat(result.getApprovedBy()).isEqualTo(rejectorId);
             assertThat(result.getStatus()).isEqualTo(AttendanceRecord.AttendanceStatus.ABSENT);
             verify(attendanceRecordRepository).save(any(AttendanceRecord.class));
+        }
+
+        @Test
+        @DisplayName("Submitting a regularization leaves the live punches untouched until approval")
+        void submitDoesNotMutateLivePunches() {
+            LocalDate date = checkInTime.toLocalDate();
+            attendanceRecord.checkIn(checkInTime, "WEB", "Office", "1.1.1.1");
+            attendanceRecord.setStatus(AttendanceRecord.AttendanceStatus.HALF_DAY);
+            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, date, tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+            when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            LocalDateTime requestedIn = date.atTime(8, 0);
+            LocalDateTime requestedOut = date.atTime(20, 0);
+            AttendanceRecord result = attendanceRecordService.submitRegularizationRequest(
+                    employeeId, date, requestedIn, requestedOut, "Forgot to punch");
+
+            assertThat(result.getCheckInTime()).isEqualTo(checkInTime);
+            assertThat(result.getCheckOutTime()).isNull();
+            assertThat(result.getStatus()).isEqualTo(AttendanceRecord.AttendanceStatus.PENDING_REGULARIZATION);
+            assertThat(result.getRegularizationReason()).startsWith("Forgot to punch");
+        }
+
+        @Test
+        @DisplayName("Approval applies the requested times and recomputes the work duration")
+        void approveAppliesRequestedTimes() {
+            LocalDate date = checkInTime.toLocalDate();
+            attendanceRecord.checkIn(checkInTime, "WEB", "Office", "1.1.1.1");
+            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, date, tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+            when(attendanceRecordRepository.findByIdAndTenantId(attendanceRecord.getId(), tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+            when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            LocalDateTime requestedIn = date.atTime(8, 0);
+            LocalDateTime requestedOut = date.atTime(18, 0);
+            attendanceRecordService.submitRegularizationRequest(employeeId, date, requestedIn, requestedOut, "Forgot");
+
+            AttendanceRecord result = attendanceRecordService.approveRegularization(
+                    attendanceRecord.getId(), UUID.randomUUID());
+
+            assertThat(result.getCheckInTime()).isEqualTo(requestedIn);
+            assertThat(result.getCheckOutTime()).isEqualTo(requestedOut);
+            assertThat(result.getWorkDurationMinutes()).isEqualTo(600);
+            assertThat(result.getStatus()).isEqualTo(AttendanceRecord.AttendanceStatus.PRESENT);
+        }
+
+        @Test
+        @DisplayName("Approving a record that is not pending regularization is refused and changes nothing")
+        void approveNonPendingIsRefused() {
+            attendanceRecord.checkIn(checkInTime, "WEB", "Office", "1.1.1.1");
+            attendanceRecord.setStatus(AttendanceRecord.AttendanceStatus.PRESENT);
+            when(attendanceRecordRepository.findByIdAndTenantId(attendanceRecord.getId(), tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+
+            assertThatThrownBy(() -> attendanceRecordService.approveRegularization(
+                    attendanceRecord.getId(), UUID.randomUUID()))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("not pending regularization");
+
+            assertThat(attendanceRecord.getRegularizationApproved()).isNotEqualTo(true);
+            verify(attendanceRecordRepository, never()).save(any(AttendanceRecord.class));
+        }
+
+        @Test
+        @DisplayName("Rejecting a record that is not pending regularization is refused")
+        void rejectNonPendingIsRefused() {
+            attendanceRecord.checkIn(checkInTime, "WEB", "Office", "1.1.1.1");
+            when(attendanceRecordRepository.findByIdAndTenantId(attendanceRecord.getId(), tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+
+            assertThatThrownBy(() -> attendanceRecordService.rejectRegularization(
+                    attendanceRecord.getId(), UUID.randomUUID(), "no"))
+                    .isInstanceOf(IllegalStateException.class);
+            verify(attendanceRecordRepository, never()).save(any(AttendanceRecord.class));
+        }
+
+        @Test
+        @DisplayName("Rejection keeps real punches and restores the prior status instead of forcing ABSENT")
+        void rejectRestoresPriorStatusWhenPunchesExist() {
+            LocalDate date = checkInTime.toLocalDate();
+            attendanceRecord.checkIn(checkInTime, "WEB", "Office", "1.1.1.1");
+            attendanceRecord.setCheckOutTime(checkOutTime);
+            attendanceRecord.setStatus(AttendanceRecord.AttendanceStatus.HALF_DAY);
+            when(attendanceRecordRepository.findByEmployeeIdAndAttendanceDateAndTenantId(employeeId, date, tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+            when(attendanceRecordRepository.findByIdAndTenantId(attendanceRecord.getId(), tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+            when(attendanceRecordRepository.save(any(AttendanceRecord.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+            attendanceRecordService.submitRegularizationRequest(employeeId, date, null, null, "Please fix");
+
+            AttendanceRecord result = attendanceRecordService.rejectRegularization(
+                    attendanceRecord.getId(), UUID.randomUUID(), "not valid");
+
+            assertThat(result.getStatus()).isEqualTo(AttendanceRecord.AttendanceStatus.HALF_DAY);
+            assertThat(result.getCheckInTime()).isEqualTo(checkInTime);
+            assertThat(result.getCheckOutTime()).isEqualTo(checkOutTime);
+        }
+
+        @Test
+        @DisplayName("A second regularization request while one is pending is refused")
+        void duplicatePendingRequestIsRefused() {
+            attendanceRecord.requestRegularization("first");
+            when(attendanceRecordRepository.findByIdAndTenantId(attendanceRecord.getId(), tenantId))
+                    .thenReturn(Optional.of(attendanceRecord));
+
+            assertThatThrownBy(() -> attendanceRecordService.requestRegularization(
+                    attendanceRecord.getId(), "second"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("already pending");
         }
 
         @Test

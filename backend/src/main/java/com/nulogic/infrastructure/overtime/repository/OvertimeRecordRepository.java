@@ -4,6 +4,7 @@ import com.nulogic.domain.overtime.OvertimeRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,11 +16,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface OvertimeRecordRepository extends JpaRepository<OvertimeRecord, UUID> {
+public interface OvertimeRecordRepository extends JpaRepository<OvertimeRecord, UUID>, JpaSpecificationExecutor<OvertimeRecord> {
 
     Optional<OvertimeRecord> findByIdAndTenantId(UUID id, UUID tenantId);
-
-    Page<OvertimeRecord> findAllByTenantId(UUID tenantId, Pageable pageable);
 
     Page<OvertimeRecord> findAllByTenantIdAndEmployeeId(UUID tenantId, UUID employeeId, Pageable pageable);
 
@@ -39,10 +38,6 @@ public interface OvertimeRecordRepository extends JpaRepository<OvertimeRecord, 
     Page<OvertimeRecord> findByStatus(@Param("tenantId") UUID tenantId,
                                       @Param("status") OvertimeRecord.OvertimeStatus status,
                                       Pageable pageable);
-
-    @Query("SELECT otr FROM OvertimeRecord otr WHERE otr.tenantId = :tenantId " +
-            "AND otr.status = 'PENDING'")
-    Page<OvertimeRecord> findPendingRecords(@Param("tenantId") UUID tenantId, Pageable pageable);
 
     @Query("SELECT otr FROM OvertimeRecord otr WHERE otr.tenantId = :tenantId " +
             "AND otr.status = 'APPROVED' " +

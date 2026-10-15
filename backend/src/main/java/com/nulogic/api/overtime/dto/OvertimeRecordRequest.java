@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OvertimeRecordRequest {
 
-    @NotNull(message = "Employee ID is required")
+    /** Optional: defaults to the authenticated employee; recording for another employee needs approval scope. */
     private UUID employeeId;
 
     @NotNull(message = "Overtime date is required")

@@ -3,6 +3,8 @@ package com.nulogic.application.report.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.report.dto.ReportTemplateDto;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.report.ReportTemplate;
@@ -15,6 +17,7 @@ import com.nulogic.infrastructure.report.repository.ReportTemplateRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -111,6 +114,11 @@ public class CustomReportService {
     @Transactional
     public List<Map<String, Object>> executeReport(ReportTemplateDto query) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        // REPORT_CREATE gates the builder; salary data additionally needs the data-level permission.
+        if ("PAYROLL".equalsIgnoreCase(query.getModule())
+                && !SecurityContext.hasPermission(Permission.PAYROLL_VIEW_ALL)) {
+            throw new AccessDeniedException("Payroll reports require payroll view permission");
+        }
         List<String> columns = query.getSelectedColumns();
         List<Map<String, String>> filters = query.getFilters() != null ? query.getFilters() : List.of();
 

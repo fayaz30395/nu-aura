@@ -33,6 +33,7 @@ public class SkillGapAnalysisService {
     private final CompetencyRequirementRepository competencyRequirementRepository;
 
     public SkillGapReport analyzeGaps(UUID tenantId, UUID employeeId) {
+        LmsAccessPolicy.requireSelfOrManager(employeeId, false);
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found: " + employeeId));
 

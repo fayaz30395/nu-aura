@@ -3,9 +3,9 @@ package com.nulogic.api.attendance.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.attendance.dto.*;
 import com.nulogic.api.attendance.mapper.AttendanceResponseMapper;
+import com.nulogic.application.attendance.service.AttendanceActorScope;
 import com.nulogic.application.attendance.service.AttendanceImportService;
 import com.nulogic.application.attendance.service.AttendanceRecordService;
-import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.common.config.TestMeterRegistryConfig;
 import com.nulogic.common.exception.GlobalExceptionHandler;
 import com.nulogic.common.security.*;
@@ -13,6 +13,7 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.domain.attendance.AttendanceTimeEntry;
 import com.nulogic.domain.user.RoleScope;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -43,7 +44,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AttendanceController.class)
-@ContextConfiguration(classes = {AttendanceController.class, GlobalExceptionHandler.class})
+// AttendanceActorScope is real so the controller's scope gates are exercised; only its employee lookup is mocked
+@ContextConfiguration(classes = {AttendanceController.class, AttendanceActorScope.class, GlobalExceptionHandler.class})
 @Import(TestMeterRegistryConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +72,7 @@ class AttendanceControllerTest {
     private DataScopeService dataScopeService;
 
     @MockitoBean
-    private EmployeeService employeeService;
+    private EmployeeRepository employeeRepository;
 
     @MockitoBean
     private TenantTimeService tenantTimeService;
@@ -165,7 +167,7 @@ class AttendanceControllerTest {
                     anyString(),
                     any(),
                     any(),
-                    any(LocalDate.class)))
+                    isNull()))
                     .thenReturn(attendanceRecord);
 
             mockMvc.perform(post("/api/v1/attendance/check-in")
@@ -181,7 +183,7 @@ class AttendanceControllerTest {
                     anyString(),
                     any(),
                     any(),
-                    any(LocalDate.class));
+                    isNull());
         }
 
         @Test
@@ -199,7 +201,7 @@ class AttendanceControllerTest {
                     anyString(),
                     any(),
                     any(),
-                    any(LocalDate.class)))
+                    isNull()))
                     .thenReturn(attendanceRecord);
 
             mockMvc.perform(post("/api/v1/attendance/check-in")
@@ -224,13 +226,35 @@ class AttendanceControllerTest {
                     anyString(),
                     any(),
                     any(),
-                    any(LocalDate.class)))
+                    isNull()))
                     .thenThrow(new IllegalArgumentException("Employee already checked in today"));
 
             mockMvc.perform(post("/api/v1/attendance/check-in")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should ignore client-supplied punch time and date and use server time")
+        void shouldIgnoreClientSuppliedTimeAndDate() throws Exception {
+            LocalDateTime serverNow = LocalDateTime.of(2026, 5, 14, 9, 30);
+            org.mockito.Mockito.lenient().when(tenantTimeService.now(any(UUID.class))).thenReturn(serverNow);
+
+            CheckInRequest request = new CheckInRequest();
+            request.setCheckInTime(LocalDateTime.of(2020, 1, 1, 6, 0)); // forged backdate
+            request.setAttendanceDate(LocalDate.of(2020, 1, 1));
+            request.setSource("WEB");
+
+            when(attendanceService.checkIn(eq(employeeId), eq(serverNow), anyString(), any(), any(), isNull()))
+                    .thenReturn(attendanceRecord);
+
+            mockMvc.perform(post("/api/v1/attendance/check-in")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isCreated());
+
+            verify(attendanceService).checkIn(eq(employeeId), eq(serverNow), anyString(), any(), any(), isNull());
         }
     }
 
@@ -253,7 +277,7 @@ class AttendanceControllerTest {
                     anyString(),
                     any(),
                     any(),
-                    any(LocalDate.class)))
+                    isNull()))
                     .thenReturn(attendanceRecord);
 
             mockMvc.perform(post("/api/v1/attendance/check-out")
@@ -268,7 +292,7 @@ class AttendanceControllerTest {
                     anyString(),
                     any(),
                     any(),
-                    any(LocalDate.class));
+                    isNull());
         }
 
         @Test
@@ -286,7 +310,7 @@ class AttendanceControllerTest {
                     anyString(),
                     any(),
                     any(),
-                    any(LocalDate.class)))
+                    isNull()))
                     .thenThrow(new IllegalArgumentException("Employee has not checked in today"));
 
             mockMvc.perform(post("/api/v1/attendance/check-out")
@@ -516,6 +540,38 @@ class AttendanceControllerTest {
                     .andExpect(status().isOk());
 
             verify(attendanceService).approveRegularization(eq(attendanceId), any(UUID.class));
+        }
+
+        @Test
+        @DisplayName("Should refuse self-approval for a TEAM-scope approver and approve nothing")
+        void shouldRefuseSelfApprovalForTeamScopeApprover() throws Exception {
+            SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"),
+                    Map.of(Permission.ATTENDANCE_APPROVE, RoleScope.TEAM));
+            SecurityContext.setAllReporteeIds(Set.of(UUID.randomUUID()));
+            when(attendanceService.getAttendanceRecordById(eq(attendanceId))).thenReturn(attendanceRecord);
+
+            mockMvc.perform(post("/api/v1/attendance/{id}/approve-regularization", attendanceId))
+                    .andExpect(status().isForbidden());
+
+            org.mockito.Mockito.verify(attendanceService, org.mockito.Mockito.never())
+                    .approveRegularization(any(), any());
+        }
+
+        @Test
+        @DisplayName("Should still let a TEAM-scope approver approve a reportee's regularization")
+        void shouldAllowTeamScopeApproverForReportee() throws Exception {
+            UUID reportee = UUID.randomUUID();
+            attendanceRecord.setEmployeeId(reportee);
+            SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of("MANAGER"),
+                    Map.of(Permission.ATTENDANCE_APPROVE, RoleScope.TEAM));
+            SecurityContext.setAllReporteeIds(Set.of(reportee));
+            when(attendanceService.getAttendanceRecordById(eq(attendanceId))).thenReturn(attendanceRecord);
+            when(attendanceService.approveRegularization(eq(attendanceId), eq(employeeId))).thenReturn(attendanceRecord);
+
+            mockMvc.perform(post("/api/v1/attendance/{id}/approve-regularization", attendanceId))
+                    .andExpect(status().isOk());
+
+            verify(attendanceService).approveRegularization(eq(attendanceId), eq(employeeId));
         }
 
         @Test

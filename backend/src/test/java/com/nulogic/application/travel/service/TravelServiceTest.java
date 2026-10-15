@@ -86,6 +86,13 @@ class TravelServiceTest {
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(userId);
+        securityContextMock.when(SecurityContext::isHRManager).thenReturn(false);
+    }
+
+    /** Approve/reject must come from someone other than the request owner. */
+    private void actAsHrApprover() {
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(UUID.randomUUID());
+        securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
     }
 
     private TravelRequest buildTravelRequest(TravelStatus status) {
@@ -207,6 +214,7 @@ class TravelServiceTest {
     @Test
     @DisplayName("approveRequest - approves submitted request")
     void approveRequest_success() {
+        actAsHrApprover();
         TravelRequest existing = buildTravelRequest(TravelStatus.SUBMITTED);
         when(travelRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(existing));
         when(travelRequestRepository.save(any(TravelRequest.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -220,6 +228,7 @@ class TravelServiceTest {
     @Test
     @DisplayName("approveRequest - fails for DRAFT request")
     void approveRequest_wrongStatus() {
+        actAsHrApprover();
         TravelRequest existing = buildTravelRequest(TravelStatus.DRAFT);
         when(travelRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(existing));
 
@@ -232,6 +241,7 @@ class TravelServiceTest {
     @Test
     @DisplayName("rejectRequest - rejects submitted request")
     void rejectRequest_success() {
+        actAsHrApprover();
         TravelRequest existing = buildTravelRequest(TravelStatus.SUBMITTED);
         when(travelRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(existing));
         when(travelRequestRepository.save(any(TravelRequest.class))).thenAnswer(inv -> inv.getArgument(0));
