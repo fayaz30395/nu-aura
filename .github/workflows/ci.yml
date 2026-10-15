@@ -111,12 +111,6 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Security audit (npm)
-        working-directory: ./frontend
-        # Gate on HIGH+CRITICAL vulnerabilities. Fails the build on fixable HIGH or CRITICAL
-        # CVEs in production dependencies. Use `npm audit fix` locally to resolve findings.
-        run: npm audit --audit-level=high --omit=dev
-
       - name: Generate API client (Orval, from committed OpenAPI snapshot)
         working-directory: ./frontend
         run: npm run api:generate
@@ -152,6 +146,32 @@ jobs:
           NEXT_PUBLIC_ENABLE_WEBSOCKET: 'true'
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
+
+  # Frontend dependency audit (gates the docker build; runs independently of frontend checks)
+  frontend-audit:
+    name: Frontend security audit (npm)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci --ignore-scripts
+
+      - name: Security audit (npm)
+        working-directory: ./frontend
+        # Gate on HIGH+CRITICAL vulnerabilities. Fails the build on fixable HIGH or CRITICAL
+        # CVEs in production dependencies. Use `npm audit fix` locally to resolve findings.
+        run: npm audit --audit-level=high --omit=dev
 
   # Security Scan
   security:
@@ -202,7 +222,7 @@ jobs:
   docker:
     name: Docker Build
     runs-on: ubuntu-latest
-    needs: [ backend, frontend ]
+    needs: [ backend, frontend, frontend-audit ]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:

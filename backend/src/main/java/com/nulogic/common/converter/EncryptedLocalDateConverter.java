@@ -34,6 +34,11 @@ import java.time.format.DateTimeParseException;
  * A {@code null} entity value is stored as SQL {@code NULL} and read back as
  * {@code null}.
  *
+ * <h3>Known limitation</h3>
+ * A decrypt failure is read as {@code null}, which is indistinguishable from a legitimate
+ * {@code null} on write, so a later full-column update of such an entity would write SQL
+ * {@code NULL} over the unreadable ciphertext. Not guardable here without breaking null writes.
+ *
  * <h3>Legacy / partial-migration compatibility</h3>
  * During the backfill window (V271 shipped, V272 drop-old-column not yet run)
  * the OLD {@code date_of_birth DATE} column may still hold a value for rows not

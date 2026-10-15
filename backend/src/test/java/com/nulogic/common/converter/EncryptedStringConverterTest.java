@@ -342,4 +342,43 @@ class EncryptedStringConverterTest {
             assertThat(rotated.convertToEntityAttribute(current)).isEqualTo("still-works");
         }
     }
+
+    @Nested
+    @DisplayName("Failure sentinels are never persisted")
+    class SentinelWriteGuardTests {
+
+        @Test
+        @DisplayName("DECRYPTION_FAILED sentinel write is rejected without echoing the value")
+        void decryptionFailedSentinelWriteRejected() {
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
+            assertThatThrownBy(() -> converter.convertToDatabaseColumn("***DECRYPTION_FAILED***"))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("EncryptedStringConverter")
+                    .hasMessageNotContaining("DECRYPTION_FAILED");
+        }
+
+        @Test
+        @DisplayName("KEY_NOT_CONFIGURED sentinel write is rejected")
+        void keyNotConfiguredSentinelWriteRejected() {
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
+            assertThatThrownBy(() -> converter.convertToDatabaseColumn("***KEY_NOT_CONFIGURED***"))
+                    .isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        @DisplayName("Normal values still round-trip and null stays null")
+        void normalAndNullUnchanged() {
+            EncryptedStringConverter converter = converterWithKey(VALID_KEY_BASE64);
+            assertThat(converter.convertToEntityAttribute(converter.convertToDatabaseColumn("abc"))).isEqualTo("abc");
+            assertThat(converter.convertToDatabaseColumn(null)).isNull();
+        }
+
+        @Test
+        @DisplayName("Read of undecryptable value still returns the placeholder (read tolerance unchanged)")
+        void readToleranceUnchanged() {
+            String ct = converterWithKey(VALID_KEY_BASE64).convertToDatabaseColumn("x");
+            String otherKey = Base64.getEncoder().encodeToString(new byte[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32});
+            assertThat(converterWithKey(otherKey).convertToEntityAttribute(ct)).isEqualTo("***DECRYPTION_FAILED***");
+        }
+    }
 }

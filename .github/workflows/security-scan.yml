@@ -74,8 +74,25 @@ jobs:
         run: |
           curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz \
             | tar xz -C /tmp
-      - name: Run gitleaks (last commit)
-        run: /tmp/gitleaks detect --redact -v --exit-code=2 --log-opts=-1
+      - name: Run gitleaks (pushed/PR commit range)
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          ZERO_SHA=0000000000000000000000000000000000000000
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            RANGE="origin/$BASE_REF..HEAD"
+          elif [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "$ZERO_SHA" ]; then
+            RANGE="$BEFORE_SHA..$HEAD_SHA"
+          else
+            # New branch or unknown base: scan full history (safe fallback)
+            RANGE=""
+          fi
+          LOG_OPTS=()
+          if [ -n "$RANGE" ]; then LOG_OPTS=(--log-opts="$RANGE"); fi
+          /tmp/gitleaks detect --redact -v --exit-code=2 "${LOG_OPTS[@]}"
 
   container-scan:
     name: Container scan (Trivy)
@@ -85,7 +102,7 @@ jobs:
       - name: Free disk space
         run: |
           docker system prune -af
-          rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android
       - name: Build backend image
         run: docker build -f backend/Dockerfile -t nu-aura-backend:scan .
       - name: Build frontend image
@@ -101,7 +118,7 @@ jobs:
       # Block on CRITICAL vulns only — all CRITICALs are remediated. HIGH is
       # reported via the SARIF steps below. Secrets are gated by gitleaks.
       - name: Trivy backend (gate — CRITICAL vulns)
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: nu-aura-backend:scan
           severity: CRITICAL
@@ -111,7 +128,7 @@ jobs:
           format: table
           exit-code: '1'
       - name: Trivy frontend (gate — CRITICAL vulns)
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: nu-aura-frontend:scan
           severity: CRITICAL
@@ -122,7 +139,7 @@ jobs:
           exit-code: '1'
       # REPORTS (all severities -> Security tab; non-blocking).
       - name: Trivy backend (SARIF report)
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: nu-aura-backend:scan
           ignore-unfixed: true
@@ -131,7 +148,7 @@ jobs:
           output: trivy-backend.sarif
           exit-code: '0'
       - name: Trivy frontend (SARIF report)
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: nu-aura-frontend:scan
           ignore-unfixed: true
@@ -146,3 +163,28 @@ jobs:
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: '.'
+
+  dependency-scan:
+    name: Dependency scan (Trivy fs)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy fs (gate — CRITICAL dependency vulns)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: 'vuln'
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: '1'
+      - name: Trivy fs (HIGH report)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: 'vuln'
+          severity: HIGH
+          ignore-unfixed: true
+          format: table
+          exit-code: '0'

@@ -21,17 +21,12 @@
 -- ── PAYROLL_ADMIN ─────────────────────────────────────────────────────────────
 DO $$
 DECLARE
-    tt RECORD;
     r RECORD;
 BEGIN
-    FOR tt IN SELECT id FROM tenants LOOP
-        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
-
     FOR r IN
         SELECT DISTINCT rl.tenant_id, rl.id AS role_id
         FROM roles rl
         WHERE rl.code = 'PAYROLL_ADMIN'
-          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
     LOOP
         INSERT INTO role_permissions (
@@ -87,21 +82,15 @@ BEGIN
           AND (p.is_deleted = false OR p.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
     END LOOP;
-    END LOOP;
 END $$;
 
 -- Field-level permissions for PAYROLL_ADMIN
 DO $$
-DECLARE
-    tt RECORD;
 BEGIN
     IF EXISTS (
         SELECT 1 FROM information_schema.tables
         WHERE table_name = 'role_field_permissions'
     ) THEN
-      FOR tt IN SELECT id FROM tenants LOOP
-        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
-
         INSERT INTO role_field_permissions (
             id, tenant_id, role_id, field_permission, scope,
             created_at, updated_at, version, is_deleted
@@ -126,27 +115,20 @@ BEGIN
                 ('EMPLOYEE:TAX_ID_VIEW')
         ) AS fp(code)
         WHERE rl.code = 'PAYROLL_ADMIN'
-          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
-      END LOOP;
     END IF;
 END $$;
 
 -- ── RECRUITMENT_ADMIN ─────────────────────────────────────────────────────────
 DO $$
 DECLARE
-    tt RECORD;
     r RECORD;
 BEGIN
-    FOR tt IN SELECT id FROM tenants LOOP
-        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
-
     FOR r IN
         SELECT DISTINCT rl.tenant_id, rl.id AS role_id
         FROM roles rl
         WHERE rl.code = 'RECRUITMENT_ADMIN'
-          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
     LOOP
         INSERT INTO role_permissions (
@@ -192,24 +174,18 @@ BEGIN
           AND (p.is_deleted = false OR p.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
     END LOOP;
-    END LOOP;
 END $$;
 
 -- ── HR_ADMIN ──────────────────────────────────────────────────────────────────
 -- HR_ADMIN is a superset of HR_MANAGER permissions.
 DO $$
 DECLARE
-    tt RECORD;
     r RECORD;
 BEGIN
-    FOR tt IN SELECT id FROM tenants LOOP
-        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
-
     FOR r IN
         SELECT DISTINCT rl.tenant_id, rl.id AS role_id
         FROM roles rl
         WHERE rl.code = 'HR_ADMIN'
-          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
     LOOP
         INSERT INTO role_permissions (
@@ -336,21 +312,15 @@ BEGIN
           AND (p.is_deleted = false OR p.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
     END LOOP;
-    END LOOP;
 END $$;
 
 -- Field-level permissions for HR_ADMIN
 DO $$
-DECLARE
-    tt RECORD;
 BEGIN
     IF EXISTS (
         SELECT 1 FROM information_schema.tables
         WHERE table_name = 'role_field_permissions'
     ) THEN
-      FOR tt IN SELECT id FROM tenants LOOP
-        PERFORM set_config('app.current_tenant_id', tt.id::text, true);
-
         INSERT INTO role_field_permissions (
             id, tenant_id, role_id, field_permission, scope,
             created_at, updated_at, version, is_deleted
@@ -376,9 +346,7 @@ BEGIN
                 ('EMPLOYEE:ID_DOCS_VIEW')
         ) AS fp(code)
         WHERE rl.code = 'HR_ADMIN'
-          AND rl.tenant_id = tt.id
           AND (rl.is_deleted = false OR rl.is_deleted IS NULL)
         ON CONFLICT DO NOTHING;
-      END LOOP;
     END IF;
 END $$;

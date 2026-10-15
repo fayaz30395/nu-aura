@@ -37,6 +37,8 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
     private static final String ALGORITHM = "AES/GCM/NoPadding";
     private static final int GCM_IV_LENGTH = 12;   // 96 bits — NIST recommended
     private static final int GCM_TAG_LENGTH = 128;  // bits
+    private static final String DECRYPTION_FAILED = "***DECRYPTION_FAILED***";
+    private static final String KEY_NOT_CONFIGURED = "***KEY_NOT_CONFIGURED***";
     private static final String ENV_KEY = "ENCRYPTION_KEY";
     /**
      * Alternate env var name used by start-backend.sh and render deployment.
@@ -186,6 +188,12 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
         if (plaintext == null) {
             return null;
         }
+        // Read-side failure sentinels must never be persisted: doing so would overwrite
+        // the real ciphertext with an encrypted placeholder (permanent data loss).
+        if (DECRYPTION_FAILED.equals(plaintext) || KEY_NOT_CONFIGURED.equals(plaintext)) {
+            throw new IllegalStateException(
+                    "EncryptedStringConverter: refusing to persist a decryption-failure placeholder");
+        }
         try {
             byte[] iv = new byte[GCM_IV_LENGTH];
             new SecureRandom().nextBytes(iv);
@@ -246,11 +254,11 @@ public class EncryptedStringConverter implements AttributeConverter<String, Stri
         } catch (java.security.GeneralSecurityException e) {
             // Decryption failure — wrong key, corrupted ciphertext, or key rotation
             log.error("Failed to decrypt column value (key mismatch or data corruption). Returning masked placeholder.", e);
-            return "***DECRYPTION_FAILED***";
+            return DECRYPTION_FAILED;
         } catch (IllegalStateException e) {
             // ENCRYPTION_KEY not set or invalid
             log.error("Encryption key configuration error: {}", e.getMessage());
-            return "***KEY_NOT_CONFIGURED***";
+            return KEY_NOT_CONFIGURED;
         } catch (Exception e) {
             // Catch-all: never let any decryption error crash the application
             log.error("Unexpected error decrypting column value. Returning raw value. Error: {}", e.getMessage(), e);
