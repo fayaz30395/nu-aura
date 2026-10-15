@@ -15,4 +15,5 @@ public class UpdatePersonalInfoRequest {
     private String phoneNumber;
     private String emergencyContactNumber;
     private String emergencyContactName;
+    private String captchaToken;
 }

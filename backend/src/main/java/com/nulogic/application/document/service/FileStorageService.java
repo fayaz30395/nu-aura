@@ -433,7 +433,7 @@ public class FileStorageService {
      * Prevents attackers from uploading malicious files disguised as images/documents.
      */
     private void validateMagicBytes(MultipartFile file, String contentType) {
-        byte[] headerBytes = new byte[16];
+        byte[] headerBytes = new byte[512];
         try (InputStream is = file.getInputStream()) {
             int bytesRead = is.read(headerBytes);
             if (bytesRead < 1) {
@@ -442,6 +442,11 @@ public class FileStorageService {
         } catch (IOException e) {
             log.error("Failed to read file header for magic byte validation", e);
             throw new BusinessException("Unable to validate file content");
+        }
+
+        if (TEXT_TYPES.contains(contentType) && startsWithMarkup(headerBytes)) {
+            log.warn("Markup rejected in {} upload, filename={}", contentType, file.getOriginalFilename());
+            throw new BusinessException("File content does not match declared type: " + contentType);
         }
 
         String detectedType = detectMimeType(headerBytes, contentType);
@@ -454,6 +459,21 @@ public class FileStorageService {
                     contentType, detectedType, file.getOriginalFilename());
             throw new BusinessException("File content does not match declared type: " + contentType);
         }
+    }
+
+    /**
+     * True if text content (after BOM/whitespace) opens with '<': HTML, SVG, XML,
+     * doctype or any other markup that a browser could render or execute.
+     */
+    private static boolean startsWithMarkup(byte[] header) {
+        int i = 0;
+        if (header.length >= 3 && header[0] == (byte) 0xEF && header[1] == (byte) 0xBB && header[2] == (byte) 0xBF) {
+            i = 3;
+        }
+        while (i < header.length && (header[i] == ' ' || header[i] == '\t' || header[i] == '\r' || header[i] == '\n')) {
+            i++;
+        }
+        return i < header.length && header[i] == '<';
     }
 
     /**

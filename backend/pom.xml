@@ -51,7 +51,22 @@
              negotiates Docker API >= 1.44, required by Docker 25+/colima 29.x.
              1.20.6's client advertised API 1.32 and was rejected by the daemon. -->
         <testcontainers.version>1.21.4</testcontainers.version>
+        <!-- CVE remediation (Trivy CRITICAL gate): override the root pom pins, patch-level only.
+             Tomcat 10.1.58 (the advisory fix version) was never published to Central; 10.1.59 is
+             the next release. Drop these when the root pom / Spring Boot BOM catch up. -->
+        <tomcat.version>10.1.59</tomcat.version>       <!-- CVE-2026-65182, CVE-2026-65905, CVE-2026-68525 -->
+        <netty.version>4.1.137.Final</netty.version>   <!-- CVE-2026-75595 -->
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>1.85</version>                <!-- CVE-2026-8763 -->
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Common Module -->
@@ -230,6 +245,13 @@
             <groupId>com.github.librepdf</groupId>
             <artifactId>openpdf</artifactId>
             <version>${openpdf.version}</version>
+        </dependency>
+
+        <!-- jsoup: server-side HTML allow-list sanitizer for stored rich text -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.22.2</version>
         </dependency>
 
         <!-- Apache Commons CSV for CSV parsing -->

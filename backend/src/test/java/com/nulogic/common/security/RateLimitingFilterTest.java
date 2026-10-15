@@ -65,4 +65,53 @@ class RateLimitingFilterTest {
             assertThat(call("/api/v1/employees", "10.0.0.5", null)).isEqualTo(200);
         }
     }
+
+    private int callXff(String ip, String xff) throws Exception {
+        MockHttpServletRequest req = new MockHttpServletRequest("POST", "/api/v1/auth/login");
+        req.setRemoteAddr(ip);
+        if (xff != null) {
+            req.addHeader("X-Forwarded-For", xff);
+        }
+        MockHttpServletResponse res = new MockHttpServletResponse();
+        filter.doFilter(req, res, new MockFilterChain());
+        return res.getStatus();
+    }
+
+    private void exhaust(String ip, String xff) throws Exception {
+        for (int i = 0; i < 5; i++) {
+            assertThat(callXff(ip, xff)).isEqualTo(200);
+        }
+    }
+
+    @Test
+    void spoofedLeftmostXff_isIgnored() throws Exception {
+        for (int i = 0; i < 5; i++) {
+            assertThat(callXff("10.9.9.9", "1.1.1." + i + ", 203.0.113.7")).isEqualTo(200);
+        }
+        assertThat(callXff("10.9.9.9", "6.6.6.6, 203.0.113.7")).isEqualTo(429);
+        assertThat(callXff("10.9.9.9", "6.6.6.6, 203.0.113.8")).isEqualTo(200);
+    }
+
+    @Test
+    void hopCountTwo_takesSecondFromRight() throws Exception {
+        ReflectionTestUtils.setField(filter, "trustedProxyHops", 2);
+        exhaust("10.9.9.9", "spoof.me, 198.51.100.4, 10.1.1.1");
+        assertThat(callXff("10.9.9.9", "other, 198.51.100.4, 10.1.1.1")).isEqualTo(429);
+        assertThat(callXff("10.9.9.9", "other, 198.51.100.5, 10.1.1.1")).isEqualTo(200);
+    }
+
+    @Test
+    void missingHeaderOrTooFewEntries_fallsBackToRemoteAddr() throws Exception {
+        ReflectionTestUtils.setField(filter, "trustedProxyHops", 2);
+        exhaust("10.8.8.8", null);
+        assertThat(callXff("10.8.8.8", null)).isEqualTo(429);
+        exhaust("10.8.8.9", "203.0.113.50");
+        assertThat(callXff("10.8.8.9", "203.0.113.51")).isEqualTo(429);
+    }
+
+    @Test
+    void garbageHeader_fallsBackToRemoteAddr() throws Exception {
+        exhaust("10.7.7.7", "not an ip!!");
+        assertThat(callXff("10.7.7.7", "<script>")).isEqualTo(429);
+    }
 }

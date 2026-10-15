@@ -1,6 +1,8 @@
 package com.nulogic.application.recruitment.service;
 
 import com.nulogic.api.recruitment.dto.*;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.recruitment.AgencySubmission;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +59,8 @@ public class AgencyService {
                 .feeAmount(request.getFeeAmount())
                 .contractStartDate(request.getContractStartDate())
                 .contractEndDate(request.getContractEndDate())
-                .status(request.getStatus() != null ? request.getStatus() : AgencyStatus.PENDING_APPROVAL)
+                // Agency approval (anything past PENDING_APPROVAL) is an AGENCY:MANAGE decision, not the creator's
+                .status(request.getStatus() != null && canApproveAgencies() ? request.getStatus() : AgencyStatus.PENDING_APPROVAL)
                 .specializations(request.getSpecializations())
                 .notes(request.getNotes())
                 .rating(request.getRating())
@@ -65,6 +69,11 @@ public class AgencyService {
         agency = agencyRepository.save(agency);
         log.info("Created recruitment agency: {} for tenant: {}", agency.getId(), tenantId);
         return toAgencyDto(agency);
+    }
+
+    private boolean canApproveAgencies() {
+        return SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()
+                || SecurityContext.hasPermission(Permission.AGENCY_MANAGE);
     }
 
     @Transactional(readOnly = true)
@@ -109,7 +118,12 @@ public class AgencyService {
         if (request.getFeeAmount() != null) agency.setFeeAmount(request.getFeeAmount());
         if (request.getContractStartDate() != null) agency.setContractStartDate(request.getContractStartDate());
         if (request.getContractEndDate() != null) agency.setContractEndDate(request.getContractEndDate());
-        if (request.getStatus() != null) agency.setStatus(request.getStatus());
+        if (request.getStatus() != null && request.getStatus() != agency.getStatus()) {
+            if (!canApproveAgencies()) {
+                throw new AccessDeniedException("Changing agency status requires AGENCY:MANAGE");
+            }
+            agency.setStatus(request.getStatus());
+        }
         if (request.getSpecializations() != null) agency.setSpecializations(request.getSpecializations());
         if (request.getNotes() != null) agency.setNotes(request.getNotes());
         if (request.getRating() != null) agency.setRating(request.getRating());

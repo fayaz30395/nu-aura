@@ -203,6 +203,20 @@ public class BenefitEnhancedService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID currentUser = SecurityContext.getCurrentUserId();
 
+        // BENEFIT_ENROLL is self-scoped: only benefit admins may enroll someone else or override costs
+        boolean benefitAdmin = SecurityContext.isSuperAdmin() || SecurityContext.isTenantAdmin()
+                || SecurityContext.hasPermission(Permission.BENEFIT_MANAGE);
+        UUID callerEmployeeId = SecurityContext.getCurrentEmployeeId();
+        if (!benefitAdmin) {
+            if (callerEmployeeId == null
+                    || (request.getEmployeeId() != null && !callerEmployeeId.equals(request.getEmployeeId()))) {
+                throw new AccessDeniedException("You are not authorized to enroll another employee");
+            }
+            request.setEmployeeId(callerEmployeeId);
+            request.setEmployeeContribution(null);
+            request.setEmployerContribution(null);
+        }
+
         // Check for existing enrollment
         Optional<BenefitEnrollment> existing = enrollmentRepository.findExistingEnrollment(
                 tenantId, request.getEmployeeId(), request.getBenefitPlanId());

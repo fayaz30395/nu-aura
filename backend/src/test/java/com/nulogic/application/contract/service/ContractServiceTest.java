@@ -280,6 +280,42 @@ class ContractServiceTest {
         }
 
         @Test
+        @DisplayName("Should ignore client-supplied status on update")
+        void shouldIgnoreBodyStatus() {
+            Contract existingContract = Contract.builder()
+                    .id(CONTRACT_ID).tenantId(TENANT_ID).title("Contract")
+                    .type(ContractType.EMPLOYMENT).status(ContractStatus.DRAFT).build();
+            UpdateContractRequest request = new UpdateContractRequest();
+            request.setStatus(ContractStatus.ACTIVE);
+            when(contractRepository.findByIdAndTenantId(CONTRACT_ID, TENANT_ID))
+                    .thenReturn(Optional.of(existingContract));
+            when(contractRepository.save(any(Contract.class))).thenReturn(existingContract);
+
+            contractService.updateContract(CONTRACT_ID, request);
+
+            assertThat(existingContract.getStatus()).isEqualTo(ContractStatus.DRAFT);
+        }
+
+        @Test
+        @DisplayName("Should reject employee outside tenant and not save")
+        void shouldRejectForeignEmployee() {
+            Contract existingContract = Contract.builder()
+                    .id(CONTRACT_ID).tenantId(TENANT_ID).title("Contract")
+                    .type(ContractType.EMPLOYMENT).status(ContractStatus.DRAFT).build();
+            UUID foreign = UUID.randomUUID();
+            UpdateContractRequest request = new UpdateContractRequest();
+            request.setEmployeeId(foreign);
+            when(contractRepository.findByIdAndTenantId(CONTRACT_ID, TENANT_ID))
+                    .thenReturn(Optional.of(existingContract));
+            when(employeeService.getByIdAndTenant(foreign, TENANT_ID))
+                    .thenThrow(new com.nulogic.common.exception.ResourceNotFoundException("Employee not found"));
+
+            assertThatThrownBy(() -> contractService.updateContract(CONTRACT_ID, request))
+                    .isInstanceOf(com.nulogic.common.exception.ResourceNotFoundException.class);
+            verify(contractRepository, never()).save(any(Contract.class));
+        }
+
+        @Test
         @DisplayName("Should create new version when terms are updated")
         void shouldCreateNewVersionWhenTermsUpdated() {
             // Given

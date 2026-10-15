@@ -236,6 +236,27 @@ class AnnouncementServiceTest {
     class CreateAnnouncementTests {
 
         @Test
+        @DisplayName("Should strip scripts and event handlers from announcement HTML before saving")
+        void shouldSanitizeContent() {
+            CreateAnnouncementRequest request = CreateAnnouncementRequest.builder()
+                    .title("t")
+                    .content("<p>ok <strong>bold</strong></p><img src=x onerror=alert(1)><script>alert(1)</script>")
+                    .build();
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(new Employee()));
+            when(announcementRepository.save(any(Announcement.class))).thenAnswer(inv -> {
+                Announcement saved = inv.getArgument(0);
+                saved.setId(UUID.randomUUID());
+                saved.setReadCount(0);
+                saved.setAcceptedCount(0);
+                return saved;
+            });
+
+            AnnouncementDto result = announcementService.createAnnouncement(request);
+
+            assertThat(result.getContent()).contains("<p>ok <strong>bold</strong></p>").doesNotContain("onerror", "<script");
+        }
+
+        @Test
         @DisplayName("Should create announcement with defaults")
         void shouldCreateAnnouncement() {
             CreateAnnouncementRequest request = CreateAnnouncementRequest.builder()

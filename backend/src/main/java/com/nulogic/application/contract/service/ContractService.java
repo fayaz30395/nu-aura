@@ -65,6 +65,8 @@ public class ContractService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         UUID userId = SecurityContext.getCurrentUserId();
 
+        assertEmployeeInTenant(request.getEmployeeId(), tenantId);
+
         Contract contract = Contract.builder()
                 .tenantId(tenantId)
                 .title(request.getTitle())
@@ -97,6 +99,12 @@ public class ContractService {
         return toDto(contract);
     }
 
+    private void assertEmployeeInTenant(UUID employeeId, UUID tenantId) {
+        if (employeeId != null) {
+            employeeService.getByIdAndTenant(employeeId, tenantId);
+        }
+    }
+
     /**
      * Update an existing contract
      */
@@ -109,13 +117,15 @@ public class ContractService {
         Contract contract = contractRepository.findByIdAndTenantId(contractId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Contract not found"));
 
-        ContractStatus previousStatus = contract.getStatus();
-
         // Update fields
         if (request.getTitle() != null) contract.setTitle(request.getTitle());
         if (request.getType() != null) contract.setType(request.getType());
-        if (request.getStatus() != null) contract.setStatus(request.getStatus());
-        if (request.getEmployeeId() != null) contract.setEmployeeId(request.getEmployeeId());
+        // Status moves only through the lifecycle endpoints (review/signatures/activate/terminate/renew);
+        // a body status is ignored so a plain edit cannot activate an unsigned contract.
+        if (request.getEmployeeId() != null) {
+            assertEmployeeInTenant(request.getEmployeeId(), tenantId);
+            contract.setEmployeeId(request.getEmployeeId());
+        }
         if (request.getVendorName() != null) contract.setVendorName(request.getVendorName());
         if (request.getStartDate() != null) contract.setStartDate(request.getStartDate());
         if (request.getEndDate() != null) contract.setEndDate(request.getEndDate());
@@ -141,9 +151,6 @@ public class ContractService {
         // Record metrics
         metricsService.recordContractLifecycle(
                 tenantId, "update", contract.getType().name(), Duration.between(start, Instant.now()));
-        if (request.getStatus() != null && request.getStatus() != previousStatus) {
-            metricsService.recordContractStatusChange(tenantId, previousStatus.name(), request.getStatus().name());
-        }
 
         return toDto(contract);
     }

@@ -261,6 +261,8 @@ app:
     # override (e.g. to roll back during a canary) without code changes.
     use-host-prefix: ${COOKIE_USE_HOST_PREFIX:true}
   security:
+    # Trusted proxies in front of the app; see RateLimitingFilter#clientIp.
+    trusted-proxy-hops: ${APP_TRUSTED_PROXY_HOPS:1}
     csrf:
       # Enable CSRF protection in production
       enabled: true

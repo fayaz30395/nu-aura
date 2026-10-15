@@ -8,4 +8,5 @@ public class UpdateBankDetailsRequest {
     private String bankName;
     private String bankIfscCode;
     private String taxId;
+    private String captchaToken;
 }

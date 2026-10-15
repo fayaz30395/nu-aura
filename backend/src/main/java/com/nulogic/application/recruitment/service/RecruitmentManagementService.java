@@ -176,7 +176,9 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
         candidate.setNoticePeriodDays(request.getNoticePeriodDays());
         candidate.setResumeUrl(request.getResumeUrl());
         candidate.setSource(request.getSource());
-        candidate.setStatus(request.getStatus());
+        if (request.getStatus() != null) {
+            candidate.setStatus(request.getStatus());
+        }
         candidate.setCurrentStage(request.getCurrentStage());
         candidate.setNotes(request.getNotes());
         candidate.setAssignedRecruiterId(request.getAssignedRecruiterId());

@@ -31,4 +31,6 @@ public interface PreboardingCandidateRepository extends JpaRepository<Preboardin
     Long countByTenantIdAndStatus(UUID tenantId, PreboardingStatus status);
 
     boolean existsByEmailAndTenantId(String email, UUID tenantId);
+
+    boolean existsByTenantIdAndEmployeeId(java.util.UUID tenantId, java.util.UUID employeeId);
 }

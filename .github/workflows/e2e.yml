@@ -20,7 +20,7 @@ on:
 
 env:
   JAVA_VERSION: '21'
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   # Plain-HTTP localhost: disable Secure cookies + the __Host- prefix (both
   # require HTTPS) so the auth cookie is actually stored by the test browser.
   COOKIE_SECURE: 'false'

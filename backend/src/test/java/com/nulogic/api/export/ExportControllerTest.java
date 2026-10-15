@@ -1,6 +1,7 @@
 package com.nulogic.api.export;
 
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.common.export.ExportFormat;
 import com.nulogic.common.export.ExportService;
 import com.nulogic.common.security.SecurityContext;
@@ -14,6 +15,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import com.nulogic.api.employee.dto.EmployeeResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -51,6 +55,8 @@ class ExportControllerTest {
     private TenantTimeService tenantTimeService;
     @MockitoBean
     private AuditLogService auditLogService;
+    @MockitoBean
+    private EmployeeService employeeService;
 
     @BeforeEach
     void setUp() {
@@ -71,20 +77,61 @@ class ExportControllerTest {
     void exportEmployees_logsExportAudit() throws Exception {
         when(exportService.export(eq(ExportFormat.CSV), any(), any(), any(), any()))
                 .thenReturn("id,name".getBytes());
-
-        ExportController.ExportRequest request = new ExportController.ExportRequest(
-                java.util.List.of("id", "name"),
-                java.util.List.of(java.util.Map.of("id", "1", "name", "Alice")),
-                java.util.List.of("id", "name"));
+        when(employeeService.getAllEmployees(any())).thenReturn(Page.empty());
 
         mockMvc.perform(post("/api/v1/export/employees")
                         .param("format", "CSV")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(employeeRequest(java.util.List.of("employeeCode", "fullName"),
+                                java.util.List.of(java.util.Map.of("employeeCode", "FORGED"))))))
                 .andExpect(status().isOk());
 
         verify(auditLogService).logAction(eq("USER"), eq(USER_ID), eq(AuditAction.EXPORT),
                 eq(null), eq(null), any(String.class));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/export/employees renders server rows and ignores client-supplied data")
+    @WithMockUser
+    void exportEmployees_usesServerRowsNotClientData() throws Exception {
+        EmployeeResponse emp = new EmployeeResponse();
+        emp.setEmployeeCode("E-1");
+        emp.setFullName("Real Person");
+        when(employeeService.getAllEmployees(any())).thenReturn(new PageImpl<>(java.util.List.of(emp)));
+        when(exportService.export(eq(ExportFormat.CSV), any(), any(), any(), any())).thenReturn(new byte[]{1});
+
+        mockMvc.perform(post("/api/v1/export/employees")
+                        .param("format", "CSV")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeRequest(java.util.List.of("employeeCode", "fullName"),
+                                java.util.List.of(java.util.Map.of("employeeCode", "FORGED", "fullName", "Forged Row"))))))
+                .andExpect(status().isOk());
+
+        org.mockito.ArgumentCaptor<java.util.List<java.util.Map<String, Object>>> rows = org.mockito.ArgumentCaptor.forClass(java.util.List.class);
+        verify(exportService).export(eq(ExportFormat.CSV), any(), any(), rows.capture(), any());
+        org.junit.jupiter.api.Assertions.assertEquals(1, rows.getValue().size());
+        org.junit.jupiter.api.Assertions.assertEquals("E-1", rows.getValue().get(0).get("employeeCode"));
+        org.junit.jupiter.api.Assertions.assertEquals("Real Person", rows.getValue().get(0).get("fullName"));
+    }
+
+    @Test
+    @DisplayName("POST /api/v1/export/employees rejects sensitive columns and exports nothing")
+    @WithMockUser
+    void exportEmployees_rejectsSensitiveColumn() throws Exception {
+        mockMvc.perform(post("/api/v1/export/employees")
+                        .param("format", "CSV")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(employeeRequest(java.util.List.of("bankAccountNumber"), java.util.List.of()))))
+                .andExpect(status().is4xxClientError());
+
+        org.mockito.Mockito.verifyNoInteractions(exportService);
+    }
+
+    private static ExportController.ExportRequest employeeRequest(java.util.List<String> keys,
+                                                                  java.util.List<java.util.Map<String, Object>> data) {
+        return new ExportController.ExportRequest(keys, data, keys);
     }
 }

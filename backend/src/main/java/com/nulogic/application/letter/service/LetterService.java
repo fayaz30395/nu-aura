@@ -13,6 +13,7 @@ import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.validation.RichTextSanitizer;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Department;
 import com.nulogic.domain.employee.Employee;
@@ -81,9 +82,9 @@ public class LetterService {
                 .code(request.getCode())
                 .description(request.getDescription())
                 .category(request.getCategory())
-                .templateContent(request.getTemplateContent())
-                .headerHtml(request.getHeaderHtml())
-                .footerHtml(request.getFooterHtml())
+                .templateContent(RichTextSanitizer.sanitizeHtml(request.getTemplateContent()))
+                .headerHtml(RichTextSanitizer.sanitizeHtml(request.getHeaderHtml()))
+                .footerHtml(RichTextSanitizer.sanitizeHtml(request.getFooterHtml()))
                 .cssStyles(request.getCssStyles())
                 .includeCompanyLogo(request.getIncludeCompanyLogo())
                 .includeSignature(request.getIncludeSignature())
@@ -117,9 +118,9 @@ public class LetterService {
 
         entity.setName(request.getName());
         entity.setDescription(request.getDescription());
-        entity.setTemplateContent(request.getTemplateContent());
-        entity.setHeaderHtml(request.getHeaderHtml());
-        entity.setFooterHtml(request.getFooterHtml());
+        entity.setTemplateContent(RichTextSanitizer.sanitizeHtml(request.getTemplateContent()));
+        entity.setHeaderHtml(RichTextSanitizer.sanitizeHtml(request.getHeaderHtml()));
+        entity.setFooterHtml(RichTextSanitizer.sanitizeHtml(request.getFooterHtml()));
         entity.setCssStyles(request.getCssStyles());
         entity.setIncludeCompanyLogo(request.getIncludeCompanyLogo());
         entity.setIncludeSignature(request.getIncludeSignature());

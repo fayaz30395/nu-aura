@@ -36,6 +36,8 @@ class PreboardingServiceTest {
     private PreboardingCandidateRepository candidateRepository;
     @Mock
     private TenantTimeService tenantTimeService;
+    @Mock
+    private com.nulogic.infrastructure.employee.repository.EmployeeRepository employeeRepository;
     @InjectMocks
     private PreboardingService service;
 
@@ -95,5 +97,56 @@ class PreboardingServiceTest {
     void completedReadable() {
         candidate(PreboardingStatus.COMPLETED);
         assertThat(service.getByAccessToken(TOKEN).getStatus()).isEqualTo(PreboardingStatus.COMPLETED);
+    }
+
+    @Test
+    @DisplayName("markConverted rejects an employee id that is not in the tenant and mutates nothing")
+    void markConverted_unknownEmployeeRejected() {
+        UUID tenantId = UUID.randomUUID();
+        UUID candidateId = UUID.randomUUID();
+        UUID employeeId = UUID.randomUUID();
+        PreboardingCandidate c = candidate(PreboardingStatus.COMPLETED);
+        com.nulogic.common.security.TenantContext.setCurrentTenant(tenantId);
+        try {
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(c));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> service.markConverted(candidateId, employeeId))
+                    .isInstanceOf(com.nulogic.common.exception.ResourceNotFoundException.class);
+            verify(candidateRepository, never()).save(any(PreboardingCandidate.class));
+            assertThat(c.getStatus()).isEqualTo(PreboardingStatus.COMPLETED);
+            assertThat(c.getEmployeeId()).isNull();
+        } finally {
+            com.nulogic.common.security.TenantContext.clear();
+        }
+    }
+
+    @Test
+    @DisplayName("markConverted links a tenant employee once; reusing the employee or re-converting is rejected")
+    void markConverted_validAndReuseRejected() {
+        UUID tenantId = UUID.randomUUID();
+        UUID candidateId = UUID.randomUUID();
+        UUID employeeId = UUID.randomUUID();
+        PreboardingCandidate c = candidate(PreboardingStatus.COMPLETED);
+        com.nulogic.common.security.TenantContext.setCurrentTenant(tenantId);
+        try {
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(c));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId))
+                    .thenReturn(Optional.of(new com.nulogic.domain.employee.Employee()));
+
+            when(candidateRepository.existsByTenantIdAndEmployeeId(tenantId, employeeId)).thenReturn(true);
+            assertThatThrownBy(() -> service.markConverted(candidateId, employeeId))
+                    .isInstanceOf(com.nulogic.common.exception.BusinessException.class);
+
+            when(candidateRepository.existsByTenantIdAndEmployeeId(tenantId, employeeId)).thenReturn(false);
+            service.markConverted(candidateId, employeeId);
+            assertThat(c.getStatus()).isEqualTo(PreboardingStatus.CONVERTED);
+            assertThat(c.getEmployeeId()).isEqualTo(employeeId);
+
+            assertThatThrownBy(() -> service.markConverted(candidateId, employeeId))
+                    .isInstanceOf(com.nulogic.common.exception.BusinessException.class);
+        } finally {
+            com.nulogic.common.security.TenantContext.clear();
+        }
     }
 }

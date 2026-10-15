@@ -15,6 +15,7 @@ import com.nulogic.domain.compensation.CompensationReviewCycle.CycleStatus;
 import com.nulogic.domain.compensation.SalaryRevision;
 import com.nulogic.domain.compensation.SalaryRevision.RevisionStatus;
 import com.nulogic.domain.employee.Employee;
+import com.nulogic.domain.user.RoleScope;
 import com.nulogic.infrastructure.compensation.repository.CompensationReviewCycleRepository;
 import com.nulogic.infrastructure.compensation.repository.SalaryRevisionRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,6 +143,10 @@ public class CompensationService {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID userId = SecurityContext.getCurrentUserId();
 
+        if (isSelf(request.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot propose a salary revision for yourself");
+        }
+
         // Check if employee exists
         var employee = employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
@@ -186,6 +192,7 @@ public class CompensationService {
         UUID tenantId = TenantContext.getCurrentTenant();
         SalaryRevision revision = revisionRepository.findByIdAndTenantId(revisionId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Salary revision not found"));
+        assertCanViewCompensationOf(revision.getEmployeeId());
         return enrichRevisionResponse(revision);
     }
 
@@ -208,14 +215,19 @@ public class CompensationService {
     @Transactional(readOnly = true)
     public Page<SalaryRevisionResponse> getRevisionsByCycle(UUID cycleId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return enrichRevisionPage(
-                revisionRepository.findByReviewCycleIdAndTenantIdOrderByCreatedAtDesc(cycleId, tenantId, pageable),
-                tenantId);
+        Specification<SalaryRevision> spec = ((Specification<SalaryRevision>) (root, query, cb) ->
+                        cb.and(cb.equal(root.get("tenantId"), tenantId), cb.equal(root.get("reviewCycleId"), cycleId)))
+                .and(dataScopeService.getScopeSpecification(Permission.COMPENSATION_VIEW));
+        Pageable sorted = pageable.getSort().isSorted()
+                ? pageable
+                : PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
+        return enrichRevisionPage(revisionRepository.findAll(spec, sorted), tenantId);
     }
 
     @Transactional(readOnly = true)
     public List<SalaryRevisionResponse> getEmployeeRevisionHistory(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanViewCompensationOf(employeeId);
         return enrichRevisionList(
                 revisionRepository.findByEmployeeIdAndTenantIdOrderByEffectiveDateDesc(employeeId, tenantId),
                 tenantId);
@@ -258,6 +270,7 @@ public class CompensationService {
         SalaryRevision revision = revisionRepository.findByIdAndTenantId(revisionId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Salary revision not found"));
 
+        assertCanDecideRevision(revision, userId, true);
         if (revision.getStatus() != RevisionStatus.PENDING_REVIEW) {
             throw new BusinessException("Can only review pending revisions");
         }
@@ -279,6 +292,7 @@ public class CompensationService {
         SalaryRevision revision = revisionRepository.findByIdAndTenantId(revisionId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Salary revision not found"));
 
+        assertCanDecideRevision(revision, userId, true);
         if (revision.getStatus() != RevisionStatus.PENDING_APPROVAL &&
                 revision.getStatus() != RevisionStatus.REVIEWED) {
             throw new BusinessException("Can only approve reviewed or pending approval revisions");
@@ -318,6 +332,7 @@ public class CompensationService {
         SalaryRevision revision = revisionRepository.findByIdAndTenantId(revisionId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Salary revision not found"));
 
+        assertCanDecideRevision(revision, userId, false);
         if (revision.getStatus() == RevisionStatus.APPLIED ||
                 revision.getStatus() == RevisionStatus.CANCELLED) {
             throw new BusinessException("Cannot reject applied or cancelled revisions");
@@ -603,5 +618,31 @@ public class CompensationService {
         }
 
         return response;
+    }
+
+    // ======================== Access control ========================
+
+    private boolean isSelf(UUID employeeId) {
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        return me != null && me.equals(employeeId);
+    }
+
+    private void assertCanViewCompensationOf(UUID employeeId) {
+        boolean wide = SecurityContext.isHRManager()
+                || SecurityContext.hasPermissionAtLeast(Permission.COMPENSATION_VIEW_ALL, RoleScope.ALL);
+        boolean reportee = employeeId != null && SecurityContext.getAllReporteeIds().contains(employeeId);
+        if (!isSelf(employeeId) && !wide && !reportee) {
+            throw new AccessDeniedException("Cannot access another employee's compensation");
+        }
+    }
+
+    /** Nobody decides on their own revision; review/approve additionally cannot be the proposer (four-eyes). */
+    private void assertCanDecideRevision(SalaryRevision revision, UUID userId, boolean notProposer) {
+        if (isSelf(revision.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot decide on your own salary revision");
+        }
+        if (notProposer && userId != null && userId.equals(revision.getProposedBy())) {
+            throw new AccessDeniedException("The proposer cannot also review or approve the revision");
+        }
     }
 }

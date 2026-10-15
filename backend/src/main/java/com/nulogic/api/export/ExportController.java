@@ -1,6 +1,8 @@
 package com.nulogic.api.export;
 
+import com.nulogic.api.employee.dto.EmployeeResponse;
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.common.export.ExportFormat;
 import com.nulogic.common.export.ExportService;
 import com.nulogic.common.security.Permission;
@@ -14,14 +16,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Generic export controller for data exports.
@@ -37,6 +43,23 @@ public class ExportController {
     private final ExportService exportService;
     private final TenantTimeService tenantTimeService;
     private final AuditLogService auditLogService;
+    private final EmployeeService employeeService;
+
+    /** Non-sensitive columns exportable from /employees (no bank, DOB, personal contact). */
+    private static final Map<String, Function<EmployeeResponse, Object>> EMPLOYEE_COLUMNS = new LinkedHashMap<>();
+
+    static {
+        EMPLOYEE_COLUMNS.put("employeeCode", EmployeeResponse::getEmployeeCode);
+        EMPLOYEE_COLUMNS.put("fullName", EmployeeResponse::getFullName);
+        EMPLOYEE_COLUMNS.put("workEmail", EmployeeResponse::getWorkEmail);
+        EMPLOYEE_COLUMNS.put("designation", EmployeeResponse::getDesignation);
+        EMPLOYEE_COLUMNS.put("departmentName", EmployeeResponse::getDepartmentName);
+        EMPLOYEE_COLUMNS.put("managerName", EmployeeResponse::getManagerName);
+        EMPLOYEE_COLUMNS.put("locationName", EmployeeResponse::getLocationName);
+        EMPLOYEE_COLUMNS.put("employmentType", EmployeeResponse::getEmploymentType);
+        EMPLOYEE_COLUMNS.put("status", EmployeeResponse::getStatus);
+        EMPLOYEE_COLUMNS.put("joiningDate", EmployeeResponse::getJoiningDate);
+    }
 
     @PostMapping("/employees")
     @RequiresPermission(Permission.EMPLOYEE_READ)
@@ -45,13 +68,24 @@ public class ExportController {
             @RequestParam(defaultValue = "EXCEL") ExportFormat format,
             @Valid @RequestBody ExportRequest request) throws Exception {
 
-        byte[] data = exportService.export(
-                format,
-                "Employee Report",
-                request.headers(),
-                request.data(),
-                request.columnKeys()
-        );
+        // Rows come from the server (caller's data scope applies); the client only picks columns.
+        List<String> keys = request.columnKeys() == null || request.columnKeys().isEmpty()
+                ? List.copyOf(EMPLOYEE_COLUMNS.keySet()) : request.columnKeys();
+        if (!EMPLOYEE_COLUMNS.keySet().containsAll(keys)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST, "Unsupported employee export column");
+        }
+        List<String> headers = request.headers() != null && request.headers().size() == keys.size()
+                ? request.headers() : keys;
+        List<Map<String, Object>> rows = employeeService
+                .getAllEmployees(PageRequest.of(0, 10000, Sort.by("employeeCode")))
+                .map(e -> {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    keys.forEach(k -> row.put(k, EMPLOYEE_COLUMNS.get(k).apply(e)));
+                    return row;
+                }).getContent();
+
+        byte[] data = exportService.export(format, "Employee Report", headers, rows, keys);
 
         return buildResponse(data, format, "employees");
     }

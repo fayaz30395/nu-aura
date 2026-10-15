@@ -176,6 +176,10 @@ class TrainingManagementControllerTest extends AbstractPostgresIntegrationTest {
         completeReq.put("completionDate", LocalDate.now().toString());
         completeReq.put("score", 85);
 
+        // Completion is a decision on someone else's enrollment: act as a different approver than the learner.
+        SecurityContext.setCurrentUser(userId, UUID.randomUUID(), Set.of("SUPER_ADMIN"),
+                Map.of(Permission.SYSTEM_ADMIN, RoleScope.ALL));
+
         mockMvc.perform(post(BASE + "/enrollments/{enrollmentId}/complete", UUID.fromString(enrollmentId))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(completeReq)))
@@ -234,6 +238,10 @@ class TrainingManagementControllerTest extends AbstractPostgresIntegrationTest {
         completeReq.put("completionDate", LocalDate.now().toString());
         completeReq.put("score", 90);
         completeReq.put("issueCertificate", true);
+
+        // Completion is a decision on someone else's enrollment: act as a different approver than the learner.
+        SecurityContext.setCurrentUser(userId, UUID.randomUUID(), Set.of("SUPER_ADMIN"),
+                Map.of(Permission.SYSTEM_ADMIN, RoleScope.ALL));
 
         mockMvc.perform(post(BASE + "/enrollments/{enrollmentId}/complete", UUID.fromString(enrollmentId))
                         .contentType(MediaType.APPLICATION_JSON)

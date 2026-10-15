@@ -262,11 +262,13 @@ public class TravelService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public Page<TravelRequestDto> getPendingApprovals(Pageable pageable) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return travelRequestRepository.findByTenantIdAndStatusIn(
-                tenantId,
-                List.of(TravelStatus.SUBMITTED, TravelStatus.PENDING_APPROVAL),
-                pageable
-        ).map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)));
+        List<TravelStatus> pending = List.of(TravelStatus.SUBMITTED, TravelStatus.PENDING_APPROVAL);
+        // Approvers without tenant-wide scope only see their reportees' requests (matches assertCanDecideOn).
+        Page<TravelRequest> page = hasTenantWideTravelScope()
+                ? travelRequestRepository.findByTenantIdAndStatusIn(tenantId, pending, pageable)
+                : travelRequestRepository.findByTenantIdAndStatusInAndEmployeeIdIn(
+                        tenantId, pending, SecurityContext.getAllReporteeIds(), pageable);
+        return page.map(req -> TravelRequestDto.fromEntity(req, getEmployeeFullName(req.getEmployeeId(), tenantId)));
     }
 
     @Transactional(readOnly = true)

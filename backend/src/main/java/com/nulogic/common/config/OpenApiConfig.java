@@ -34,7 +34,7 @@ public class OpenApiConfig {
                 .info(apiInfo())
                 .servers(servers())
                 .components(securityComponents())
-                .security(List.of(new SecurityRequirement().addList("Bearer Authentication")))
+                .security(List.of(new SecurityRequirement().addList("bearerAuth")))
                 .tags(apiTags());
     }
 
@@ -97,13 +97,13 @@ public class OpenApiConfig {
 
     private Components securityComponents() {
         return new Components()
-                .addSecuritySchemes("Bearer Authentication",
+                .addSecuritySchemes("bearerAuth",
                         new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
                                 .description("Enter JWT token obtained from /api/v1/auth/login"))
-                .addSecuritySchemes("Tenant ID",
+                .addSecuritySchemes("tenantId",
                         new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.HEADER)

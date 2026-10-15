@@ -140,6 +140,10 @@ management:
       threshold: 10MB
 
 server:
+  # Railway terminates TLS and appends the real client IP to X-Forwarded-For.
+  # "framework" makes scheme/isSecure honour X-Forwarded-Proto (Secure cookies, redirects, HSTS).
+  # It does NOT set remoteAddr; client IP comes from app.security.trusted-proxy-hops.
+  forward-headers-strategy: framework
   # Render injects PORT env var (default 10000); Spring Boot must bind to that port
   port: ${PORT:8080}
   tomcat:
@@ -195,6 +199,9 @@ app:
     secure: true
 
   security:
+    # Trusted proxies in front of the app (Railway edge = 1); see RateLimitingFilter#clientIp.
+    # Operator: verify with a live request. Too high trusts client entries, too low shares proxy IP.
+    trusted-proxy-hops: ${APP_TRUSTED_PROXY_HOPS:1}
     csrf:
       enabled: true
     rls:

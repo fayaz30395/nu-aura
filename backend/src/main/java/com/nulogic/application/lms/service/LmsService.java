@@ -5,6 +5,7 @@ import com.nulogic.api.lms.dto.LearningPathSummaryResponse;
 import com.nulogic.api.lms.dto.CourseCatalogResponse.CourseSummaryDto;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.validation.RichTextSanitizer;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.lms.*;
 import com.nulogic.domain.lms.ContentProgress.ProgressStatus;
@@ -235,6 +236,7 @@ public class LmsService {
     @Transactional
     public ModuleContent createContent(ModuleContent content) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        content.setTextContent(RichTextSanitizer.sanitizeHtml(content.getTextContent()));
         content.setCreatedAt(tenantTimeService.now(tenantId));
         return contentRepository.save(content);
     }
@@ -242,6 +244,7 @@ public class LmsService {
     @Transactional
     public ModuleContent updateContent(ModuleContent content) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        content.setTextContent(RichTextSanitizer.sanitizeHtml(content.getTextContent()));
         content.setUpdatedAt(tenantTimeService.now(tenantId));
         return contentRepository.save(content);
     }

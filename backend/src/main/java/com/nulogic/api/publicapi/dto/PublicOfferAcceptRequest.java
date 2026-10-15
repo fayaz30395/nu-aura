@@ -25,4 +25,7 @@ public class PublicOfferAcceptRequest {
     private LocalDate confirmedJoiningDate;
 
     private String signatureData;
+
+    /** reCAPTCHA token; verified server-side when captcha is enabled. */
+    private String captchaToken;
 }

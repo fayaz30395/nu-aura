@@ -7,7 +7,11 @@ import com.nulogic.api.training.dto.TrainingProgramResponse;
 import com.nulogic.application.audit.service.AuditLogService;
 import com.nulogic.application.event.DomainEventPublisher;
 import com.nulogic.application.notification.service.WebSocketNotificationService;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.domain.user.RoleScope;
+import org.springframework.security.access.AccessDeniedException;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
@@ -163,6 +167,8 @@ public class TrainingManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Enrolling employee {} in program {} for tenant {}", request.getEmployeeId(), request.getProgramId(), tenantId);
 
+        assertCanActOnEmployee(request.getEmployeeId(), "enroll another employee");
+
         // Check if program exists
         TrainingProgram program = programRepository.findByIdAndTenantId(request.getProgramId(), tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Training program not found"));
@@ -257,6 +263,7 @@ public class TrainingManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         TrainingEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Training enrollment not found"));
+        assertCanDecideEnrollment(enrollment);
 
         enrollment.setStatus(status);
         if (status == TrainingEnrollment.EnrollmentStatus.COMPLETED) {
@@ -270,7 +277,10 @@ public class TrainingManagementService {
     @Transactional(readOnly = true)
     public List<TrainingEnrollmentResponse> getEnrollmentsByProgram(UUID programId) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        List<TrainingEnrollment> enrollments = enrollmentRepository.findByTenantIdAndProgramId(tenantId, programId);
+        // Employees only see their own enrollments; managers their reportees'; HR/ALL-scope everyone's.
+        List<TrainingEnrollment> enrollments = enrollmentRepository.findByTenantIdAndProgramId(tenantId, programId).stream()
+                .filter(e -> canActOnEmployee(e.getEmployeeId()))
+                .collect(Collectors.toList());
         EnrollmentNameCaches caches = buildEnrollmentCaches(enrollments, tenantId);
         return enrollments.stream().map(e -> mapToEnrollmentResponse(e, caches)).collect(Collectors.toList());
     }
@@ -278,6 +288,7 @@ public class TrainingManagementService {
     @Transactional(readOnly = true)
     public List<TrainingEnrollmentResponse> getEnrollmentsByEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanActOnEmployee(employeeId, "view another employee's enrollments");
         List<TrainingEnrollment> enrollments = enrollmentRepository.findByTenantIdAndEmployeeId(tenantId, employeeId);
         EnrollmentNameCaches caches = buildEnrollmentCaches(enrollments, tenantId);
         return enrollments.stream().map(e -> mapToEnrollmentResponse(e, caches)).collect(Collectors.toList());
@@ -290,6 +301,7 @@ public class TrainingManagementService {
 
         TrainingEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Training enrollment not found"));
+        assertCanDecideEnrollment(enrollment);
 
         if (enrollment.getStatus() == TrainingEnrollment.EnrollmentStatus.COMPLETED) {
             throw new IllegalArgumentException("Training enrollment is already completed");
@@ -339,6 +351,7 @@ public class TrainingManagementService {
 
         TrainingEnrollment enrollment = enrollmentRepository.findByIdAndTenantId(enrollmentId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Training enrollment not found"));
+        assertCanDecideEnrollment(enrollment);
 
         if (enrollment.getStatus() != TrainingEnrollment.EnrollmentStatus.COMPLETED) {
             throw new IllegalArgumentException(
@@ -484,5 +497,39 @@ public class TrainingManagementService {
                 .createdAt(enrollment.getCreatedAt())
                 .updatedAt(enrollment.getUpdatedAt())
                 .build();
+    }
+
+    // ======================== Access control ========================
+
+    private boolean hasTenantWideTrainingScope() {
+        return SecurityContext.isSuperAdmin()
+                || SecurityContext.isHRManager()
+                || SecurityContext.hasPermissionAtLeast(Permission.TRAINING_APPROVE, RoleScope.ALL);
+    }
+
+    private boolean isSelf(UUID employeeId) {
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        return me != null && me.equals(employeeId);
+    }
+
+    private boolean canActOnEmployee(UUID employeeId) {
+        return isSelf(employeeId) || hasTenantWideTrainingScope()
+                || (employeeId != null && SecurityContext.getAllReporteeIds().contains(employeeId));
+    }
+
+    private void assertCanActOnEmployee(UUID employeeId, String action) {
+        if (!canActOnEmployee(employeeId)) {
+            throw new AccessDeniedException("Cannot " + action);
+        }
+    }
+
+    /** Completing / certifying / changing status: never your own enrollment; manager of the learner or HR only. */
+    private void assertCanDecideEnrollment(TrainingEnrollment enrollment) {
+        if (isSelf(enrollment.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot approve your own training enrollment");
+        }
+        if (!canActOnEmployee(enrollment.getEmployeeId())) {
+            throw new AccessDeniedException("Only the learner's manager or HR can decide this enrollment");
+        }
     }
 }

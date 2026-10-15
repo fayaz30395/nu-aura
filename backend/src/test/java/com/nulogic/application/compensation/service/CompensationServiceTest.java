@@ -408,7 +408,13 @@ class CompensationServiceTest {
         when(revisionRepository.findByEmployeeIdAndTenantIdOrderByEffectiveDateDesc(employeeId, tenantId))
                 .thenReturn(List.of(revision));
 
-        List<SalaryRevisionResponse> result = compensationService.getEmployeeRevisionHistory(employeeId);
+        securityContextMock.when(SecurityContext::isHRManager).thenReturn(true);
+        List<SalaryRevisionResponse> result;
+        try {
+            result = compensationService.getEmployeeRevisionHistory(employeeId);
+        } finally {
+            securityContextMock.when(SecurityContext::isHRManager).thenReturn(false);
+        }
 
         assertThat(result).hasSize(1);
     }

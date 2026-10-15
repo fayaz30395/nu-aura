@@ -18,7 +18,10 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.time.LocalDate;
+import com.nulogic.common.security.SecurityContext;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,6 +63,12 @@ class TrainingManagementServiceTest {
     void setUp() {
         tenantId = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+        SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of("HR_MANAGER"), Map.of());
+    }
+
+    @org.junit.jupiter.api.AfterEach
+    void clearSecurity() {
+        SecurityContext.clear();
     }
 
     private TrainingProgramRequest buildRequest() {

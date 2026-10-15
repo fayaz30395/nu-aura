@@ -3,6 +3,7 @@ package com.nulogic.application.knowledge.service;
 import com.nulogic.application.knowledge.util.TipTapTextExtractor;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.validation.RichTextSanitizer;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.BlogPost;
@@ -65,6 +66,7 @@ public class BlogPostService {
         // V152: derive flat text projection of TipTap JSONB so the RAG retriever
         // (FluenceContentRetriever) can hit idx_blog_posts_body_text_trgm instead
         // of seq-scanning CAST(content AS TEXT) on every keyword pass.
+        post.setContent(RichTextSanitizer.sanitizeContent(post.getContent()));
         post.setBodyText(tipTapTextExtractor.extract(post.getContent()));
 
         BlogPost saved = blogPostRepository.save(post);
@@ -87,9 +89,9 @@ public class BlogPostService {
         post.setSlug(postData.getSlug());
         post.setExcerpt(postData.getExcerpt());
         post.setFeaturedImageUrl(postData.getFeaturedImageUrl());
-        post.setContent(postData.getContent());
+        post.setContent(RichTextSanitizer.sanitizeContent(postData.getContent()));
         // V152: keep body_text in sync with content for trigram-indexed RAG search.
-        post.setBodyText(tipTapTextExtractor.extract(postData.getContent()));
+        post.setBodyText(tipTapTextExtractor.extract(post.getContent()));
         post.setVisibility(postData.getVisibility());
         post.setStatus(postData.getStatus());
         post.setReadTimeMinutes(postData.getReadTimeMinutes());

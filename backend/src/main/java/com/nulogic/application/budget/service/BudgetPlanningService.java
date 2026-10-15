@@ -194,6 +194,7 @@ public class BudgetPlanningService {
         }
 
         budget.setStatus(HeadcountBudget.BudgetStatus.PENDING_APPROVAL);
+        budget.setSubmittedBy(SecurityContext.getCurrentUserId());
         budget = budgetRepository.save(budget);
 
         log.info("Budget {} submitted for approval", budgetId);
@@ -210,6 +211,10 @@ public class BudgetPlanningService {
 
         if (budget.getStatus() != HeadcountBudget.BudgetStatus.PENDING_APPROVAL) {
             throw new IllegalStateException("Only pending budgets can be approved");
+        }
+        // Four-eyes: the submitter cannot approve their own budget.
+        if (currentUserId != null && currentUserId.equals(budget.getSubmittedBy())) {
+            throw new org.springframework.security.access.AccessDeniedException("Cannot approve a budget you submitted");
         }
 
         budget.setStatus(HeadcountBudget.BudgetStatus.APPROVED);

@@ -79,13 +79,8 @@ public class AssetManagementService implements ApprovalCallbackHandler {
             throw new IllegalArgumentException("Asset with code " + request.getAssetCode() + " already exists");
         }
 
-        // IDOR fix: validate assignedTo employee belongs to the current tenant.
-        // assignAsset() already has this check; create/update must match.
-        if (request.getAssignedTo() != null) {
-            employeeRepository.findByIdAndTenantId(request.getAssignedTo(), tenantId)
-                    .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
-        }
-
+        // Assignment (assignedTo / ASSIGNED status) is only changed via assignAsset()/returnAsset();
+        // body values for them are ignored here.
         Asset asset = new Asset();
         // F-26 FIX (2/2): Do NOT manually call setId() — Asset has @GeneratedValue(strategy=UUID)
         // so a non-null ID causes JPA to issue a MERGE instead of INSERT, producing a 500.
@@ -99,8 +94,8 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         asset.setPurchaseDate(request.getPurchaseDate());
         asset.setPurchaseCost(request.getPurchaseCost());
         asset.setCurrentValue(request.getCurrentValue());
-        asset.setStatus(request.getStatus() != null ? request.getStatus() : Asset.AssetStatus.AVAILABLE);
-        asset.setAssignedTo(request.getAssignedTo());
+        asset.setStatus(request.getStatus() != null && request.getStatus() != Asset.AssetStatus.ASSIGNED
+                ? request.getStatus() : Asset.AssetStatus.AVAILABLE);
         asset.setLocation(request.getLocation());
         asset.setWarrantyExpiry(request.getWarrantyExpiry());
         asset.setNotes(request.getNotes());
@@ -117,12 +112,6 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         Asset asset = assetRepository.findByIdAndTenantId(assetId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
 
-        // IDOR fix: validate the new assignee belongs to the current tenant.
-        if (request.getAssignedTo() != null) {
-            employeeRepository.findByIdAndTenantId(request.getAssignedTo(), tenantId)
-                    .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
-        }
-
         asset.setAssetName(request.getAssetName());
         asset.setCategory(request.getCategory());
         asset.setBrand(request.getBrand());
@@ -131,8 +120,11 @@ public class AssetManagementService implements ApprovalCallbackHandler {
         asset.setPurchaseDate(request.getPurchaseDate());
         asset.setPurchaseCost(request.getPurchaseCost());
         asset.setCurrentValue(request.getCurrentValue());
-        asset.setStatus(request.getStatus());
-        asset.setAssignedTo(request.getAssignedTo());
+        // Status may not enter or leave ASSIGNED through a plain edit; assignedTo is never edited here.
+        if (request.getStatus() != null && request.getStatus() != Asset.AssetStatus.ASSIGNED
+                && asset.getStatus() != Asset.AssetStatus.ASSIGNED) {
+            asset.setStatus(request.getStatus());
+        }
         asset.setLocation(request.getLocation());
         asset.setWarrantyExpiry(request.getWarrantyExpiry());
         asset.setNotes(request.getNotes());

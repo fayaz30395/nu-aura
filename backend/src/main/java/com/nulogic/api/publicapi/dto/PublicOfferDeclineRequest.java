@@ -21,4 +21,7 @@ public class PublicOfferDeclineRequest {
     private String email;
 
     private String declineReason;
+
+    /** reCAPTCHA token; verified server-side when captcha is enabled. */
+    private String captchaToken;
 }

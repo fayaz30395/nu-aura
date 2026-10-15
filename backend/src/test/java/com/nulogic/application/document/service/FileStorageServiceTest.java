@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -100,6 +101,32 @@ class FileStorageServiceTest {
                 .startsWith(TENANT_ID + "/" + FileStorageService.CATEGORY_DOCUMENTS + "/" + ENTITY_ID + "/")
                 .endsWith(".pdf")
                 .doesNotContain("..", "\\", ":", "?");
+    }
+
+
+    @Test
+    @DisplayName("uploadFile rejects text/plain content that is HTML/SVG/XML markup")
+    void uploadFileRejectsMarkupDeclaredAsTextPlain() {
+        for (String body : new String[]{"<html><script>alert(1)</script>", "  \n<!DOCTYPE html>", "<svg onload=alert(1)>",
+                "<?xml version=\"1.0\"?><x/>", "\uFEFF<svg/>"}) {
+            MockMultipartFile file = new MockMultipartFile("file", "n.txt", "text/plain", body.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            org.assertj.core.api.Assertions.assertThatThrownBy(
+                            () -> fileStorageService.uploadFile(file, FileStorageService.CATEGORY_DOCUMENTS, ENTITY_ID))
+                    .isInstanceOf(com.nulogic.common.exception.BusinessException.class)
+                    .hasMessageContaining("does not match declared type");
+        }
+        verifyNoInteractions(storageProvider);
+    }
+
+    @Test
+    @DisplayName("uploadFile accepts plain text/plain content")
+    void uploadFileAcceptsPlainText() {
+        MockMultipartFile file = new MockMultipartFile("file", "n.txt", "text/plain", "a < b is fine\nhello".getBytes());
+        when(virusScanService.scan(any(), any())).thenReturn(new VirusScanService.Clean());
+        when(storageProvider.upload(any(), any(InputStream.class), anyLong(), eq("text/plain"), any())).thenReturn("id");
+        when(jdbcTemplate.update(any(String.class), eq(TENANT_ID), any(String.class), eq("id"))).thenReturn(1);
+
+        assertThat(fileStorageService.uploadFile(file, FileStorageService.CATEGORY_DOCUMENTS, ENTITY_ID)).isNotNull();
     }
 
     // ─── BUG-E1: the receipts category ──────────────────────────────────────

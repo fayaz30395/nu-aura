@@ -185,4 +185,22 @@ class TravelAccessControlTest {
         assertThatThrownBy(() -> expenseService.rejectExpense(expenseId, "x")).isInstanceOf(AccessDeniedException.class);
         assertThat(expense.getStatus()).isEqualTo(ExpenseStatus.PENDING);
     }
+
+    @Test
+    @DisplayName("pending-approvals list: reportees only for managers, whole tenant for tenant-wide scope")
+    void pendingApprovals_scopedToReportees() {
+        var pageable = org.springframework.data.domain.Pageable.unpaged();
+        var pending = java.util.List.of(TravelStatus.SUBMITTED, TravelStatus.PENDING_APPROVAL);
+        secCtx.when(SecurityContext::getAllReporteeIds).thenReturn(Set.of(owner));
+        when(requestRepo.findByTenantIdAndStatusInAndEmployeeIdIn(tenantId, pending, Set.of(owner), pageable))
+                .thenReturn(new org.springframework.data.domain.PageImpl<>(java.util.List.of(request)));
+
+        assertThat(travelService.getPendingApprovals(pageable).getContent()).hasSize(1);
+        verify(requestRepo, never()).findByTenantIdAndStatusIn(any(), any(), any());
+
+        secCtx.when(SecurityContext::isHRManager).thenReturn(true);
+        when(requestRepo.findByTenantIdAndStatusIn(tenantId, pending, pageable))
+                .thenReturn(new org.springframework.data.domain.PageImpl<>(java.util.List.of(request, request)));
+        assertThat(travelService.getPendingApprovals(pageable).getContent()).hasSize(2);
+    }
 }

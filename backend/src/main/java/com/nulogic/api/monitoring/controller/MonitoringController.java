@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/monitoring")
 @RequiredArgsConstructor
 @Tag(name = "Monitoring", description = "System monitoring and metrics API")
-@SecurityRequirement(name = "Bearer Authentication")
+@SecurityRequirement(name = "bearerAuth")
 public class MonitoringController {
 
     private final MonitoringService monitoringService;

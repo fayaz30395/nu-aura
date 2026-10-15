@@ -152,6 +152,55 @@ class AssetManagementServiceTest {
                 .hasMessageContaining("already exists");
     }
 
+    @Test
+    @DisplayName("createAsset - ignores client assignedTo and ASSIGNED status")
+    void createAsset_ignoresAssignment() {
+        AssetRequest request = buildAssetRequest();
+        request.setStatus(AssetStatus.ASSIGNED);
+        request.setAssignedTo(UUID.randomUUID());
+        when(assetRepository.existsByTenantIdAndAssetCode(tenantId, "LAPTOP-001")).thenReturn(false);
+        when(assetRepository.save(any(Asset.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        assetManagementService.createAsset(request);
+
+        org.mockito.ArgumentCaptor<Asset> cap = org.mockito.ArgumentCaptor.forClass(Asset.class);
+        verify(assetRepository).save(cap.capture());
+        assertThat(cap.getValue().getStatus()).isEqualTo(AssetStatus.AVAILABLE);
+        assertThat(cap.getValue().getAssignedTo()).isNull();
+    }
+
+    @Test
+    @DisplayName("updateAsset - cannot assign or un-assign via body")
+    void updateAsset_ignoresAssignment() {
+        Asset assigned = buildAsset(AssetStatus.ASSIGNED);
+        UUID holder = UUID.randomUUID();
+        assigned.setAssignedTo(holder);
+        when(assetRepository.findByIdAndTenantId(assetId, tenantId)).thenReturn(Optional.of(assigned));
+        when(assetRepository.save(any(Asset.class))).thenAnswer(inv -> inv.getArgument(0));
+        AssetRequest request = buildAssetRequest();
+        request.setStatus(AssetStatus.AVAILABLE);
+        request.setAssignedTo(null);
+
+        assetManagementService.updateAsset(assetId, request);
+
+        assertThat(assigned.getStatus()).isEqualTo(AssetStatus.ASSIGNED);
+        assertThat(assigned.getAssignedTo()).isEqualTo(holder);
+    }
+
+    @Test
+    @DisplayName("updateAsset - valid status change on unassigned asset still applies")
+    void updateAsset_statusChangeApplies() {
+        Asset existing = buildAsset(AssetStatus.AVAILABLE);
+        when(assetRepository.findByIdAndTenantId(assetId, tenantId)).thenReturn(Optional.of(existing));
+        when(assetRepository.save(any(Asset.class))).thenAnswer(inv -> inv.getArgument(0));
+        AssetRequest request = buildAssetRequest();
+        request.setStatus(AssetStatus.RETIRED);
+
+        assetManagementService.updateAsset(assetId, request);
+
+        assertThat(existing.getStatus()).isEqualTo(AssetStatus.RETIRED);
+    }
+
     // ==================== updateAsset ====================
 
     @Test

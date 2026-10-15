@@ -6,6 +6,8 @@ import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.exit.*;
+import com.nulogic.domain.user.RoleScope;
+import com.nulogic.common.security.Permission;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.exit.repository.*;
 import com.nulogic.infrastructure.kafka.producer.EventPublisher;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -188,6 +191,7 @@ public class ExitManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitProcess exitProcess = exitProcessRepository.findByIdAndTenantId(processId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(EXIT_PROCESS_NOT_FOUND));
+        assertCanViewExit(exitProcess);
         return mapToExitProcessResponse(exitProcess);
     }
 
@@ -196,6 +200,7 @@ public class ExitManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitProcess exitProcess = exitProcessRepository.findByTenantIdAndEmployeeId(tenantId, employeeId)
                 .orElseThrow(() -> new IllegalArgumentException("No exit process found for employee"));
+        assertCanViewExit(exitProcess);
         return mapToExitProcessResponse(exitProcess);
     }
 
@@ -259,15 +264,18 @@ public class ExitManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating exit clearance for process {} in tenant {}", request.getExitProcessId(), tenantId);
 
+        // Tenant-scoped parent lookup; decision fields (status/approvedDate) are server-owned.
+        requireExitProcess(request.getExitProcessId(), tenantId);
+        requireTenantEmployee(request.getApproverId(), tenantId);
+
         ExitClearance clearance = new ExitClearance();
         clearance.setId(UUID.randomUUID());
         clearance.setTenantId(tenantId);
         clearance.setExitProcessId(request.getExitProcessId());
         clearance.setDepartment(request.getDepartment());
         clearance.setApproverId(request.getApproverId());
-        clearance.setStatus(request.getStatus() != null ? request.getStatus() : ExitClearance.ClearanceStatus.PENDING);
+        clearance.setStatus(ExitClearance.ClearanceStatus.PENDING);
         clearance.setRequestedDate(request.getRequestedDate());
-        clearance.setApprovedDate(request.getApprovedDate());
         clearance.setComments(request.getComments());
         clearance.setChecklistItems(request.getChecklistItems());
 
@@ -283,10 +291,31 @@ public class ExitManagementService {
         ExitClearance clearance = exitClearanceRepository.findByIdAndTenantId(clearanceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(EXIT_CLEARANCE_NOT_FOUND));
 
-        clearance.setApproverId(request.getApproverId());
-        clearance.setStatus(request.getStatus());
+        ExitProcess process = requireExitProcess(clearance.getExitProcessId(), tenantId);
+        if (isOwnExit(process)) {
+            throw new AccessDeniedException("Cannot update clearance for your own exit process");
+        }
+        if (process.getStatus() == ExitProcess.ExitStatus.COMPLETED
+                || process.getStatus() == ExitProcess.ExitStatus.CANCELLED) {
+            throw new IllegalStateException("Cannot update clearance: exit process is " + process.getStatus());
+        }
+
+        ExitClearance.ClearanceStatus newStatus = request.getStatus() != null ? request.getStatus() : clearance.getStatus();
+        boolean decision = newStatus == ExitClearance.ClearanceStatus.APPROVED
+                || newStatus == ExitClearance.ClearanceStatus.REJECTED;
+        if (decision) {
+            // Approver identity and decision date come from the authenticated caller, never the body.
+            clearance.setApproverId(SecurityContext.getCurrentEmployeeId());
+            clearance.setApprovedDate(tenantTimeService.today(tenantId));
+        } else {
+            requireTenantEmployee(request.getApproverId(), tenantId);
+            if (request.getApproverId() != null) {
+                clearance.setApproverId(request.getApproverId());
+            }
+            clearance.setApprovedDate(null);
+        }
+        clearance.setStatus(newStatus);
         clearance.setRequestedDate(request.getRequestedDate());
-        clearance.setApprovedDate(request.getApprovedDate());
         clearance.setComments(request.getComments());
         clearance.setChecklistItems(request.getChecklistItems());
 
@@ -297,6 +326,7 @@ public class ExitManagementService {
     @Transactional(readOnly = true)
     public List<ExitClearanceResponse> getClearancesByExitProcess(UUID exitProcessId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanViewExit(requireExitProcess(exitProcessId, tenantId));
         return exitClearanceRepository.findByTenantIdAndExitProcessId(tenantId, exitProcessId).stream()
                 .map(this::mapToExitClearanceResponse)
                 .collect(Collectors.toList());
@@ -305,6 +335,9 @@ public class ExitManagementService {
     @Transactional(readOnly = true)
     public List<ExitClearanceResponse> getClearancesByApprover(UUID approverId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!hasTenantWideExitScope() && !Objects.equals(approverId, SecurityContext.getCurrentEmployeeId())) {
+            throw new AccessDeniedException("Cannot list another approver's clearances");
+        }
         return exitClearanceRepository.findByTenantIdAndApproverId(tenantId, approverId).stream()
                 .map(this::mapToExitClearanceResponse)
                 .collect(Collectors.toList());
@@ -316,6 +349,58 @@ public class ExitManagementService {
         ExitClearance clearance = exitClearanceRepository.findByIdAndTenantId(clearanceId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(EXIT_CLEARANCE_NOT_FOUND));
         exitClearanceRepository.delete(clearance);
+    }
+
+    // ==================== Access control helpers ====================
+
+    private ExitProcess requireExitProcess(UUID processId, UUID tenantId) {
+        return exitProcessRepository.findByIdAndTenantId(processId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException(EXIT_PROCESS_NOT_FOUND));
+    }
+
+    private void requireTenantEmployee(UUID employeeId, UUID tenantId) {
+        if (employeeId != null) {
+            employeeRepository.findByIdAndTenantId(employeeId, tenantId)
+                    .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        }
+    }
+
+    private boolean hasTenantWideExitScope() {
+        return SecurityContext.isHRManager()
+                || SecurityContext.hasPermissionAtLeast(Permission.EXIT_VIEW, RoleScope.ALL)
+                || SecurityContext.hasPermissionAtLeast(Permission.EXIT_MANAGE, RoleScope.ALL);
+    }
+
+    private boolean isOwnExit(ExitProcess process) {
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        return me != null && me.equals(process.getEmployeeId());
+    }
+
+    private void assertCanViewExit(ExitProcess process) {
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        boolean reportee = me != null && SecurityContext.getAllReporteeIds().contains(process.getEmployeeId());
+        if (!hasTenantWideExitScope() && !isOwnExit(process) && !reportee) {
+            throw new AccessDeniedException("Cannot access another employee's exit process");
+        }
+    }
+
+    private void assertCanViewInterview(ExitInterview interview) {
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        if (!hasTenantWideExitScope() && (me == null || !me.equals(interview.getInterviewerId()))) {
+            throw new AccessDeniedException("Cannot access another employee's exit interview");
+        }
+    }
+
+    private void assertCanModifyInterview(ExitInterview interview) {
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        if (me != null && me.equals(interview.getEmployeeId())) {
+            throw new AccessDeniedException("Cannot conduct or reschedule your own exit interview");
+        }
+        assertCanViewInterview(interview);
+        if (interview.getStatus() == ExitInterview.InterviewStatus.COMPLETED
+                || interview.getStatus() == ExitInterview.InterviewStatus.CANCELLED) {
+            throw new IllegalStateException("Exit interview is already " + interview.getStatus());
+        }
     }
 
     // ==================== Event Publishing ====================
@@ -701,10 +786,14 @@ public class ExitManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         log.info("Creating exit interview for process {} in tenant {}", request.getExitProcessId(), tenantId);
 
+        // Employee identity comes from the tenant-scoped exit process, not the body.
+        ExitProcess process = requireExitProcess(request.getExitProcessId(), tenantId);
+        requireTenantEmployee(request.getInterviewerId(), tenantId);
+
         ExitInterview interview = new ExitInterview();
         interview.setTenantId(tenantId);
-        interview.setExitProcessId(request.getExitProcessId());
-        interview.setEmployeeId(request.getEmployeeId());
+        interview.setExitProcessId(process.getId());
+        interview.setEmployeeId(process.getEmployeeId());
         interview.setInterviewerId(request.getInterviewerId());
         interview.setScheduledDate(request.getScheduledDate());
         interview.setScheduledTime(request.getScheduledTime());
@@ -720,6 +809,8 @@ public class ExitManagementService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         ExitInterview interview = exitInterviewRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(EXIT_INTERVIEW_NOT_FOUND));
+
+        assertCanModifyInterview(interview);
 
         // S12-B: tenant-local "today" for interview actual date — resolved via TenantTimeService.
         interview.setActualDate(tenantTimeService.today(tenantId));
@@ -757,6 +848,8 @@ public class ExitManagementService {
         ExitInterview interview = exitInterviewRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(EXIT_INTERVIEW_NOT_FOUND));
 
+        assertCanModifyInterview(interview);
+
         interview.setScheduledDate(newDate);
         interview.setStatus(ExitInterview.InterviewStatus.RESCHEDULED);
         return mapToExitInterviewResponse(exitInterviewRepository.save(interview));
@@ -767,24 +860,34 @@ public class ExitManagementService {
         UUID tenantId = TenantContext.getCurrentTenant();
         ExitInterview interview = exitInterviewRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(EXIT_INTERVIEW_NOT_FOUND));
+        assertCanViewInterview(interview);
         return mapToExitInterviewResponse(interview);
     }
 
     @Transactional(readOnly = true)
     public Page<ExitInterviewResponse> getAllExitInterviews(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!hasTenantWideExitScope()) {
+            return Page.empty(pageable);
+        }
         return exitInterviewRepository.findByTenantId(tenantId, pageable).map(this::mapToExitInterviewResponse);
     }
 
     @Transactional(readOnly = true)
     public List<ExitInterviewResponse> getScheduledInterviews() {
         UUID tenantId = TenantContext.getCurrentTenant();
+        boolean wide = hasTenantWideExitScope();
         return exitInterviewRepository.findByTenantIdAndStatus(tenantId, ExitInterview.InterviewStatus.SCHEDULED)
-                .stream().map(this::mapToExitInterviewResponse).collect(Collectors.toList());
+                .stream()
+                .filter(i -> wide || Objects.equals(i.getInterviewerId(), SecurityContext.getCurrentEmployeeId()))
+                .map(this::mapToExitInterviewResponse).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public Map<String, Object> getExitInterviewAnalytics() {
+        if (!hasTenantWideExitScope()) {
+            throw new AccessDeniedException("Exit interview analytics require tenant-wide exit access");
+        }
         UUID tenantId = TenantContext.getCurrentTenant();
         Map<String, Object> analytics = new HashMap<>();
 

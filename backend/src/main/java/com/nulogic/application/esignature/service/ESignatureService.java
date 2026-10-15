@@ -6,6 +6,7 @@ import com.nulogic.application.integration.service.DocuSignManagementService;
 import com.nulogic.application.integration.service.IntegrationConnectorConfigService;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
@@ -24,6 +25,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -142,6 +144,7 @@ public class ESignatureService {
 
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
+        assertCreatorOrManager(signatureRequest);
 
         if (signatureRequest.getStatus() != SignatureRequest.SignatureStatus.DRAFT) {
             throw new IllegalStateException("Only draft signature requests can be sent");
@@ -265,6 +268,7 @@ public class ESignatureService {
         UUID tenantId = TenantContext.getCurrentTenant();
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
+        assertCanAccessRequest(signatureRequest);
         return mapToSignatureRequestResponse(signatureRequest);
     }
 
@@ -283,6 +287,9 @@ public class ESignatureService {
     @Transactional(readOnly = true)
     public List<SignatureRequestResponse> getSignatureRequestsByCreator(UUID creatorId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!isESignManager() && !isMe(creatorId)) {
+            throw new AccessDeniedException("Cannot list another user's signature requests");
+        }
         return signatureRequestRepository.findByTenantIdAndCreatedByOrderByCreatedAtDesc(tenantId, creatorId).stream()
                 .map(this::mapToSignatureRequestResponse)
                 .collect(Collectors.toList());
@@ -292,6 +299,7 @@ public class ESignatureService {
     public List<SignatureRequestResponse> getSignatureRequestsByStatus(SignatureRequest.SignatureStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
         return signatureRequestRepository.findByTenantIdAndStatus(tenantId, status).stream()
+                .filter(this::canAccessRequest)
                 .map(this::mapToSignatureRequestResponse)
                 .collect(Collectors.toList());
     }
@@ -368,6 +376,7 @@ public class ESignatureService {
 
         SignatureRequest signatureRequest = signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND));
+        assertCreatorOrManager(signatureRequest);
 
         // Only allow adding signers if in DRAFT status
         if (signatureRequest.getStatus() != SignatureRequest.SignatureStatus.DRAFT) {
@@ -391,6 +400,9 @@ public class ESignatureService {
 
         SignatureApproval approval = signatureApprovalRepository.findByIdAndTenantId(approvalId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_APPROVAL_NOT_FOUND));
+
+        // Signing is personal: only the employee named on the approval may sign (external signers use the token flow).
+        assertIsSigner(approval);
 
         if (approval.getStatus() == SignatureApproval.ApprovalStatus.SIGNED) {
             throw new IllegalStateException(DOCUMENT_ALREADY_SIGNED);
@@ -444,6 +456,7 @@ public class ESignatureService {
 
         SignatureApproval approval = signatureApprovalRepository.findByIdAndTenantId(approvalId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_APPROVAL_NOT_FOUND));
+        assertIsSigner(approval);
 
         if (approval.getStatus() == SignatureApproval.ApprovalStatus.SIGNED) {
             throw new IllegalStateException("Cannot decline an already signed document");
@@ -472,6 +485,8 @@ public class ESignatureService {
     @Transactional(readOnly = true)
     public List<SignatureApprovalResponse> getApprovalsByRequest(UUID requestId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanAccessRequest(signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException(SIGNATURE_REQUEST_NOT_FOUND)));
         return signatureApprovalRepository.findByTenantIdAndSignatureRequestIdOrderBySigningOrderAsc(tenantId, requestId).stream()
                 .map(this::mapToSignatureApprovalResponse)
                 .collect(Collectors.toList());
@@ -480,6 +495,9 @@ public class ESignatureService {
     @Transactional(readOnly = true)
     public List<SignatureApprovalResponse> getPendingApprovalsBySigner(UUID signerId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!isESignManager() && !isMe(signerId)) {
+            throw new AccessDeniedException("Cannot list another signer's pending approvals");
+        }
         return signatureApprovalRepository.findByTenantIdAndSignerIdAndStatus(
                         tenantId, signerId, SignatureApproval.ApprovalStatus.SENT).stream()
                 .map(this::mapToSignatureApprovalResponse)
@@ -834,5 +852,43 @@ public class ESignatureService {
                 .createdAt(approval.getCreatedAt())
                 .updatedAt(approval.getUpdatedAt())
                 .build();
+    }
+
+    // ======================== Access control ========================
+
+    private boolean isMe(UUID employeeId) {
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        return me != null && me.equals(employeeId);
+    }
+
+    private boolean isESignManager() {
+        return SecurityContext.isHRManager() || SecurityContext.hasPermission(Permission.ESIGNATURE_MANAGE);
+    }
+
+    private boolean canAccessRequest(SignatureRequest request) {
+        if (isESignManager() || isMe(request.getCreatedBy())) {
+            return true;
+        }
+        return signatureApprovalRepository
+                .findByTenantIdAndSignatureRequestId(request.getTenantId(), request.getId()).stream()
+                .anyMatch(a -> isMe(a.getSignerId()));
+    }
+
+    private void assertCanAccessRequest(SignatureRequest request) {
+        if (!canAccessRequest(request)) {
+            throw new AccessDeniedException("Cannot access this signature request");
+        }
+    }
+
+    private void assertCreatorOrManager(SignatureRequest request) {
+        if (!isESignManager() && !isMe(request.getCreatedBy())) {
+            throw new AccessDeniedException("Only the request creator or an e-signature manager can do this");
+        }
+    }
+
+    private void assertIsSigner(SignatureApproval approval) {
+        if (approval.getSignerId() == null || !isMe(approval.getSignerId())) {
+            throw new AccessDeniedException("You are not the signer on this approval");
+        }
     }
 }

@@ -117,7 +117,9 @@ public class JobOpeningService {
         jobOpening.setRequirements(request.getRequirements());
         jobOpening.setSkillsRequired(request.getSkillsRequired());
         jobOpening.setHiringManagerId(request.getHiringManagerId());
-        jobOpening.setStatus(request.getStatus());
+        if (request.getStatus() != null) {
+            jobOpening.setStatus(request.getStatus());
+        }
         jobOpening.setPostedDate(request.getPostedDate());
         jobOpening.setClosingDate(request.getClosingDate());
         jobOpening.setPriority(request.getPriority());

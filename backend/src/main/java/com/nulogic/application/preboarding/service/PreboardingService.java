@@ -6,6 +6,7 @@ import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.preboarding.PreboardingCandidate;
 import com.nulogic.domain.preboarding.PreboardingCandidate.PreboardingStatus;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.preboarding.repository.PreboardingCandidateRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class PreboardingService {
 
     private final PreboardingCandidateRepository candidateRepository;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * Create a new pre-boarding invitation for a candidate.
@@ -240,6 +242,18 @@ public class PreboardingService {
         UUID tenantId = SecurityContext.getCurrentTenantId();
         PreboardingCandidate candidate = candidateRepository.findByIdAndTenantId(candidateId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException(CANDIDATE_NOT_FOUND));
+
+        // employeeId arrives from the client: it must be a real employee of this tenant, not already
+        // linked to a candidate, and the candidate must still be convertible.
+        if (employeeId == null || employeeRepository.findByIdAndTenantId(employeeId, tenantId).isEmpty()) {
+            throw new ResourceNotFoundException("Employee not found");
+        }
+        if (candidate.getStatus() == PreboardingStatus.CONVERTED || candidate.getStatus() == PreboardingStatus.CANCELLED) {
+            throw new BusinessException("Candidate is already " + candidate.getStatus());
+        }
+        if (candidateRepository.existsByTenantIdAndEmployeeId(tenantId, employeeId)) {
+            throw new BusinessException("Employee is already linked to another pre-boarding candidate");
+        }
 
         candidate.setStatus(PreboardingStatus.CONVERTED);
         candidate.setEmployeeId(employeeId);

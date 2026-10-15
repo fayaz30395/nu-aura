@@ -233,7 +233,9 @@ public class InterviewManagementService {
         interview.setInterviewerId(request.getInterviewerId());
         interview.setLocation(request.getLocation());
         interview.setMeetingLink(request.getMeetingLink());
-        interview.setStatus(request.getStatus());
+        if (request.getStatus() != null) {
+            interview.setStatus(request.getStatus());
+        }
         interview.setFeedback(request.getFeedback());
         interview.setRating(request.getRating());
         interview.setResult(request.getResult());

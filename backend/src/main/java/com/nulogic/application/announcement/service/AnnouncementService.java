@@ -9,6 +9,7 @@ import com.nulogic.application.wall.service.WallService;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.validation.RichTextSanitizer;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.announcement.Announcement;
 import com.nulogic.domain.announcement.Announcement.AnnouncementCategory;
@@ -67,7 +68,7 @@ public class AnnouncementService {
 
         Announcement announcement = Announcement.builder()
                 .title(request.getTitle())
-                .content(request.getContent())
+                .content(RichTextSanitizer.sanitizeHtml(request.getContent()))
                 .category(request.getCategory() != null ? request.getCategory() : AnnouncementCategory.GENERAL)
                 .priority(request.getPriority() != null ? request.getPriority() : AnnouncementPriority.MEDIUM)
                 .targetAudience(request.getTargetAudience() != null ? request.getTargetAudience() : TargetAudience.ALL_EMPLOYEES)
@@ -115,7 +116,7 @@ public class AnnouncementService {
                 .orElseThrow(() -> new ResourceNotFoundException("Announcement not found: " + announcementId));
 
         announcement.setTitle(request.getTitle());
-        announcement.setContent(request.getContent());
+        announcement.setContent(RichTextSanitizer.sanitizeHtml(request.getContent()));
         if (request.getCategory() != null) announcement.setCategory(request.getCategory());
         if (request.getPriority() != null) announcement.setPriority(request.getPriority());
         if (request.getTargetAudience() != null) announcement.setTargetAudience(request.getTargetAudience());

@@ -7,6 +7,7 @@ import com.nulogic.application.knowledge.util.TipTapTextExtractor;
 import com.nulogic.common.exception.UnauthorizedException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.validation.RichTextSanitizer;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.knowledge.WikiPage;
@@ -87,6 +88,7 @@ public class WikiPageService {
         // V152: derive flat text projection of TipTap JSONB so the RAG retriever
         // (FluenceContentRetriever) can hit idx_wiki_pages_body_text_trgm instead
         // of seq-scanning CAST(content AS TEXT) on every keyword pass.
+        page.setContent(RichTextSanitizer.sanitizeContent(page.getContent()));
         page.setBodyText(tipTapTextExtractor.extract(page.getContent()));
 
         WikiPage saved = wikiPageRepository.save(page);
@@ -116,9 +118,9 @@ public class WikiPageService {
         page.setTitle(pageData.getTitle());
         page.setSlug(pageData.getSlug());
         page.setExcerpt(pageData.getExcerpt());
-        page.setContent(pageData.getContent());
+        page.setContent(RichTextSanitizer.sanitizeContent(pageData.getContent()));
         // V152: keep body_text in sync with content for trigram-indexed RAG search.
-        page.setBodyText(tipTapTextExtractor.extract(pageData.getContent()));
+        page.setBodyText(tipTapTextExtractor.extract(page.getContent()));
         page.setVisibility(pageData.getVisibility());
         page.setStatus(pageData.getStatus());
 

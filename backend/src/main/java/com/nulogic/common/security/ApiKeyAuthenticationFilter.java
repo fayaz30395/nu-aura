@@ -40,6 +40,9 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
     private final ApiKeyService apiKeyService;
 
+    @org.springframework.beans.factory.annotation.Value("${app.security.trusted-proxy-hops:1}")
+    private int trustedProxyHops = 1;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -122,11 +125,7 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getClientIp(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            return xForwardedFor.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
+        return RateLimitingFilter.clientIp(request, trustedProxyHops);
     }
 
     /**

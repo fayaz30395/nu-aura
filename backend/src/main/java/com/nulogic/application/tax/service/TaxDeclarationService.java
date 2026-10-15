@@ -47,9 +47,16 @@ public class TaxDeclarationService {
     @Transactional
     public TaxDeclarationResponse createTaxDeclaration(TaxDeclarationRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        log.info("Creating tax declaration for employee {} for FY {}", request.getEmployeeId(), request.getFinancialYear());
+        // Owner is the caller; a body employeeId for someone else needs STATUTORY:VIEW
+        UUID callerId = SecurityContext.getCurrentEmployeeId();
+        UUID ownerId = request.getEmployeeId() != null ? request.getEmployeeId() : callerId;
+        if (ownerId == null || (!ownerId.equals(callerId) && !SecurityContext.hasPermission(Permission.STATUTORY_VIEW))) {
+            throw new AccessDeniedException("Access denied");
+        }
+        request.setEmployeeId(ownerId);
+        log.info("Creating tax declaration for employee {} for FY {}", ownerId, request.getFinancialYear());
 
-        employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId)
+        employeeRepository.findByIdAndTenantId(ownerId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
         // Check if declaration already exists for this FY
@@ -337,12 +344,12 @@ public class TaxDeclarationService {
     private TaxDeclaration mapToEntity(TaxDeclarationRequest request, UUID tenantId) {
         TaxDeclaration decl = new TaxDeclaration();
         decl.setTenantId(tenantId);
+        decl.setEmployeeId(request.getEmployeeId());
         updateEntityFromRequest(decl, request);
         return decl;
     }
 
     private void updateEntityFromRequest(TaxDeclaration decl, TaxDeclarationRequest request) {
-        decl.setEmployeeId(request.getEmployeeId());
         decl.setFinancialYear(request.getFinancialYear());
         decl.setTaxRegime(request.getTaxRegime());
         decl.setSec80cPpf(request.getSec80cPpf());

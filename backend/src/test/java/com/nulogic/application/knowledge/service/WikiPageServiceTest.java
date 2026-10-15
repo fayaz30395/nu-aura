@@ -101,6 +101,20 @@ class WikiPageServiceTest {
     }
 
     @Test
+    @DisplayName("createPage strips unsafe link/image URLs from TipTap content before saving")
+    void createPageSanitizesContent() {
+        WikiPage page = pageWithStatus(WikiPage.PageStatus.DRAFT);
+        page.setContent("{\"type\":\"doc\",\"content\":[{\"type\":\"image\",\"attrs\":{\"src\":\"javascript:alert(1)\"}}]}");
+        when(wikiPageRepository.save(any())).thenReturn(page);
+        when(wikiPageVersionRepository.countByTenantIdAndPageId(any(), any())).thenReturn(0L);
+        when(wikiPageVersionRepository.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        service.createPage(page);
+
+        assertThat(page.getContent()).doesNotContain("javascript:");
+    }
+
+    @Test
     @DisplayName("updatePage rejects when a different user holds the edit lock")
     void updatePageRejectsWhenLocked() {
         WikiPage existing = pageWithStatus(WikiPage.PageStatus.DRAFT);

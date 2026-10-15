@@ -85,6 +85,7 @@ class BenefitEnhancedServiceEligibilityTest {
         planId = UUID.randomUUID();
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         securityContextMock.when(SecurityContext::getCurrentUserId).thenReturn(UUID.randomUUID());
+        securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
 
         service = new BenefitEnhancedService(planRepository, enrollmentRepository, dependentRepository,
                 claimRepository, flexAllocationRepository, employeeRepository, eventPublisher,

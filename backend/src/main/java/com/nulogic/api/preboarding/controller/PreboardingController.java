@@ -5,11 +5,14 @@ import com.nulogic.api.preboarding.dto.PreboardingCandidateResponse;
 import com.nulogic.api.preboarding.dto.UpdateBankDetailsRequest;
 import com.nulogic.api.preboarding.dto.UpdatePersonalInfoRequest;
 import com.nulogic.application.preboarding.service.PreboardingService;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.preboarding.PreboardingCandidate;
 import com.nulogic.domain.preboarding.PreboardingCandidate.PreboardingStatus;
+import com.nulogic.infrastructure.security.CaptchaService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,6 +34,7 @@ public class PreboardingController {
 
     private final PreboardingService preboardingService;
     private final TenantTimeService tenantTimeService;
+    private final CaptchaService captchaService;
 
     // ============ ADMIN ENDPOINTS ============
 
@@ -116,7 +120,9 @@ public class PreboardingController {
     @PutMapping("/portal/{token}/personal-info")
     public ResponseEntity<PreboardingCandidateResponse> updatePersonalInfo(
             @PathVariable String token,
-            @Valid @RequestBody UpdatePersonalInfoRequest request) {
+            @Valid @RequestBody UpdatePersonalInfoRequest request,
+            HttpServletRequest httpRequest) {
+        requireCaptcha(request.getCaptchaToken(), httpRequest);
         PreboardingCandidate candidate = preboardingService.updatePersonalInfo(
                 token,
                 request.getDateOfBirth(),
@@ -135,7 +141,9 @@ public class PreboardingController {
     @PutMapping("/portal/{token}/bank-details")
     public ResponseEntity<PreboardingCandidateResponse> updateBankDetails(
             @PathVariable String token,
-            @Valid @RequestBody UpdateBankDetailsRequest request) {
+            @Valid @RequestBody UpdateBankDetailsRequest request,
+            HttpServletRequest httpRequest) {
+        requireCaptcha(request.getCaptchaToken(), httpRequest);
         PreboardingCandidate candidate = preboardingService.updateBankDetails(
                 token,
                 request.getBankAccountNumber(),
@@ -149,14 +157,27 @@ public class PreboardingController {
     @PostMapping("/portal/{token}/documents/{documentType}")
     public ResponseEntity<PreboardingCandidateResponse> markDocumentUploaded(
             @PathVariable String token,
-            @PathVariable String documentType) {
+            @PathVariable String documentType,
+            @RequestHeader(value = "X-Captcha-Token", required = false) String captchaToken,
+            HttpServletRequest httpRequest) {
+        requireCaptcha(captchaToken, httpRequest);
         PreboardingCandidate candidate = preboardingService.markDocumentUploaded(token, documentType);
         return ResponseEntity.ok(PreboardingCandidateResponse.from(candidate));
     }
 
     @PostMapping("/portal/{token}/sign-offer")
-    public ResponseEntity<PreboardingCandidateResponse> signOfferLetter(@PathVariable String token) {
+    public ResponseEntity<PreboardingCandidateResponse> signOfferLetter(
+            @PathVariable String token,
+            @RequestHeader(value = "X-Captcha-Token", required = false) String captchaToken,
+            HttpServletRequest httpRequest) {
+        requireCaptcha(captchaToken, httpRequest);
         PreboardingCandidate candidate = preboardingService.signOfferLetter(token);
         return ResponseEntity.ok(PreboardingCandidateResponse.from(candidate));
+    }
+
+    private void requireCaptcha(String captchaToken, HttpServletRequest httpRequest) {
+        if (!captchaService.verify(captchaToken, httpRequest.getRemoteAddr())) {
+            throw new BusinessException("Captcha verification failed. Please refresh the page and try again.");
+        }
     }
 }

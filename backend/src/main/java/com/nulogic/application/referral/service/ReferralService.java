@@ -1,6 +1,8 @@
 package com.nulogic.application.referral.service;
 
 import com.nulogic.api.referral.dto.*;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.referral.EmployeeReferral;
@@ -8,6 +10,7 @@ import com.nulogic.domain.referral.EmployeeReferral.BonusStatus;
 import com.nulogic.domain.referral.EmployeeReferral.ReferralStatus;
 import com.nulogic.domain.referral.ReferralPolicy;
 import com.nulogic.domain.user.User;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.referral.repository.EmployeeReferralRepository;
 import com.nulogic.infrastructure.referral.repository.ReferralPolicyRepository;
 import com.nulogic.infrastructure.user.repository.UserRepository;
@@ -16,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +39,7 @@ public class ReferralService {
     private final ReferralPolicyRepository policyRepository;
     private final UserRepository userRepository;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
 
     // ==================== Referral Submission ====================
 
@@ -105,6 +110,11 @@ public class ReferralService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
+        // REFERRAL_VIEW is held by regular employees: only the referrer or a referral manager may read it.
+        if (!isReferrer(referral) && !SecurityContext.hasPermission(Permission.REFERRAL_MANAGE)
+                && !SecurityContext.isHRManager()) {
+            throw new AccessDeniedException("Cannot access another employee's referral");
+        }
         return mapToResponse(referral);
     }
 
@@ -190,6 +200,11 @@ public class ReferralService {
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
 
+        // hiredEmployeeId comes from the client: must be an employee of this tenant, and not the referrer.
+        employeeRepository.findByIdAndTenantId(hiredEmployeeId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        assertNotOwnReferral(referral);
+
         LocalDate today = tenantTimeService.today(tenantId);
         referral.setHiredEmployeeId(hiredEmployeeId);
         referral.setStatus(ReferralStatus.JOINED);
@@ -212,6 +227,7 @@ public class ReferralService {
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
 
+        assertNotOwnReferral(referral);
         if (referral.getBonusStatus() != BonusStatus.ELIGIBLE) {
             throw new IllegalStateException("Referral is not eligible for bonus processing");
         }
@@ -225,6 +241,11 @@ public class ReferralService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         EmployeeReferral referral = referralRepository.findByIdAndTenantId(referralId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Referral not found"));
+
+        assertNotOwnReferral(referral);
+        if (referral.getBonusStatus() != BonusStatus.PROCESSING) {
+            throw new IllegalStateException("Bonus can only be paid after it is PROCESSING");
+        }
 
         referral.setBonusStatus(BonusStatus.PAID);
         referral.setBonusPaidDate(tenantTimeService.today(tenantId));
@@ -534,5 +555,16 @@ public class ReferralService {
                 .createdAt(policy.getCreatedAt())
                 .updatedAt(policy.getUpdatedAt())
                 .build();
+    }
+
+    private boolean isReferrer(EmployeeReferral referral) {
+        UUID me = SecurityContext.getCurrentUserId();
+        return me != null && me.equals(referral.getReferrerId());
+    }
+
+    private void assertNotOwnReferral(EmployeeReferral referral) {
+        if (isReferrer(referral)) {
+            throw new AccessDeniedException("Cannot process your own referral");
+        }
     }
 }

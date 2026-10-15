@@ -1,7 +1,10 @@
 package com.nulogic.api.publicapi.controller;
 
 import com.nulogic.application.publicapi.service.PublicCareerService;
+import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.infrastructure.security.CaptchaService;
+import jakarta.servlet.http.HttpServletRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
@@ -36,6 +39,7 @@ import java.util.UUID;
 public class PublicCareerController {
 
     private final PublicCareerService publicCareerService;
+    private final CaptchaService captchaService;
 
     /**
      * Default tenant for the public career landing page when no {@code X-Tenant-ID}
@@ -116,8 +120,13 @@ public class PublicCareerController {
             @RequestParam(required = false) String phone,
             @RequestParam(required = false) @Size(max = 2000) String coverLetter,
             @RequestParam(required = false) String expectedSalary,
-            @RequestParam(required = false) MultipartFile resume) {
+            @RequestParam(required = false) MultipartFile resume,
+            @RequestParam(required = false) String captchaToken,
+            HttpServletRequest httpRequest) {
 
+        if (!captchaService.verify(captchaToken, httpRequest.getRemoteAddr())) {
+            throw new BusinessException("Captcha verification failed. Please refresh the page and try again.");
+        }
         UUID tenantId = resolveTenantOrDefault();
         log.info("Public application received: tenantId={}, jobId={}, email={}", tenantId, jobId, email);
 

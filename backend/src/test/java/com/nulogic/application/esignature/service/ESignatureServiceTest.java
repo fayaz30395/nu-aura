@@ -7,6 +7,7 @@ import com.nulogic.application.integration.service.DocuSignManagementService;
 import com.nulogic.application.integration.service.IntegrationConnectorConfigService;
 import com.nulogic.common.security.DataScopeService;
 import com.nulogic.common.security.TenantContext;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.esignature.SignatureApproval;
 import com.nulogic.domain.esignature.SignatureRequest;
@@ -27,6 +28,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,6 +72,7 @@ class ESignatureServiceTest {
     private SignatureRequest signatureRequest;
     private SignatureApproval approval;
     private LocalDateTime now;
+    private UUID me;
 
     @BeforeAll
     static void setUpClass() {
@@ -80,11 +84,18 @@ class ESignatureServiceTest {
         tenantContextMock.close();
     }
 
+    @org.junit.jupiter.api.AfterEach
+    void clearSecurity() {
+        SecurityContext.clear();
+    }
+
     @BeforeEach
     void setUp() {
         tenantId = UUID.randomUUID();
         requestId = UUID.randomUUID();
         approvalId = UUID.randomUUID();
+        me = UUID.randomUUID();
+        SecurityContext.setCurrentUser(UUID.randomUUID(), me, Set.of(), Map.of());
         now = LocalDateTime.of(2025, 6, 1, 9, 0);
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
@@ -102,7 +113,7 @@ class ESignatureServiceTest {
         signatureRequest.setTenantId(tenantId);
         signatureRequest.setTitle("Offer Letter");
         signatureRequest.setDocumentType(SignatureRequest.DocumentType.OFFER_LETTER);
-        signatureRequest.setCreatedBy(UUID.randomUUID());
+        signatureRequest.setCreatedBy(me);
         signatureRequest.setStatus(SignatureRequest.SignatureStatus.DRAFT);
         signatureRequest.setSignatureOrder(false);
         signatureRequest.setRequiredSignatures(1);
@@ -113,6 +124,7 @@ class ESignatureServiceTest {
         approval.setTenantId(tenantId);
         approval.setSignatureRequestId(requestId);
         approval.setSignerRole(SignatureApproval.SignerRole.EXTERNAL);
+        approval.setSignerId(me);
         approval.setSignerEmail("candidate@example.com");
         approval.setStatus(SignatureApproval.ApprovalStatus.PENDING);
         approval.setIsRequired(true);
@@ -244,6 +256,77 @@ class ESignatureServiceTest {
             assertThat(result.getDeclineReason()).isEqualTo("salary too low");
             assertThat(signatureRequest.getStatus()).isEqualTo(SignatureRequest.SignatureStatus.DECLINED);
             verify(eventPublisher).publishEvent(any());
+        }
+    }
+
+    @Nested
+    @DisplayName("Record-level access")
+    class AccessControlTests {
+
+        private void actAs(UUID employeeId, String... roles) {
+            SecurityContext.setCurrentUser(UUID.randomUUID(), employeeId, Set.of(roles), Map.of());
+        }
+
+        @Test
+        @DisplayName("a non-signer with ESIGNATURE:SIGN cannot sign or decline someone else's approval; nothing saved")
+        void strangerCannotSignOrDecline() {
+            actAs(UUID.randomUUID());
+            when(signatureApprovalRepository.findByIdAndTenantId(approvalId, tenantId)).thenReturn(Optional.of(approval));
+
+            assertThatThrownBy(() -> eSignatureService.signDocument(approvalId, SignDocumentRequest.builder()
+                    .signatureMethod(SignatureApproval.SignatureMethod.TYPED).signatureData("x").build()))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThatThrownBy(() -> eSignatureService.declineDocument(approvalId, "no"))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            verify(signatureApprovalRepository, never()).save(any());
+            assertThat(approval.getStatus()).isEqualTo(SignatureApproval.ApprovalStatus.PENDING);
+        }
+
+        @Test
+        @DisplayName("an external (no employee) approval cannot be signed through the internal endpoint")
+        void externalApprovalNotSignableInternally() {
+            approval.setSignerId(null);
+            when(signatureApprovalRepository.findByIdAndTenantId(approvalId, tenantId)).thenReturn(Optional.of(approval));
+
+            assertThatThrownBy(() -> eSignatureService.signDocument(approvalId, SignDocumentRequest.builder()
+                    .signatureMethod(SignatureApproval.SignatureMethod.TYPED).signatureData("x").build()))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        }
+
+        @Test
+        @DisplayName("request read/send/addSigner are limited to creator, signer or manager")
+        void requestScoped() {
+            actAs(UUID.randomUUID());
+            when(signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(signatureRequest));
+
+            assertThatThrownBy(() -> eSignatureService.getSignatureRequestById(requestId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThatThrownBy(() -> eSignatureService.getApprovalsByRequest(requestId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThatThrownBy(() -> eSignatureService.sendForSignature(requestId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThatThrownBy(() -> eSignatureService.addSigner(requestId, new com.nulogic.api.esignature.dto.SignatureApprovalRequest()))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThatThrownBy(() -> eSignatureService.getSignatureRequestsByCreator(me))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+            assertThatThrownBy(() -> eSignatureService.getPendingApprovalsBySigner(me))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+
+            actAs(me); // creator and named signer
+            assertThat(eSignatureService.getSignatureRequestById(requestId)).isNotNull();
+            assertThat(eSignatureService.getPendingApprovalsBySigner(me)).isEmpty();
+        }
+
+        @Test
+        @DisplayName("a named signer who did not create the request may read it")
+        void signerMayRead() {
+            UUID signer = UUID.randomUUID();
+            approval.setSignerId(signer);
+            when(signatureRequestRepository.findByIdAndTenantId(requestId, tenantId)).thenReturn(Optional.of(signatureRequest));
+            when(signatureApprovalRepository.findByTenantIdAndSignatureRequestId(tenantId, requestId)).thenReturn(List.of(approval));
+            actAs(signer);
+
+            assertThat(eSignatureService.getSignatureRequestById(requestId)).isNotNull();
         }
     }
 }

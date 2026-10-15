@@ -5,6 +5,8 @@ import com.nulogic.api.workflow.dto.WorkflowExecutionRequest;
 import com.nulogic.application.workflow.callback.ApprovalCallbackHandler;
 import com.nulogic.application.workflow.service.WorkflowService;
 import com.nulogic.common.logging.Audited;
+import com.nulogic.common.security.Permission;
+import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
@@ -22,6 +24,7 @@ import com.nulogic.infrastructure.onboarding.repository.OnboardingTemplateTaskRe
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -339,6 +342,8 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<OnboardingTaskResponse> getProcessTasks(UUID processId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        assertCanView(onboardingRepository.findByIdAndTenantId(processId, tenantId)
+                .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND)));
         return taskRepository.findByProcessIdAndTenantId(processId, tenantId).stream()
                 .map(this::mapToTaskResponse)
                 .collect(Collectors.toList());
@@ -495,6 +500,7 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingProcess process = onboardingRepository.findByIdAndTenantId(processId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException(PROCESS_NOT_FOUND));
+        assertCanView(process);
         return mapToResponse(process);
     }
 
@@ -503,14 +509,22 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         UUID tenantId = TenantContext.getCurrentTenant();
         OnboardingProcess process = onboardingRepository.findByTenantIdAndEmployeeId(tenantId, employeeId)
                 .orElseThrow(() -> new IllegalArgumentException("No onboarding process found for employee"));
+        assertCanView(process);
         return mapToResponse(process);
     }
 
     @Transactional(readOnly = true)
     public Page<OnboardingProcessResponse> getAllProcesses(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        boolean wide = hasTenantWideOnboardingScope();
         Page<OnboardingProcess> page = onboardingRepository.findAll(
-                (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId),
+                (root, query, cb) -> wide
+                        ? cb.equal(root.get("tenantId"), tenantId)
+                        : cb.and(cb.equal(root.get("tenantId"), tenantId),
+                                me == null ? cb.disjunction()
+                                        : cb.or(cb.equal(root.get("employeeId"), me),
+                                                cb.equal(root.get("assignedBuddyId"), me))),
                 pageable);
         Map<UUID, String> nameCache = buildEmployeeNameCache(page.getContent());
         return page.map(process -> mapToResponse(process, nameCache));
@@ -519,7 +533,8 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<OnboardingProcessResponse> getProcessesByStatus(OnboardingProcess.ProcessStatus status) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        List<OnboardingProcess> processes = onboardingRepository.findByTenantIdAndStatus(tenantId, status);
+        List<OnboardingProcess> processes = onboardingRepository.findByTenantIdAndStatus(tenantId, status).stream()
+                .filter(this::canView).collect(Collectors.toList());
         Map<UUID, String> nameCache = buildEmployeeNameCache(processes);
         return processes.stream()
                 .map(process -> mapToResponse(process, nameCache))
@@ -529,6 +544,9 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
     @Transactional(readOnly = true)
     public List<OnboardingProcessResponse> getProcessesByBuddy(UUID buddyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        if (!hasTenantWideOnboardingScope() && !isMe(buddyId)) {
+            throw new AccessDeniedException("Cannot list another buddy's onboarding processes");
+        }
         List<OnboardingProcess> processes = onboardingRepository.findByTenantIdAndAssignedBuddyId(tenantId, buddyId);
         Map<UUID, String> nameCache = buildEmployeeNameCache(processes);
         return processes.stream()
@@ -720,6 +738,30 @@ public class OnboardingManagementService implements ApprovalCallbackHandler {
         } catch (Exception e) { // Intentional broad catch — service error boundary
             log.warn("Could not start approval workflow for onboarding process {}: {}",
                     process.getId(), e.getMessage());
+        }
+    }
+
+    // ======================== Access control ========================
+
+    private boolean isMe(UUID employeeId) {
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        return me != null && me.equals(employeeId);
+    }
+
+    /** ONBOARDING_VIEW is also granted to buddies, so tenant-wide reads need an HR-level permission. */
+    private boolean hasTenantWideOnboardingScope() {
+        return SecurityContext.isHRManager()
+                || SecurityContext.hasPermission(Permission.ONBOARDING_MANAGE)
+                || SecurityContext.hasPermission(Permission.ONBOARDING_CREATE);
+    }
+
+    private boolean canView(OnboardingProcess process) {
+        return hasTenantWideOnboardingScope() || isMe(process.getEmployeeId()) || isMe(process.getAssignedBuddyId());
+    }
+
+    private void assertCanView(OnboardingProcess process) {
+        if (!canView(process)) {
+            throw new AccessDeniedException("Cannot access this onboarding process");
         }
     }
 }

@@ -94,6 +94,10 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     private DistributedRateLimiter distributedRateLimiter;
     @Value("${app.rate-limit.requests-per-minute:60}")
     private int requestsPerMinute;
+    /** Number of trusted proxies in front of the app; see {@link #clientIp}. */
+    @Value("${app.security.trusted-proxy-hops:1}")
+    private int trustedProxyHops = 1;
+
     @Value("${app.rate-limit.enabled:true}")
     private boolean rateLimitEnabled;
     /**
@@ -457,18 +461,30 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Returns the client IP address.
+     * Returns the client IP address using a trusted-proxy-hop model.
      *
-     * <p><b>Security note (SEC-B01):</b> Do not parse X-Forwarded-For directly — the
-     * header is fully attacker-controllable when the request bypasses our trusted
-     * reverse proxy (and even when it doesn't, both leftmost and rightmost strategies
-     * have foot-guns). Instead we rely on Spring's {@code ForwardedHeaderFilter} which
-     * is enabled in production via {@code server.forward-headers-strategy: framework}
-     * and rewrites {@code request.getRemoteAddr()} only when the immediate peer is a
-     * configured trusted proxy.</p>
+     * <p>{@code server.forward-headers-strategy: framework} does NOT rewrite
+     * {@code getRemoteAddr()} (that is Tomcat's RemoteIpValve), so behind the edge proxy
+     * remoteAddr is the proxy. We take the Nth entry counted from the RIGHT of
+     * X-Forwarded-For, where N = {@code app.security.trusted-proxy-hops}: the right-hand
+     * entries are appended by our own proxies; the leftmost is client-supplied and
+     * spoofable, so it is never used unless it is exactly the Nth-from-right entry.</p>
      */
     private String getClientIp(HttpServletRequest request) {
-        // Trust resolved client IP from ForwardedHeaderFilter (configured via server.forward-headers-strategy=framework).
+        return clientIp(request, trustedProxyHops);
+    }
+
+    static String clientIp(HttpServletRequest request, int hops) {
+        String header = request.getHeader("X-Forwarded-For");
+        if (hops > 0 && header != null && !header.isBlank()) {
+            String[] parts = header.split(",");
+            if (parts.length >= hops) {
+                String candidate = parts[parts.length - hops].trim();
+                if (candidate.matches("[0-9a-fA-F:.]{2,45}")) {
+                    return candidate;
+                }
+            }
+        }
         return request.getRemoteAddr();
     }
 
