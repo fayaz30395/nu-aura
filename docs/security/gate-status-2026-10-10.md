@@ -235,3 +235,31 @@ CORS, security headers, parameterized queries, check file upload types, log admi
 prod, private storage buckets, verify webhook signatures, Claude security review. Still open: stop IDOR bugs
 (partial), never trust the frontend (partial), CAPTCHA on public forms (fail), HTTPS everywhere (partial),
 sanitize user input (partial), update vulnerable packages (partial).
+
+## 7. Second remediation round, 2026-10-15
+
+Release gate: still NOT_PASS. Hardening checklist is now 16 of 19. CAPTCHA, HTTPS and input sanitizing moved
+to fixed. IDOR, client-trust and package updates remain partial.
+
+What the first real CI run showed (commit bb498c3a on both forks): the backend, the new `frontend-audit`
+job, the new Trivy dependency scan, gitleaks and CodeQL passed. Two jobs failed. Two frontend tests belonged
+to another session's uncommitted work (fixed). The Trivy backend image scan, which had never run before,
+found 7 CRITICAL vulnerabilities.
+
+| Area | Change | Remaining |
+|---|---|---|
+| Backend CRITICAL CVEs | Tomcat 10.1.55 to 10.1.59, Netty 4.1.133 to 4.1.137, BouncyCastle bcprov 1.84 to 1.85 (6 of 7 CVEs, including two authentication or constraint bypasses in Tomcat). | CVE-2026-47884 and CVE-2026-47890 in spring-webmvc 6.2.x are fixed only in Spring 7. Options: Spring 7 migration, a documented dated exception with owner, or a commercial backport. Nothing was added to `.trivyignore`. |
+| Frontend dev tools | CI moved to Node 22. vitest 5. | One critical remains (orval 7, generation-time, dev only). Orval 8 clears it but breaks about 15 pages (148 type errors) and needs its own migration. |
+| Public form abuse | reCAPTCHA v3 verified server-side on careers apply, offer accept and decline, and preboarding submits. Login moved to the same v3 helper. | Operator must set `RECAPTCHA_SECRET_KEY`, `RECAPTCHA_SITE_KEY`, `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` with a v3 key pair. The careers form field names and the preboarding document upload route were found mismatched with the backend and are not yet fixed. |
+| Rate limits | Client IP is taken from the proxy-appended end of `X-Forwarded-For` (`app.security.trusted-proxy-hops`, default 1). The API key filter had the same spoofable behaviour and now uses the helper. | Operator confirms Railway's hop count. The request logger, audit log and login captcha still read the leftmost entry. |
+| Stored HTML | Server-side jsoup sanitizer on wiki, blog, announcement, letter template and LMS writes. HTML declared as text or CSV uploads is rejected. | Plain-text comment paths are untouched by design. |
+| IDOR and client trust | Fixed across exit, travel, training, referral, e-signature, compensation, budget, onboarding, tax declarations, benefits, assets, contracts and agencies. | Public exit-interview token, a few unscoped reads, recruitment status transition rules and benefit verification policy (both need a decision). |
+
+Verified: full backend suite 5,354 tests, 0 failures, 2 skipped, Docker classes included. Frontend `tsc`, lint,
+2,609 tests, production build and `npm audit --omit=dev --audit-level=high` pass.
+
+Checklist (16 of 19, from `.claude/security-checklist.json`): fixed are row level security, auth on every API
+route, hide admin pages, rate limiting, lock down CORS, security headers, parameterized queries, check file upload
+types, log admin actions, debug mode off in prod, private storage buckets, verify webhook signatures, Claude
+security review, CAPTCHA on public forms, HTTPS everywhere, sanitize user input. Partial: stop IDOR bugs, never
+trust the frontend, update vulnerable packages.

@@ -8,12 +8,12 @@
     {
       "id": "stop-idor-bugs",
       "status": "pending",
-      "evidence": "PARTIAL: Fixed travel req/expense, letters, F&F edit freeze with tests; exit clearances, onboarding, esign, training etc. unreviewed/open"
+      "evidence": "PARTIAL: exit, travel, training, referral, e-signature, compensation, budget, onboarding fixed. Public exit-interview token and some unscoped reads remain."
     },
     {
       "id": "never-trust-the-frontend",
       "status": "pending",
-      "evidence": "PARTIAL: Fixed travel expense employee/approver, F&F employeeId; exit clearance and several status DTOs still client-driven"
+      "evidence": "PARTIAL: tax, benefits, assets, contracts, agencies fixed. Recruitment status rules and benefit verification need a policy decision."
     },
     {
       "id": "auth-on-every-api-route",
@@ -32,8 +32,8 @@
     },
     {
       "id": "captcha-on-public-forms",
-      "status": "pending",
-      "evidence": "FAIL: reCAPTCHA only on password login after 3 failures (AuthService, prod enabled). None on careers/offers/preboarding; DSR authenticated only. Stopgap per-IP PUBLIC bucket; recommend CaptchaService.verify on public POSTs (decision needed)"
+      "status": "fixed",
+      "evidence": "FIXED: careers, offers and preboarding verify a reCAPTCHA v3 token server-side (9 tests); login moved to v3. Operator sets RECAPTCHA_SECRET_KEY, RECAPTCHA_SITE_KEY, NEXT_PUBLIC_RECAPTCHA_SITE_KEY."
     },
     {
       "id": "lock-down-cors",
@@ -47,13 +47,13 @@
     },
     {
       "id": "https-everywhere",
-      "status": "pending",
-      "evidence": "PARTIAL: cookie.secure true, HSTS, no http URLs in prod/render; render yml missing server.forward-headers-strategy (prod has framework)"
+      "status": "fixed",
+      "evidence": "FIXED: client IP from the proxy-appended X-Forwarded-For end (hops configurable), secure cookies, HSTS. Operator confirms Railway hop count."
     },
     {
       "id": "sanitize-user-input",
-      "status": "pending",
-      "evidence": "PARTIAL: PASS: 469/487 @RequestBody are @Valid (rest are signed webhooks/legacy); ValidationAdvice XSS/SQLi denylist; FE every dangerouslySetInnerHTML wrapped by DOMPurify (frontend/lib/utils/sanitize.ts, learning play page:118, fluence/search:624); Tiptap Link isAllowedUri (ContentViewer.tsx:48); export formula guard ExportService.java:218, CustomReportService.csvEscape, ExcelExportService.neutralizeFormula, CellValueSanitizer on imports. PARTIAL: no server-side HTML sanitization of stored rich text, denylist-only"
+      "status": "fixed",
+      "evidence": "FIXED for HTML sinks: jsoup sanitizer on wiki, blog, announcements, letters, LMS writes; text/plain markup uploads rejected. Plain-text comments untouched by design."
     },
     {
       "id": "parameterized-queries",
@@ -83,7 +83,7 @@
     {
       "id": "update-vulnerable-packages",
       "status": "pending",
-      "evidence": "PARTIAL: npm audit --omit=dev: 2 moderate (exceljs, uuid), 0 high/crit. Full: 30 (3 crit: orval, tinypool, vitest; 19 high, dev-tooling). Backend not scanned with versions plugin; bucket4j 8.10.1, jjwt/poi/openpdf via properties, no upgrades done"
+      "evidence": "PARTIAL: prod deps clean; backend 6 of 7 CRITICAL fixed, 2 Spring CVEs (fixed only in Spring 7) need a decision; frontend 1 dev critical needs an orval 8 migration (148 type errors today)."
     },
     {
       "id": "verify-webhook-signatures",
