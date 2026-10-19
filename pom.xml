@@ -57,7 +57,7 @@
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
-                <version>1.84</version>                <!-- CVE-2026-5598 -->
+                <version>1.85</version>                <!-- CVE-2026-5598 -->
             </dependency>
             <dependency>
                 <groupId>org.lz4</groupId>
