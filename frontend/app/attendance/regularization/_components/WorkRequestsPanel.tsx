@@ -227,7 +227,11 @@ export function WorkRequestsPanel({types, title, canApprove}: Props) {
             withAsterisk
             rows={3}
             value={form.reason}
-            onChange={(e) => setForm((f) => ({...f, reason: e.currentTarget.value}))}
+            onChange={(e) => {
+              // Read before the updater runs: currentTarget is null by then.
+              const reason = e.currentTarget.value;
+              setForm((f) => ({...f, reason}));
+            }}
             error={formError}
           />
           <div className="flex justify-end gap-2 border-t border-border pt-4">

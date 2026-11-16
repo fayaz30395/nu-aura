@@ -186,7 +186,7 @@ export function useAddComment() {
       parentCommentId?: string;
     }) => wallService.addComment(postId, {content, parentCommentId}),
     onSuccess: (_data, {postId}) => {
-      queryClient.invalidateQueries({queryKey: wallKeys.commentList(postId)});
+      queryClient.invalidateQueries({queryKey: [...wallKeys.comments(), postId]});
       queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });
@@ -199,7 +199,7 @@ export function useDeleteWallComment() {
     mutationFn: ({commentId}: { commentId: string; postId: string }) =>
       wallService.deleteComment(commentId),
     onSuccess: (_data, {postId}) => {
-      queryClient.invalidateQueries({queryKey: wallKeys.commentList(postId)});
+      queryClient.invalidateQueries({queryKey: [...wallKeys.comments(), postId]});
       queryClient.invalidateQueries({queryKey: wallKeys.posts()});
     },
   });

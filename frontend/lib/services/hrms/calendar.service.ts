@@ -47,10 +47,14 @@ class CalendarService {
   }
 
   async getMyEventsForRange(startTime: string, endTime: string): Promise<CalendarEvent[]> {
-    const response = await apiClient.get<CalendarEvent[]>('/calendar/events/my/range', {
-      params: {startTime, endTime},
-    });
-    return response.data;
+    const response = await apiClient.get<CalendarEvent[] | { data?: CalendarEvent[]; content?: CalendarEvent[] }>(
+      '/calendar/events/my/range',
+      {params: {startTime, endTime}}
+    );
+    const body = response.data;
+    // Backend wraps the list in an envelope on some paths; always hand callers an array.
+    if (Array.isArray(body)) return body;
+    return body?.data ?? body?.content ?? [];
   }
 
   // All Events (Admin)

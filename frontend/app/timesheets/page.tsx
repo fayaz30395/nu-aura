@@ -217,11 +217,13 @@ export default function TimesheetsPage() {
   };
 
   const handleAddEntry = () => {
-    if (!user?.employeeId || !selectedTimesheet) return;
+    const target = selectedTimesheet ?? currentWeekTimesheet;
+    if (!user?.employeeId || !target) return;
+    if (!selectedTimesheet) setSelectedTimesheet(target);
     setEntryForm({
       employeeId: user.employeeId,
       projectId: projects[0]?.id || '',
-      entryDate: selectedTimesheet.weekStartDate,
+      entryDate: target.weekStartDate,
       hours: 0,
       isBillable: true,
       workDescription: '',

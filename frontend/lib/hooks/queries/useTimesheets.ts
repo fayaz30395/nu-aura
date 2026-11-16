@@ -88,6 +88,7 @@ export function useSubmitTimesheet() {
     mutationFn: (id: string) => timesheetService.submitTimesheet(id),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({queryKey: timesheetKeys.detail(id)});
+      queryClient.invalidateQueries({queryKey: timesheetKeys.all});
       toast.success('Timesheet Submitted', 'Timesheet has been submitted for approval');
     },
     meta: {skipGlobalError: true},

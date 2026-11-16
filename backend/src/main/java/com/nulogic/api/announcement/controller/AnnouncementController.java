@@ -31,7 +31,7 @@ public class AnnouncementController {
     private final AnnouncementService announcementService;
 
     @PostMapping
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission({Permission.SYSTEM_ADMIN, Permission.ANNOUNCEMENT_MANAGE})
     @Operation(summary = "Create announcement",
             description = "Create a new announcement; visible to all employees when active (admin only)")
     @ApiResponses({
@@ -47,7 +47,7 @@ public class AnnouncementController {
     }
 
     @PutMapping("/{announcementId}")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission({Permission.SYSTEM_ADMIN, Permission.ANNOUNCEMENT_MANAGE})
     @Operation(summary = "Update announcement",
             description = "Mutate an existing announcement (admin only)")
     @ApiResponses({
@@ -143,7 +143,7 @@ public class AnnouncementController {
     }
 
     @PostMapping("/{announcementId}/pin")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission({Permission.SYSTEM_ADMIN, Permission.ANNOUNCEMENT_MANAGE})
     @Operation(summary = "Pin announcement",
             description = "Pin the announcement to the top of the feed (admin only)")
     @ApiResponses({
@@ -156,7 +156,7 @@ public class AnnouncementController {
     }
 
     @PostMapping("/{announcementId}/unpin")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission({Permission.SYSTEM_ADMIN, Permission.ANNOUNCEMENT_MANAGE})
     @Operation(summary = "Unpin announcement",
             description = "Remove the announcement from the pinned section (admin only)")
     @ApiResponses({
@@ -169,7 +169,7 @@ public class AnnouncementController {
     }
 
     @DeleteMapping("/{announcementId}")
-    @RequiresPermission(Permission.SYSTEM_ADMIN)
+    @RequiresPermission({Permission.SYSTEM_ADMIN, Permission.ANNOUNCEMENT_MANAGE})
     @Operation(summary = "Delete announcement",
             description = "Soft-delete an announcement (admin only)")
     @ApiResponses({

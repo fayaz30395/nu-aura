@@ -22,7 +22,7 @@ const BREADCRUMBS = [
 
 export default function MyDocumentsPage() {
   const router = useRouter();
-  const {user, hasHydrated} = useAuth();
+  const {user, hasHydrated, isAuthenticated, isLoading: authLoading} = useAuth();
   const [showModal, setShowModal] = useState(false);
 
   const {data: documentTypeValues} = useDocumentTypes();
@@ -35,10 +35,11 @@ export default function MyDocumentsPage() {
   const createMutation = useCreateDocumentRequest();
 
   useEffect(() => {
-    if (hasHydrated && !user) {
+    // Only leave when the session is truly gone, not while the profile is still loading.
+    if (hasHydrated && !authLoading && !isAuthenticated && !user) {
       router.replace('/auth/login');
     }
-  }, [hasHydrated, user, router]);
+  }, [hasHydrated, authLoading, isAuthenticated, user, router]);
 
   const handleCreate = async (payload: DocumentRequestDto) => {
     if (!user?.employeeId) return;
