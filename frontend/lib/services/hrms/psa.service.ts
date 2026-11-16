@@ -5,7 +5,25 @@ import {PSAInvoice, PSATimeEntry, PSATimesheet,} from '@/lib/types/hrms/psa';
 const TIMESHEETS_URL = '/psa/timesheets';
 const INVOICES_URL = '/psa/invoices';
 
+export interface PSAProjectSummary {
+  id: string;
+  projectCode?: string;
+  projectName: string;
+}
+
 export const psaService = {
+  // --- Projects (timesheet entries are validated against PSA projects) ---
+
+  getProjects: async (size = 200): Promise<PSAProjectSummary[]> => {
+    try {
+      const response = await apiClient.get<{ content: PSAProjectSummary[] }>('/psa/projects', {params: {size}});
+      return response.data.content ?? [];
+    } catch (error) {
+      logger.error('Failed to fetch PSA projects', {error});
+      throw error;
+    }
+  },
+
   // --- Timesheets ---
 
   createTimesheet: async (data: Partial<PSATimesheet>): Promise<PSATimesheet> => {

@@ -55,6 +55,7 @@ export function CopyLastWeekButton({employeeId, currentTimesheet, currentEntries
     } finally {
       await queryClient.invalidateQueries({queryKey: timesheetKeys.entries(currentTimesheet.id)});
       await queryClient.invalidateQueries({queryKey: timesheetKeys.detail(currentTimesheet.id)});
+      await queryClient.invalidateQueries({queryKey: timesheetKeys.all});
       setBusy(false);
       setOpen(false);
     }

@@ -40,7 +40,7 @@ import {
 } from '@/lib/hooks/queries/useTimesheets';
 import {CopyLastWeekButton} from '@/components/timesheets/CopyLastWeekButton';
 import {TimesheetTabPanel, TimesheetTabSwitcher, type TimesheetTabId} from '@/components/timesheets/TimesheetTabs';
-import {useProjects} from '@/lib/hooks/queries/useProjects';
+import {usePsaProjects} from '@/lib/hooks/queries/usePsa';
 import {ActivityType, CreateTimeEntryRequest, Timesheet} from '@/lib/types/hrms/timesheet';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -80,8 +80,9 @@ export default function TimesheetsPage() {
     isAuthenticated && hasHydrated && !!user?.employeeId
   );
 
-  const {data: projectsResponse} = useProjects(0, 100);
-  const projects = projectsResponse?.content ?? [];
+  // Entries are validated against PSA projects, so list those (not the generic projects module).
+  const {data: psaProjects = []} = usePsaProjects();
+  const projects = psaProjects.map((p) => ({id: p.id, name: p.projectName}));
 
   // Mutations
   const createTimesheetMutation = useCreateTimesheet();

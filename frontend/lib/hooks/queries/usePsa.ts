@@ -16,6 +16,7 @@ export const psaKeys = {
   timesheet: (id: string) => [...psaKeys.timesheets(), id] as const,
   timesheetEntries: (timesheetId: string) =>
     [...psaKeys.timesheet(timesheetId), 'entries'] as const,
+  projects: () => [...psaKeys.all, 'projects'] as const,
   invoices: () => [...psaKeys.all, 'invoices'] as const,
   invoicesByProject: (projectId: string) =>
     [...psaKeys.invoices(), 'project', projectId] as const,
@@ -23,6 +24,17 @@ export const psaKeys = {
     [...psaKeys.invoices(), 'client', clientId] as const,
   invoice: (id: string) => [...psaKeys.invoices(), id] as const,
 };
+
+// ─── Projects ─────────────────────────────────────────────────────────────────
+
+export function usePsaProjects(enabled: boolean = true) {
+  return useQuery({
+    queryKey: psaKeys.projects(),
+    queryFn: () => psaService.getProjects(),
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
 
 // ─── Timesheets ───────────────────────────────────────────────────────────────
 
