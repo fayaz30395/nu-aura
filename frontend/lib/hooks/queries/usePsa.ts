@@ -17,6 +17,7 @@ export const psaKeys = {
   timesheetEntries: (timesheetId: string) =>
     [...psaKeys.timesheet(timesheetId), 'entries'] as const,
   projects: () => [...psaKeys.all, 'projects'] as const,
+  myAllocations: () => [...psaKeys.projects(), 'my-allocations'] as const,
   invoices: () => [...psaKeys.all, 'invoices'] as const,
   invoicesByProject: (projectId: string) =>
     [...psaKeys.invoices(), 'project', projectId] as const,
@@ -31,6 +32,15 @@ export function usePsaProjects(enabled: boolean = true) {
   return useQuery({
     queryKey: psaKeys.projects(),
     queryFn: () => psaService.getProjects(),
+    enabled,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useMyPsaAllocations(enabled: boolean = true) {
+  return useQuery({
+    queryKey: psaKeys.myAllocations(),
+    queryFn: () => psaService.getMyAllocations(),
     enabled,
     staleTime: 5 * 60 * 1000,
   });

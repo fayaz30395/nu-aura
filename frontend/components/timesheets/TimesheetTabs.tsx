@@ -39,14 +39,14 @@ interface PanelProps {
   onOpen: (ts: Timesheet) => void;
 }
 
-export function TimesheetTabPanel({tab, employeeId, timesheets, isLoading, projectNames, onOpen}: PanelProps) {
+export function TimesheetTabPanel({tab, timesheets, isLoading, projectNames, onOpen}: PanelProps) {
   return (
     <div role="tabpanel" id={`tabpanel-${tab}`} aria-labelledby={`tab-${tab}`}>
       {tab === 'past-due' && <TimesheetStatusListTab mode="past-due" timesheets={timesheets} isLoading={isLoading} onOpen={onOpen}/>}
       {tab === 'rejected' && <TimesheetStatusListTab mode="rejected" timesheets={timesheets} isLoading={isLoading} onOpen={onOpen}/>}
       {tab === 'project-time' && <ProjectTimeTab timesheets={timesheets} projectNames={projectNames}/>}
       {tab === 'summary' && <TimeSummaryTab timesheets={timesheets} isLoading={isLoading}/>}
-      {tab === 'projects' && <ProjectsAllocatedTab employeeId={employeeId}/>}
+      {tab === 'projects' && <ProjectsAllocatedTab/>}
     </div>
   );
 }

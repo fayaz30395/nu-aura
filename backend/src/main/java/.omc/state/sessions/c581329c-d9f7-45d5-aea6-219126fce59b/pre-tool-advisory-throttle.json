@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "entries": {
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1792102505869,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
+    "466399dafa2d20f60587180bad0a07358eb7f2bce724df0ff682f038ad33f5ad": {
+      "last_emitted_at_ms": 1792101992929,
+      "message": "Read multiple files in parallel when possible for faster analysis."
+    },
+    "98f83b1d94b0ad666aff22ba4b29492f5e086898d3b4ee8ce4451592dee5858c": {
+      "last_emitted_at_ms": 1792101717696,
+      "message": "Spawning agent: savvy-flow:savvy-careful (inherit) | Task: Item 23 and Flyway discovery | Active agents: 4"
+    },
+    "575aa55a91e41f5be3cdd7b039437682ce2c17ae76b15798a6b5611adc790634": {
+      "last_emitted_at_ms": 1792101712343,
+      "message": "Spawning agent: savvy-flow:savvy-careful (inherit) | Task: Items 22 and 24 discovery | Active agents: 3"
+    },
+    "3e221b62f1a6fc1eb801165d276f3d7f65ad15fb8ebd3e042d9c4a419a37bfde": {
+      "last_emitted_at_ms": 1792101707992,
+      "message": "Spawning agent: savvy-flow:savvy-medium (inherit) | Task: Item 21 admin route gates | Active agents: 2"
+    },
+    "4192f5e33eee79230988d500ef19c182970d065d5ed5ba3ce5d2b3251ebb3148": {
+      "last_emitted_at_ms": 1792101704671,
+      "message": "Spawning agent: savvy-flow:savvy-careful (inherit) | Task: Item 20 trust discovery | Active agents: 1"
+    },
+    "8c1c0920029a53c5f6f1aca577d5a731a4594aa465c32c5ef78baea535c1e72c": {
+      "last_emitted_at_ms": 1792101701439,
+      "message": "Spawning agent: savvy-flow:savvy-careful (inherit) | Task: Item 19 authz discovery"
+    }
+  },
+  "updated_at": "2026-10-15T22:15:05.869Z"
+}

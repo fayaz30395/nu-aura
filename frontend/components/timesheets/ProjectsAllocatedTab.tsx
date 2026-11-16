@@ -4,17 +4,17 @@ import React from 'react';
 import {Card, CardContent, EmptyState} from '@/components/ui';
 import {ResponsiveTable, type Column} from '@/components/ui/ResponsiveTable';
 import {Badge} from '@/components/ui/Badge';
-import {useEmployeeProjects} from '@/lib/hooks/queries/useProjects';
-import type {ProjectEmployee} from '@/lib/types/hrms/project';
+import {useMyPsaAllocations} from '@/lib/hooks/queries/usePsa';
+import type {MyProjectAllocation} from '@/lib/services/hrms/psa.service';
 import {formatDateShort} from '@/lib/utils/format/date';
 
-export function ProjectsAllocatedTab({employeeId}: {employeeId: string}) {
-  const query = useEmployeeProjects(employeeId);
+export function ProjectsAllocatedTab() {
+  const query = useMyPsaAllocations();
 
-  const columns: Column<ProjectEmployee>[] = [
+  const columns: Column<MyProjectAllocation>[] = [
     {key: 'project', header: 'Project', accessor: (r) => r.projectName ?? 'Unknown project', mobilePriority: 'primary'},
-    {key: 'role', header: 'Role', accessor: (r) => r.role ?? '-'},
-    {key: 'alloc', header: 'Allocation', numeric: true, accessor: (r) => `${r.allocationPercentage}%`},
+    {key: 'role', header: 'Role', accessor: (r) => r.roleName ?? '-'},
+    {key: 'alloc', header: 'Allocation', numeric: true, accessor: (r) => `${r.allocationPercentage ?? 0}%`},
     {key: 'start', header: 'Start', accessor: (r) => formatDateShort(r.startDate)},
     {key: 'end', header: 'End', accessor: (r) => (r.endDate ? formatDateShort(r.endDate) : 'Ongoing')},
     {key: 'active', header: 'Status', accessor: (r) => <Badge variant={r.isActive ? 'success' : 'secondary'}>{r.isActive ? 'Active' : 'Ended'}</Badge>},
@@ -26,7 +26,7 @@ export function ProjectsAllocatedTab({employeeId}: {employeeId: string}) {
         <ResponsiveTable
           columns={columns}
           data={query.data ?? []}
-          keyExtractor={(r) => r.id}
+          keyExtractor={(r) => r.projectId}
           isLoading={query.isPending}
           error={query.isError}
           onRetry={() => void query.refetch()}

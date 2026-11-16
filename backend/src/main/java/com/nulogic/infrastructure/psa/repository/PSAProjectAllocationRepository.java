@@ -1,5 +1,6 @@
 package com.nulogic.infrastructure.psa.repository;
 
+import com.nulogic.api.psa.dto.MyProjectAllocationResponse;
 import com.nulogic.domain.psa.PSAProjectAllocation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,16 @@ public interface PSAProjectAllocationRepository extends JpaRepository<PSAProject
     List<PSAProjectAllocation> findByProjectIdAndTenantId(@Param("projectId") UUID projectId, @Param("tenantId") UUID tenantId);
 
     boolean existsByTenantIdAndProjectIdAndEmployeeIdAndIsActiveTrue(UUID tenantId, UUID projectId, UUID employeeId);
+
+    @Query("""
+            SELECT new com.nulogic.api.psa.dto.MyProjectAllocationResponse(
+                p.id, p.projectCode, p.projectName, a.roleName, a.allocationPercentage,
+                a.startDate, a.endDate, a.isActive)
+            FROM PSAProjectAllocation a, PSAProject p
+            WHERE p.id = a.projectId AND p.tenantId = a.tenantId
+              AND a.tenantId = :tenantId AND a.employeeId = :employeeId AND a.isActive = true
+            ORDER BY p.projectName
+            """)
+    List<MyProjectAllocationResponse> findActiveAllocationsForEmployee(
+            @Param("tenantId") UUID tenantId, @Param("employeeId") UUID employeeId);
 }

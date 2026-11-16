@@ -1,5 +1,6 @@
 package com.nulogic.application.psa.service;
 
+import com.nulogic.api.psa.dto.MyProjectAllocationResponse;
 import com.nulogic.api.psa.dto.PSATimeEntryRequest;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.exception.ValidationException;
@@ -98,6 +99,31 @@ class PSAServiceTest {
         employeeId = UUID.randomUUID();
 
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
+    }
+
+    @Test
+    @DisplayName("getMyActiveAllocations uses caller employee from SecurityContext and tenant scope")
+    void getMyActiveAllocations_usesSecurityContextEmployee() {
+        MyProjectAllocationResponse row = new MyProjectAllocationResponse(
+                projectId, "P-1", "Proj", "Dev", 50, LocalDate.of(2026, 1, 1), null, true);
+        try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+            sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(employeeId);
+            when(allocationRepository.findActiveAllocationsForEmployee(tenantId, employeeId))
+                    .thenReturn(List.of(row));
+
+            assertThat(psaService.getMyActiveAllocations()).containsExactly(row);
+        }
+    }
+
+    @Test
+    @DisplayName("getMyActiveAllocations returns empty and skips query when user has no employee")
+    void getMyActiveAllocations_noEmployee_returnsEmpty() {
+        try (MockedStatic<SecurityContext> sc = mockStatic(SecurityContext.class)) {
+            sc.when(SecurityContext::getCurrentEmployeeId).thenReturn(null);
+
+            assertThat(psaService.getMyActiveAllocations()).isEmpty();
+            verify(allocationRepository, never()).findActiveAllocationsForEmployee(any(), any());
+        }
     }
 
     @Test

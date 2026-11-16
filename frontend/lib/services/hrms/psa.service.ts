@@ -11,6 +11,17 @@ export interface PSAProjectSummary {
   projectName: string;
 }
 
+export interface MyProjectAllocation {
+  projectId: string;
+  projectCode?: string;
+  projectName: string;
+  roleName?: string;
+  allocationPercentage?: number;
+  startDate: string;
+  endDate?: string | null;
+  isActive: boolean;
+}
+
 export const psaService = {
   // --- Projects (timesheet entries are validated against PSA projects) ---
 
@@ -20,6 +31,16 @@ export const psaService = {
       return response.data.content ?? [];
     } catch (error) {
       logger.error('Failed to fetch PSA projects', {error});
+      throw error;
+    }
+  },
+
+  getMyAllocations: async (): Promise<MyProjectAllocation[]> => {
+    try {
+      const response = await apiClient.get<MyProjectAllocation[]>('/psa/projects/my-allocations');
+      return response.data ?? [];
+    } catch (error) {
+      logger.error('Failed to fetch my PSA allocations', {error});
       throw error;
     }
   },

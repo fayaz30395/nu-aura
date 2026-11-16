@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"f=com/nulogic/application/lms/service/LmsService.java; grep -n \\\"updateEnrollmentProgress(UUID\\\" $f; n=$(grep -n \\\"private void updateEnrollmentProgress(UUID\\\\|void updateEnrollmentProgres...",
+  "error": "Exit code 1\n297:    public CourseEnrollment updateEnrollmentProgress(UUID tenantId, UUID enrollmentId) {\nsed: 1: \",35p\n\": invalid command code ,",
+  "timestamp": "2026-10-15T22:06:30.651Z",
+  "retry_count": 1
+}

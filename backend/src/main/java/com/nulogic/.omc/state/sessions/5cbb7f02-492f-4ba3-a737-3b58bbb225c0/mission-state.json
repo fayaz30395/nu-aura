@@ -1,0 +1,87 @@
+{
+  "updatedAt": "2026-10-10T04:47:32.693Z",
+  "missions": [
+    {
+      "id": "session:5cbb7f02-492f-4ba3-a737-3b58bbb225c0:none",
+      "source": "session",
+      "name": "none",
+      "objective": "Session mission",
+      "createdAt": "2026-10-10T04:39:10.435Z",
+      "updatedAt": "2026-10-10T04:47:32.693Z",
+      "status": "running",
+      "workerCount": 2,
+      "taskCounts": {
+        "total": 2,
+        "pending": 0,
+        "blocked": 0,
+        "inProgress": 1,
+        "completed": 1,
+        "failed": 0
+      },
+      "agents": [
+        {
+          "name": "vault-writer:avault-",
+          "role": "vault-writer",
+          "ownership": "avault-writer-5ff64ab044a7cb70",
+          "status": "done",
+          "currentStep": null,
+          "latestUpdate": "completed",
+          "completedSummary": null,
+          "updatedAt": "2026-10-10T04:47:32.693Z"
+        },
+        {
+          "name": "payslip-gating:apaysli",
+          "role": "payslip-gating",
+          "ownership": "apayslip-gating-088893e21411eeb0",
+          "status": "running",
+          "currentStep": null,
+          "latestUpdate": null,
+          "completedSummary": null,
+          "updatedAt": "2026-10-10T04:39:20.248Z"
+        }
+      ],
+      "timeline": [
+        {
+          "id": "session-start:avault-writer-5ff64ab044a7cb70:2026-10-10T04:39:10.435Z",
+          "at": "2026-10-10T04:39:10.435Z",
+          "kind": "update",
+          "agent": "vault-writer:avault-",
+          "detail": "started vault-writer:avault-",
+          "sourceKey": "session-start:avault-writer-5ff64ab044a7cb70"
+        },
+        {
+          "id": "session-start:apayslip-gating-088893e21411eeb0:2026-10-10T04:39:20.248Z",
+          "at": "2026-10-10T04:39:20.248Z",
+          "kind": "update",
+          "agent": "payslip-gating:apaysli",
+          "detail": "started payslip-gating:apaysli",
+          "sourceKey": "session-start:apayslip-gating-088893e21411eeb0"
+        },
+        {
+          "id": "session-stop:avault-writer-5ff64ab044a7cb70:2026-10-10T04:39:44.639Z",
+          "at": "2026-10-10T04:39:44.639Z",
+          "kind": "completion",
+          "agent": "vault-writer:avault-",
+          "detail": "completed",
+          "sourceKey": "session-stop:avault-writer-5ff64ab044a7cb70"
+        },
+        {
+          "id": "session-stop:aa0bc226f7dcb9d02:2026-10-10T04:39:47.958Z",
+          "at": "2026-10-10T04:39:47.958Z",
+          "kind": "completion",
+          "agent": "vault-writer:avault-",
+          "detail": "completed",
+          "sourceKey": "session-stop:aa0bc226f7dcb9d02"
+        },
+        {
+          "id": "session-stop:afe-404-check-5d87642536c7e044:2026-10-10T04:47:32.693Z",
+          "at": "2026-10-10T04:47:32.693Z",
+          "kind": "completion",
+          "agent": "vault-writer:avault-",
+          "detail": "completed",
+          "sourceKey": "session-stop:afe-404-check-5d87642536c7e044"
+        }
+      ]
+    }
+  ]
+}

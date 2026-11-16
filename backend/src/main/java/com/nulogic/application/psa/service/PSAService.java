@@ -1,5 +1,6 @@
 package com.nulogic.application.psa.service;
 
+import com.nulogic.api.psa.dto.MyProjectAllocationResponse;
 import com.nulogic.api.psa.dto.PSATimeEntryRequest;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.Permission;
@@ -94,6 +95,19 @@ public class PSAService {
         log.debug("Retrieving all PSA projects for tenant {}", tenantId);
 
         return projectRepository.findAllByTenantId(tenantId);
+    }
+
+    /**
+     * Active PSA allocations of the calling user. Employee comes from the security context only.
+     */
+    @Transactional(readOnly = true)
+    public List<MyProjectAllocationResponse> getMyActiveAllocations() {
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        UUID employeeId = SecurityContext.getCurrentEmployeeId();
+        if (employeeId == null) {
+            return List.of();
+        }
+        return allocationRepository.findActiveAllocationsForEmployee(tenantId, employeeId);
     }
 
     /**

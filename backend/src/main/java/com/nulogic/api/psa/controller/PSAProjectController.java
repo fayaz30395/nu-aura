@@ -1,5 +1,6 @@
 package com.nulogic.api.psa.controller;
 
+import com.nulogic.api.psa.dto.MyProjectAllocationResponse;
 import com.nulogic.application.psa.service.PSAService;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.domain.psa.PSAProject;
@@ -42,6 +43,12 @@ public class PSAProjectController {
     public ResponseEntity<Page<PSAProject>> getAllProjects(
             @PageableDefault(size = 20, sort = "startDate", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(psaService.getAllProjects(pageable));
+    }
+
+    @GetMapping("/my-allocations")
+    @RequiresPermission(PROJECT_VIEW)
+    public ResponseEntity<List<MyProjectAllocationResponse>> getMyAllocations() {
+        return ResponseEntity.ok(psaService.getMyActiveAllocations());
     }
 
     @GetMapping("/{id}")
