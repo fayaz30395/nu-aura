@@ -206,3 +206,7 @@ docs/.obsidian/
 # graphify local analysis artifacts (large build outputs)
 graphify-out/
 .graphifyignore
+
+# Playwright auth state (login cookies/tokens)
+qa-reports/playwright-rbac/latest/auth-*.json
+frontend/e2e/.auth/
