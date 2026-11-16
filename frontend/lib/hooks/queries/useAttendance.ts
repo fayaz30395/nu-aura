@@ -105,10 +105,11 @@ export function useAttendanceByDate(
 }
 
 // Get pending regularizations
-export function usePendingRegularizations(page: number = 0, size: number = 20) {
+export function usePendingRegularizations(page: number = 0, size: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: attendanceKeys.pendingRegularizations(page, size),
     queryFn: () => attendanceService.getPendingRegularizations(page, size),
+    enabled,
     staleTime: 30 * 1000,
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),

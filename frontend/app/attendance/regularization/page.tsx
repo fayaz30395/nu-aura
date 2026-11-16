@@ -111,7 +111,7 @@ export default function RegularizationPage() {
   // ---------------------------------------------------------------------------
   // Data
   // ---------------------------------------------------------------------------
-  const regularizationsQuery = usePendingRegularizations(0, 50);
+  const regularizationsQuery = usePendingRegularizations(0, 50, canApprove);
   const regularizationsData = regularizationsQuery.data;
   const requestMutation = useRequestRegularization();
 
