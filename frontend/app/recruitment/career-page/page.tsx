@@ -119,7 +119,7 @@ function JobPostingsPanel() {
         color: newStatus === 'OPEN' ? 'green' : 'orange',
       });
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to update job status.', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 

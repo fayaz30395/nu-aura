@@ -115,7 +115,7 @@ export function ManageProgramsTab({
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <Card className="card-aura">
+      <Card>
         <CardContent className="p-4">
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="relative flex-1">
@@ -243,16 +243,16 @@ export function ManageProgramsTab({
                   </div>
 
                   <div className="flex gap-2 pt-2 border-t border-[var(--border-main)]">
-                    <Button size="sm" variant="outline" onClick={() => onViewProgram(program)}>
+                    <Button size="sm" variant="outline" onClick={() => onViewProgram(program)} aria-label="View">
                       <Eye className="h-4 w-4"/>
                     </Button>
                     <PermissionGate permission={Permissions.TRAINING_ENROLL}>
-                      <Button size="sm" variant="outline" onClick={() => onEnrollEmployee(program)}>
+                      <Button size="sm" variant="outline" onClick={() => onEnrollEmployee(program)} aria-label="Enroll employee">
                         <UserPlus className="h-4 w-4"/>
                       </Button>
                     </PermissionGate>
                     <PermissionGate permission={Permissions.TRAINING_EDIT}>
-                      <Button size="sm" variant="outline" onClick={() => onEditProgram(program)}>
+                      <Button size="sm" variant="outline" onClick={() => onEditProgram(program)} aria-label="Edit">
                         <Edit className="h-4 w-4"/>
                       </Button>
                     </PermissionGate>
@@ -262,7 +262,7 @@ export function ManageProgramsTab({
                         variant="outline"
                         className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                         onClick={() => onDeleteProgram(program.id)}
-                      >
+                       aria-label="Delete">
                         <Trash2 className="h-4 w-4"/>
                       </Button>
                     </PermissionGate>

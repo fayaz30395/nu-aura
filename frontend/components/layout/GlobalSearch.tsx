@@ -98,7 +98,7 @@ const defaultNavigationItems: NavigationItem[] = [
     id: 'org-chart',
     title: 'Organization Chart',
     description: 'View org structure',
-    href: '/org-chart',
+    href: '/admin/org-hierarchy',
     icon: Building2,
     category: 'Pages',
     keywords: ['hierarchy', 'structure', 'reporting']

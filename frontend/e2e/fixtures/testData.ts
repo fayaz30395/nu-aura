@@ -15,6 +15,8 @@ export type DemoRole =
   | 'MANAGER'
   | 'TEAM_LEAD'
   | 'HR_MANAGER'
+  | 'HR_ADMIN'
+  | 'FINANCE_ADMIN'
   | 'RECRUITMENT_ADMIN'
   | 'EMPLOYEE';
 
@@ -81,6 +83,24 @@ export const demoUsers = {
     role: 'TENANT_ADMIN' as DemoRole,
     name: 'Tenant Admin',
     department: 'Administration',
+    reportsTo: null,
+  },
+
+  // ── HR_ADMIN / FINANCE_ADMIN (runbook: admin@ and finance@; saran@ is EMPLOYEE in DB) ──
+  hrAdmin: {
+    email: 'admin@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'HR_ADMIN' as DemoRole,
+    name: 'Admin',
+    department: 'HR',
+    reportsTo: null,
+  },
+  financeAdmin: {
+    email: 'finance@nulogic.io',
+    password: DEMO_PASSWORD,
+    role: 'FINANCE_ADMIN' as DemoRole,
+    name: 'Finance',
+    department: 'Finance',
     reportsTo: null,
   },
 
@@ -192,6 +212,27 @@ export const demoUsers = {
     reportsTo: 'dhanush@nulogic.io',
   },
 };
+
+/**
+ * Role aliases for per-role storageState files (`playwright/.auth/<alias>.json`).
+ * SA is local-only and gated by E2E_ALLOW_SUPER_ADMIN=true.
+ */
+export const roleAliases = {
+  emp: demoUsers.employeeArun,
+  tl: demoUsers.teamLeadEng,
+  mgr: demoUsers.managerEng,
+  hrm: demoUsers.hrManager,
+  hra: demoUsers.hrAdmin,
+  rec: demoUsers.recruitmentAdmin,
+  fin: demoUsers.financeAdmin,
+  ta: demoUsers.tenantAdmin,
+  sa: demoUsers.superAdmin,
+} as const;
+
+export type RoleAlias = keyof typeof roleAliases;
+
+/** Throwaway account for lockout / brute-force specs; created by auth.setup.ts as HRA. */
+export const E2E_LOCK_USER_EMAIL = 'nuaura_test_e2e_lock@nulogic.io';
 
 /** Flat array of all demo users for iteration */
 export const allDemoUsers: DemoUser[] = Object.values(demoUsers);

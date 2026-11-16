@@ -85,6 +85,7 @@ export function useCreateRestrictedHoliday() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -108,6 +109,7 @@ export function useUpdateRestrictedHoliday() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -130,6 +132,7 @@ export function useDeleteRestrictedHoliday() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -197,6 +200,7 @@ export function useSelectRestrictedHoliday() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Selection Failed',
@@ -221,6 +225,7 @@ export function useCancelSelection() {
         color: 'blue',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -244,6 +249,7 @@ export function useApproveSelection() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -272,6 +278,7 @@ export function useRejectSelection() {
         color: 'orange',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -311,6 +318,7 @@ export function useSaveRestrictedHolidayPolicy() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',

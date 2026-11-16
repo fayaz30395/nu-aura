@@ -296,7 +296,7 @@ function PayslipsPageContent() {
                     size="sm"
                     onClick={() => setCurrentPage(page)}
                     disabled={loading}
-                    className="min-w-[40px]"
+                    className="min-w-10"
                   >
                     {page + 1}
                   </Button>
@@ -320,7 +320,7 @@ function PayslipsPageContent() {
 
 export default function PayslipsPage() {
   return (
-    <PermissionGate permission={Permissions.PAYROLL_VIEW} fallback={<PageDeniedFallback/>}>
+    <PermissionGate anyOf={[Permissions.PAYROLL_VIEW, Permissions.PAYROLL_VIEW_ALL]} fallback={<PageDeniedFallback/>}>
       <PayslipsPageContent/>
     </PermissionGate>
   );

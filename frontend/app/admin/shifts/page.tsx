@@ -295,7 +295,7 @@ export default function ShiftsManagementPage() {
                 key={shift.id}
                 data-testid="shift-card"
                 className="skeuo-card overflow-hidden"
-                style={{boxShadow: `inset 0 3px 0 0 ${shift.colorCode || '#2563EB'}`}}
+                style={{boxShadow: `inset 0 3px 0 0 ${shift.colorCode || 'var(--accent)'}`}}
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">

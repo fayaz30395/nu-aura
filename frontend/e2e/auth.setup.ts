@@ -1,8 +1,10 @@
-import {expect, test as setup, type APIRequestContext} from '@playwright/test';
-import {demoUsers} from './fixtures/testData';
+import {expect, test as setup, type APIRequestContext, type Page} from '@playwright/test';
+import {DEMO_PASSWORD, E2E_LOCK_USER_EMAIL, roleAliases, type RoleAlias} from './fixtures/testData';
 import {gotoWithRetry, loginAs} from './fixtures/helpers';
 
-const authFile = 'playwright/.auth/user.json';
+const AUTH_DIR = 'playwright/.auth';
+// Legacy single-state file still read by the current playwright.config.ts projects (until T1-01).
+const legacyAuthFile = `${AUTH_DIR}/user.json`;
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
 
@@ -65,35 +67,79 @@ async function assertDemoCredentialsUsable(
 }
 
 /**
+ * Create the throwaway lockout user via API as HRA (idempotent: an existing
+ * account is fine). Lockout/brute-force specs must target this user only.
+ */
+async function ensureLockUser(page: Page): Promise<void> {
+  const csrf = (await page.context().cookies()).find((c) => c.name === 'XSRF-TOKEN')?.value;
+  const response = await page.request.post(`${API_BASE}/employees`, {
+    data: {
+      firstName: 'NUAURA_TEST_E2E',
+      lastName: 'lock',
+      workEmail: E2E_LOCK_USER_EMAIL,
+      password: DEMO_PASSWORD,
+      joiningDate: '2024-01-01',
+      designation: 'NUAURA_TEST_E2E lock user',
+      employmentType: 'FULL_TIME',
+    },
+    headers: csrf ? {'X-XSRF-TOKEN': csrf} : {},
+    failOnStatusCode: false,
+  });
+  // 4xx other than "already exists" is surfaced as a warning, not a setup failure.
+  if (!response.ok()) {
+    console.warn(`lock user create: HTTP ${response.status()} (ok if it already exists)`);
+  }
+}
+
+/**
  * Authentication Setup
  *
- * Runs once before all tests and stores authentication state. Uses the
- * API-backed login helper because the production login bundle may omit
- * the demo account panel and UI form failures should not block non-auth
- * suites that only need a valid session.
- *
- * Authenticates as SUPER_ADMIN (fayaz.m@nulogic.io) for broadest
- * permission coverage downstream.
+ * Logs in once per role alias (see roleAliases) and writes
+ * `playwright/.auth/<alias>.json`. `loginAs` spaces API logins by
+ * E2E_API_LOGIN_RATE_LIMIT_DELAY_MS (default 15 s) to stay under the 5/min
+ * login limit. SUPER_ADMIN is skipped unless E2E_ALLOW_SUPER_ADMIN=true.
  */
 setup('authenticate', async ({page}) => {
   setup.setTimeout(1800000); // dev auth can stall behind Neon/Kafka/Hikari recovery in local E2E
 
-  const defaultUser = demoUsers.superAdmin;
+  const aliases = (Object.keys(roleAliases) as RoleAlias[]).filter(
+    (alias) => alias !== 'sa' || process.env.E2E_ALLOW_SUPER_ADMIN === 'true',
+  );
 
-  // Fail here, with the cause named, rather than letting a credential problem
-  // reach `loginAs` — which can fall back to synthetic local auth state
-  // (E2E_ALLOW_LOCAL_AUTH_FALLBACK) and let the suite "pass" against a session
-  // the backend never issued. Skipped only in the explicitly offline auth mode.
-  if (process.env.E2E_AUTH_MODE !== 'local') {
-    await assertDemoCredentialsUsable(page.request, defaultUser.email, defaultUser.password);
+  for (const [index, alias] of aliases.entries()) {
+    const user = roleAliases[alias];
+
+    // Fail with the cause named rather than letting loginAs report "0 tests ran".
+    // Probe only the first role; a bad shared password fails every role the same way.
+    if (index === 0 && process.env.E2E_AUTH_MODE !== 'local') {
+      await assertDemoCredentialsUsable(page.request, user.email, user.password);
+    }
+
+    await loginAs(page, user.email, {verifyDashboard: false});
+
+    if (alias === 'hra') {
+      await ensureLockUser(page);
+    }
+
+    if (index === 0) {
+      await warmRoutes(page);
+    }
+
+    await page.context().storageState({path: `${AUTH_DIR}/${alias}.json`});
+    if (alias === (process.env.E2E_ALLOW_SUPER_ADMIN === 'true' ? 'sa' : 'hra')) {
+      await page.context().storageState({path: legacyAuthFile});
+    }
   }
+});
 
-  await loginAs(page, defaultUser.email, {verifyDashboard: false});
-
-  // Warm high-traffic protected routes before worker fan-out. In next dev,
-  // first compile + hydration of these route chunks can exceed a normal test
-  // assertion budget when three or four workers hit cold routes at once.
-  const warmRoutes = process.env.E2E_SKIP_ROUTE_WARMUP === 'true' ? [] : [
+/**
+ * Warm high-traffic protected routes before worker fan-out. In next dev,
+ * first compile + hydration of these route chunks can exceed a normal test
+ * assertion budget when three or four workers hit cold routes at once.
+ */
+async function warmRoutes(page: Page): Promise<void> {
+  if (process.env.E2E_SKIP_ROUTE_WARMUP === 'true') return;
+  const routes = [
     {path: '/me/dashboard', marker: /Dashboard|My Dashboard|Home/i},
     {path: '/analytics', marker: /Analytics/i},
     {path: '/announcements', marker: /Announcements/i},
@@ -113,11 +159,8 @@ setup('authenticate', async ({page}) => {
     {path: '/employees/change-requests', marker: /Employment Change Requests/i},
   ];
 
-  for (const route of warmRoutes) {
+  for (const route of routes) {
     await gotoWithRetry(page, route.path);
     await expect(page.locator('body')).toContainText(route.marker, {timeout: 180000});
   }
-
-  // Store authenticated state
-  await page.context().storageState({path: authFile});
-});
+}

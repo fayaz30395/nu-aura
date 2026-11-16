@@ -154,7 +154,7 @@ export default function PayrollPage() {
             <StaggerItem>
               <Card padding="md" hover className="h-full">
                 <Stat
-                  icon={<Wallet className="h-[18px] w-[18px]" />}
+                  icon={<Wallet className="h-4.5 w-4.5" />}
                   iconTone="accent"
                   label="YTD gross"
                   value={formatCompactINR(ytdGross)}
@@ -167,7 +167,7 @@ export default function PayrollPage() {
             <StaggerItem>
               <Card padding="md" hover className="h-full">
                 <Stat
-                  icon={<Banknote className="h-[18px] w-[18px]" />}
+                  icon={<Banknote className="h-4.5 w-4.5" />}
                   iconTone="success"
                   label="Avg cost / employee"
                   value={formatCompactINR(avgCostPerEmployee)}
@@ -180,7 +180,7 @@ export default function PayrollPage() {
             <StaggerItem>
               <Card padding="md" hover className="h-full">
                 <Stat
-                  icon={<Percent className="h-[18px] w-[18px]" />}
+                  icon={<Percent className="h-4.5 w-4.5" />}
                   iconTone="warning"
                   label="Effective deduction rate"
                   value={`${effectiveRate.toFixed(1)}%`}
@@ -193,7 +193,7 @@ export default function PayrollPage() {
             <StaggerItem>
               <Card padding="md" hover className="h-full">
                 <Stat
-                  icon={<Users className="h-[18px] w-[18px]" />}
+                  icon={<Users className="h-4.5 w-4.5" />}
                   iconTone="info"
                   label="On this run"
                   value={latestEmployees.toLocaleString('en-IN')}
@@ -302,25 +302,18 @@ function CurrentRunBanner({run}: {run: PayrollRun}) {
 
   return (
     <Card padding="none" className="overflow-hidden">
-      {/* Tinted gradient top region */}
-      <div
-        className="px-6 py-6"
-        style={{
-          background:
-            'linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, var(--surface)), var(--surface) 60%)',
-        }}
-      >
+      <div className="px-6 py-6">
         <div className="flex flex-wrap items-start justify-between gap-5">
           <div className="min-w-0">
             <div className="mb-2 flex items-center gap-2.5">
-              <Badge variant="primary" dot dotColor="info" pulse={run.status === 'PROCESSING'}>
+              <Badge variant="default" dot dotColor="info" pulse={run.status === 'PROCESSING'}>
                 {badgeMeta.label}
               </Badge>
               <span className="num text-xs text-[var(--text-3)]">
                 {run.runName}
               </span>
             </div>
-            <div className="font-[family-name:var(--font-display)] text-2xl font-bold tracking-[-0.02em] text-[var(--text-1)]">
+            <div className="font-display text-2xl font-bold tracking-tight text-[var(--text-1)]">
               {run.runName}
             </div>
             <div className="mt-0.5 text-sm text-[var(--text-3)]">
@@ -343,7 +336,7 @@ function CurrentRunBanner({run}: {run: PayrollRun}) {
 
         {/* 3 big mono stats */}
         <div className="mt-5 flex flex-wrap gap-x-12 gap-y-4">
-          <BannerFigure label="Gross" value={formatINR0(run.totalGrossAmount)} />
+          {/* Gross hidden until backend returns run totals */}
           <BannerFigure label="Net pay" value={formatINR0(run.totalNetAmount)} />
           <BannerFigure label="Taxes &amp; deductions" value={formatINR0(run.totalDeductions)} />
         </div>
@@ -360,7 +353,7 @@ function CurrentRunBanner({run}: {run: PayrollRun}) {
             <React.Fragment key={stage}>
               <div className="flex items-center gap-2.5">
                 <span
-                  className={`grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full ${dotState}`}
+                  className={`grid h-6 w-6 shrink-0 place-items-center rounded-full ${dotState}`}
                 >
                   {done ? (
                     <Check className="h-3.5 w-3.5" aria-hidden="true" />
@@ -368,12 +361,12 @@ function CurrentRunBanner({run}: {run: PayrollRun}) {
                     <span className="num text-xs font-bold">{i + 1}</span>
                   )}
                 </span>
-                <span className={`text-[13px] ${labelState}`}>
+                <span className={`text-sm ${labelState}`}>
                   {STAGE_LABEL[stage]}
                 </span>
               </div>
               {i < RUN_STAGES.length - 1 && (
-                <div className={`mx-3.5 h-0.5 flex-1 rounded-[2px] ${done ? 'bg-[var(--ok-fg)]' : 'bg-[var(--border)]'}`} />
+                <div className={`mx-3.5 h-0.5 flex-1 rounded-sm ${done ? 'bg-[var(--ok-fg)]' : 'bg-[var(--border)]'}`} />
               )}
             </React.Fragment>
           );
@@ -387,7 +380,7 @@ function BannerFigure({label, value}: {label: string; value: string}) {
   return (
     <div>
       <div className="text-aura-micro text-[var(--text-3)]">{label}</div>
-      <div className="num mt-1 text-xl font-bold text-[var(--text-1)] sm:text-[21px]">{value}</div>
+      <div className="num mt-1 text-xl font-bold text-[var(--text-1)]">{value}</div>
     </div>
   );
 }
@@ -413,13 +406,13 @@ function CostByRunCard({runs}: {runs: PayrollRun[]}) {
         }
       />
       <div className="-mx-2 mt-4 overflow-x-auto">
-        <table className="w-full min-w-[480px] text-sm">
+        <table className="w-full min-w-max text-sm">
           <thead>
             <tr className="text-aura-micro text-[var(--text-3)]">
               <th className="px-2 pb-3 text-left font-bold">Cycle</th>
               <th className="px-2 pb-3 text-right font-bold">Employees</th>
               <th className="px-2 pb-3 text-right font-bold">Net</th>
-              <th className="w-[200px] px-2 pb-3 text-left font-bold">Share</th>
+              <th className="w-50 px-2 pb-3 text-left font-bold">Share</th>
             </tr>
           </thead>
           <tbody>
@@ -499,7 +492,7 @@ function LegendRow({label, value, color, muted}: {label: string; value: string; 
         ? 'bg-[var(--chart-3)]'
         : 'bg-[var(--chart-4)]';
   return (
-    <div className="flex items-center gap-2.5 text-[13px]">
+    <div className="flex items-center gap-2.5 text-sm">
       <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${colorClass}`} aria-hidden="true" />
       <span className={muted ? 'text-[var(--text-3)]' : 'font-medium text-[var(--text-2)]'}>{label}</span>
       <span className="num ml-auto font-semibold text-[var(--text-1)]">{value}</span>
@@ -524,14 +517,14 @@ function RunHistoryCard({runs}: {runs: PayrollRun[]}) {
         />
       </div>
       <div className="mt-1 overflow-x-auto">
-        <table className="w-full min-w-[760px] text-sm">
+        <table className="w-full min-w-max text-sm">
           <thead className="sticky top-0 z-10 bg-[var(--surface)]">
             <tr className="text-aura-micro text-[var(--text-3)] border-b border-[var(--border-soft)]">
               <th className="px-5 py-3 text-left font-bold">Run</th>
               <th className="px-3 py-3 text-left font-bold">Period</th>
               <th className="px-3 py-3 text-left font-bold">Pay date</th>
               <th className="px-3 py-3 text-right font-bold">Employees</th>
-              <th className="px-3 py-3 text-right font-bold">Gross</th>
+              {/* Gross hidden until backend returns run totals */}
               <th className="px-3 py-3 text-right font-bold">Net</th>
               <th className="px-3 py-3 text-left font-bold">Status</th>
               <th className="w-12 px-3 py-3" />
@@ -549,13 +542,11 @@ function RunHistoryCard({runs}: {runs: PayrollRun[]}) {
                   {' – '}
                   <span className="num">{formatDate(r.payrollPeriodEnd)}</span>
                 </td>
-                <td className="num px-3 py-3 text-[13px] text-[var(--text-2)]">{formatDate(r.paymentDate)}</td>
+                <td className="num px-3 py-3 text-sm text-[var(--text-2)]">{formatDate(r.paymentDate)}</td>
                 <td className="num px-3 py-3 text-right text-[var(--text-2)]">
                   {r.totalEmployees.toLocaleString('en-IN')}
                 </td>
-                <td className="num px-3 py-3 text-right text-[var(--text-2)]">
-                  {formatCompactINR(r.totalGrossAmount)}
-                </td>
+                {/* Gross hidden until backend returns run totals */}
                 <td className="num px-3 py-3 text-right font-semibold text-[var(--text-1)]">
                   {formatCompactINR(r.totalNetAmount)}
                 </td>
@@ -586,7 +577,7 @@ function SectionHead({title, sub, action}: {title: string; sub?: string; action?
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0">
         <h2 className="text-base font-semibold tracking-tight text-[var(--text-1)]">{title}</h2>
-        {sub && <p className="mt-0.5 text-[13px] text-[var(--text-3)]">{sub}</p>}
+        {sub && <p className="mt-0.5 text-sm text-[var(--text-3)]">{sub}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

@@ -128,6 +128,7 @@ export default function ScheduledReportsPage() {
   const updateMutation = useUpdateScheduledReport();
   const deleteMutation = useDeleteScheduledReport();
   const toggleMutation = useToggleScheduledReportStatus();
+  const isSaving = createMutation.isPending || updateMutation.isPending;
 
   // RBAC guard — scheduled reports requires REPORT_VIEW permission (DEF-50)
   useEffect(() => {
@@ -143,6 +144,7 @@ export default function ScheduledReportsPage() {
   }
 
   const handleFormSubmit = async (data: ScheduledReportFormData) => {
+    if (isSaving) return;
     // Filter out empty recipients
     const filteredRecipients = data.recipients.filter(r => r.email.trim() !== '').map(r => r.email);
     if (filteredRecipients.length === 0) {
@@ -184,7 +186,7 @@ export default function ScheduledReportsPage() {
   };
 
   const handleDelete = async () => {
-    if (!selectedReport) return;
+    if (!selectedReport || deleteMutation.isPending) return;
     try {
       await deleteMutation.mutateAsync(selectedReport.id);
       toast.success('Scheduled report deleted successfully');
@@ -199,6 +201,7 @@ export default function ScheduledReportsPage() {
   };
 
   const handleToggleStatus = async (report: ScheduledReport) => {
+    if (toggleMutation.isPending) return;
     try {
       await toggleMutation.mutateAsync(report.id);
       toast.success(report.isActive ? 'Report paused' : 'Report activated');
@@ -352,6 +355,7 @@ export default function ScheduledReportsPage() {
                     </div>
                     <button
                       onClick={() => handleToggleStatus(report)}
+                      disabled={toggleMutation.isPending}
                       className={`p-2 rounded-lg transition-colors ${
                         report.isActive
                           ? 'bg-success-50 dark:bg-success-950/20 text-success-600 hover:bg-success-100'
@@ -648,10 +652,10 @@ export default function ScheduledReportsPage() {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading}
+                      disabled={isSaving}
                       className="flex-1 px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
-                      {loading ? 'Saving...' : selectedReport ? 'Update' : 'Create'}
+                      {isSaving ? 'Saving...' : selectedReport ? 'Update' : 'Create'}
                     </button>
                   </div>
                 </form>
@@ -680,10 +684,10 @@ export default function ScheduledReportsPage() {
                 </button>
                 <button
                   onClick={handleDelete}
-                  disabled={loading}
+                  disabled={deleteMutation.isPending}
                   className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
-                  {loading ? 'Deleting...' : 'Delete'}
+                  {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>

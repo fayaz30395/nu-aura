@@ -1,5 +1,6 @@
 'use client';
 
+import {Progress} from '@/components/ui';
 import {useEffect, useState} from 'react';
 import {Spinner} from '@/components/ui/Spinner';
 import {Button} from '@/components/ui/Button';
@@ -13,6 +14,7 @@ import {AppLayout} from '@/components/layout';
 import {apiClient} from '@/lib/api/client';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {Badge} from '@/components/ui/Badge';
 import {LEARNING_STATUS} from '@/lib/status/vocabulary';
 
 interface LearningPath {
@@ -66,6 +68,7 @@ export default function LearningPathsPage() {
     onSuccess: () => {
       refetch();
     },
+    meta: {skipGlobalError: true},
     onError: (err: unknown) => {
       toast.error((err as {
         response?: { data?: { message?: string } }
@@ -103,16 +106,16 @@ export default function LearningPathsPage() {
     }
   };
 
-  const getDifficultyColor = (level: string) => {
+  const getDifficultyVariant = (level: string): 'success' | 'warning' | 'danger' | 'default' => {
     switch (level) {
       case 'BEGINNER':
-        return 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-300';
+        return 'success';
       case 'INTERMEDIATE':
-        return 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-300';
+        return 'warning';
       case 'ADVANCED':
-        return 'bg-danger-100 text-danger-800 dark:bg-danger-900/50 dark:text-danger-300';
+        return 'danger';
       default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
+        return 'default';
     }
   };
 
@@ -244,10 +247,9 @@ export default function LearningPathsPage() {
 
                   {/* Difficulty Badge */}
                   <div className="mb-4">
-                    <span
-                      className={`badge-status inline-block px-4 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(path.difficulty)}`}>
+                    <Badge variant={getDifficultyVariant(path.difficulty)} className="px-4 py-1 rounded-full font-semibold">
                       {path.difficulty}
-                    </span>
+                    </Badge>
                   </div>
 
                   {/* Progress Bar (if enrolled) */}
@@ -257,12 +259,7 @@ export default function LearningPathsPage() {
                         <span className="text-xs font-medium text-[var(--text-secondary)]">Progress</span>
                         <span className="text-xs font-bold text-[var(--text-primary)]">{path.progressPercentage}%</span>
                       </div>
-                      <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-accent-600 transition-all duration-300"
-                          style={{width: `${path.progressPercentage}%`}}
-                        />
-                      </div>
+                      <Progress value={path.progressPercentage} label="Path progress"/>
                     </div>
                   )}
 

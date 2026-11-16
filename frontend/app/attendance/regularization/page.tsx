@@ -1,17 +1,17 @@
 'use client';
 
 import {useMemo, useState} from 'react';
-import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
 import {logger} from '@/lib/utils/logger';
-import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {ArrowLeft, Info, Plus} from 'lucide-react';
+import {Plus} from 'lucide-react';
+import {Button, Tabs} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent} from '@/components/ui/Card';
-import {Button} from '@/components/ui/Button';
+import {Callout} from '@/components/ui/Callout';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
 import {useToast} from '@/components/ui/Toast';
 import {
   usePendingRegularizations,
@@ -31,6 +31,7 @@ import {
   StatusFilterTabs,
   TeamRequestsView,
   ViewTabs,
+  WorkRequestsPanel,
 } from './_components';
 
 // ---------------------------------------------------------------------------
@@ -54,7 +55,6 @@ const rejectReasonSchema = z.object({
 });
 
 export default function RegularizationPage() {
-  const router = useRouter();
   const {success, error} = useToast();
   const {user} = useAuth();
   const {data: myEmployee} = useEmployee(user?.employeeId || '', !!user?.employeeId);
@@ -68,8 +68,7 @@ export default function RegularizationPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formStep, setFormStep] = useState<1 | 2 | 3>(1);
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'>('ALL');
-  const [cancelConfirmOpen, setCancelConfirmOpen] = useState(false);
-  const [_requestToCancel, setRequestToCancel] = useState<string | null>(null);
+  const [section, setSection] = useState<'wfh' | 'regularization' | 'remote'>('wfh');
   const [activeTab, setActiveTab] = useState<'my-requests' | 'team-requests'>('my-requests');
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [requestToReject, setRequestToReject] = useState<string | null>(null);
@@ -112,7 +111,8 @@ export default function RegularizationPage() {
   // ---------------------------------------------------------------------------
   // Data
   // ---------------------------------------------------------------------------
-  const {data: regularizationsData, isLoading: loading} = usePendingRegularizations(0, 50);
+  const regularizationsQuery = usePendingRegularizations(0, 50);
+  const regularizationsData = regularizationsQuery.data;
   const requestMutation = useRequestRegularization();
 
   const allRequests: RegularizationRequest[] = (regularizationsData?.content || [])
@@ -228,84 +228,71 @@ export default function RegularizationPage() {
     if (formStep > 1) setFormStep((formStep - 1) as 1 | 2 | 3);
   };
 
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
   return (
     <AppLayout activeMenuItem="attendance">
-      <motion.div
-        className="space-y-8"
-        initial={{opacity: 0, y: 12}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-      >
-        {/* Header with Breadcrumb */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 text-sm">
-            <button
-              onClick={() => router.push('/attendance')}
-              className="flex items-center gap-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              <ArrowLeft className="h-4 w-4"/>
-              Back to Attendance
-            </button>
-          </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-page-title">Attendance Regularization</h1>
-              <p className="text-[var(--text-muted)] mt-2">
-                Request corrections for your attendance records
-              </p>
-            </div>
-            <Button onClick={handleOpenCreate} className="bg-accent-500 hover:bg-accent-700 text-white">
-              <Plus className="h-4 w-4 mr-2"/>
-              Request Regularization
-            </Button>
-          </div>
-        </div>
+      <div className="flex flex-col gap-6">
+        <PageHeader
+          title="Attendance Requests"
+          description="Work from home, on duty, regularization and remote clock-in requests"
+          breadcrumbs={[{label: 'Attendance', href: '/attendance'}, {label: 'Requests'}]}
+          actions={
+            section === 'regularization' ? (
+              <Button leftSection={<Plus size={16} aria-hidden/>} onClick={handleOpenCreate}>
+                Request Regularization
+              </Button>
+            ) : undefined
+          }
+        />
 
-        {/* Info Banner */}
-        <Card className="card-aura tint-info border-[var(--status-info-border)]">
-          <CardContent className="p-4">
-            <div className="flex gap-4">
-              <Info className="h-5 w-5 flex-shrink-0 mt-0.5 text-[var(--status-info-text)]"/>
-              <div className="text-sm text-[var(--status-info-text)]">
-                <p className="font-semibold mb-1">About Attendance Regularization</p>
-                <p>
-                  If you forgot to check in/out or need to correct your attendance, you can submit a
-                  regularization request. Your manager will review and approve/reject the request.
-                </p>
+        <Tabs value={section} onChange={(v) => v && setSection(v as typeof section)}>
+          <Tabs.List>
+            <Tabs.Tab value="wfh">Work From Home / On Duty</Tabs.Tab>
+            <Tabs.Tab value="regularization">Regularization</Tabs.Tab>
+            <Tabs.Tab value="remote">Remote Clock-in</Tabs.Tab>
+          </Tabs.List>
+        </Tabs>
+
+        {section === 'wfh' && (
+          <WorkRequestsPanel
+            types={['WORK_FROM_HOME', 'ON_DUTY']}
+            title="Work From Home / On Duty Requests"
+            canApprove={canApprove}
+          />
+        )}
+        {section === 'remote' && (
+          <WorkRequestsPanel types={['REMOTE_CLOCK_IN']} title="Remote Clock-in Requests" canApprove={canApprove}/>
+        )}
+
+        {section === 'regularization' && <Callout tone="info" title="About attendance regularization">
+          If you forgot to check in/out or need to correct your attendance, you can submit a regularization
+          request. Your manager will review and approve/reject the request.
+        </Callout>}
+
+        {section === 'regularization' && (
+          <ViewTabs activeTab={activeTab} onTabChange={setActiveTab} canApprove={canApprove}/>
+        )}
+
+        {section === 'regularization' && activeTab === 'my-requests' && (
+          <QueryState
+            query={regularizationsQuery}
+            skeleton={<ListPageSkeleton rows={5} columns={5} showHeader={false} showFilters/>}
+            errorTitle="Couldn't load regularization requests"
+          >
+            {() => (
+              <div className="flex flex-col gap-6">
+                <RegularizationStatsCards stats={stats}/>
+                <div>
+                  <StatusFilterTabs statusFilter={statusFilter} onFilterChange={setStatusFilter}/>
+                </div>
+                <RequestsTable requests={sortedRequests} statusFilter={statusFilter} onNewRequest={handleOpenCreate}/>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* KPI Stats Cards */}
-        <RegularizationStatsCards stats={stats} loading={loading}/>
-
-        {/* My Requests / Team Requests tab switcher */}
-        <ViewTabs activeTab={activeTab} onTabChange={setActiveTab} canApprove={canApprove}/>
-
-        {/* My Requests View */}
-        {activeTab === 'my-requests' && (
-          <>
-            <StatusFilterTabs statusFilter={statusFilter} onFilterChange={setStatusFilter}/>
-            <RequestsTable
-              requests={sortedRequests}
-              loading={loading}
-              statusFilter={statusFilter}
-              onNewRequest={handleOpenCreate}
-            />
-          </>
+            )}
+          </QueryState>
         )}
 
-        {/* Team Requests View */}
-        {activeTab === 'team-requests' && canApprove && (
-          <TeamRequestsView onReject={handleOpenReject}/>
-        )}
-      </motion.div>
+        {section === 'regularization' && activeTab === 'team-requests' && canApprove && <TeamRequestsView onReject={handleOpenReject}/>}
+      </div>
 
-      {/* Create Request Modal */}
       <CreateRequestModal
         open={showCreateModal}
         formStep={formStep}
@@ -320,11 +307,10 @@ export default function RegularizationPage() {
         onNext={handleNextStep}
         onPrev={handlePrevStep}
         onSubmit={onSubmit}
-        onQuickReason={(template) => setValue('reason', template)}
+        onQuickReason={(template) => setValue('reason', template, {shouldValidate: true})}
         handleSubmit={handleSubmit}
       />
 
-      {/* Reject Request Modal */}
       <RejectRequestModal
         open={showRejectModal}
         register={registerReject}
@@ -335,24 +321,6 @@ export default function RegularizationPage() {
         onClose={handleCloseReject}
         onSubmit={onRejectSubmit}
         handleSubmit={handleSubmitReject}
-      />
-
-      {/* Cancel Confirm Dialog */}
-      <ConfirmDialog
-        isOpen={cancelConfirmOpen}
-        onClose={() => {
-          setCancelConfirmOpen(false);
-          setRequestToCancel(null);
-        }}
-        onConfirm={() => {
-          setCancelConfirmOpen(false);
-          setRequestToCancel(null);
-        }}
-        title="Cancel Request"
-        message="Are you sure you want to cancel this regularization request? This action cannot be undone."
-        confirmText="Cancel Request"
-        cancelText="Keep Request"
-        type="warning"
       />
     </AppLayout>
   );

@@ -40,10 +40,9 @@ type EmailPasswordForm = z.infer<typeof emailPasswordSchema>;
 
 export const dynamic = 'force-dynamic';
 
-// Demo accounts render by default for this staging/demo product. Set
-// NEXT_PUBLIC_DEMO_MODE=false to hide the panel (and tree-shake the array)
-// for a hardened production deployment.
-const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE !== 'false';
+// Demo accounts are opt-in: only NEXT_PUBLIC_DEMO_MODE=true renders the panel.
+// Otherwise the array and password are tree-shaken out of the production bundle.
+const IS_DEMO_MODE = process.env.NEXT_PUBLIC_DEMO_MODE === 'true';
 
 interface DemoAccount {
   name: string;
@@ -54,8 +53,8 @@ interface DemoAccount {
   color: string;
 }
 
-// Demo accounts are bundled unless NEXT_PUBLIC_DEMO_MODE=false, in which case
-// tree-shaking removes the array entirely (hardened-prod opt-out). Listed
+// Demo accounts are bundled only when NEXT_PUBLIC_DEMO_MODE=true; otherwise
+// tree-shaking removes the array entirely. Listed
 // lowest-privilege first so the EMPLOYEE account is the default quick-login for
 // employee-facing testing.
 const DEMO_ACCOUNTS: DemoAccount[] = IS_DEMO_MODE

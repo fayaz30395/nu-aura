@@ -17,6 +17,7 @@ export const attendanceKeys = {
   all: ['attendance'] as const,
   // Attendance records
   records: () => [...attendanceKeys.all, 'records'] as const,
+  today: () => [...attendanceKeys.all, 'today'] as const,
   employeeRecords: (employeeId: string, page: number, size: number) =>
     [...attendanceKeys.records(), 'employee', employeeId, {page, size}] as const,
   dateRange: (startDate: string, endDate: string) =>
@@ -69,6 +70,18 @@ export function useAttendanceByDateRange(
     queryFn: () => attendanceService.getAttendanceByDateRange(startDate, endDate),
     enabled: enabled && !!startDate && !!endDate,
     staleTime: 60 * 1000,
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+  });
+}
+
+// Get my attendance for today, stamped by the server's tenant date
+export function useTodayAttendance(enabled: boolean = true) {
+  return useQuery({
+    queryKey: attendanceKeys.today(),
+    queryFn: () => attendanceService.getToday(),
+    enabled,
+    staleTime: 30 * 1000,
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
@@ -229,6 +242,7 @@ export function useCheckIn() {
       const today = resolveAttendanceDate(variables);
       queryClient.invalidateQueries({queryKey: attendanceKeys.dateRange(today, today)});
       queryClient.invalidateQueries({queryKey: attendanceKeys.timeEntries(today)});
+      queryClient.invalidateQueries({queryKey: attendanceKeys.today()});
     },
   });
 }
@@ -279,6 +293,7 @@ export function useCheckOut() {
       const today = resolveAttendanceDate(variables);
       queryClient.invalidateQueries({queryKey: attendanceKeys.dateRange(today, today)});
       queryClient.invalidateQueries({queryKey: attendanceKeys.timeEntries(today)});
+      queryClient.invalidateQueries({queryKey: attendanceKeys.today()});
     },
   });
 }

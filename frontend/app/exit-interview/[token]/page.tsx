@@ -98,6 +98,7 @@ export default function PublicExitInterviewPage() {
     onSuccess: () => {
       setSubmitted(true);
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Could not submit. Please try again.', color: 'red'});
     },

@@ -200,12 +200,6 @@ export default function AdminIntegrationsPage() {
           toast.success('Connector configured successfully');
           setSelectedConnectorId(null);
         },
-        onError: (error: unknown) => {
-          toast.error(
-            (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to save configuration'
-          );
-        },
       }
     );
   };

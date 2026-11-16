@@ -22,6 +22,15 @@
  *      the structural `blur(6px)` card treatment is CSS, not a Tailwind
  *      class, so this rule is a coarse heuristic for manual review, not
  *      an auto-fixable finding).
+ *   8. Hex colour string literals anywhere in JSX/TSX (`'#fff'`, `"#1c2033"`).
+ *   9. Arbitrary Tailwind sizes (`text-[13px]`, `w-[42px]`, `p-[0.6rem]`) —
+ *      should use the type/space/control scale.
+ *  10. Icon-only buttons with no accessible name: `<ActionIcon>` without
+ *      aria-label/aria-labelledby/title, or `<button>`/`<Button>` whose only
+ *      children are self-closing components (icons) and no label/sr-only text.
+ *
+ * Ratchet: `--strict` exits 1 when any rule in STRICT_BASELINE exceeds its
+ * count. Lower a baseline number whenever drift is migrated; never raise it.
  *
  * FR-4 scope note: the following DESIGN.md Don'ts are NOT automated here —
  * they need semantic/AST-level analysis or a maintained exemption list,
@@ -37,8 +46,8 @@
  * Escalate these to a follow-up ticket if broader FR-4 coverage is wanted.
  *
  * Run:  node frontend/scripts/check-styling-drift.mjs
- *       (always exits 0; pass --json for machine output, --quiet for
- *        counts only)
+ *       (exits 0 unless --strict; pass --json for machine output, --quiet
+ *        for counts only)
  */
 import {readdir, readFile, stat} from 'node:fs/promises';
 import {join, relative, resolve} from 'node:path';
@@ -73,10 +82,28 @@ const BLUR_CLASS_RE = /\b(?:backdrop-)?blur-(?:xs|sm|md|lg|xl|2xl|3xl|\[[^\]]+\]
 const RAW_INPUT_RE = /<input(?=[\s/>])/g;
 const RAW_SELECT_RE = /<select(?=[\s/>])/g;
 const RAW_TEXTAREA_RE = /<textarea(?=[\s/>])/g;
+// Hex colour string literal (3/4/6/8 digits) — not inside a Tailwind [..] arbitrary
+const HEX_LITERAL_RE = /(?<=['"`(\s:,])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})(?![\w-])/g;
+// Arbitrary Tailwind size utility with a px/rem/em value
+const ARBITRARY_SIZE_RE = /(?<![\w-])-?(?:text|w|h|min-w|min-h|max-w|max-h|size|p[xytrbl]?|m[xytrbl]?|gap(?:-[xy])?|space-[xy]|top|left|right|bottom|inset(?:-[xy])?|rounded(?:-[a-z]{1,2})?|leading|tracking)-\[-?\d*\.?\d+(?:px|rem|em)\]/g;
+const ICON_BUTTON_OPEN_RE = /<(button|Button|ActionIcon)\b/g;
+const ACCESSIBLE_NAME_RE = /aria-label|aria-labelledby|title=|sr-only/;
+
+// Ratchet for --strict (counts as of the WS1 design-foundations pass).
+const STRICT_BASELINE = {
+  'raw-input': 4,
+  'raw-select': 0,
+  'raw-textarea': 0,
+  'hex-in-className': 0,
+  'hex-literal': 66,
+  'arbitrary-size': 585,
+  'icon-button-no-label': 42,
+};
 
 const args = new Set(process.argv.slice(2));
 const FORMAT_JSON = args.has('--json');
 const QUIET = args.has('--quiet');
+const STRICT = args.has('--strict');
 
 /** @typedef {{file: string, rule: string, line: number, snippet: string}} Finding */
 /** @type {Finding[]} */
@@ -145,7 +172,74 @@ async function scanFile(absPath, rel) {
       findings.push({file: rel, rule: 'blur-advisory', line: lineNo, snippet: trimmed.slice(0, 120)});
       BLUR_CLASS_RE.lastIndex = 0;
     }
+
+    // Rule 8 — hex colour literal
+    if (HEX_LITERAL_RE.test(line)) {
+      findings.push({file: rel, rule: 'hex-literal', line: lineNo, snippet: trimmed.slice(0, 120)});
+      HEX_LITERAL_RE.lastIndex = 0;
+    }
+
+    // Rule 9 — arbitrary Tailwind size
+    if (ARBITRARY_SIZE_RE.test(line)) {
+      findings.push({file: rel, rule: 'arbitrary-size', line: lineNo, snippet: trimmed.slice(0, 120)});
+      ARBITRARY_SIZE_RE.lastIndex = 0;
+    }
   });
+
+  // Rule 10 — icon-only buttons without an accessible name (multi-line JSX)
+  for (const {line, tag} of findUnlabelledIconButtons(src)) {
+    findings.push({file: rel, rule: 'icon-button-no-label', line, snippet: `<${tag}> ${lines[line - 1].trim().slice(0, 100)}`});
+  }
+}
+
+/** End index of a JSX opening tag starting at `from`, skipping `{…}` and strings. */
+function openingTagEnd(src, from) {
+  let depth = 0;
+  let quote = null;
+  for (let i = from; i < src.length; i++) {
+    const c = src[i];
+    if (quote) {
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (depth > 0 && (c === '"' || c === "'" || c === '`')) quote = c;
+    else if (c === '{') depth++;
+    else if (c === '}') depth--;
+    else if (c === '>' && depth === 0) return i;
+  }
+  return -1;
+}
+
+function findUnlabelledIconButtons(src) {
+  const out = [];
+  ICON_BUTTON_OPEN_RE.lastIndex = 0;
+  let m;
+  while ((m = ICON_BUTTON_OPEN_RE.exec(src))) {
+    const tag = m[1];
+    const end = openingTagEnd(src, m.index + m[0].length);
+    if (end < 0) continue;
+    const open = src.slice(m.index, end + 1);
+    const selfClosing = open.endsWith('/>');
+    const close = selfClosing ? -1 : src.indexOf(`</${tag}>`, end);
+    const inner = close < 0 ? '' : src.slice(end + 1, close);
+    if (ACCESSIBLE_NAME_RE.test(open + inner)) continue;
+
+    let iconOnly;
+    if (tag === 'ActionIcon') {
+      iconOnly = true;
+    } else {
+      if (selfClosing || close < 0 || inner.length > 400) continue;
+      iconOnly = /^\s*(<[A-Z][\w.]*[^>]*\/>\s*)+$/.test(inner);
+    }
+    if (iconOnly) out.push({line: src.slice(0, m.index).split('\n').length, tag});
+  }
+  return out;
+}
+
+function strictViolations(byRule) {
+  return Object.entries(STRICT_BASELINE)
+    .filter(([rule, max]) => (byRule[rule] || 0) > max)
+    .map(([rule, max]) => ({rule, count: byRule[rule] || 0, max}));
 }
 
 function summarize() {
@@ -170,9 +264,14 @@ async function main() {
   const summary = summarize();
   const elapsed = Date.now() - start;
 
+  const violations = STRICT ? strictViolations(summary.byRule) : [];
+
   if (FORMAT_JSON) {
-    process.stdout.write(JSON.stringify({summary, findings}, null, 2));
-    process.exit(0);
+    // Exit only after the pipe drains; process.exit() truncates large piped output.
+    process.stdout.write(JSON.stringify({summary, findings, violations}, null, 2), () => {
+      process.exit(violations.length ? 1 : 0);
+    });
+    return;
   }
 
   console.log('\nNU-AURA Styling Drift Report (T3-13)');
@@ -193,12 +292,21 @@ async function main() {
       console.log(`        ${f.snippet}`);
     }
   }
-  console.log('\n(Report only — exits 0. Migrate drift in housekeeping PRs.)\n');
+  if (!STRICT) {
+    console.log('\n(Report only — exits 0. Pass --strict to enforce the ratchet.)\n');
+    process.exit(0);
+  }
+  if (violations.length) {
+    console.error('\nStyling drift above ratchet baseline:');
+    for (const v of violations) console.error(`  ${v.rule.padEnd(22)} ${v.count} > ${v.max}`);
+    console.error('Fix the new drift (see --json for locations); do not raise the baseline.\n');
+    process.exit(1);
+  }
+  console.log('\nStrict: all ratcheted rules at or below baseline.\n');
   process.exit(0);
 }
 
 main().catch((err) => {
   console.error('drift-checker failed:', err);
-  // Still exit 0 — never block CI on this tool's own bugs (yet).
-  process.exit(0);
+  process.exit(STRICT ? 1 : 0);
 });

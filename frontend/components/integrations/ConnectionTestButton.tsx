@@ -41,7 +41,6 @@ export function ConnectionTestButton({connectorId, isDisabled}: ConnectionTestBu
           message,
           latencyMs: 0,
         });
-        toast.error(message);
       },
     });
   };

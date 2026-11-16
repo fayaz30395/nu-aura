@@ -41,6 +41,7 @@ import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion'
 import {PageErrorFallback} from '@/components/errors/PageErrorFallback';
 import {
   useAddAgendaItem,
+  useAgendaTemplates,
   useCancelMeeting,
   useCompleteMeeting,
   useCreateActionItem,
@@ -72,6 +73,9 @@ import type {
   RecurrencePattern,
 } from '@/lib/types/hrms/meeting';
 import {safeUrl} from '@/lib/utils/safeUrl';
+import {ActionItemsPanel} from '@/components/one-on-one/ActionItemsPanel';
+import {AgendaTemplatesPanel} from '@/components/one-on-one/AgendaTemplatesPanel';
+import {toAgendaRequests} from '@/lib/utils/agenda-template';
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────
 
@@ -255,7 +259,8 @@ export default function OneOnOnePage() {
   // ── State ──────────────────────────────────────────────────────────
   const [view, setView] = useState<'list' | 'detail' | 'schedule'>('list');
   const [selectedMeetingId, setSelectedMeetingId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'upcoming' | 'all' | 'manager'>('upcoming');
+  const [activeTab, setActiveTab] = useState<'upcoming' | 'all' | 'manager' | 'actions' | 'templates'>('upcoming');
+  const [templateId, setTemplateId] = useState('');
   const [page, setPage] = useState(0);
   const [statusFilter, setStatusFilter] = useState<MeetingStatus | 'ALL'>('ALL');
   const [showAgendaForm, setShowAgendaForm] = useState(false);
@@ -277,6 +282,8 @@ export default function OneOnOnePage() {
   const upcomingQuery = useUpcomingMeetings();
   const allMeetingsQuery = useMyMeetings(page, 20);
   const dashboardQuery = useMeetingDashboard();
+  const templatesQuery = useAgendaTemplates();
+  const selectedTemplate = templatesQuery.data?.find((t) => t.id === templateId);
   const pendingActionsQuery = usePendingActionItems();
   const overdueActionsQuery = useOverdueActionItems();
   const detailQuery = useMeetingDetail(selectedMeetingId || '', !!selectedMeetingId && view === 'detail');
@@ -384,8 +391,10 @@ export default function OneOnOnePage() {
       recurrencePattern: data.isRecurring ? (data.recurrencePattern as RecurrencePattern) : undefined,
       recurrenceEndDate: data.isRecurring ? data.recurrenceEndDate : undefined,
       reminderMinutesBefore: data.reminderMinutesBefore,
+      agendaItems: selectedTemplate ? toAgendaRequests(selectedTemplate.items) : undefined,
     });
     scheduleForm.reset();
+    setTemplateId('');
     setView('list');
   };
 
@@ -1390,6 +1399,27 @@ export default function OneOnOnePage() {
                 )}
               </div>
 
+              {/* Agenda template */}
+              <div>
+                <label htmlFor="one-on-one-template" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Agenda template</label>
+                <select
+                  id="one-on-one-template"
+                  value={templateId}
+                  onChange={(e) => setTemplateId(e.target.value)}
+                  className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg bg-[var(--bg-card)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-accent-700"
+                >
+                  <option value="">None</option>
+                  {(templatesQuery.data ?? []).map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+                {selectedTemplate && (
+                  <ul className="mt-2 list-disc pl-5 text-caption">
+                    {selectedTemplate.items.map((item, i) => <li key={i}>{item}</li>)}
+                  </ul>
+                )}
+              </div>
+
               {/* Description */}
               <div>
                 <label htmlFor="one-on-one-description" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Description</label>
@@ -1653,6 +1683,8 @@ export default function OneOnOnePage() {
             {([
               {key: 'upcoming', label: 'Upcoming'},
               {key: 'all', label: 'All Meetings'},
+              {key: 'actions', label: 'Action Items'},
+              {key: 'templates', label: 'Agenda Templates'},
             ] as const).map((tab) => (
               <button
                 key={tab.key}
@@ -1671,6 +1703,9 @@ export default function OneOnOnePage() {
             ))}
           </div>
 
+          {activeTab === 'actions' && <ActionItemsPanel/>}
+          {activeTab === 'templates' && <AgendaTemplatesPanel/>}
+          {(activeTab === 'upcoming' || activeTab === 'all') && (<>
           {/* Status Filter */}
           {activeTab === 'all' && (
             <div className="p-4 border-b border-[var(--border-main)]">
@@ -1781,6 +1816,7 @@ export default function OneOnOnePage() {
               </div>
             </div>
           )}
+          </>)}
         </div>
       </PageTransition>
     </AppLayout>

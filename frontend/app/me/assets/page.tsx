@@ -1,110 +1,100 @@
 'use client';
 
 import React from 'react';
-import {AlertCircle, Calendar, Laptop, MapPin, Package} from 'lucide-react';
+import {Calendar, Laptop, MapPin, Package} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent} from '@/components/ui/Card';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
 import {EmptyState} from '@/components/ui/EmptyState';
-import {SkeletonTable} from '@/components/ui/Skeleton';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useAssetsByEmployee} from '@/lib/hooks/queries/useAssets';
 import {formatDate} from '@/lib/utils/format/date';
 
+const BREADCRUMBS = [{label: 'My Space', href: '/me/dashboard'}, {label: 'My Assets'}];
+
 export default function MyAssetsPage() {
   const {user, hasHydrated} = useAuth();
   const employeeId = user?.employeeId ?? '';
   const assetsQuery = useAssetsByEmployee(employeeId);
-  const assets = assetsQuery.data ?? [];
+  const skeleton = <ListPageSkeleton rows={4} columns={3} showHeader={false} showFilters={false}/>;
 
   return (
     <AppLayout activeMenuItem="my-assets">
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">My Assets</h1>
-          <p className="text-[var(--text-secondary)] mt-1">
-            View company assets currently assigned to you.
-          </p>
-        </div>
+      <div className="flex flex-col gap-6">
+        <PageHeader
+          title="My Assets"
+          description="View company assets currently assigned to you."
+          breadcrumbs={BREADCRUMBS}
+        />
 
         {!hasHydrated || (!user && assetsQuery.fetchStatus !== 'idle') ? (
-          <SkeletonTable rows={4} columns={4}/>
+          skeleton
         ) : !employeeId ? (
-          <Card className="card-aura">
-            <CardContent className="py-12">
-              <EmptyState
-                icon={<Package className="h-8 w-8" aria-hidden="true"/>}
-                title="No employee profile linked"
-                description="Asset self-service will appear here once your account is linked to an employee profile."
-              />
-            </CardContent>
-          </Card>
-        ) : assetsQuery.isLoading ? (
-          <SkeletonTable rows={4} columns={4}/>
-        ) : assetsQuery.isError ? (
-          <Card className="card-aura">
-            <CardContent className="py-12">
-              <EmptyState
-                icon={<AlertCircle className="h-8 w-8" aria-hidden="true"/>}
-                title="Couldn't load assets"
-                description="Something went wrong while loading your assets. Please try again."
-              />
-            </CardContent>
-          </Card>
-        ) : assets.length === 0 ? (
-          <Card className="card-aura">
-            <CardContent className="py-12">
-              <EmptyState
-                icon={<Package className="h-8 w-8" aria-hidden="true"/>}
-                title="No assets assigned"
-                description="Assigned laptops, devices, access cards, and other company assets will appear here."
-              />
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {assets.map((asset) => (
-              <Card key={asset.id} className="card-aura">
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-start gap-4 min-w-0">
-                      <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-lg bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
-                        <Laptop className="h-5 w-5" aria-hidden="true"/>
-                      </div>
-                      <div className="min-w-0">
-                        <h2 className="font-semibold text-[var(--text-primary)] truncate">
-                          {asset.assetName}
-                        </h2>
-                        <p className="text-sm text-[var(--text-secondary)] truncate">
-                          {asset.assetCode}
-                        </p>
-                      </div>
-                    </div>
-                    <StatusBadge status={asset.status}/>
-                  </div>
-
-                  <div className="mt-5 space-y-4 text-sm text-[var(--text-secondary)]">
-                    <div className="flex items-center gap-2">
-                      <Package className="h-4 w-4" aria-hidden="true"/>
-                      <span>{asset.category.replace(/_/g, ' ')}</span>
-                    </div>
-                    {asset.location && (
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" aria-hidden="true"/>
-                        <span>{asset.location}</span>
-                      </div>
-                    )}
-                    {asset.purchaseDate && (
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" aria-hidden="true"/>
-                        <span>Purchased {formatDate(asset.purchaseDate)}</span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="rounded-lg border border-border bg-card p-4">
+            <EmptyState
+              icon={<Package className="h-8 w-8" aria-hidden="true"/>}
+              title="No employee profile linked"
+              description="Asset self-service will appear here once your account is linked to an employee profile."
+            />
           </div>
+        ) : (
+          <QueryState
+            query={assetsQuery}
+            skeleton={skeleton}
+            errorTitle="Couldn't load assets"
+            errorMessage="Something went wrong while loading your assets. Please try again."
+            isEmpty={(assets) => assets.length === 0}
+            empty={{
+              icon: <Package className="h-8 w-8" aria-hidden="true"/>,
+              title: 'No assets assigned',
+              description: 'Assigned laptops, devices, access cards, and other company assets will appear here.',
+            }}
+          >
+            {(assets) => (
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {assets.map((asset) => (
+                  <article key={asset.id} className="rounded-lg border border-border bg-card p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex min-w-0 items-start gap-4">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accent-subtle text-accent">
+                          <Laptop className="h-4 w-4" aria-hidden="true"/>
+                        </div>
+                        <div className="min-w-0">
+                          <h2 className="truncate text-sm font-semibold text-text-1">{asset.assetName}</h2>
+                          <p className="truncate text-xs text-text-2">{asset.assetCode}</p>
+                        </div>
+                      </div>
+                      <StatusBadge status={asset.status}/>
+                    </div>
+
+                    <dl className="mt-4 flex flex-col gap-2 text-sm text-text-2">
+                      <div className="flex items-center gap-2">
+                        <Package className="h-4 w-4" aria-hidden="true"/>
+                        <dt className="sr-only">Category</dt>
+                        <dd>{asset.category.replace(/_/g, ' ')}</dd>
+                      </div>
+                      {asset.location && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" aria-hidden="true"/>
+                          <dt className="sr-only">Location</dt>
+                          <dd>{asset.location}</dd>
+                        </div>
+                      )}
+                      {asset.purchaseDate && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4" aria-hidden="true"/>
+                          <dt className="sr-only">Purchase date</dt>
+                          <dd>Purchased {formatDate(asset.purchaseDate)}</dd>
+                        </div>
+                      )}
+                    </dl>
+                  </article>
+                ))}
+              </div>
+            )}
+          </QueryState>
         )}
       </div>
     </AppLayout>

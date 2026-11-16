@@ -325,6 +325,7 @@ export default function UtilizationReportsPage() {
             <button
               onClick={() => refetch()}
               disabled={loading}
+              aria-label="Refresh utilization report"
               className="p-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}/>

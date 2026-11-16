@@ -70,7 +70,7 @@ export function EmptyState({
       <div
         className={cn(
           'flex flex-col items-center justify-center px-6',
-          isCompact ? 'py-6' : 'py-16'
+          isCompact ? 'py-6' : 'py-12'
         )}
       >
         {/* Icon Container */}
@@ -80,15 +80,15 @@ export function EmptyState({
             initial="hidden"
             animate="visible"
             className={cn(
-              'flex items-center justify-center rounded-lg',
-              isCompact ? 'w-10 h-10 mb-3' : 'w-16 h-16 mb-6',
-              iconColor || 'bg-[var(--bg-surface)] text-[var(--text-muted)]'
+              'flex items-center justify-center rounded-full',
+              isCompact ? 'w-10 h-10 mb-3' : 'w-12 h-12 mb-4',
+              iconColor || 'bg-[var(--surface-hover)] text-[var(--text-muted)]'
             )}
           >
             <div
               className={cn(
                 'flex items-center justify-center',
-                isCompact ? 'w-5 h-5' : 'w-8 h-8'
+                isCompact ? 'w-5 h-5' : 'w-6 h-6'
               )}
             >
               {icon}
@@ -100,7 +100,7 @@ export function EmptyState({
         <h3
           className={cn(
             'font-semibold text-center max-w-xs text-[var(--text-primary)]',
-            isCompact ? 'text-sm mb-1' : 'text-xl mb-2'
+            isCompact ? 'text-sm mb-1' : 'text-base mb-1'
           )}
         >
           {title}
@@ -111,7 +111,7 @@ export function EmptyState({
           <p
             className={cn(
               'text-center max-w-sm leading-relaxed text-[var(--text-secondary)]',
-              isCompact ? 'text-xs mb-3' : 'text-sm mb-6'
+              isCompact ? 'text-xs mb-3' : 'text-[13px] mb-5'
             )}
           >
             {description}

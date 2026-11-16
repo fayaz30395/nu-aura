@@ -63,6 +63,7 @@ export function useAddEmployeeSkill(employeeId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -86,6 +87,7 @@ export function useVerifySkill() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -111,6 +113,7 @@ export function useRemoveSkill(employeeId: string) {
         color: 'blue',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -149,6 +152,7 @@ export function useAddCompetency() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -175,6 +179,7 @@ export function useRemoveCompetency(reviewId: string) {
         color: 'blue',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',

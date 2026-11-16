@@ -1,6 +1,7 @@
 'use client';
 
-import React, {ReactNode, useCallback, useEffect, useId, useRef} from 'react';
+import React, {ReactNode, useCallback, useEffect, useId, useRef, useState} from 'react';
+import {createPortal} from 'react-dom';
 import {AnimatePresence, motion} from 'framer-motion';
 import {modalVariants, overlayVariants} from '@/lib/animation';
 import {useReducedMotionSafe} from '@/lib/animation';
@@ -55,6 +56,9 @@ const Modal: React.FC<ModalProps> = ({
   // open/close effect from re-running (and stealing focus) on every parent render.
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  // Portal to <body>: transformed ancestors (page/shell animation) would otherwise anchor position:fixed to themselves.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const {pick} = useReducedMotionSafe();
 
   // QA-003: Focus trap — trap Tab/Shift+Tab within modal
@@ -128,7 +132,9 @@ const Modal: React.FC<ModalProps> = ({
     full: 'max-w-[calc(100vw-2rem)] sm:max-w-[calc(100vw-4rem)]',
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <ModalTitleIdContext.Provider value={titleId}>
       <AnimatePresence>
         {isOpen && (
@@ -141,7 +147,7 @@ const Modal: React.FC<ModalProps> = ({
           >
             {/* Backdrop */}
             <motion.div
-              className="absolute inset-0 bg-[var(--bg-overlay)]"
+              className="absolute inset-0 bg-[var(--overlay)]"
               onClick={closeOnBackdrop ? onClose : undefined}
               initial="initial"
               animate="animate"
@@ -153,7 +159,7 @@ const Modal: React.FC<ModalProps> = ({
             <motion.div
               ref={modalRef}
               className={cn(
-                'relative w-full rounded-lg border border-[var(--border-main)] bg-[var(--bg-elevated)] shadow-[var(--shadow-dropdown)]',
+                'relative w-full rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] shadow-[var(--sh-overlay)]',
                 'max-h-[90vh] overflow-hidden flex flex-col',
                 sizeClasses[size],
                 className
@@ -169,7 +175,8 @@ const Modal: React.FC<ModalProps> = ({
           </div>
         )}
       </AnimatePresence>
-    </ModalTitleIdContext.Provider>
+    </ModalTitleIdContext.Provider>,
+    document.body
   );
 };
 
@@ -184,13 +191,13 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
   return (
     <div
       className={cn(
-        'row-between border-b border-[var(--border-main)] px-6 py-4',
+        'row-between border-b border-[var(--border-subtle)] px-6 py-4',
         className
       )}
     >
       <div className="flex-1 min-w-0">
         {typeof children === 'string' ? (
-          <h2 id={titleId} className="text-xl font-semibold text-surface-900 dark:text-surface-50 truncate">
+          <h2 id={titleId} className="text-lg font-semibold text-[var(--text-primary)] truncate">
             {children}
           </h2>
         ) : (
@@ -213,7 +220,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({
 
 const ModalBody: React.FC<ModalBodyProps> = ({children, className}) => {
   return (
-    <div className={cn('flex-1 overflow-y-auto px-6 py-4', className)}>
+    <div className={cn('flex-1 overflow-y-auto p-6', className)}>
       {children}
     </div>
   );
@@ -223,7 +230,7 @@ const ModalFooter: React.FC<ModalFooterProps> = ({children, className}) => {
   return (
     <div
       className={cn(
-        'flex items-center justify-end gap-2 border-t border-[var(--border-main)] bg-[var(--bg-surface)] px-6 py-4',
+        'flex items-center justify-end gap-3 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)] px-6 py-4',
         className
       )}
     >

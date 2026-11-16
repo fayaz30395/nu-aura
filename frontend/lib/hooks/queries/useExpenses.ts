@@ -213,6 +213,7 @@ export function usePolicyValidation(employeeId: string | undefined, amount: numb
 export function useScanReceipt() {
   return useMutation({
     mutationFn: (file: File) => expenseService.scanReceipt(file),
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'OCR Scan Failed',
@@ -339,6 +340,7 @@ export function useAddExpenseItem() {
       queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(variables.claimId)});
       queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -371,6 +373,7 @@ export function useDeleteExpenseItem() {
       queryClient.invalidateQueries({queryKey: expenseKeys.claimDetail(variables.claimId)});
       queryClient.invalidateQueries({queryKey: expenseKeys.myClaims()});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',

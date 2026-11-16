@@ -220,11 +220,7 @@ export default function SeparationDetailPage() {
       });
       setClearanceModalOpen(false);
     } catch {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to update clearance',
-        color: 'red',
-      });
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -272,11 +268,7 @@ export default function SeparationDetailPage() {
       });
       setAssetModalOpen(false);
     } catch {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to update asset recovery',
-        color: 'red',
-      });
+      // The global MutationCache handler shows the error toast.
     }
   };
 

@@ -55,6 +55,7 @@ export function useEnableMfa() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -83,6 +84,7 @@ export function useDisableMfa() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -103,6 +105,7 @@ export function useMfaLogin() {
   return useMutation({
     mutationFn: (params: { mfaToken: string; code: string }) =>
       mfaApi.mfaLogin(params.mfaToken, params.code),
+    meta: {skipGlobalError: true},
     onError: (error) => {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||

@@ -91,12 +91,6 @@ export default function AdminLeaveRequestsPage() {
           setSelectedRequest(null);
           toast.success('Leave request approved');
         },
-        onError: (err: unknown) => {
-          toast.error(
-            (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to approve leave request'
-          );
-        },
       }
     );
   };
@@ -118,12 +112,6 @@ export default function AdminLeaveRequestsPage() {
           setRejectionReason('');
           setSelectedRequest(null);
           toast.success('Leave request rejected');
-        },
-        onError: (err: unknown) => {
-          toast.error(
-            (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to reject leave request'
-          );
         },
       }
     );

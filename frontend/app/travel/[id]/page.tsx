@@ -39,11 +39,8 @@ import {
   User,
   XCircle,
 } from 'lucide-react';
-import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
 import {formatDate as formatDateCanonical} from '@/lib/utils/format/date';
-
-const log = createLogger('TravelPage');
 
 export default function TravelRequestDetailsPage() {
   const toast = useToast();
@@ -95,12 +92,6 @@ export default function TravelRequestDetailsPage() {
     rejectMutation.mutate(
       {id: travelRequest.id, approverId: user.employeeId, reason: rejectReason},
       {
-        onError: (error: unknown) => {
-          log.error('Error rejecting travel request:', error);
-          toast.error((error as {
-            response?: { data?: { message?: string } }
-          })?.response?.data?.message || 'Failed to reject travel request');
-        },
         onSuccess: () => {
           setShowRejectReasonModal(false);
           setRejectReason('');
@@ -120,12 +111,6 @@ export default function TravelRequestDetailsPage() {
     cancelMutation.mutate(
       {id: travelRequest.id, reason: cancelReason},
       {
-        onError: (error: unknown) => {
-          log.error('Error cancelling travel request:', error);
-          toast.error((error as {
-            response?: { data?: { message?: string } }
-          })?.response?.data?.message || 'Failed to cancel travel request');
-        },
         onSuccess: () => {
           setShowCancelReasonModal(false);
           setCancelReason('');
@@ -143,12 +128,6 @@ export default function TravelRequestDetailsPage() {
     if (!travelRequest) return;
 
     completeMutation.mutate(travelRequest.id, {
-      onError: (error: unknown) => {
-        log.error('Error completing travel request:', error);
-        toast.error((error as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to complete travel request');
-      },
       onSuccess: () => {
         setShowCompleteConfirm(false);
       },

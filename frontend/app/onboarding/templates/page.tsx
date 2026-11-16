@@ -30,9 +30,6 @@ export default function TemplatesPage() {
         notifications.show({title: 'Template deleted', message: '', color: 'green'});
         setDeletingTemplateId(null);
       },
-      onError: () => {
-        notifications.show({title: 'Error', message: 'Failed to delete template', color: 'red'});
-      },
     });
   };
 

@@ -51,9 +51,6 @@ export default function ContractTemplatesPage() {
         onSuccess: () => {
           notifications.show({title: 'Deleted', message: 'Template deleted successfully', color: 'green'});
         },
-        onError: () => {
-          notifications.show({title: 'Error', message: 'Failed to delete template. Please try again.', color: 'red'});
-        },
       });
       setDeleteConfirmOpen(false);
       setTemplateToDelete(null);

@@ -207,7 +207,7 @@ export default function CourseCatalogPage() {
 
         {/* Filters */}
         <div className="flex items-center gap-4 flex-wrap">
-          <div className="relative flex-1 min-w-[220px] max-w-sm">
+          <div className="relative flex-1 min-w-56 max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
             <Input
               placeholder="Search courses…"
@@ -398,7 +398,7 @@ export default function CourseCatalogPage() {
             <Button
               variant="outline"
               onClick={() => loadCatalog(page + 1)}
-              className="min-w-[160px]"
+              className="min-w-40"
             >
               Load more courses
             </Button>

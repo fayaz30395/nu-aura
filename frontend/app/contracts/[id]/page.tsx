@@ -113,9 +113,6 @@ export default function ContractDetailPage() {
                 onSuccess: () => {
                   notifications.show({title: 'Success', message: 'Contract marked as active', color: 'green'});
                 },
-                onError: () => {
-                  notifications.show({title: 'Error', message: 'Failed to mark contract as active', color: 'red'});
-                },
               })}
               loading={markActiveMutation.isPending}
             >
@@ -128,9 +125,6 @@ export default function ContractDetailPage() {
               onClick={() => terminateMutation.mutate(contractId, {
                 onSuccess: () => {
                   notifications.show({title: 'Success', message: 'Contract terminated', color: 'green'});
-                },
-                onError: () => {
-                  notifications.show({title: 'Error', message: 'Failed to terminate contract', color: 'red'});
                 },
               })}
               loading={terminateMutation.isPending}

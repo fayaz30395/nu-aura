@@ -1,12 +1,15 @@
 'use client';
 
-import {useId, useState} from 'react';
-import {Controller, useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
+import {useState} from 'react';
+import {Button, NativeSelect} from '@mantine/core';
+import {MessageSquare, Plus} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {notifications} from '@mantine/notifications';
-import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {Card} from '@/components/ui/Card';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useCreateFeedback,
@@ -17,27 +20,20 @@ import {
 } from '@/lib/hooks/queries/useFeedback';
 import {Feedback, FeedbackRequest, FeedbackType} from '@/lib/types/grow/performance';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
-import {formatDateTime} from '@/lib/utils/format/date';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {FeedbackCard} from './_components/FeedbackCard';
+import {type FeedbackFormData, FeedbackFormModal} from './_components/FeedbackFormModal';
+import {FEEDBACK_TYPE_OPTIONS} from './_components/feedbackOptions';
 
-// ─── Validation Schemas ───────────────────────────────────────────────────────
+type FeedbackTab = 'received' | 'given';
 
-const feedbackFormSchema = z.object({
-  recipientId: z.string().min(1, 'Recipient is required'),
-  giverId: z.string().min(1, 'Giver ID is required'),
-  feedbackType: z.enum(['PRAISE', 'CONSTRUCTIVE', 'GENERAL', 'REQUEST'] as const) as z.ZodType<FeedbackType>,
-  category: z.string().optional().or(z.literal('')),
-  feedbackText: z.string().min(1, 'Feedback is required').max(5000),
-  isAnonymous: z.boolean().optional(),
-  isPublic: z.boolean().optional(),
-  relatedReviewId: z.string().optional().or(z.literal('')),
-});
-
-type FeedbackFormData = z.infer<typeof feedbackFormSchema>;
+const FILTER_OPTIONS = [{value: 'ALL', label: 'All Types'}, ...FEEDBACK_TYPE_OPTIONS];
+const BREADCRUMBS = [{label: 'Performance', href: '/performance'}, {label: 'Feedback'}];
 
 export default function FeedbackPage() {
   const {user} = useAuth();
   const currentUserId = user?.employeeId || '';
+  const {hasPermission} = usePermissions();
 
   // React Query hooks
   const receivedQuery = useReceivedFeedback(currentUserId);
@@ -47,38 +43,28 @@ export default function FeedbackPage() {
   const deleteMutation = useDeleteFeedback();
 
   // Local state
-  const formModalTitleId = useId();
-  const deleteModalTitleId = useId();
   const [showModal, setShowModal] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedFeedback, setSelectedFeedback] = useState<Feedback | null>(null);
-  const [activeTab, setActiveTab] = useState<'received' | 'given'>('received');
+  const [editingFeedback, setEditingFeedback] = useState<Feedback | null>(null);
+  const [deletingFeedback, setDeletingFeedback] = useState<Feedback | null>(null);
+  const [activeTab, setActiveTab] = useState<FeedbackTab>('received');
   const [filterType, setFilterType] = useState<FeedbackType | 'ALL'>('ALL');
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    formState: {errors, isSubmitting},
-  } = useForm<FeedbackFormData>({
-    resolver: zodResolver(feedbackFormSchema),
-    defaultValues: {
-      recipientId: '',
-      giverId: '',
-      feedbackType: 'GENERAL',
-      category: '',
-      feedbackText: '',
-      isAnonymous: false,
-      isPublic: false,
-      relatedReviewId: '',
-    },
-  });
+  const openCreateModal = () => {
+    setEditingFeedback(null);
+    setShowModal(true);
+  };
 
-  const receivedFeedback = receivedQuery.data || [];
-  const givenFeedback = givenQuery.data || [];
-  const isLoading = receivedQuery.isLoading || givenQuery.isLoading;
+  const openEditModal = (feedback: Feedback) => {
+    setEditingFeedback(feedback);
+    setShowModal(true);
+  };
 
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingFeedback(null);
+  };
+
+  // Failures are reported by the global MutationCache toast; the modal stays open so the user can retry.
   const handleFormSubmit = async (formData: FeedbackFormData) => {
     const feedbackData = {
       ...formData,
@@ -88,412 +74,150 @@ export default function FeedbackPage() {
     };
 
     try {
-      if (selectedFeedback) {
-        await updateMutation.mutateAsync({id: selectedFeedback.id, data: feedbackData as FeedbackRequest});
+      if (editingFeedback) {
+        await updateMutation.mutateAsync({id: editingFeedback.id, data: feedbackData as FeedbackRequest});
       } else {
         await createMutation.mutateAsync(feedbackData as FeedbackRequest);
       }
-      setShowModal(false);
-      resetFormHandler();
-    } catch (err) {
-      notifications.show({
-        title: 'Error',
-        message: err instanceof Error ? err.message : 'Failed to save feedback.',
-        color: 'red',
-      });
+    } catch {
+      return;
     }
+    closeModal();
   };
 
   const handleDelete = async () => {
-    if (!selectedFeedback) return;
+    if (!deletingFeedback) return;
     try {
-      await deleteMutation.mutateAsync(selectedFeedback.id);
-      setShowDeleteConfirm(false);
-      setSelectedFeedback(null);
-    } catch (err) {
-      notifications.show({
-        title: 'Error',
-        message: err instanceof Error ? err.message : 'Failed to delete feedback.',
-        color: 'red',
-      });
+      await deleteMutation.mutateAsync(deletingFeedback.id);
+    } catch {
+      return;
     }
+    setDeletingFeedback(null);
   };
-
-  const openEditModal = (feedback: Feedback) => {
-    setSelectedFeedback(feedback);
-    reset({
-      recipientId: feedback.recipientId,
-      giverId: feedback.giverId,
-      feedbackType: feedback.feedbackType,
-      category: feedback.category || '',
-      feedbackText: feedback.feedbackText,
-      isAnonymous: feedback.isAnonymous,
-      isPublic: feedback.isPublic,
-      relatedReviewId: feedback.relatedReviewId || '',
-    });
-    setShowModal(true);
-  };
-
-  const openDeleteConfirm = (feedback: Feedback) => {
-    setSelectedFeedback(feedback);
-    setShowDeleteConfirm(true);
-  };
-
-  const resetFormHandler = () => {
-    setSelectedFeedback(null);
-    reset({
-      recipientId: '',
-      giverId: '',
-      feedbackType: 'GENERAL',
-      category: '',
-      feedbackText: '',
-      isAnonymous: false,
-      isPublic: false,
-      relatedReviewId: '',
-    });
-  };
-
-  const getTypeColor = (type: FeedbackType) => {
-    switch (type) {
-      case 'PRAISE':
-        return 'bg-success-100 text-success-800';
-      case 'CONSTRUCTIVE':
-        return 'bg-warning-100 text-warning-800';
-      case 'GENERAL':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'REQUEST':
-        return 'bg-accent-300 text-accent-900';
-      default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-    }
-  };
-
-  const currentFeedbackList = activeTab === 'received' ? receivedFeedback : givenFeedback;
-  const filteredFeedback = currentFeedbackList.filter(feedback => {
-    if (filterType !== 'ALL' && feedback.feedbackType !== filterType) return false;
-    return true;
-  });
 
   if (!currentUserId) {
     return (
-      <AppLayout activeMenuItem="performance">
-        <div className="page-shell-centered fade-slide-up auth-delay-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-600"></div>
+      <AppLayout activeMenuItem="performance" breadcrumbs={BREADCRUMBS}>
+        <div className="mx-auto w-full max-w-7xl">
+          <ListPageSkeleton rows={4} columns={3}/>
         </div>
       </AppLayout>
     );
   }
 
+  const activeQuery = activeTab === 'received' ? receivedQuery : givenQuery;
+  const canCreate = hasPermission(Permissions.REVIEW_CREATE);
+  const tabs: {value: FeedbackTab; label: string; count: number}[] = [
+    {value: 'received', label: 'Received Feedback', count: receivedQuery.data?.length ?? 0},
+    {value: 'given', label: 'Given Feedback', count: givenQuery.data?.length ?? 0},
+  ];
+
   return (
-    <AppLayout activeMenuItem="performance">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold">Feedback</h1>
-          <PermissionGate permission={Permissions.REVIEW_CREATE}>
-            <button
-              onClick={() => {
-                resetFormHandler();
-                setShowModal(true);
-              }}
-              className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
-            >
-              Give Feedback
-            </button>
-          </PermissionGate>
-        </div>
+    <AppLayout activeMenuItem="performance" breadcrumbs={BREADCRUMBS}>
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <PageHeader
+          title="Feedback"
+          description="Give and receive ongoing feedback all year."
+          actions={
+            <PermissionGate permission={Permissions.REVIEW_CREATE}>
+              <Button leftSection={<Plus className="h-4 w-4" aria-hidden/>} onClick={openCreateModal}>
+                Give Feedback
+              </Button>
+            </PermissionGate>
+          }
+        />
 
-        <div
-          className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] mb-6">
-          <div className="flex border-b">
-            <button
-              onClick={() => setActiveTab('received')}
-              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'received' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
-            >
-              Received Feedback ({receivedFeedback.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('given')}
-              className={'flex-1 px-6 py-4 font-semibold transition-colors ' + (activeTab === 'given' ? 'border-b-2 border-accent-500 text-accent-700 dark:text-accent-400' : 'text-[var(--text-secondary)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-secondary)]')}
-            >
-              Given Feedback ({givenFeedback.length})
-            </button>
-          </div>
-
-          <div className="p-4">
-            <div>
-              <label htmlFor="feedback-filter-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Filter by Type
-              </label>
-              <select
-                id="feedback-filter-type"
-                aria-label="Filter by Type"
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value as FeedbackType | 'ALL')}
-                className="w-full md:w-1/2 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div role="group" aria-label="Feedback view" className="flex flex-wrap gap-2">
+            {tabs.map((tab) => (
+              <Button
+                key={tab.value}
+                variant={activeTab === tab.value ? 'light' : 'subtle'}
+                color={activeTab === tab.value ? undefined : 'gray'}
+                aria-pressed={activeTab === tab.value}
+                onClick={() => setActiveTab(tab.value)}
               >
-                <option value="ALL">All Types</option>
-                <option value="PRAISE">Praise</option>
-                <option value="CONSTRUCTIVE">Constructive</option>
-                <option value="GENERAL">General</option>
-                <option value="REQUEST">Request</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {isLoading ? (
-          <div className="text-center py-12">
-            <div className="text-[var(--text-secondary)]">Loading feedback...</div>
-          </div>
-        ) : filteredFeedback.length === 0 ? (
-          <div
-            className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-12 text-center">
-            <div className="text-[var(--text-secondary)] mb-4">
-              No {activeTab === 'received' ? 'received' : 'given'} feedback found
-            </div>
-            {activeTab === 'given' && (
-              <PermissionGate permission={Permissions.REVIEW_CREATE}>
-                <button
-                  onClick={() => {
-                    resetFormHandler();
-                    setShowModal(true);
-                  }}
-                  className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
-                >
-                  Give Your First Feedback
-                </button>
-              </PermissionGate>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredFeedback.map((feedback) => (
-              <div key={feedback.id}
-                   className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg shadow-[var(--shadow-elevated)] p-6 hover:shadow-[var(--shadow-dropdown)] transition-shadow">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <div className="flex gap-2 mb-4 flex-wrap">
-                      <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(feedback.feedbackType)}>
-                        {feedback.feedbackType}
-                      </span>
-                      {feedback.category && (
-                        <span
-                          className="px-2 py-1 rounded text-xs font-medium bg-[var(--bg-secondary)] text-[var(--text-primary)]">
-                          {feedback.category}
-                        </span>
-                      )}
-                      {feedback.isAnonymous && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-accent-300 text-accent-900">
-                          Anonymous
-                        </span>
-                      )}
-                      {feedback.isPublic && (
-                        <span className="px-2 py-1 rounded text-xs font-medium bg-accent-100 text-accent-800">
-                          Public
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-body-secondary mb-2">
-                      {feedback.createdAt ? formatDateTime(feedback.createdAt) : 'N/A'}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <p className="text-[var(--text-primary)] whitespace-pre-wrap">{feedback.feedbackText}</p>
-                </div>
-
-                {activeTab === 'given' && (
-                  <div className="flex gap-2">
-                    <PermissionGate permission={Permissions.REVIEW_UPDATE}>
-                      <button
-                        onClick={() => openEditModal(feedback)}
-                        className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
-                      >
-                        Edit
-                      </button>
-                    </PermissionGate>
-                    <PermissionGate permission={Permissions.REVIEW_DELETE}>
-                      <button
-                        onClick={() => openDeleteConfirm(feedback)}
-                        className="flex-1 px-4 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
-                    </PermissionGate>
-                  </div>
-                )}
-              </div>
+                {tab.label} ({tab.count})
+              </Button>
             ))}
           </div>
-        )}
+          <NativeSelect
+            id="feedback-filter-type"
+            label="Filter by Type"
+            data={FILTER_OPTIONS}
+            value={filterType}
+            onChange={(e) => setFilterType(e.currentTarget.value as FeedbackType | 'ALL')}
+            className="w-full sm:w-56"
+          />
+        </div>
 
-        {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div
-              role="dialog" aria-modal="true" aria-labelledby={formModalTitleId}
-              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <h2 id={formModalTitleId} className="text-xl font-bold mb-6">
-                  {selectedFeedback ? 'Edit Feedback' : 'Give Feedback'}
-                </h2>
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
-                  <div className="space-y-4">
-                    <div>
-                      <Controller
-                        control={control}
-                        name="recipientId"
-                        render={({field}) => (
-                          <EmployeeSearchAutocomplete
-                            label="Recipient *"
-                            value={field.value ? {id: field.value, name: field.value} : null}
-                            onChange={(employee) => field.onChange(employee?.id || '')}
-                            placeholder="Search for a recipient..."
-                            required
-                          />
-                        )}
-                      />
-                      {errors.recipientId && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.recipientId.message}</p>
-                      )}
-                    </div>
+        <QueryState
+          query={activeQuery}
+          skeleton={<ListPageSkeleton showHeader={false} showFilters={false} rows={4} columns={2}/>}
+          errorTitle="Couldn't load feedback"
+        >
+          {(list) => {
+            const filtered = (list ?? []).filter(
+              (feedback) => filterType === 'ALL' || feedback.feedbackType === filterType);
 
-                    <div>
-                      <label htmlFor="feedback-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Feedback Type *
-                      </label>
-                      <select
-                        id="feedback-type"
-                        aria-label="Feedback Type"
-                        {...register('feedbackType')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                      >
-                        <option value="PRAISE">Praise</option>
-                        <option value="CONSTRUCTIVE">Constructive</option>
-                        <option value="GENERAL">General</option>
-                        <option value="REQUEST">Request</option>
-                      </select>
-                      {errors.feedbackType && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.feedbackType.message}</p>
-                      )}
-                    </div>
+            if (filtered.length === 0) {
+              const emptyAction = filterType !== 'ALL'
+                ? {actionLabel: 'Clear filters', onAction: () => setFilterType('ALL')}
+                : activeTab === 'given' && canCreate
+                  ? {actionLabel: 'Give Your First Feedback', onAction: openCreateModal}
+                  : {};
+              return (
+                <Card className="rounded-lg">
+                  <EmptyState
+                    icon={<MessageSquare className="h-full w-full"/>}
+                    title={`No ${activeTab} feedback found`}
+                    description={filterType !== 'ALL'
+                      ? 'No feedback matches the selected type.'
+                      : activeTab === 'given'
+                        ? 'Feedback you give to colleagues will appear here.'
+                        : 'Feedback colleagues share with you will appear here.'}
+                    {...emptyAction}
+                  />
+                </Card>
+              );
+            }
 
-                    <div>
-                      <label htmlFor="feedback-category" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Category
-                      </label>
-                      <input
-                        id="feedback-category"
-                        type="text"
-                        placeholder="e.g., Communication, Leadership, Technical Skills"
-                        {...register('category')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                      />
-                      {errors.category && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.category.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="feedback-text" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Feedback *
-                      </label>
-                      <textarea
-                        id="feedback-text"
-                        rows={6}
-                        placeholder="Provide detailed feedback..."
-                        {...register('feedbackText')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                      />
-                      {errors.feedbackText && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.feedbackText.message}</p>
-                      )}
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          {...register('isAnonymous')}
-                          className="w-4 h-4 text-accent-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500"
-                        />
-                        <span className="ml-2 text-body-secondary">
-                          Submit as anonymous
-                        </span>
-                      </label>
-
-                      <label className="flex items-center">
-                        <input
-                          type="checkbox"
-                          {...register('isPublic')}
-                          className="w-4 h-4 text-accent-700 border-[var(--border-main)] dark:border-[var(--border-main)] rounded focus:ring-accent-500"
-                        />
-                        <span className="ml-2 text-body-secondary">
-                          Make this feedback public
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 mt-6">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowModal(false);
-                        resetFormHandler();
-                      }}
-                      className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
-                    >
-                      Cancel
-                    </button>
-                    <PermissionGate
-                      permission={selectedFeedback ? Permissions.REVIEW_UPDATE : Permissions.REVIEW_CREATE}>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        {isSubmitting ? 'Saving...' : selectedFeedback ? 'Update' : 'Submit'}
-                      </button>
-                    </PermissionGate>
-                  </div>
-                </form>
+            return (
+              <div className="flex flex-col gap-4">
+                {filtered.map((feedback) => (
+                  <FeedbackCard
+                    key={feedback.id}
+                    feedback={feedback}
+                    editable={activeTab === 'given'}
+                    onEdit={openEditModal}
+                    onDelete={setDeletingFeedback}
+                  />
+                ))}
               </div>
-            </div>
-          </div>
-        )}
-
-        {showDeleteConfirm && selectedFeedback && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div role="dialog" aria-modal="true" aria-labelledby={deleteModalTitleId} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
-              <h2 id={deleteModalTitleId} className="text-xl font-bold mb-4">Delete Feedback</h2>
-              <p className="text-[var(--text-secondary)] mb-6">
-                Are you sure you want to delete this feedback? This action cannot be undone.
-              </p>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => {
-                    setShowDeleteConfirm(false);
-                    setSelectedFeedback(null);
-                  }}
-                  className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
-                >
-                  Cancel
-                </button>
-                <PermissionGate permission={Permissions.REVIEW_DELETE}>
-                  <button
-                    onClick={handleDelete}
-                    disabled={deleteMutation.isPending}
-                    className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
-                  </button>
-                </PermissionGate>
-              </div>
-            </div>
-          </div>
-        )}
+            );
+          }}
+        </QueryState>
       </div>
+
+      <FeedbackFormModal
+        isOpen={showModal}
+        feedback={editingFeedback}
+        currentUserId={currentUserId}
+        isSaving={createMutation.isPending || updateMutation.isPending}
+        onClose={closeModal}
+        onSubmit={handleFormSubmit}
+      />
+
+      <ConfirmDialog
+        isOpen={!!deletingFeedback}
+        onClose={() => setDeletingFeedback(null)}
+        onConfirm={handleDelete}
+        title="Delete Feedback"
+        message="Are you sure you want to delete this feedback? This action cannot be undone."
+        confirmText="Delete"
+        type="danger"
+        loading={deleteMutation.isPending}
+      />
     </AppLayout>
   );
 }

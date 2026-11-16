@@ -11,8 +11,11 @@ const Card = React.forwardRef<
   isClickable?: boolean;
   padding?: 'none' | 'sm' | 'md' | 'lg';
   glow?: boolean;
+  /** Semantic element to render (default div). Keeps landmark/list semantics when migrating raw markup. */
+  as?: 'div' | 'section' | 'article' | 'aside' | 'li';
 }
 >(({
+     as: Tag = 'div',
      className,
      variant = 'default',
      hover = false,
@@ -21,6 +24,7 @@ const Card = React.forwardRef<
      glow = false,
      ...props
    }, ref) => {
+  const Component = Tag as React.ElementType<React.HTMLAttributes<HTMLElement> & { ref?: React.Ref<HTMLDivElement> }>;
   const isHoverable = hover || isClickable;
   const variantStyles = {
     default: 'card-aura',
@@ -39,13 +43,13 @@ const Card = React.forwardRef<
   // `.press-scale` utilities (transform + box-shadow only, reduced-motion aware).
   // No more JS spring wrapper — keeps a single DOM node and honors the design tokens.
   return (
-    <div
+    <Component
       ref={ref}
       className={cn(
-        'rounded-[var(--r-lg)] shadow-[var(--shadow-card)] bg-[var(--bg-card)] border-[var(--border-main)] transition-all duration-200 overflow-hidden',
+        'rounded-[var(--r-lg)] shadow-[var(--sh-xs)] bg-[var(--bg-card)] border-[var(--border-main)] transition-[border-color,background-color] duration-[var(--t-fast,150ms)] overflow-hidden',
         variantStyles[variant],
         paddingStyles[padding],
-        isHoverable && 'hover-lift press-scale cursor-pointer hover:border-[var(--border-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)]',
+        isHoverable && 'cursor-pointer hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)]',
         glow && 'hover:border-[var(--accent-primary)]',
         className
       )}

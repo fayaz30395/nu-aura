@@ -7,48 +7,48 @@ import {cn} from '@/lib/utils';
 import {useReducedMotionSafe} from '@/lib/animation';
 
 const badgeVariants = cva(
-  'inline-flex items-center gap-1 font-medium motion-rise transition-[transform,box-shadow,color,background-color,border-color] duration-200 ease-[cubic-bezier(.16,1,.3,1)]',
+  'inline-flex items-center gap-1 font-medium whitespace-nowrap',
   {
     variants: {
       variant: {
         // Default - neutral
         default:
-          'bg-surface-100 text-surface-700 dark:bg-surface-700 dark:text-surface-200',
+          'bg-[var(--neutral-bg)] text-[var(--neutral-fg)]',
         // Primary
         primary:
-          'bg-accent-50 text-accent-700 dark:bg-accent-950 dark:text-accent-300',
+          'bg-[var(--accent-subtle)] text-[var(--accent-text)]',
         // Secondary
         secondary:
-          'bg-surface-200 text-surface-700 dark:bg-surface-600 dark:text-surface-200',
+          'bg-[var(--neutral-bg)] text-[var(--neutral-fg)]',
         // Success
         success:
-          'bg-success-50 text-success-700 dark:bg-success-950 dark:text-success-300',
+          'bg-[var(--ok-bg)] text-[var(--ok-fg)]',
         // Warning
         warning:
-          'bg-warning-50 text-warning-700 dark:bg-warning-950 dark:text-warning-300',
+          'bg-[var(--warn-bg)] text-[var(--warn-fg)]',
         // Danger / Destructive
         danger:
-          'bg-danger-50 text-danger-700 dark:bg-danger-950 dark:text-danger-300',
+          'bg-[var(--err-bg)] text-[var(--err-fg)]',
         destructive:
-          'bg-danger-50 text-danger-700 dark:bg-danger-950 dark:text-danger-300',
+          'bg-[var(--err-bg)] text-[var(--err-fg)]',
         // Info
         info:
-          'bg-info-50 text-info-700 dark:bg-info-950 dark:text-info-300',
+          'bg-[var(--info-bg)] text-[var(--info-fg)]',
         // Outline variants
         outline:
-          'bg-transparent border border-surface-300 text-surface-700 dark:border-surface-600 dark:text-surface-200',
+          'bg-transparent border border-[var(--border-main)] text-[var(--text-secondary)]',
         'outline-primary':
-          'bg-transparent border border-accent-300 text-accent-700 dark:border-accent-700 dark:text-accent-300',
+          'bg-transparent border border-[var(--accent)] text-[var(--accent-text)]',
         'outline-success':
-          'bg-transparent border border-success-300 text-success-700 dark:border-success-700 dark:text-success-300',
+          'bg-transparent border border-[var(--ok-fg)] text-[var(--ok-fg)]',
         'outline-danger':
-          'bg-transparent border border-danger-300 text-danger-700 dark:border-danger-700 dark:text-danger-300',
+          'bg-transparent border border-[var(--err-fg)] text-[var(--err-fg)]',
       },
       // Aura: pill-tag corners sit at 7px (--r-sm); lg nudges to 9px (--r-md).
       size: {
-        sm: 'text-xs px-2 py-0.5 rounded-aura-sm',
-        md: 'text-xs px-2.5 py-1 rounded-aura-sm',
-        lg: 'text-sm px-2.5 py-1 rounded-aura-md',
+        sm: 'text-[11px] leading-4 px-2 py-0.5 rounded-[var(--radius-sm)]',
+        md: 'text-xs leading-4 px-2 py-0.5 rounded-[var(--radius-sm)]',
+        lg: 'text-sm px-2.5 py-1 rounded-[var(--radius-md)]',
       },
     },
     defaultVariants: {
@@ -76,11 +76,11 @@ const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
   ({className, variant, size, icon, dot, dotColor = 'default', pulse = false, children, ...props}, ref) => {
     const {prefersReduced} = useReducedMotionSafe();
     const dotColorClasses = {
-      default: 'bg-surface-500',
-      success: 'bg-success-500',
-      warning: 'bg-warning-500',
-      danger: 'bg-danger-500',
-      info: 'bg-info-500',
+      default: 'bg-[var(--neutral-fg)]',
+      success: 'bg-[var(--ok-fg)]',
+      warning: 'bg-[var(--warn-fg)]',
+      danger: 'bg-[var(--err-fg)]',
+      info: 'bg-[var(--info-fg)]',
     };
 
     const shouldPulse = dot && pulse && !prefersReduced;

@@ -1,228 +1,88 @@
 'use client';
 
 import {useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
-import {
-  CheckCircle2,
-  Circle,
-  FileEdit,
-  PauseCircle,
-  Play,
-  Target,
-  TrendingUp,
-  UserCheck,
-  XCircle,
-} from 'lucide-react';
+import {Button, NativeSelect} from '@mantine/core';
+import {Plus, Target, UserCheck} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useCreateGoal, useDeleteGoal, useEmployeeGoals, useUpdateGoal} from '@/lib/hooks/queries/useGoals';
-import {Goal, GoalRequest, GoalStatus, GoalType} from '@/lib/types/grow/performance';
+import type {Goal, GoalRequest, GoalStatus, GoalType} from '@/lib/types/grow/performance';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {createLogger} from '@/lib/utils/logger';
-import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
-import {formatDate} from '@/lib/utils/format/date';
+import {type GoalFormData, STATUS_FILTER_OPTIONS, TYPE_FILTER_OPTIONS} from './_components/goalConfig';
+import {GoalCard} from './_components/GoalCard';
+import {GoalFormModal} from './_components/GoalFormModal';
 
 const log = createLogger('GoalsPage');
 
-// ─── Validation Schemas ───────────────────────────────────────────────────────
-
-const goalFormSchema = z.object({
-  employeeId: z.string().min(1, 'Employee ID is required'),
-  title: z.string().min(1, 'Title is required').max(255),
-  description: z.string().optional().or(z.literal('')),
-  goalType: z.enum(['OKR', 'KPI', 'PERSONAL', 'TEAM', 'DEPARTMENT', 'ORGANIZATION'] as const) as z.ZodType<GoalType>,
-  targetValue: z.coerce.number().min(0, 'Target value must be >= 0'),
-  currentValue: z.coerce.number().min(0, 'Current value must be >= 0'),
-  unit: z.string().min(1, 'Unit is required'),
-  status: z.enum(['DRAFT', 'ACTIVE', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'ON_HOLD'] as const) as z.ZodType<GoalStatus>,
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
-}).refine(data => new Date(data.endDate) > new Date(data.startDate), {
-  message: 'End date must be after start date',
-  path: ['endDate'],
-});
-
-type GoalFormData = z.infer<typeof goalFormSchema>;
-
-function getProgressWidthClass(progress: number): string {
-  if (progress <= 0) return 'w-0';
-  if (progress < 10) return 'w-[10%]';
-  if (progress < 25) return 'w-[25%]';
-  if (progress < 40) return 'w-[40%]';
-  if (progress < 60) return 'w-[60%]';
-  if (progress < 80) return 'w-[80%]';
-  return 'w-full';
-}
+const BREADCRUMBS = [{label: 'Performance', href: '/performance'}, {label: 'Goals'}];
 
 export default function GoalsPage() {
   const {user} = useAuth();
+  const {hasPermission} = usePermissions();
   const goalsQuery = useEmployeeGoals(user?.employeeId || '');
   const createGoalMutation = useCreateGoal();
   const updateGoalMutation = useUpdateGoal();
   const deleteGoalMutation = useDeleteGoal();
 
-  const [showModal, setShowModal] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [deletingGoal, setDeletingGoal] = useState<Goal | null>(null);
   const [filterType, setFilterType] = useState<GoalType | 'ALL'>('ALL');
   const [filterStatus, setFilterStatus] = useState<GoalStatus | 'ALL'>('ALL');
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: {errors, isSubmitting},
-  } = useForm<GoalFormData>({
-    resolver: zodResolver(goalFormSchema),
-    defaultValues: {
-      employeeId: '',
-      title: '',
-      description: '',
-      goalType: 'PERSONAL',
-      targetValue: 0,
-      currentValue: 0,
-      unit: '',
-      status: 'DRAFT',
-      startDate: '',
-      endDate: '',
-    },
-  });
+  const openCreate = () => {
+    setEditingGoal(null);
+    setFormOpen(true);
+  };
 
-  const goals = goalsQuery.data || [];
-  const loading = goalsQuery.isLoading || createGoalMutation.isPending || updateGoalMutation.isPending || deleteGoalMutation.isPending;
+  const closeForm = () => {
+    setFormOpen(false);
+    setEditingGoal(null);
+  };
 
-  const handleFormSubmit = async (formData: GoalFormData) => {
+  // Failures are reported by the global MutationCache toast; the dialog stays open so the user can retry.
+  const handleSave = async (formData: GoalFormData) => {
+    const goalData = {
+      ...formData,
+      employeeId: user?.employeeId || '',
+      description: formData.description || '',
+    };
     try {
-      const goalData = {
-        ...formData,
-        employeeId: user?.employeeId || '',
-        description: formData.description || '',
-      };
-
-      if (selectedGoal) {
-        await updateGoalMutation.mutateAsync({id: selectedGoal.id, data: goalData as GoalRequest});
+      if (editingGoal) {
+        await updateGoalMutation.mutateAsync({id: editingGoal.id, data: goalData as GoalRequest});
       } else {
         await createGoalMutation.mutateAsync(goalData as GoalRequest);
       }
-
-      setShowModal(false);
-      resetFormHandler();
     } catch (error: unknown) {
       log.error('Error saving goal:', error);
+      return;
     }
+    closeForm();
   };
 
   const handleDelete = async () => {
-    if (!selectedGoal) return;
+    if (!deletingGoal) return;
     try {
-      await deleteGoalMutation.mutateAsync(selectedGoal.id);
-      setShowDeleteConfirm(false);
-      setSelectedGoal(null);
+      await deleteGoalMutation.mutateAsync(deletingGoal.id);
     } catch (error: unknown) {
       log.error('Error deleting goal:', error);
+      return;
     }
+    setDeletingGoal(null);
   };
-
-  const openEditModal = (goal: Goal) => {
-    setSelectedGoal(goal);
-    reset({
-      employeeId: goal.employeeId,
-      title: goal.title,
-      description: goal.description || '',
-      goalType: goal.goalType,
-      targetValue: goal.targetValue,
-      currentValue: goal.currentValue,
-      unit: goal.unit,
-      status: goal.status,
-      startDate: goal.startDate,
-      endDate: goal.endDate,
-    });
-    setShowModal(true);
-  };
-
-  const openDeleteConfirm = (goal: Goal) => {
-    setSelectedGoal(goal);
-    setShowDeleteConfirm(true);
-  };
-
-  const resetFormHandler = () => {
-    setSelectedGoal(null);
-    reset({
-      employeeId: '',
-      title: '',
-      description: '',
-      goalType: 'PERSONAL',
-      targetValue: 0,
-      currentValue: 0,
-      unit: '',
-      status: 'DRAFT',
-      startDate: '',
-      endDate: '',
-    });
-  };
-
-  const getStatusColor = (status: GoalStatus) => {
-    switch (status) {
-      case 'DRAFT':
-        return 'badge-status status-neutral';
-      case 'ACTIVE':
-        return 'badge-status status-info';
-      case 'IN_PROGRESS':
-        return 'badge-status status-warning';
-      case 'COMPLETED':
-        return 'badge-status status-success';
-      case 'CANCELLED':
-        return 'badge-status status-danger';
-      case 'ON_HOLD':
-        return 'badge-status status-warning';
-      default:
-        return 'badge-status status-neutral';
-    }
-  };
-
-  const getStatusIcon = (status: GoalStatus) => {
-    switch (status) {
-      case 'DRAFT':
-        return <FileEdit className="h-3.5 w-3.5"/>;
-      case 'ACTIVE':
-        return <Play className="h-3.5 w-3.5"/>;
-      case 'IN_PROGRESS':
-        return <TrendingUp className="h-3.5 w-3.5"/>;
-      case 'COMPLETED':
-        return <CheckCircle2 className="h-3.5 w-3.5"/>;
-      case 'CANCELLED':
-        return <XCircle className="h-3.5 w-3.5"/>;
-      case 'ON_HOLD':
-        return <PauseCircle className="h-3.5 w-3.5"/>;
-      default:
-        return <Circle className="h-3.5 w-3.5"/>;
-    }
-  };
-
-  const getTypeColor = (_type: GoalType) => {
-    // Goal type is rendered as a neutral-tinted chip; semantic emphasis is reserved for status.
-    return 'badge-status status-neutral';
-  };
-
-  const calculateProgress = (current?: number, target?: number) => {
-    if (!target || target === 0) return 0;
-    return Math.min(Math.round(((current || 0) / target) * 100), 100);
-  };
-
-  const filteredGoals = goals.filter(goal => {
-    if (filterType !== 'ALL' && goal.goalType !== filterType) return false;
-    if (filterStatus !== 'ALL' && goal.status !== filterStatus) return false;
-    return true;
-  });
 
   if (!user?.employeeId) {
     return (
-      <AppLayout activeMenuItem="performance">
+      <AppLayout activeMenuItem="performance" breadcrumbs={BREADCRUMBS}>
         <EmptyState
-          icon={<UserCheck className="h-8 w-8"/>}
+          icon={<UserCheck className="h-full w-full"/>}
           title="No Employee Profile Linked"
           description="Goal management requires an employee profile. Use the admin panels to manage employee goals."
           actionLabel="Go Back"
@@ -232,383 +92,113 @@ export default function GoalsPage() {
     );
   }
 
+  const filtersActive = filterType !== 'ALL' || filterStatus !== 'ALL';
+  const canCreate = hasPermission(Permissions.GOAL_CREATE);
+
   return (
-    <AppLayout activeMenuItem="performance">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold">Goals</h1>
-          <PermissionGate permission={Permissions.GOAL_CREATE}>
-            <button
-              onClick={() => {
-                resetFormHandler();
-                setShowModal(true);
-              }}
-              className="btn-primary !h-auto"
-            >
-              Create Goal
-            </button>
-          </PermissionGate>
-        </div>
-
-        <div className="card-aura p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="filter-goal-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Filter by Type
-              </label>
-              <select
-                id="filter-goal-type"
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value as GoalType | 'ALL')}
-                className="input-aura"
-              >
-                <option value="ALL">All Types</option>
-                <option value="OKR">OKR</option>
-                <option value="KPI">KPI</option>
-                <option value="PERSONAL">Personal</option>
-                <option value="TEAM">Team</option>
-                <option value="DEPARTMENT">Department</option>
-                <option value="ORGANIZATION">Organization</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="filter-goal-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Filter by Status
-              </label>
-              <select
-                id="filter-goal-status"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value as GoalStatus | 'ALL')}
-                className="input-aura"
-              >
-                <option value="ALL">All Status</option>
-                <option value="DRAFT">Draft</option>
-                <option value="ACTIVE">Active</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="CANCELLED">Cancelled</option>
-                <option value="ON_HOLD">On Hold</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="text-[var(--text-secondary)]">Loading goals...</div>
-          </div>
-        ) : filteredGoals.length === 0 ? (
-          <div className="card-aura">
-            <PermissionGate
-              permission={Permissions.GOAL_CREATE}
-              fallback={
-                <EmptyState
-                  icon={<Target className="h-8 w-8"/>}
-                  title="No goals found"
-                  description="Adjust your filters or check back once goals have been created."
-                />
-              }
-            >
-              <EmptyState
-                icon={<Target className="h-8 w-8"/>}
-                title="No goals found"
-                description="Adjust your filters or create your first goal to start tracking progress."
-                actionLabel="Create Your First Goal"
-                onAction={() => {
-                  resetFormHandler();
-                  setShowModal(true);
-                }}
-              />
+    <AppLayout activeMenuItem="performance" breadcrumbs={BREADCRUMBS}>
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <PageHeader
+          title="Goals"
+          description="Set, track and update progress on your goals."
+          actions={
+            <PermissionGate permission={Permissions.GOAL_CREATE}>
+              <Button leftSection={<Plus className="h-4 w-4" aria-hidden/>} onClick={openCreate}>
+                Create Goal
+              </Button>
             </PermissionGate>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredGoals.map((goal) => {
-              const progress = calculateProgress(goal.currentValue, goal.targetValue);
-              return (
-                <div key={goal.id} className="card-aura card-interactive p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold mb-2 text-[var(--text-primary)]">{goal.title}</h3>
-                      <div className="flex gap-2 mb-4">
-                        <span className={getTypeColor(goal.goalType)}>
-                          {goal.goalType}
-                        </span>
-                        <span className={getStatusColor(goal.status)}>
-                          {getStatusIcon(goal.status)}
-                          {goal.status}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+          }
+        />
 
-                  {goal.description && (
-                    <p className="text-body-secondary mb-4 line-clamp-2">{goal.description}</p>
-                  )}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:max-w-2xl">
+          <NativeSelect
+            id="filter-goal-type"
+            label="Filter by Type"
+            data={TYPE_FILTER_OPTIONS}
+            value={filterType}
+            onChange={(e) => setFilterType(e.currentTarget.value as GoalType | 'ALL')}
+          />
+          <NativeSelect
+            id="filter-goal-status"
+            label="Filter by Status"
+            data={STATUS_FILTER_OPTIONS}
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.currentTarget.value as GoalStatus | 'ALL')}
+          />
+        </div>
 
-                  <div className="mb-4">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-[var(--text-secondary)]">Progress</span>
-                      <span className="font-semibold">{progress}%</span>
-                    </div>
-                    <div className="w-full h-2 bg-[var(--border-main)] rounded-full overflow-hidden">
-                      <div
-                        className={`h-full bg-accent-500 transition-all duration-300 ${getProgressWidthClass(progress)}`}
-                      />
-                    </div>
-                    <div className="flex justify-between text-xs text-[var(--text-secondary)] mt-1">
-                      <span>{goal.currentValue} {goal.unit}</span>
-                      <span>{goal.targetValue} {goal.unit}</span>
-                    </div>
-                  </div>
+        <QueryState
+          query={goalsQuery}
+          skeleton={<ListPageSkeleton showHeader={false} showFilters={false} rows={4} columns={3}/>}
+          errorTitle="Couldn't load goals"
+        >
+          {(data) => {
+            const goals = (data || []).filter(goal =>
+              (filterType === 'ALL' || goal.goalType === filterType) &&
+              (filterStatus === 'ALL' || goal.status === filterStatus));
 
-                  <div className="text-body-secondary mb-4">
-                    <div>Start: {goal.startDate ? formatDate(goal.startDate) : 'N/A'}</div>
-                    <div>End: {goal.endDate ? formatDate(goal.endDate) : 'N/A'}</div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <PermissionGate permission={Permissions.GOAL_UPDATE}>
-                      <button
-                        onClick={() => openEditModal(goal)}
-                        className="flex-1 px-4 py-2 bg-accent-50 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400 rounded hover:bg-accent-100 text-sm font-medium"
-                      >
-                        Edit
-                      </button>
-                    </PermissionGate>
-                    <PermissionGate permission={Permissions.GOAL_DELETE}>
-                      <button
-                        onClick={() => openDeleteConfirm(goal)}
-                        className="flex-1 px-4 py-2 bg-danger-50 text-danger-600 rounded hover:bg-danger-100 text-sm font-medium"
-                      >
-                        Delete
-                      </button>
-                    </PermissionGate>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {showModal && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="card-elevated max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <h2 className="text-xl font-bold mb-6">
-                  {selectedGoal ? 'Edit Goal' : 'Create Goal'}
-                </h2>
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
-                  <div className="space-y-4">
-                    <div>
-                      <label htmlFor="goal-title" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Title *
-                      </label>
-                      <input
-                        id="goal-title"
-                        type="text"
-                        {...register('title')}
-                        className="input-aura"
-                      />
-                      {errors.title && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.title.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="goal-description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Description
-                      </label>
-                      <textarea
-                        id="goal-description"
-                        rows={3}
-                        {...register('description')}
-                        className="input-aura"
-                      />
-                      {errors.description && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="goal-goal-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Goal Type *
-                        </label>
-                        <select
-                          id="goal-goal-type"
-                          {...register('goalType')}
-                          className="input-aura"
-                        >
-                          <option value="OKR">OKR</option>
-                          <option value="KPI">KPI</option>
-                          <option value="PERSONAL">Personal</option>
-                          <option value="TEAM">Team</option>
-                          <option value="DEPARTMENT">Department</option>
-                          <option value="ORGANIZATION">Organization</option>
-                        </select>
-                        {errors.goalType && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.goalType.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="goal-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Status *
-                        </label>
-                        <select
-                          id="goal-status"
-                          {...register('status')}
-                          className="input-aura"
-                        >
-                          <option value="DRAFT">Draft</option>
-                          <option value="ACTIVE">Active</option>
-                          <option value="IN_PROGRESS">In Progress</option>
-                          <option value="COMPLETED">Completed</option>
-                          <option value="CANCELLED">Cancelled</option>
-                          <option value="ON_HOLD">On Hold</option>
-                        </select>
-                        {errors.status && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <label htmlFor="goal-target-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Target Value *
-                        </label>
-                        <input
-                          id="goal-target-value"
-                          type="number"
-                          {...register('targetValue')}
-                          className="input-aura"
-                        />
-                        {errors.targetValue && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.targetValue.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="goal-current-value" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Current Value *
-                        </label>
-                        <input
-                          id="goal-current-value"
-                          type="number"
-                          {...register('currentValue')}
-                          className="input-aura"
-                        />
-                        {errors.currentValue && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.currentValue.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="goal-unit" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Unit *
-                        </label>
-                        <input
-                          id="goal-unit"
-                          type="text"
-                          placeholder="e.g., tasks, %"
-                          {...register('unit')}
-                          className="input-aura"
-                        />
-                        {errors.unit && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.unit.message}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="goal-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Start Date *
-                        </label>
-                        <input
-                          id="goal-start-date"
-                          type="date"
-                          {...register('startDate')}
-                          className="input-aura"
-                        />
-                        {errors.startDate && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="goal-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          End Date *
-                        </label>
-                        <input
-                          id="goal-end-date"
-                          type="date"
-                          {...register('endDate')}
-                          className="input-aura"
-                        />
-                        {errors.endDate && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 mt-6">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowModal(false);
-                        resetFormHandler();
-                      }}
-                      className="flex-1 btn-secondary"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="flex-1 btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      {isSubmitting ? 'Saving...' : selectedGoal ? 'Update' : 'Create'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showDeleteConfirm && selectedGoal && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="card-elevated max-w-md w-full p-6">
-              <h2 className="text-xl font-bold mb-4">Delete Goal?</h2>
-              <p className="text-[var(--text-secondary)] mb-6">
-                This action cannot be undone. &quot;{selectedGoal.title}&quot; will be permanently deleted.
-              </p>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => {
-                    setShowDeleteConfirm(false);
-                    setSelectedGoal(null);
+            if (goals.length === 0) {
+              return filtersActive ? (
+                <EmptyState
+                  icon={<Target className="h-full w-full"/>}
+                  title="No goals found"
+                  description="No goals match the selected filters."
+                  actionLabel="Clear filters"
+                  onAction={() => {
+                    setFilterType('ALL');
+                    setFilterStatus('ALL');
                   }}
-                  className="flex-1 btn-secondary"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={loading}
-                  className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  {loading ? 'Deleting...' : 'Delete'}
-                </button>
+                />
+              ) : (
+                <EmptyState
+                  icon={<Target className="h-full w-full"/>}
+                  title="No goals found"
+                  description={canCreate
+                    ? 'Create your first goal to start tracking progress.'
+                    : 'Check back once goals have been created.'}
+                  {...(canCreate ? {actionLabel: 'Create Your First Goal', onAction: openCreate} : {})}
+                />
+              );
+            }
+
+            return (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {goals.map(goal => (
+                  <GoalCard
+                    key={goal.id}
+                    goal={goal}
+                    onEdit={(g) => {
+                      setEditingGoal(g);
+                      setFormOpen(true);
+                    }}
+                    onDelete={setDeletingGoal}
+                  />
+                ))}
               </div>
-            </div>
-          </div>
-        )}
+            );
+          }}
+        </QueryState>
       </div>
+
+      <GoalFormModal
+        isOpen={formOpen}
+        goal={editingGoal}
+        employeeId={user.employeeId}
+        isSaving={createGoalMutation.isPending || updateGoalMutation.isPending}
+        onClose={closeForm}
+        onSubmit={handleSave}
+      />
+
+      <ConfirmDialog
+        isOpen={!!deletingGoal}
+        onClose={() => setDeletingGoal(null)}
+        onConfirm={handleDelete}
+        title="Delete Goal?"
+        message={`This action cannot be undone. "${deletingGoal?.title ?? ''}" will be permanently deleted.`}
+        confirmText="Delete"
+        type="danger"
+        loading={deleteGoalMutation.isPending}
+      />
     </AppLayout>
   );
 }

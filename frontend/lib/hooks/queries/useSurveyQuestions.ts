@@ -195,6 +195,7 @@ export function useAddQuestion(surveyId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -218,6 +219,7 @@ export function useDeleteQuestion(surveyId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: surveyQuestionKeys.list(surveyId)});
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Not available',
@@ -246,6 +248,7 @@ export function useSubmitSurveyResponse() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',

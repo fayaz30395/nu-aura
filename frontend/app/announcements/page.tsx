@@ -200,7 +200,6 @@ export default function AnnouncementsPage() {
       toast.success('Announcement Deleted', 'The announcement has been permanently removed.');
     } catch (error) {
       logger.error('Failed to delete announcement:', error);
-      toast.error('Delete Failed', 'Unable to delete the announcement. Please try again.');
     }
   };
 
@@ -795,7 +794,6 @@ function CreateAnnouncementModal({announcement, onClose, onSuccess}: CreateAnnou
         response?: { data?: { message?: string } }
       })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} announcement`;
       setError(errorMessage);
-      toast.error(isEditing ? 'Update Failed' : 'Publish Failed', errorMessage);
     }
   };
 

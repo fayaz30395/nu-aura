@@ -14,8 +14,6 @@ import {
   Calendar,
   CheckCircle,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   ChevronUp,
   Eye,
   Hash,
@@ -32,10 +30,11 @@ import {
 import {AdminPageContent} from '@/components/layout';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Button} from '@/components/ui/Button';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {EmptyState} from '@/components/ui/EmptyState';
-import {SkeletonTable} from '@/components/ui/Skeleton';
+import {ResponsiveTable, TablePagination, type Column} from '@/components/ui/ResponsiveTable';
 import {useCreateEmployee, useEmployees, useManagers} from '@/lib/hooks/queries/useEmployees';
 import {useAllDepartments} from '@/lib/hooks/queries/useDepartments';
 import {useAssignRolesToUser, useRoles} from '@/lib/hooks/queries/useRoles';
@@ -315,6 +314,35 @@ function InlineRoleEditor({employee, onClose}: { employee: Employee; onClose: ()
 // ──────────────────────────────────────────────
 // Main Page
 // ──────────────────────────────────────────────
+const EMPLOYEE_TABLE_COLUMNS: Column<Employee>[] = [
+  {
+    key: 'employee',
+    header: 'Employee',
+    mobilePriority: 'primary',
+    accessor: (emp) => (
+      <div className="flex items-center gap-2">
+        <div className="h-8 w-8 shrink-0 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-xs font-semibold text-accent-700 dark:text-accent-300">
+          {emp.firstName?.[0]}{emp.lastName?.[0]}
+        </div>
+        <div className="min-w-0">
+          <p className="font-medium text-[var(--text-1)] truncate">{emp.fullName || `${emp.firstName} ${emp.lastName}`}</p>
+          <p className="text-caption text-[var(--text-3)] truncate">{emp.workEmail}</p>
+        </div>
+      </div>
+    ),
+  },
+  {key: 'code', header: 'Code', numeric: true, accessor: (emp) => <span className="text-caption text-[var(--text-2)]">{emp.employeeCode}</span>},
+  {key: 'department', header: 'Department', accessor: (emp) => <span className="text-[var(--text-2)]">{emp.departmentName || '—'}</span>},
+  {key: 'designation', header: 'Designation', accessor: (emp) => <span className="text-[var(--text-2)]">{emp.designation || '—'}</span>},
+  {
+    key: 'type',
+    header: 'Type',
+    accessor: (emp) => <span className="badge-status status-info text-xs font-medium">{emp.employmentType?.replace('_', ' ') || 'Full Time'}</span>,
+  },
+  {key: 'status', header: 'Status', accessor: (emp) => <StatusBadge status={emp.status || 'ACTIVE'}/>},
+];
+
+
 export default function AdminEmployeesPage() {
   const {hasAnyPermission, isAdmin, isPermissionReady} = usePermissions();
   useEffect(() => {
@@ -440,20 +468,37 @@ export default function AdminEmployeesPage() {
     reset();
   };
 
+  const employeeSearch = (
+    <div className="relative w-full sm:w-72">
+              <div className="relative w-full sm:w-72">
+                  <TextInput
+                    aria-label="Search employees"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.currentTarget.value)}
+                    placeholder="Search by name, email, code..."
+                    leftSection={<Search className="h-4 w-4"/>}
+                    className={TEXT_INPUT_CLASS}
+                  />
+                </div>
+    </div>
+  );
+
   return (
     <PageTransition>
       <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8 space-y-6">
         {/* Header */}
-        <Reveal className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-page-title text-[var(--text-primary)]">Employee Management</h1>
-          <p className="text-body-secondary text-[var(--text-secondary)] mt-1">Create employees, assign roles, and
-            manage access</p>
-        </div>
-        <Button variant="primary" leftIcon={<UserPlus className="h-4 w-4"/>} onClick={() => setShowCreateModal(true)}>
-          Create Employee
-        </Button>
-      </Reveal>
+        <Reveal>
+          <PageHeader
+            title="Employee Management"
+            description="Create employees, assign roles, and manage access"
+            breadcrumbs={[{label: 'Admin', href: '/admin'}, {label: 'Employees'}]}
+            actions={
+              <Button variant="primary" leftIcon={<UserPlus className="h-4 w-4"/>} onClick={() => setShowCreateModal(true)}>
+                Create Employee
+              </Button>
+            }
+          />
+        </Reveal>
 
       {/* Stats */}
       <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -510,131 +555,58 @@ export default function AdminEmployeesPage() {
                 <CardTitle>All Employees</CardTitle>
                 <CardDescription>Click the edit icon to change roles for any employee</CardDescription>
               </div>
-              <div className="relative w-full sm:w-72">
-                <TextInput
-                  aria-label="Search employees"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.currentTarget.value)}
-                  placeholder="Search by name, email, code..."
-                  leftSection={<Search className="h-4 w-4"/>}
-                  className={TEXT_INPUT_CLASS}
-                />
-              </div>
             </div>
           </CardHeader>
           <CardContent>
-            {employeesLoading ? (
-              <SkeletonTable rows={8} columns={5}/>
-            ) : employeesError ? (
-              <div className="flex flex-col items-center gap-4 py-12">
-                <div
-                  className="h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/20 flex items-center justify-center">
-                  <AlertCircle className="h-6 w-6 text-danger-500"/>
-                </div>
-                <p className="text-[var(--text-secondary)]">Failed to load employees</p>
-                <Button variant="outline" onClick={() => window.location.reload()}>Retry</Button>
-              </div>
-            ) : filteredEmployees.length === 0 ? (
-              <EmptyState icon={<Users className="h-8 w-8"/>} title="No employees found"
-                          description={searchQuery ? 'Try a different search term' : 'Create your first employee to get started'}
-                          actionLabel={searchQuery ? undefined : 'Create Employee'}
-                          onAction={searchQuery ? undefined : () => setShowCreateModal(true)}/>
-            ) : (
-              <>
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
-                  <table className="table-aura min-w-[800px]">
-                    <thead>
-                    <tr>
-                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Employee</th>
-                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Code</th>
-                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Department</th>
-                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Designation</th>
-                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Type</th>
-                      <th className="text-aura-micro text-[var(--text-3)] uppercase">Status</th>
-                      <th className="text-aura-micro text-[var(--text-3)] uppercase text-right">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {filteredEmployees.map((emp: Employee) => {
-                      const isEditingRoles = editingRoleForEmployee?.id === emp.id;
-                      return (
-                        <React.Fragment key={emp.id}>
-                          <tr className="hover:bg-[var(--surface-aura-2)] transition-colors duration-150 hover-lift">
-                            <td>
-                              <div className="flex items-center gap-2">
-                                <div
-                                  className="h-8 w-8 rounded-full bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center text-xs font-semibold text-accent-700 dark:text-accent-300">
-                                  {emp.firstName?.[0]}{emp.lastName?.[0]}
-                                </div>
-                                <div>
-                                  <p
-                                    className="font-medium text-[var(--text-1)]">{emp.fullName || `${emp.firstName} ${emp.lastName}`}</p>
-                                  <p className="text-caption text-[var(--text-3)]">{emp.workEmail}</p>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="text-caption text-[var(--text-2)] font-mono tabular-nums">{emp.employeeCode}</td>
-                            <td className="text-[var(--text-2)]">{emp.departmentName || '—'}</td>
-                            <td className="text-[var(--text-2)]">{emp.designation || '—'}</td>
-                            <td><span
-                              className="badge-status status-info text-xs font-medium">{emp.employmentType?.replace('_', ' ') || 'Full Time'}</span>
-                            </td>
-                            <td>
-                              <StatusBadge status={emp.status || 'ACTIVE'} />
-                            </td>
-                            <td className="text-right">
-                              <Button
-                                variant={isEditingRoles ? 'primary' : 'ghost'}
-                                size="icon-sm"
-                                onClick={() => setEditingRoleForEmployee(isEditingRoles ? null : emp)}
-                                title={isEditingRoles ? 'Close role editor' : 'Edit roles'}
-                                aria-label={`${isEditingRoles ? 'Close role editor for' : 'Edit roles for'} ${emp.fullName || emp.firstName}`}
-                                aria-expanded={isEditingRoles}
-                                className="focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-1 focus-visible:rounded"
-                              >
-                                {isEditingRoles ? <X className="h-3.5 w-3.5"/> : <Pencil className="h-3.5 w-3.5"/>}
-                              </Button>
-                            </td>
-                          </tr>
-                          {isEditingRoles && (
-                            <tr className="bg-[var(--bg-surface)]">
-                              <td colSpan={7} className="p-0">
-                                <div className="border border-accent-200 dark:border-accent-700 bg-accent-50 dark:bg-accent-900/20 rounded-lg px-4 py-4">
-                                  <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-[var(--text-primary)]">
-                                    <Shield className="h-4 w-4 text-accent-500"/>
-                                    <span>Edit Roles</span>
-                                  </div>
-                                  <InlineRoleEditor employee={emp} onClose={() => setEditingRoleForEmployee(null)}/>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                    </tbody>
-                  </table>
-                </div>
+            <ResponsiveTable<Employee>
+              columns={EMPLOYEE_TABLE_COLUMNS}
+              data={filteredEmployees}
+              keyExtractor={(emp) => emp.id}
+              isLoading={employeesLoading}
+              error={Boolean(employeesError)}
+              onRetry={() => window.location.reload()}
+              toolbar={employeeSearch}
+              renderRowActions={(emp) => {
+                const isEditingRoles = editingRoleForEmployee?.id === emp.id;
+                return (
+                  <Button
+                    variant={isEditingRoles ? 'primary' : 'ghost'}
+                    size="icon-sm"
+                    onClick={() => setEditingRoleForEmployee(isEditingRoles ? null : emp)}
+                    title={isEditingRoles ? 'Close role editor' : 'Edit roles'}
+                    aria-label={`${isEditingRoles ? 'Close role editor for' : 'Edit roles for'} ${emp.fullName || emp.firstName}`}
+                    aria-expanded={isEditingRoles}
+                  >
+                    {isEditingRoles ? <X className="h-3.5 w-3.5"/> : <Pencil className="h-3.5 w-3.5"/>}
+                  </Button>
+                );
+              }}
+              emptyState={
+                <EmptyState icon={<Users className="h-8 w-8"/>} title="No employees found"
+                            description={searchQuery ? 'Try a different search term' : 'Create your first employee to get started'}
+                            actionLabel={searchQuery ? undefined : 'Create Employee'}
+                            onAction={searchQuery ? undefined : () => setShowCreateModal(true)}/>
+              }
+            />
 
-                {totalPages > 1 && (
-                  <div className="row-between mt-4 pt-4 border-t border-[var(--border-soft)]">
-                    <p className="text-caption text-[var(--text-3)] font-mono tabular-nums">
-                      {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, totalElements)} of {totalElements}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={() => setPage(Math.max(0, page - 1))}
-                              disabled={page === 0}
-                              leftIcon={<ChevronLeft className="h-4 w-4"/>}
-                              className="focus-visible:ring-2 focus-visible:ring-[var(--ring)]">Previous</Button>
-                      <span className="text-body-secondary font-mono tabular-nums">{page + 1} / {totalPages}</span>
-                      <Button variant="outline" size="sm" onClick={() => setPage(Math.min(totalPages - 1, page + 1))}
-                              disabled={page >= totalPages - 1}
-                              rightIcon={<ChevronRight className="h-4 w-4"/>}
-                              className="focus-visible:ring-2 focus-visible:ring-[var(--ring)]">Next</Button>
-                    </div>
-                  </div>
-                )}
-              </>
+            {editingRoleForEmployee && (
+              <div className="mt-4 rounded-lg border border-accent-200 dark:border-accent-700 bg-accent-50 dark:bg-accent-900/20 px-4 py-4">
+                <div className="flex items-center gap-2 mb-3 text-sm font-semibold text-[var(--text-primary)]">
+                  <Shield className="h-4 w-4 text-accent-500"/>
+                  <span>Edit Roles</span>
+                </div>
+                <InlineRoleEditor employee={editingRoleForEmployee} onClose={() => setEditingRoleForEmployee(null)}/>
+              </div>
+            )}
+
+            {totalPages > 1 && (
+              <TablePagination
+                currentPage={page}
+                totalPages={totalPages}
+                totalItems={totalElements}
+                pageSize={PAGE_SIZE}
+                onPageChange={setPage}
+              />
             )}
           </CardContent>
         </Card>

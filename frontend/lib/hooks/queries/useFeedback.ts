@@ -35,6 +35,7 @@ export function useCreateFeedback() {
       queryClient.invalidateQueries({queryKey: performanceKeys.feedback()});
       notifications.show({title: 'Success', message: 'Feedback submitted successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to submit feedback', color: 'red'});
     },
@@ -51,6 +52,7 @@ export function useUpdateFeedback() {
       queryClient.invalidateQueries({queryKey: performanceKeys.feedback()});
       notifications.show({title: 'Success', message: 'Feedback updated successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to update feedback', color: 'red'});
     },
@@ -66,6 +68,7 @@ export function useDeleteFeedback() {
       queryClient.invalidateQueries({queryKey: performanceKeys.feedback()});
       notifications.show({title: 'Success', message: 'Feedback deleted successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to delete feedback', color: 'red'});
     },

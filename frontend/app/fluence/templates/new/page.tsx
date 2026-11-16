@@ -151,13 +151,6 @@ export default function CreateTemplatePage() {
           });
           router.push('/fluence/templates');
         },
-        onError: () => {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to create template. Please try again.',
-            color: 'red',
-          });
-        },
         onSettled: () => {
           setIsSubmitting(false);
         },

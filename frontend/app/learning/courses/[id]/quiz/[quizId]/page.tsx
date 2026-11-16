@@ -1,5 +1,6 @@
 'use client';
 
+import {Progress} from '@/components/ui';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {Spinner} from '@/components/ui/Spinner';
 import {notFound, useParams} from 'next/navigation';
@@ -388,11 +389,8 @@ export default function QuizPage() {
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-2">
                   <span className="text-body-secondary">Progress:</span>
-                  <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-accent-600 transition-all duration-300"
-                      style={{width: `${((currentQuestionIdx + 1) / quiz.questions.length) * 100}%`}}
-                    />
+                  <div className="w-32">
+                    <Progress value={((currentQuestionIdx + 1) / quiz.questions.length) * 100} label="Quiz progress"/>
                   </div>
                 </div>
                 {quiz.timeLimit && (

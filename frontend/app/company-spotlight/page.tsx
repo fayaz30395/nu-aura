@@ -98,7 +98,6 @@ export default function CompanySpotlightPage() {
       toast.success('Spotlight Deleted', 'The spotlight slide has been deleted.');
     } catch (error) {
       logger.error('Failed to delete spotlight:', error);
-      toast.error('Delete Failed', 'Unable to delete the spotlight. Please try again.');
     }
   };
 
@@ -427,7 +426,6 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
         response?: { data?: { message?: string } }
       })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} spotlight`;
       setError(errorMessage);
-      toast.error(isEditing ? 'Update Failed' : 'Create Failed', errorMessage);
     }
   };
 

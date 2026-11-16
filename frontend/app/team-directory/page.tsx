@@ -212,7 +212,7 @@ export default function TeamDirectoryPage() {
   return (
     <AppLayout activeMenuItem="team-directory">
       <motion.div
-        className="space-y-6 p-4 md:p-6 lg:p-8 max-w-[1400px] mx-auto"
+        className="space-y-6 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto"
         initial={{opacity: 0, y: 8}}
         animate={{opacity: 1, y: 0}}
         transition={{duration: 0.3}}

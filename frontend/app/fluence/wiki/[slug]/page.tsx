@@ -296,7 +296,7 @@ function CommentThread({
                     animate={{opacity: 1, height: 'auto'}}
                     exit={{opacity: 0, height: 0}}
                     transition={{duration: 0.2, ease: 'easeInOut'}}
-                    className="border-l-2 border-[var(--border-main)] pl-4 ml-1 space-y-4 overflow-hidden"
+                    className="border-l border-[var(--border-main)] pl-4 ml-1 space-y-4 overflow-hidden"
                   >
                     {replies.map((reply) => (
                       <ReplyItem
@@ -515,7 +515,6 @@ export default function WikiPageDetailPage() {
     if (!page) return;
     publishPage.mutate(page.id, {
       onSuccess: () => notifications.show({title: 'Submitted', message: 'Page sent for publishing', color: 'green'}),
-      onError: () => notifications.show({title: 'Error', message: 'Failed to publish page', color: 'red'}),
     });
   }, [page, publishPage]);
 
@@ -523,7 +522,6 @@ export default function WikiPageDetailPage() {
     if (!page) return;
     approvePage.mutate(page.id, {
       onSuccess: () => notifications.show({title: 'Approved', message: 'Page approved and published', color: 'green'}),
-      onError: () => notifications.show({title: 'Error', message: 'Failed to approve page', color: 'red'}),
     });
   }, [page, approvePage]);
 
@@ -531,7 +529,6 @@ export default function WikiPageDetailPage() {
     if (!page) return;
     rejectPage.mutate(page.id, {
       onSuccess: () => notifications.show({title: 'Rejected', message: 'Page sent back to draft', color: 'yellow'}),
-      onError: () => notifications.show({title: 'Error', message: 'Failed to reject page', color: 'red'}),
     });
   }, [page, rejectPage]);
 
@@ -539,7 +536,6 @@ export default function WikiPageDetailPage() {
     if (!page) return;
     archivePage.mutate(page.id, {
       onSuccess: () => notifications.show({title: 'Archived', message: 'Page archived', color: 'green'}),
-      onError: () => notifications.show({title: 'Error', message: 'Failed to archive page', color: 'red'}),
     });
   }, [page, archivePage]);
 
@@ -648,13 +644,6 @@ export default function WikiPageDetailPage() {
               title: 'Revision restored',
               message: 'Page has been restored to the selected version.',
               color: 'green',
-            });
-          },
-          onError: () => {
-            notifications.show({
-              title: 'Error',
-              message: 'Failed to restore revision',
-              color: 'red',
             });
           },
         }

@@ -211,6 +211,7 @@ export default function WorkloadDashboardPage() {
   }, [dashboardData, searchQuery, selectedStatus, selectedRanges]);
 
   const handleExport = () => {
+    if (exportMutation.isPending) return;
     exportMutation.mutate(
       {
         format: 'csv',
@@ -263,6 +264,7 @@ export default function WorkloadDashboardPage() {
 
   // Handle edit allocation
   const handleEditAllocation = (employeeId: string, data: AllocationEditData) => {
+    if (updateAllocationMutation.isPending) return;
     updateAllocationMutation.mutate(
       {
         employeeId,
@@ -304,7 +306,9 @@ export default function WorkloadDashboardPage() {
             </button>
             <button
               onClick={handleExport}
-              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]"
+              disabled={exportMutation.isPending}
+              aria-busy={exportMutation.isPending}
+              className="inline-flex items-center gap-1.5 rounded-md border border-[var(--border-main)] bg-[var(--bg-card)] px-4 py-1.5 text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50 dark:border-[var(--border-main)] dark:bg-[var(--bg-secondary)] dark:text-[var(--text-muted)] dark:hover:bg-[var(--bg-secondary)]"
             >
               <Download className="h-4 w-4"/>
               Export

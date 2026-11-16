@@ -85,6 +85,7 @@ export default function DepartmentsPage() {
       invalidate();
       closeDrawer();
     },
+    meta: {skipGlobalError: true},
     onError: (err: unknown) => toast.error((err as {
       response?: { data?: { message?: string } }
     })?.response?.data?.message ?? 'Create failed'),
@@ -97,6 +98,7 @@ export default function DepartmentsPage() {
       invalidate();
       closeDrawer();
     },
+    meta: {skipGlobalError: true},
     onError: (err: unknown) => toast.error((err as {
       response?: { data?: { message?: string } }
     })?.response?.data?.message ?? 'Update failed'),
@@ -109,6 +111,7 @@ export default function DepartmentsPage() {
       toast.success(vars.active ? 'Department deactivated' : 'Department activated');
       invalidate();
     },
+    meta: {skipGlobalError: true},
     onError: (err: unknown) => toast.error((err as {
       response?: { data?: { message?: string } }
     })?.response?.data?.message ?? 'Toggle failed'),
@@ -121,6 +124,7 @@ export default function DepartmentsPage() {
       invalidate();
       setDeleteTarget(null);
     },
+    meta: {skipGlobalError: true},
     onError: (err: unknown) => toast.error((err as {
       response?: { data?: { message?: string } }
     })?.response?.data?.message ?? 'Delete failed'),

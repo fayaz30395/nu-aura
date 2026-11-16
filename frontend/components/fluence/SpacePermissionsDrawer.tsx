@@ -176,13 +176,6 @@ export function SpacePermissionsDrawer({
           });
           onClose();
         },
-        onError: () => {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to update space permissions. Please try again.',
-            color: 'red',
-          });
-        },
       }
     );
   };
@@ -202,13 +195,6 @@ export function SpacePermissionsDrawer({
           setSelectedEmployee(null);
           setNewMemberRole('VIEWER');
         },
-        onError: () => {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to add member. They may already be a member.',
-            color: 'red',
-          });
-        },
       }
     );
   };
@@ -226,13 +212,6 @@ export function SpacePermissionsDrawer({
             color: 'green',
           });
         },
-        onError: () => {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to update role. Please try again.',
-            color: 'red',
-          });
-        },
       }
     );
   };
@@ -248,13 +227,6 @@ export function SpacePermissionsDrawer({
             title: 'Member removed',
             message: `${member.userName ?? 'Member'} has been removed from this space.`,
             color: 'green',
-          });
-        },
-        onError: () => {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to remove member. Please try again.',
-            color: 'red',
           });
         },
       }

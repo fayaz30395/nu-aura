@@ -72,6 +72,7 @@ export function useCreatePsaTimesheet() {
       queryClient.invalidateQueries({queryKey: psaKeys.timesheets()});
       toast.success('Timesheet Created', 'Timesheet has been created');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Failed to create timesheet');
     },
@@ -89,6 +90,7 @@ export function useSubmitPsaTimesheet() {
       queryClient.invalidateQueries({queryKey: psaKeys.timesheets()});
       toast.success('Timesheet Submitted', 'Timesheet has been submitted for approval');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Submission Failed', error.message || 'Failed to submit timesheet');
     },
@@ -107,6 +109,7 @@ export function useApprovePsaTimesheet() {
       queryClient.invalidateQueries({queryKey: psaKeys.timesheets()});
       toast.success('Timesheet Approved', 'Timesheet has been approved');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Approval Failed', error.message || 'Failed to approve timesheet');
     },
@@ -125,6 +128,7 @@ export function useRejectPsaTimesheet() {
       queryClient.invalidateQueries({queryKey: psaKeys.timesheets()});
       toast.info('Timesheet Rejected', 'Timesheet has been rejected');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Rejection Failed', error.message || 'Failed to reject timesheet');
     },
@@ -148,6 +152,7 @@ export function useAddPsaTimeEntry() {
       queryClient.invalidateQueries({queryKey: psaKeys.timesheetEntries(timesheetId)});
       toast.success('Time Entry Added', 'Time entry has been recorded');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Failed to add time entry');
     },
@@ -194,6 +199,7 @@ export function useGenerateInvoice() {
       queryClient.invalidateQueries({queryKey: psaKeys.invoices()});
       toast.success('Invoice Generated', 'New invoice has been generated');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Failed to create invoice');
     },
@@ -212,6 +218,7 @@ export function useUpdateInvoice() {
       queryClient.invalidateQueries({queryKey: psaKeys.invoices()});
       toast.success('Invoice Updated', 'Invoice details have been updated');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Failed to update invoice');
     },
@@ -229,6 +236,7 @@ export function useApproveInvoice() {
       queryClient.invalidateQueries({queryKey: psaKeys.invoices()});
       toast.success('Invoice Approved', 'Invoice has been approved');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Approval Failed', error.message || 'Failed to approve invoice');
     },

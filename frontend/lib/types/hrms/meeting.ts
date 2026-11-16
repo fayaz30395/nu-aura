@@ -212,3 +212,14 @@ export interface Page<T> {
   size: number;
   number: number;
 }
+
+export interface AgendaTemplate {
+  id: string;
+  name: string;
+  items: string[];
+}
+
+export interface AgendaTemplateRequest {
+  name: string;
+  items: string[];
+}

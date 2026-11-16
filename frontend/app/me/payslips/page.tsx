@@ -1,11 +1,18 @@
 'use client';
 
 import React, {useState} from 'react';
-import {AlertCircle, Calendar, DollarSign, Download, FileText, Filter, Search, TrendingUp, Users,} from 'lucide-react';
+import {DollarSign, FileText, Search, TrendingUp, Users} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
-import {Card, CardContent} from '@/components/ui/Card';
+import {PageTransition} from '@/components/motion';
+import {Card} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryErrorCard} from '@/components/ui/QueryState';
+import {Button} from '@/components/ui/Button';
+import {Input} from '@/components/ui/Input';
+import {Select} from '@/components/ui/Select';
+import {DashboardSkeleton} from '@/components/ui/skeletons';
+import {PayslipCard} from './_components/PayslipCard';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles} from '@/lib/hooks/usePermissions';
 import {
@@ -15,12 +22,12 @@ import {
   usePayslipReleaseStatus,
 } from '@/lib/hooks/queries/usePayroll';
 import {Callout} from '@/components/ui/Callout';
+import {useToast} from '@/components/ui/Toast';
 import {PayslipView, toPayslipView} from './payslipView';
 import {createLogger} from '@/lib/utils/logger';
 import {formatCurrency} from '@/lib/utils';
 import {Stat} from '@/components/ui/Stat';
-import {SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
-import {formatDate as formatDateCanonical, formatMonthYear as formatMonthYearCanonical} from '@/lib/utils/format/date';
+import {formatMonthYear} from '@/lib/utils/format/date';
 
 const log = createLogger('PayslipsPage');
 
@@ -91,13 +98,10 @@ export default function MyPayslipsPage() {
   };
 
 
-  const formatDate = (date: string) => formatDateCanonical(date);
-
-  const formatMonthYear = (date: string) => formatMonthYearCanonical(date);
-
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const downloadMutation = useDownloadPayslipPdf();
+  const toast = useToast();
 
   const downloadPayslipPDF = async (payslip: PayslipView) => {
     try {
@@ -105,6 +109,10 @@ export default function MyPayslipsPage() {
 
       // Use backend PDF generation for professional payslip
       const blob = await downloadMutation.mutateAsync(payslip.id);
+      if (blob.size === 0) {
+        toast.error('Payslip PDF is empty, contact HR');
+        return;
+      }
 
       // Create download link
       const url = window.URL.createObjectURL(blob);
@@ -146,16 +154,13 @@ export default function MyPayslipsPage() {
   const yearlyAverage = filteredPayslips.length > 0 ? yearlyTotal / filteredPayslips.length : 0;
   const yearLabel = selectedYear === 0 ? 'All Years' : String(selectedYear);
 
+  const breadcrumbs = [{label: 'My Space', href: '/me/dashboard'}, {label: 'My Payslips'}];
+
   if (isLoading) {
     return (
-      <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
-        <PageTransition className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {Array.from({length: 3}).map((_, i) => (
-              <SkeletonStatCard key={i}/>
-            ))}
-          </div>
-          <SkeletonTable rows={6} columns={5}/>
+      <AppLayout activeMenuItem="payslips">
+        <PageTransition className="flex flex-col gap-6">
+          <DashboardSkeleton stats={3} showHeader={false}/>
         </PageTransition>
       </AppLayout>
     );
@@ -163,8 +168,9 @@ export default function MyPayslipsPage() {
 
   if (!user?.employeeId && !isAdmin) {
     return (
-      <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
-        <PageTransition>
+      <AppLayout activeMenuItem="payslips">
+        <PageTransition className="flex flex-col gap-6">
+          <PageHeader title="My Payslips" breadcrumbs={breadcrumbs}/>
           <EmptyState
             icon={<DollarSign className="h-8 w-8"/>}
             title="No Employee Profile Linked"
@@ -175,104 +181,59 @@ export default function MyPayslipsPage() {
     );
   }
 
+  const searchLabel = isAdminView ? 'Search by employee name or month...' : 'Search payslips...';
+
   return (
-    <AppLayout activeMenuItem="payslips" breadcrumbs={[{label: 'My Payslips', href: '/me/payslips'}]}>
-      <PageTransition className="space-y-6">
-        {/* Header */}
-        <Reveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-aura-title text-[var(--text-1)]">
-              {isAdminView ? 'All Employee Payslips' : 'My Payslips'}
-            </h1>
-            <p className="text-sm text-[var(--text-2)] mt-2">
-              {isAdminView
-                ? 'View and manage all employee salary statements'
-                : 'View and download your salary statements'}
-            </p>
-          </div>
-          {isAdmin && user?.employeeId && !isAdminView && (
-            <button
+    <AppLayout activeMenuItem="payslips">
+      <PageTransition className="flex flex-col gap-6">
+        <PageHeader
+          title={isAdminView ? 'All Employee Payslips' : 'My Payslips'}
+          description={isAdminView ? 'View and manage all employee salary statements' : 'View and download your salary statements'}
+          breadcrumbs={breadcrumbs}
+          actions={isAdmin && user?.employeeId ? (
+            <Button
+              variant="soft"
               onClick={toggleView}
-              className="flex items-center gap-2 px-4 py-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              leftIcon={isAdminView ? <FileText className="h-4 w-4" aria-hidden="true"/> : <Users className="h-4 w-4" aria-hidden="true"/>}
             >
-              <Users className="h-4 w-4"/>
-              View All Employees
-            </button>
-          )}
-          {isAdminView && user?.employeeId && (
-            <button
-              onClick={toggleView}
-              className="flex items-center gap-2 px-4 py-2 bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 rounded-lg hover:bg-accent-200 dark:hover:bg-accent-900/50 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              <FileText className="h-4 w-4"/>
-              View My Payslips
-            </button>
-          )}
-        </Reveal>
+              {isAdminView ? 'View My Payslips' : 'View All Employees'}
+            </Button>
+          ) : undefined}
+        />
 
-        {/* Summary Cards */}
-        <Reveal className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="card-aura">
-            <CardContent className="pt-6">
-              <div className="row-between">
-                <Stat label="Total Payslips" value={filteredPayslips.length}/>
-                <div
-                  className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-                </div>
-              </div>
-            </CardContent>
+        <section aria-label="Payslip summary" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <Card padding="sm">
+            <Stat label="Total Payslips" value={filteredPayslips.length} icon={<FileText className="h-4 w-4"/>} iconTone="accent"/>
           </Card>
-
           {isAdminView && (
-            <Card className="card-aura">
-              <CardContent className="pt-6">
-                <div className="row-between">
-                  <Stat
-                    label="Employees"
-                    value={new Set(filteredPayslips.map(p => p.employeeId)).size}
-                  />
-                  <div
-                    className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-full flex items-center justify-center">
-                    <Users className="h-6 w-6 text-accent-600 dark:text-accent-400"/>
-                  </div>
-                </div>
-              </CardContent>
+            <Card padding="sm">
+              <Stat
+                label="Employees"
+                value={new Set(filteredPayslips.map(p => p.employeeId)).size}
+                icon={<Users className="h-4 w-4"/>}
+                iconTone="accent"
+              />
             </Card>
           )}
-
-          <Card className="card-aura">
-            <CardContent className="pt-6">
-              <div className="row-between">
-                <Stat
-                  label={isAdminView ? `Total Payout (${yearLabel})` : `Total Earnings (${yearLabel})`}
-                  value={formatCurrency(yearlyTotal)}
-                  tone="success"
-                />
-                <div
-                  className="w-12 h-12 bg-success-100 dark:bg-success-950/30 rounded-full flex items-center justify-center">
-                  <TrendingUp className="h-6 w-6 text-success-600 dark:text-success-400"/>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm">
+            <Stat
+              label={isAdminView ? `Total Payout (${yearLabel})` : `Total Earnings (${yearLabel})`}
+              value={formatCurrency(yearlyTotal)}
+              tone="success"
+              icon={<TrendingUp className="h-4 w-4"/>}
+              iconTone="success"
+            />
           </Card>
-
-          <Card className="card-aura">
-            <CardContent className="pt-6">
-              <div className="row-between">
-                <Stat
-                  label={isAdminView ? 'Avg. per Employee' : 'Average Salary'}
-                  value={formatCurrency(yearlyAverage)}
-                  tone="accent"
-                />
-                <div
-                  className="w-12 h-12 bg-accent-300 dark:bg-accent-900/30 rounded-full flex items-center justify-center">
-                  <DollarSign className="h-6 w-6 text-accent-800 dark:text-accent-600"/>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm">
+            <Stat
+              label={isAdminView ? 'Avg. per Employee' : 'Average Salary'}
+              value={formatCurrency(yearlyAverage)}
+              tone="accent"
+              icon={<DollarSign className="h-4 w-4"/>}
+              iconTone="info"
+            />
           </Card>
-        </Reveal>
+        </section>
 
         {/* Unreleased periods are explicit, not silently missing from the totals */}
         {releaseNote && (
@@ -281,202 +242,62 @@ export default function MyPayslipsPage() {
           </div>
         )}
 
-        {/* Filters */}
-        <Reveal>
-        <Card className="card-aura">
-          <CardContent className="pt-6">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
-                <input
-                  type="text"
-                  aria-label={isAdminView ? "Search by employee name or month..." : "Search payslips..."}
-                  placeholder={isAdminView ? "Search by employee name or month..." : "Search payslips..."}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="input-aura w-full pl-10 pr-4 py-2 rounded-lg"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4 text-[var(--text-muted)]"/>
-                <select
-                  aria-label="Year"
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(Number(e.target.value))}
-                  className="input-aura px-4 py-2 rounded-lg"
-                >
-                  <option value={0}>All Years</option>
-                  {years.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        </Reveal>
+        <div className="flex flex-col gap-4 md:flex-row md:items-end">
+          <div className="flex-1">
+            <Input
+              type="text"
+              aria-label={searchLabel}
+              placeholder={searchLabel}
+              icon={<Search className="h-4 w-4"/>}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="md:w-48">
+            <Select aria-label="Year" value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
+              <option value={0}>All Years</option>
+              {years.map((year) => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </Select>
+          </div>
+        </div>
 
-        {/* Error Message */}
         {error && (
-          <div
-            className="flex items-center gap-2 p-4 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <AlertCircle className="h-5 w-5 text-danger-600"/>
-            <p className="text-danger-800 dark:text-danger-200 font-medium">{error}</p>
+          <div role="alert">
+            <Callout tone="danger">{error}</Callout>
           </div>
         )}
 
-        {/* Payslips List */}
         {isQueryError ? (
-          <Card className="card-aura">
-            <CardContent>
-              <EmptyState
-                icon={<AlertCircle className="w-full h-full"/>}
-                title="Couldn't Load Payslips"
-                description="Something went wrong while loading your payslips. Please try again."
-              />
-            </CardContent>
-          </Card>
+          <QueryErrorCard
+            title="Couldn't Load Payslips"
+            message="Something went wrong while loading your payslips. Please try again."
+            onRetry={() => activeQuery.refetch()}
+            retrying={activeQuery.isFetching}
+          />
         ) : filteredPayslips.length === 0 ? (
-          <Card className="card-aura">
-            <CardContent>
-              <EmptyState
-                icon={<FileText className="w-full h-full"/>}
-                title="No Payslips Found"
-                description={searchQuery
-                  ? 'Try adjusting your search criteria'
-                  : `No payslips available for ${yearLabel}`}
-              />
-            </CardContent>
-          </Card>
+          <div className="rounded-lg border border-border bg-card p-4">
+            <EmptyState
+              icon={<FileText className="h-8 w-8"/>}
+              title="No Payslips Found"
+              description={searchQuery ? 'Try adjusting your search criteria' : `No payslips available for ${yearLabel}`}
+              actionLabel={searchQuery ? 'Clear search' : undefined}
+              onAction={searchQuery ? () => setSearchQuery('') : undefined}
+            />
+          </div>
         ) : (
-          <Stagger className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {filteredPayslips.map((payslip) => (
-              <StaggerItem key={payslip.id}>
-                <Card className="card-aura card-interactive overflow-hidden hover-lift">
-                  <CardContent className="p-6">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div className="flex items-start gap-4">
-                        <div
-                          className="w-12 h-12 bg-accent-100 dark:bg-accent-950/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Calendar className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
-                        </div>
-                        <div>
-                          {isAdminView && payslip.employeeName && (
-                            <p className="text-sm font-medium text-accent-700 dark:text-accent-400 mb-1">
-                              {payslip.employeeName}
-                            </p>
-                          )}
-                          <h3 className="text-xl font-semibold text-[var(--text-primary)]">
-                            {formatMonthYear(payslip.periodDate)}
-                          </h3>
-                          <p className="text-body-secondary mt-1">
-                            Pay Date: {formatDate(payslip.payDate)}
-                          </p>
-                          {/* Everything the self view receives is released. Release is not payment, so no PAID. */}
-                          {!isAdminView && (
-                            <div className="flex items-center gap-2 mt-2">
-                              <span className="badge-status status-info">Released</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col md:items-end gap-2">
-                        <div className="space-y-1">
-                          <p className="text-body-secondary">Net Salary</p>
-                          <p className="text-xl font-bold text-success-600 dark:text-success-400">
-                            {formatCurrency(payslip.netAmount)}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2 text-body-secondary">
-                          <span>Gross: {formatCurrency(payslip.grossAmount)}</span>
-                          <span>•</span>
-                          <span>Deductions: {formatCurrency(payslip.deductions)}</span>
-                        </div>
-                        <button
-                          onClick={() => downloadPayslipPDF(payslip)}
-                          disabled={downloadingId === payslip.id}
-                          className="btn-primary flex items-center gap-2 px-4 py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {downloadingId === payslip.id ? (
-                            <>
-                              <div
-                                className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
-                              Downloading...
-                            </>
-                          ) : (
-                            <>
-                              <Download className="h-4 w-4"/>
-                              Download PDF
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Breakdown */}
-                    {(payslip.allowanceDetails.length > 0 || payslip.deductionDetails.length > 0) && (
-                      <div className="mt-4 pt-4 border-t border-[var(--border-main)]">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {/* Earnings */}
-                          {payslip.allowanceDetails && payslip.allowanceDetails.length > 0 && (
-                            <div>
-                              <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
-                                Earnings
-                              </h4>
-                              <div className="space-y-1">
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-[var(--text-secondary)]">
-                                    Base Salary
-                                  </span>
-                                  <span className="text-[var(--text-primary)] font-medium">
-                                    {formatCurrency(payslip.baseSalary)}
-                                  </span>
-                                </div>
-                                {payslip.allowanceDetails.map((allowance, idx) => (
-                                  <div key={idx} className="flex justify-between text-sm">
-                                    <span className="text-[var(--text-secondary)]">
-                                      {allowance.name}
-                                    </span>
-                                    <span className="text-[var(--text-primary)] font-medium">
-                                      {formatCurrency(allowance.amount)}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Deductions */}
-                          {payslip.deductionDetails && payslip.deductionDetails.length > 0 && (
-                            <div>
-                              <h4 className="text-sm font-semibold text-[var(--text-primary)] mb-2">
-                                Deductions
-                              </h4>
-                              <div className="space-y-1">
-                                {payslip.deductionDetails.map((deduction, idx) => (
-                                  <div key={idx} className="flex justify-between text-sm">
-                                    <span className="text-[var(--text-secondary)]">
-                                      {deduction.name}
-                                    </span>
-                                    <span className="text-danger-600 dark:text-danger-400 font-medium">
-                                      -{formatCurrency(deduction.amount)}
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </StaggerItem>
+              <PayslipCard
+                key={payslip.id}
+                payslip={payslip}
+                isAdminView={isAdminView}
+                downloading={downloadingId === payslip.id}
+                onDownload={downloadPayslipPDF}
+              />
             ))}
-          </Stagger>
+          </div>
         )}
       </PageTransition>
     </AppLayout>

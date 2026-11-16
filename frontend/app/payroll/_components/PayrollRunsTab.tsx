@@ -6,7 +6,7 @@ import {Reveal} from '@/components/motion';
 import {EmptyState} from '@/components/ui';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {formatCurrency, formatDate, getStatusColor, PayrollRun, PayrollRunStatus} from './types';
+import {formatDate, getStatusColor, PayrollRun, PayrollRunStatus} from './types';
 
 interface PayrollRunsTabProps {
   payrollRuns: PayrollRun[];
@@ -108,10 +108,7 @@ export function PayrollRunsTab({
               <th
                 className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Employees
               </th>
-              <th
-                className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Gross
-                Amount
-              </th>
+              {/* Gross hidden until backend returns run totals */}
               <th
                 className="skeuo-table-header px-6 py-2 text-left text-sm font-semibold text-[var(--text-primary)]">Actions
               </th>
@@ -132,7 +129,7 @@ export function PayrollRunsTab({
                     </span>
                 </td>
                 <td className="px-6 py-4 text-sm tabular-nums">{run.totalEmployees}</td>
-                <td className="px-6 py-4 text-sm font-semibold tabular-nums">{formatCurrency(run.totalGrossAmount)}</td>
+                {/* Gross hidden until backend returns run totals */}
                 <td className="px-6 py-4 text-sm">
                   <div className="flex gap-2">
                     {run.status === 'DRAFT' && (

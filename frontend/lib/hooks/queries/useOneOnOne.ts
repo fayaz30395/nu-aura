@@ -4,6 +4,7 @@ import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {meetingService} from '@/lib/services/hrms/meeting.service';
 import {notifications} from '@mantine/notifications';
 import type {
+  AgendaTemplateRequest,
   MeetingActionItemRequest,
   MeetingActionItemStatusRequest,
   MeetingAgendaItemRequest,
@@ -26,6 +27,7 @@ export const meetingKeys = {
   actions: (meetingId: string) => ['meetings', 'actions', meetingId] as const,
   pendingActions: () => ['meetings', 'actions', 'pending'] as const,
   overdueActions: () => ['meetings', 'actions', 'overdue'] as const,
+  agendaTemplates: () => ['meetings', 'agenda-templates'] as const,
   dashboard: () => ['meetings', 'dashboard'] as const,
   managerDashboard: () => ['meetings', 'dashboard', 'manager'] as const,
 };
@@ -166,6 +168,7 @@ export function useCreateMeeting() {
         color: 'teal',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -190,6 +193,7 @@ export function useUpdateMeeting() {
         color: 'teal',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -360,6 +364,46 @@ export function useUpdateActionItemStatus() {
       meetingService.updateActionItemStatus(actionId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: meetingKeys.all});
+    },
+  });
+}
+
+// ─── Agenda Templates ───────────────────────────────────────────────────────
+
+export function useAgendaTemplates() {
+  return useQuery({
+    queryKey: meetingKeys.agendaTemplates(),
+    queryFn: () => meetingService.getAgendaTemplates(),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+export function useCreateAgendaTemplate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: AgendaTemplateRequest) => meetingService.createAgendaTemplate(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: meetingKeys.agendaTemplates()});
+      notifications.show({title: 'Template Saved', message: 'Agenda template created.', color: 'teal'});
+    },
+    meta: {skipGlobalError: true},
+    onError: () => {
+      notifications.show({title: 'Error', message: 'Failed to save agenda template.', color: 'red'});
+    },
+  });
+}
+
+export function useDeleteAgendaTemplate() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => meetingService.deleteAgendaTemplate(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: meetingKeys.agendaTemplates()});
+      notifications.show({title: 'Template Deleted', message: 'Agenda template removed.', color: 'teal'});
+    },
+    meta: {skipGlobalError: true},
+    onError: () => {
+      notifications.show({title: 'Error', message: 'Failed to delete agenda template.', color: 'red'});
     },
   });
 }

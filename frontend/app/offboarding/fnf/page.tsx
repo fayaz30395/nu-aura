@@ -98,12 +98,7 @@ export default function FnFManagementPage() {
         icon: <IconCheck size={16}/>,
       });
     } catch {
-      notifications.show({
-        title: 'Approval Failed',
-        message: 'Unable to approve settlement. Please try again.',
-        color: 'red',
-        icon: <IconAlertCircle size={16}/>,
-      });
+      // The global MutationCache handler shows the error toast.
     }
   };
 

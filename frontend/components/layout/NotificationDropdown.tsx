@@ -552,12 +552,14 @@ export function NotificationDropdown({isOpen, onClose}: NotificationDropdownProp
                 {systemUnreadCount > 0 && (
                   <button
                     onClick={() => {
+                      if (markAllReadMutation.isPending) return;
                       if (canReadSystemNotifications) {
                         markAllReadMutation.mutate();
                       }
                       wsMarkAllAsRead();
                     }}
-                    className="text-xs font-medium text-accent-700 hover:text-accent-700 dark:text-accent-400"
+                    disabled={markAllReadMutation.isPending}
+                    className="text-xs font-medium text-accent-700 hover:text-accent-700 disabled:opacity-50 dark:text-accent-400"
                   >
                     Mark all read
                   </button>

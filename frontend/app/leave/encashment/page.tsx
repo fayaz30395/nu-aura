@@ -1,20 +1,21 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
+import {Box, Button, NativeSelect, NumberInput} from '@mantine/core';
+import {Coins} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {Button} from '@/components/ui/Button';
-import {Input} from '@/components/ui/Input';
-import {Select} from '@/components/ui/Select';
+import {Callout} from '@/components/ui/Callout';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {FormPageSkeleton} from '@/components/ui/skeletons';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
-import {PermissionGate} from '@/components/auth/PermissionGate';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {leaveService} from '@/lib/services/hrms/leave.service';
-import {Coins} from 'lucide-react';
 
 const encashSchema = z.object({
   leaveBalanceId: z.string().min(1, 'Leave balance is required'),
@@ -23,21 +24,23 @@ const encashSchema = z.object({
 
 type EncashFormData = z.infer<typeof encashSchema>;
 
+const BREADCRUMBS = [{label: 'Leave', href: '/leave'}, {label: 'Encashment'}];
+
 export default function LeaveEncashmentPage() {
-  const router = useRouter();
   const toast = useToast();
   const queryClient = useQueryClient();
-  const {hasPermission: _hasPermission, isReady: permReady} = usePermissions();
+  const {isReady: permReady} = usePermissions();
   const {user} = useAuth();
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     formState: {errors},
   } = useForm<EncashFormData>({resolver: zodResolver(encashSchema)});
 
-  const {data: balances = [], isLoading} = useQuery({
+  const balancesQuery = useQuery({
     queryKey: ['leave-balances', user?.employeeId],
     queryFn: () => leaveService.getEmployeeBalances(user!.employeeId!),
     enabled: !!user?.employeeId,
@@ -54,6 +57,7 @@ export default function LeaveEncashmentPage() {
       queryClient.invalidateQueries({queryKey: ['leave-balances']});
       reset();
     },
+    meta: {skipGlobalError: true},
     onError: (err: unknown) => {
       toast.error(
         (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -62,120 +66,110 @@ export default function LeaveEncashmentPage() {
     },
   });
 
+  const header = (
+    <PageHeader
+      title="Leave Encashment"
+      description="Convert unused leave days to cash compensation."
+      breadcrumbs={BREADCRUMBS}
+    />
+  );
+
   if (!permReady) {
     return (
       <AppLayout activeMenuItem="leave">
-        <div className="p-6 max-w-2xl mx-auto space-y-4">
-          {[1, 2].map((i) => (
-            <div key={i} className="skeuo-card p-4 animate-pulse">
-              <div className="h-4 bg-[var(--skeleton-base)] rounded w-1/3 mb-2"/>
-              <div className="h-3 bg-[var(--skeleton-base)] rounded w-2/3"/>
-            </div>
-          ))}
-        </div>
+        <FormPageSkeleton fields={2}/>
       </AppLayout>
     );
   }
 
   return (
     <AppLayout activeMenuItem="leave">
-      <PermissionGate
-        permission={Permissions.LEAVE_VIEW_SELF}
-        fallback={
-          <div className="p-6">
-            <p className="text-danger-600">You do not have permission to view this page.</p>
-          </div>
-        }
-      >
-        <div className="p-6 max-w-2xl mx-auto">
-          <button
-            onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2 mb-6 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            ← Back
-          </button>
+      <PermissionGate permission={Permissions.LEAVE_VIEW_SELF} fallback={<PageDeniedFallback/>}>
+        <Box maw={720} className="flex flex-col gap-6">
+          {header}
 
-          <div className="flex items-center gap-2 mb-8">
-            <Coins className="h-7 w-7 text-accent-600"/>
-            <div>
-              <h1 className="text-xl font-bold">Leave Encashment</h1>
-              <p className="text-[var(--text-secondary)] text-sm mt-1">
-                Convert unused leave days to cash compensation
-              </p>
-            </div>
-          </div>
-
-          {isLoading ? (
-            <div className="skeuo-card p-6 animate-pulse space-y-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-4 bg-[var(--skeleton-base)] rounded"/>
-              ))}
-            </div>
+          {!user?.employeeId ? (
+            <Callout tone="warning" title="No employee profile linked">
+              Leave encashment is available once your account is linked to an employee record.
+            </Callout>
           ) : (
-            <form onSubmit={handleSubmit((data) => encashMutation.mutate(data))} className="skeuo-card p-6 space-y-6">
-              <div>
-                <label htmlFor="encash-leave-balance" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Leave Balance
-                </label>
-                <Select id="encash-leave-balance" {...register('leaveBalanceId')}>
-                  <option value="">Select leave type</option>
-                  {balances
-                    .filter((b) => b.available > 0)
-                    .map((b) => (
-                      <option key={b.id} value={b.id}>
-                        {b.leaveTypeName ?? b.leaveTypeId}: {b.available} days available
-                      </option>
-                    ))}
-                </Select>
-                {errors.leaveBalanceId && (
-                  <p className="text-danger-500 text-xs mt-1">{errors.leaveBalanceId.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="encash-days" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Days to Encash
-                </label>
-                <Input
-                  id="encash-days"
-                  type="number"
-                  step="0.5"
-                  min="0.5"
-                  {...register('daysToEncash', {valueAsNumber: true})}
-                  placeholder="e.g. 5"
-                />
-                {errors.daysToEncash && (
-                  <p className="text-danger-500 text-xs mt-1">{errors.daysToEncash.message}</p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={encashMutation.isPending}
-                className="w-full"
-              >
-                {encashMutation.isPending ? 'Submitting...' : 'Submit Encashment Request'}
-              </Button>
-            </form>
-          )}
-
-          {balances.length > 0 && (
-            <div className="mt-8">
-              <h2 className="text-sm font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-4">
-                Current Balances
-              </h2>
-              <div className="space-y-2">
-                {balances.map((b) => (
-                  <div key={b.id} className="skeuo-card p-4 flex items-center justify-between">
-                    <span className="text-sm font-medium">{b.leaveTypeName ?? b.leaveTypeId}</span>
-                    <span className="text-sm text-[var(--text-secondary)]">{b.available} days</span>
+          <QueryState
+            query={balancesQuery}
+            skeleton={<FormPageSkeleton fields={2} showHeader={false}/>}
+            errorTitle="Couldn't load your leave balances"
+          >
+            {(balances) => (
+              <>
+                <form
+                  onSubmit={handleSubmit((data) => encashMutation.mutate(data))}
+                  noValidate
+                  className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:p-6"
+                >
+                  <NativeSelect
+                    id="encash-leave-balance"
+                    label="Leave balance"
+                    withAsterisk
+                    error={errors.leaveBalanceId?.message}
+                    {...register('leaveBalanceId')}
+                    data={[
+                      {value: '', label: 'Select leave type'},
+                      ...balances
+                        .filter((b) => b.available > 0)
+                        .map((b) => ({
+                          value: String(b.id),
+                          label: `${b.leaveTypeName ?? b.leaveTypeId}: ${b.available} days available`,
+                        })),
+                    ]}
+                  />
+                  <Controller
+                    name="daysToEncash"
+                    control={control}
+                    render={({field}) => (
+                      <NumberInput
+                        id="encash-days"
+                        label="Days to encash"
+                        withAsterisk
+                        placeholder="e.g. 5"
+                        step={0.5}
+                        min={0.5}
+                        decimalScale={1}
+                        value={field.value ?? ''}
+                        onChange={(v) => field.onChange(typeof v === 'number' ? v : Number.NaN)}
+                        onBlur={field.onBlur}
+                        error={errors.daysToEncash?.message}
+                      />
+                    )}
+                  />
+                  <div className="flex justify-end border-t border-border pt-4">
+                    <Button
+                      type="submit"
+                      leftSection={<Coins size={16} aria-hidden="true"/>}
+                      loading={encashMutation.isPending}
+                      disabled={encashMutation.isPending}
+                    >
+                      Submit Encashment Request
+                    </Button>
                   </div>
-                ))}
-              </div>
-            </div>
+                </form>
+
+                {balances.length > 0 && (
+                  <section aria-labelledby="encash-balances-title" className="flex flex-col gap-2">
+                    <h2 id="encash-balances-title" className="text-base font-semibold text-text-1">Current balances</h2>
+                    <ul className="divide-y divide-border-subtle rounded-lg border border-border bg-card">
+                      {balances.map((b) => (
+                        <li key={b.id} className="flex items-center justify-between px-4 py-2">
+                          <span className="text-sm font-medium text-text-1">{b.leaveTypeName ?? b.leaveTypeId}</span>
+                          <span className="text-sm tabular-nums text-text-2">{b.available} days</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+              </>
+            )}
+          </QueryState>
           )}
-        </div>
+        </Box>
       </PermissionGate>
     </AppLayout>
   );

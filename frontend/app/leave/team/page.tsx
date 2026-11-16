@@ -2,6 +2,7 @@
 
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
 
 export default function TeamLeaveRedirectPage() {
   const router = useRouter();
@@ -10,10 +11,5 @@ export default function TeamLeaveRedirectPage() {
     router.replace('/leave/approvals');
   }, [router]);
 
-  return (
-    <main className="page-shell-centered fade-slide-up auth-delay-20 p-6">
-      <h1 className="text-xl font-bold text-[var(--text-primary)]">Team Leave</h1>
-      <p className="mt-2 text-[var(--text-secondary)]">Opening leave approvals...</p>
-    </main>
-  );
+  return <ListPageSkeleton/>;
 }

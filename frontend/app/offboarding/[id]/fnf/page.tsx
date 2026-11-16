@@ -182,7 +182,7 @@ export default function FnFSettlementPage() {
         });
       }
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to save settlement', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -197,7 +197,7 @@ export default function FnFSettlementPage() {
         icon: <IconCheck size={16}/>
       });
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to submit for approval', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -212,7 +212,7 @@ export default function FnFSettlementPage() {
         icon: <IconCheck size={16}/>
       });
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to approve settlement', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -231,7 +231,7 @@ export default function FnFSettlementPage() {
         icon: <IconCheck size={16}/>
       });
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to process payment', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 

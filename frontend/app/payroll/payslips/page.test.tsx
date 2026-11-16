@@ -30,7 +30,9 @@ vi.mock('@/lib/services/hrms/payroll.service', () => ({
 }));
 
 vi.mock('@/components/auth/PermissionGate', () => ({
-  PermissionGate: ({children}: { children: React.ReactNode }) => <>{children}</>,
+  PermissionGate: ({children, anyOf}: { children: React.ReactNode; anyOf?: string[] }) => (
+    <div data-testid="gate" data-any-of={(anyOf ?? []).join(',')}>{children}</div>
+  ),
   PageDeniedFallback: () => null,
 }));
 
@@ -48,6 +50,14 @@ vi.mock('@/components/payroll/PayslipCard', () => ({
 }));
 
 const downloadPdf = payrollService.downloadPayslipPdf as unknown as ReturnType<typeof vi.fn>;
+
+describe('/payroll/payslips gate', () => {
+  it('accepts PAYROLL:VIEW_ALL as well as PAYROLL:VIEW (DEF-E2E-03)', () => {
+    render(<PayslipsPage/>);
+    const any = screen.getAllByTestId('gate')[0].getAttribute('data-any-of') ?? '';
+    expect(any.split(',')).toEqual(expect.arrayContaining(['PAYROLL:VIEW', 'PAYROLL:VIEW_ALL']));
+  });
+});
 
 describe('/payroll/payslips Download All', () => {
   beforeEach(() => {

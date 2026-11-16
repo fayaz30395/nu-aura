@@ -109,7 +109,7 @@ function AuditRow({log}: {log: AuditLogResponse}) {
           {log.changes && (
             <div>
               <p className="text-xs text-[var(--text-muted)] mb-1">Changes</p>
-              <pre className="text-[10px] font-mono text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded p-2 overflow-x-auto whitespace-pre-wrap break-all max-h-40">
+              <pre className="text-2xs font-mono text-[var(--text-secondary)] bg-[var(--bg-secondary)] rounded p-2 overflow-x-auto whitespace-pre-wrap break-all max-h-40">
                 {log.changes}
               </pre>
             </div>
@@ -184,8 +184,8 @@ export default function AuditLogPage() {
                   <Icon className="w-4 h-4 text-[var(--text-muted)]"/>
                 </div>
                 <div>
-                  <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wide">{label}</p>
-                  <p className="text-sm font-semibold text-[var(--text-primary)] truncate max-w-[120px]">{String(value)}</p>
+                  <p className="text-2xs text-[var(--text-muted)] uppercase tracking-wide">{label}</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)] truncate max-w-28">{String(value)}</p>
                 </div>
               </CardContent>
             </Card>
@@ -228,7 +228,7 @@ export default function AuditLogPage() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="flex items-center gap-3 px-4 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border-main)] text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-wide">
+            <div className="flex items-center gap-3 px-4 py-2 bg-[var(--bg-secondary)] border-b border-[var(--border-main)] text-2xs font-medium text-[var(--text-muted)] uppercase tracking-wide">
               <span className="w-3.5 shrink-0"/>
               <span className="w-3.5 shrink-0"/>
               <span className="w-28 shrink-0">Action</span>

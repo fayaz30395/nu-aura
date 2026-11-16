@@ -60,9 +60,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputType = type === 'password' && showPassword ? 'text' : type;
 
     const sizeStyles = {
-      sm: 'h-[calc(var(--control-height)-10px)] min-h-[calc(var(--control-height)-10px)] text-sm px-4',
-      md: 'h-[var(--control-height)] min-h-[var(--control-height)] text-sm px-4',
-      lg: 'h-[calc(var(--control-height)+8px)] min-h-[calc(var(--control-height)+8px)] text-base px-4',
+      sm: 'h-9 min-h-9 text-sm px-3',
+      md: 'h-10 min-h-10 text-sm px-3',
+      lg: 'h-11 min-h-11 text-base px-3.5',
     };
 
     return (
@@ -71,11 +71,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <label
             htmlFor={inputId}
             className={cn(
-              'block text-sm font-medium mb-1.5 transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
+              'block text-[13px] font-medium mb-1 transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
               error
-                ? 'text-danger-600 dark:text-danger-400'
+                ? 'text-[var(--err-fg)]'
                 : success
-                  ? 'text-success-600 dark:text-success-400'
+                  ? 'text-[var(--ok-fg)]'
                   : 'text-[var(--text-secondary)]'
             )}
           >
@@ -90,8 +90,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 'absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-3)]',
                 'transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
                 isFocused && !error && !success && 'text-[var(--accent)]',
-                error && 'text-danger-500',
-                success && 'text-success-500'
+                error && 'text-[var(--err-fg)]',
+                success && 'text-[var(--ok-fg)]'
               )}
             >
               {icon}
@@ -109,8 +109,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               // Aura: 10px control radius + inset top shadow (--inset-input). Focus
               // and validation state layer on the token-driven accent/status ring.
               // Compositor-safe: only color + box-shadow transition.
-              'w-full rounded-aura-control border shadow-[var(--inset-input)] transition-[border-color,box-shadow,color] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
-              'placeholder:text-[var(--text-3)]',
+              'w-full rounded-[var(--radius-md)] border text-[var(--text-primary)] transition-[border-color,box-shadow,color] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
+              'placeholder:text-[var(--text-tertiary)]',
               // Size
               sizeStyles[inputSize],
               // Icon padding
@@ -119,13 +119,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               // Hover state
               !hasError && !hasSuccess && !disabled && 'hover:border-[var(--border-strong)]',
                 // Focus state — Aura accent border + soft focus ring (--sh-focus)
-              !hasError && !hasSuccess && 'focus:border-[var(--accent)] focus:shadow-[var(--inset-input),var(--sh-focus)]',
+              !hasError && !hasSuccess && 'focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]',
                 // Error state
-              hasError && 'border-danger-500 focus:border-danger-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-danger)]',
+              hasError && 'border-[var(--err-fg)] focus:border-[var(--err-fg)] focus:shadow-[0_0_0_3px_var(--ring-danger)]',
                 // Success state
-              hasSuccess && 'border-success-500 focus:border-success-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-success)]',
+              hasSuccess && 'border-[var(--ok-fg)] focus:border-[var(--ok-fg)] focus:shadow-[0_0_0_3px_var(--ring-success)]',
               // Disabled
               disabled && 'bg-[var(--surface-sunken)] cursor-not-allowed opacity-60',
+              props.readOnly && !disabled && 'bg-[var(--surface-sunken)] focus:border-[var(--border-main)] focus:shadow-none',
               // Remove default outline
               'outline-none',
               className
@@ -172,11 +173,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
 
             {error && (
-              <AlertCircle className="motion-scale-in h-4 w-4 text-danger-500"/>
+              <AlertCircle className="motion-scale-in h-4 w-4 text-[var(--err-fg)]"/>
             )}
 
             {success && !error && (
-              <CheckCircle className="motion-scale-in h-4 w-4 text-success-500"/>
+              <CheckCircle className="motion-scale-in h-4 w-4 text-[var(--ok-fg)]"/>
             )}
           </div>
         </div>
@@ -185,10 +186,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <p
             id={messageId}
             className={cn(
-              'motion-fade text-sm mt-1.5',
+              'motion-fade text-xs mt-1',
               error
-                ? 'text-danger-600 dark:text-danger-400'
-                : 'text-surface-500 dark:text-surface-400'
+                ? 'text-[var(--err-fg)]'
+                : 'text-[var(--text-muted)]'
             )}
           >
             {error || helper}

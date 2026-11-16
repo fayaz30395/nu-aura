@@ -74,12 +74,19 @@ class FluenceService {
   }
 
   async createWikiPage(data: CreateWikiPageRequest): Promise<WikiPage> {
-    const response = await apiClient.post<WikiPage>('/knowledge/wiki/pages', data);
+    // Backend DTO declares content as String; the editor produces a JSON object.
+    const response = await apiClient.post<WikiPage>('/knowledge/wiki/pages', {
+      ...data,
+      content: JSON.stringify(data.content),
+    });
     return response.data;
   }
 
   async updateWikiPage(id: string, data: UpdateWikiPageRequest): Promise<WikiPage> {
-    const response = await apiClient.put<WikiPage>(`/knowledge/wiki/pages/${id}`, data);
+    const response = await apiClient.put<WikiPage>(`/knowledge/wiki/pages/${id}`, {
+      ...data,
+      ...(data.content !== undefined && {content: JSON.stringify(data.content)}),
+    });
     return response.data;
   }
 

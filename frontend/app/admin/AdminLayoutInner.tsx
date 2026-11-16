@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import {useUnreadNotificationCount} from '@/lib/hooks/queries/useNotifications';
 import {useUiStore} from '@/lib/stores/useUiStore';
+import {hasAdminConsoleAccess} from '@/components/layout/menuSections';
 
 // This component is dynamically imported with { ssr: false } from layout.tsx.
 // It is NEVER server-rendered, so there is no hydration to worry about.
@@ -40,7 +41,7 @@ export default function AdminLayoutInner({
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const {roles, hasPermission, isPermissionReady} = usePermissions();
+  const {roles, hasPermission, hasAnyRole, isPermissionReady} = usePermissions();
   const {user} = useAuth();
   const isSuperAdmin = useMemo(
     () => roles.includes(Roles.SUPER_ADMIN),
@@ -64,16 +65,8 @@ export default function AdminLayoutInner({
   // console (an RBAC loosening). This set grants exactly {SUPER_ADMIN, TENANT_ADMIN,
   // HR_MANAGER, HR_ADMIN} on the current catalog — the intended org/HR-admin tier.
   const hasAdminAccess = useMemo(
-    () =>
-      isSuperAdmin ||
-      roles.includes(Roles.TENANT_ADMIN) ||
-      roles.includes(Roles.HR_MANAGER) ||
-      hasPermission(Permissions.ROLE_MANAGE) ||
-      hasPermission(Permissions.PERMISSION_MANAGE) ||
-      hasPermission(Permissions.USER_MANAGE) ||
-      hasPermission(Permissions.AUDIT_VIEW) ||
-      hasPermission(Permissions.SETTINGS_UPDATE),
-    [isSuperAdmin, roles, hasPermission]
+    () => hasAdminConsoleAccess({roles, hasPermission, hasAnyRole}),
+    [roles, hasPermission, hasAnyRole]
   );
   const {data: unreadCount} = useUnreadNotificationCount(isPermissionReady && hasAdminAccess);
 

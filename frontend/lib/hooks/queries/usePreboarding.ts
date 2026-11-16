@@ -66,6 +66,7 @@ export function useCreatePreboardingCandidate() {
       queryClient.invalidateQueries({queryKey: preboardingKeys.candidates()});
       toast.success('Candidate invited successfully');
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
@@ -87,6 +88,7 @@ export function useResendPreboardingInvitation() {
     onSuccess: () => {
       toast.success('Invitation resent successfully');
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       const message =
         (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||

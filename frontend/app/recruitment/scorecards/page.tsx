@@ -1,4 +1,5 @@
 'use client';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 import React, {useState} from 'react';
 import {Check, ClipboardList, Edit2, Plus, Star, Trash2, X} from 'lucide-react';
@@ -195,7 +196,7 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm font-medium text-[var(--text-primary)]">{template.name}</span>
               {template.isDefault && (
-                <Badge variant="success" className="text-[10px] flex items-center gap-1">
+                <Badge variant="success" className="text-2xs flex items-center gap-1">
                   <Star className="w-2.5 h-2.5"/>Default
                 </Badge>
               )}
@@ -206,14 +207,14 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
             {(template.criteria?.length ?? 0) > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {template.criteria?.slice(0, 4).map((c: CriterionResponse, i: number) => (
-                  <span key={i} className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
+                  <span key={i} className="inline-flex items-center gap-1 text-2xs px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                     <Check className="w-2.5 h-2.5"/>
                     {c.name}
                     {c.weight ? <span className="text-[var(--text-muted)]">({c.weight}%)</span> : null}
                   </span>
                 ))}
                 {(template.criteria?.length ?? 0) > 4 && (
-                  <span className="text-[10px] text-[var(--text-muted)] px-1.5 py-0.5">+{(template.criteria?.length ?? 0) - 4} more</span>
+                  <span className="text-2xs text-[var(--text-muted)] px-1.5 py-0.5">+{(template.criteria?.length ?? 0) - 4} more</span>
                 )}
               </div>
             )}
@@ -224,10 +225,10 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
             </button>
             {confirmDelete ? (
               <div className="flex items-center gap-1">
-                <button type="button" onClick={handleDelete} disabled={deleteMutation.isPending} className="text-[10px] px-2 py-1 rounded bg-danger-600 text-white hover:bg-danger-700">
+                <button type="button" onClick={handleDelete} disabled={deleteMutation.isPending} className="text-2xs px-2 py-1 rounded bg-danger-600 text-white hover:bg-danger-700">
                   Delete
                 </button>
-                <button type="button" onClick={() => setConfirmDelete(false)} className="text-[10px] px-2 py-1 rounded border border-[var(--border-main)] text-[var(--text-secondary)]">
+                <button type="button" onClick={() => setConfirmDelete(false)} className="text-2xs px-2 py-1 rounded border border-[var(--border-main)] text-[var(--text-secondary)]">
                   Cancel
                 </button>
               </div>
@@ -277,18 +278,18 @@ export default function ScorecardsPage() {
   return (
     <AppLayout>
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">Interview Scorecards</h1>
-            <p className="page-subtitle">Manage scorecard templates used to evaluate candidates consistently.</p>
-          </div>
-          {canLoadPage && (
-            <Button size="sm" onClick={() => setPanelTemplate('new')} className="flex items-center gap-1.5">
-              <Plus className="w-3.5 h-3.5"/>
-              New Template
-            </Button>
-          )}
-        </div>
+        <PageHeader
+          title="Interview Scorecards"
+          description="Manage scorecard templates used to evaluate candidates consistently."
+          actions={
+            canLoadPage ? (
+              <Button size="sm" onClick={() => setPanelTemplate('new')} className="flex items-center gap-1.5">
+                <Plus className="w-3.5 h-3.5"/>
+                New Template
+              </Button>
+            ) : undefined
+          }
+        />
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

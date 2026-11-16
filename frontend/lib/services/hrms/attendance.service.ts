@@ -156,6 +156,12 @@ class AttendanceService {
     return mapAttendanceDay(response.data);
   }
 
+  // Server-side "today" (tenant timezone). Returns a NOT_CHECKED_IN stub when no punch yet.
+  async getToday(): Promise<AttendanceRecord> {
+    const response = await apiClient.get<AttendanceDayResponse>('/attendance/today');
+    return mapAttendanceDay(response.data);
+  }
+
   async checkOut(data: CheckOutRequest): Promise<AttendanceRecord> {
     const response = await apiClient.post<AttendanceDayResponse>('/attendance/check-out', data);
     return mapAttendanceDay(response.data);

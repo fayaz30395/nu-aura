@@ -27,6 +27,7 @@ import {AppLayout} from '@/components/layout/AppLayout';
 import {
   Button,
   ConfirmDialog,
+  EmptyState,
   Input,
   Modal,
   ModalBody,
@@ -343,15 +344,13 @@ export default function SurveysPage() {
             </button>
           </div>
         ) : filteredSurveys.length === 0 ? (
-          <div className="rounded-aura-lg border border-[var(--border-soft)] bg-[var(--surface)] p-12 text-center">
-            <ClipboardList className="h-8 w-8 mx-auto mb-4 text-[var(--text-3)]"/>
-            <h3 className="text-base font-semibold text-[var(--text-1)]">No surveys found</h3>
-            <p className="mt-1 text-sm text-[var(--text-2)]">Create your first survey to collect employee feedback</p>
-            <Button onClick={handleCreateSurvey} className="mt-4">
-              <Plus className="mr-2 h-4 w-4"/>
-              Create Survey
-            </Button>
-          </div>
+          <EmptyState
+            icon={<ClipboardList className="h-8 w-8"/>}
+            title="No surveys found"
+            description="Create your first survey to collect employee feedback"
+            actionLabel="Create Survey"
+            onAction={handleCreateSurvey}
+          />
         ) : (
           <Stagger className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredSurveys.map((survey) => (
@@ -399,12 +398,12 @@ export default function SurveysPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 pt-2 border-t border-[var(--border)]">
-                      <Button size="sm" variant="outline" onClick={() => handleViewSurvey(survey)}>
+                      <Button size="sm" variant="outline" onClick={() => handleViewSurvey(survey)} aria-label="View">
                         <Eye className="h-4 w-4"/>
                       </Button>
                       {survey.status === SurveyStatus.DRAFT && (
                         <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-                          <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)}>
+                          <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)} aria-label="Launch">
                             <Send className="h-4 w-4"/>
                           </Button>
                         </PermissionGate>
@@ -412,12 +411,12 @@ export default function SurveysPage() {
                       {survey.status === SurveyStatus.ACTIVE && (
                         <>
                           <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-                            <Button size="sm" variant="outline" onClick={() => handlePauseSurvey(survey.id)}>
+                            <Button size="sm" variant="outline" onClick={() => handlePauseSurvey(survey.id)} aria-label="Pause">
                               <Pause className="h-4 w-4"/>
                             </Button>
                           </PermissionGate>
                           <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-                            <Button size="sm" variant="outline" onClick={() => handleCompleteSurvey(survey.id)}>
+                            <Button size="sm" variant="outline" onClick={() => handleCompleteSurvey(survey.id)} aria-label="Complete">
                               <CheckCircle className="h-4 w-4"/>
                             </Button>
                           </PermissionGate>
@@ -425,13 +424,13 @@ export default function SurveysPage() {
                       )}
                       {survey.status === SurveyStatus.PAUSED && (
                         <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-                          <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)}>
+                          <Button size="sm" variant="outline" onClick={() => handleLaunchSurvey(survey.id)} aria-label="Resume">
                             <Play className="h-4 w-4"/>
                           </Button>
                         </PermissionGate>
                       )}
                       <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-                        <Button size="sm" variant="outline" onClick={() => handleEditSurvey(survey)}>
+                        <Button size="sm" variant="outline" onClick={() => handleEditSurvey(survey)} aria-label="Edit">
                           <Edit className="h-4 w-4"/>
                         </Button>
                       </PermissionGate>
@@ -441,7 +440,7 @@ export default function SurveysPage() {
                           variant="outline"
                           className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                           onClick={() => handleDeleteSurvey(survey.id)}
-                        >
+                         aria-label="Delete">
                           <Trash2 className="h-4 w-4"/>
                         </Button>
                       </PermissionGate>
@@ -709,7 +708,7 @@ export default function SurveysPage() {
                 <Button onClick={() => {
                   handleLaunchSurvey(selectedSurvey.id);
                   setIsViewModalOpen(false);
-                }}>
+                }} aria-label="Launch">
                   <Send className="mr-2 h-4 w-4"/>
                   Launch Survey
                 </Button>

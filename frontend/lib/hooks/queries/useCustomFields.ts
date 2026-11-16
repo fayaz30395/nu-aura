@@ -161,6 +161,7 @@ export function useCreateCustomFieldDefinition() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to create custom field:', error);
       notifications.show({
@@ -191,6 +192,7 @@ export function useUpdateCustomFieldDefinition(definitionId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to update custom field:', error);
       notifications.show({
@@ -218,6 +220,7 @@ export function useDeleteCustomFieldDefinition() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to delete custom field:', error);
       notifications.show({
@@ -245,6 +248,7 @@ export function useActivateCustomFieldDefinition() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to activate custom field:', error);
       notifications.show({
@@ -272,6 +276,7 @@ export function useDeactivateCustomFieldDefinition() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to deactivate custom field:', error);
       notifications.show({

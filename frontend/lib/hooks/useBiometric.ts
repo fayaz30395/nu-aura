@@ -62,6 +62,7 @@ export function useRegisterDevice() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Registration Failed',
@@ -87,6 +88,7 @@ export function useUpdateDevice(id: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Update Failed',
@@ -110,6 +112,7 @@ export function useDeactivateDevice() {
         color: 'yellow',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -133,6 +136,7 @@ export function useSyncDevice() {
         color: 'blue',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Sync Failed',
@@ -176,6 +180,7 @@ export function useReprocessPunches() {
         color: 'blue',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -210,6 +215,7 @@ export function useGenerateApiKey() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -233,6 +239,7 @@ export function useRevokeApiKey() {
         color: 'yellow',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',

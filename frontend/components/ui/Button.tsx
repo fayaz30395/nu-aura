@@ -6,53 +6,56 @@ import {cva, type VariantProps} from 'class-variance-authority';
 import {cn} from '@/lib/utils';
 import {Loader2} from 'lucide-react';
 
-  const buttonVariants = cva(
-  // Aura: display-font label, tracking-tight, token-driven motion (--t-base / --ease).
-  // A11y: focus-visible ring with offset for keyboard nav; disabled state accessible.
-  'press-scale inline-flex items-center justify-center gap-2 whitespace-nowrap font-display font-semibold tracking-[-0.005em] transition-all duration-[var(--t-base)] ease-[var(--ease)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)] min-h-[var(--control-height)] disabled:pointer-events-none disabled:opacity-50 disabled:translate-y-0 motion-reduce:transition-none',
+const FOCUS = 'focus-visible:ring-[var(--ring-primary)]';
+// Flat accent fill: no gradient, lift or glow (Wave 2 brand: Apple-neutral).
+const PRIMARY =
+  `bg-[var(--btn-primary-bg)] text-white hover:bg-[var(--btn-primary-bg-hover)] active:brightness-95 ${FOCUS}`;
+
+const buttonVariants = cva(
+  // 150ms token motion, 8px radius via size, focus-visible ring with offset, flat disabled state.
+  'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap font-sans font-medium transition-[background-color,border-color,color,box-shadow,filter] duration-[var(--t-fast,150ms)] ease-[var(--ease)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-card)] disabled:pointer-events-none disabled:opacity-50 motion-reduce:transition-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        // Aura primary: accent fill + 1px top highlight + soft accent glow (token-driven).
-        primary:
-          'bg-[var(--btn-primary-bg)] bg-[image:var(--btn-primary-gradient)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_2px_color-mix(in_srgb,var(--accent-primary)_50%,transparent),0_4px_12px_color-mix(in_srgb,var(--accent-primary)_30%,transparent)] hover:bg-[image:var(--btn-primary-gradient-hover)] hover:-translate-y-px hover:brightness-[1.03] focus-visible:ring-[var(--ring-primary)] active:translate-y-0 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]',
+        primary: PRIMARY,
         secondary:
-          'border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] shadow-[var(--sh-xs)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
+          `border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] active:bg-[var(--surface-2)] ${FOCUS}`,
         outline:
-          'border border-[var(--border-main)] bg-transparent text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
+          `border border-[var(--border-main)] bg-transparent text-[var(--text-primary)] hover:border-[var(--border-strong)] hover:bg-[var(--bg-card-hover)] ${FOCUS}`,
         ghost:
-          'text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--text-primary)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
+          `text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] hover:text-[var(--text-primary)] active:bg-[var(--surface-2)] ${FOCUS}`,
         danger:
-          'bg-[var(--err-bg)] text-[var(--err-fg)] hover:bg-[var(--err-bg)] hover:brightness-90 focus-visible:ring-[var(--err-bg)]/50 active:translate-y-px',
+          'bg-[var(--err-bg)] text-[var(--err-fg)] hover:brightness-95 focus-visible:ring-[var(--err-fg)]',
         success:
-          'bg-[var(--ok-bg)] text-[var(--ok-fg)] hover:bg-[var(--ok-bg)] hover:brightness-90 focus-visible:ring-[var(--ok-bg)]/50 active:translate-y-px',
+          'bg-[var(--ok-bg)] text-[var(--ok-fg)] hover:brightness-95 focus-visible:ring-[var(--ok-fg)]',
         warning:
-          'bg-[var(--warn-bg)] text-[var(--warn-fg)] hover:bg-[var(--warn-bg)] hover:brightness-90 focus-visible:ring-[var(--warn-bg)]/50 active:translate-y-px',
+          'bg-[var(--warn-bg)] text-[var(--warn-fg)] hover:brightness-95 focus-visible:ring-[var(--warn-fg)]',
         link:
-          'text-[var(--accent-primary)] underline-offset-4 hover:underline focus-visible:ring-[var(--ring-primary)]',
+          `text-[var(--accent-text,var(--accent-primary))] underline-offset-4 hover:underline ${FOCUS}`,
         soft:
-          'bg-[var(--accent-primary-subtle)] text-[var(--accent-primary)] hover:bg-[var(--accent-100)] focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
+          `bg-[var(--accent-subtle)] text-[var(--accent-text,var(--accent-primary))] hover:brightness-95 ${FOCUS}`,
         'soft-danger':
-          'bg-[var(--err-bg)] text-[var(--err-fg)] hover:bg-[color-mix(in_srgb,var(--err-bg)_85%,var(--text-1))] focus-visible:ring-[var(--err-bg)]/50 active:translate-y-px',
+          'bg-[var(--err-bg)] text-[var(--err-fg)] hover:brightness-95 focus-visible:ring-[var(--err-fg)]',
         'soft-success':
-          'bg-[var(--ok-bg)] text-[var(--ok-fg)] hover:bg-[color-mix(in_srgb,var(--ok-bg)_85%,var(--text-1))] focus-visible:ring-[var(--ok-bg)]/50 active:translate-y-px',
+          'bg-[var(--ok-bg)] text-[var(--ok-fg)] hover:brightness-95 focus-visible:ring-[var(--ok-fg)]',
+        // Solid destructive (additive): confirm-delete style actions.
+        destructive:
+          'bg-[var(--err-fg)] text-white hover:brightness-90 focus-visible:ring-[var(--err-fg)]',
         default:
-          'bg-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 focus-visible:ring-[var(--ring-primary)] active:translate-y-px',
-        cta:
-          'bg-[var(--btn-primary-bg)] bg-[image:var(--btn-primary-gradient)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_1px_2px_color-mix(in_srgb,var(--accent-primary)_50%,transparent),0_4px_12px_color-mix(in_srgb,var(--accent-primary)_30%,transparent)] hover:bg-[image:var(--btn-primary-gradient-hover)] hover:-translate-y-px hover:brightness-[1.03] focus-visible:ring-[var(--ring-primary)] active:translate-y-0 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)]',
+          `bg-[var(--text-heading)] text-[var(--text-inverse)] hover:brightness-110 ${FOCUS}`,
+        cta: PRIMARY,
       },
-      // Aura radii: control surfaces sit at 8–11px. Heights are unchanged (DESIGN
-      // contract: md=36 / lg=44 / xl=48) — only the corner softness is re-systemed.
-    size: {
-        xs: 'h-7 px-2 text-xs rounded-aura-xs',
-        sm: 'h-8 px-3 text-sm rounded-aura-sm',
-        md: 'h-9 px-3.5 text-sm rounded-aura-control',
-        lg: 'h-11 px-4 text-sm rounded-aura-lg',
-        xl: 'h-12 px-6 text-base rounded-aura-lg',
-        icon: 'h-9 w-9 rounded-aura-control',
-        'icon-sm': 'h-8 w-8 rounded-aura-sm',
-        'icon-xs': 'h-7 w-7 rounded-aura-xs',
-        'icon-lg': 'h-11 w-11 rounded-aura-lg',
+      // Heights: sm 32 / md 36 (default) / lg 44 / xl 48 (existing contract); all 8px radius.
+      size: {
+        xs: 'h-7 px-2 text-xs rounded-[var(--radius-md)]',
+        sm: 'h-8 px-3 text-sm rounded-[var(--radius-md)]',
+        md: 'h-9 px-3.5 text-sm rounded-[var(--radius-md)]',
+        lg: 'h-11 px-4 text-sm rounded-[var(--radius-md)]',
+        xl: 'h-12 px-6 text-base rounded-[var(--radius-md)]',
+        icon: 'h-9 w-9 rounded-[var(--radius-md)]',
+        'icon-sm': 'h-8 w-8 rounded-[var(--radius-md)]',
+        'icon-xs': 'h-7 w-7 rounded-[var(--radius-md)]',
+        'icon-lg': 'h-11 w-11 rounded-[var(--radius-md)]',
       },
     },
     defaultVariants: {
@@ -90,12 +93,25 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const Comp = asChild ? Slot : 'button';
+    // Keep the button's width while loading so the layout does not jump.
+    const innerRef = React.useRef<HTMLButtonElement | null>(null);
+    const idleWidth = React.useRef<number | undefined>(undefined);
+    React.useLayoutEffect(() => {
+      if (!isLoading) idleWidth.current = innerRef.current?.offsetWidth;
+    });
+    const lockedWidth = isLoading ? idleWidth.current : undefined;
+    const setRefs = (node: HTMLButtonElement | null) => {
+      innerRef.current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref) ref.current = node;
+    };
     return (
       <Comp
         className={cn(buttonVariants({variant, size, className}))}
-        ref={ref}
+        ref={setRefs}
         disabled={isLoading || disabled}
         {...props}
+        style={lockedWidth ? {minWidth: lockedWidth, ...props.style} : props.style}
         aria-busy={isLoading ? 'true' : undefined}
         aria-label={isLoading ? (loadingText || props['aria-label'] || 'Loading') : props['aria-label']}
       >

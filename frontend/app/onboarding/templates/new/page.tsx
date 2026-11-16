@@ -68,6 +68,7 @@ export default function NewTemplatePage() {
           <Button
             variant="outline"
             size="sm"
+            aria-label="Go back"
             className="rounded-lg h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
             onClick={() => router.back()}
           >

@@ -126,7 +126,6 @@ export default function NewLoanPage() {
       router.push('/loans');
     } catch (err) {
       logger.error('Error creating loan:', err);
-      toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to submit loan application');
     }
   };
 

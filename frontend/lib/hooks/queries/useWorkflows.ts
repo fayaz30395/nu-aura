@@ -86,6 +86,7 @@ export function useCreateWorkflowDefinition() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -114,6 +115,7 @@ export function useUpdateWorkflowDefinition(id: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -140,6 +142,7 @@ export function useDeactivateWorkflowDefinition() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',

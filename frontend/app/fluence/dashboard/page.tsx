@@ -75,7 +75,7 @@ function FluenceDashboardPageContent() {
             <div className="flex items-start justify-between gap-6 mb-6">
               <div className="flex-1">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="p-4 bg-white/15 rounded-[var(--r-md)] backdrop-blur-sm">
+                  <div className="p-4 bg-white/15 rounded-[var(--r-md)]">
                     <BookOpen className="w-6 h-6 text-white"/>
                   </div>
                   <h1 className="text-white text-3xl md:text-4xl font-bold tracking-tight">
@@ -102,7 +102,7 @@ function FluenceDashboardPageContent() {
               <Button
                 onClick={() => router.push('/fluence/blogs/new')}
                 variant="outline"
-                className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium backdrop-blur-sm"
+                className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium"
                 size="sm"
               >
                 <Pen className="w-4 h-4"/>
@@ -111,7 +111,7 @@ function FluenceDashboardPageContent() {
               <Button
                 onClick={() => router.push('/fluence/search')}
                 variant="outline"
-                className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium backdrop-blur-sm"
+                className="gap-2 border-white/30 bg-white/10 hover:bg-white/20 text-white font-medium"
                 size="sm"
               >
                 <Clock className="w-4 h-4"/>
@@ -120,13 +120,6 @@ function FluenceDashboardPageContent() {
             </div>
           </div>
 
-          {/* Decorative background */}
-          <div className="absolute inset-0 opacity-5 dark:opacity-10">
-            <div
-              className="absolute top-0 right-0 w-96 h-96 bg-white dark:bg-accent-100 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/4"/>
-            <div
-              className="absolute bottom-0 left-0 w-64 h-64 bg-white dark:bg-accent-100 rounded-full blur-3xl transform -translate-x-1/3 translate-y-1/4"/>
-          </div>
         </Reveal>
 
         {/* Stats Grid */}

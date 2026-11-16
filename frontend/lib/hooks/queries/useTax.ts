@@ -60,6 +60,7 @@ export function useCreateTaxDeclaration() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -86,6 +87,7 @@ export function useApproveTaxDeclaration() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -112,6 +114,7 @@ export function useRejectTaxDeclaration() {
         color: 'orange',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -137,6 +140,7 @@ export function useSubmitTaxDeclaration() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',

@@ -2,8 +2,8 @@
 
 import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import Link from 'next/link';
-import {AlertCircle, CheckCircle, RefreshCw, Loader2, ShieldAlert} from 'lucide-react';
+import {Button} from '@mantine/core';
+import {CheckCircle} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {
   useActiveLeaveTypes,
@@ -16,18 +16,22 @@ import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGa
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {ResponsiveTable, type Column} from '@/components/ui/ResponsiveTable';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
 import {useEmployees} from '@/lib/hooks/queries/useEmployees';
 import {Stat} from '@/components/ui/Stat';
-import {Card, CardContent} from '@/components/ui/Card';
 import {formatDate} from '@/lib/utils/format/date';
+import type {LeaveRequest} from '@/lib/types/hrms/leave';
+
+const BREADCRUMBS = [{label: 'Leave', href: '/leave'}, {label: 'Approvals'}];
 
 function LeaveApprovalsPageContent() {
   const toast = useToast();
   const router = useRouter();
   const {user, isAuthenticated, hasHydrated} = useAuth();
-  // Permission gate handled by <PermissionGate> wrapper in default export.
-  // Auth (logged-in vs anonymous) is still our responsibility — PermissionGate
-  // doesn't redirect anonymous users to login.
+  // PermissionGate (default export) covers authorization; anonymous users still need the login redirect.
   useEffect(() => {
     if (!hasHydrated) return;
     if (!isAuthenticated) {
@@ -35,44 +39,12 @@ function LeaveApprovalsPageContent() {
     }
   }, [hasHydrated, isAuthenticated, router]);
 
-  // Call all hooks unconditionally at the top, before any conditional renders
-  const {
-    data: pendingData,
-    isError: isPendingError,
-    fetchStatus: pendingFetchStatus
-  } = useLeaveRequestsByStatus('PENDING', 0, 50);
+  const pendingQuery = useLeaveRequestsByStatus('PENDING', 0, 50);
   const {data: leaveTypes = []} = useActiveLeaveTypes();
   const {data: employeeData} = useEmployees(0, 500);
   const approveLeaveRequest = useApproveLeaveRequest();
   const rejectLeaveRequest = useRejectLeaveRequest();
 
-  const authShell = (message: string) => (
-    <div className="page-shell-centered fade-slide-up auth-delay-20">
-      <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
-        <CardContent className="py-10">
-          <div className="flex items-start gap-4">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-300">
-              <ShieldAlert className="h-5 w-5"/>
-            </span>
-            <div className="space-y-1">
-              <p className="text-sm font-semibold text-[var(--text-primary)]">Leave approvals</p>
-              <p className="text-caption">{message}</p>
-            </div>
-          </div>
-          <Link
-            href="/auth/login"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
-          >
-            <Loader2 className="h-4 w-4 animate-spin"/>
-            Sign in
-          </Link>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const [error, setError] = useState<string | null>(null);
-  const [_processing, _setProcessing] = useState<string | null>(null);
   const [showApproveConfirm, setShowApproveConfirm] = useState(false);
   const [showRejectConfirm, setShowRejectConfirm] = useState(false);
   const [showRejectReasonModal, setShowRejectReasonModal] = useState(false);
@@ -80,11 +52,7 @@ function LeaveApprovalsPageContent() {
   const [selectedRequestId, setSelectedRequestId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const requests = useMemo(() => pendingData?.content ?? [], [pendingData]);
-  // Stable reference: prevents employeeMap useMemo from re-running on every render.
   const employees = useMemo(() => employeeData?.content ?? [], [employeeData]);
-
-  // Build employee name map
   const employeeMap = useMemo(() => {
     return employees.reduce((acc, emp) => {
       acc[emp.id] = emp.fullName || emp.id;
@@ -95,7 +63,7 @@ function LeaveApprovalsPageContent() {
   if (!hasHydrated || !isAuthenticated) {
     return (
       <AppLayout activeMenuItem="leave">
-        {authShell('Redirecting to sign in.')}
+        <ListPageSkeleton/>
       </AppLayout>
     );
   }
@@ -114,10 +82,8 @@ function LeaveApprovalsPageContent() {
       await approveLeaveRequest.mutateAsync({id: selectedRequestId, approverId: user?.employeeId || ''});
       toast.success('Leave request approved successfully');
       setSelectedRequestId(null);
-    } catch (error: unknown) {
-      toast.error((error as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to approve leave request');
+    } catch {
+      // The global MutationCache handler shows the error toast.
     } finally {
       setIsProcessing(false);
     }
@@ -144,191 +110,101 @@ function LeaveApprovalsPageContent() {
       setShowRejectReasonModal(false);
       setRejectReason('');
       setSelectedRequestId(null);
-    } catch (error: unknown) {
-      toast.error((error as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to reject leave request');
+    } catch {
+      // The global MutationCache handler shows the error toast.
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const getLeaveTypeName = (leaveTypeId: string) => {
-    return leaveTypes.find(t => t.id === leaveTypeId)?.leaveName || 'Unknown';
-  };
+  const getLeaveTypeName = (leaveTypeId: string) =>
+    leaveTypes.find(t => t.id === leaveTypeId)?.leaveName || 'Unknown';
+
+  const columns: Column<LeaveRequest>[] = [
+    {key: 'requestNumber', header: 'Request #', accessor: (r) => <span className="font-medium">{r.requestNumber}</span>, mobilePriority: 'primary'},
+    {
+      key: 'employee', header: 'Employee', mobilePriority: 'secondary',
+      accessor: (r) => employeeMap[r.employeeId] || r.employeeId.substring(0, 8) + '...',
+    },
+    {key: 'leaveType', header: 'Leave type', accessor: (r) => getLeaveTypeName(r.leaveTypeId), mobilePriority: 'secondary'},
+    {key: 'duration', header: 'Duration', accessor: (r) => `${formatDate(r.startDate)} – ${formatDate(r.endDate)}`, mobilePriority: 'secondary'},
+    {key: 'days', header: 'Days', numeric: true, accessor: (r) => `${r.totalDays}${r.isHalfDay ? ' (Half)' : ''}`, mobilePriority: 'secondary'},
+    {
+      key: 'reason', header: 'Reason', mobilePriority: 'hidden',
+      accessor: (r) => <span className="block max-w-xs truncate" title={r.reason}>{r.reason}</span>,
+    },
+    {key: 'appliedOn', header: 'Applied on', accessor: (r) => formatDate(r.appliedOn), mobilePriority: 'hidden'},
+  ];
 
   return (
     <AppLayout activeMenuItem="leave">
-      <div className="motion-rise max-w-7xl mx-auto">
-        <div className="mb-6">
-          <button
-            onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            ← Back
-          </button>
-        </div>
+      <div className="flex flex-col gap-6">
+        <PageHeader
+          title="Leave Approvals"
+          description="Review pending leave requests from your team."
+          breadcrumbs={BREADCRUMBS}
+        />
 
-        <h1 className="text-xl font-bold">Leave Approvals</h1>
-
-        {/* Error State */}
-        {error && (
-          <div
-            className="mb-6 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-4">
-            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0"/>
-            <div className="flex-1">
-              <p className="text-sm text-danger-800 dark:text-danger-300">{error}</p>
-            </div>
-            <button
-              onClick={() => setError(null)}
-              aria-label="Dismiss error"
-              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              <RefreshCw
-                className="w-4 h-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
-            </button>
-          </div>
-        )}
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="skeuo-card rounded-xl p-6">
-            <Stat label="Pending Requests" value={requests.length} tone="warning"/>
-          </div>
-          <div className="skeuo-card rounded-xl p-6">
-            <Stat
-              label="Approved (This Month)"
-              value={0}
-              tone="success"
-              caption="Updated when filters applied"
-            />
-          </div>
-          <div className="skeuo-card rounded-xl p-6">
-            <Stat
-              label="Rejected (This Month)"
-              value={0}
-              tone="danger"
-              caption="Updated when filters applied"
-            />
-          </div>
-        </div>
-
-        {/* Requests Table */}
-        <div className="card-aura overflow-hidden">
-          {isPendingError ? (
-            <div className="px-6 py-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <AlertCircle className="w-8 h-8 text-danger-500"/>
-                <span className="text-[var(--text-secondary)]">Failed to load leave requests. The server may be unreachable.</span>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="skeuo-button px-4 py-2 text-sm cursor-pointer active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
-                >
-                  Try Again
-                </button>
-              </div>
-            </div>
-          ) : !pendingData && pendingFetchStatus === 'fetching' ? (
-            <div className="px-6 py-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div
-                  className="w-8 h-8 border-4 border-accent-200 dark:border-accent-900/30 border-t-accent-500 rounded-full animate-spin"
-                  aria-label="Loading leave requests"/>
-                <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
-              </div>
-            </div>
-          ) : requests.length === 0 ? (
-            <div className="text-center py-12 px-4">
-              <div className="flex justify-center mb-4">
-                <div
-                  className="w-16 h-16 rounded-full bg-success-100 dark:bg-success-950/30 flex items-center justify-center">
-                  <CheckCircle className="w-8 h-8 text-success-500 dark:text-success-400"/>
+        <QueryState
+          query={pendingQuery}
+          skeleton={<ListPageSkeleton showHeader={false} showFilters={false} rows={5} columns={7}/>}
+          errorTitle="Couldn't load leave requests"
+          isEmpty={(data) => data.content.length === 0}
+          empty={{
+            icon: <CheckCircle className="h-6 w-6"/>,
+            title: 'All caught up!',
+            description: 'No pending leave requests to review',
+          }}
+        >
+          {(data) => (
+            <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <div className="rounded-lg border border-border bg-card p-4">
+                  <Stat label="Pending Requests" value={data.content.length} tone="warning"/>
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">All caught up!</h3>
-              <p className="text-body-secondary">No pending leave requests to review</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="table-aura">
-                <thead className="skeuo-table-header">
-                <tr>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request #
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Employee
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave
-                    Type
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason</th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied
-                    On
-                  </th>
-                  <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions
-                  </th>
-                </tr>
-                </thead>
-                <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                {requests.map((request) => (
-                  <tr key={request.id}
-                      className="hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                    <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                      {request.requestNumber}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
-                      {employeeMap[request.employeeId] || request.employeeId.substring(0, 8) + '...'}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
-                      {getLeaveTypeName(request.leaveTypeId)}
-                    </td>
-                    <td className="px-6 py-4 text-body-secondary">
-                      {formatDate(request.startDate)} - {formatDate(request.endDate)}
-                    </td>
-                    <td className="px-6 py-4 text-body-secondary">
-                      {request.totalDays} {request.isHalfDay && '(Half)'}
-                    </td>
-                    <td className="px-6 py-4 text-body-secondary max-w-xs">
-                      <div className="truncate" title={request.reason}>
-                        {request.reason}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-body-secondary">
-                      {formatDate(request.appliedOn)}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <div className="flex gap-2">
-                        <PermissionGate permission={Permissions.LEAVE_APPROVE}>
-                          <button
-                            onClick={() => handleApproveClick(request.id)}
-                            disabled={isProcessing}
-                            className="btn-primary px-4 py-1 bg-success-600 text-white rounded hover:bg-success-700 disabled:opacity-50 text-xs font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          >
-                            {isProcessing && selectedRequestId === request.id ? 'Processing...' : 'Approve'}
-                          </button>
-                        </PermissionGate>
-                        <PermissionGate permission={Permissions.LEAVE_REJECT}>
-                          <button
-                            onClick={() => handleRejectClick(request.id)}
-                            disabled={isProcessing}
-                            className="btn-secondary px-4 py-1 bg-danger-600 text-white rounded hover:bg-danger-700 disabled:opacity-50 text-xs font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          >
-                            Reject
-                          </button>
-                        </PermissionGate>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-                </tbody>
-              </table>
+              <div className="rounded-lg border border-border bg-card">
+                <ResponsiveTable
+                  columns={columns}
+                  data={data.content}
+                  keyExtractor={(r) => r.id}
+                  stickyHeader
+                  renderRowActions={(request) => (
+                    <div className="flex justify-end gap-2">
+                      <PermissionGate permission={Permissions.LEAVE_APPROVE}>
+                        <Button
+                          size="xs"
+                          color="green"
+                          onClick={() => handleApproveClick(request.id)}
+                          disabled={isProcessing}
+                          loading={isProcessing && selectedRequestId === request.id && !showRejectReasonModal}
+                          data-testid={`leave-approve-${request.id}`}
+                          aria-label={`Approve leave request ${request.id}`}
+                        >
+                          Approve
+                        </Button>
+                      </PermissionGate>
+                      <PermissionGate permission={Permissions.LEAVE_REJECT}>
+                        <Button
+                          size="xs"
+                          variant="light"
+                          color="red"
+                          onClick={() => handleRejectClick(request.id)}
+                          disabled={isProcessing}
+                          data-testid={`leave-reject-${request.id}`}
+                          aria-label={`Reject leave request ${request.id}`}
+                        >
+                          Reject
+                        </Button>
+                      </PermissionGate>
+                    </div>
+                  )}
+                />
+              </div>
             </div>
           )}
-        </div>
+        </QueryState>
 
-        {/* Approve Confirmation Dialog */}
         <ConfirmDialog
           isOpen={showApproveConfirm}
           onClose={() => setShowApproveConfirm(false)}
@@ -341,7 +217,6 @@ function LeaveApprovalsPageContent() {
           loading={isProcessing}
         />
 
-        {/* Reject Confirmation Dialog */}
         <ConfirmDialog
           isOpen={showRejectConfirm}
           onClose={() => setShowRejectConfirm(false)}
@@ -353,7 +228,6 @@ function LeaveApprovalsPageContent() {
           type="danger"
         />
 
-        {/* Reject Reason Dialog */}
         <ConfirmDialog
           isOpen={showRejectReasonModal}
           onClose={() => {

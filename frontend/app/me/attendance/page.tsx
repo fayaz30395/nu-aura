@@ -1,772 +1,133 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
-import {
-  AlertTriangle,
-  Calendar as CalendarIcon,
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  Coffee,
-  FileText,
-  Home,
-  LogIn,
-  LogOut,
-  Sun,
-  XCircle,
-} from 'lucide-react';
+import {useState} from 'react';
+import {CheckCircle, Clock, Coffee, LogIn, XCircle} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
-import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
-import {useAuth} from '@/lib/hooks/useAuth';
-import {
-  useAttendanceByDateRange,
-  useCheckIn,
-  useCheckOut,
-  useMyTimeEntries,
-  useRequestRegularization
-} from '@/lib/hooks/queries/useAttendance';
-import {AttendanceRecord, AttendanceStatus} from '@/lib/types/hrms/attendance';
-import {
-  getLocalDateString,
-  getMonthEndString,
-  getMonthStartString
-} from '@/lib/utils/dateUtils';
-import {createLogger} from '@/lib/utils/logger';
-import {formatMonthYear} from '@/lib/utils/format/date';
-import {format} from 'date-fns';
+import {PageTransition} from '@/components/motion';
+import {Button, Callout, Card} from '@/components/ui';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {Stat} from '@/components/ui/Stat';
+import type {AttendanceRecord} from '@/lib/types/hrms/attendance';
+import {useMyAttendance} from './_hooks/useMyAttendance';
+import {AttendanceTodayCard} from './_components/AttendanceTodayCard';
+import {AttendanceCalendar} from './_components/AttendanceCalendar';
+import {AttendanceDayDetails} from './_components/AttendanceDayDetails';
+import {RegularizationModal} from './_components/RegularizationModal';
 
-const log = createLogger('AttendancePage');
-
-// DEF-42: Zod schema for regularization form
-const regularizationSchema = z.object({
-  reason: z.string().min(1, 'Reason is required').max(1000, 'Reason must be 1000 characters or less'),
-});
-
-type RegularizationFormData = z.infer<typeof regularizationSchema>;
+const TITLE = 'My Attendance';
+const DESCRIPTION = 'Track your attendance and working hours';
+// my-space.spec.ts locates the stat tiles via `.skeuo-card`.
+const STAT_CARD_CLASS = 'skeuo-card';
 
 export default function MyAttendancePage() {
-  const {user, isAuthenticated, hasHydrated} = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [showRegularizationModal, setShowRegularizationModal] = useState(false);
+  const state = useMyAttendance();
   const [regularizingRecord, setRegularizingRecord] = useState<AttendanceRecord | null>(null);
 
-  // DEF-42: React Hook Form + Zod for regularization modal
-  const {
-    register: registerRegularization,
-    handleSubmit: handleRegularizationSubmit,
-    reset: resetRegularization,
-    watch: watchRegularization,
-    formState: {errors: regularizationErrors},
-  } = useForm<RegularizationFormData>({
-    resolver: zodResolver(regularizationSchema),
-    defaultValues: {reason: ''},
-  });
-
-  const startOfMonth = getMonthStartString(currentDate.getFullYear(), currentDate.getMonth());
-  const endOfMonth = getMonthEndString(currentDate.getFullYear(), currentDate.getMonth());
-
-  const {
-    data: attendance = [],
-    isLoading: isLoadingAttendance
-  } = useAttendanceByDateRange(startOfMonth, endOfMonth, Boolean(hasHydrated && user?.employeeId));
-  const todayDateStr = getLocalDateString();
-  const {
-    data: selectedDateTimeEntries = [],
-    isLoading: isLoadingTimeEntries
-  } = useMyTimeEntries(selectedDate ? getLocalDateString(selectedDate) : todayDateStr, Boolean(selectedDate));
-
-  const checkIn = useCheckIn();
-  const checkOut = useCheckOut();
-  const requestRegularization = useRequestRegularization();
-
-  const todayAttendance = attendance.find((a) => {
-    const recordDate = a.attendanceDate?.includes('T')
-      ? a.attendanceDate.split('T')[0]
-      : a.attendanceDate;
-    return recordDate === todayDateStr;
-  });
-
-  useEffect(() => {
-    if (!hasHydrated) return;
-
-    if (isAuthenticated && user?.employeeId) {
-      setSelectedDate(new Date());
-    }
-  }, [hasHydrated, isAuthenticated, user]);
-
-  useEffect(() => {
-    document.title = 'My Attendance | NU-AURA';
-  }, []);
-
-  const handleDateSelect = (day: Date) => {
-    setSelectedDate(day);
-  };
-
-  const handleCheckIn = async () => {
-    try {
-      setError(null);
-
-      // Omit the time so the backend stamps the tenant-local instant (single source of truth);
-      // attendanceDate stays client-local only to key the optimistic cache entry.
-      const localDate = getLocalDateString();
-
-      await checkIn.mutateAsync({
-        employeeId: user!.employeeId!,
-        attendanceDate: localDate,
-      });
-    } catch (err: unknown) {
-      log.error('Failed to check in:', err);
-      setError((err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to check in');
-    }
-  };
-
-  const handleCheckOut = async () => {
-    try {
-      setError(null);
-
-      // Omit the time so the backend stamps the tenant-local instant (single source of truth).
-      const localDate = getLocalDateString();
-
-      await checkOut.mutateAsync({
-        employeeId: user!.employeeId!,
-        attendanceDate: localDate,
-      });
-    } catch (err: unknown) {
-      log.error('Failed to check out:', err);
-      setError((err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to check out');
-    }
-  };
-
-  const handleRequestRegularization = async (formData: RegularizationFormData) => {
-    if (!regularizingRecord) return;
-
-    try {
-      setError(null);
-      await requestRegularization.mutateAsync({
-        id: regularizingRecord.id,
-        data: {
-          reason: formData.reason,
-        },
-      });
-
-      setShowRegularizationModal(false);
-      resetRegularization();
-      setRegularizingRecord(null);
-    } catch (err: unknown) {
-      log.error('Failed to request regularization:', err);
-      setError((err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to request regularization');
-    }
-  };
-
-  const formatTime = (time: string | undefined) => {
-    if (!time) return '--:--';
-    return new Date(time).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
-  const formatDuration = (minutes: number | undefined) => {
-    if (!minutes) return '0h 0m';
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return `${h}h ${m}m`;
-  };
-
-  const hasCheckedIn = Boolean(todayAttendance?.checkInTime);
-  const hasCheckedOut = Boolean(todayAttendance?.checkOutTime);
-  const canCheckIn = !hasCheckedIn;
-  const canCheckOut = hasCheckedIn && !hasCheckedOut;
-  const attendanceComplete = hasCheckedIn && hasCheckedOut;
-
-  const getStatusColor = (status: AttendanceStatus) => {
-    switch (status) {
-      case 'PRESENT':
-        return 'text-[var(--ok-fg)] bg-[var(--ok-bg)] border border-[var(--ok-bd)]';
-      case 'ABSENT':
-        return 'text-[var(--err-fg)] bg-[var(--err-bg)] border border-[var(--err-bd)]';
-      case 'HALF_DAY':
-        return 'text-[var(--warn-fg)] bg-[var(--warn-bg)] border border-[var(--warn-bd)]';
-      case 'ON_LEAVE':
-        return 'text-[var(--info-fg)] bg-[var(--info-bg)] border border-[var(--info-bd)]';
-      case 'WEEKLY_OFF':
-        return 'text-[var(--neutral-fg)] bg-[var(--neutral-bg)] border border-[var(--neutral-bd)]';
-      case 'HOLIDAY':
-        return 'text-[var(--info-fg)] bg-[var(--info-bg)] border border-[var(--info-bd)]';
-      case 'PENDING_REGULARIZATION':
-        return 'text-[var(--warn-fg)] bg-[var(--warn-bg)] border border-[var(--warn-bd)]';
-      default:
-        return 'badge-status status-neutral';
-    }
-  };
-
-  const getStatusIcon = (status: AttendanceStatus) => {
-    switch (status) {
-      case 'PRESENT':
-        return <CheckCircle className="h-3 w-3"/>;
-      case 'ABSENT':
-        return <XCircle className="h-3 w-3"/>;
-      case 'ON_LEAVE':
-        return <Coffee className="h-3 w-3"/>;
-      case 'WEEKLY_OFF':
-        return <Home className="h-3 w-3"/>;
-      case 'HOLIDAY':
-        return <Sun className="h-3 w-3"/>;
-      case 'PENDING_REGULARIZATION':
-        return <AlertTriangle className="h-3 w-3"/>;
-      default:
-        return <Clock className="h-3 w-3"/>;
-    }
-  };
-
-  const getDaysInMonth = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-
-    const days: (Date | null)[] = [];
-
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null);
-    }
-
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push(new Date(year, month, i));
-    }
-
-    return days;
-  };
-
-  const getAttendanceForDate = (date: Date) => {
-    // Use local date format to avoid UTC timezone issues
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    return attendance.find((a) => {
-      const recordDate = a.attendanceDate?.includes('T')
-        ? a.attendanceDate.split('T')[0]
-        : a.attendanceDate;
-      return recordDate === dateStr;
-    });
-  };
-
-  const workingDaysCount = attendance.filter(a => a.workDurationMinutes && a.workDurationMinutes > 0).length;
-  const monthStats = {
-    present: attendance.filter((a) => a.status === 'PRESENT').length,
-    absent: attendance.filter((a) => a.status === 'ABSENT').length,
-    leave: attendance.filter((a) => a.status === 'ON_LEAVE').length,
-    totalMinutes: attendance.reduce((sum, a) => sum + (a.workDurationMinutes || 0), 0),
-    avgHours: workingDaysCount > 0
-      ? attendance.reduce((sum, a) => sum + (a.workDurationMinutes || 0), 0) / workingDaysCount / 60
-      : 0,
-  };
-
-  const previousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-  };
-
-  const nextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-  };
-
-  const selectedAttendance = selectedDate ? getAttendanceForDate(selectedDate) : null;
-
-  if (!user?.employeeId) {
+  if (!state.user?.employeeId) {
+    // Renders immediately while the auth profile hydrates so the controls stay discoverable.
     return (
       <AppLayout activeMenuItem="my-attendance">
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-aura-title text-[var(--text-1)]">My Attendance</h1>
-            <p className="text-sm text-[var(--text-2)] mt-2">Track your attendance and working hours</p>
-            <p role="status" className="text-xs text-[var(--text-3)] mt-2">
-              Loading employee profile...
-            </p>
-          </div>
-
-          <Card className="border border-[var(--border-soft)] bg-[var(--surface)] shadow-sh-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-[var(--text-1)]">Today&apos;s Status</h3>
-                  <span className="sr-only">Today&apos;s Status, text=Today&apos;s Status</span>
-                  <p className="text-sm text-[var(--text-2)] mt-2">Preparing your attendance controls</p>
-                </div>
-                <button
-                  type="button"
-                  disabled
-                  className="flex items-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg opacity-60 cursor-not-allowed"
-                >
-                  <LogIn className="h-5 w-5"/>
-                  Check In
-                </button>
+        <div className="flex flex-col gap-6">
+          <PageHeader title={TITLE} description={DESCRIPTION}/>
+          <p role="status" className="-mt-4 text-xs text-text-3">Loading employee profile...</p>
+          <Card padding="sm">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <h2 className="text-base font-semibold text-text-1">Today&apos;s Status</h2>
+                <span className="sr-only">Today&apos;s Status, text=Today&apos;s Status</span>
+                <p className="mt-2 text-sm text-text-2">Preparing your attendance controls</p>
               </div>
-            </CardContent>
+              <Button variant="success" disabled leftIcon={<LogIn className="h-4 w-4" aria-hidden="true"/>}>
+                Check In
+              </Button>
+            </div>
           </Card>
         </div>
       </AppLayout>
     );
   }
 
-  return (
-    <AppLayout activeMenuItem="my-attendance" breadcrumbs={[{label: 'My Attendance', href: '/me/attendance'}]}>
-      <PageTransition className="space-y-6">
-        <Reveal>
-          <h1 className="text-aura-title text-[var(--text-1)]">My Attendance</h1>
-          <p className="text-sm text-[var(--text-2)] mt-2">Track your attendance and working hours</p>
-          {isLoadingAttendance && (
-            <p role="status" className="text-xs text-[var(--text-3)] mt-2">
-              Loading attendance records...
-            </p>
-          )}
-        </Reveal>
+  const {monthStats} = state;
 
-        {error && (
-          <div className="p-4 bg-[var(--err-bg)] border border-[var(--err-bd)] rounded-aura-lg">
-            <p className="text-[var(--err-fg)] font-medium">{error}</p>
-            <button
-              onClick={() => setError(null)}
-              className="text-danger-600 text-sm mt-2 underline"
+  return (
+    <AppLayout activeMenuItem="my-attendance">
+      <PageTransition className="flex flex-col gap-6">
+        <PageHeader
+          title={TITLE}
+          description={DESCRIPTION}
+          breadcrumbs={[{label: 'My Space', href: '/me/dashboard'}, {label: 'Attendance'}]}
+        />
+        {state.isLoadingAttendance && (
+          <p role="status" className="-mt-4 text-xs text-text-3">Loading attendance records...</p>
+        )}
+
+        {state.error && (
+          <div role="alert">
+            <Callout
+              tone="danger"
+              action={
+                <Button variant="ghost" size="sm" onClick={state.clearError}>
+                  Dismiss
+                </Button>
+              }
             >
-              Dismiss
-            </button>
+              {state.error}
+            </Callout>
           </div>
         )}
 
-        {/* Check-in/Check-out Card */}
-        <Reveal>
-        <Card className="skeuo-card">
-          <CardContent className="pt-6">
-            <div className="row-between">
-              <div>
-                <h3 className="text-xl font-semibold text-[var(--text-primary)]">Today&apos;s Status</h3>
-                <span className="sr-only">Today&apos;s Status, text=Today&apos;s Status</span>
-                {todayAttendance && (
-                  <div className="mt-2 space-y-1">
-                    <p className="text-body-secondary">
-                      Check-in: <span className="font-medium">{formatTime(todayAttendance.checkInTime)}</span>
-                    </p>
-                    <p className="text-body-secondary">
-                      Check-out: <span className="font-medium">{formatTime(todayAttendance.checkOutTime)}</span>
-                    </p>
-                    {todayAttendance.workDurationMinutes !== undefined && (
-                      <p className="text-body-secondary">
-                        Work Duration: <span
-                        className="font-medium">{formatDuration(todayAttendance.workDurationMinutes)}</span>
-                      </p>
-                    )}
-                    {todayAttendance.isLate && (
-                      <p className="text-sm text-warning-600 font-medium">
-                        Late by {todayAttendance.lateByMinutes} minutes
-                      </p>
-                    )}
-                  </div>
-                )}
-                {!todayAttendance && (
-                  <p className="text-body-muted mt-2">No attendance record for today</p>
-                )}
-              </div>
-              <div className="flex gap-4">
-                {canCheckIn && (
-                  <button
-                    onClick={handleCheckIn}
-                    disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-4 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    <LogIn className="h-5 w-5"/>
-                    {checkIn.isPending || checkOut.isPending ? 'Checking In...' : 'Check In'}
-                  </button>
-                )}
-                {canCheckOut && (
-                  <button
-                    onClick={handleCheckOut}
-                    disabled={checkIn.isPending || checkOut.isPending}
-                    className="flex items-center gap-2 px-6 py-4 bg-accent-600 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    <LogOut className="h-5 w-5"/>
-                    {checkIn.isPending || checkOut.isPending ? 'Checking Out...' : 'Check Out'}
-                  </button>
-                )}
-                {attendanceComplete && (
-                  <div
-                    className="flex items-center gap-2 px-6 py-4 rounded-lg border border-success-600/30 bg-success-600/10">
-                    <CheckCircle className="h-5 w-5 text-success-500"/>
-                    <span className="text-sm font-semibold text-success-400">Attendance Completed</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        </Reveal>
+        <AttendanceTodayCard
+          todayAttendance={state.todayAttendance}
+          canCheckIn={state.canCheckIn}
+          canCheckOut={state.canCheckOut}
+          attendanceComplete={state.attendanceComplete}
+          pending={state.clockPending}
+          onCheckIn={state.handleCheckIn}
+          onCheckOut={state.handleCheckOut}
+        />
 
-        {/* Stats Cards */}
-        <Stagger className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <StaggerItem>
-          <Card className="skeuo-card hover-lift">
-            <CardContent className="pt-6">
-              <div className="row-between">
-                <div>
-                  <p className="text-body-secondary">Present Days</p>
-                  <p className="text-xl font-bold">{monthStats.present}</p>
-                </div>
-                <div className="w-12 h-12 bg-success-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6 text-success-600"/>
-                </div>
-              </div>
-            </CardContent>
+        <section aria-label="This month" className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <Card padding="sm" className={STAT_CARD_CLASS}>
+            <Stat label="Present Days" value={monthStats.present} icon={<CheckCircle className="h-4 w-4"/>} iconTone="success"/>
           </Card>
-          </StaggerItem>
-
-          <StaggerItem>
-          <Card className="skeuo-card hover-lift">
-            <CardContent className="pt-6">
-              <div className="row-between">
-                <div>
-                  <p className="text-body-secondary">Absent Days</p>
-                  <p className="text-xl font-bold">{monthStats.absent}</p>
-                </div>
-                <div className="w-12 h-12 bg-danger-100 rounded-full flex items-center justify-center">
-                  <XCircle className="h-6 w-6 text-danger-600"/>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm" className={STAT_CARD_CLASS}>
+            <Stat label="Absent Days" value={monthStats.absent} icon={<XCircle className="h-4 w-4"/>} iconTone="danger"/>
           </Card>
-          </StaggerItem>
-
-          <StaggerItem>
-          <Card className="skeuo-card hover-lift">
-            <CardContent className="pt-6">
-              <div className="row-between">
-                <div>
-                  <p className="text-body-secondary">On Leave</p>
-                  <p className="text-xl font-bold">{monthStats.leave}</p>
-                </div>
-                <div className="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center">
-                  <Coffee className="h-6 w-6 text-accent-600"/>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm" className={STAT_CARD_CLASS}>
+            <Stat label="On Leave" value={monthStats.leave} icon={<Coffee className="h-4 w-4"/>} iconTone="info"/>
           </Card>
-          </StaggerItem>
-
-          <StaggerItem>
-          <Card className="skeuo-card hover-lift">
-            <CardContent className="pt-6">
-              <div className="row-between">
-                <div>
-                  <p className="text-body-secondary">Avg. Hours/Day</p>
-                  <p className="text-xl font-bold">
-                    {monthStats.avgHours.toFixed(1)}
-                  </p>
-                </div>
-                <div className="w-12 h-12 bg-accent-300 rounded-full flex items-center justify-center">
-                  <Clock className="h-6 w-6 text-accent-800"/>
-                </div>
-              </div>
-            </CardContent>
+          <Card padding="sm" className={STAT_CARD_CLASS}>
+            <Stat label="Avg. Hours/Day" value={monthStats.avgHours.toFixed(1)} icon={<Clock className="h-4 w-4"/>} iconTone="accent"/>
           </Card>
-          </StaggerItem>
-        </Stagger>
+        </section>
 
-        <Reveal inView className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          {/* Calendar */}
-          <Card className="lg:col-span-2 card-aura">
-            <CardHeader>
-              <div className="row-between gap-4">
-                <CardTitle className="flex min-w-0 items-center gap-2">
-                  <CalendarIcon className="h-5 w-5"/>
-                  Attendance Calendar
-                </CardTitle>
-                <div className="relative z-10 flex shrink-0 items-center gap-2">
-                  <button
-                    onClick={previousMonth}
-                    aria-label="Previous month"
-                    className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    <ChevronLeft className="h-5 w-5"/>
-                  </button>
-                  <span className="font-semibold text-lg min-w-[150px] text-center">
-                    {formatMonthYear(currentDate)}
-                  </span>
-                  <button
-                    onClick={nextMonth}
-                    aria-label="Next month"
-                    className="p-2 hover:bg-[var(--bg-card-hover)] rounded-lg transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    <ChevronRight className="h-5 w-5"/>
-                  </button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-7 gap-1">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                  <div key={day} className="text-center text-xs font-semibold text-[var(--text-muted)] py-1">
-                    {day}
-                  </div>
-                ))}
-                {getDaysInMonth().map((day, index) => {
-                  if (!day) {
-                    return <div key={`empty-${index}`} className="aspect-square"/>;
-                  }
-
-                  const attendanceRecord = getAttendanceForDate(day);
-                  const isSelected = selectedDate?.toDateString() === day.toDateString();
-                  const isToday = new Date().toDateString() === day.toDateString();
-
-                  return (
-                    <button
-                      key={day.toISOString()}
-                      onClick={() => handleDateSelect(day)}
-                      className={`aspect-square p-1 rounded-md border transition-all ${
-                        isSelected
-                          ? 'border-accent-500 bg-accent-50 shadow-[var(--shadow-card)]'
-                          : 'border-[var(--border-subtle)] hover:border-[var(--border-main)] hover:bg-[var(--bg-surface)]'
-                      } ${isToday ? 'ring-2 ring-accent-300' : ''}`}
-                    >
-                      <div className="flex flex-col items-center justify-center h-full gap-0.5">
-                        <span
-                          className={`text-xs font-medium ${
-                            isToday ? 'text-accent-700' : 'text-[var(--text-secondary)]'
-                          }`}
-                        >
-                          {day.getDate()}
-                        </span>
-                        {attendanceRecord && (
-                          <div
-                            className={`w-5 h-5 rounded-full flex items-center justify-center ${getStatusColor(attendanceRecord.status)}`}>
-                            {getStatusIcon(attendanceRecord.status)}
-                          </div>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Attendance Details */}
-          <Card className="card-aura">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5"/>
-                Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {selectedDate ? (
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-body-secondary">Date</p>
-                    <p className="text-lg font-semibold text-[var(--text-primary)]">
-                      {selectedDate ? format(selectedDate, 'EEEE, MMMM d') : ''}
-                    </p>
-                  </div>
-
-                  {selectedAttendance && (
-                    <>
-                      <div>
-                        <p className="text-body-secondary">Status</p>
-                        <span
-                          className={`inline-flex items-center gap-1 px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedAttendance.status)}`}>
-                          {getStatusIcon(selectedAttendance.status)}
-                          {selectedAttendance.status?.replace(/_/g, ' ') ?? '-'}
-                        </span>
-                      </div>
-
-                      {selectedAttendance.workDurationMinutes !== undefined && (
-                        <div>
-                          <p className="text-body-secondary">Total Work Duration</p>
-                          <p className="text-md font-medium text-[var(--text-primary)]">
-                            {formatDuration(selectedAttendance.workDurationMinutes)}
-                          </p>
-                        </div>
-                      )}
-
-                      {selectedAttendance.isLate && (
-                        <div className="p-2 bg-warning-50 border border-warning-200 rounded-lg">
-                          <p className="text-sm text-warning-800 font-medium">
-                            Late by {selectedAttendance.lateByMinutes} minutes
-                          </p>
-                        </div>
-                      )}
-
-                      {selectedAttendance.regularizationRequested && (
-                        <div className="p-2 bg-accent-50 border border-accent-200 rounded-lg">
-                          <p className="text-sm text-accent-800 font-medium">Regularization Requested</p>
-                          <p className="text-xs text-accent-600 mt-1">
-                            Status: {selectedAttendance.regularizationApproved ? 'Approved' : 'Pending'}
-                          </p>
-                        </div>
-                      )}
-                    </>
-                  )}
-
-                  {/* Sessions */}
-                  <div className="pt-4 border-t border-[var(--border-main)]">
-                    <div className="row-between mb-2">
-                      <p className="text-sm font-medium text-[var(--text-secondary)]">Sessions</p>
-                      {selectedDateTimeEntries.length > 0 && (
-                        <span className="text-sm font-bold text-accent-700">
-                          Total: {formatDuration(
-                          selectedDateTimeEntries
-                            .filter(e => e.entryType === 'REGULAR')
-                            .reduce((sum, e) => sum + (e.durationMinutes || 0), 0)
-                        )}
-                        </span>
-                      )}
-                    </div>
-                    {isLoadingTimeEntries ? (
-                      <div className="flex items-center justify-center py-4">
-                        <div
-                          className="w-6 h-6 border-2 border-accent-200 border-t-accent-700 rounded-full animate-spin"/>
-                      </div>
-                    ) : selectedDateTimeEntries.length === 0 ? (
-                      <p className="text-body-muted py-2">No sessions recorded</p>
-                    ) : (
-                      <div className="space-y-2 max-h-[250px] overflow-y-auto">
-                        {selectedDateTimeEntries.map((entry) => (
-                          <div
-                            key={entry.id}
-                            className={`p-2 rounded-lg border text-sm ${
-                              entry.open
-                                ? 'bg-success-50 border-success-200'
-                                : 'bg-[var(--bg-surface)] border-[var(--border-main)]'
-                            }`}
-                          >
-                            <div className="row-between">
-                              <div className="flex items-center gap-2">
-                                <span
-                                  className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-semibold ${
-                                    entry.open ? 'bg-success-600 text-white' : 'bg-[var(--border-main)] text-[var(--text-secondary)]'
-                                  }`}>
-                                  {entry.sequenceNumber}
-                                </span>
-                                <div>
-                                  <div className="flex items-center gap-1">
-                                    <LogIn className="h-3 w-3 text-success-600"/>
-                                    <span>{formatTime(entry.checkInTime)}</span>
-                                    {entry.checkOutTime ? (
-                                      <>
-                                        <span className="text-[var(--text-muted)] mx-1">-</span>
-                                        <LogOut className="h-3 w-3 text-accent-600"/>
-                                        <span>{formatTime(entry.checkOutTime)}</span>
-                                      </>
-                                    ) : (
-                                      <span className="text-success-600 ml-1 italic text-xs">Active</span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              <span className="font-medium">
-                                {entry.checkOutTime ? formatDuration(entry.durationMinutes) : '--'}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {selectedAttendance?.checkInTime && !selectedAttendance.regularizationRequested && (
-                    <button
-                      onClick={() => {
-                        setRegularizingRecord(selectedAttendance);
-                        setShowRegularizationModal(true);
-                      }}
-                      className="w-full px-4 py-2 bg-warning-600 text-white rounded-lg hover:bg-warning-700 transition-colors text-sm"
-                    >
-                      Request Regularization
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-[300px] text-[var(--text-muted)]">
-                  <p>Select a date to view details</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </Reveal>
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+          <AttendanceCalendar
+            currentDate={state.currentDate}
+            selectedDate={state.selectedDate}
+            onSelect={state.setSelectedDate}
+            onPrevious={state.previousMonth}
+            onNext={state.nextMonth}
+            getAttendanceForDate={state.getAttendanceForDate}
+          />
+          <AttendanceDayDetails
+            selectedDate={state.selectedDate}
+            selectedAttendance={state.selectedAttendance}
+            timeEntries={state.selectedDateTimeEntries}
+            isLoadingTimeEntries={state.isLoadingTimeEntries}
+            onRequestRegularization={setRegularizingRecord}
+          />
+        </div>
       </PageTransition>
 
-      {/* Regularization Modal — DEF-42: React Hook Form + Zod */}
-      <Modal
-        isOpen={showRegularizationModal}
-        onClose={() => {
-          setShowRegularizationModal(false);
-          resetRegularization();
-          setRegularizingRecord(null);
-        }}
-        size="sm"
-      >
-        <ModalHeader
-          onClose={() => {
-            setShowRegularizationModal(false);
-            resetRegularization();
-            setRegularizingRecord(null);
-          }}
-        >
-          Request Regularization
-        </ModalHeader>
-        <form onSubmit={handleRegularizationSubmit(handleRequestRegularization)}>
-          <ModalBody>
-            <div>
-              <label htmlFor="regularization-reason"
-                     className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Reason
-              </label>
-              <textarea
-                id="regularization-reason"
-                {...registerRegularization('reason')}
-                className="w-full px-4 py-2 border border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                rows={4}
-                placeholder="Please explain why you need regularization..."
-              />
-              {regularizationErrors.reason && (
-                <p className="mt-1 text-sm text-danger-600">{regularizationErrors.reason.message}</p>
-              )}
-            </div>
-          </ModalBody>
-          <ModalFooter className="gap-4">
-            <button
-              type="button"
-              onClick={() => {
-                setShowRegularizationModal(false);
-                resetRegularization();
-                setRegularizingRecord(null);
-              }}
-              className="px-4 py-2 border border-[var(--border-main)] text-[var(--text-secondary)] rounded-lg hover:bg-[var(--bg-surface)] transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={!watchRegularization('reason')?.trim()}
-              className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              Submit Request
-            </button>
-          </ModalFooter>
-        </form>
-      </Modal>
+      <RegularizationModal
+        isOpen={regularizingRecord !== null}
+        pending={state.regularizationPending}
+        onClose={() => setRegularizingRecord(null)}
+        onSubmit={(reason) =>
+          regularizingRecord ? state.submitRegularization(regularizingRecord, reason) : Promise.resolve(false)
+        }
+      />
     </AppLayout>
   );
 }

@@ -114,6 +114,7 @@ export function useCreateRole() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to create role:', error);
       notifications.show({
@@ -141,6 +142,7 @@ export function useUpdateRole(roleId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to update role:', error);
       notifications.show({
@@ -167,6 +169,7 @@ export function useDeleteRole() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to delete role:', error);
       notifications.show({
@@ -195,6 +198,7 @@ export function useAssignPermissions(roleId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to assign permissions:', error);
       notifications.show({
@@ -223,6 +227,7 @@ export function useAddPermissions(roleId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to add permissions:', error);
       notifications.show({
@@ -251,6 +256,7 @@ export function useRemovePermissions(roleId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to remove permissions:', error);
       notifications.show({
@@ -279,6 +285,7 @@ export function useAssignPermissionsWithScope(roleId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to assign permissions with scope:', error);
       notifications.show({
@@ -307,6 +314,7 @@ export function useUpdatePermissionScope(roleId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to update permission scope:', error);
       notifications.show({
@@ -334,6 +342,7 @@ export function useAssignRolesToUser(userId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to assign roles:', error);
       notifications.show({

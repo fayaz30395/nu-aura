@@ -29,7 +29,12 @@ import {DragDropContext, Draggable, Droppable} from '@hello-pangea/dnd';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
-import {Button, Input, Modal, ModalBody, ModalFooter, ModalHeader, Select, Textarea,} from '@/components/ui';
+import {Badge, Button, Card, Input, Modal, ModalBody, ModalFooter, ModalHeader, Select, Textarea,} from '@/components/ui';
+import {STAGE_TONE} from './_components/pipeline-config';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryErrorCard} from '@/components/ui/QueryState';
+import type {StatusTone} from '@/lib/status/vocabulary';
 import {applicantService} from '@/lib/services/hire/applicant.service';
 import {useQueryClient} from '@tanstack/react-query';
 import {useJobOpenings} from '@/lib/hooks/queries/useRecruitment';
@@ -69,72 +74,80 @@ const STAGE_LABELS: Record<ApplicationStatus, string> = {
   [ApplicationStatus.WITHDRAWN]: 'Withdrawn',
 };
 
+const STAGE_BADGE_VARIANT: Record<StatusTone, 'info' | 'warning' | 'success' | 'danger' | 'default'> = {
+  info: 'info',
+  warning: 'warning',
+  success: 'success',
+  danger: 'danger',
+  neutral: 'default',
+};
+
 const STAGE_COLORS: Record<ApplicationStatus, { col: string; header: string; badge: string; bg: string }> = {
   [ApplicationStatus.APPLIED]: {
-    col: 'border-t-accent-500',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
-    bg: 'bg-accent-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.SCREENING]: {
-    col: 'border-t-accent-500',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
-    bg: 'bg-accent-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.PHONE_SCREEN]: {
-    col: 'border-t-accent-500',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
-    bg: 'bg-accent-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.INTERVIEW]: {
-    col: 'border-t-accent-700',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
-    bg: 'bg-accent-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.TECHNICAL_ROUND]: {
-    col: 'border-t-accent-700',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
-    bg: 'bg-accent-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.HR_ROUND]: {
-    col: 'border-t-accent-800',
-    header: 'bg-accent-50',
-    badge: 'bg-accent-100 text-accent-700',
-    bg: 'bg-accent-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.OFFER_PENDING]: {
-    col: 'border-t-warning-500',
-    header: 'bg-warning-50',
-    badge: 'bg-warning-100 text-warning-700',
-    bg: 'bg-warning-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.OFFERED]: {
-    col: 'border-t-success-500',
-    header: 'bg-success-50',
-    badge: 'bg-success-100 text-success-700',
-    bg: 'bg-success-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.ACCEPTED]: {
-    col: 'border-t-success-600',
-    header: 'bg-success-50',
-    badge: 'bg-success-100 text-success-700',
-    bg: 'bg-success-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.REJECTED]: {
-    col: 'border-t-danger-500',
-    header: 'bg-danger-50',
-    badge: 'bg-danger-100 text-danger-700',
-    bg: 'bg-danger-50/50'
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
+    badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
+    bg: 'bg-[var(--bg-surface)]'
   },
   [ApplicationStatus.WITHDRAWN]: {
-    col: 'border-t-[var(--border-main)]',
-    header: 'bg-[var(--bg-surface)]',
+    col: 'border-[var(--border-main)]',
+    header: 'bg-transparent',
     badge: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
-    bg: 'bg-[var(--bg-surface)]/50'
+    bg: 'bg-[var(--bg-surface)]'
   },
 };
 
@@ -702,16 +715,11 @@ export default function ApplicantPipelinePage() {
           </div>
         }
       >
-        <div className="page-shell-centered motion-rise p-6 space-y-6">
-          {/* ── Header ────────────────────────────────────────────────────── */}
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">ATS Pipeline</h1>
-              <p className="text-body-muted mt-0.5">
-                Drag candidates between stages or use the quick-move buttons
-              </p>
-            </div>
-
+        <div className="page-shell motion-rise p-6 space-y-6">
+          <PageHeader
+            title="ATS Pipeline"
+            description="Drag candidates between stages or use the quick-move buttons"
+            actions={
             <div className="flex flex-wrap items-center gap-4">
               {/* Job Selector */}
               <div className="w-72">
@@ -749,14 +757,11 @@ export default function ApplicantPipelinePage() {
                 Add Applicant
               </Button>
             </div>
-          </div>
+            }
+          />
 
           {/* ── Errors ────────────────────────────────────────────────────── */}
-          {jobsError && (
-            <div className="bg-danger-50 border border-danger-200 text-danger-700 text-sm rounded-lg px-4 py-4">
-              {jobsError}
-            </div>
-          )}
+          {jobsError && <QueryErrorCard title="Couldn't load job openings" message={jobsError} />}
 
           {/* ── Drag Error Toast ───────────────────────────────────────────── */}
           {dragError && (
@@ -773,14 +778,14 @@ export default function ApplicantPipelinePage() {
 
           {/* ── Empty / Loading / Content ─────────────────────────────────── */}
           {!effectiveJobId && !jobsLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-16 h-16 rounded-full bg-[var(--bg-secondary)] flex items-center justify-center mb-4">
-                <User size={28} className="text-[var(--text-muted)]"/>
-              </div>
-              <h2 className="text-[var(--text-secondary)] font-semibold mb-1">No Job Selected</h2>
-              <p className="text-[var(--text-muted)] text-sm">
-                Select a job opening above to view its applicant pipeline.
-              </p>
+            <div className="py-8">
+              <EmptyState
+                icon={<User className="h-6 w-6"/>}
+                title="No job selected"
+                description="Select a job opening above to view its applicant pipeline."
+                actionLabel="Go to job openings"
+                onAction={() => router.push('/recruitment/jobs')}
+              />
             </div>
           ) : pipelineLoading ? (
             <div className="flex items-center justify-center py-20">
@@ -824,7 +829,7 @@ export default function ApplicantPipelinePage() {
 
               {/* ── Search & Filters ───────────────────────────────────── */}
               <div className="flex flex-wrap items-center gap-4">
-                <div className="relative flex-1 min-w-[200px] max-w-md">
+                <div className="relative flex-1 min-w-52 max-w-md">
                   <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"/>
                   <input
                     type="text"
@@ -881,7 +886,7 @@ export default function ApplicantPipelinePage() {
               {showFilters && (
                 <div
                   className="card-aura flex flex-wrap items-end gap-4 p-4 animate-in fade-in slide-in-from-top-1">
-                  <div className="min-w-[160px]">
+                  <div className="min-w-40">
                     <label htmlFor="pipeline-source-filter" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Source</label>
                     <select
                       id="pipeline-source-filter"
@@ -897,7 +902,7 @@ export default function ApplicantPipelinePage() {
                     </select>
                   </div>
 
-                  <div className="min-w-[140px]">
+                  <div className="min-w-36">
                     <span id="pipeline-min-rating-label" className="block text-xs font-medium text-[var(--text-secondary)] mb-1">Min. Rating</span>
                     <div
                       role="group"
@@ -937,26 +942,26 @@ export default function ApplicantPipelinePage() {
                             <div
                               ref={provided.innerRef}
                               {...provided.droppableProps}
-                              className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] border-t-2 ${colors.col} bg-[var(--bg-card)] overflow-hidden transition-shadow max-h-[calc(100dvh-380px)] ${
+                              className={`flex-shrink-0 w-60 flex flex-col rounded-xl border border-[var(--border-main)] ${colors.bg} overflow-hidden transition-shadow max-h-[calc(100dvh-380px)] ${
                                 snapshot.isDraggingOver
                                   ? 'shadow-[var(--shadow-card-hover)] border-accent-300'
                                   : ''
                               }`}
                             >
                               {/* Column Header */}
-                              <div className={`px-4 py-2.5 ${colors.header} row-between`}>
+                              <div className={`px-3 py-2.5 border-b border-[var(--border-subtle)] ${colors.header} row-between`}>
                               <span className="text-sm font-semibold text-[var(--text-secondary)]">
                                 {STAGE_LABELS[stage]}
                               </span>
-                                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colors.badge}`}>
+                                <Badge variant={STAGE_BADGE_VARIANT[STAGE_TONE[stage]]} className="tabular-nums">
                                 {hasActiveFilters && applicants.length !== unfilteredCount
                                   ? `${applicants.length}/${unfilteredCount}`
                                   : applicants.length}
-                              </span>
+                                </Badge>
                               </div>
 
                               {/* Cards scroll area */}
-                              <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-[60px]">
+                              <div className="flex-1 overflow-y-auto p-2 space-y-2 min-h-16">
                                 {applicants.length === 0 ? (
                                   <div className="flex flex-col items-center justify-center py-6 px-3 text-center">
                                     <Inbox className="h-6 w-6 text-[var(--text-muted)] opacity-60 mb-2" aria-hidden="true"/>
@@ -973,10 +978,12 @@ export default function ApplicantPipelinePage() {
                                     return (
                                       <Draggable key={applicant.id} draggableId={applicant.id} index={index}>
                                         {(dragProvided, dragSnapshot) => (
-                                          <div
+                                          <Card
                                             ref={dragProvided.innerRef}
                                             {...dragProvided.draggableProps}
-                                            className={`card-interactive p-4 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded-lg ${
+                                            padding="sm"
+                                            isClickable
+                                            className={`group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                                               dragSnapshot.isDragging
                                                 ? 'shadow-[var(--shadow-dropdown)] border-accent-300 ring-2 ring-accent-200 rotate-1'
                                                 : ''
@@ -1093,7 +1100,7 @@ export default function ApplicantPipelinePage() {
                                                 )}
                                               </button>
                                             )}
-                                          </div>
+                                          </Card>
                                         )}
                                       </Draggable>
                                     );

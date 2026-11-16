@@ -122,13 +122,6 @@ export default function TemplateDetailPage() {
           });
           router.push(`/fluence/wiki/${page.id}`);
         },
-        onError: () => {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to create page from template',
-            color: 'red',
-          });
-        },
       });
     },
     [template, instantiate, reset, router]
@@ -161,9 +154,6 @@ export default function TemplateDetailPage() {
             setShowEditModal(false);
             notifications.show({title: 'Template updated', message: '', color: 'green'});
           },
-          onError: () => {
-            notifications.show({title: 'Error', message: 'Failed to update template', color: 'red'});
-          },
         }
       );
     },
@@ -172,16 +162,12 @@ export default function TemplateDetailPage() {
 
   const handleToggleActive = useCallback(() => {
     if (!template) return;
-    toggleActive.mutate(template.id, {
-      onError: () => notifications.show({title: 'Error', message: 'Failed to toggle active state', color: 'red'}),
-    });
+    toggleActive.mutate(template.id);
   }, [template, toggleActive]);
 
   const handleToggleFeatured = useCallback(() => {
     if (!template) return;
-    toggleFeatured.mutate(template.id, {
-      onError: () => notifications.show({title: 'Error', message: 'Failed to toggle featured state', color: 'red'}),
-    });
+    toggleFeatured.mutate(template.id);
   }, [template, toggleFeatured]);
 
   const handleDelete = useCallback(() => {

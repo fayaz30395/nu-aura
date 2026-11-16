@@ -2,8 +2,19 @@
 
 import React from 'react';
 import {cn} from '@/lib/utils';
-import {ChevronDown, ChevronUp} from 'lucide-react';
+import {ChevronDown, ChevronLeft, ChevronRight, ChevronUp, ChevronsLeft, ChevronsRight} from 'lucide-react';
 import {EmptyState} from './EmptyState';
+import {QueryErrorCard} from './QueryState';
+import {ResponsiveTableRowActions, type RowActionItem} from './ResponsiveTableRowActions';
+
+export type {RowActionItem};
+
+const ALIGN_CLASS = {left: 'text-left', right: 'text-right', center: 'text-center'} as const;
+const JUSTIFY_CLASS = {left: undefined, right: 'justify-end', center: 'justify-center'} as const;
+
+function resolveAlign<T>(column: Column<T>): 'left' | 'right' | 'center' {
+  return column.align ?? (column.numeric ? 'right' : 'left');
+}
 
 // Column definition for the table
 export interface Column<T> {
@@ -17,6 +28,10 @@ export interface Column<T> {
   sortable?: boolean;
   // Width class for desktop
   width?: string;
+  // Horizontal alignment (default left)
+  align?: 'left' | 'right' | 'center';
+  // Shorthand: right-aligned with tabular-nums (explicit `align` wins)
+  numeric?: boolean;
 }
 
 export interface ResponsiveTableProps<T> {
@@ -26,11 +41,24 @@ export interface ResponsiveTableProps<T> {
   // Empty state
   emptyMessage?: string;
   emptyIcon?: React.ReactNode;
+  // Rendered instead of the plain emptyMessage when provided
+  emptyState?: React.ReactNode;
   // Loading state
   isLoading?: boolean;
+  // Error state: with no rows, renders QueryErrorCard instead of the empty state
+  error?: boolean;
+  onRetry?: () => void;
+  // Sticky thead within the table's scroll container
+  stickyHeader?: boolean;
+  // Row height: 'comfortable' (48px, default) or 'compact' (36px)
+  density?: 'comfortable' | 'compact';
+  // Slot above the table for search + filters
+  toolbar?: React.ReactNode;
   // Row actions
   onRowClick?: (row: T) => void;
   renderRowActions?: (row: T) => React.ReactNode;
+  // Menu-based row actions; ignored when renderRowActions is also provided
+  rowActionsMenu?: (row: T) => RowActionItem[];
   // Sorting
   sortColumn?: string;
   sortDirection?: 'asc' | 'desc';
@@ -52,9 +80,16 @@ function ResponsiveTable<T>({
                               keyExtractor,
                               emptyMessage = 'No data available',
                               emptyIcon,
+                              emptyState,
                               isLoading = false,
+                              error = false,
+                              onRetry,
+                              stickyHeader = false,
+                              density = 'comfortable',
+                              toolbar,
                               onRowClick,
                               renderRowActions,
+                              rowActionsMenu,
                               sortColumn,
                               sortDirection,
                               onSort,
@@ -65,6 +100,20 @@ function ResponsiveTable<T>({
                               rowClassName,
                               renderMobileCard,
                             }: ResponsiveTableProps<T>) {
+  const hasRowActions = Boolean(renderRowActions || rowActionsMenu);
+  const cellPad = density === 'compact' ? 'px-4 py-1.5' : 'px-4 py-3';
+  const rowHeight = density === 'compact' ? 'h-9' : 'h-12';
+  const wrap = (body: React.ReactNode) => (
+    <div className={cn('w-full', className)}>
+      {toolbar && <div className="mb-3">{toolbar}</div>}
+      {body}
+    </div>
+  );
+  const renderActions = (row: T): React.ReactNode =>
+    renderRowActions
+      ? renderRowActions(row)
+      : rowActionsMenu && <ResponsiveTableRowActions items={rowActionsMenu(row)}/>;
+
   const handleSelectAll = () => {
     if (!onSelectionChange) return;
     if (selectedKeys.size === data.length) {
@@ -99,36 +148,46 @@ function ResponsiveTable<T>({
 
   // Skeleton loading
   if (isLoading) {
-    return (
-      <div className={cn('w-full', className)}>
+    return wrap(
+      <div role="status" aria-busy="true" aria-label="Loading table">
         {/* Desktop skeleton */}
         <div className="hidden md:block">
-          <div className="animate-pulse space-y-4">
-            <div className="h-12 bg-surface-200 dark:bg-surface-700 rounded"/>
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-16 bg-surface-100 dark:bg-surface-800 rounded"/>
-            ))}
-          </div>
-        </div>
-        {/* Mobile skeleton */}
-        <div className="md:hidden space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-32 bg-surface-100 dark:bg-surface-800 rounded-lg animate-pulse"/>
+          <div className="skeleton-aura h-10 rounded-md mb-1"/>
+          {[...Array(6)].map((_, i) => (
+            <div key={i}
+                 className={cn('flex items-center gap-4 border-b border-[var(--border-subtle)]', rowHeight, cellPad)}>
+              <div className="skeleton-aura h-3 w-1/4 rounded"/>
+              <div className="skeleton-aura h-3 w-1/5 rounded"/>
+              <div className="skeleton-aura h-3 w-1/6 rounded"/>
+              <div className="skeleton-aura h-3 w-1/12 rounded ml-auto"/>
+            </div>
           ))}
         </div>
+        {/* Mobile skeleton */}
+        <div className="md:hidden space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="skeleton-aura h-28 rounded-xl"/>
+          ))}
+        </div>
+        <span className="sr-only">Loading...</span>
       </div>
     );
   }
 
+  // Error state — never rendered as an empty state
+  if (error && data.length === 0) {
+    return wrap(<QueryErrorCard onRetry={onRetry}/>);
+  }
+
   // Empty state — delegates to canonical EmptyState component
   if (data.length === 0) {
-    return (
-      <div className={cn('w-full', className)}>
+    return wrap(
+      emptyState ?? (
         <EmptyState
           icon={emptyIcon}
           title={emptyMessage}
         />
-      </div>
+      )
     );
   }
 
@@ -138,13 +197,14 @@ function ResponsiveTable<T>({
 
   return (
     <div className={cn('w-full', className)}>
+      {toolbar && <div className="mb-3">{toolbar}</div>}
       {/* Desktop Table View */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full border-collapse">
-          <thead>
-          <tr className="border-b border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800/50">
+          <thead className={stickyHeader ? 'sticky top-0 z-10 bg-[var(--bg-surface)]' : undefined}>
+          <tr className="border-b border-[var(--border-subtle)] bg-[var(--bg-surface)]">
             {selectable && (
-              <th className="w-12 px-4 py-2 text-left">
+              <th scope="col" className="w-12 px-4 py-2.5 text-left">
                 <input
                   type="checkbox"
                   aria-label="Select all rows"
@@ -154,24 +214,30 @@ function ResponsiveTable<T>({
                 />
               </th>
             )}
-            {columns.map((column) => (
-              <th
-                key={column.key}
-                className={cn(
-                  'px-4 py-4 text-left text-sm font-semibold text-surface-700 dark:text-surface-300 transition-colors',
-                  column.sortable && 'cursor-pointer select-none hover:bg-surface-100 dark:hover:bg-surface-700/50',
-                  column.width
-                )}
-                onClick={() => column.sortable && onSort?.(column.key)}
-              >
-                <div className="flex items-center gap-1">
-                  {column.header}
-                  {renderSortIcon(column)}
-                </div>
-              </th>
-            ))}
-            {renderRowActions && (
-              <th className="w-16 px-4 py-2 text-right text-sm font-semibold text-surface-700 dark:text-surface-300">
+            {columns.map((column) => {
+              const align = resolveAlign(column);
+              return (
+                <th
+                  key={column.key}
+                  scope="col"
+                  className={cn(
+                    'px-4 py-2.5',
+                    ALIGN_CLASS[align],
+                    'text-xs font-medium text-[var(--text-secondary)] whitespace-nowrap transition-colors',
+                    column.sortable && 'cursor-pointer select-none hover:bg-[var(--surface-hover)]',
+                    column.width
+                  )}
+                  onClick={() => column.sortable && onSort?.(column.key)}
+                >
+                  <div className={cn('flex items-center gap-1', JUSTIFY_CLASS[align])}>
+                    {column.header}
+                    {renderSortIcon(column)}
+                  </div>
+                </th>
+              );
+            })}
+            {hasRowActions && (
+              <th scope="col" className="w-16 px-4 py-2.5 text-right text-xs font-medium text-[var(--text-secondary)]">
                 Actions
               </th>
             )}
@@ -187,15 +253,16 @@ function ResponsiveTable<T>({
               <tr
                 key={key}
                 className={cn(
-                  'border-b border-surface-100 dark:border-surface-800 transition-colors duration-[var(--motion-fast)]',
-                  onRowClick && 'cursor-pointer hover:bg-surface-50 dark:hover:bg-surface-800/50',
-                  isSelected && 'bg-accent-50 dark:bg-accent-900/20',
+                  'border-b border-[var(--border-subtle)] transition-colors duration-[var(--motion-fast)] hover:bg-[var(--surface-hover)]',
+                  rowHeight,
+                  onRowClick && 'cursor-pointer',
+                  isSelected && 'bg-[var(--accent-subtle)] hover:bg-[var(--accent-subtle)]',
                   computedRowClassName
                 )}
                 onClick={() => onRowClick?.(row)}
               >
                 {selectable && (
-                  <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
+                  <td className={cellPad} onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       checked={isSelected}
@@ -208,14 +275,20 @@ function ResponsiveTable<T>({
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className={cn('px-4 py-4 text-sm text-surface-900 dark:text-surface-100', column.width)}
+                    className={cn(
+                      cellPad,
+                      'text-sm text-[var(--text-primary)]',
+                      column.width,
+                      resolveAlign(column) !== 'left' && ALIGN_CLASS[resolveAlign(column)],
+                      column.numeric && 'tabular-nums'
+                    )}
                   >
                     {column.accessor(row)}
                   </td>
                 ))}
-                {renderRowActions && (
-                  <td className="px-4 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                    {renderRowActions(row)}
+                {hasRowActions && (
+                  <td className={cn(cellPad, 'text-right')} onClick={(e) => e.stopPropagation()}>
+                    {renderActions(row)}
                   </td>
                 )}
               </tr>
@@ -318,8 +391,8 @@ function ResponsiveTable<T>({
                       className="rounded border-surface-300 text-accent-700 focus:ring-accent-500 mt-1"
                     />
                   )}
-                  {renderRowActions && (
-                    <div className="cursor-pointer" onClick={(e) => e.stopPropagation()}>{renderRowActions(row)}</div>
+                  {hasRowActions && (
+                    <div className="cursor-pointer" onClick={(e) => e.stopPropagation()}>{renderActions(row)}</div>
                   )}
                 </div>
               </div>
@@ -351,28 +424,32 @@ export function TablePagination({
                                   onPageSizeChange,
                                   pageSizeOptions = [10, 20, 50, 100],
                                 }: TablePaginationProps) {
-  const startItem = currentPage * pageSize + 1;
+  const startItem = totalItems === 0 ? 0 : currentPage * pageSize + 1;
   const endItem = Math.min((currentPage + 1) * pageSize, totalItems);
+  const isFirst = currentPage === 0;
+  const isLast = currentPage >= totalPages - 1;
+  const navBtn =
+    'inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]';
 
   return (
-    <div
-      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-4 border-t border-surface-200 dark:border-surface-700">
-      {/* Info */}
-      <div className="text-sm text-surface-500 dark:text-surface-400 order-2 sm:order-1">
-        Showing {startItem} to {endItem} of {totalItems} results
+    <nav
+      aria-label="Table pagination"
+      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-3 border-t border-[var(--border-subtle)]"
+    >
+      <div className="text-[13px] text-[var(--text-secondary)] tabular-nums order-2 sm:order-1" aria-live="polite">
+        {startItem}-{endItem} of {totalItems}
       </div>
 
-      {/* Controls */}
       <div className="flex items-center gap-4 order-1 sm:order-2">
-        {/* Page size selector */}
         {onPageSizeChange && (
           <div className="hidden sm:flex items-center gap-2">
-            <span className="text-sm text-surface-500 dark:text-surface-400">Show:</span>
+            <label htmlFor="table-page-size" className="text-[13px] text-[var(--text-secondary)]">Rows per page</label>
             <select
+              id="table-page-size"
               aria-label="Page size"
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="text-sm border border-surface-300 dark:border-surface-600 rounded px-2 py-1 bg-[var(--bg-input)]"
+              className="text-[13px] border border-[var(--border-main)] rounded-lg px-2 h-8 bg-[var(--bg-input)] text-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)]"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -383,48 +460,31 @@ export function TablePagination({
           </div>
         )}
 
-        {/* Page navigation */}
         <div className="flex items-center gap-1">
-          <button
-            onClick={() => onPageChange(0)}
-            disabled={currentPage === 0}
-            className="p-2 rounded press-scale hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            aria-label="First page"
-          >
-            <span className="text-sm">First</span>
+          <button type="button" onClick={() => onPageChange(0)} disabled={isFirst} className={navBtn}
+                  aria-label="First page">
+            <ChevronsLeft className="h-4 w-4" aria-hidden="true"/>
           </button>
-          <button
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 0}
-            className="p-2 rounded press-scale hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            aria-label="Previous page"
-          >
-            <span className="text-sm">Prev</span>
+          <button type="button" onClick={() => onPageChange(currentPage - 1)} disabled={isFirst} className={navBtn}
+                  aria-label="Previous page">
+            <ChevronLeft className="h-4 w-4" aria-hidden="true"/>
           </button>
 
-          <span className="px-4 py-1 text-sm text-surface-700 dark:text-surface-300">
+          <span className="px-2 text-[13px] text-[var(--text-secondary)] tabular-nums">
             {currentPage + 1} / {totalPages || 1}
           </span>
 
-          <button
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage >= totalPages - 1}
-            className="p-2 rounded press-scale hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            aria-label="Next page"
-          >
-            <span className="text-sm">Next</span>
+          <button type="button" onClick={() => onPageChange(currentPage + 1)} disabled={isLast} className={navBtn}
+                  aria-label="Next page">
+            <ChevronRight className="h-4 w-4" aria-hidden="true"/>
           </button>
-          <button
-            onClick={() => onPageChange(totalPages - 1)}
-            disabled={currentPage >= totalPages - 1}
-            className="p-2 rounded press-scale hover:bg-surface-100 dark:hover:bg-surface-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            aria-label="Last page"
-          >
-            <span className="text-sm">Last</span>
+          <button type="button" onClick={() => onPageChange(totalPages - 1)} disabled={isLast} className={navBtn}
+                  aria-label="Last page">
+            <ChevronsRight className="h-4 w-4" aria-hidden="true"/>
           </button>
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
 

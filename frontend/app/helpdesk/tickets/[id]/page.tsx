@@ -118,11 +118,8 @@ export default function TicketDetailPage() {
     try {
       await statusMutation.mutateAsync({id: ticketId, status});
       toast.success(`Status updated to ${STATUS_LABELS[status]}`);
-    } catch (err: unknown) {
-      const message = (err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to update status';
-      toast.error(message);
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -131,11 +128,8 @@ export default function TicketDetailPage() {
     try {
       await assignMutation.mutateAsync({id: ticketId, assigneeId: user.employeeId});
       toast.success('Ticket assigned to you');
-    } catch (err: unknown) {
-      const message = (err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to assign ticket';
-      toast.error(message);
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -149,11 +143,8 @@ export default function TicketDetailPage() {
         isInternal: data.isInternal,
       });
       reset();
-    } catch (err: unknown) {
-      const message = (err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to add comment';
-      toast.error(message);
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -163,11 +154,8 @@ export default function TicketDetailPage() {
       await deleteCommentMutation.mutateAsync({commentId: commentToDelete, ticketId});
       setCommentToDelete(null);
       toast.success('Comment deleted');
-    } catch (err: unknown) {
-      const message = (err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to delete comment';
-      toast.error(message);
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -176,11 +164,8 @@ export default function TicketDetailPage() {
       await deleteTicketMutation.mutateAsync(ticketId);
       toast.success('Ticket deleted');
       router.push('/helpdesk/tickets');
-    } catch (err: unknown) {
-      const message = (err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to delete ticket';
-      toast.error(message);
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 

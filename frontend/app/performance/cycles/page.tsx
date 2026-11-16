@@ -1,22 +1,24 @@
 'use client';
 
-import {useId, useState} from 'react';
-import Link from 'next/link';
-import {Controller, useForm} from 'react-hook-form';
-import {DateInput} from '@mantine/dates';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
+import {useState} from 'react';
+import {Button, NativeSelect} from '@mantine/core';
+import {CalendarClock, Plus} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {PageTransition} from '@/components/motion';
-import {
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import type {
   ActivateCycleRequest,
   ActivateCycleResponse,
   CycleStatus,
   CycleType,
   ReviewCycle,
-  ReviewCycleRequest
+  ReviewCycleRequest,
 } from '@/lib/types/grow/performance';
-import {Building2, CheckCircle, Grid3x3, MapPin, Play, Scale, Users} from 'lucide-react';
 import {
   useActivatePerformanceCycle,
   useCreatePerformanceCycle,
@@ -26,935 +28,196 @@ import {
 } from '@/lib/hooks/queries/useReviewCycles';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {useActiveOfficeLocations} from '@/lib/hooks/queries/useOfficeLocations';
-import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
-import {Stat} from '@/components/ui/Stat';
-import {StatusBadge} from '@/components/ui/StatusBadge';
-import {CYCLE_STATUS} from '@/lib/status/vocabulary';
-import {formatDate} from '@/lib/utils/format/date';
+import {CycleCard} from './_components/CycleCard';
+import {CycleFormModal} from './_components/CycleFormModal';
+import {ActivateCycleModal} from './_components/ActivateCycleModal';
+import {ActivationResultModal} from './_components/ActivationResultModal';
+import {CYCLE_STATUS_OPTIONS, CYCLE_TYPE_OPTIONS} from './_components/cycleOptions';
 
-// ─── Validation Schemas ───────────────────────────────────────────────────────
-
-const cycleFormSchema = z.object({
-  name: z.string().min(1, 'Cycle name is required').max(255),
-  description: z.string().max(1000).optional().or(z.literal('')),
-  cycleType: z.enum(['ANNUAL', 'SEMI_ANNUAL', 'QUARTERLY', 'MONTHLY', 'PROBATION', 'PROJECT_END'] as const) as z.ZodType<CycleType>,
-  status: z.enum(['PLANNING', 'ACTIVE', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'] as const) as z.ZodType<CycleStatus>,
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
-  reviewDeadline: z.string().min(1, 'Review deadline is required'),
-  selfReviewDeadline: z.string().optional().or(z.literal('')),
-}).refine(data => new Date(data.endDate) > new Date(data.startDate), {
-  message: 'End date must be after start date',
-  path: ['endDate'],
-});
-
-type CycleFormData = z.infer<typeof cycleFormSchema>;
+const TYPE_FILTER_OPTIONS = [{value: 'ALL', label: 'All Types'}, ...CYCLE_TYPE_OPTIONS];
+const STATUS_FILTER_OPTIONS = [{value: 'ALL', label: 'All Status'}, ...CYCLE_STATUS_OPTIONS];
 
 export default function ReviewCyclesPage() {
-  // React Query hooks
-  const {data: cyclesResponse, isLoading: cyclesLoading} = usePerformanceAllCycles();
-  const {data: departmentsData = []} = useActiveDepartments();
-  const {data: locationsData = []} = useActiveOfficeLocations();
+  const cyclesQuery = usePerformanceAllCycles();
+  const {data: departments = []} = useActiveDepartments();
+  const {data: locations = []} = useActiveOfficeLocations();
   const createMutation = useCreatePerformanceCycle();
   const updateMutation = useUpdatePerformanceCycle();
   const deleteMutation = useDeletePerformanceCycle();
   const activateMutation = useActivatePerformanceCycle();
+  const {hasPermission} = usePermissions();
 
-  const cycles = cyclesResponse?.content || [];
-  const loading = cyclesLoading;
-  const departments = departmentsData;
-  const locations = locationsData;
-  const formModalTitleId = useId();
-  const deleteModalTitleId = useId();
-  const activateModalTitleId = useId();
-  const resultModalTitleId = useId();
-  const [showModal, setShowModal] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showActivateModal, setShowActivateModal] = useState(false);
-  const [showActivationResult, setShowActivationResult] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
+  const [editingCycle, setEditingCycle] = useState<ReviewCycle | null>(null);
+  const [deletingCycle, setDeletingCycle] = useState<ReviewCycle | null>(null);
+  const [activatingCycle, setActivatingCycle] = useState<ReviewCycle | null>(null);
   const [activationResult, setActivationResult] = useState<ActivateCycleResponse | null>(null);
-  const [selectedCycle, setSelectedCycle] = useState<ReviewCycle | null>(null);
   const [filterType, setFilterType] = useState<CycleType | 'ALL'>('ALL');
   const [filterStatus, setFilterStatus] = useState<CycleStatus | 'ALL'>('ALL');
-  const [activateFormData, setActivateFormData] = useState<ActivateCycleRequest>({
-    scopeType: 'ALL',
-    departmentIds: [],
-    locationIds: [],
-    createSelfReviews: true,
-    createManagerReviews: true,
-  });
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    reset,
-    formState: {errors, isSubmitting},
-  } = useForm<CycleFormData>({
-    resolver: zodResolver(cycleFormSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      cycleType: 'ANNUAL',
-      status: 'PLANNING',
-      startDate: '',
-      endDate: '',
-      reviewDeadline: '',
-      selfReviewDeadline: '',
-    },
-  });
+  const openCreate = () => {
+    setEditingCycle(null);
+    setFormOpen(true);
+  };
 
-  const handleFormSubmit = (data: CycleFormData) => {
-    const cycleData: ReviewCycleRequest = {
-      cycleName: data.name,
-      cycleType: data.cycleType,
-      status: data.status,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      managerReviewDeadline: data.reviewDeadline,
-      description: data.description || '',
-      selfReviewDeadline: data.selfReviewDeadline || '',
-    };
+  const openEdit = (cycle: ReviewCycle) => {
+    setEditingCycle(cycle);
+    setFormOpen(true);
+  };
 
-    if (selectedCycle) {
-      updateMutation.mutate({id: selectedCycle.id, data: cycleData});
-    } else {
-      createMutation.mutate(cycleData);
+  const closeForm = () => {
+    setFormOpen(false);
+    setEditingCycle(null);
+  };
+
+  // Failures are reported by the global MutationCache toast; the dialog stays open so the user can retry.
+  const handleSave = async (data: ReviewCycleRequest) => {
+    try {
+      if (editingCycle) {
+        await updateMutation.mutateAsync({id: editingCycle.id, data});
+      } else {
+        await createMutation.mutateAsync(data);
+      }
+    } catch {
+      return;
     }
-
-    setShowModal(false);
-    resetFormHandler();
+    closeForm();
   };
 
   const handleDelete = () => {
-    if (!selectedCycle) return;
-    deleteMutation.mutate(selectedCycle.id, {
-      onSuccess: () => {
-        setShowDeleteConfirm(false);
-        setSelectedCycle(null);
-      },
-    });
+    if (!deletingCycle) return;
+    deleteMutation.mutate(deletingCycle.id, {onSuccess: () => setDeletingCycle(null)});
   };
 
-  const openEditModal = (cycle: ReviewCycle) => {
-    setSelectedCycle(cycle);
-    reset({
-      name: cycle.name ?? cycle.cycleName,
-      description: cycle.description || '',
-      cycleType: cycle.cycleType,
-      status: cycle.status,
-      startDate: cycle.startDate,
-      endDate: cycle.endDate,
-      reviewDeadline: cycle.reviewDeadline ?? cycle.managerReviewDeadline,
-      selfReviewDeadline: cycle.selfReviewDeadline || '',
-    });
-    setShowModal(true);
-  };
-
-  const openDeleteConfirm = (cycle: ReviewCycle) => {
-    setSelectedCycle(cycle);
-    setShowDeleteConfirm(true);
-  };
-
-  const openActivateModal = (cycle: ReviewCycle) => {
-    setSelectedCycle(cycle);
-    setActivateFormData({
-      scopeType: 'ALL',
-      departmentIds: [],
-      locationIds: [],
-      createSelfReviews: true,
-      createManagerReviews: true,
-    });
-    setShowActivateModal(true);
-  };
-
-  const handleActivate = () => {
-    if (!selectedCycle) return;
+  const handleActivate = (data: ActivateCycleRequest) => {
+    if (!activatingCycle) return;
     activateMutation.mutate(
-      {id: selectedCycle.id, data: activateFormData},
+      {id: activatingCycle.id, data},
       {
         onSuccess: (result) => {
+          setActivatingCycle(null);
           setActivationResult(result);
-          setShowActivateModal(false);
-          setShowActivationResult(true);
         },
-      }
+      },
     );
   };
 
-  const handleDepartmentToggle = (deptId: string) => {
-    setActivateFormData(prev => ({
-      ...prev,
-      departmentIds: prev.departmentIds?.includes(deptId)
-        ? prev.departmentIds.filter(id => id !== deptId)
-        : [...(prev.departmentIds || []), deptId],
-    }));
-  };
-
-  const handleLocationToggle = (locId: string) => {
-    setActivateFormData(prev => ({
-      ...prev,
-      locationIds: prev.locationIds?.includes(locId)
-        ? prev.locationIds.filter(id => id !== locId)
-        : [...(prev.locationIds || []), locId],
-    }));
-  };
-
-  const resetFormHandler = () => {
-    setSelectedCycle(null);
-    reset({
-      name: '',
-      description: '',
-      cycleType: 'ANNUAL',
-      status: 'PLANNING',
-      startDate: '',
-      endDate: '',
-      reviewDeadline: '',
-      selfReviewDeadline: '',
-    });
-  };
-
-  const getTypeColor = (type: CycleType) => {
-    switch (type) {
-      case 'ANNUAL':
-        return 'bg-accent-300 text-accent-900';
-      case 'SEMI_ANNUAL':
-        return 'bg-accent-100 text-accent-800';
-      case 'QUARTERLY':
-        return 'bg-accent-50 dark:bg-accent-950/30 text-accent-800 dark:text-accent-400';
-      case 'MONTHLY':
-        return 'bg-success-100 text-success-800';
-      case 'PROBATION':
-        return 'bg-warning-100 text-warning-800';
-      case 'PROJECT_END':
-        return 'bg-accent-300 text-accent-900';
-      default:
-        return 'bg-[var(--bg-secondary)] text-[var(--text-primary)]';
-    }
-  };
-
-  const isDeadlineNear = (deadline?: string) => {
-    if (!deadline) return false;
-    const deadlineDate = new Date(deadline);
-    const now = new Date();
-    const daysUntilDeadline = Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    return daysUntilDeadline <= 7 && daysUntilDeadline >= 0;
-  };
-
-  const isDeadlinePassed = (deadline?: string) => {
-    if (!deadline) return false;
-    return new Date(deadline) < new Date();
-  };
-
-  const filteredCycles = cycles.filter(cycle => {
-    if (filterType !== 'ALL' && cycle.cycleType !== filterType) return false;
-    if (filterStatus !== 'ALL' && cycle.status !== filterStatus) return false;
-    return true;
-  });
+  const filtersActive = filterType !== 'ALL' || filterStatus !== 'ALL';
+  const canCreate = hasPermission(Permissions.REVIEW_CREATE);
 
   return (
-    <AppLayout activeMenuItem="performance">
-      <PageTransition className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold">Review Cycles</h1>
-          <PermissionGate permission={Permissions.REVIEW_CREATE}>
-            <button
-              onClick={() => {
-                resetFormHandler();
-                setShowModal(true);
-              }}
-              className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
-            >
-              Create Cycle
-            </button>
-          </PermissionGate>
-        </div>
-
-        <div className="card-aura p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="filterType" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Filter by Type
-              </label>
-              <select
-                id="filterType"
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value as CycleType | 'ALL')}
-                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-              >
-                <option value="ALL">All Types</option>
-                <option value="ANNUAL">Annual</option>
-                <option value="SEMI_ANNUAL">Semi-Annual</option>
-                <option value="QUARTERLY">Quarterly</option>
-                <option value="MONTHLY">Monthly</option>
-                <option value="PROBATION">Probation</option>
-                <option value="PROJECT_END">Project End</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="filterStatus" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Filter by Status
-              </label>
-              <select
-                id="filterStatus"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value as CycleStatus | 'ALL')}
-                className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-              >
-                <option value="ALL">All Status</option>
-                <option value="PLANNING">Planning</option>
-                <option value="ACTIVE">Active</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="CANCELLED">Cancelled</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="text-[var(--text-secondary)]">Loading review cycles...</div>
-          </div>
-        ) : filteredCycles.length === 0 ? (
-          <div className="card-aura p-12 text-center">
-            <div className="text-[var(--text-secondary)] mb-4">No review cycles found</div>
+    <AppLayout
+      activeMenuItem="performance"
+      breadcrumbs={[{label: 'Performance', href: '/performance'}, {label: 'Review Cycles'}]}
+    >
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <PageHeader
+          title="Review Cycles"
+          description="Plan, activate and track performance review cycles."
+          actions={
             <PermissionGate permission={Permissions.REVIEW_CREATE}>
-              <button
-                onClick={() => {
-                  resetFormHandler();
-                  setShowModal(true);
-                }}
-                className="px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
-              >
-                Create Your First Cycle
-              </button>
+              <Button leftSection={<Plus className="h-4 w-4" aria-hidden/>} onClick={openCreate}>
+                Create Cycle
+              </Button>
             </PermissionGate>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCycles.map((cycle) => (
-              <div key={cycle.id} className="card-interactive hover-lift p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-2">{cycle.name ?? cycle.cycleName}</h3>
-                    <div className="flex gap-2 mb-4 flex-wrap">
-                      <span className={'px-2 py-1 rounded text-xs font-medium ' + getTypeColor(cycle.cycleType)}>
-                        {cycle.cycleType}
-                      </span>
-                      <StatusBadge status={cycle.status} domain={CYCLE_STATUS} />
-                    </div>
-                  </div>
-                </div>
+          }
+        />
 
-                {cycle.description && (
-                  <p className="text-body-secondary mb-4 line-clamp-2">{cycle.description}</p>
-                )}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:max-w-2xl">
+          <NativeSelect
+            id="filterType"
+            label="Filter by Type"
+            data={TYPE_FILTER_OPTIONS}
+            value={filterType}
+            onChange={(e) => setFilterType(e.currentTarget.value as CycleType | 'ALL')}
+          />
+          <NativeSelect
+            id="filterStatus"
+            label="Filter by Status"
+            data={STATUS_FILTER_OPTIONS}
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.currentTarget.value as CycleStatus | 'ALL')}
+          />
+        </div>
 
-                <div className="space-y-2 mb-4">
-                  <div className="text-sm">
-                    <span className="text-[var(--text-secondary)]">Period:</span>
-                    <div className="font-medium">
-                      {cycle.startDate ? formatDate(cycle.startDate) : 'N/A'} - {cycle.endDate ? formatDate(cycle.endDate) : 'N/A'}
-                    </div>
-                  </div>
+        <QueryState
+          query={cyclesQuery}
+          skeleton={<ListPageSkeleton showHeader={false} showFilters={false} rows={4} columns={3}/>}
+          errorTitle="Couldn't load review cycles"
+        >
+          {(response) => {
+            const cycles = (response?.content ?? []).filter(cycle =>
+              (filterType === 'ALL' || cycle.cycleType === filterType) &&
+              (filterStatus === 'ALL' || cycle.status === filterStatus));
 
-                  <div className="text-sm">
-                    <span className="text-[var(--text-secondary)]">Review Deadline:</span>
-                    <div
-                      className={'font-medium ' + (isDeadlinePassed(cycle.reviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.reviewDeadline) ? 'text-warning-600' : '')}>
-                      {cycle.reviewDeadline || cycle.managerReviewDeadline ? formatDate(cycle.reviewDeadline ?? cycle.managerReviewDeadline ?? '') : 'N/A'}
-                      {isDeadlinePassed(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && ' (Passed)'}
-                      {isDeadlineNear(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && !isDeadlinePassed(cycle.reviewDeadline ?? cycle.managerReviewDeadline) && ' (Soon)'}
-                    </div>
-                  </div>
-
-                  {cycle.selfReviewDeadline && (
-                    <div className="text-sm">
-                      <span className="text-[var(--text-secondary)]">Self Review Deadline:</span>
-                      <div
-                        className={'font-medium ' + (isDeadlinePassed(cycle.selfReviewDeadline) ? 'text-danger-600' : isDeadlineNear(cycle.selfReviewDeadline) ? 'text-warning-600' : '')}>
-                        {formatDate(cycle.selfReviewDeadline)}
-                        {isDeadlinePassed(cycle.selfReviewDeadline) && ' (Passed)'}
-                        {isDeadlineNear(cycle.selfReviewDeadline) && !isDeadlinePassed(cycle.selfReviewDeadline) && ' (Soon)'}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex gap-2 mb-2">
-                  <Link
-                    href={`/performance/cycles/${cycle.id}/calibration`}
-                    className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
-                  >
-                    <Scale className="h-4 w-4"/>
-                    Calibration
-                  </Link>
-                  <Link
-                    href={`/performance/cycles/${cycle.id}/nine-box`}
-                    className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
-                  >
-                    <Grid3x3 className="h-4 w-4"/>
-                    9-Box
-                  </Link>
-                </div>
-
-                <div className="flex gap-2">
-                  {cycle.status === 'PLANNING' && (
-                    <PermissionGate permission={Permissions.REVIEW_UPDATE}>
-                      <button
-                        onClick={() => openActivateModal(cycle)}
-                        className="flex-1 px-4 py-2 tint-success text-success-600 dark:text-success-400 rounded hover:opacity-80 text-sm font-medium flex items-center justify-center gap-1"
-                      >
-                        <Play className="h-4 w-4"/>
-                        Activate
-                      </button>
-                    </PermissionGate>
-                  )}
-                  <PermissionGate permission={Permissions.REVIEW_UPDATE}>
-                    <button
-                      onClick={() => openEditModal(cycle)}
-                      className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
-                    >
-                      Edit
-                    </button>
-                  </PermissionGate>
-                  <PermissionGate permission={Permissions.REVIEW_DELETE}>
-                    <button
-                      onClick={() => openDeleteConfirm(cycle)}
-                      className="flex-1 px-4 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
-                    >
-                      Delete
-                    </button>
-                  </PermissionGate>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div
-              role="dialog" aria-modal="true" aria-labelledby={formModalTitleId}
-              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <h2 id={formModalTitleId} className="text-xl font-bold mb-6">
-                  {selectedCycle ? 'Edit Review Cycle' : 'Create Review Cycle'}
-                </h2>
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
-                  <div className="space-y-4">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Cycle Name *
-                      </label>
-                      <input
-                        id="name"
-                        type="text"
-                        placeholder="e.g., Annual Review 2024"
-                        {...register('name')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                      />
-                      {errors.name && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.name.message}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label htmlFor="description" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                        Description
-                      </label>
-                      <textarea
-                        id="description"
-                        rows={3}
-                        {...register('description')}
-                        className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                      />
-                      {errors.description && (
-                        <p className="text-danger-500 text-sm mt-1">{errors.description.message}</p>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="cycle-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Cycle Type *
-                        </label>
-                        <select
-                          id="cycle-type"
-                          aria-label="Cycle Type"
-                          {...register('cycleType')}
-                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                        >
-                          <option value="ANNUAL">Annual</option>
-                          <option value="SEMI_ANNUAL">Semi-Annual</option>
-                          <option value="QUARTERLY">Quarterly</option>
-                          <option value="MONTHLY">Monthly</option>
-                          <option value="PROBATION">Probation</option>
-                          <option value="PROJECT_END">Project End</option>
-                        </select>
-                        {errors.cycleType && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.cycleType.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="cycle-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Status *
-                        </label>
-                        <select
-                          id="cycle-status"
-                          aria-label="Status"
-                          {...register('status')}
-                          className="w-full px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-500"
-                        >
-                          <option value="PLANNING">Planning</option>
-                          <option value="ACTIVE">Active</option>
-                          <option value="IN_PROGRESS">In Progress</option>
-                          <option value="COMPLETED">Completed</option>
-                          <option value="CANCELLED">Cancelled</option>
-                        </select>
-                        {errors.status && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.status.message}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="cycle-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Start Date *
-                        </label>
-                        <Controller
-                          name="startDate"
-                          control={control}
-                          render={({field}) => (
-                            <DateInput
-                              id="cycle-start-date"
-                              value={field.value || null}
-                              onChange={(d) => field.onChange(d ?? '')}
-                              valueFormat="YYYY-MM-DD"
-                              placeholder="YYYY-MM-DD"
-                              clearable
-                              size="sm"
-                            />
-                          )}
-                        />
-                        {errors.startDate && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="cycle-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          End Date *
-                        </label>
-                        <Controller
-                          name="endDate"
-                          control={control}
-                          render={({field}) => (
-                            <DateInput
-                              id="cycle-end-date"
-                              value={field.value || null}
-                              onChange={(d) => field.onChange(d ?? '')}
-                              valueFormat="YYYY-MM-DD"
-                              placeholder="YYYY-MM-DD"
-                              clearable
-                              size="sm"
-                            />
-                          )}
-                        />
-                        {errors.endDate && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="cycle-review-deadline" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Review Deadline *
-                        </label>
-                        <Controller
-                          name="reviewDeadline"
-                          control={control}
-                          render={({field}) => (
-                            <DateInput
-                              id="cycle-review-deadline"
-                              value={field.value || null}
-                              onChange={(d) => field.onChange(d ?? '')}
-                              valueFormat="YYYY-MM-DD"
-                              placeholder="YYYY-MM-DD"
-                              clearable
-                              size="sm"
-                            />
-                          )}
-                        />
-                        {errors.reviewDeadline && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.reviewDeadline.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="cycle-self-review-deadline" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Self Review Deadline
-                        </label>
-                        <Controller
-                          name="selfReviewDeadline"
-                          control={control}
-                          render={({field}) => (
-                            <DateInput
-                              id="cycle-self-review-deadline"
-                              value={field.value || null}
-                              onChange={(d) => field.onChange(d ?? '')}
-                              valueFormat="YYYY-MM-DD"
-                              placeholder="YYYY-MM-DD"
-                              clearable
-                              size="sm"
-                            />
-                          )}
-                        />
-                        {errors.selfReviewDeadline && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.selfReviewDeadline.message}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 mt-6">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowModal(false);
-                        resetFormHandler();
-                      }}
-                      className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
-                    >
-                      Cancel
-                    </button>
-                    <PermissionGate permission={selectedCycle ? Permissions.REVIEW_UPDATE : Permissions.REVIEW_CREATE}>
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="flex-1 px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        {isSubmitting ? 'Saving...' : selectedCycle ? 'Update' : 'Create'}
-                      </button>
-                    </PermissionGate>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showDeleteConfirm && selectedCycle && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div role="dialog" aria-modal="true" aria-labelledby={deleteModalTitleId} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
-              <h2 id={deleteModalTitleId} className="text-xl font-bold mb-4">Delete Review Cycle?</h2>
-              <p className="text-[var(--text-secondary)] mb-6">
-	                This action cannot be undone. &quot;{selectedCycle.name ?? selectedCycle.cycleName}&quot; will be permanently deleted.
-              </p>
-              <div className="flex gap-4">
-                <button
-                  onClick={() => {
-                    setShowDeleteConfirm(false);
-                    setSelectedCycle(null);
+            if (cycles.length === 0) {
+              return filtersActive ? (
+                <EmptyState
+                  icon={<CalendarClock className="h-full w-full"/>}
+                  title="No review cycles found"
+                  description="No cycles match the selected filters."
+                  actionLabel="Clear filters"
+                  onAction={() => {
+                    setFilterType('ALL');
+                    setFilterStatus('ALL');
                   }}
-                  className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
-                >
-                  Cancel
-                </button>
-                <PermissionGate permission={Permissions.REVIEW_DELETE}>
-                  <button
-                    onClick={handleDelete}
-                    disabled={loading}
-                    className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-lg hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    {loading ? 'Deleting...' : 'Delete'}
-                  </button>
-                </PermissionGate>
+                />
+              ) : (
+                <EmptyState
+                  icon={<CalendarClock className="h-full w-full"/>}
+                  title="No review cycles found"
+                  description="Create a cycle to start collecting self and manager reviews."
+                  {...(canCreate ? {actionLabel: 'Create Your First Cycle', onAction: openCreate} : {})}
+                />
+              );
+            }
+
+            return (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {cycles.map((cycle) => (
+                  <CycleCard
+                    key={cycle.id}
+                    cycle={cycle}
+                    onActivate={setActivatingCycle}
+                    onEdit={openEdit}
+                    onDelete={setDeletingCycle}
+                  />
+                ))}
               </div>
-            </div>
-          </div>
-        )}
+            );
+          }}
+        </QueryState>
+      </div>
 
-        {/* Activate Modal */}
-        {showActivateModal && selectedCycle && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div
-              role="dialog" aria-modal="true" aria-labelledby={activateModalTitleId}
-              className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg">
-                    <Play className="h-6 w-6 text-success-600 dark:text-success-400"/>
-                  </div>
-                  <div>
-                    <h2 id={activateModalTitleId} className="text-xl font-bold">Activate Review Cycle</h2>
-                    <p className="text-xs text-[var(--text-secondary)]">{selectedCycle.name}</p>
-                  </div>
-                </div>
+      <CycleFormModal
+        isOpen={formOpen}
+        cycle={editingCycle}
+        isSaving={createMutation.isPending || updateMutation.isPending}
+        onClose={closeForm}
+        onSubmit={handleSave}
+      />
 
-                <div className="space-y-6">
-                  {/* Scope Type Selection */}
-                  <div>
-                    <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                      Activation Scope
-                    </span>
-                    <div className="grid grid-cols-3 gap-4">
-                      <button
-                        type="button"
-                        onClick={() => setActivateFormData({
-                          ...activateFormData,
-                          scopeType: 'ALL',
-                          departmentIds: [],
-                          locationIds: []
-                        })}
-                        className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
-                          activateFormData.scopeType === 'ALL'
-                            ? 'border-success-500 tint-success'
-                            : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
-                        }`}
-                      >
-                        <Users
-                          className={`h-6 w-6 ${activateFormData.scopeType === 'ALL' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
-                        <span
-                          className={`text-sm font-medium ${activateFormData.scopeType === 'ALL' ? 'text-success-700 dark:text-success-400' : ''}`}>
-                          All Employees
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActivateFormData({
-                          ...activateFormData,
-                          scopeType: 'DEPARTMENT',
-                          locationIds: []
-                        })}
-                        className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
-                          activateFormData.scopeType === 'DEPARTMENT'
-                            ? 'border-success-500 tint-success'
-                            : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
-                        }`}
-                      >
-                        <Building2
-                          className={`h-6 w-6 ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
-                        <span
-                          className={`text-sm font-medium ${activateFormData.scopeType === 'DEPARTMENT' ? 'text-success-700 dark:text-success-400' : ''}`}>
-                          By Department
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActivateFormData({
-                          ...activateFormData,
-                          scopeType: 'LOCATION',
-                          departmentIds: []
-                        })}
-                        className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center gap-2 ${
-                          activateFormData.scopeType === 'LOCATION'
-                            ? 'border-success-500 tint-success'
-                            : 'border-[var(--border-main)] dark:border-[var(--border-main)] hover:border-[var(--border-main)]'
-                        }`}
-                      >
-                        <MapPin
-                          className={`h-6 w-6 ${activateFormData.scopeType === 'LOCATION' ? 'text-success-600' : 'text-[var(--text-muted)]'}`}/>
-                        <span
-                          className={`text-sm font-medium ${activateFormData.scopeType === 'LOCATION' ? 'text-success-700 dark:text-success-400' : ''}`}>
-                          By Location
-                        </span>
-                      </button>
-                    </div>
-                  </div>
+      <ConfirmDialog
+        isOpen={!!deletingCycle}
+        onClose={() => setDeletingCycle(null)}
+        onConfirm={handleDelete}
+        title="Delete Review Cycle?"
+        message={`This action cannot be undone. "${deletingCycle?.name ?? deletingCycle?.cycleName ?? ''}" will be permanently deleted.`}
+        confirmText="Delete"
+        type="danger"
+        loading={deleteMutation.isPending}
+      />
 
-                  {/* Department Selection */}
-                  {activateFormData.scopeType === 'DEPARTMENT' && (
-                    <div>
-                      <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                        Select Departments
-                      </span>
-                      <div
-                        className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
-                        {departments.length === 0 ? (
-                          <p className="p-4 text-body-muted">No departments available</p>
-                        ) : (
-                          departments.map((dept) => (
-                            <label
-                              key={dept.id}
-                              className="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer border-b border-[var(--border-main)] last:border-b-0"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={activateFormData.departmentIds?.includes(dept.id) || false}
-                                onChange={() => handleDepartmentToggle(dept.id)}
-                                className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
-                              />
-                              <span className="text-sm">{dept.name}</span>
-                            </label>
-                          ))
-                        )}
-                      </div>
-                      {activateFormData.departmentIds && activateFormData.departmentIds.length > 0 && (
-                        <p className="mt-2 text-body-secondary">
-                          {activateFormData.departmentIds.length} department(s) selected
-                        </p>
-                      )}
-                    </div>
-                  )}
+      <ActivateCycleModal
+        cycle={activatingCycle}
+        departments={departments}
+        locations={locations}
+        isActivating={activateMutation.isPending}
+        onClose={() => setActivatingCycle(null)}
+        onActivate={handleActivate}
+      />
 
-                  {/* Location Selection */}
-                  {activateFormData.scopeType === 'LOCATION' && (
-                    <div>
-                      <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                        Select Locations
-                      </span>
-                      <div
-                        className="border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg max-h-48 overflow-y-auto">
-                        {locations.length === 0 ? (
-                          <p className="p-4 text-body-muted">No locations available</p>
-                        ) : (
-                          locations.map((loc) => (
-                            <label
-                              key={loc.id}
-                              className="flex items-center gap-4 p-4 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 cursor-pointer border-b border-[var(--border-main)] last:border-b-0"
-                            >
-                              <input
-                                type="checkbox"
-                                aria-label={`${loc.name}, ${loc.city}, ${loc.country}`}
-                                checked={activateFormData.locationIds?.includes(loc.id) || false}
-                                onChange={() => handleLocationToggle(loc.id)}
-                                className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
-                              />
-                              <div>
-                                <span className="text-sm font-medium">{loc.name}</span>
-                                <span className="text-caption ml-2">{loc.city}, {loc.country}</span>
-                              </div>
-                            </label>
-                          ))
-                        )}
-                      </div>
-                      {activateFormData.locationIds && activateFormData.locationIds.length > 0 && (
-                        <p className="mt-2 text-body-secondary">
-                          {activateFormData.locationIds.length} location(s) selected
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Review Options */}
-                  <div>
-                    <span className="block text-sm font-medium text-[var(--text-secondary)] mb-4">
-                      Review Types to Create
-                    </span>
-                    <div className="space-y-4">
-                      <label className="flex items-center gap-4 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          aria-label="Self Reviews"
-                          checked={activateFormData.createSelfReviews}
-                          onChange={(e) => setActivateFormData({
-                            ...activateFormData,
-                            createSelfReviews: e.target.checked
-                          })}
-                          className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
-                        />
-                        <div>
-                          <span className="text-sm font-medium">Self Reviews</span>
-                          <p className="text-caption">Each employee will receive a self-assessment form</p>
-                        </div>
-                      </label>
-                      <label className="flex items-center gap-4 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          aria-label="Manager Reviews"
-                          checked={activateFormData.createManagerReviews}
-                          onChange={(e) => setActivateFormData({
-                            ...activateFormData,
-                            createManagerReviews: e.target.checked
-                          })}
-                          className="h-4 w-4 text-success-600 focus:ring-success-500 border-[var(--border-main)] rounded"
-                        />
-                        <div>
-                          <span className="text-sm font-medium">Manager Reviews</span>
-                          <p className="text-caption">Managers will receive review forms for their direct reports</p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 mt-6">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowActivateModal(false);
-                      setSelectedCycle(null);
-                    }}
-                    className="flex-1 px-4 py-2 border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleActivate}
-                    disabled={loading || (activateFormData.scopeType === 'DEPARTMENT' && (!activateFormData.departmentIds || activateFormData.departmentIds.length === 0)) || (activateFormData.scopeType === 'LOCATION' && (!activateFormData.locationIds || activateFormData.locationIds.length === 0))}
-                    className="flex-1 px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    {loading ? (
-                      <>
-                        <span
-                          className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                        Activating...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="h-4 w-4"/>
-                        Activate Cycle
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Activation Result Modal */}
-        {showActivationResult && activationResult && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div role="dialog" aria-modal="true" aria-labelledby={resultModalTitleId} className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] rounded-lg max-w-md w-full p-6">
-              <div className="flex flex-col items-center text-center">
-                <div className="p-4 bg-success-100 dark:bg-success-900/30 rounded-full mb-4">
-                  <CheckCircle className="h-12 w-12 text-success-600 dark:text-success-400"/>
-                </div>
-                <h2 id={resultModalTitleId} className="text-xl font-bold mb-2">Cycle Activated!</h2>
-                <p className="text-[var(--text-secondary)] mb-6">
-                  Review cycle has been successfully activated
-                </p>
-
-                <div className="w-full bg-[var(--bg-secondary)] rounded-lg p-4 mb-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Stat label="Employees in Scope" value={activationResult.employeesInScope} tone="accent"/>
-                    <Stat label="Reviews Created" value={activationResult.reviewsCreated} tone="success"/>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    setShowActivationResult(false);
-                    setActivationResult(null);
-                    setSelectedCycle(null);
-                  }}
-                  className="w-full px-4 py-2 bg-accent-700 text-white rounded-lg hover:bg-accent-700"
-                >
-                  Done
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </PageTransition>
+      <ActivationResultModal result={activationResult} onClose={() => setActivationResult(null)}/>
     </AppLayout>
   );
 }

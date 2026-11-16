@@ -1,43 +1,83 @@
 'use client';
 
-import { AlertTriangle } from 'lucide-react';
+import {useEffect} from 'react';
+import Link from 'next/link';
+import {Button} from '@mantine/core';
+import {AlertTriangle, Home, RefreshCw} from 'lucide-react';
+import {handleError} from '@/lib/utils/error-handler';
 
-interface PageErrorFallbackProps {
-  error?: Error | null;
-  title?: string;
-  onReset?: () => void;
+/** Heading text asserted by e2e specs — do not change. */
+export const PAGE_ERROR_TITLE = 'Something went wrong';
+const PAGE_ERROR_DESCRIPTION =
+  'This page ran into an unexpected problem. Try again, or head back to your dashboard.';
+const HOME_HREF = '/me/dashboard';
+
+/** Props Next.js passes to every `error.tsx` route boundary. */
+export interface RouteErrorProps {
+  error: Error & { digest?: string };
+  reset: () => void;
 }
 
+interface PageErrorFallbackProps {
+  error?: (Error & { digest?: string }) | null;
+  title?: string;
+  /** User-safe copy. Raw error messages are never rendered. */
+  description?: string;
+  onReset?: () => void;
+  /** Tag forwarded to the error tracker to identify the boundary. */
+  source?: string;
+}
+
+/**
+ * Shared body for route `error.tsx` boundaries and page-level fallbacks.
+ * Renders inside the persistent shell; logs via the dev-gated error handler.
+ */
 export function PageErrorFallback({
-                                    error,
-                                    title = 'Failed to load page',
-                                    onReset,
-                                  }: PageErrorFallbackProps) {
+  error,
+  title = PAGE_ERROR_TITLE,
+  description = PAGE_ERROR_DESCRIPTION,
+  onReset,
+  source = 'page-error-boundary',
+}: PageErrorFallbackProps) {
+  useEffect(() => {
+    if (error) handleError(error, {source, digest: error.digest});
+  }, [error, source]);
+
   return (
-    <div className="w-full max-w-xl p-8 mx-auto flex flex-col items-center justify-center text-center">
-      <div className="w-16 h-16 rounded-full bg-[var(--err-bg)] flex items-center justify-center mb-6">
-        <AlertTriangle className="w-8 h-8 text-[var(--err-fg)]" />
+    <div
+      role="alert"
+      className="mx-auto flex w-full max-w-xl flex-col items-center px-4 py-16 text-center"
+    >
+      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--err-bg)]">
+        <AlertTriangle className="h-5 w-5 text-[var(--err-fg)]" aria-hidden="true" />
       </div>
-      <h2 className="text-aura-title text-[var(--text-1)] mb-2">{title}</h2>
-      <p className="text-sm text-[var(--text-2)] mb-8 max-w-md leading-relaxed">
-        {error?.message || 'An unexpected error occurred. Please try refreshing the page.'}
-      </p>
-      <div className="flex gap-2">
+      <h1 className="mb-2 text-xl font-semibold text-[var(--text-1)]">{title}</h1>
+      <p className="mb-6 max-w-md text-sm text-[var(--text-2)]">{description}</p>
+      {error?.digest && (
+        <p className="-mt-4 mb-6 text-xs text-[var(--text-3)]">
+          Reference: <span className="num">{error.digest}</span>
+        </p>
+      )}
+      <div className="flex flex-wrap justify-center gap-2">
         {onReset && (
-          <button
-            onClick={onReset}
-            className="px-4 py-2 text-sm font-medium rounded-[var(--r-control)] bg-[var(--surface)] text-[var(--text-2)] hover:bg-[var(--surface-2)] border border-[var(--border-soft)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
-          >
-            Try again
-          </button>
+          <Button onClick={onReset} leftSection={<RefreshCw className="h-4 w-4" aria-hidden="true" />}>
+            Retry
+          </Button>
         )}
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 text-sm font-medium rounded-[var(--r-control)] bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+        <Button
+          component={Link}
+          href={HOME_HREF}
+          variant="default"
+          leftSection={<Home className="h-4 w-4" aria-hidden="true" />}
         >
-          Refresh page
-        </button>
+          Go to dashboard
+        </Button>
       </div>
     </div>
   );
+}
+
+/** Drop-in body for `app/**\/error.tsx` files. */
+export function RouteErrorFallback({error, reset, source}: RouteErrorProps & { source?: string }) {
+  return <PageErrorFallback error={error} onReset={reset} source={source} />;
 }

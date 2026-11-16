@@ -67,6 +67,7 @@ export function useCreateSurvey() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -94,6 +95,7 @@ export function useUpdateSurvey() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -134,6 +136,7 @@ export function useLaunchSurvey() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -160,6 +163,7 @@ export function useCompleteSurvey() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -185,6 +189,7 @@ export function useDeleteSurvey() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',

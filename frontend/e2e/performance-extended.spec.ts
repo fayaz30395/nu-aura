@@ -203,7 +203,7 @@ test.describe('Performance - Competency Framework', () => {
     await loginAs(page, testUsers.admin.email);
     await navigateTo(page, '/performance/competency-framework');
 
-    await expect(page.getByText('Review Cycle')).toBeVisible({timeout: LOAD_TIMEOUT});
+    await expect(page.getByLabel('Review Cycle')).toBeVisible({timeout: LOAD_TIMEOUT});
     await expect(page.locator('select').first()).toBeVisible();
     // Without selecting a cycle, the empty-state prompt should be shown
     await expect(page.getByText('Select a review cycle')).toBeVisible();
@@ -727,7 +727,7 @@ test.describe('Performance - Feedback', () => {
     await expect(page.getByRole('heading', {name: /Give Feedback/i})).toBeVisible({
       timeout: MODAL_TIMEOUT,
     });
-    await expect(page.getByText('Recipient Employee ID *')).toBeVisible();
+    await expect(page.getByText('Recipient *')).toBeVisible();
     await expect(page.getByText('Feedback Type *')).toBeVisible();
     await expect(page.getByText(/Feedback \*/i)).toBeVisible();
     // Checkboxes for anonymous and public

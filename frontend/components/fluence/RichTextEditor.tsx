@@ -581,7 +581,7 @@ export default function RichTextEditor({
                   '#eef1f9',
                   '#ff0000',
                   '#00bb00',
-                  '#2952A3',
+                  '#2563EB',
                   '#ffff00',
                   '#ff00ff',
                   '#00cccc',

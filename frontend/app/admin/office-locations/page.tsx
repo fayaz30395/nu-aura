@@ -105,12 +105,6 @@ export default function OfficeLocationsPage() {
             reset();
             toast.success('Location updated successfully');
           },
-          onError: (error: unknown) => {
-            toast.error(
-              (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-              'Failed to update location'
-            );
-          },
         }
       );
     } else {
@@ -120,12 +114,6 @@ export default function OfficeLocationsPage() {
           setEditingId(null);
           reset();
           toast.success('Location created successfully');
-        },
-        onError: (error: unknown) => {
-          toast.error(
-            (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-            'Failed to create location'
-          );
         },
       });
     }
@@ -160,12 +148,6 @@ export default function OfficeLocationsPage() {
       onSuccess: () => {
         setShowDeleteConfirm(false);
         setLocationToDelete(null);
-      },
-      onError: (error: unknown) => {
-        toast.error(
-          (error as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          'Failed to delete location'
-        );
       },
     });
   };

@@ -187,6 +187,7 @@ export default function TemplateEditorPage() {
               <Button
                 variant="outline"
                 size="sm"
+                aria-label="Go back"
                 className="rounded-lg h-12 w-12 p-0 border-[var(--border-main)] bg-[var(--bg-elevated)] group"
                 onClick={() => router.back()}
               >
@@ -264,7 +265,7 @@ export default function TemplateEditorPage() {
             {/* Right Panel: Task Orchestration */}
             <div className="lg:col-span-2 space-y-6">
               <Card
-                className="shadow-[var(--shadow-card)] bg-[var(--bg-card)] border border-[var(--border-main)] overflow-hidden min-h-[600px]">
+                className="shadow-[var(--shadow-card)] bg-[var(--bg-card)] border border-[var(--border-main)] overflow-hidden">
                 <CardHeader className="p-8 flex flex-row items-center justify-between divider-b">
                   <CardTitle
                     className="text-sm font-black uppercase tracking-widest text-[var(--text-muted)] flex items-center gap-2">
@@ -302,7 +303,7 @@ export default function TemplateEditorPage() {
                                   <h4 className="font-black text-[var(--text-primary)] text-lg">{task.taskName}</h4>
                                   {task.isMandatory && (
                                     <Badge variant="danger"
-                                           className="rounded-lg px-2 py-0.5 font-black text-[8px] tracking-widest uppercase bg-danger-500 text-white">
+                                           className="rounded-lg px-2 py-0.5 font-black text-2xs tracking-widest uppercase bg-danger-500 text-white">
                                       Required
                                     </Badge>
                                   )}
@@ -331,6 +332,7 @@ export default function TemplateEditorPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
+                                aria-label="Edit task"
                                 className="h-10 w-10 p-0 rounded-lg border-[var(--border-subtle)] opacity-0 group-hover:opacity-100 transition-all"
                                 onClick={() => editTask(task)}
                               >
@@ -339,6 +341,7 @@ export default function TemplateEditorPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
+                                aria-label="Delete task"
                                 className="h-10 w-10 p-0 rounded-lg border-[var(--border-subtle)] text-danger-500 hover:bg-danger-500 hover:text-white opacity-0 group-hover:opacity-100 transition-all"
                                 onClick={() => handleDeleteTask(task.id)}
                               >

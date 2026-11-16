@@ -51,7 +51,7 @@ export default function SettlementApprovalQueuePage() {
         icon: <IconCheck size={16}/>,
       });
     } catch {
-      notifications.show({title: 'Approval Failed', message: 'Unable to approve settlement. Please try again.', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 

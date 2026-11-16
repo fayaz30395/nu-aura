@@ -83,6 +83,7 @@ export function useCreateTrainingProgram() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -110,6 +111,7 @@ export function useUpdateTrainingProgram() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -135,6 +137,7 @@ export function useDeleteTrainingProgram() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -161,6 +164,7 @@ export function useEnrollInTraining() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -188,6 +192,7 @@ export function useUpdateEnrollmentStatus() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',

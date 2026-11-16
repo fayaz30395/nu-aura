@@ -20,6 +20,7 @@ export function useReportDownload() {
       if (!fn) throw new Error(`Unknown report type: ${type}`);
       return fn(request);
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       notifications.show({
         title: 'Download Failed',

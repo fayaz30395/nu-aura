@@ -1,5 +1,6 @@
 'use client';
 
+import {Progress} from '@/components/ui';
 import {useState} from 'react';
 import {Spinner} from '@/components/ui/Spinner';
 import Image from 'next/image';
@@ -221,10 +222,8 @@ export default function CourseDetailPage() {
                 {/* Completion percentage */}
                 <div className="mb-6">
                   <div className="flex items-center gap-4 mb-4">
-                    <div className="flex-1 h-3 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-accent-600 to-accent-400 rounded-full transition-all duration-500"
-                        style={{width: `${completionPercentage}%`}}/>
+                    <div className="flex-1">
+                      <Progress value={completionPercentage} size="md" label="Course completion"/>
                     </div>
                     <span className="text-sm font-bold text-[var(--text-primary)]">{completionPercentage}%</span>
                   </div>
@@ -403,9 +402,7 @@ export default function CourseDetailPage() {
                       <span className="text-[var(--text-secondary)]">Progress</span>
                       <span className="font-semibold text-[var(--text-primary)]">{progress}%</span>
                     </div>
-                    <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                      <div className="h-full bg-accent-600 rounded-full" style={{width: `${progress}%`}}/>
-                    </div>
+                    <Progress value={progress} label="Course progress"/>
                   </div>
 
                   {enrollment?.status === 'COMPLETED' && !enrollment?.certificateId && (

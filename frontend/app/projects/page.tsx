@@ -553,9 +553,8 @@ export default function ProjectsPage() {
       link.click();
       URL.revokeObjectURL(url);
       toast.success('Export Complete', 'Projects exported as CSV');
-    } catch (err) {
-      const apiError = parseApiError(err);
-      toast.error('Export Failed', apiError.message || 'Could not export projects');
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 

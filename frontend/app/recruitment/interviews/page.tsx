@@ -1,4 +1,5 @@
 'use client';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 import React, {Suspense, useMemo, useRef, useState} from 'react';
 import {useSearchParams} from 'next/navigation';
@@ -324,11 +325,7 @@ function InterviewsPage() {
       setCreateMeetToggle(false);
       // React Query auto-refetches via invalidateQueries in the mutation hook
     } catch (_err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to save interview',
-        color: 'red',
-      });
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -365,11 +362,7 @@ function InterviewsPage() {
       resetFeedback();
       // React Query auto-refetches via invalidateQueries in the mutation hook
     } catch (_err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to submit feedback',
-        color: 'red',
-      });
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -430,11 +423,7 @@ function InterviewsPage() {
       setInterviewToDelete(null);
       // React Query auto-refetches via invalidateQueries in the mutation hook
     } catch (_err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to delete interview',
-        color: 'red',
-      });
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -459,11 +448,7 @@ function InterviewsPage() {
       setGeneratedQuestions(response);
       setShowQuestionsModal(true);
     } catch (_err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to generate interview questions',
-        color: 'red',
-      });
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -618,12 +603,10 @@ function InterviewsPage() {
   return (
     <AppLayout activeMenuItem="recruitment">
       <PageTransition className="p-6 space-y-6">
-        {/* Header */}
-        <div className="row-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Interviews</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Schedule and manage candidate interviews</p>
-          </div>
+        <PageHeader
+          title="Interviews"
+          description="Schedule and manage candidate interviews"
+          actions={
           <Button onClick={() => {
             resetCreate();
             setEditingInterview(null);
@@ -632,7 +615,8 @@ function InterviewsPage() {
             <Plus className="h-4 w-4"/>
             Schedule Interview
           </Button>
-        </div>
+          }
+        />
 
         {/* Stats Cards */}
         <Stagger className="grid grid-cols-1 md:grid-cols-4 gap-4">

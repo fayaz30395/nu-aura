@@ -68,7 +68,7 @@ function DashboardCards({dashboard}: {dashboard?: BudgetDashboard}) {
               <Icon className="w-4 h-4 text-[var(--text-muted)]"/>
             </div>
             <div>
-              <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wide">{label}</p>
+              <p className="text-2xs text-[var(--text-muted)] uppercase tracking-wide">{label}</p>
               <p className="text-sm font-semibold text-[var(--text-primary)]">{value}</p>
             </div>
           </CardContent>
@@ -107,7 +107,7 @@ function BudgetRow({budget, isAdmin}: {budget: HeadcountBudgetResponse; isAdmin:
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-[var(--text-primary)] truncate">{budget.name}</span>
-            <Badge variant={statusVariant(budget.status)} className="text-[10px] shrink-0">{budget.status}</Badge>
+            <Badge variant={statusVariant(budget.status)} className="text-2xs shrink-0">{budget.status}</Badge>
           </div>
           <p className="text-xs text-[var(--text-muted)] mt-0.5">
             {budget.departmentName} · FY{budget.fiscalYear}{budget.quarter ? ` Q${budget.quarter}` : ''}
@@ -115,7 +115,7 @@ function BudgetRow({budget, isAdmin}: {budget: HeadcountBudgetResponse; isAdmin:
         </div>
         <div className="text-right shrink-0">
           <p className="text-sm font-semibold text-[var(--text-primary)]">{fmt(budget.totalBudget, budget.currency)}</p>
-          <p className="text-[10px] text-[var(--text-muted)]">{pct.toFixed(0)}% utilized</p>
+          <p className="text-2xs text-[var(--text-muted)]">{pct.toFixed(0)}% utilized</p>
         </div>
       </button>
 

@@ -2,6 +2,22 @@ import {defineConfig, devices} from '@playwright/test';
 
 process.env.NEXT_PUBLIC_E2E_AUTH_STORAGE ??= 'localStorage';
 
+const IS_CI = !!process.env.CI;
+const USE_BUILD = process.env.PLAYWRIGHT_USE_BUILD === '1';
+const AUTH_DIR = 'playwright/.auth';
+
+// Role aliases match roleAliases in e2e/fixtures/testData.ts (written by e2e/auth.setup.ts).
+// Specs live in e2e/roles/<alias>/ ; sa has no role project (it backs `smoke`).
+const ROLE_PROJECTS = ['emp', 'tl', 'mgr', 'hrm', 'hra', 'rec', 'fin', 'ta'] as const;
+const VIEWPORTS = [
+  {name: 'ui-1440', width: 1440, height: 900},
+  {name: 'ui-1280', width: 1280, height: 800},
+  {name: 'ui-768', width: 768, height: 1024},
+  {name: 'ui-390', width: 390, height: 844},
+] as const;
+// SA state exists only when E2E_ALLOW_SUPER_ADMIN=true; otherwise fall back to the HRA state.
+const SMOKE_STATE = `${AUTH_DIR}/${process.env.E2E_ALLOW_SUPER_ADMIN === 'true' ? 'sa' : 'hra'}.json`;
+
 /**
  * Playwright E2E Test Configuration for HRMS Frontend
  *
@@ -24,7 +40,7 @@ export default defineConfig({
   // routes warmed up. Production-build runs (PLAYWRIGHT_USE_BUILD=1) can
   // shorten this back to 60s once we wire `next build && next start` into
   // the test webServer.
-  timeout: 120 * 1000,
+  timeout: (USE_BUILD ? 60 : 120) * 1000,
 
   // Maximum time to wait for each assertion
   expect: {
@@ -41,18 +57,21 @@ export default defineConfig({
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: !!process.env.CI,
 
-  // Retry on CI only
-  retries: process.env.CI ? 2 : 1,
+  // A test that needs a retry is flaky: quarantine it with @flaky + an issue id.
+  retries: IS_CI ? 1 : 0,
 
   // Number of parallel workers
   workers: process.env.CI ? 2 : 4,
 
   // Reporter to use
-  reporter: [
-    ['html', {outputFolder: 'playwright-report'}],
-    ['json', {outputFile: 'playwright-report/results.json'}],
-    ['list'],
-  ],
+  // Tags: @smoke @regression @security @ui @a11y @perf @rbac @journey (select with --grep).
+  reporter: IS_CI
+    ? [['blob'], ['list']]
+    : [
+        ['html', {outputFolder: 'playwright-report'}],
+        ['json', {outputFile: 'playwright-report/results.json'}],
+        ['list'],
+      ],
 
   // Shared settings for all projects
   use: {
@@ -100,65 +119,59 @@ export default defineConfig({
       testMatch: /credential-free\.smoke\.spec\.ts/,
     },
 
+    // SA (or HRA fallback) smoke: route-smoke + critical journeys.
     {
-      name: 'chromium',
-      use: {
-        ...devices['Desktop Chrome'],
-        // Use stored auth state
-        storageState: 'playwright/.auth/user.json',
-        launchOptions: {
-          args: ['--disable-web-security'],
-        },
-      },
+      name: 'smoke',
+      use: {...devices['Desktop Chrome'], storageState: SMOKE_STATE},
       dependencies: ['setup'],
+      testIgnore: [/roles\//, /security\//, /ui\//, /accessibility\//, /mobile\//, /security-.*\.spec\.ts/, /auth-.*\.spec\.ts/, /ui-ux-.*\.spec\.ts/],
     },
 
-    {
-      name: 'firefox',
-      use: {
-        ...devices['Desktop Firefox'],
-        // Use stored auth state
-        storageState: 'playwright/.auth/user.json',
-      },
+    // One project per role, each with its own storageState from auth.setup.ts.
+    ...ROLE_PROJECTS.map((role) => ({
+      name: role,
+      use: {...devices['Desktop Chrome'], storageState: `${AUTH_DIR}/${role}.json`},
       dependencies: ['setup'],
+      testMatch: new RegExp(`roles/${role}/.*\\.spec\\.ts`),
+    })),
+
+    // Fresh context, no stored auth. Login/lockout specs create their own sessions.
+    {
+      name: 'security',
+      use: {...devices['Desktop Chrome'], storageState: {cookies: [], origins: []}},
+      testMatch: /security\/.*\.spec\.ts|security-.*\.spec\.ts|auth-.*\.spec\.ts/,
     },
 
-    // Mobile viewport projects
-    {
-      name: 'mobile-chrome',
-      use: {
-        ...devices['Pixel 5'],
-        storageState: 'playwright/.auth/user.json',
-      },
+    // Overflow / visual checks at four viewports, authenticated as HRA.
+    ...VIEWPORTS.map(({name, width, height}) => ({
+      name,
+      use: {...devices['Desktop Chrome'], viewport: {width, height}, storageState: `${AUTH_DIR}/hra.json`},
       dependencies: ['setup'],
-      testMatch: /.*\.mobile\.spec\.ts/,
-    },
+      testMatch: /ui\/.*\.spec\.ts|ui-ux-.*\.spec\.ts/,
+    })),
 
     {
-      name: 'mobile-safari',
-      use: {
-        ...devices['iPhone 13'],
-        storageState: 'playwright/.auth/user.json',
-      },
+      name: 'a11y',
+      use: {...devices['Desktop Chrome'], storageState: `${AUTH_DIR}/hra.json`},
       dependencies: ['setup'],
-      testMatch: /.*\.mobile\.spec\.ts/,
+      testMatch: /accessibility\/.*\.spec\.ts/,
     },
 
-    // Tablet viewport project
-    {
-      name: 'tablet',
-      use: {
-        ...devices['iPad Pro 11'],
-        storageState: 'playwright/.auth/user.json',
-      },
-      dependencies: ['setup'],
-      testMatch: /.*\.mobile\.spec\.ts/,
-    },
+    // Firefox is opt-in: PW_FIREFOX=1
+    ...(process.env.PW_FIREFOX === '1'
+      ? [
+          {
+            name: 'firefox',
+            use: {...devices['Desktop Firefox'], storageState: SMOKE_STATE},
+            dependencies: ['setup'],
+          },
+        ]
+      : []),
   ],
 
   // Run your local dev server before starting the tests
   webServer: {
-    command: 'npm run dev',
+    command: USE_BUILD ? 'next build && next start -p 3000' : 'npm run dev',
     env: {
       NEXT_PUBLIC_E2E_AUTH_STORAGE: 'localStorage',
     },

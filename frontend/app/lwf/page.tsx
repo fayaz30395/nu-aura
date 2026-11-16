@@ -40,6 +40,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
@@ -137,6 +138,7 @@ export default function LWFPage() {
   const [activeTab, setActiveTab] = useState<string | null>('configurations');
   const [configModalOpen, setConfigModalOpen] = useState(false);
   const [editingConfig, setEditingConfig] = useState<LWFConfiguration | null>(null);
+  const [deactivateTarget, setDeactivateTarget] = useState<string | null>(null);
 
   // Deductions tab state
   const now = new Date();
@@ -215,6 +217,7 @@ export default function LWFPage() {
   };
 
   const onSubmitConfig = (data: LWFConfigFormData) => {
+    if (createOrUpdate.isPending) return;
     const request: LWFConfigurationRequest = {
       stateCode: data.stateCode.toUpperCase(),
       stateName: data.stateName,
@@ -235,10 +238,11 @@ export default function LWFPage() {
     });
   };
 
-  const handleDeactivate = (stateCode: string) => {
-    if (window.confirm(`Deactivate LWF configuration for ${stateCode}?`)) {
-      deactivate.mutate(stateCode);
-    }
+  const handleDeactivateConfirm = () => {
+    if (!deactivateTarget || deactivate.isPending) return;
+    deactivate.mutate(deactivateTarget, {
+      onSuccess: () => setDeactivateTarget(null),
+    });
   };
 
   const exportDeductionsCSV = () => {
@@ -369,7 +373,7 @@ export default function LWFPage() {
                                 <Tooltip label="Deactivate">
                                   <ActionIcon variant="subtle" color="red"
                                               aria-label="Deactivate LWF configuration"
-                                              onClick={() => handleDeactivate(config.stateCode)}>
+                                              onClick={() => setDeactivateTarget(config.stateCode)}>
                                     <IconTrash size={16}/>
                                   </ActionIcon>
                                 </Tooltip>
@@ -694,6 +698,18 @@ export default function LWFPage() {
             </Stack>
           </form>
         </Modal>
+
+        <ConfirmDialog
+          isOpen={deactivateTarget !== null}
+          onClose={() => setDeactivateTarget(null)}
+          onConfirm={handleDeactivateConfirm}
+          title="Deactivate LWF configuration?"
+          message={`Deactivate the LWF configuration for ${deactivateTarget ?? ''}? Labour Welfare Fund deductions will stop for this state until it is reactivated.`}
+          confirmText="Deactivate"
+          cancelText="Keep active"
+          type="danger"
+          loading={deactivate.isPending}
+        />
       </Container>
     </AppLayout>
   );

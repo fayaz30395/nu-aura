@@ -72,9 +72,6 @@ export default function ApprovalsPage() {
           refetchRequests();
           toast.success('Request Approved', 'Over-allocation request has been approved');
         },
-        onError: (error: Error) => {
-          toast.error('Approval Failed', error.message || 'Failed to approve the request');
-        },
       }
     );
   };
@@ -93,9 +90,6 @@ export default function ApprovalsPage() {
           setSelectedRequest(null);
           refetchRequests();
           toast.info('Request Rejected', 'Over-allocation request has been rejected');
-        },
-        onError: (error: Error) => {
-          toast.error('Rejection Failed', error.message || 'Failed to reject the request');
         },
       }
     );

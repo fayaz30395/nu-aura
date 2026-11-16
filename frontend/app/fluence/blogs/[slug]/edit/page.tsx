@@ -12,7 +12,6 @@ import {useBlogCategories, useBlogPost, useEditLock, useUpdateBlogPost,} from '@
 import {notifications} from '@mantine/notifications';
 import {LoadingOverlay, MultiSelect, Select, Skeleton, Textarea, TextInput} from '@mantine/core';
 import {ArrowLeft, RefreshCw, Save} from 'lucide-react';
-import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import EditLockWarning from '@/components/fluence/EditLockWarning';
 import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
@@ -141,12 +140,6 @@ export default function EditBlogPost() {
               color: 'green',
             });
             router.push(`/fluence/blogs/${post.id}`);
-          },
-          onError: (error: unknown) => {
-            const message = isAxiosError(error) && typeof error.response?.data === 'object' && error.response?.data !== null && 'message' in error.response.data
-              ? (error.response.data as { message?: string }).message ?? 'Failed to update blog post'
-              : 'Failed to update blog post';
-            notifications.show({title: 'Error', message, color: 'red'});
           },
         }
       );

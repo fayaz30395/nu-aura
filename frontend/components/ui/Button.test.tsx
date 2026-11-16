@@ -57,6 +57,29 @@ describe('Button', () => {
     });
   });
 
+  describe('flat brand system', () => {
+    it('primary is flat: no gradient, lift or glow', () => {
+      render(<Button>Primary</Button>);
+      const cls = screen.getByRole('button').className;
+      expect(cls).not.toMatch(/gradient|-translate-y|shadow-\[/);
+    });
+
+    it('all sizes share the 8px radius token', () => {
+      render(<><Button size="sm">a</Button><Button size="md">b</Button><Button size="lg">c</Button></>);
+      screen.getAllByRole('button').forEach((b) => expect(b.className).toContain('rounded-[var(--radius-md)]'));
+    });
+
+    it('renders solid destructive variant', () => {
+      render(<Button variant="destructive">Delete</Button>);
+      expect(screen.getByRole('button').className).toContain('bg-[var(--err-fg)]');
+    });
+
+    it('keeps aria-busy while loading', () => {
+      render(<Button isLoading>Save</Button>);
+      expect(screen.getByRole('button')).toHaveAttribute('aria-busy', 'true');
+    });
+  });
+
   describe('sizes', () => {
     // Studio Slate v2 canonical sizes: md=h-9 (36px), lg=h-11 (44px), xl=h-12 (48px).
     // See frontend/app/globals.css `.btn-primary` and DESIGN.md "Spacing — Button height".

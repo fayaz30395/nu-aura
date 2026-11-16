@@ -445,10 +445,10 @@ export default function ApprovalInboxPage() {
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
             <div className="space-y-2.5">
               {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} className="h-[88px] rounded-[var(--r-lg)]"/>
+                <Skeleton key={i} className="h-20 rounded-[var(--r-lg)]"/>
               ))}
             </div>
-            <Skeleton className="h-[420px] rounded-[var(--r-lg)]"/>
+            <Skeleton className="h-96 rounded-[var(--r-lg)]"/>
           </div>
         ) : items.length === 0 ? (
           <EmptyState
@@ -498,7 +498,7 @@ export default function ApprovalInboxPage() {
                 />
               ) : (
                 <div
-                  className="flex min-h-[280px] items-center justify-center rounded-[var(--r-lg)] border border-dashed border-[var(--border)] bg-[var(--surface)] p-8 text-sm text-[var(--text-3)]">
+                  className="flex min-h-72 items-center justify-center rounded-[var(--r-lg)] border border-dashed border-[var(--border)] bg-[var(--surface)] p-8 text-sm text-[var(--text-3)]">
                   Select a request from the left to review and decide.
                 </div>
               )}
@@ -831,21 +831,21 @@ function InboxListItem({
       {/* Type icon tile */}
       <span
         className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-[var(--r-md)] bg-[var(--accent-soft)] text-[var(--accent-text)]">
-        <TypeIcon className="h-[17px] w-[17px]"/>
+        <TypeIcon className="h-4 w-4"/>
       </span>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="min-w-0 truncate text-[13px] font-bold text-[var(--text-1)]">
+          <span className="min-w-0 truncate text-sm font-bold text-[var(--text-1)]">
             {item.requesterName ?? 'Unknown'}
           </span>
           {item.submittedAt && (
-            <span className="num ml-auto flex-shrink-0 text-[11px] text-[var(--text-3)]">
+            <span className="num ml-auto flex-shrink-0 text-2xs text-[var(--text-3)]">
               {formatRelative(item.submittedAt)}
             </span>
           )}
         </div>
-        <div className="mt-[3px] truncate text-[12.5px] text-[var(--text-2)]">
+        <div className="mt-0.5 truncate text-xs text-[var(--text-2)]">
           {item.title}
         </div>
         <div className="mt-2 flex items-center gap-2">
@@ -910,14 +910,14 @@ function DetailPane({
           <div className="truncate font-display text-base font-bold text-[var(--text-1)]">
             {item.requesterName ?? 'Unknown'}
           </div>
-          <div className="truncate text-[13px] text-[var(--text-3)]">
+          <div className="truncate text-sm text-[var(--text-3)]">
             {item.currentStepName ?? 'Pending review'}
           </div>
         </div>
         <div className="text-right">
           <Badge variant="primary" size="sm" dot dotColor="info">{item.module}</Badge>
           {item.referenceNumber && (
-            <div className="num mt-1.5 text-[11.5px] text-[var(--text-3)]">#{item.referenceNumber}</div>
+            <div className="num mt-1.5 text-2xs text-[var(--text-3)]">#{item.referenceNumber}</div>
           )}
         </div>
       </div>
@@ -925,7 +925,7 @@ function DetailPane({
       {/* Body */}
       <div className="px-6 py-5">
         <div className="mb-3 flex items-center justify-between">
-          <h3 className="text-[15px] font-bold leading-tight text-[var(--text-1)]">Request details</h3>
+          <h3 className="text-base font-bold leading-tight text-[var(--text-1)]">Request details</h3>
           <Badge variant={isPending ? 'warning' : 'default'} size="sm" dot dotColor={isPending ? 'warning' : 'default'}>
             {isPending ? 'Pending' : item.status}
           </Badge>
@@ -934,8 +934,8 @@ function DetailPane({
         <dl className="divide-y divide-[var(--border-soft)]">
           {detail.map(([k, v]) => (
             <div key={k} className="flex items-start justify-between gap-4 py-2.5">
-              <dt className="text-[13px] text-[var(--text-3)]">{k}</dt>
-              <dd className="max-w-[60%] text-right text-[13px] font-medium text-[var(--text-1)]">{v}</dd>
+              <dt className="text-sm text-[var(--text-3)]">{k}</dt>
+              <dd className="max-w-[60%] text-right text-sm font-medium text-[var(--text-1)]">{v}</dd>
             </div>
           ))}
         </dl>
@@ -944,17 +944,17 @@ function DetailPane({
         <div className="text-aura-micro mb-3 mt-6 text-[var(--text-3)]">Approval chain</div>
         <ol className="relative space-y-4 pl-7">
           <span aria-hidden="true"
-                className="absolute left-[10px] top-1.5 bottom-1.5 w-px bg-[var(--border)]"/>
+                className="absolute left-2.5 top-1.5 bottom-1.5 w-px bg-[var(--border)]"/>
           <li className="relative">
             <span
               className="absolute -left-7 top-0 grid h-5 w-5 place-items-center rounded-full bg-[var(--ok-fg)] text-white ring-2 ring-[var(--surface)]">
               <Check className="h-2.5 w-2.5"/>
             </span>
-            <div className="text-[13px] font-semibold text-[var(--text-1)]">
+            <div className="text-sm font-semibold text-[var(--text-1)]">
               {item.requesterName ?? 'Requester'} submitted
             </div>
             {item.submittedAt && (
-              <div className="num text-[11.5px] text-[var(--text-3)]">{formatRelative(item.submittedAt)}</div>
+              <div className="num text-2xs text-[var(--text-3)]">{formatRelative(item.submittedAt)}</div>
             )}
           </li>
           <li className="relative">
@@ -962,15 +962,15 @@ function DetailPane({
               className="absolute -left-7 top-0 grid h-5 w-5 place-items-center rounded-full bg-[var(--ok-fg)] text-white ring-2 ring-[var(--surface)]">
               <Check className="h-2.5 w-2.5"/>
             </span>
-            <div className="text-[13px] font-semibold text-[var(--text-1)]">Manager endorsed</div>
-            <div className="text-[11.5px] text-[var(--text-3)]">Auto-routed</div>
+            <div className="text-sm font-semibold text-[var(--text-1)]">Manager endorsed</div>
+            <div className="text-2xs text-[var(--text-3)]">Auto-routed</div>
           </li>
           <li className="relative">
             <span
               className="absolute -left-7 top-0 grid h-5 w-5 place-items-center rounded-full bg-[var(--accent)] text-white ring-2 ring-[var(--surface)]">
               <Clock className="h-2.5 w-2.5"/>
             </span>
-            <div className="text-[13px] font-semibold text-[var(--text-1)]">
+            <div className="text-sm font-semibold text-[var(--text-1)]">
               Your approval{' '}
               <span className="font-normal text-[var(--text-3)]">
                 · {isPending ? 'pending' : item.status.toLowerCase()}

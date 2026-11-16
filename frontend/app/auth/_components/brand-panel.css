@@ -1,5 +1,5 @@
 /* Hallmark redesign · genre: modern-minimal · direction: dark-luxury editorial
-   Scope: visual layer only. Locked to the frozen Aura tokens (accent #2952A3,
+   Scope: visual layer only. Locked to the frozen Aura tokens (accent #2563EB,
    Montserrat display, Roboto Mono numerals) — no new palette introduced.
 
    NU-AURA Aura — Auth brand panel (page-local).
@@ -17,7 +17,7 @@
   align-items: center;
   border-radius: var(--r-xl, 16px);
   padding: clamp(2.25rem, 3.6vw, 3.75rem);
-  background: #0f1424;
+  background: #141416;
   color: #f6f8ff;
   box-shadow: var(--sh-lg);
   isolation: isolate;
@@ -32,7 +32,7 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(720px 520px at 12% 8%, rgba(68, 99, 207, 0.26), transparent 58%),
+    radial-gradient(720px 520px at 12% 8%, rgba(110, 168, 254, 0.18), transparent 58%),
     radial-gradient(560px 440px at 94% 98%, rgba(123, 70, 155, 0.14), transparent 60%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 38%);
 }

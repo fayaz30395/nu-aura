@@ -397,7 +397,7 @@ function BentoTile({title, description, icon: Icon, href, badge}: {
     >
       <Link
         href={href}
-        className="group flex h-full min-h-[7.25rem] items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-4 transition-all hover:border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
+        className="group flex h-full min-h-28 items-start gap-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border-subtle)] p-4 transition-all hover:border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] focus-visible:ring-offset-2"
       >
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
           <Icon className="h-4 w-4" aria-hidden="true" />

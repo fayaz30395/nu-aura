@@ -1,14 +1,14 @@
 'use client';
 
-import {ReactNode, useEffect, useRef, useState} from 'react';
+import {ReactNode, useEffect, useRef, useState, useSyncExternalStore} from 'react';
 import {usePathname, useRouter} from 'next/navigation';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {usePermissions} from '@/lib/hooks/usePermissions';
 import {findRouteConfig, isPublicRoute, RouteConfig,} from '@/lib/config/routes';
-import {SkeletonDashboard} from '@/components/ui/Skeleton';
+import {ShellSkeleton} from '@/components/layout/ShellSkeleton';
+import {isShellRoute} from '@/components/layout/shell/shellRoutes';
 import {PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {logger} from '@/lib/utils/logger';
-import {RefreshCw} from 'lucide-react';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -17,6 +17,8 @@ interface AuthGuardProps {
   /** Optional custom access denied component */
   accessDeniedComponent?: ReactNode;
 }
+
+const subscribeNoop = () => () => {};
 
 /**
  * AuthGuard component that protects routes based on authentication and permissions
@@ -56,10 +58,16 @@ export function AuthGuard({
   // Note: Middleware handles the primary 401 → login redirect via cookie inspection
   const isSuperAdmin = roles.includes('SUPER_ADMIN');
 
-  // Always start as null (matches SSR render → skeleton loader) to prevent hydration mismatch.
-  // Both server and client render skeleton loader initially; the useEffect below sets the
-  // correct authorization state after React has hydrated, avoiding any SSR mismatch.
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  // false during SSR and the hydration render, true afterwards (and on client-only mounts).
+  // The auth store rehydrates synchronously from sessionStorage on the client, so without
+  // this the hydration render would diverge from the server's loading markup.
+  const isMounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+
+  // Set once session restoration has definitively failed (user is being sent to login).
+  // Route authorization itself is NOT stored in state: it is derived during render from the
+  // current pathname (see deriveAuthorization), so a stale result from a previous route can
+  // never let a forbidden route's children render, not even for one commit.
+  const [sessionRestoreFailed, setSessionRestoreFailed] = useState(false);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
   const restoreAttemptedRef = useRef(false);
   // Mirror of isRestoringSession in a ref so the effect can read it
@@ -84,9 +92,8 @@ export function AuthGuard({
       return;
     }
 
-    // Public routes are always accessible
+    // Public routes are always accessible (no session work needed)
     if (isPublicRoute(pathname)) {
-      setIsAuthorized(true);
       return;
     }
 
@@ -132,7 +139,7 @@ export function AuthGuard({
             } catch {
               window.location.href = loginUrl;
             }
-            setIsAuthorized(false);
+            setSessionRestoreFailed(true);
           }
           // If restored, the isAuthenticated state change will re-trigger this effect
         }).catch(() => {
@@ -154,50 +161,19 @@ export function AuthGuard({
         } catch {
           window.location.href = loginUrl;
         }
-        setIsAuthorized(false);
+        setSessionRestoreFailed(true);
       }
       return;
     }
 
-    // Reset restore flag on successful auth (for future navigations)
+    // Reset restore flags on successful auth (for future navigations)
     restoreAttemptedRef.current = false;
+    setSessionRestoreFailed(false);
 
     // Force password change: block ALL navigation until the user sets a new password.
     if (user?.mustChangePassword && pathname !== '/auth/change-password') {
       router.replace('/auth/change-password');
       return;
-    }
-
-    // Wait for permissions to be ready before running authorization checks.
-    // At this point we know the user object is loaded (the !user branch above
-    // would have returned), so isReady should be true. This guard is a safety
-    // net for the brief window between user being set and permissions being derived.
-    if (!isReady) {
-      return;
-    }
-
-    // Find route config
-    const routeConfig = findRouteConfig(pathname);
-
-    // No specific config - just requires auth
-    if (!routeConfig) {
-      setIsAuthorized(true);
-      return;
-    }
-
-    // SuperAdmin bypasses all route-level checks
-    if (isSuperAdmin) {
-      setIsAuthorized(true);
-      return;
-    }
-
-    // Check authorization
-    const authorized = checkAuthorization(routeConfig);
-    setIsAuthorized(authorized);
-
-    if (!authorized) {
-      logger.warn(`[AuthGuard] Access denied to ${pathname}`);
-      router.replace('/me/dashboard?denied=1');
     }
 
     return () => {
@@ -206,12 +182,64 @@ export function AuthGuard({
         redirectTimeoutRef.current = null;
       }
     };
-    // Intentional omissions: checkAuthorization is a stable hoisted function; router is stable
-    // from useRouter; restoreSession is a stable Zustand action; isRestoringSession is omitted
-    // to avoid an infinite loop (this effect sets it indirectly via restoreSession().then()).
+    // Intentional omissions: router is stable from useRouter; restoreSession is a stable Zustand
+    // action; isRestoringSession is omitted to avoid an infinite loop (this effect sets it
+    // indirectly via restoreSession().then()).
     // `user` is included so the effect re-runs after restoreSession populates the user object.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname, isAuthenticated, hasHydrated, isReady, isSuperAdmin, user]);
+  }, [pathname, isAuthenticated, hasHydrated, user]);
+
+  // Authorization for the CURRENT pathname, computed synchronously on every render.
+  // null = undecided (show loading), true = render children, false = deny.
+  const isAuthorized = deriveAuthorization();
+  const isRouteDenied = isAuthorized === false && isAuthenticated && !!user;
+
+  useEffect(() => {
+    if (!isRouteDenied) {
+      return;
+    }
+    logger.warn(`[AuthGuard] Access denied to ${pathname}`);
+    router.replace('/me/dashboard?denied=1');
+  }, [isRouteDenied, pathname, router]);
+
+  function deriveAuthorization(): boolean | null {
+    if (!isMounted || !hasHydrated) {
+      return null;
+    }
+
+    if (isPublicRoute(pathname)) {
+      return true;
+    }
+
+    // Session missing or user not loaded yet: undecided while restoring, denied once
+    // restoration has failed (the effect is already redirecting to login).
+    if (!isAuthenticated || !user) {
+      return sessionRestoreFailed ? false : null;
+    }
+
+    // The effect is redirecting to the change-password page.
+    if (user.mustChangePassword && pathname !== '/auth/change-password') {
+      return null;
+    }
+
+    if (!isReady) {
+      return null;
+    }
+
+    const routeConfig = findRouteConfig(pathname);
+
+    // No specific config - just requires auth
+    if (!routeConfig) {
+      return true;
+    }
+
+    // SuperAdmin bypasses all route-level checks
+    if (isSuperAdmin) {
+      return true;
+    }
+
+    return checkAuthorization(routeConfig);
+  }
 
   function checkAuthorization(config: RouteConfig): boolean {
     // Auth only check
@@ -267,7 +295,7 @@ export function AuthGuard({
 
   // Loading state
   if (!hasHydrated || !isReady || isAuthorized === null || isRestoringSession) {
-    if (pathname.startsWith('/me/') && hasHydrated && (isAuthenticated || isRestoringSession)) {
+    if (pathname.startsWith('/me/') && isMounted && hasHydrated && (isAuthenticated || isRestoringSession)) {
       return children;
     }
 
@@ -275,27 +303,9 @@ export function AuthGuard({
       return loadingComponent;
     }
 
-    return (
-      <div className="page-shell-centered fade-slide-up">
-        <div
-          className="page-shell-card border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-card)] p-6"
-        >
-          <div
-            className="mb-5 flex items-center justify-between rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] px-4 py-3"
-          >
-            <div>
-              <p className="text-sm font-medium text-[var(--text-secondary)]">Session restoring</p>
-              <p className="text-xs text-[var(--text-muted)] mt-0.5">Checking your workspace credentials...</p>
-            </div>
-            <RefreshCw className="w-4 h-4 text-accent-600 dark:text-accent-400"/>
-          </div>
-          <SkeletonDashboard/>
-        </div>
-      </div>
-    );
+    return <ShellSkeleton chrome={isShellRoute(pathname)}/>;
   }
 
-  // Access denied
   if (!isAuthorized) {
     if (accessDeniedComponent) {
       return accessDeniedComponent;

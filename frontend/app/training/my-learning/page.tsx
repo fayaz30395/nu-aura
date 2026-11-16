@@ -1,5 +1,6 @@
 'use client';
 
+import {Progress} from '@/components/ui';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {
@@ -51,19 +52,7 @@ function statusLabel(status: CourseEnrollment['status']): string {
 }
 
 function ProgressBar({value}: { value: number }) {
-  const clamped = Math.min(100, Math.max(0, value));
-  const color =
-    clamped === 100 ? 'var(--chart-success)' :
-      clamped >= 50 ? 'var(--chart-warning)' :
-        'var(--chart-primary)';
-  return (
-    <div className="w-full bg-[var(--border-main)] rounded-full h-2.5 overflow-hidden">
-      <div
-        className="h-2.5 rounded-full transition-all duration-300"
-        style={{width: `${clamped}%`, backgroundColor: color}}
-      />
-    </div>
-  );
+  return <Progress value={value} tone={value >= 100 ? 'ok' : 'accent'} size="md" label="Training progress"/>;
 }
 
 // ─── component ──────────────────────────────────────────────────────────────

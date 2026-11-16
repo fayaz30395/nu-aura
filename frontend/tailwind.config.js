@@ -1,48 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 /**
  * NU-AURA Theme - Tailwind CSS Configuration
- * Brand: NULogic — Infinite Innovation
- * Palette: Lapis Blue primary + Red-Orange/Purple accents + Dark Teal depth
- *
- * Design Principles:
- * - NULogic Lapis Blue (#050766) as dominant brand color
- * - Red-Orange (#E62A32) → Purple (#8939A1) gradient for CTAs and energy
- * - Dark Teal (#133E49) for deep backgrounds and section dividers
- * - Near-White (#F4F5F6) for clean card surfaces
- * - Montserrat headings + Open Sans body typography
+ * Neutral Apple-style system: Geist type, refined blue accent (#2563EB / dark #6EA8FE).
+ * Colours resolve to CSS variables in app/globals.css (light + dark).
  */
 
 const gray = {
-  50: '#f7f8fb',
-  100: '#f0f2f7',
-  200: '#dfe2ed',
-  300: '#b8bccf',
-  400: '#8186a0',
-  500: '#5a5f78',
-  600: '#4e5270',
-  700: '#363a52',
-  800: '#1e2240',
-  900: '#0e1225',
-  950: '#080c18',
+  50: '#FAFAFC', 100: '#F5F5F7', 200: '#E5E5EA', 300: '#C7C7CC', 400: '#8E8E93',
+  500: '#6E6E73', 600: '#55555B', 700: '#3A3A3F', 800: '#242428', 900: '#1D1D1F', 950: '#111113',
 };
 
-// ── Aura accent scale (NU-AURA Blue, hue ~228) — anchor #2952A3 (step 700).
-// Mirrors the --aura-accent-* / --accent-* CSS vars in app/globals.css so
-// `bg-accent-700`, `text-accent-600`, `border-accent-300`, etc. match the
-// runtime token values exactly.
-const brand = {
-  50: '#f0f3fc',
-  100: '#dce3f8',
-  200: '#bcc9f2',
-  300: '#92a8e8',
-  400: '#6884dc',
-  500: '#4463cf',
-  600: '#3350b8',
-  700: '#2952A3',
-  800: '#244288',
-  900: '#1d356d',
-  950: '#121f44',
-};
+// Colors defined in app/globals.css as RGB triplets (`--x-rgb`) so the
+// opacity modifiers (`bg-accent-500/10`) keep working against a CSS var.
+const fromVar = (name) => `rgb(var(--${name}-rgb) / <alpha-value>)`;
+
+// ── NULogic accent scale (refined blue) — anchor step 600 (#2563EB).
+// Reads the --aura-accent-* scale, which is theme-independent (same in dark).
+const brand = Object.fromEntries(
+  [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((step) => [step, fromVar(`aura-accent-${step}`)]),
+);
 
 const semanticColors = {
   success: {
@@ -60,29 +36,29 @@ const semanticColors = {
     400: '#FBBF24', 500: '#F59E0B', 600: '#D97706', 700: '#B45309',
     800: '#92400E', 900: '#78350F', 950: '#451A03',
   },
-  // Aura: info === accent (single-hue blue). Mirrors the accent scale.
+  // Info is muted blue-slate (#4A6FA5 family), distinct from the blue accent.
   info: {
-    50: '#f0f3fc', 100: '#dce3f8', 200: '#bcc9f2', 300: '#92a8e8',
-    400: '#6884dc', 500: '#4463cf', 600: '#3350b8', 700: '#2952A3',
-    800: '#244288', 900: '#1d356d', 950: '#121f44',
+    50: '#EDF1F8', 100: '#D3DDEC', 200: '#B3C4DE', 300: '#8FA9D4',
+    400: '#6F8CBF', 500: '#4A6FA5', 600: '#44659A', 700: '#375282',
+    800: '#2B4068', 900: '#1F2E4B', 950: '#141D31',
   },
 };
 
-// ── Aura product accents (bundle rail) — mirror --prod-* CSS vars ──
+// ── Aura product accents (bundle rail) — --prod-* CSS vars ──
 const prod = {
-  hrms: '#4463cf',
-  hire: '#0ea5a3',
-  grow: '#d97706',
-  fluence: '#8b5cf6',
+  hrms: fromVar('prod-hrms'),
+  hire: fromVar('prod-hire'),
+  grow: fromVar('prod-grow'),
+  fluence: fromVar('prod-fluence'),
 };
 
-// ── Aura chart palette — mirror --chart-1..5 CSS vars ──
+// ── Aura chart palette — same values as the --chart-1..5 CSS vars ──
 const chart = {
-  1: '#2952A3',
-  2: '#6884dc',
-  3: '#0ea5a3',
-  4: '#d97706',
-  5: '#8b5cf6',
+  1: '#2563EB',
+  2: '#6B7FA8',
+  3: prod.hire,
+  4: prod.grow,
+  5: prod.fluence,
 };
 
 module.exports = {
@@ -95,26 +71,37 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // Aura typography — Open Sans (body) / Montserrat (display) / Roboto Mono (numerics).
+      // Typography — Geist Sans (UI + headings) / Geist Mono (code, IDs).
       // CSS vars are set by next/font in app/layout.tsx.
       fontFamily: {
-        sans: ['var(--font-sans)', '"Open Sans"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        display: ['var(--font-display)', '"Montserrat"', '"Open Sans"', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        mono: ['var(--font-mono)', '"Roboto Mono"', 'SF Mono', 'Monaco', 'Cascadia Code', 'Consolas', 'Courier New', 'monospace'],
+        // Full stacks (brand font + fallbacks) live in the --font-* vars.
+        sans: ['var(--font-sans)'],
+        display: ['var(--font-display)'],
+        mono: ['var(--font-mono)'],
       },
+      // Contract type scale (--font-size-* vars). sm/base/lg intentionally keep
+      // Tailwind defaults; see the type-scale note in app/globals.css.
       fontSize: {
-        '2xs': ['0.625rem', {lineHeight: '0.875rem'}],   // 10px / 14px
-        '3xs': ['0.6875rem', {lineHeight: '1rem'}],       // 11px / 16px
+        '2xs': ['var(--font-size-2xs)', {lineHeight: 'var(--line-height-2xs)'}],
+        '3xs': ['var(--font-size-2xs)', {lineHeight: 'var(--line-height-2xs)'}],
+        xs: ['var(--font-size-xs)', {lineHeight: 'var(--line-height-xs)'}],
+        xl: ['var(--font-size-xl)', {lineHeight: 'var(--line-height-xl)'}],
+        title: ['var(--font-size-title)', {lineHeight: 'var(--line-height-title)', fontWeight: 'var(--font-weight-heading)'}],
       },
-      // ── Aura radii — mirror --r-* CSS vars (cards 12px / controls 10px) ──
+      // ── Aura radii — --r-* CSS vars (aliased to the contract --radius-*) ──
       borderRadius: {
-        'aura-xs': 'var(--r-xs)',     // 5px
-        'aura-sm': 'var(--r-sm)',     // 7px
-        'aura-md': 'var(--r-md)',     // 9px
-        'aura-lg': 'var(--r-lg)',     // 12px — card default
-        'aura-xl': 'var(--r-xl)',     // 16px
-        'aura-2xl': 'var(--r-2xl)',   // 22px
-        'aura-control': 'var(--r-control)', // 12px — buttons / inputs
+        'aura-xs': 'var(--r-xs)',
+        'aura-sm': 'var(--r-sm)',
+        'aura-md': 'var(--r-md)',
+        'aura-lg': 'var(--r-lg)',
+        'aura-xl': 'var(--r-xl)',
+        'aura-2xl': 'var(--r-2xl)',
+        'aura-control': 'var(--r-control)',
+      },
+      height: {
+        'control-sm': 'var(--control-sm)',
+        'control-md': 'var(--control-md)',
+        'control-lg': 'var(--control-lg)',
       },
       colors: {
         // ── Design Token Bridge (CSS Variables → Tailwind) ──────
@@ -201,9 +188,7 @@ module.exports = {
           strong: 'var(--border-aura-strong)',
           focus: 'var(--border-focus)',
         },
-        // Product accents (bundle rail) — static hex, mirror --prod-* vars
         prod,
-        // Chart palette — static hex, mirror --chart-1..5 vars
         chart,
         // Status — token-driven (light/dark aware) fg/bg/border
         status: {
@@ -214,10 +199,10 @@ module.exports = {
           'neutral-fg': 'var(--neutral-fg)', 'neutral-bg': 'var(--neutral-bg)', 'neutral-bd': 'var(--neutral-bd)',
         },
 
-        // ── Accent (NU-AURA Blue — anchor #2952A3 = brand[700]) ──
+        // ── Accent: DEFAULT/hover follow the theme-aware --accent token ──
         accent: {
-          DEFAULT: brand[700],
-          hover: brand[800],
+          DEFAULT: fromVar('accent'),
+          hover: fromVar('accent-hover'),
           subtle: brand[50],
           soft: 'var(--accent-soft)',
           ...brand,
@@ -225,7 +210,7 @@ module.exports = {
 
         // ── Primary (Alias for accent for backward compatibility) ──
         primary: {
-          DEFAULT: brand[700],
+          DEFAULT: fromVar('accent'),
           ...brand,
         },
 
@@ -299,20 +284,19 @@ module.exports = {
       },
       // Refined Animation Configuration (Fast, Purposeful)
       animation: {
-        // Essential animations only
-        'fade-in': 'fadeIn 0.2s ease-out',
-        'fade-in-up': 'fadeInUp 0.2s ease-out',
-        'slide-in-up': 'slideInUp 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        'slide-in-left': 'slideInLeft 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-        'rise-in': 'riseIn 0.28s ease-out',
+        // Durations/easings come from the --motion-* / --ease-* tokens.
+        'fade-in': 'fadeIn var(--motion-base) var(--ease-out)',
+        'fade-in-up': 'fadeInUp var(--motion-base) var(--ease-out)',
+        'slide-in-up': 'slideInUp var(--motion-base) var(--ease-out)',
+        'slide-in-left': 'slideInLeft var(--motion-slow) var(--ease-out)',
+        'rise-in': 'riseIn var(--motion-base) var(--ease-out)',
 
         // Loading states
         'shimmer': 'shimmer 1.5s linear infinite',
         'skeleton': 'skeleton 1.5s ease-in-out infinite',
         'spin': 'spin 1s linear infinite',
 
-        // Page transitions (faster)
-        'page-enter': 'pageEnter 0.2s ease-out',
+        'page-enter': 'pageEnter var(--motion-base) var(--ease-out)',
       },
       keyframes: {
         // Essential keyframes only
@@ -321,11 +305,11 @@ module.exports = {
           '100%': {opacity: '1'},
         },
         fadeInUp: {
-          '0%': {opacity: '0', transform: 'translateY(10px)'},
+          '0%': {opacity: '0', transform: 'translateY(var(--motion-rise-distance))'},
           '100%': {opacity: '1', transform: 'translateY(0)'},
         },
         riseIn: {
-          '0%': {opacity: '0', transform: 'translateY(12px)'},
+          '0%': {opacity: '0', transform: 'translateY(var(--motion-rise-distance))'},
           '100%': {opacity: '1', transform: 'translateY(0)'},
         },
         slideInUp: {
@@ -346,7 +330,7 @@ module.exports = {
           '100%': {opacity: '0.6'},
         },
         pageEnter: {
-          '0%': {opacity: '0', transform: 'translateY(4px)'},
+          '0%': {opacity: '0', transform: 'translateY(var(--motion-rise-distance))'},
           '100%': {opacity: '1', transform: 'translateY(0)'},
         },
       },
@@ -359,10 +343,15 @@ module.exports = {
         '200': '200ms',
         '300': '300ms',
         '500': '500ms',
+        fast: 'var(--motion-fast)',
+        base: 'var(--motion-base)',
+        slow: 'var(--motion-slow)',
       },
       transitionTimingFunction: {
-        'DEFAULT': 'cubic-bezier(0.4, 0, 0.2, 1)',
-        'smooth': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'DEFAULT': 'var(--ease-standard)',
+        'smooth': 'var(--ease-standard)',
+        standard: 'var(--ease-standard)',
+        out: 'var(--ease-out)',
       },
       // Backdrop Blur
       backdropBlur: {

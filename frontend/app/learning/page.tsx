@@ -1,5 +1,6 @@
 'use client';
 
+import {Callout} from '@/components/ui';
 import React from 'react';
 import Link from 'next/link';
 import {motion} from 'framer-motion';
@@ -126,7 +127,7 @@ function PageHeader() {
       className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
     >
       <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+        <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
           Learning &amp; Development
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
@@ -365,7 +366,7 @@ function BentoTile({title, description, icon: Icon, href, badge}: {
         className="group flex h-full items-start gap-4 rounded-aura-lg bg-[var(--surface)] border border-[var(--border-soft)] p-5 sm:p-6 transition-all hover:border-[var(--border)] hover:shadow-[var(--sh-sm)] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
       >
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-aura-md bg-[var(--surface-aura-2)] border border-[var(--border-soft)] text-[var(--text-2)]">
-          <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+          <Icon className="h-4 w-4" aria-hidden="true" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-4">
@@ -498,12 +499,8 @@ function AttentionStrip({count}: {count: number}) {
 // ── Error banner ─────────────────────────────────────────────────────────────
 function ErrorBanner({message}: {message: string}) {
   return (
-    <div role="alert" className="flex items-center gap-4 rounded-xl border border-danger-200 bg-danger-50/40 dark:border-danger-700/40 dark:bg-danger-950/30 px-5 py-4">
-      <AlertTriangle className="h-4 w-4 shrink-0 text-danger-600 dark:text-danger-400" aria-hidden="true" />
-      <div className="flex-1 text-sm">
-        <p className="font-medium text-danger-700 dark:text-danger-300">Could not load data</p>
-        <p className="text-[var(--text-secondary)]">{message}</p>
-      </div>
-    </div>
+    <Callout tone="danger" title="Could not load data">
+      {message}
+    </Callout>
   );
 }

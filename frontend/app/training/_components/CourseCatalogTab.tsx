@@ -72,7 +72,7 @@ export function CourseCatalogTab({
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <Card className="card-aura">
+      <Card>
         <CardContent className="p-4">
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="relative flex-1">

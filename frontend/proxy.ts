@@ -1,5 +1,6 @@
 import type {NextRequest} from 'next/server';
 import {NextResponse} from 'next/server';
+import {EDGE_PUBLIC_ROUTES as PUBLIC_ROUTES} from './lib/config/public-routes';
 
 /**
  * Next.js Edge Proxy for route protection and security hardening.
@@ -47,23 +48,6 @@ function generateNonce(): string {
   }
   return btoa(binary);
 }
-
-// Public routes that don't require authentication
-const PUBLIC_ROUTES = [
-  '/auth/login',
-  '/auth/reset-password',
-  '/auth/forgot-password',
-  '/reset-password',
-  '/',
-  '/terms',                  // public legal page (linked from login/forgot-password/reset-password)
-  '/privacy',                // public legal page (linked from login/forgot-password/reset-password)
-  // Token-based public portals — accessed by candidates/employees without an account session
-  '/preboarding/portal/',   // candidate preboarding portal (token in URL)
-  '/exit-interview/',        // public exit interview form (token in URL)
-  '/offer-portal',
-  '/careers',           // candidate offer sign page
-  '/sign/',                  // e-signature portal (token in URL)
-];
 
 // Authenticated routes that require authentication
 const AUTHENTICATED_ROUTES = [

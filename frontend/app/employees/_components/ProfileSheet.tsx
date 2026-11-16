@@ -162,10 +162,10 @@ export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileShe
                 <KV k="Phone" v={employee.phoneNumber ?? '—'} mono />
                 <KV k="Location" v={[employee.city, employee.country].filter(Boolean).join(', ') || '—'} />
 
-                <div className="text-aura-micro mb-1 mt-[22px] text-[var(--text-3)]">Employment</div>
+                <div className="text-aura-micro mb-1 mt-5 text-[var(--text-3)]">Employment</div>
                 <div className={styles.kvRow}>
-                  <span className="text-[13px] text-[var(--text-3)]">Manager</span>
-                  <span className="flex items-center gap-2 text-[13px] font-medium text-[var(--text-1)]">
+                  <span className="text-sm text-[var(--text-3)]">Manager</span>
+                  <span className="flex items-center gap-2 text-sm font-medium text-[var(--text-1)]">
                     {employee.managerName ? (
                       <>
                         <EmployeeAvatar name={employee.managerName} size={22} />
@@ -190,10 +190,10 @@ export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileShe
                     key={doc}
                     className="flex items-center gap-4 rounded-[var(--r-md)] border border-[var(--border)] px-4 py-3"
                   >
-                    <span className="grid h-[34px] w-[34px] place-items-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent-text)]">
+                    <span className="grid h-9 w-9 place-items-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent-text)]">
                       <FileText size={17} aria-hidden />
                     </span>
-                    <span className="flex-1 text-[13px] font-semibold text-[var(--text-1)]">{doc}</span>
+                    <span className="flex-1 text-sm font-semibold text-[var(--text-1)]">{doc}</span>
                     <Button variant="ghost" size="icon-sm" aria-label={`Download ${doc}`}>
                       <Download size={16} aria-hidden />
                     </Button>
@@ -203,18 +203,18 @@ export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileShe
             )}
 
             {tab === 'timeline' && (
-              <ul className="m-0 list-none p-0 pl-[26px]">
+              <ul className="m-0 list-none p-0 pl-6">
                 {timeline.map((e, i) => {
                   const Icon = e.icon;
                   return (
                     <li key={i} className="relative pb-6 pl-5 last:pb-0">
                       <span
-                        className={`absolute -left-[13px] top-0 grid h-[22px] w-[22px] place-items-center rounded-full text-white ${e.toneClass}`}
+                        className={`absolute -left-3.5 top-0 grid h-6 w-6 place-items-center rounded-full text-white ${e.toneClass}`}
                       >
                         <Icon size={10} aria-hidden />
                       </span>
-                      <div className="text-[13px] font-medium text-[var(--text-2)]">{e.text}</div>
-                      <div className="num mt-[3px] text-[11.5px] text-[var(--text-3)]">{e.when}</div>
+                      <div className="text-sm font-medium text-[var(--text-2)]">{e.text}</div>
+                      <div className="num mt-0.5 text-2xs text-[var(--text-3)]">{e.when}</div>
                     </li>
                   );
                 })}
@@ -231,8 +231,8 @@ export function ProfileSheet({employee, onClose, onViewFull, onEdit}: ProfileShe
 function KV({k, v, mono = false}: {k: string; v: string; mono?: boolean}) {
   return (
     <div className={styles.kvRow}>
-      <span className="text-[13px] text-[var(--text-3)]">{k}</span>
-      <span className={cn('text-[13px] font-medium text-[var(--text-1)]', mono && 'num')}>{v}</span>
+      <span className="text-sm text-[var(--text-3)]">{k}</span>
+      <span className={cn('text-sm font-medium text-[var(--text-1)]', mono && 'num')}>{v}</span>
     </div>
   );
 }

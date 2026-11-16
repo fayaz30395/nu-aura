@@ -399,7 +399,7 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
     setIsSubmittingComment(true);
     try {
       const newComment = await wallService.addComment(item.wallPostId, {content: commentText.trim()});
-      setComments((prev) => [...prev, newComment]);
+      setComments((prev) => [newComment, ...prev]);
       setCommentText('');
       setLocalCommentCount((prev) => prev + 1);
     } catch (error) {
@@ -414,7 +414,8 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
     const isOwnPost = user?.employeeId === item.wallPostAuthorId;
     const avatarUrl = item.personAvatarUrl
       || (isOwnPost && user?.profilePictureUrl ? user.profilePictureUrl : null)
-      || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.wallPostAuthor || 'U')}&background=6366f1&color=fff&size=80&bold=true&format=svg`;
+      || null;
+    const authorInitials = (item.wallPostAuthor || 'U').split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? '').join('');
 
     return (
       <div
@@ -422,8 +423,15 @@ export function FeedCard({item, onDeleted, onUpdated}: FeedCardProps) {
         {/* Header: avatar + "Author created a post" + timestamp + action menu */}
         <div className="flex items-start gap-2 px-4 pt-4 pb-2">
           <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden">
-            <Image src={avatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40}
-                   className="rounded-full object-cover w-10 h-10"/>
+            {avatarUrl ? (
+              <Image src={avatarUrl} alt={item.wallPostAuthor || ''} width={40} height={40}
+                     className="rounded-full object-cover w-10 h-10"/>
+            ) : (
+              <span aria-hidden="true"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent-subtle,var(--bg-surface-2))] text-xs font-semibold text-[var(--accent-primary)]">
+                {authorInitials}
+              </span>
+            )}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm leading-snug">

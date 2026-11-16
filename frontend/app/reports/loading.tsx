@@ -32,7 +32,7 @@ export default function ReportsLoading() {
             >
               <div className="mb-3.5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-[38px] w-[38px] rounded-[10px] bg-[var(--surface-hover)]" />
+                  <div className="h-10 w-10 rounded-xl bg-[var(--surface-hover)]" />
                   <div className="space-y-1.5">
                     <div className="h-3.5 w-28 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
                     <div className="h-4 w-14 rounded-aura-sm bg-[var(--surface-hover)]" />
@@ -40,7 +40,7 @@ export default function ReportsLoading() {
                 </div>
                 <div className="h-4 w-4 rounded bg-[var(--surface-hover)]" />
               </div>
-              <div className="h-[52px] rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
+              <div className="h-12 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
               <div className="mt-3 flex items-center justify-between border-t border-[var(--border-soft)] pt-3">
                 <div className="h-3 w-20 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
                 <div className="h-3.5 w-12 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
@@ -52,7 +52,7 @@ export default function ReportsLoading() {
 
       {/* Scheduled deliveries table */}
       <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)] shadow-[var(--sh-sm)]">
-        <div className="flex items-end justify-between gap-4 px-5 pb-4 pt-[18px]">
+        <div className="flex items-end justify-between gap-4 px-5 pb-4 pt-4">
           <div className="space-y-1.5">
             <div className="h-5 w-44 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
             <div className="h-3 w-56 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
@@ -70,7 +70,7 @@ export default function ReportsLoading() {
             <div className="h-4 w-40 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
             <div className="h-4 w-28 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
             <div className="flex items-center gap-2">
-              <div className="h-[26px] w-[26px] rounded-full bg-[var(--surface-hover)]" />
+              <div className="h-6 w-6 rounded-full bg-[var(--surface-hover)]" />
               <div className="h-4 w-24 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />
             </div>
             <div className="ml-auto h-4 w-12 rounded-[var(--r-sm)] bg-[var(--surface-hover)]" />

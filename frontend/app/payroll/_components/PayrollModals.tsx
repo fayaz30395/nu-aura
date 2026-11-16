@@ -402,7 +402,7 @@ export const SalaryStructureModal = React.memo(function SalaryStructureModal({
                   <button
                     type="button"
                     onClick={() => appendAllowance({name: '', amount: 0, type: 'FIXED', description: ''})}
-                    className="px-4 py-1 text-sm bg-success-100 text-success-700 rounded hover:bg-success-200"
+                    className="px-4 py-1 text-sm bg-success-100 dark:bg-success-900/40 text-success-700 dark:text-success-400 rounded hover:bg-success-200 dark:hover:bg-success-900/60"
                   >
                     Add Allowance
                   </button>

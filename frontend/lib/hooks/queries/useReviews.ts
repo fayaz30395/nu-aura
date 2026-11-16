@@ -60,6 +60,7 @@ export function useCreateReview() {
       queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
       notifications.show({title: 'Success', message: 'Performance review created successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to create review', color: 'red'});
     },
@@ -77,6 +78,7 @@ export function useUpdateReview() {
       queryClient.setQueryData(performanceKeys.reviewDetail(data.id), data);
       notifications.show({title: 'Success', message: 'Performance review updated successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to update review', color: 'red'});
     },
@@ -93,6 +95,7 @@ export function useSubmitReview() {
       queryClient.setQueryData(performanceKeys.reviewDetail(data.id), data);
       notifications.show({title: 'Success', message: 'Performance review submitted', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to submit review', color: 'red'});
     },
@@ -109,6 +112,7 @@ export function useSubmitSelfAssessment() {
       queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
       notifications.show({title: 'Success', message: 'Self assessment submitted', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to submit self assessment', color: 'red'});
     },
@@ -125,6 +129,7 @@ export function useCompleteReview() {
       queryClient.setQueryData(performanceKeys.reviewDetail(data.id), data);
       notifications.show({title: 'Success', message: 'Performance review completed', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to complete review', color: 'red'});
     },
@@ -140,6 +145,7 @@ export function useDeleteReview() {
       queryClient.invalidateQueries({queryKey: performanceKeys.reviews()});
       notifications.show({title: 'Success', message: 'Performance review deleted successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to delete review', color: 'red'});
     },
@@ -160,6 +166,7 @@ export function useDeleteCompetency() {
       });
       notifications.show({title: 'Success', message: 'Competency removed', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to remove competency', color: 'red'});
     },

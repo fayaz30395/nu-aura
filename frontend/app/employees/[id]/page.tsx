@@ -1,181 +1,45 @@
 'use client';
 
 import {useState} from 'react';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
-import {
-  useGetEmployeeSkills,
-  useVerifySkill,
-  getGetEmployeeSkillsQueryKey,
-} from '@/lib/generated/api/employee-skills/employee-skills';
-import {notFound, useParams, useRouter, useSearchParams} from 'next/navigation';
-import {
-  AlertTriangle,
-  CheckCircle2,
-  ChevronLeft,
-  FileText,
-  IdCard,
-  Laptop,
-  Mail,
-  MapPin,
-  MessageSquare,
-  Package,
-  Pencil,
-  Phone,
-  Star,
-  Trash2,
-} from 'lucide-react';
-import CustomFieldsSection from '@/components/custom-fields/CustomFieldsSection';
-import {EntityType} from '@/lib/types/core/custom-fields';
+import {notFound, useParams, useRouter} from 'next/navigation';
+import {Button, Tabs} from '@mantine/core';
+import {Pencil, Trash2} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
-import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
-import TalentJourneyTab from '@/components/employee/talent-profiles/TalentJourneyTab';
-import {useDeleteEmployee, useDottedLineReports, useEmployee, useSubordinates,} from '@/lib/hooks/queries/useEmployees';
-import {employeeService, EmployeeDocumentRecord} from '@/lib/services/hrms/employee.service';
-import {useAssetsByEmployee} from '@/lib/hooks/queries/useAssets';
-import {useToast} from '@/components/notifications/ToastProvider';
-import {createLogger} from '@/lib/utils/logger';
+import {PageTransition} from '@/components/motion';
 import {PermissionGate} from '@/components/auth/PermissionGate';
+import {useToast} from '@/components/notifications/ToastProvider';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryErrorCard} from '@/components/ui/QueryState';
+import {DetailPageSkeleton} from '@/components/ui/skeletons';
+import {useDeleteEmployee, useDottedLineReports, useEmployee, useSubordinates} from '@/lib/hooks/queries/useEmployees';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Card, CardContent} from '@/components/ui/Card';
-import {EmptyState} from '@/components/ui/EmptyState';
-import {ProfileHero} from '@/components/ui/ProfileHero';
-import {Asset} from '@/lib/types/hrms/asset';
-import {Skeleton} from '@mantine/core';
-import {formatDate as canonicalFormatDate} from '@/lib/utils/format/date';
+import {createLogger} from '@/lib/utils/logger';
+import {AboutTab} from './_components/AboutTab';
+import {AssetsTab} from './_components/AssetsTab';
+import {DocumentsTab} from './_components/DocumentsTab';
+import {EmployeeSidePanel} from './_components/EmployeeSidePanel';
+import {JobTab} from './_components/JobTab';
+import {ProfileTab} from './_components/ProfileTab';
+import {MAIN_TABS, type MainTab, useEmployeeTabs} from './_hooks/useEmployeeTabs';
 
 const log = createLogger('EmployeePage');
 
-// ─── Tab configuration ───────────────────────────────────────────────
-type MainTab = 'about' | 'profile' | 'job' | 'documents' | 'assets';
-type AboutSubTab = 'summary' | 'timeline' | 'wall';
-type AssetSubTab = 'assigned' | 'requests' | 'damages';
-
-const MAIN_TABS: { key: MainTab; label: string }[] = [
-  {key: 'about', label: 'About'},
-  {key: 'profile', label: 'Profile'},
-  {key: 'job', label: 'Job'},
-  {key: 'documents', label: 'Documents'},
-  {key: 'assets', label: 'Assets'},
+const BREADCRUMB_ROOT = [
+  {label: 'NU-HRMS'},
+  {label: 'Employees', href: '/employees'},
 ];
 
-const ABOUT_SUB_TABS: { key: AboutSubTab; label: string }[] = [
-  {key: 'summary', label: 'Summary'},
-  {key: 'timeline', label: 'Timeline'},
-  {key: 'wall', label: 'Wall Activity'},
-];
-
-const ASSET_SUB_TABS: { key: AssetSubTab; label: string }[] = [
-  {key: 'assigned', label: 'Assigned Assets'},
-  {key: 'requests', label: 'Asset Requests'},
-  {key: 'damages', label: 'Damage Charges'},
-];
-
-
-// ─── Helpers ─────────────────────────────────────────────────────────
-function getStatusBadgeColor(status: string) {
-  switch (status) {
-    case 'ACTIVE':
-      return 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400';
-    case 'ON_LEAVE':
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
-    case 'ON_NOTICE':
-      return 'bg-warning-100 text-warning-800 dark:bg-warning-900/30 dark:text-warning-400';
-    case 'TERMINATED':
-      return 'bg-danger-100 text-danger-800 dark:bg-danger-900/30 dark:text-danger-400';
-    default:
-      return 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]';
-  }
+function loadErrorMessage(error: unknown): string {
+  const status = (error as {response?: {status?: number}})?.response?.status;
+  if (status === 403) return "You don't have access to this employee's profile.";
+  return 'Failed to load employee. Please try again.';
 }
 
-function formatDate(date?: string) {
-  if (!date) return '-';
-  return canonicalFormatDate(date);
-}
-
-function formatEnumValue(value?: string) {
-  if (!value) return '-';
-  return value.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
-}
-
-// ─── Reusable UI pieces ──────────────────────────────────────────────
-function InfoField({label, value}: { label: string; value: string | undefined | null }) {
-  return (
-    <div className="space-y-1">
-      <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
-        {label}
-      </p>
-      <p className="text-sm text-[var(--text-primary)]">{value || '-'}</p>
-    </div>
-  );
-}
-
-function SectionCard({
-                       title,
-                       children,
-                       className = '',
-                     }: {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <Card className={className}>
-      <CardContent className="p-6">
-        <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-4 uppercase tracking-wider">
-          {title}
-        </h2>
-        {children}
-      </CardContent>
-    </Card>
-  );
-}
-
-function AvatarInitials({
-                          name,
-                          size = 'md',
-                        }: {
-  name: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
-}) {
-  const sizeMap = {
-    sm: 'h-8 w-8 text-xs',
-    md: 'h-10 w-10 text-sm',
-    lg: 'h-16 w-16 text-xl',
-    xl: 'h-20 w-20 text-2xl',
-  };
-  const initials = name
-    .split(' ')
-    .map((n) => n.charAt(0))
-    .join('')
-    .slice(0, 2);
-
-  return (
-    <div
-      className={`${sizeMap[size]} bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center flex-shrink-0`}
-    >
-      <span className="font-medium text-accent-700 dark:text-accent-400">{initials}</span>
-    </div>
-  );
-}
-
-// ─── Active tab underline style ──────────────────────────────────────
-function tabClass(active: boolean) {
-  return `py-4 px-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-t-sm ${
-    active
-      ? 'border-accent-500 text-accent-700 dark:border-accent-400 dark:text-accent-400'
-      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)]'
-  }`;
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-// MAIN COMPONENT
-// ═══════════════════════════════════════════════════════════════════════
 export default function EmployeeDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const searchParams = useSearchParams();
   const toast = useToast();
   const employeeId = params.id as string;
 
@@ -191,75 +55,14 @@ export default function EmployeeDetailPage() {
     notFound();
   }
 
-  // URL-addressable tabs
-  const initialTab = (searchParams.get('tab') as MainTab) || 'about';
-  const initialSubTab = (searchParams.get('sub') as AboutSubTab | AssetSubTab) || 'summary';
-
-  const [currentTab, setCurrentTab] = useState<MainTab>(
-    MAIN_TABS.some((t) => t.key === initialTab) ? initialTab : 'about'
-  );
-  const [aboutSubTab, setAboutSubTab] = useState<AboutSubTab>(
-    ABOUT_SUB_TABS.some((t) => t.key === initialSubTab) ? (initialSubTab as AboutSubTab) : 'summary'
-  );
-  const [assetSubTab, setAssetSubTab] = useState<AssetSubTab>(
-    ASSET_SUB_TABS.some((t) => t.key === initialSubTab) ? (initialSubTab as AssetSubTab) : 'assigned'
-  );
+  const tabs = useEmployeeTabs();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
-  const [docUploadError, setDocUploadError] = useState<string | null>(null);
-  const documentsQueryKey = ['employee-documents', employeeId];
-  const {data: documents = [], isLoading: isDocumentsLoading, isError: isDocumentsError} = useQuery({
-    queryKey: documentsQueryKey,
-    queryFn: () => employeeService.listDocuments(employeeId),
-    enabled: currentTab === 'documents',
-  });
 
-  // React Query hooks
-  const {data: employee, isLoading: loading, error: queryError} = useEmployee(employeeId);
+  const employeeQuery = useEmployee(employeeId);
+  const {data: employee, isLoading: loading, error: queryError} = employeeQuery;
   const {data: dottedReports = []} = useDottedLineReports(employeeId);
   const {data: subordinates = []} = useSubordinates(employeeId);
-  const {data: employeeAssets = []} = useAssetsByEmployee(employeeId);
   const deleteEmployeeMutation = useDeleteEmployee();
-
-  // Skills
-  const queryClient = useQueryClient();
-  const {data: employeeSkills = [], isLoading: skillsLoading} = useGetEmployeeSkills(employeeId, {
-    query: {enabled: !!employeeId},
-  });
-  const verifySkillMut = useVerifySkill({
-    mutation: {
-      onSuccess: () => queryClient.invalidateQueries({queryKey: getGetEmployeeSkillsQueryKey(employeeId)}),
-    },
-  });
-
-  const error = queryError
-    ? (queryError as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-    'Failed to load employee'
-    : null;
-
-  // Update URL when tab changes
-  const navigateTab = (tab: MainTab, sub?: string) => {
-    const url = new URL(window.location.href);
-    url.searchParams.set('tab', tab);
-    if (sub) url.searchParams.set('sub', sub);
-    else url.searchParams.delete('sub');
-    window.history.replaceState({}, '', url.toString());
-  };
-
-  const handleMainTab = (tab: MainTab) => {
-    setCurrentTab(tab);
-    navigateTab(tab);
-  };
-
-  const handleAboutSubTab = (sub: AboutSubTab) => {
-    setAboutSubTab(sub);
-    navigateTab('about', sub);
-  };
-
-  const handleAssetSubTab = (sub: AssetSubTab) => {
-    setAssetSubTab(sub);
-    navigateTab('assets', sub);
-  };
 
   const handleDelete = async () => {
     try {
@@ -267,76 +70,16 @@ export default function EmployeeDetailPage() {
       toast.success('Employee Deleted', 'The employee has been deleted successfully.');
       router.push('/employees');
     } catch (err: unknown) {
-      const errorMsg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-        'Failed to delete employee';
-      toast.error('Error', errorMsg);
+      // Error toast comes from the global mutation handler.
       log.error('Error deleting employee:', err);
       setShowDeleteModal(false);
     }
   };
 
-  const handleDocumentUpload = async (file: File) => {
-    setIsUploadingDoc(true);
-    setDocUploadError(null);
-    try {
-      await employeeService.uploadDocument(employeeId, file);
-      await queryClient.invalidateQueries({queryKey: documentsQueryKey});
-      toast.success('Document Uploaded', `${file.name} uploaded successfully.`);
-    } catch (err) {
-      setDocUploadError('Failed to upload document. Please try again.');
-      log.error('Error uploading employee document:', err);
-    } finally {
-      setIsUploadingDoc(false);
-    }
-  };
-
-  const handleDocumentDelete = async (doc: EmployeeDocumentRecord) => {
-    try {
-      await employeeService.deleteDocument(doc.objectName);
-      await queryClient.invalidateQueries({queryKey: documentsQueryKey});
-      toast.success('Document Deleted', `${doc.fileName} was deleted.`);
-    } catch (err) {
-      toast.error('Error', 'Failed to delete document.');
-      log.error('Error deleting employee document:', err);
-    }
-  };
-
-  // ─── Loading state ──────────────────────────────────────────────────
   if (loading) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
-          <div className="max-w-7xl mx-auto">
-            {/* Header skeleton */}
-            <div className="mb-8 flex items-center space-x-4">
-              <Skeleton circle height={80} width={80}/>
-              <div className="flex-1">
-                <Skeleton height={28} width="30%" mb="md"/>
-                <Skeleton height={16} width="20%"/>
-              </div>
-            </div>
-
-            {/* Tabs skeleton */}
-            <div className="flex space-x-4 mb-6 border-b border-[var(--border-main)]">
-              {[...Array(5)].map((_, i) => (
-                <Skeleton key={i} height={40} width={100}/>
-              ))}
-            </div>
-
-            {/* Content skeleton */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="space-y-4">
-                  <Skeleton height={24} width="40%"/>
-                  <Skeleton height={16} mb="sm"/>
-                  <Skeleton height={16} width="80%" mb="sm"/>
-                  <Skeleton height={16} width="75%"/>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <DetailPageSkeleton sections={3} showSidePanel/>
       </AppLayout>
     );
   }
@@ -345,906 +88,112 @@ export default function EmployeeDetailPage() {
     notFound();
   }
 
-  if (error || !employee) {
+  if (queryError || !employee) {
     return (
       <AppLayout activeMenuItem="employees">
-        <div className="page-shell-centered fade-slide-up auth-delay-20">
-          <nav
-            className="bg-[var(--bg-card)] dark:bg-[var(--bg-secondary)] shadow-[var(--shadow-card)] border-b border-[var(--border-main)]">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between items-center h-16">
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={() => router.push('/employees')}
-                    aria-label="Back to employees list"
-                    className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
-                  >
-                    <ChevronLeft className="h-5 w-5"/>
-                  </button>
-                  <h1 className="text-xl font-bold text-[var(--text-primary)]">Employee Details</h1>
-                </div>
-              </div>
-            </div>
-          </nav>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div
-              className="bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800 rounded-md p-4">
-              <p className="text-sm text-danger-600 dark:text-danger-400">
-                {error || 'Employee not found'}
-              </p>
-            </div>
-          </div>
+        <div className="flex flex-col gap-6">
+          <PageHeader title="Employee Details" breadcrumbs={BREADCRUMB_ROOT}/>
+          <QueryErrorCard
+            title="Couldn't load employee"
+            message={loadErrorMessage(queryError)}
+            onRetry={() => void employeeQuery.refetch()}
+            retrying={employeeQuery.isFetching}
+          />
         </div>
       </AppLayout>
     );
   }
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // RENDER
-  // ═══════════════════════════════════════════════════════════════════════
   return (
     <AppLayout activeMenuItem="employees">
-      <PageTransition className="page-shell-centered">
-        {/* ── PROFILE HERO (unified) ─────────────────────────────────── */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-          <ProfileHero
-            name={employee.fullName}
-            photoUrl={employee.profilePhotoUrl}
-            subtitle={employee.designation || '-'}
-            onBack={() => router.push('/employees')}
-            backLabel="Employees"
-            status={
-              <span
-                className={`px-2.5 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeColor(employee.status)}`}
-              >
-                {formatEnumValue(employee.status)}
-              </span>
-            }
-            meta={
-              <>
-                <a
-                  href={`mailto:${employee.workEmail}`}
-                  className="inline-flex items-center gap-1.5 hover:text-[var(--text-primary)]"
+      <PageTransition className="flex flex-col gap-6">
+        <PageHeader
+          title={employee.fullName}
+          description={[employee.designation, employee.employeeCode].filter(Boolean).join(' · ')}
+          breadcrumbs={[...BREADCRUMB_ROOT, {label: employee.fullName}]}
+          actions={
+            <div className="flex items-center gap-2">
+              <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
+                <Button
+                  size="sm"
+                  variant="default"
+                  leftSection={<Pencil className="h-4 w-4"/>}
+                  onClick={() => router.push(`/employees/${employeeId}/edit`)}
                 >
-                  <Mail className="h-3.5 w-3.5"/>
-                  {employee.workEmail}
-                </a>
-                {employee.phoneNumber && (
-                  <a
-                    href={`tel:${employee.phoneNumber}`}
-                    className="inline-flex items-center gap-1.5 hover:text-[var(--text-primary)]"
-                  >
-                    <Phone className="h-3.5 w-3.5"/>
-                    {employee.phoneNumber}
-                  </a>
-                )}
-                {(employee.city || employee.state || employee.country) && (
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="h-3.5 w-3.5"/>
-                    {[employee.city, employee.state, employee.country].filter(Boolean).join(', ')}
-                  </span>
-                )}
-                <span className="inline-flex items-center gap-1.5">
-                  <IdCard className="h-3.5 w-3.5"/>
-                  {employee.employeeCode}
-                </span>
-              </>
-            }
-            actions={
-              <>
-                <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
-                  <button
-                    type="button"
-                    onClick={() => router.push(`/employees/${employeeId}/edit`)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-accent-700 hover:bg-accent-800 rounded-lg transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
-                  >
-                    <Pencil className="h-3.5 w-3.5"/>
-                    Edit
-                  </button>
-                </PermissionGate>
-                <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
-                  <button
-                    onClick={() => setShowDeleteModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-danger-600 hover:bg-danger-700 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:ring-offset-2"
-                  >
-                    <Trash2 className="h-3.5 w-3.5"/>
-                    Delete
-                  </button>
-                </PermissionGate>
-              </>
-            }
-          />
-        </div>
-
-        {/* ── ORG INFO BAR ─────────────────────────────────────────── */}
-        <div className="bg-[var(--bg-card)] border-b border-[var(--border-main)]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-4">
-              <div>
-                <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
-                  Business Unit
-                </p>
-                <p className="text-sm font-medium text-[var(--text-primary)]">
-                  {employee.departmentName || 'Not Set'}
-                </p>
-              </div>
-              <div>
-                <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
-                  Department
-                </p>
-                <p className="text-sm font-medium text-[var(--text-primary)]">
-                  {employee.departmentName || 'Not Set'}
-                </p>
-              </div>
-              <div>
-                <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
-                  Cost Center
-                </p>
-                <p className="text-sm font-medium text-[var(--text-primary)]">Not Set</p>
-              </div>
-              <div>
-                <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-1">
-                  Reporting Manager
-                </p>
-                {employee.managerId ? (
-                  <button
-                    onClick={() => router.push(`/employees/${employee.managerId}`)}
-                    aria-label={`View profile of reporting manager ${employee.managerName}`}
-                    className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 rounded-md"
-                  >
-                    <AvatarInitials name={employee.managerName || 'M'} size="sm"/>
-                    <span className="text-sm font-medium text-accent-700 dark:text-accent-400 group-hover:underline">
-                      {employee.managerName}
-                    </span>
-                  </button>
-                ) : (
-                  <p className="text-sm font-medium text-[var(--text-primary)]">-</p>
-                )}
-              </div>
+                  Edit
+                </Button>
+              </PermissionGate>
+              <PermissionGate permission={Permissions.EMPLOYEE_DELETE}>
+                <Button
+                  size="sm"
+                  color="red"
+                  variant="light"
+                  leftSection={<Trash2 className="h-4 w-4"/>}
+                  onClick={() => setShowDeleteModal(true)}
+                >
+                  Delete
+                </Button>
+              </PermissionGate>
             </div>
-          </div>
-        </div>
+          }
+        />
 
-        {/* ── MAIN TABS ────────────────────────────────────────────── */}
-        <div className="bg-[var(--bg-card)] border-b border-[var(--border-main)] sticky top-0 z-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex gap-1 -mb-px overflow-x-auto" aria-label="Employee tabs">
-              {MAIN_TABS.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => handleMainTab(tab.key)}
-                  className={tabClass(currentTab === tab.key)}
-                  aria-current={currentTab === tab.key ? 'page' : undefined}
-                >
-                  {tab.label}
-                </button>
-              ))}
-              {dottedReports.length > 0 && (
-                <button
-                  onClick={() => handleMainTab('about')}
-                  className={`py-4 px-4 text-sm font-medium border-b-2 border-transparent text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--border-main)] whitespace-nowrap`}
-                  title="View dotted reports in Job tab org section"
-                >
-                  Dotted Reports ({dottedReports.length})
-                </button>
-              )}
-            </nav>
-          </div>
-        </div>
-
-        {/* ── TAB CONTENT ──────────────────────────────────────────── */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          {/* ═══ ABOUT TAB ═══════════════════════════════════════════ */}
-          {currentTab === 'about' && (
-            <div>
-              {/* Sub-tabs */}
-              <div className="flex gap-1 mb-6 border-b border-[var(--border-main)]">
-                {ABOUT_SUB_TABS.map((sub) => (
-                  <button
-                    key={sub.key}
-                    onClick={() => handleAboutSubTab(sub.key)}
-                    className={tabClass(aboutSubTab === sub.key)}
-                    aria-current={aboutSubTab === sub.key ? 'page' : undefined}
-                  >
-                    {sub.label}
-                  </button>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="order-2 min-w-0 lg:order-1">
+            <Tabs keepMounted={false} value={tabs.currentTab} onChange={(v) => v && tabs.selectMainTab(v as MainTab)}>
+              <Tabs.List aria-label="Employee tabs" className="mb-4 flex-nowrap overflow-x-auto">
+                {MAIN_TABS.map((tab) => (
+                  <Tabs.Tab key={tab.key} value={tab.key}>{tab.label}</Tabs.Tab>
                 ))}
-              </div>
+              </Tabs.List>
 
-              {/* Summary sub-tab */}
-              {aboutSubTab === 'summary' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Left column — About & Professional Summary */}
-                  <div className="lg:col-span-2 space-y-6">
-                    <SectionCard title="About">
-                      <p className="text-body-secondary leading-relaxed">
-                        {employee.designation
-                          ? `${employee.fullName} is a ${formatEnumValue(employee.designation)} at the ${employee.departmentName || 'organization'}.`
-                          : `${employee.fullName} is a member of the ${employee.departmentName || 'organization'}.`}
-                        {employee.joiningDate &&
-                          ` Joined on ${formatDate(employee.joiningDate)}.`}
-                      </p>
-                    </SectionCard>
-
-                    <SectionCard title="Professional Summary">
-                      <div className="grid grid-cols-2 gap-4">
-                        <InfoField label="Job Role" value={formatEnumValue(employee.jobRole)}/>
-                        <InfoField label="Level" value={formatEnumValue(employee.level)}/>
-                        <InfoField
-                          label="Employment Type"
-                          value={formatEnumValue(employee.employmentType)}
-                        />
-                        <InfoField label="Department" value={employee.departmentName}/>
-                      </div>
-                    </SectionCard>
-
-                    {/* Custom Fields / Additional Info */}
-                    <SectionCard title="Additional Information">
-                      <CustomFieldsSection
-                        entityType={EntityType.EMPLOYEE}
-                        entityId={employee.id}
-                        disabled={true}
-                        showGroupHeaders={true}
-                      />
-                    </SectionCard>
-                  </div>
-
-                  {/* Right column — Skills, Reporting Team, Recognition */}
-                  <aside className="space-y-6" aria-label="Employee summary details">
-                    {/* Skills */}
-                    <SectionCard title="Skills">
-                      {skillsLoading ? (
-                        <div className="space-y-2">
-                          {[1, 2, 3].map((n) => (
-                            <Skeleton key={n} height={24} radius="sm"/>
-                          ))}
-                        </div>
-                      ) : employeeSkills.length === 0 ? (
-                        <p className="text-body-muted text-sm">No skills on record</p>
-                      ) : (
-                        <div className="space-y-3">
-                          {employeeSkills.map((skill) => (
-                            <div key={skill.id} className="flex items-center justify-between gap-2">
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className="text-sm font-medium text-[var(--text-primary)] truncate">
-                                    {skill.skillName}
-                                  </span>
-                                  {skill.isVerified && (
-                                    <CheckCircle2 className="h-3.5 w-3.5 text-success-600 flex-shrink-0" aria-label="Verified"/>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-1.5 mt-0.5">
-                                  <div className="flex gap-0.5" aria-label={`Proficiency ${skill.proficiencyLevel ?? 1} of 5`}>
-                                    {[1, 2, 3, 4, 5].map((n) => (
-                                      <Star
-                                        key={n}
-                                        className={`h-3 w-3 ${n <= (skill.proficiencyLevel ?? 1) ? 'fill-warning-500 text-warning-500' : 'text-[var(--border)]'}`}
-                                        aria-hidden="true"
-                                      />
-                                    ))}
-                                  </div>
-                                  <span className="text-xs text-[var(--text-secondary)]">{skill.category}</span>
-                                </div>
-                              </div>
-                              {!skill.isVerified && (
-                                <PermissionGate permission={Permissions.EMPLOYEE_UPDATE}>
-                                  <button
-                                    type="button"
-                                    onClick={() => skill.id && verifySkillMut.mutate({skillId: skill.id})}
-                                    disabled={verifySkillMut.isPending}
-                                    className="text-xs text-accent-700 dark:text-accent-400 hover:underline disabled:opacity-50 whitespace-nowrap"
-                                  >
-                                    Verify
-                                  </button>
-                                </PermissionGate>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </SectionCard>
-
-                    {/* Reporting Team */}
-                    <SectionCard title="Reporting Team">
-                      {subordinates.length > 0 ? (
-                        <div className="space-y-4">
-                          {subordinates.slice(0, 8).map((sub) => (
-                            <button
-                              key={sub.id}
-                              onClick={() => router.push(`/employees/${sub.id}`)}
-                              className="flex items-center gap-4 w-full text-left hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
-                            >
-                              <AvatarInitials name={sub.fullName} size="sm"/>
-                              <div className="min-w-0">
-                                <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                                  {sub.fullName}
-                                </p>
-                                <p className="text-caption truncate">
-                                  {sub.designation || '-'}
-                                </p>
-                              </div>
-                            </button>
-                          ))}
-                          {subordinates.length > 8 && (
-                            <p className="text-xs text-accent-700 dark:text-accent-400 font-medium">
-                              +{subordinates.length - 8} more
-                            </p>
-                          )}
-                        </div>
-                      ) : (
-                        <p className="text-body-muted">No direct reports</p>
-                      )}
-                    </SectionCard>
-
-                    {/* System Information */}
-                    <SectionCard title="System Information">
-                      <div className="space-y-4">
-                        <InfoField label="Created At" value={formatDate(employee.createdAt)}/>
-                        <InfoField label="Last Updated" value={formatDate(employee.updatedAt)}/>
-                        <InfoField label="Employee ID" value={employee.id}/>
-                        {employee.userId && (
-                          <InfoField label="User ID" value={employee.userId}/>
-                        )}
-                      </div>
-                    </SectionCard>
-                  </aside>
-                </div>
-              )}
-
-              {/* Timeline sub-tab */}
-              {aboutSubTab === 'timeline' && (
-                <TalentJourneyTab employeeId={employeeId}/>
-              )}
-
-              {/* Wall Activity sub-tab */}
-              {aboutSubTab === 'wall' && (
-                <div className="text-center py-16">
-                  <MessageSquare className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                    Wall Activity
-                  </h2>
-                  <p className="text-body-muted max-w-md mx-auto">
-                    Social feed posts, recognitions, and announcements involving{' '}
-                    {employee.firstName} will appear here.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ═══ PROFILE TAB ═════════════════════════════════════════ */}
-          {currentTab === 'profile' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Primary Details */}
-              <SectionCard title="Primary Details">
-                <div className="grid grid-cols-2 gap-4">
-                  <InfoField label="First Name" value={employee.firstName}/>
-                  <InfoField label="Last Name" value={employee.lastName}/>
-                  <InfoField label="Middle Name" value={employee.middleName}/>
-                  <InfoField label="Gender" value={formatEnumValue(employee.gender)}/>
-                  <InfoField label="Date of Birth" value={formatDate(employee.dateOfBirth)}/>
-                  <InfoField label="Nationality" value={employee.country}/>
-                </div>
-              </SectionCard>
-
-              {/* Contact Details */}
-              <SectionCard title="Contact Details">
-                <div className="grid grid-cols-1 gap-4">
-                  <InfoField label="Work Email" value={employee.workEmail}/>
-                  <InfoField label="Personal Email" value={employee.personalEmail}/>
-                  <InfoField label="Mobile" value={employee.phoneNumber}/>
-                  <InfoField
-                    label="Emergency Contact"
-                    value={employee.emergencyContactNumber}
-                  />
-                </div>
-              </SectionCard>
-
-              {/* Addresses */}
-              <SectionCard title="Address">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
-                    <InfoField label="Street Address" value={employee.address}/>
-                  </div>
-                  <InfoField label="City" value={employee.city}/>
-                  <InfoField label="State / Province" value={employee.state}/>
-                  <InfoField label="Postal Code" value={employee.postalCode}/>
-                  <InfoField label="Country" value={employee.country}/>
-                </div>
-              </SectionCard>
-
-              {/* Banking & Tax */}
-              <PermissionGate anyOf={[Permissions.PAYROLL_VIEW, Permissions.PAYROLL_VIEW_SELF, Permissions.PAYROLL_VIEW_ALL]} fallback={null}>
-                <SectionCard title="Banking & Tax">
-                  <div className="grid grid-cols-1 gap-4">
-                    <InfoField label="Bank Name" value={employee.bankName}/>
-                    <InfoField label="Account Number" value={employee.bankAccountNumber}/>
-                    <InfoField label="IFSC / Routing" value={employee.bankIfscCode}/>
-                    <InfoField label="Tax ID / SSN" value={employee.taxId}/>
-                  </div>
-                  <div className="mt-4 bg-accent-50 dark:bg-accent-950/30 border border-accent-500/30 rounded-md p-4">
-                    <p className="text-xs text-accent-700 dark:text-accent-400">
-                      Banking and tax information is encrypted and stored securely.
-                    </p>
-                  </div>
-                </SectionCard>
-              </PermissionGate>
-            </div>
-          )}
-
-          {/* ═══ JOB TAB ═════════════════════════════════════════════ */}
-          {currentTab === 'job' && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Job Details */}
-              <SectionCard title="Job Details">
-                <div className="grid grid-cols-2 gap-4">
-                  <InfoField label="Employee Number" value={employee.employeeCode}/>
-                  <InfoField label="Date of Joining" value={formatDate(employee.joiningDate)}/>
-                  <InfoField label="Job Title" value={employee.designation}/>
-                  <InfoField label="Job Role" value={formatEnumValue(employee.jobRole)}/>
-                  <InfoField
-                    label="Confirmation Date"
-                    value={formatDate(employee.confirmationDate)}
-                  />
-                  <InfoField label="Worker Type" value={formatEnumValue(employee.employmentType)}/>
-                  <InfoField label="Level" value={formatEnumValue(employee.level)}/>
-                  <InfoField label="Status" value={formatEnumValue(employee.status)}/>
-                  {employee.exitDate && (
-                    <InfoField label="Exit Date" value={formatDate(employee.exitDate)}/>
-                  )}
-                </div>
-              </SectionCard>
-
-              {/* Organization */}
-              <SectionCard title="Organization">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <InfoField label="Department" value={employee.departmentName}/>
-                    <InfoField label="Cost Center" value="Not Set"/>
-                  </div>
-
-                  {/* Reporting Manager */}
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] mb-2">
-                      Reports To
-                    </p>
-                    {employee.managerId ? (
-                      <button
-                        onClick={() => router.push(`/employees/${employee.managerId}`)}
-                        className="flex items-center gap-4 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
-                      >
-                        <AvatarInitials name={employee.managerName || 'M'} size="sm"/>
-                        <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
-                          {employee.managerName}
-                        </span>
-                      </button>
-                    ) : (
-                      <p className="text-sm text-[var(--text-primary)]">-</p>
-                    )}
-                  </div>
-
-                  {/* Dotted-Line Managers */}
-                  {employee.dottedLineManager1Name && (
-                    <div>
-                      <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] mb-2">
-                        Dotted-Line Manager 1
-                      </p>
-                      {employee.dottedLineManager1Id ? (
-                        <button
-                          onClick={() =>
-                            router.push(`/employees/${employee.dottedLineManager1Id}`)
-                          }
-                          className="flex items-center gap-4 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
-                        >
-                          <AvatarInitials
-                            name={employee.dottedLineManager1Name}
-                            size="sm"
-                          />
-                          <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
-                            {employee.dottedLineManager1Name}
-                          </span>
-                        </button>
-                      ) : (
-                        <p className="text-sm text-[var(--text-primary)]">
-                          {employee.dottedLineManager1Name}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  {employee.dottedLineManager2Name && (
-                    <div>
-                      <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] mb-2">
-                        Dotted-Line Manager 2
-                      </p>
-                      {employee.dottedLineManager2Id ? (
-                        <button
-                          onClick={() =>
-                            router.push(`/employees/${employee.dottedLineManager2Id}`)
-                          }
-                          className="flex items-center gap-4 hover:bg-[var(--bg-secondary)] rounded-lg p-2 -mx-2 transition-colors"
-                        >
-                          <AvatarInitials
-                            name={employee.dottedLineManager2Name}
-                            size="sm"
-                          />
-                          <span className="text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline">
-                            {employee.dottedLineManager2Name}
-                          </span>
-                        </button>
-                      ) : (
-                        <p className="text-sm text-[var(--text-primary)]">
-                          {employee.dottedLineManager2Name}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Direct Reports count */}
-                  <div className="grid grid-cols-2 gap-4 pt-2">
-                    <InfoField
-                      label="Direct Reports"
-                      value={String(subordinates.length)}
-                    />
-                    <InfoField
-                      label="Dotted Reports"
-                      value={String(dottedReports.length)}
-                    />
-                  </div>
-                </div>
-              </SectionCard>
-
-              {/* Dotted Reports Table */}
-              {dottedReports.length > 0 && (
-                <div className="lg:col-span-2">
-                  <SectionCard title="Dotted-Line Reports">
-                    <p className="text-caption mb-4">
-                      Employees who have {employee.fullName} assigned as a dotted-line manager
-                      (matrix reporting).
-                    </p>
-                    <div className="overflow-x-auto">
-                      <table className="table-aura w-full">
-                        <thead>
-                        <tr>
-                          <th
-                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                            Employee
-                          </th>
-                          <th
-                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                            Code
-                          </th>
-                          <th
-                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                            Designation
-                          </th>
-                          <th
-                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                            Department
-                          </th>
-                          <th
-                            className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2">
-                            Status
-                          </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {dottedReports.map((report) => (
-                          <tr
-                            key={report.id}
-                            className="hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer focus-within:bg-[var(--bg-card-hover)]"
-                            onClick={() => router.push(`/employees/${report.id}`)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                router.push(`/employees/${report.id}`);
-                              }
-                            }}
-                            tabIndex={0}
-                            role="link"
-                            aria-label={`View profile of ${report.fullName}`}
-                          >
-                            <td className="whitespace-nowrap py-2">
-                              <div className="flex items-center gap-2">
-                                <AvatarInitials name={report.fullName} size="sm"/>
-                                <span className="font-medium text-sm text-[var(--text-primary)]">
-                                    {report.fullName}
-                                  </span>
-                              </div>
-                            </td>
-                            <td className="whitespace-nowrap text-body-secondary py-2">
-                              {report.employeeCode}
-                            </td>
-                            <td className="whitespace-nowrap text-body-secondary py-2">
-                              {report.designation || '-'}
-                            </td>
-                            <td className="whitespace-nowrap text-body-secondary py-2">
-                              {report.departmentName || '-'}
-                            </td>
-                            <td className="py-2">
-                                <span
-                                  className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getStatusBadgeColor(report.status)}`}
-                                >
-                                  {formatEnumValue(report.status)}
-                                </span>
-                            </td>
-                          </tr>
-                        ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </SectionCard>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ═══ DOCUMENTS TAB ═══════════════════════════════════════ */}
-          {currentTab === 'documents' && (
-            <div>
-              <PermissionGate permission={Permissions.DOCUMENT_UPLOAD}>
-                <div className="mb-6">
-                  <label
-                    htmlFor="employee-document-upload"
-                    className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl border border-[var(--border-main)] bg-[var(--bg-card)] text-[var(--text-primary)] hover:bg-[var(--bg-card-hover)] transition-colors cursor-pointer ${isUploadingDoc ? 'opacity-50 pointer-events-none' : ''}`}
-                  >
-                    <FileText className="h-4 w-4"/>
-                    {isUploadingDoc ? 'Uploading...' : 'Upload Document'}
-                  </label>
-                  <input
-                    id="employee-document-upload"
-                    type="file"
-                    className="sr-only"
-                    disabled={isUploadingDoc}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) void handleDocumentUpload(file);
-                      e.target.value = '';
-                    }}
-                  />
-                  {docUploadError && (
-                    <p className="text-sm text-danger-500 mt-2">{docUploadError}</p>
-                  )}
-                </div>
-              </PermissionGate>
-
-              {isDocumentsLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} height={72} radius="md"/>
-                  ))}
-                </div>
-              ) : isDocumentsError ? (
-                <div
-                  className="p-6 bg-danger-50 dark:bg-danger-950/20 border border-danger-200 dark:border-danger-800 rounded-xl flex items-center gap-4">
-                  <AlertTriangle className="h-5 w-5 text-danger-500 flex-shrink-0"/>
-                  <p className="text-sm text-danger-600 dark:text-danger-400">
-                    Failed to load documents. Please try again.
-                  </p>
-                </div>
-              ) : documents.length === 0 ? (
-                <EmptyState
-                  icon={<FileText className="w-full h-full"/>}
-                  title="No documents uploaded yet"
-                  description="Documents uploaded this session will appear here."
+              <Tabs.Panel value="about">
+                <AboutTab
+                  employee={employee}
+                  subordinates={subordinates}
+                  subTab={tabs.aboutSubTab}
+                  onSubTabChange={tabs.selectAboutSubTab}
                 />
-              ) : (
-                <Stagger inView className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {documents.map((doc) => (
-                    <StaggerItem key={doc.objectName}>
-                      <Card>
-                        <CardContent className="p-4 flex items-start gap-3">
-                          <div
-                            className="h-10 w-10 shrink-0 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
-                            <FileText className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            {doc.downloadUrl ? (
-                              <a
-                                href={doc.downloadUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm font-medium text-[var(--text-primary)] hover:text-accent-700 truncate block"
-                              >
-                                {doc.fileName}
-                              </a>
-                            ) : (
-                              <p className="text-sm font-medium text-[var(--text-primary)] truncate">
-                                {doc.fileName}
-                              </p>
-                            )}
-                            <p className="text-caption">{Math.round(doc.fileSize / 1024)} KB</p>
-                          </div>
-                          <PermissionGate permission={Permissions.DOCUMENT_DELETE}>
-                            <button
-                              onClick={() => void handleDocumentDelete(doc)}
-                              aria-label={`Delete ${doc.fileName}`}
-                              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20 transition-colors cursor-pointer"
-                            >
-                              <Trash2 className="h-4 w-4"/>
-                            </button>
-                          </PermissionGate>
-                        </CardContent>
-                      </Card>
-                    </StaggerItem>
-                  ))}
-                </Stagger>
-              )}
-            </div>
-          )}
+              </Tabs.Panel>
+              <Tabs.Panel value="profile">
+                <ProfileTab employee={employee}/>
+              </Tabs.Panel>
+              <Tabs.Panel value="job">
+                <JobTab employee={employee} directReports={subordinates.length} dottedReports={dottedReports}/>
+              </Tabs.Panel>
+              <Tabs.Panel value="documents">
+                <DocumentsTab employeeId={employeeId}/>
+              </Tabs.Panel>
+              <Tabs.Panel value="assets">
+                <AssetsTab
+                  employeeId={employeeId}
+                  firstName={employee.firstName}
+                  subTab={tabs.assetSubTab}
+                  onSubTabChange={tabs.selectAssetSubTab}
+                />
+              </Tabs.Panel>
+            </Tabs>
+          </div>
 
-          {/* ═══ ASSETS TAB ══════════════════════════════════════════ */}
-          {currentTab === 'assets' && (
-            <div>
-              {/* Sub-tabs */}
-              <div className="flex gap-1 mb-6 border-b border-[var(--border-main)]">
-                {ASSET_SUB_TABS.map((sub) => (
-                  <button
-                    key={sub.key}
-                    onClick={() => handleAssetSubTab(sub.key)}
-                    className={tabClass(assetSubTab === sub.key)}
-                    aria-current={assetSubTab === sub.key ? 'page' : undefined}
-                  >
-                    {sub.label}
-                  </button>
-                ))}
-              </div>
+          <div className="order-1 lg:order-2">
+            <EmployeeSidePanel
+              employee={employee}
+              directReports={subordinates.length}
+              dottedReports={dottedReports.length}
+            />
+          </div>
+        </div>
 
-              {/* Assigned Assets */}
-              {assetSubTab === 'assigned' && (
-                <div>
-                  {(employeeAssets as Asset[]).length > 0 ? (
-                    <div className="overflow-x-auto">
-                      <table className="table-aura w-full">
-                        <thead>
-                        <tr>
-                          {[
-                            'Asset Name',
-                            'Category',
-                            'Serial Number',
-                            'Status',
-                            'Purchase Date',
-                            'Location',
-                          ].map((h) => (
-                            <th
-                              key={h}
-                              className="text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)] py-2"
-                            >
-                              {h}
-                            </th>
-                          ))}
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {(employeeAssets as Asset[]).map((asset) => (
-                          <tr
-                            key={asset.id}
-                            className="hover:bg-[var(--bg-card-hover)] transition-colors"
-                          >
-                            <td className="py-2">
-                              <div className="flex items-center gap-2">
-                                <Laptop className="h-4 w-4 text-[var(--text-muted)]"/>
-                                <div>
-                                  <p className="text-sm font-medium text-[var(--text-primary)]">
-                                    {asset.assetName}
-                                  </p>
-                                  <p className="text-caption">
-                                    {asset.assetCode}
-                                  </p>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="text-body-secondary py-2">
-                              {formatEnumValue(asset.category)}
-                            </td>
-                            <td className="text-body-secondary py-2 font-mono">
-                              {asset.serialNumber || '-'}
-                            </td>
-                            <td className="py-2">
-                                <span
-                                  className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
-                                    asset.status === 'ASSIGNED'
-                                      ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-400'
-                                      : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)]'
-                                  }`}
-                                >
-                                  {formatEnumValue(asset.status)}
-                                </span>
-                            </td>
-                            <td className="text-body-secondary py-2">
-                              {formatDate(asset.purchaseDate)}
-                            </td>
-                            <td className="text-body-secondary py-2">
-                              {asset.location || '-'}
-                            </td>
-                          </tr>
-                        ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-16">
-                      <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                      <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                        No Assets Assigned
-                      </h2>
-                      <p className="text-body-muted">
-                        No assets are currently assigned to this employee.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Asset Requests */}
-              {assetSubTab === 'requests' && (
-                <div className="text-center py-16">
-                  <Package className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                    Asset Requests
-                  </h2>
-                  <p className="text-body-muted max-w-md mx-auto">
-                    Asset requests made by {employee.firstName} will appear here.
-                  </p>
-                </div>
-              )}
-
-              {/* Damage Charges */}
-              {assetSubTab === 'damages' && (
-                <div className="text-center py-16">
-                  <AlertTriangle className="h-12 w-12 text-[var(--text-muted)] mx-auto mb-4"/>
-                  <h2 className="text-xl font-semibold text-[var(--text-primary)] mb-2">
-                    Asset Damage Charges
-                  </h2>
-                  <p className="text-body-muted max-w-md mx-auto">
-                    Any damage charges for assets assigned to {employee.firstName} will appear here.
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </main>
-
-        {/* ── DELETE CONFIRMATION MODAL ─────────────────────────────── */}
-        <Modal
+        <ConfirmDialog
           isOpen={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          size="sm"
-        >
-          <ModalHeader onClose={() => setShowDeleteModal(false)}>
-            <div className="flex items-center gap-4">
-              <div
-                className="flex-shrink-0 h-12 w-12 rounded-full bg-danger-100 dark:bg-danger-900/30 flex items-center justify-center">
-                <AlertTriangle className="h-6 w-6 text-danger-600 dark:text-danger-400"/>
-              </div>
-              <h2 className="text-lg font-medium text-[var(--text-primary)]">
-                Delete Employee
-              </h2>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <p className="text-body-muted mb-6">
-              Are you sure you want to delete <strong>{employee.fullName}</strong>? This action
-              cannot be undone.
-            </p>
-            <div className="flex gap-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                disabled={deleteEmployeeMutation.isPending}
-                className="flex-1 px-4 py-2 border border-[var(--border-main)] rounded-md text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleteEmployeeMutation.isPending}
-                className="flex-1 px-4 py-2 bg-danger-600 text-white rounded-md hover:bg-danger-700 disabled:opacity-50"
-              >
-                {deleteEmployeeMutation.isPending ? 'Deleting...' : 'Delete'}
-              </button>
-            </div>
-          </ModalBody>
-        </Modal>
+          onClose={() => !deleteEmployeeMutation.isPending && setShowDeleteModal(false)}
+          onConfirm={() => void handleDelete()}
+          title="Delete Employee?"
+          message={`Are you sure you want to delete ${employee.fullName}? This action cannot be undone.`}
+          confirmText="Delete"
+          type="danger"
+          loading={deleteEmployeeMutation.isPending}
+        />
       </PageTransition>
     </AppLayout>
   );

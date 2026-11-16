@@ -147,7 +147,7 @@ function PageHeader({onInitiate, onTemplates}: {onInitiate: () => void; onTempla
       className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
     >
       <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+        <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
           Talent Onboarding
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
@@ -205,7 +205,7 @@ function StatsRow({active, joiningThisWeek, overdue, completedYtd}: {
         >
           <div className="flex items-center gap-2 text-[var(--text-3)]">
             <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="text-2xs font-bold uppercase tracking-[0.08em]">{item.label}</span>
+            <span className="text-2xs font-bold uppercase tracking-wider">{item.label}</span>
           </div>
           <p
             className={`mt-3 font-mono text-3xl sm:text-4xl font-bold tabular-nums tracking-tight ${
@@ -308,7 +308,7 @@ function BentoHero({count}: {count: number}) {
             </span>
             <span className="text-sm text-[var(--text-secondary)]">in progress</span>
           </div>
-          <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+          <p className="text-2xs font-medium uppercase tracking-widest text-[var(--text-muted)]">
             Live cohort
           </p>
         </div>

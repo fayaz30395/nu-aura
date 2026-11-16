@@ -320,10 +320,6 @@ export default function LettersPage() {
           resetForm();
           refetchLetters();
         },
-        onError: (err: unknown) => {
-          log.error('Error generating letter:', err);
-          toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to generate letter');
-        }
       }
     );
   };
@@ -352,10 +348,6 @@ export default function LettersPage() {
           refetchLetters();
           refetchCandidates();
         },
-        onError: (err: unknown) => {
-          log.error('Error generating offer letter:', err);
-          toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to generate offer letter');
-        }
       }
     );
   };
@@ -365,7 +357,6 @@ export default function LettersPage() {
       {letterId: letter.id, approverId: user?.id || ''},
       {
         onSuccess: () => { toast.success('Submitted for approval'); refetchLetters(); },
-        onError: (err) => { log.error('Error:', err); toast.error('Failed to submit for approval'); }
       }
     );
   };
@@ -375,7 +366,6 @@ export default function LettersPage() {
       {letterId: letter.id, approverId: user?.id || ''},
       {
         onSuccess: () => { toast.success('Letter approved'); refetchLetters(); },
-        onError: (err) => { log.error('Error:', err); toast.error('Failed to approve letter'); }
       }
     );
   };
@@ -385,7 +375,6 @@ export default function LettersPage() {
       {letterId: letter.id, issuerId: user?.id || ''},
       {
         onSuccess: () => { toast.success('Letter issued'); refetchLetters(); },
-        onError: (err) => { log.error('Error:', err); toast.error('Failed to issue letter'); }
       }
     );
   };
@@ -395,7 +384,6 @@ export default function LettersPage() {
       {letterId: letter.id, issuerId: user?.id || ''},
       {
         onSuccess: () => { toast.success('Letter issued for e-signature'); refetchLetters(); },
-        onError: (err) => { log.error('Error:', err); toast.error('Failed to issue letter for e-sign'); }
       }
     );
   };
@@ -403,7 +391,6 @@ export default function LettersPage() {
   const handleRevokeLetter = async (letter: GeneratedLetter) => {
     revokeLetterMutation.mutate(letter.id, {
       onSuccess: () => { toast.success('Letter revoked'); refetchLetters(); },
-      onError: (err) => { log.error('Error:', err); toast.error('Failed to revoke letter'); },
     });
   };
 

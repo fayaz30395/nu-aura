@@ -13,7 +13,6 @@ import {notifications} from '@mantine/notifications';
 import {Drawer, LoadingOverlay, Modal, Select} from '@mantine/core';
 import {AnimatePresence, motion} from 'framer-motion';
 import {ArrowLeft, Building2, ChevronDown, Eye, FileText, Globe, Lock, Save, Send, Shield,} from 'lucide-react';
-import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import {motion as dsMotion} from '@/lib/theme/design-system';
 import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
@@ -174,16 +173,6 @@ export default function CreateWikiPage() {
             notifications.show({title: 'Draft saved', message: 'Your wiki page has been saved as a draft', color: 'green'});
             router.push(`/fluence/wiki/${page.id}`);
           },
-          onError: (error: unknown) => {
-            const message =
-              isAxiosError(error) &&
-              typeof error.response?.data === 'object' &&
-              error.response?.data !== null &&
-              'message' in error.response.data
-                ? ((error.response.data as { message?: string }).message ?? 'Failed to save draft')
-                : 'Failed to save draft';
-            notifications.show({title: 'Error', message, color: 'red'});
-          },
         }
       );
     } finally {
@@ -221,16 +210,6 @@ export default function CreateWikiPage() {
               },
               onSettled: () => router.push(`/fluence/wiki/${page.id}`),
             });
-          },
-          onError: (error: unknown) => {
-            const message =
-              isAxiosError(error) &&
-              typeof error.response?.data === 'object' &&
-              error.response?.data !== null &&
-              'message' in error.response.data
-                ? ((error.response.data as { message?: string }).message ?? 'Failed to create wiki page')
-                : 'Failed to create wiki page';
-            notifications.show({title: 'Error', message, color: 'red'});
           },
         }
       );

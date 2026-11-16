@@ -80,6 +80,7 @@ export function useCreateShiftDefinition() {
       queryClient.invalidateQueries({queryKey: shiftKeys.definitions()});
       notifications.show({title: 'Success', message: 'Shift created successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to create shift', color: 'red'});
     },
@@ -95,6 +96,7 @@ export function useUpdateShiftDefinition() {
       queryClient.invalidateQueries({queryKey: shiftKeys.definitions()});
       notifications.show({title: 'Success', message: 'Shift updated successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to update shift', color: 'red'});
     },
@@ -109,6 +111,7 @@ export function useDeleteShiftDefinition() {
       queryClient.invalidateQueries({queryKey: shiftKeys.definitions()});
       notifications.show({title: 'Success', message: 'Shift deleted', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to delete shift', color: 'red'});
     },
@@ -142,6 +145,7 @@ export function useCreatePattern() {
       queryClient.invalidateQueries({queryKey: shiftKeys.patterns()});
       notifications.show({title: 'Success', message: 'Pattern created successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to create pattern', color: 'red'});
     },
@@ -157,6 +161,7 @@ export function useUpdatePattern() {
       queryClient.invalidateQueries({queryKey: shiftKeys.patterns()});
       notifications.show({title: 'Success', message: 'Pattern updated', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to update pattern', color: 'red'});
     },
@@ -171,6 +176,7 @@ export function useDeletePattern() {
       queryClient.invalidateQueries({queryKey: shiftKeys.patterns()});
       notifications.show({title: 'Success', message: 'Pattern deleted', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to delete pattern', color: 'red'});
     },
@@ -216,6 +222,7 @@ export function useGenerateSchedule() {
       queryClient.invalidateQueries({queryKey: shiftKeys.assignments()});
       notifications.show({title: 'Success', message: 'Schedule generated', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to generate schedule', color: 'red'});
     },
@@ -233,6 +240,7 @@ export function useAssignShift() {
       queryClient.invalidateQueries({queryKey: shiftKeys.schedule()});
       notifications.show({title: 'Success', message: 'Shift assigned', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to assign shift', color: 'red'});
     },
@@ -275,6 +283,7 @@ export function useSubmitSwapRequest() {
       queryClient.invalidateQueries({queryKey: shiftKeys.swaps()});
       notifications.show({title: 'Success', message: 'Swap request submitted', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to submit swap request', color: 'red'});
     },
@@ -290,6 +299,7 @@ export function useAcceptSwapRequest() {
       queryClient.invalidateQueries({queryKey: shiftKeys.swaps()});
       notifications.show({title: 'Success', message: 'Swap request accepted', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to accept request', color: 'red'});
     },
@@ -305,6 +315,7 @@ export function useApproveSwapRequest() {
       queryClient.invalidateQueries({queryKey: shiftKeys.swaps()});
       notifications.show({title: 'Success', message: 'Swap approved', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to approve swap', color: 'red'});
     },
@@ -327,6 +338,7 @@ export function useRejectSwapRequest() {
       queryClient.invalidateQueries({queryKey: shiftKeys.swaps()});
       notifications.show({title: 'Success', message: 'Swap rejected', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to reject swap', color: 'red'});
     },

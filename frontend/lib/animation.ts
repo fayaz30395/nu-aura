@@ -21,36 +21,16 @@
  * ============================================================================
  */
 import {useReducedMotion, type Transition, type Variants} from 'framer-motion';
+import {MOTION_DURATION, MOTION_EASE, MOTION_RISE_DISTANCE, MOTION_STAGGER} from '@/lib/theme/design-system';
 
-/* ── Duration tokens (seconds — Framer uses seconds, CSS uses ms) ───────── */
-export const MOTION_DURATION = {
-  fast: 0.12,
-  base: 0.2,
-  slow: 0.32,
-} as const;
-
-/* ── Easing tokens (cubic-bezier arrays mirror the CSS vars) ────────────── */
-export const MOTION_EASE = {
-  standard: [0.4, 0, 0.2, 1],
-  outExpo: [0.16, 1, 0.3, 1],
-  // De-bounced to ease-out-expo (no overshoot). Bounce/elastic easing is banned
-  // per DESIGN.md; the brand is calm and quietly confident. Name kept for its
-  // Framer call sites (Sidebar, MobileBottomNav, scaleIn).
-  spring: [0.16, 1, 0.3, 1],
-} as const;
-
-/** Rise distance (px) for fade+rise entrances — matches --motion-rise-distance. */
-export const MOTION_RISE_DISTANCE = 8;
-
-/** Default stagger gap (seconds) between orchestrated children. */
-export const MOTION_STAGGER = 0.06;
+export {MOTION_DURATION, MOTION_EASE, MOTION_RISE_DISTANCE, MOTION_STAGGER};
 
 const baseTransition: Transition = {
   duration: MOTION_DURATION.base,
   ease: MOTION_EASE.outExpo,
 };
 
-/* ── fadeRise — entrance: fade + 8px rise ───────────────────────────────── */
+/* ── fadeRise — entrance: fade + rise ───────────────────────────────────── */
 export const fadeRise: Variants = {
   hidden: {opacity: 0, y: MOTION_RISE_DISTANCE},
   visible: {
@@ -65,7 +45,7 @@ export const fadeRise: Variants = {
   },
 };
 
-/* ── scaleIn — entrance: scale + fade (springy) ─────────────────────────── */
+/* ── scaleIn — entrance: scale + fade ───────────────────────────────────── */
 export const scaleIn: Variants = {
   hidden: {opacity: 0, scale: 0.96},
   visible: {
@@ -86,7 +66,7 @@ export const pageTransition: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: {duration: MOTION_DURATION.slow, ease: MOTION_EASE.outExpo},
+    transition: {duration: MOTION_DURATION.base, ease: MOTION_EASE.outExpo},
   },
   exit: {
     opacity: 0,
@@ -168,39 +148,37 @@ export {noopVariants};
 
 /* ── Modal / overlay / toast — merged from lib/animations/variants.ts ───── */
 export const modalVariants: Variants = {
-  initial: {opacity: 0, scale: 0.95, y: 10},
+  initial: {opacity: 0, scale: 0.98, y: MOTION_RISE_DISTANCE},
   animate: {
     opacity: 1,
     scale: 1,
     y: 0,
-    transition: {duration: 0.25, ease: [0.16, 1, 0.3, 1]},
+    transition: {duration: MOTION_DURATION.slow, ease: MOTION_EASE.outExpo},
   },
   exit: {
     opacity: 0,
-    scale: 0.95,
-    y: 10,
-    transition: {duration: 0.15, ease: 'easeIn'},
+    scale: 0.98,
+    y: MOTION_RISE_DISTANCE,
+    transition: {duration: MOTION_DURATION.fast, ease: MOTION_EASE.standard},
   },
 };
 
 export const overlayVariants: Variants = {
   initial: {opacity: 0},
-  animate: {opacity: 1, transition: {duration: 0.2}},
-  exit: {opacity: 0, transition: {duration: 0.15}},
+  animate: {opacity: 1, transition: {duration: MOTION_DURATION.base, ease: MOTION_EASE.outExpo}},
+  exit: {opacity: 0, transition: {duration: MOTION_DURATION.fast, ease: MOTION_EASE.standard}},
 };
 
 export const toastVariants: Variants = {
-  initial: {opacity: 0, y: -20, scale: 0.95},
+  initial: {opacity: 0, y: -MOTION_RISE_DISTANCE * 2},
   animate: {
     opacity: 1,
     y: 0,
-    scale: 1,
-    transition: {type: 'spring', stiffness: 400, damping: 25},
+    transition: {duration: MOTION_DURATION.base, ease: MOTION_EASE.outExpo},
   },
   exit: {
     opacity: 0,
-    y: -20,
-    scale: 0.95,
-    transition: {duration: 0.15, ease: 'easeIn'},
+    y: -MOTION_RISE_DISTANCE * 2,
+    transition: {duration: MOTION_DURATION.fast, ease: MOTION_EASE.standard},
   },
 };

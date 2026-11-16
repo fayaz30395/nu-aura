@@ -43,6 +43,7 @@ export type {
 
 // StatCard Component (legacy — prefer `<Stat>` for new code)
 export {StatCard} from './StatCard';
+export {Progress} from './Progress';
 export type {StatCardProps} from './StatCard';
 
 // Stat — flat single-hue statistic (Studio Slate v2)
@@ -155,3 +156,7 @@ export type {EditableCellProps} from './EditableCell';
 // DashboardGrid Component
 export {DashboardGrid} from './DashboardGrid';
 export type {DashboardGridProps, DashboardWidget} from './DashboardGrid';
+
+// SearchField Component
+export {SearchField} from './SearchField';
+export type {SearchFieldProps} from './SearchField';

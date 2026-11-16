@@ -1,10 +1,16 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {AlertCircle, CalendarOff, RefreshCw} from 'lucide-react';
+import {Button, NativeSelect} from '@mantine/core';
+import {CalendarOff} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {PageTransition, Reveal} from '@/components/motion';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {ResponsiveTable, TablePagination, type Column, type RowActionItem} from '@/components/ui/ResponsiveTable';
+import {ResponsiveTableRowActions} from '@/components/ui/ResponsiveTableRowActions';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
+import {StatusBadge} from '@/components/ui/StatusBadge';
 import {
   useActiveLeaveTypes,
   useCancelLeaveRequest,
@@ -12,43 +18,39 @@ import {
   useLeaveRequestsByStatus
 } from '@/lib/hooks/queries/useLeaves';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {LeaveRequest, LeaveRequestStatus} from '@/lib/types/hrms/leave';
+import {LEAVE_STATUS} from '@/lib/status/vocabulary';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
-import {EmptyState} from '@/components/ui/EmptyState';
 import {formatDate} from '@/lib/utils/format/date';
+
+const PAGE_SIZE = 10;
+const BREADCRUMBS = [{label: 'Leave', href: '/leave'}, {label: 'My Leaves'}];
+const STATUS_OPTIONS = [
+  {value: '', label: 'All statuses'},
+  {value: 'PENDING', label: 'Pending'},
+  {value: 'APPROVED', label: 'Approved'},
+  {value: 'REJECTED', label: 'Rejected'},
+  {value: 'CANCELLED', label: 'Cancelled'},
+];
 
 export default function MyLeavesPage() {
   const toast = useToast();
   const router = useRouter();
   const {user} = useAuth();
-  const {hasPermission, isPermissionReady: permReady} = usePermissions();
-
-  // A3: Permission gate — redirect if user lacks LEAVE:VIEW_SELF
-  useEffect(() => {
-    if (!permReady) return;
-    if (!hasPermission(Permissions.LEAVE_VIEW_SELF)) {
-      router.replace('/me/dashboard?denied=1');
-    }
-  }, [permReady, hasPermission, router]);
   const [filterStatus, setFilterStatus] = useState<LeaveRequestStatus | ''>('');
   const [currentPage, setCurrentPage] = useState(0);
-  const [error, setError] = useState<string | null>(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showReasonModal, setShowReasonModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [selectedLeaveId, setSelectedLeaveId] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
   const cancelLeaveRequest = useCancelLeaveRequest();
 
-  const employeeRequests = useEmployeeLeaveRequests(user?.employeeId || '', currentPage, 10, Boolean(user?.employeeId && !filterStatus));
-  const statusRequests = useLeaveRequestsByStatus(filterStatus as LeaveRequestStatus, currentPage, 10);
+  const employeeRequests = useEmployeeLeaveRequests(user?.employeeId || '', currentPage, PAGE_SIZE, Boolean(user?.employeeId && !filterStatus));
+  const statusRequests = useLeaveRequestsByStatus(filterStatus as LeaveRequestStatus, currentPage, PAGE_SIZE);
   const {data: leaveTypes = []} = useActiveLeaveTypes();
 
-  const requestsData = filterStatus ? statusRequests.data : employeeRequests.data;
-  const requests = requestsData?.content ?? [];
-  const totalPages = requestsData?.totalPages ?? 0;
+  const requestsQuery = filterStatus ? statusRequests : employeeRequests;
 
   const handleCancelClick = (id: string) => {
     setSelectedLeaveId(id);
@@ -62,234 +64,118 @@ export default function MyLeavesPage() {
 
   const handleReasonSubmit = async (reason?: string) => {
     const trimmed = (reason ?? cancelReason).trim();
-    if (!trimmed || !selectedLeaveId) return;
+    if (!trimmed || !selectedLeaveId || cancelLeaveRequest.isPending) return;
 
     try {
-      setIsProcessing(true);
       await cancelLeaveRequest.mutateAsync({id: selectedLeaveId, reason: trimmed});
-      toast.success('Leave request cancelled successfully');
-      setShowReasonModal(false);
-      setCancelReason('');
-      setSelectedLeaveId(null);
-    } catch (error: unknown) {
-      toast.error((error as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to cancel leave request');
-    } finally {
-      setIsProcessing(false);
+    } catch {
+      // useCancelLeaveRequest shows the single error toast.
+      return;
     }
+    toast.success('Leave request cancelled successfully');
+    setShowReasonModal(false);
+    setCancelReason('');
+    setSelectedLeaveId(null);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'APPROVED':
-        return 'bg-success-100 text-success-800';
-      case 'PENDING':
-        return 'bg-warning-100 text-warning-800';
-      case 'REJECTED':
-        return 'bg-danger-100 text-danger-800';
-      case 'CANCELLED':
-        return 'bg-[var(--bg-surface)] text-[var(--text-primary)]';
-      default:
-        return 'bg-accent-100 text-accent-800';
+  const getLeaveTypeName = (leaveTypeId: string) =>
+    leaveTypes.find(t => t.id === leaveTypeId)?.leaveName || 'Unknown';
+
+  const rowActions = (request: LeaveRequest): RowActionItem[] => {
+    const items: RowActionItem[] = [];
+    if (request.status === 'PENDING') {
+      items.push({label: 'Cancel request', color: 'red', onClick: () => handleCancelClick(request.id)});
     }
+    if (request.status === 'REJECTED' && request.rejectionReason) {
+      items.push({label: 'View rejection reason', onClick: () => toast.error(`Rejection Reason: ${request.rejectionReason}`)});
+    }
+    return items;
   };
 
-  const getLeaveTypeName = (leaveTypeId: string) => {
-    return leaveTypes.find(t => t.id === leaveTypeId)?.leaveName || 'Unknown';
-  };
+  const columns: Column<LeaveRequest>[] = [
+    {key: 'requestNumber', header: 'Request #', accessor: (r) => <span className="font-medium">{r.requestNumber}</span>, mobilePriority: 'primary'},
+    {key: 'leaveType', header: 'Leave type', accessor: (r) => getLeaveTypeName(r.leaveTypeId), mobilePriority: 'secondary'},
+    {key: 'duration', header: 'Duration', accessor: (r) => `${formatDate(r.startDate)} – ${formatDate(r.endDate)}`, mobilePriority: 'secondary'},
+    {key: 'days', header: 'Days', numeric: true, accessor: (r) => `${r.totalDays}${r.isHalfDay ? ' (Half)' : ''}`, mobilePriority: 'secondary'},
+    {
+      key: 'reason', header: 'Reason', mobilePriority: 'hidden',
+      accessor: (r) => <span className="block max-w-xs truncate" title={r.reason}>{r.reason}</span>,
+    },
+    {key: 'status', header: 'Status', accessor: (r) => <StatusBadge status={r.status} domain={LEAVE_STATUS} compact/>, mobilePriority: 'secondary'},
+    {key: 'appliedOn', header: 'Applied on', accessor: (r) => formatDate(r.appliedOn), mobilePriority: 'hidden'},
+  ];
 
   return (
     <AppLayout activeMenuItem="leave">
-      <PageTransition className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <button
-            onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            ← Back
-          </button>
+      <div className="flex flex-col gap-6">
+        <PageHeader
+          title="My Leaves"
+          description="Track the status of your leave requests."
+          breadcrumbs={BREADCRUMBS}
+          actions={<Button onClick={() => router.push('/leave/apply')}>Apply for Leave</Button>}
+        />
+
+        <div className="flex flex-wrap items-end gap-2">
+          <NativeSelect
+            id="leave-filter-status"
+            label="Status"
+            aria-label="Filter by Status"
+            className="w-full sm:w-48"
+            value={filterStatus}
+            onChange={(e) => {
+              setFilterStatus(e.currentTarget.value as LeaveRequestStatus | '');
+              setCurrentPage(0);
+            }}
+            data={STATUS_OPTIONS}
+          />
         </div>
 
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold">My Leaves</h1>
-          <button
-            onClick={() => router.push('/leave/apply')}
-            className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            Apply for Leave
-          </button>
-        </div>
-
-        {/* Filters */}
-        <div className="skeuo-card p-6 mb-6">
-          <div className="flex gap-4 items-center">
-            <label htmlFor="leave-filter-status" className="text-sm font-medium text-[var(--text-secondary)]">Filter by Status:</label>
-            <select
-              id="leave-filter-status"
-              aria-label="Filter by Status"
-              value={filterStatus}
-              onChange={(e) => {
-                setFilterStatus(e.target.value as LeaveRequestStatus | '');
-                setCurrentPage(0);
-              }}
-              className="input-aura"
-            >
-              <option value="">All Statuses</option>
-              <option value="PENDING">Pending</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="CANCELLED">Cancelled</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Error State */}
-        {error && (
-          <div
-            className="mb-6 bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-4">
-            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0"/>
-            <div className="flex-1">
-              <p className="text-sm text-danger-800 dark:text-danger-300">{error}</p>
-            </div>
-            <button
-              onClick={() => setError(null)}
-              aria-label="Dismiss error"
-              className="text-danger-600 dark:text-danger-400 hover:text-danger-700 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              <RefreshCw
-                className="w-4 h-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"/>
-            </button>
-          </div>
-        )}
-
-        {/* Leave Requests Table */}
-        <Reveal className="skeuo-card overflow-hidden">
-          {!requestsData ? (
-            <div className="px-6 py-12 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div
-                  className="w-8 h-8 border-4 border-accent-200 dark:border-accent-900/30 border-t-accent-500 rounded-full animate-spin"
-                  aria-label="Loading leave requests"/>
-                <span className="text-[var(--text-secondary)]">Loading leave requests...</span>
-              </div>
-            </div>
-          ) : requests.length === 0 ? (
-            <EmptyState
-              icon={<CalendarOff className="h-12 w-12"/>}
-              title="No leave requests found"
-              description="Get started by applying for your first leave"
-              actionLabel="Apply for Leave"
-              onAction={() => router.push('/leave/apply')}
-            />
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="table-aura">
-                  <thead className="skeuo-table-header">
-                  <tr>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Request
-                      #
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Leave
-                      Type
-                    </th>
-                    <th
-                      className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Duration
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Days</th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Reason
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Status
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Applied
-                      On
-                    </th>
-                    <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase">Actions
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody className="divide-y divide-surface-200 dark:divide-surface-700">
-                  {requests.map((request: LeaveRequest) => (
-                    <tr key={request.id}
-                        className="hover-lift hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50">
-                      <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                        {request.requestNumber}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-[var(--text-primary)]">
-                        {getLeaveTypeName(request.leaveTypeId)}
-                      </td>
-                      <td className="px-6 py-4 text-body-secondary">
-                        {formatDate(request.startDate)} - {formatDate(request.endDate)}
-                      </td>
-                      <td className="px-6 py-4 text-body-secondary">
-                        {request.totalDays} {request.isHalfDay && '(Half)'}
-                      </td>
-                      <td className="px-6 py-4 text-body-secondary max-w-xs truncate" title={request.reason}>
-                        {request.reason}
-                      </td>
-                      <td className="px-6 py-4">
-                          <span
-                            className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(request.status)}`}>
-                            {request.status}
-                          </span>
-                      </td>
-                      <td className="px-6 py-4 text-body-secondary">
-                        {formatDate(request.appliedOn)}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        {request.status === 'PENDING' && (
-                          <button
-                            onClick={() => handleCancelClick(request.id)}
-                            className="text-danger-600 dark:text-danger-500 hover:text-danger-700 dark:hover:text-danger-400 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          >
-                            Cancel
-                          </button>
-                        )}
-                        {request.status === 'REJECTED' && request.rejectionReason && (
-                          <button
-                            onClick={() => toast.error(`Rejection Reason: ${request.rejectionReason}`)}
-                            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          >
-                            View Reason
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="px-6 py-4 bg-[var(--bg-secondary)]/50 flex justify-between items-center">
-                  <button
-                    onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
-                    disabled={currentPage === 0}
-                    className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg disabled:opacity-50 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    Previous
-                  </button>
-                  <div className="text-body-secondary">
-                    <span>Showing {currentPage * 10 + 1}–{Math.min((currentPage + 1) * 10, requests.length + currentPage * 10)} of ~{totalPages * 10} results</span>
-                    <br/>
-                    <span>Page {currentPage + 1} of {totalPages}</span>
-                  </div>
-                  <button
-                    onClick={() => setCurrentPage(p => Math.min(totalPages - 1, p + 1))}
-                    disabled={currentPage >= totalPages - 1}
-                    className="px-4 py-2 bg-[var(--bg-card)] border border-[var(--border-main)] dark:border-[var(--border-main)] rounded-lg disabled:opacity-50 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                  >
-                    Next
-                  </button>
+        <QueryState
+          query={requestsQuery}
+          skeleton={<ListPageSkeleton showHeader={false} showFilters={false} rows={5} columns={7}/>}
+          errorTitle="Couldn't load your leave requests"
+          isEmpty={(data) => data.content.length === 0}
+          empty={filterStatus ? {
+            icon: <CalendarOff className="h-6 w-6"/>,
+            title: 'No matching leave requests',
+            description: 'No requests have this status.',
+            actionLabel: 'Clear filters',
+            onAction: () => setFilterStatus(''),
+          } : {
+            icon: <CalendarOff className="h-6 w-6"/>,
+            title: 'No leave requests found',
+            description: 'Get started by applying for your first leave',
+            actionLabel: 'Apply for Leave',
+            onAction: () => router.push('/leave/apply'),
+          }}
+        >
+          {(data) => (
+            <div className="rounded-lg border border-border bg-card">
+              <ResponsiveTable
+                columns={columns}
+                data={data.content}
+                keyExtractor={(r) => r.id}
+                stickyHeader
+                renderRowActions={(r) => {
+                  const items = rowActions(r);
+                  return items.length > 0 ? <ResponsiveTableRowActions items={items}/> : null;
+                }}
+              />
+              {data.totalPages > 1 && (
+                <div className="px-4">
+                  <TablePagination
+                    currentPage={currentPage}
+                    totalPages={data.totalPages}
+                    totalItems={data.totalElements ?? data.totalPages * PAGE_SIZE}
+                    pageSize={PAGE_SIZE}
+                    onPageChange={setCurrentPage}
+                  />
                 </div>
               )}
-            </>
+            </div>
           )}
-        </Reveal>
+        </QueryState>
 
-        {/* Cancel Leave Confirmation Dialog */}
         <ConfirmDialog
           isOpen={showCancelConfirm}
           onClose={() => setShowCancelConfirm(false)}
@@ -301,7 +187,6 @@ export default function MyLeavesPage() {
           type="warning"
         />
 
-        {/* Cancel Reason Dialog */}
         <ConfirmDialog
           isOpen={showReasonModal}
           onClose={() => {
@@ -314,13 +199,14 @@ export default function MyLeavesPage() {
           confirmText="Submit"
           cancelText="Cancel"
           type="warning"
-          loading={isProcessing}
+          loading={cancelLeaveRequest.isPending}
           reason={{
             label: 'Cancellation reason',
             placeholder: 'Enter cancellation reason...',
             required: true,
           }}
         />
-      </PageTransition>
-    </AppLayout>);
+      </div>
+    </AppLayout>
+  );
 }

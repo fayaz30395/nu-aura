@@ -423,7 +423,7 @@ export default function PermissionsPage() {
                   />
                 ) : (
                   <div className="bg-[var(--bg-card)] rounded-xl border border-[var(--border-main)] overflow-x-auto -mx-4 sm:mx-0">
-                    <table className="w-full min-w-[640px] text-left text-sm">
+                    <table className="w-full min-w-max text-left text-sm">
                       <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
                       <tr>
                         <th className="px-6 py-2 font-medium">User</th>

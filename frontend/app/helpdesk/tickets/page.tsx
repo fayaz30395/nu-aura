@@ -152,11 +152,8 @@ export default function TicketListPage() {
       toast.success('Ticket created successfully');
       setShowCreateModal(false);
       reset();
-    } catch (err: unknown) {
-      const message = (err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to create ticket';
-      toast.error(message);
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -164,11 +161,8 @@ export default function TicketListPage() {
     try {
       await statusMutation.mutateAsync({id: ticketId, status: newStatus});
       toast.success(`Ticket status updated to ${STATUS_LABELS[newStatus]}`);
-    } catch (err: unknown) {
-      const message = (err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to update status';
-      toast.error(message);
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 

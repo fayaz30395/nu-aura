@@ -78,11 +78,13 @@ export const employeeLevelSchema = z.enum([
 // Create Employee Schema
 export const createEmployeeSchema = z.object({
   // Required fields
+  // Blank means the backend auto-generates the code (CreateEmployeeRequest F-02).
   employeeCode: z
     .string()
-    .min(1, 'Employee code is required')
     .max(50, 'Employee code must be 50 characters or less')
-    .regex(/^[A-Za-z0-9-_]+$/, 'Only letters, numbers, hyphens, and underscores allowed'),
+    .regex(/^[A-Za-z0-9-_]+$/, 'Only letters, numbers, hyphens, and underscores allowed')
+    .optional()
+    .or(z.literal('')),
   firstName: z
     .string()
     .min(1, 'First name is required')

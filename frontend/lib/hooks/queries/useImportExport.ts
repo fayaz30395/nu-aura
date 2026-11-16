@@ -55,6 +55,7 @@ export function useImportData() {
         color: result.errorCount > 0 ? 'yellow' : 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Import Failed',
@@ -94,6 +95,7 @@ export function useExecuteEmployeeImport() {
       });
       queryClient.invalidateQueries({queryKey: ['employees']});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Employee Import Failed',
@@ -116,6 +118,7 @@ export function useDownloadEmployeeTemplate() {
         `employee_import_template.${format}`,
       );
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Download Failed',
@@ -149,6 +152,7 @@ export function useExportData() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Export Failed',

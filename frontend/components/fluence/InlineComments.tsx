@@ -109,7 +109,7 @@ function CommentThread({
   const timeAgo = formatTimeAgo(comment.createdAt);
 
   return (
-    <div className={`${depth > 0 ? 'ml-6 border-l-2 border-[var(--border-subtle)] pl-4' : ''}`}>
+    <div className={`${depth > 0 ? 'ml-6 border-l border-[var(--border-subtle)] pl-4' : ''}`}>
       <div className={`py-2 ${isResolved ? 'opacity-60' : ''}`}>
         {/* Comment Header */}
         <div className="flex items-center gap-2 mb-1">
@@ -182,7 +182,7 @@ function CommentThread({
               className="flex-1 px-4 py-2 text-sm bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg input-skeuo"
               autoFocus
             />
-            <Button type="submit" disabled={replyMutation.isPending} className="px-2 py-2">
+            <Button type="submit" disabled={replyMutation.isPending} className="px-2 py-2" aria-label="Send reply">
               <Send className="h-3.5 w-3.5"/>
             </Button>
           </form>

@@ -599,7 +599,7 @@ function PageHeader({onCreate}: {onCreate: () => void}) {
       className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
     >
       <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+        <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
           Expenses
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
@@ -820,7 +820,7 @@ function BentoHero({
         <p className="mt-3 text-body-secondary max-w-[48ch]">{description}</p>
         <div className="mt-10 flex items-end justify-between gap-6">
           <BentoHeroBars />
-          <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">{cta}</p>
+          <p className="text-2xs font-medium uppercase tracking-widest text-[var(--text-muted)]">{cta}</p>
         </div>
       </button>
     </motion.div>
@@ -922,7 +922,7 @@ function FiltersBar({
   return (
     <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4">
       <div className="flex flex-wrap items-center gap-4">
-        <div className="flex-1 min-w-[200px]" role="search">
+        <div className="flex-1 min-w-50" role="search">
           <Input
             type="search"
             aria-label="Search claims"

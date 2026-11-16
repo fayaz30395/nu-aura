@@ -1,5 +1,7 @@
 import {apiClient} from '../../api/client';
 import type {
+  AgendaTemplate,
+  AgendaTemplateRequest,
   MeetingActionItemRequest,
   MeetingActionItemResponse,
   MeetingActionItemStatusRequest,
@@ -15,6 +17,20 @@ import type {
 } from '../../types/hrms/meeting';
 
 export const meetingService = {
+  getAgendaTemplates: async (): Promise<AgendaTemplate[]> => {
+    const response = await apiClient.get<AgendaTemplate[]>('/meetings/agenda-templates');
+    return response.data;
+  },
+
+  createAgendaTemplate: async (data: AgendaTemplateRequest): Promise<AgendaTemplate> => {
+    const response = await apiClient.post<AgendaTemplate>('/meetings/agenda-templates', data);
+    return response.data;
+  },
+
+  deleteAgendaTemplate: async (id: string): Promise<void> => {
+    await apiClient.delete(`/meetings/agenda-templates/${id}`);
+  },
+
   // One-on-one legacy endpoints
   scheduleOneOnOneMeeting: async (
     data: OneOnOneMeetingEntity

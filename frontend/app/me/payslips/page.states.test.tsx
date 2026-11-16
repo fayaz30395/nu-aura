@@ -1,6 +1,7 @@
 import React from 'react';
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {MantineProvider} from '@mantine/core';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import MyPayslipsPage from './page';
 
@@ -37,9 +38,11 @@ vi.mock('@/components/motion', () => {
 function renderPage() {
   const client = new QueryClient({defaultOptions: {queries: {retry: false}}});
   return render(
-    <QueryClientProvider client={client}>
-      <MyPayslipsPage/>
-    </QueryClientProvider>
+    <MantineProvider>
+      <QueryClientProvider client={client}>
+        <MyPayslipsPage/>
+      </QueryClientProvider>
+    </MantineProvider>
   );
 }
 

@@ -53,6 +53,7 @@ export function useCreatePerformanceCycle() {
       queryClient.invalidateQueries({queryKey: performanceKeys.cycles()});
       notifications.show({title: 'Success', message: 'Review cycle created successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to create review cycle', color: 'red'});
     },
@@ -70,6 +71,7 @@ export function useUpdatePerformanceCycle() {
       queryClient.setQueryData(performanceKeys.cycleDetail(data.id), data);
       notifications.show({title: 'Success', message: 'Review cycle updated successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to update review cycle', color: 'red'});
     },
@@ -91,6 +93,7 @@ export function useActivatePerformanceCycle() {
         color: 'green'
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to activate review cycle', color: 'red'});
     },
@@ -107,6 +110,7 @@ export function useCompletePerformanceCycle() {
       queryClient.setQueryData(performanceKeys.cycleDetail(data.id), data);
       notifications.show({title: 'Success', message: 'Review cycle completed', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to complete review cycle', color: 'red'});
     },
@@ -122,6 +126,7 @@ export function useDeletePerformanceCycle() {
       queryClient.invalidateQueries({queryKey: performanceKeys.cycles()});
       notifications.show({title: 'Success', message: 'Review cycle deleted successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to delete review cycle', color: 'red'});
     },

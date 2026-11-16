@@ -93,7 +93,7 @@ export function ViewProgramModal({
                   {enrollments.map((enrollment) => (
                     <div
                       key={enrollment.id}
-                      className="row-between p-2 card-aura rounded-lg"
+                      className="row-between p-2 rounded-lg border border-[var(--border-main)]"
                     >
                       <div>
                         <p className="font-medium text-[var(--text-primary)]">

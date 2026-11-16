@@ -28,25 +28,25 @@ const PRODUCT_ACCENT_CLASSES: Record<AppCode, {
     ring: 'focus-visible:ring-[var(--prod-hrms)]',
     indicator: 'bg-[var(--prod-hrms)]',
     chip: 'bg-[color-mix(in_srgb,var(--prod-hrms)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod-hrms)_45%,transparent)]',
-    glow: 'shadow-[0_0_12px_var(--prod-hrms)]',
+    glow: '',
   },
   HIRE: {
     ring: 'focus-visible:ring-[var(--prod-hire)]',
     indicator: 'bg-[var(--prod-hire)]',
     chip: 'bg-[color-mix(in_srgb,var(--prod-hire)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod-hire)_45%,transparent)]',
-    glow: 'shadow-[0_0_12px_var(--prod-hire)]',
+    glow: '',
   },
   GROW: {
     ring: 'focus-visible:ring-[var(--prod-grow)]',
     indicator: 'bg-[var(--prod-grow)]',
     chip: 'bg-[color-mix(in_srgb,var(--prod-grow)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod-grow)_45%,transparent)]',
-    glow: 'shadow-[0_0_12px_var(--prod-grow)]',
+    glow: '',
   },
   FLUENCE: {
     ring: 'focus-visible:ring-[var(--prod-fluence)]',
     indicator: 'bg-[var(--prod-fluence)]',
     chip: 'bg-[color-mix(in_srgb,var(--prod-fluence)_24%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--prod-fluence)_45%,transparent)]',
-    glow: 'shadow-[0_0_12px_var(--prod-fluence)]',
+    glow: '',
   },
 };
 
@@ -83,7 +83,7 @@ export function ProductRail({
       {/* Brand mark — NULogic gradient "N" */}
       <div
         title="NU-AURA"
-        className="relative mb-3 grid h-10 w-10 place-items-center rounded-[11px] bg-[var(--nu-grad-brand)] shadow-[0_4px_14px_rgba(180,58,134,0.4),inset_0_1px_0_rgba(255,255,255,0.25)]"
+        className="relative mb-3 grid h-10 w-10 place-items-center rounded-[11px] bg-[var(--accent)]"
       >
         <span className="font-display text-[17px] font-extrabold tracking-[-0.04em] text-white">
           N

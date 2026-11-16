@@ -1,23 +1,20 @@
 'use client';
 
+import type {ReactNode} from 'react';
 import {useEffect, useState} from 'react';
 import {format} from 'date-fns';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 /**
- * Owns the once-per-second clock so only this small block re-renders on each tick —
- * not the whole 1500-line dashboard (Epic F1: kills the page-wide 1-sec re-render).
- *
- * Behaviour-identical to the previous inline greeting derivation: same null-initial
- * (SSR-safe) `currentTime`, same greeting thresholds, same date format, same markup.
- * Pure presentation — no query, data, or RBAC concern lives here.
+ * Owns the clock so only the header re-renders on each tick, not the whole dashboard.
+ * `currentTime` starts null so server and first client render match (SSR-safe).
  */
-export function LiveGreeting({firstName}: {firstName: string}) {
+export function LiveGreeting({firstName, actions}: {firstName: string; actions?: ReactNode}) {
   const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   useEffect(() => {
-    // Initialize on client only to prevent SSR hydration mismatch
     setCurrentTime(new Date());
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    const timer = setInterval(() => setCurrentTime(new Date()), 60_000);
     return () => clearInterval(timer);
   }, []);
 
@@ -26,14 +23,11 @@ export function LiveGreeting({firstName}: {firstName: string}) {
   const greetingDate = currentTime ? format(currentTime, 'EEEE, MMMM d') : '';
 
   return (
-    <div className="min-w-0 space-y-1.5">
-      <h1 className="text-aura-title text-[var(--text-1)]">
-        {greeting}, {firstName}
-      </h1>
-      <p className="text-sm text-[var(--text-3)]">
-        {greetingDate ? `${greetingDate} · ` : ''}Here&apos;s what&apos;s moving across your workspace today.
-      </p>
-    </div>
+    <PageHeader
+      title={`${greeting}, ${firstName}`}
+      description={`${greetingDate ? `${greetingDate} · ` : ''}Here's what's moving across your workspace today.`}
+      actions={actions}
+    />
   );
 }
 

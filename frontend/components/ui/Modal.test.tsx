@@ -22,6 +22,27 @@ function FormModal() {
 }
 
 describe('Modal', () => {
+  it('renders through a portal into document.body and closes on Escape', async () => {
+    const user = userEvent.setup();
+    const {container} = render(<FormModal/>);
+    const dialog = await screen.findByRole('dialog');
+    expect(container).not.toContainElement(dialog);
+    expect(document.body).toContainElement(dialog);
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+  });
+
+  it('traps Tab focus inside the dialog', async () => {
+    const user = userEvent.setup();
+    render(<><button>outside</button><FormModal/></>);
+    const dialog = await screen.findByRole('dialog');
+    await waitFor(() => expect(screen.getByLabelText('Name')).toHaveFocus());
+    for (let i = 0; i < 6; i++) {
+      await user.tab();
+      expect(dialog).toContainElement(document.activeElement as HTMLElement);
+    }
+  });
+
   it('keeps focus in the active field while the parent re-renders with an inline onClose', async () => {
     const user = userEvent.setup();
     render(<FormModal/>);

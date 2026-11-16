@@ -24,7 +24,9 @@ import {notifications} from '@mantine/notifications';
 import {BookOpen, Eye, Heart, Newspaper} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {formatDateShort} from '@/lib/utils/format/date';
-import {Center, Loader, Pagination, Text} from '@mantine/core';
+import {Pagination} from '@mantine/core';
+import {QueryErrorCard} from '@/components/ui/QueryState';
+import {SkeletonCard} from '@/components/ui/Skeleton';
 import {useAuth} from '@/lib/hooks/useAuth';
 
 interface TrendingItem {
@@ -283,7 +285,7 @@ function WallFeed() {
   const [commentStates, setCommentStates] = useState<Record<string, PostCommentState>>({});
   const [commentSubmittingFor, setCommentSubmittingFor] = useState<string | null>(null);
 
-  const {data, isLoading, isError} = useWallPosts(undefined, page, 10);
+  const {data, isLoading, isError, refetch} = useWallPosts(undefined, page, 10);
 
   const addReaction = useAddWallReaction();
   const removeReaction = useRemoveWallReaction();
@@ -348,17 +350,19 @@ function WallFeed() {
 
   if (isLoading) {
     return (
-      <Center py="xl">
-        <Loader size="md"/>
-      </Center>
+      <div className="space-y-4" aria-busy="true">
+        <SkeletonCard/>
+        <SkeletonCard/>
+      </div>
     );
   }
 
   if (isError) {
     return (
-      <Center py="xl">
-        <Text c="red" size="sm">Failed to load wall posts. Please try again.</Text>
-      </Center>
+      <QueryErrorCard
+        title="Couldn't load wall posts"
+        onRetry={() => void refetch()}
+      />
     );
   }
 
@@ -452,13 +456,6 @@ function WallPageContent() {
                           ? 'Your praise has been sent.'
                           : 'Your post has been published.',
                       color: 'green',
-                    });
-                  },
-                  onError: () => {
-                    notifications.show({
-                      title: 'Error',
-                      message: 'Failed to create post. Please try again.',
-                      color: 'red',
                     });
                   },
                 });

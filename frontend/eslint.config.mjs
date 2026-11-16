@@ -138,6 +138,7 @@ const config = [
       'playwright/**',
       'test-results/**',
       '.next/**',
+      '.next-*/**',
       '.vercel/**',
       'node_modules/**',
       'coverage/**',

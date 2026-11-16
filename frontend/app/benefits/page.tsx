@@ -674,7 +674,7 @@ export default function BenefitsPage() {
             {/* Section head — Aura */}
             {benefits.length > 0 && (
               <div>
-                <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">Plans</h2>
+                <h2 className="font-display text-base font-bold text-[var(--text-1)]">Plans</h2>
                 <p className="text-xs text-[var(--text-3)]">Enrollment and coverage by program</p>
               </div>
             )}
@@ -706,7 +706,7 @@ export default function BenefitsPage() {
                           {getBenefitIcon(benefit.type)}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <div className="truncate font-display text-[15px] font-bold text-[var(--text-1)]">
+                          <div className="truncate font-display text-base font-bold text-[var(--text-1)]">
                             {benefit.name}
                           </div>
                           <div className="truncate text-xs text-[var(--text-3)]">{benefit.provider}</div>
@@ -719,7 +719,7 @@ export default function BenefitsPage() {
                       </div>
 
                       {/* Enrolled row + progress bar */}
-                      <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
+                      <div className="mb-1.5 flex items-center justify-between text-xs">
                         <span className="text-[var(--text-3)]">Enrolled</span>
                         <span className="tnum whitespace-nowrap font-semibold text-[var(--text-1)]">
                           {benefit.isEnrolled ? 'Active' : <span className="text-[var(--text-3)]">Not enrolled</span>}
@@ -736,11 +736,11 @@ export default function BenefitsPage() {
                       <div className="mt-4 flex items-end justify-between border-t border-[var(--border-soft)] pt-3.5">
                         <div>
                           <div className="text-aura-micro">Tier</div>
-                          <div className="mt-[3px] text-[12.5px] font-semibold text-[var(--text-1)]">{tier}</div>
+                          <div className="mt-1 text-xs font-semibold text-[var(--text-1)]">{tier}</div>
                         </div>
                         <div className="text-right">
                           <div className="text-aura-micro">Cost</div>
-                          <div className="tnum mt-[3px] whitespace-nowrap text-[12.5px] font-semibold text-[var(--text-1)]">
+                          <div className="tnum mt-1 whitespace-nowrap text-xs font-semibold text-[var(--text-1)]">
                             {formatINR(benefit.monthlyPremium)}/mo
                           </div>
                         </div>
@@ -791,7 +791,7 @@ export default function BenefitsPage() {
                 <Card className="p-5">
                   <div className="mb-4 flex items-start justify-between gap-4">
                     <div>
-                      <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">
+                      <h2 className="font-display text-base font-bold text-[var(--text-1)]">
                         Your enrollment progress
                       </h2>
                       <p className="text-xs text-[var(--text-3)]">
@@ -811,7 +811,7 @@ export default function BenefitsPage() {
                       label={`${ringPct}%`}
                       ariaLabel={`${ringPct} percent of available plans enrolled`}
                     />
-                    <div className="flex min-w-[240px] flex-1 flex-col gap-4">
+                    <div className="flex min-w-60 flex-1 flex-col gap-4">
                       {rows.map(([label, n, color]) => (
                         <div key={label}>
                           <div className="mb-1.5 flex items-center justify-between text-xs">
@@ -854,7 +854,7 @@ export default function BenefitsPage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="mb-3 flex items-center gap-2">
-                        <h3 className="font-display text-[15px] font-bold text-[var(--text-1)]">
+                        <h3 className="font-display text-base font-bold text-[var(--text-1)]">
                           {enrollment.benefitPlanName}
                         </h3>
                         <Badge variant={enrollment.status === 'ACTIVE' ? 'success' : 'default'} size="sm">
@@ -864,31 +864,31 @@ export default function BenefitsPage() {
                       <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4">
                         <div>
                           <div className="text-aura-micro">Coverage level</div>
-                          <p className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                          <p className="mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                             {coverageLevelLabels[enrollment.coverageLevel]}
                           </p>
                         </div>
                         <div>
                           <div className="text-aura-micro">Effective date</div>
-                          <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                          <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                             {formatDate(enrollment.effectiveDate)}
                           </p>
                         </div>
                         <div>
                           <div className="text-aura-micro">Monthly premium</div>
-                          <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                          <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                             {formatINR(enrollment.employeeContribution)}
                           </p>
                         </div>
                         <div>
                           <div className="text-aura-micro">Coverage</div>
-                          <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                          <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                             {formatINR(enrollment.currentCoverage)}
                           </p>
                         </div>
                       </div>
                       {enrollment.dependentCount > 0 && (
-                        <div className="mt-3 flex items-center gap-2 text-[13px] text-[var(--text-2)]">
+                        <div className="mt-3 flex items-center gap-2 text-sm text-[var(--text-2)]">
                           <UserPlus className="h-4 w-4 text-[var(--text-3)]"/>
                           <span className="tnum">{enrollment.dependentCount}</span> dependent(s) covered
                         </div>
@@ -940,40 +940,40 @@ export default function BenefitsPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
                         <div className="mb-2 flex items-center gap-2">
-                          <h3 className="tnum font-display text-[15px] font-bold text-[var(--text-1)]">
+                          <h3 className="tnum font-display text-base font-bold text-[var(--text-1)]">
                             {claim.claimNumber}
                           </h3>
                           <Badge variant={claimStatusVariant} size="sm">{claim.status}</Badge>
                         </div>
-                        <p className="mb-3 text-[13px] text-[var(--text-2)]">{claim.description}</p>
+                        <p className="mb-3 text-sm text-[var(--text-2)]">{claim.description}</p>
                         <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4">
                           <div>
                             <div className="text-aura-micro">Type</div>
-                            <p className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">{claim.claimType}</p>
+                            <p className="mt-0.5 text-sm font-semibold text-[var(--text-1)]">{claim.claimType}</p>
                           </div>
                           <div>
                             <div className="text-aura-micro">Service date</div>
-                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                               {formatDate(claim.serviceDate)}
                             </p>
                           </div>
                           <div>
                             <div className="text-aura-micro">Claim amount</div>
-                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                               {formatINR(claim.claimAmount)}
                             </p>
                           </div>
                           {claim.approvedAmount !== undefined && (
                             <div>
                               <div className="text-aura-micro">Approved amount</div>
-                              <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--ok-fg)]">
+                              <p className="tnum mt-0.5 text-sm font-semibold text-[var(--ok-fg)]">
                                 {formatINR(claim.approvedAmount)}
                               </p>
                             </div>
                           )}
                         </div>
                         {claim.rejectionReason && (
-                          <div className="mt-3 text-[13px] text-[var(--err-fg)]">
+                          <div className="mt-3 text-sm text-[var(--err-fg)]">
                             <span className="font-semibold">Rejection reason:</span> {claim.rejectionReason}
                           </div>
                         )}
@@ -1012,7 +1012,7 @@ export default function BenefitsPage() {
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
                         <div className="mb-3 flex items-center gap-2">
-                          <h3 className="font-display text-[15px] font-bold text-[var(--text-1)]">
+                          <h3 className="font-display text-base font-bold text-[var(--text-1)]">
                             {enrollment.benefitPlanName}
                           </h3>
                           <Badge variant="warning" size="sm">Pending</Badge>
@@ -1020,25 +1020,25 @@ export default function BenefitsPage() {
                         <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4">
                           <div>
                             <div className="text-aura-micro">Coverage level</div>
-                            <p className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            <p className="mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                               {coverageLevelLabels[enrollment.coverageLevel]}
                             </p>
                           </div>
                           <div>
                             <div className="text-aura-micro">Effective date</div>
-                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                               {formatDate(enrollment.effectiveDate)}
                             </p>
                           </div>
                           <div>
                             <div className="text-aura-micro">Monthly premium</div>
-                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                               {formatINR(enrollment.employeeContribution)}
                             </p>
                           </div>
                           <div>
                             <div className="text-aura-micro">Enrolled on</div>
-                            <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                            <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                               {formatDate(enrollment.enrollmentDate)}
                             </p>
                           </div>
@@ -1075,7 +1075,7 @@ export default function BenefitsPage() {
             <div className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">Pending claims</h2>
+                  <h2 className="font-display text-base font-bold text-[var(--text-1)]">Pending claims</h2>
                   <p className="text-xs text-[var(--text-3)]">Submitted claims awaiting review</p>
                 </div>
                 {pendingClaimsQuery.isLoading ? (
@@ -1096,32 +1096,32 @@ export default function BenefitsPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="min-w-0">
                           <div className="mb-2 flex items-center gap-2">
-                            <h3 className="tnum font-display text-[15px] font-bold text-[var(--text-1)]">
+                            <h3 className="tnum font-display text-base font-bold text-[var(--text-1)]">
                               {claim.claimNumber}
                             </h3>
                             <Badge variant="warning" size="sm">{claim.status}</Badge>
                           </div>
-                          <p className="mb-3 text-[13px] text-[var(--text-2)]">{claim.description}</p>
+                          <p className="mb-3 text-sm text-[var(--text-2)]">{claim.description}</p>
                           <div className="grid grid-cols-2 gap-x-6 gap-y-3 md:grid-cols-4">
                             <div>
                               <div className="text-aura-micro">Type</div>
-                              <p className="mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">{claim.claimType}</p>
+                              <p className="mt-0.5 text-sm font-semibold text-[var(--text-1)]">{claim.claimType}</p>
                             </div>
                             <div>
                               <div className="text-aura-micro">Service date</div>
-                              <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                                 {formatDate(claim.serviceDate)}
                               </p>
                             </div>
                             <div>
                               <div className="text-aura-micro">Claim amount</div>
-                              <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                                 {formatINR(claim.claimAmount)}
                               </p>
                             </div>
                             <div>
                               <div className="text-aura-micro">Deductible / co-pay</div>
-                              <p className="tnum mt-0.5 text-[13px] font-semibold text-[var(--text-1)]">
+                              <p className="tnum mt-0.5 text-sm font-semibold text-[var(--text-1)]">
                                 {formatINR(claim.deductibleApplied)} / {formatINR(claim.coPayApplied)}
                               </p>
                             </div>
@@ -1154,7 +1154,7 @@ export default function BenefitsPage() {
               {approvedClaims.length > 0 && (
                 <div className="space-y-4">
                   <div>
-                    <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">Ready for payment</h2>
+                    <h2 className="font-display text-base font-bold text-[var(--text-1)]">Ready for payment</h2>
                     <p className="text-xs text-[var(--text-3)]">Approved this session — initiate or complete payment</p>
                   </div>
                   {approvedClaims.map((claim) => (
@@ -1162,12 +1162,12 @@ export default function BenefitsPage() {
                       <div className="flex items-center justify-between gap-4">
                         <div className="min-w-0">
                           <div className="mb-1 flex items-center gap-2">
-                            <h3 className="tnum font-display text-[15px] font-bold text-[var(--text-1)]">
+                            <h3 className="tnum font-display text-base font-bold text-[var(--text-1)]">
                               {claim.claimNumber}
                             </h3>
                             <Badge variant="success" size="sm">{claim.status}</Badge>
                           </div>
-                          <p className="tnum text-[13px] text-[var(--text-2)]">
+                          <p className="tnum text-sm text-[var(--text-2)]">
                             Approved: {formatINR(claim.approvedAmount ?? claim.claimAmount)}
                           </p>
                         </div>
@@ -1205,7 +1205,7 @@ export default function BenefitsPage() {
         {activeTab === 'analytics' && (
           <div className="space-y-6">
             <div>
-              <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">My benefits summary</h2>
+              <h2 className="font-display text-base font-bold text-[var(--text-1)]">My benefits summary</h2>
               <p className="text-xs text-[var(--text-3)]">Your personal enrollment, coverage, and claims activity</p>
             </div>
             {employeeSummaryQuery.isLoading ? (
@@ -1256,7 +1256,7 @@ export default function BenefitsPage() {
             <PermissionGate permission={Permissions.REPORT_VIEW}>
               <div className="space-y-4 border-t border-[var(--border)] pt-6">
                 <div>
-                  <h2 className="font-display text-[15px] font-bold text-[var(--text-1)]">Organization dashboard</h2>
+                  <h2 className="font-display text-base font-bold text-[var(--text-1)]">Organization dashboard</h2>
                   <p className="text-xs text-[var(--text-3)]">Benefits program totals across the tenant</p>
                 </div>
                 {dashboardQuery.isLoading ? (

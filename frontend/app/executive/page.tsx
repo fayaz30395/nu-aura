@@ -2,10 +2,9 @@
 
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import Link from 'next/link';
-import {Card, CardContent} from '@/components/ui/Card';
-import {Loader2, ArrowRight, Building2} from 'lucide-react';
+import {ArrowRight, Building2} from 'lucide-react';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 /** /executive redirect — the actual page lives at /dashboards/executive */
 export default function ExecutiveRedirectPage() {
@@ -14,6 +13,7 @@ export default function ExecutiveRedirectPage() {
 
   const hasAccess = hasPermission(Permissions.DASHBOARD_EXECUTIVE);
 
+  // DASHBOARD_EXECUTIVE differs from the route config (ANALYTICS_VIEW / SYSTEM_ADMIN), so this check stays.
   useEffect(() => {
     if (!isPermissionReady) return;
     if (!hasAccess) {
@@ -24,35 +24,30 @@ export default function ExecutiveRedirectPage() {
   }, [isPermissionReady, hasAccess, router]);
 
   return (
-    <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
-      <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
-        <CardContent className="py-10">
-          <div className="flex items-start gap-4">
-            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">
-              <Building2 className="h-5 w-5"/>
-            </span>
-            <div className="space-y-1">
-              <p className="text-sm font-semibold text-[var(--text-primary)]">Executive route</p>
-              <p className="text-caption">
-                {hasAccess ? 'Redirecting to the executive dashboard.' : 'Access restricted, routing you to your dashboard.'}
-              </p>
-            </div>
-          </div>
-          <Link
-            href={hasAccess ? '/dashboards/executive' : '/me/dashboard'}
-            className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent-700 hover:text-accent-800 transition-colors"
-          >
-            <Loader2 className="h-4 w-4 animate-spin"/>
-            Continue
-            <ArrowRight className="h-4 w-4"/>
-          </Link>
-          {!hasAccess && (
-            <p className="mt-2 text-xs text-[var(--text-muted)]">
-              You do not have executive dashboard rights.
+    <div className="mx-auto w-full max-w-xl p-4 sm:p-6">
+      <section role="status" className="rounded-lg border border-border bg-card p-4">
+        <div className="flex items-start gap-4">
+          <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accent-subtle text-accent">
+            <Building2 className="h-4 w-4" aria-hidden="true"/>
+          </span>
+          <div className="flex flex-col gap-1">
+            <h1 className="text-sm font-semibold text-text-1">Executive route</h1>
+            <p className="text-xs text-text-2">
+              {hasAccess ? 'Redirecting to the executive dashboard.' : 'Access restricted, routing you to your dashboard.'}
             </p>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        </div>
+        <Link
+          href={hasAccess ? '/dashboards/executive' : '/me/dashboard'}
+          className="mt-4 inline-flex items-center gap-2 rounded-sm text-sm font-medium text-accent hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          Continue
+          <ArrowRight className="h-4 w-4" aria-hidden="true"/>
+        </Link>
+        {!hasAccess && (
+          <p className="mt-2 text-xs text-text-3">You do not have executive dashboard rights.</p>
+        )}
+      </section>
     </div>
   );
 }

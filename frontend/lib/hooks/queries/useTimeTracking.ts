@@ -147,6 +147,7 @@ export function useCreateTimeEntry() {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -170,6 +171,7 @@ export function useUpdateTimeEntry() {
       queryClient.invalidateQueries({queryKey: timeTrackingKeys.detail(id)});
       queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -191,6 +193,7 @@ export function useDeleteTimeEntry() {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: timeTrackingKeys.all});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',

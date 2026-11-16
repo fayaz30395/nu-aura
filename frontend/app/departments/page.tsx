@@ -159,7 +159,6 @@ export default function DepartmentsPage() {
         response?: { data?: { message?: string } }
       })?.response?.data?.message || `Failed to ${editingDepartment ? 'update' : 'create'} department`;
       setError(errorMsg);
-      toast.error('Error', errorMsg);
       log.error('Error saving department:', err);
     }
   };
@@ -199,7 +198,6 @@ export default function DepartmentsPage() {
         response?: { data?: { message?: string } }
       })?.response?.data?.message || 'Failed to delete department';
       setError(errorMsg);
-      toast.error('Error', errorMsg);
       log.error('Error deleting department:', err);
     }
   };
@@ -228,7 +226,6 @@ export default function DepartmentsPage() {
         response?: { data?: { message?: string } }
       })?.response?.data?.message || 'Failed to update department status';
       setError(errorMsg);
-      toast.error('Error', errorMsg);
       log.error('Error toggling department status:', err);
     }
   };

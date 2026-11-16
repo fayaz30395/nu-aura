@@ -18,6 +18,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Badge,
   Select,
   Stat,
   StatusBadge,
@@ -139,13 +140,12 @@ function ProgramCard({program}: {
               </p>
             )}
             <div className="flex items-center gap-4 text-caption">
-              <span
-                className="bg-accent-50 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400 px-2 py-0.5 rounded-full font-medium">
+              <Badge variant="primary">
                 {CATEGORY_LABELS[program.category] ?? program.category}
-              </span>
-              <span className="bg-[var(--bg-secondary)] px-2 py-0.5 rounded-full">
+              </Badge>
+              <Badge variant="default">
                 {PROGRAM_TYPE_LABELS[program.programType] ?? program.programType}
-              </span>
+              </Badge>
               {program.pointsReward != null && (
                 <span className="flex items-center gap-1">
                   <Trophy size={10}/>
@@ -660,7 +660,7 @@ export default function WellnessAdminPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Card className="card-aura">
+            <Card>
               <CardContent className="p-4">
                 <Stat
                   label="Active Programs"
@@ -670,7 +670,7 @@ export default function WellnessAdminPage() {
                 />
               </CardContent>
             </Card>
-            <Card className="card-aura">
+            <Card>
               <CardContent className="p-4">
                 <Stat
                   label="Active Challenges"
@@ -680,7 +680,7 @@ export default function WellnessAdminPage() {
                 />
               </CardContent>
             </Card>
-            <Card className="card-aura">
+            <Card>
               <CardContent className="p-4">
                 <Stat
                   label="Upcoming Challenges"
@@ -718,7 +718,7 @@ export default function WellnessAdminPage() {
             </div>
           ) : activeTab === 'programs' ? (
             programs.length === 0 ? (
-              <Card className="card-aura">
+              <Card>
                 <CardContent className="p-0">
                   <EmptyState
                     icon={<Info className="h-8 w-8"/>}
@@ -738,7 +738,7 @@ export default function WellnessAdminPage() {
             )
           ) : (
             allChallenges.length === 0 ? (
-              <Card className="card-aura">
+              <Card>
                 <CardContent className="p-0">
                   <EmptyState
                     icon={<Info className="h-8 w-8"/>}

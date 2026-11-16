@@ -16,7 +16,6 @@ const API_LOGIN_TIMEOUT_MS = Number(process.env.E2E_API_LOGIN_TIMEOUT_MS ?? 6000
 const API_LOGIN_PAGE_TIMEOUT_MS = Number(process.env.E2E_AUTH_PAGE_TIMEOUT_MS ?? 90000);
 const API_LOGIN_ATTEMPTS = Number(process.env.E2E_API_LOGIN_ATTEMPTS ?? 3);
 const API_LOGIN_RATE_LIMIT_DELAY_MS = Number(process.env.E2E_API_LOGIN_RATE_LIMIT_DELAY_MS ?? 15000);
-const ALLOW_LOCAL_AUTH_FALLBACK = AUTH_MODE === 'local' || process.env.E2E_ALLOW_LOCAL_AUTH_FALLBACK === 'true';
 
 interface ApiLoginResponse {
   accessToken?: string | null;
@@ -31,7 +30,6 @@ interface ApiLoginResponse {
   permissions?: string[];
 }
 
-const NULOGIC_TENANT_ID = '660e8400-e29b-41d4-a716-446655440001';
 const AUTH_COOKIE_NAMES = new Set([
   'access_token',
   'refresh_token',
@@ -56,6 +54,8 @@ let lastApiLoginAt = 0;
 
 const ROLE_PERMISSIONS: Record<DemoUser['role'], string[]> = {
   SUPER_ADMIN: [],
+  HR_ADMIN: [],
+  FINANCE_ADMIN: [],
   TENANT_ADMIN: [
     'EMPLOYEE:VIEW_ALL', 'EMPLOYEE:CREATE', 'EMPLOYEE:UPDATE', 'EMPLOYEE:DELETE',
     'LEAVE:APPROVE', 'LEAVE:VIEW_ALL', 'LEAVE:MANAGE', 'LEAVE_TYPE:MANAGE',
@@ -138,34 +138,6 @@ function base64UrlEncode(value: string): string {
     .replace(/=+$/g, '');
 }
 
-function createUnsignedJwt(user: DemoUser): string {
-  const nowSeconds = Math.floor(Date.now() / 1000);
-  const header = base64UrlEncode(JSON.stringify({alg: 'none', typ: 'JWT'}));
-  const payload = base64UrlEncode(JSON.stringify({
-    sub: user.email,
-    email: user.email,
-    role: user.role,
-    roles: [user.role],
-    tenantId: NULOGIC_TENANT_ID,
-    exp: nowSeconds + 60 * 60,
-    iat: nowSeconds,
-  }));
-  return `${header}.${payload}.e2e`;
-}
-
-function buildFallbackAuth(user: DemoUser): ApiLoginResponse {
-  const slug = user.email.replace(/[^a-z0-9]/gi, '-').toLowerCase();
-  return {
-    userId: `e2e-user-${slug}`,
-    employeeId: `e2e-employee-${slug}`,
-    tenantId: NULOGIC_TENANT_ID,
-    email: user.email,
-    fullName: user.name,
-    roles: [user.role],
-    permissions: ROLE_PERMISSIONS[user.role],
-  };
-}
-
 function buildStoredUser(auth: ApiLoginResponse) {
   const hasSuperAdminRole = auth.roles
     .filter(Boolean)
@@ -239,14 +211,7 @@ async function seedStoredAuth(page: Page, auth: ApiLoginResponse, verifyDashboar
       }
     }, {tenantId: auth.tenantId, user: storedUser, useLocalStorage: useLocalAuthStorage});
   } catch (error) {
-    if (!String(error).includes('SecurityError: Failed to read the \'localStorage\' property')) {
-      throw error;
-    }
-
-    if (!ALLOW_LOCAL_AUTH_FALLBACK) {
-      throw error;
-    }
-    return;
+    throw error;
   }
 
   if (!verifyDashboard) {
@@ -273,33 +238,10 @@ export async function seedLocalStoredAuth(page: Page, email: string): Promise<vo
   }
 
   const cachedAuth = authStateCache.get(email);
-  await seedStoredAuth(page, cachedAuth?.auth ?? buildFallbackAuth(user), false);
-}
-
-async function seedFallbackCookies(page: Page, user: DemoUser): Promise<void> {
-  const appUrl = new URL(page.url());
-  await page.context().addCookies([
-    {
-      name: 'access_token',
-      value: createUnsignedJwt(user),
-      domain: appUrl.hostname,
-      path: '/',
-      httpOnly: true,
-      secure: appUrl.protocol === 'https:',
-      sameSite: 'Lax',
-      expires: Math.floor(Date.now() / 1000) + 60 * 60,
-    },
-    {
-      name: 'refresh_token',
-      value: `e2e-refresh-${Date.now()}`,
-      domain: appUrl.hostname,
-      path: '/',
-      httpOnly: true,
-      secure: appUrl.protocol === 'https:',
-      sameSite: 'Lax',
-      expires: Math.floor(Date.now() / 1000) + 60 * 60,
-    },
-  ]);
+  if (!cachedAuth) {
+    throw new Error(`seedLocalStoredAuth(${email}): no cached API login; call loginAs first`);
+  }
+  await seedStoredAuth(page, cachedAuth.auth, false);
 }
 
 async function waitForApiLoginSlot(page: Page): Promise<void> {
@@ -380,10 +322,7 @@ async function safeClearClientAuthState(page: Page, reason: string): Promise<voi
       });
     }, {authCookieNames: Array.from(AUTH_COOKIE_NAMES)});
   } catch (error) {
-    if (!ALLOW_LOCAL_AUTH_FALLBACK) {
-      throw error;
-    }
-    console.warn(`safeClearClientAuthState(${reason}) failed; continuing with fallback auth path.`);
+    throw new Error(`safeClearClientAuthState(${reason}) failed: ${String(error)}`);
   }
 }
 
@@ -450,29 +389,17 @@ export async function loginAs(page: Page, email: string, options: LoginAsOptions
     throw new Error(`loginAs(${email}) failed: HTTP ${response.status()} — ${lastBody}`);
   }
 
-  if (!response?.ok() && !ALLOW_LOCAL_AUTH_FALLBACK) {
+  if (!response?.ok()) {
     throw new Error(`loginAs(${email}) failed: API login did not return usable auth state. Last response: HTTP ${response?.status() ?? 'none'} — ${lastBody}`);
   }
 
-  const auth = response?.ok()
-    ? await response.json() as ApiLoginResponse
-    : buildFallbackAuth(user);
-  const authCookies = response?.ok()
-    ? (await page.context().cookies()).filter((cookie) => AUTH_COOKIE_NAMES.has(cookie.name) && cookie.value)
-    : [];
+  const auth = await response.json() as ApiLoginResponse;
+  const authCookies = (await page.context().cookies()).filter((cookie) => AUTH_COOKIE_NAMES.has(cookie.name) && cookie.value);
   const hasBackendAccessCookie = authCookies.some((cookie) => cookie.name === 'access_token');
-
-  if (response?.ok() && hasBackendAccessCookie) {
-    authStateCache.set(email, {auth, cookies: authCookies});
-  } else {
-    if (!ALLOW_LOCAL_AUTH_FALLBACK) {
-      throw new Error(`loginAs(${email}) failed: API login succeeded but no backend access cookie was stored.`);
-    }
-    if (AUTH_MODE !== 'local') {
-      console.warn(`loginAs(${email}) API login failed; using local E2E auth state fallback. HTTP ${response?.status()} — ${lastBody}`);
-    }
-    await seedFallbackCookies(page, user);
+  if (!hasBackendAccessCookie) {
+    throw new Error(`loginAs(${email}) failed: API login succeeded but no backend access cookie was stored.`);
   }
+  authStateCache.set(email, {auth, cookies: authCookies});
 
   await seedStoredAuth(page, auth, verifyDashboard);
 }

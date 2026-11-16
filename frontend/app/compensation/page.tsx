@@ -178,7 +178,6 @@ export default function CompensationPage() {
       setCreateCycleForm(emptyCycleForm);
     } catch (err) {
       log.error('Failed to create cycle:', err);
-      notifications.show({title: 'Error', message: 'Failed to create review cycle. Please try again.', color: 'red'});
     }
   };
 
@@ -419,11 +418,11 @@ export default function CompensationPage() {
                       </p>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-4">
-                      <div className="bg-white/10 rounded-lg p-4 text-center min-w-[100px]">
+                      <div className="bg-white/10 rounded-lg p-4 text-center min-w-24">
                         <p className="text-xl font-bold text-white">{activeCycle.revisionsDrafted}</p>
                         <p className="text-xs text-white/80">Drafted</p>
                       </div>
-                      <div className="bg-white/10 rounded-lg p-4 text-center min-w-[100px]">
+                      <div className="bg-white/10 rounded-lg p-4 text-center min-w-24">
                         <p className="text-xl font-bold text-white">{activeCycle.revisionsApproved}</p>
                         <p className="text-xs text-white/80">Approved</p>
                       </div>
@@ -606,7 +605,7 @@ export default function CompensationPage() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleViewRevision(revision)}
+                          aria-label="View revision" onClick={() => handleViewRevision(revision)}
                         >
                           <Eye className="h-4 w-4"/>
                         </Button>
@@ -687,7 +686,7 @@ export default function CompensationPage() {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => handleViewRevision(revision)}
+                              aria-label="View revision" onClick={() => handleViewRevision(revision)}
                             >
                               Review
                             </Button>

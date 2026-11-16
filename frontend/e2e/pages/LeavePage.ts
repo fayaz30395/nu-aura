@@ -55,8 +55,8 @@ export class LeavePage extends BasePage {
 
     // Apply leave page form elements
     this.leaveTypeSelect = page.locator('select[name="leaveTypeId"]');
-    this.startDateInput = page.locator('label:has-text("Start Date")').locator('..').locator('input');
-    this.endDateInput = page.locator('label:has-text("End Date")').locator('..').locator('input');
+    this.startDateInput = page.getByLabel(/^Start date/);
+    this.endDateInput = page.getByLabel(/^End date/);
     this.halfDayCheckbox = page.locator('input[name="isHalfDay"]');
     this.reasonTextarea = page.locator('textarea[placeholder*="reason"]');
     this.submitLeaveButton = page.locator('button:has-text("Submit Leave Request")');

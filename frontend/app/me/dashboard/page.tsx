@@ -3,15 +3,19 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import Link from 'next/link';
 import {format, parseISO} from 'date-fns';
-import {motion} from 'framer-motion';
 import {ArrowRight, CalendarDays, CheckCircle2, Clock, Inbox, User} from 'lucide-react';
 
 import {useToast} from '@/components/notifications';
 import {getErrorMessage} from '@/lib/utils/error-handler';
 import {AppLayout} from '@/components/layout';
-import {SkeletonDashboard} from '@/components/ui/Skeleton';
-import {Button} from '@/components/ui/Button';
-import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
+import {Button, buttonVariants} from '@/components/ui/Button';
+import {Card} from '@/components/ui/Card';
+import {Callout} from '@/components/ui/Callout';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {Stat} from '@/components/ui/Stat';
+import {DashboardSkeleton} from '@/components/ui/skeletons';
+import {PageTransition} from '@/components/motion';
 
 // Dashboard widget components (preserved)
 import {QuickAccessWidget} from '@/components/dashboard/WelcomeBanner';
@@ -30,14 +34,8 @@ import {useSelfServiceDashboard} from '@/lib/hooks/queries';
 import {useLeaveBalances} from '@/lib/hooks/queries/useHome';
 import {useQueryClient} from '@tanstack/react-query';
 import {createLogger} from '@/lib/utils/logger';
-import {MOTION_EASE} from '@/lib/animation';
 
 const log = createLogger('Dashboard');
-
-// Consolidated onto the shared motion foundation: every transition on this page
-// uses the foundation easing token (MOTION_EASE.outExpo) so there is a single
-// source of truth for motion across all surfaces — no per-page cubic-bezier drift.
-const EASE = [...MOTION_EASE.outExpo] as [number, number, number, number];
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -143,25 +141,21 @@ export default function MyDashboardPage() {
 
   if (!hasHydrated || isLoading) {
     return (
-      <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}>
-        <div className="p-6">
-          <h1 className="sr-only">My Dashboard</h1>
-          {loadingTimedOut ? (
-            <div className="flex flex-col items-center gap-4 py-16 text-center">
-              <p className="text-sm text-[var(--text-secondary)]">
-                Dashboard is taking longer than expected.
-              </p>
-              <Button
-                variant="secondary"
-                onClick={() => { setLoadingTimedOut(false); queryClient.invalidateQueries({queryKey: ['selfServiceDashboard']}); }}
-              >
-                Retry
-              </Button>
-            </div>
-          ) : (
-            <SkeletonDashboard/>
-          )}
-        </div>
+      <AppLayout activeMenuItem="my-dashboard" showBreadcrumbs={false}>
+        <h1 className="sr-only">My Dashboard</h1>
+        {loadingTimedOut ? (
+          <div className="flex flex-col items-center gap-4 py-16 text-center" role="status">
+            <p className="text-sm text-text-2">Dashboard is taking longer than expected.</p>
+            <Button
+              variant="secondary"
+              onClick={() => { setLoadingTimedOut(false); queryClient.invalidateQueries({queryKey: ['selfServiceDashboard']}); }}
+            >
+              Retry
+            </Button>
+          </div>
+        ) : (
+          <DashboardSkeleton stats={4}/>
+        )}
       </AppLayout>
     );
   }
@@ -174,18 +168,16 @@ export default function MyDashboardPage() {
 
   if (!dashboard && !isSuperAdminOrAdmin) {
     return (
-      <AppLayout activeMenuItem="my-dashboard" breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}>
-        <div className="mx-auto w-full max-w-3xl px-6 py-16 text-center space-y-4" role="status">
-          <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-muted)]">
-            <User className="h-5 w-5" aria-hidden="true"/>
+      <AppLayout activeMenuItem="my-dashboard" showBreadcrumbs={false}>
+        <div className="flex flex-col gap-6">
+          <PageHeader title="My Dashboard"/>
+          <div className="rounded-lg border border-border bg-card p-4" role="status">
+            <EmptyState
+              icon={<User className="h-8 w-8" aria-hidden="true"/>}
+              title="No employee profile linked"
+              description="Your account is not linked to an employee profile. Please contact your HR administrator to complete the setup."
+            />
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-[var(--text-heading)]">
-            No employee profile linked
-          </h1>
-          <p className="text-body-secondary max-w-[55ch] mx-auto">
-            Your account is not linked to an employee profile. Please contact your HR administrator
-            to complete the setup.
-          </p>
         </div>
       </AppLayout>
     );
@@ -195,6 +187,7 @@ export default function MyDashboardPage() {
   const firstName = employeeName.split(' ')[0];
   const designation = dashboard?.designation || (isSuperAdminOrAdmin ? 'Super Admin' : undefined);
   const department = dashboard?.department || (isSuperAdminOrAdmin ? 'Administration' : undefined);
+  const subtitle = [designation, department].filter(Boolean).join(' · ');
 
   const pendingApprovals = dashboard?.pendingApprovals ?? 0;
   const pendingTimesheets = dashboard?.pendingTimesheets ?? 0;
@@ -204,222 +197,144 @@ export default function MyDashboardPage() {
   const teamOnLeave = dashboard?.teamMembersOnLeave ?? 0;
 
   return (
-    <AppLayout
-      activeMenuItem="my-dashboard"
-      breadcrumbs={[{label: 'My Dashboard', href: '/me/dashboard'}]}
-    >
+    <AppLayout activeMenuItem="my-dashboard" showBreadcrumbs={false}>
       <PageTransition>
-        <div className="mx-auto w-full max-w-7xl px-6 py-8 space-y-10">
-        <PageHeader
-          firstName={firstName}
-          designation={designation}
-          department={department}
-          hasInbox={totalPending > 0}
-          inboxCount={totalPending}
-        />
+        <div className="flex flex-col gap-6">
+          <PageHeader
+            title={`${getGreeting()}, ${firstName}.`}
+            description={`${format(new Date(), 'EEEE, MMMM d')} · ${subtitle
+              ? `${subtitle}. Here's what's on your plate today.`
+              : "Here's what's on your plate today — attendance, approvals, and your team at a glance."}`}
+            actions={
+              <Link
+                href="/approvals/inbox"
+                prefetch={false}
+                className={buttonVariants({variant: totalPending > 0 ? 'primary' : 'outline', size: 'md'})}
+              >
+                <Inbox className="h-4 w-4" aria-hidden="true"/>
+                Inbox
+                {totalPending > 0 && (
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md bg-white/20 px-1 text-2xs font-semibold tabular-nums">
+                    {totalPending}
+                  </span>
+                )}
+              </Link>
+            }
+          />
 
-        <StatsRow
-          attendancePercentage={attendancePct}
-          presentDays={dashboard?.presentDaysThisMonth ?? 0}
-          pendingActions={totalPending}
-          teamOnLeave={teamOnLeave}
-        />
+          <StatsRow
+            attendancePercentage={attendancePct}
+            presentDays={dashboard?.presentDaysThisMonth ?? 0}
+            pendingActions={totalPending}
+            teamOnLeave={teamOnLeave}
+          />
 
-        {/* Bento — hero (Time clock or Welcome card) col-7, ancillary col-5 */}
-        <motion.section
-          initial="hidden"
-          animate="visible"
-          variants={{visible: {transition: {staggerChildren: 0.07, delayChildren: 0.18}}}}
-          className="grid gap-4 grid-cols-1 lg:grid-cols-12"
-          aria-label="Today"
-        >
           {/* Hero tile — Time Clock for employees, Quick Access fallback for admins */}
-          <motion.div
-            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.5, ease: EASE}}}}
-            className="lg:col-span-7"
-          >
-            {user?.employeeId ? (
-              <TimeClockWidget
-                isCheckedIn={isCheckedIn}
-                checkInTime={checkInTime}
-                onCheckIn={handleCheckIn}
-                onCheckOut={handleCheckOut}
-                isLoading={checkingIn}
-                isCompleted={localCompleted || (!isCheckedIn && !!dashboard?.todayCheckInTime && !!dashboard?.todayCheckOutTime)}
-                checkOutTime={localCheckOutTime || (dashboard?.todayCheckOutTime ? new Date(dashboard.todayCheckOutTime).toLocaleTimeString('en-US', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: true,
-                }) : null)}
-                workDurationMinutes={null}
-              />
-            ) : (
-              <QuickAccessWidget
-                pendingApprovals={pendingApprovals}
-                pendingTimesheets={pendingTimesheets}
-                pendingProfileUpdates={pendingProfileUpdates}
-                inboxCount={0}
-              />
-            )}
-          </motion.div>
+          <section className="grid grid-cols-1 gap-4 lg:grid-cols-12" aria-label="Today">
+            <div className="lg:col-span-7 min-w-0">
+              {user?.employeeId ? (
+                <TimeClockWidget
+                  isCheckedIn={isCheckedIn}
+                  checkInTime={checkInTime}
+                  onCheckIn={handleCheckIn}
+                  onCheckOut={handleCheckOut}
+                  isLoading={checkingIn}
+                  isCompleted={localCompleted || (!isCheckedIn && !!dashboard?.todayCheckInTime && !!dashboard?.todayCheckOutTime)}
+                  checkOutTime={localCheckOutTime || (dashboard?.todayCheckOutTime ? new Date(dashboard.todayCheckOutTime).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true,
+                  }) : null)}
+                  workDurationMinutes={null}
+                />
+              ) : (
+                <QuickAccessWidget
+                  pendingApprovals={pendingApprovals}
+                  pendingTimesheets={pendingTimesheets}
+                  pendingProfileUpdates={pendingProfileUpdates}
+                  inboxCount={0}
+                />
+              )}
+            </div>
+            <div className="lg:col-span-5 min-w-0">
+              {user?.employeeId ? (
+                <QuickAccessWidget
+                  pendingApprovals={pendingApprovals}
+                  pendingTimesheets={pendingTimesheets}
+                  pendingProfileUpdates={pendingProfileUpdates}
+                  inboxCount={0}
+                />
+              ) : (
+                <HolidayCarousel/>
+              )}
+            </div>
+          </section>
 
-          {/* Sidekick — Quick Access (employees) or Holiday (admins) */}
-          <motion.div
-            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.45, ease: EASE}}}}
-            className="lg:col-span-5"
-          >
-            {user?.employeeId ? (
-              <QuickAccessWidget
-                pendingApprovals={pendingApprovals}
-                pendingTimesheets={pendingTimesheets}
-                pendingProfileUpdates={pendingProfileUpdates}
-                inboxCount={0}
-              />
-            ) : (
-              <HolidayCarousel/>
-            )}
-          </motion.div>
-        </motion.section>
-
-        {/* Attention strip — surface when actions are waiting */}
-        {totalPending > 0 && (
-          <AttentionStrip count={totalPending}/>
-        )}
-
-        {/* Secondary grid — supplementary widgets stay grouped */}
-        <motion.section
-          initial="hidden"
-          whileInView="visible"
-          viewport={{once: true, amount: 0.15}}
-          variants={{visible: {transition: {staggerChildren: 0.06}}}}
-          className="grid gap-4 grid-cols-1 lg:grid-cols-12"
-          aria-label="Your team and time off"
-        >
-          {user?.employeeId && (
-            <motion.div
-              variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-              className="lg:col-span-5"
-            >
-              <LeaveBalanceWidget
-                leaveBalances={
-                  leaveBalances
-                    ? leaveBalances.map((b) => ({
-                      leaveTypeId: b.leaveTypeId,
-                      leaveName: b.leaveTypeName || b.leaveTypeId,
-                      available: b.available,
-                      total: b.openingBalance + b.accrued,
-                      used: b.used,
-                    }))
-                    : undefined
+          {totalPending > 0 && (
+            <div role="status" aria-live="polite">
+              <Callout
+                tone="warning"
+                icon={<Clock className="h-4 w-4" aria-hidden="true"/>}
+                action={
+                  <Link href="/approvals/inbox" prefetch={false} className={buttonVariants({variant: 'outline', size: 'sm'})}>
+                    Review
+                    <ArrowRight className="h-4 w-4" aria-hidden="true"/>
+                  </Link>
                 }
-              />
-            </motion.div>
+              >
+                <span className="font-semibold tabular-nums">{totalPending}</span>{' '}
+                {totalPending === 1 ? 'item is' : 'items are'} waiting on your action.
+              </Callout>
+            </div>
           )}
 
-          {user?.employeeId && (
-            <motion.div
-              variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-              className="lg:col-span-7"
-            >
-              <HolidayCarousel/>
-            </motion.div>
-          )}
+          <section className="grid grid-cols-1 gap-4 lg:grid-cols-12" aria-label="Your team and time off">
+            {user?.employeeId && (
+              <div className="lg:col-span-5 min-w-0">
+                <LeaveBalanceWidget
+                  leaveBalances={
+                    leaveBalances
+                      ? leaveBalances.map((b) => ({
+                        leaveTypeId: b.leaveTypeId,
+                        leaveName: b.leaveTypeName || b.leaveTypeId,
+                        available: b.available,
+                        total: b.openingBalance + b.accrued,
+                        used: b.used,
+                      }))
+                      : undefined
+                  }
+                />
+              </div>
+            )}
+            {user?.employeeId && (
+              <div className="lg:col-span-7 min-w-0">
+                <HolidayCarousel/>
+              </div>
+            )}
+            <div className="lg:col-span-6 min-w-0">
+              <OnLeaveTodayCard/>
+            </div>
+            <div className="lg:col-span-6 min-w-0">
+              <WorkingRemotelyCard/>
+            </div>
+          </section>
 
-          <motion.div
-            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-            className={user?.employeeId ? 'lg:col-span-6' : 'lg:col-span-6'}
-          >
-            <OnLeaveTodayCard/>
-          </motion.div>
+          {/* Birthday banner — conditional, only renders on user's birthday */}
+          <BirthdayWishingBoard/>
 
-          <motion.div
-            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-            className="lg:col-span-6"
-          >
-            <WorkingRemotelyCard/>
-          </motion.div>
-        </motion.section>
-
-        {/* Birthday banner — conditional, only renders on user's birthday */}
-        <BirthdayWishingBoard/>
-
-        {/* Social section */}
-        <motion.section
-          initial="hidden"
-          whileInView="visible"
-          viewport={{once: true, amount: 0.1}}
-          variants={{visible: {transition: {staggerChildren: 0.06}}}}
-          className="space-y-6"
-          aria-label="Company feed"
-        >
-          <motion.div
-            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-          >
+          <section className="flex flex-col gap-6" aria-label="Company feed">
             <PostComposer onPostCreated={() => setFeedRefreshKey((k) => k + 1)}/>
-          </motion.div>
-
-          <motion.div
-            data-section="celebrations"
-            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-          >
-            <CelebrationTabs/>
-          </motion.div>
-
-          <motion.div
-            variants={{hidden: {opacity: 0, y: 8}, visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}}}}
-          >
+            <div data-section="celebrations">
+              <CelebrationTabs/>
+            </div>
             <CompanyFeed employeeId={user?.employeeId} refreshKey={feedRefreshKey}/>
-          </motion.div>
-        </motion.section>
+          </section>
         </div>
       </PageTransition>
     </AppLayout>
   );
 }
 
-// ── Header ───────────────────────────────────────────────────────────────────
-function PageHeader({firstName, designation, department, hasInbox, inboxCount}: {
-  firstName: string;
-  designation?: string;
-  department?: string;
-  hasInbox: boolean;
-  inboxCount: number;
-}) {
-  const today = format(new Date(), 'EEEE, MMMM d');
-  const greeting = getGreeting();
-  const subtitle = [designation, department].filter(Boolean).join(' · ');
-
-  return (
-    <Reveal className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
-      <div className="space-y-2 max-w-2xl">
-        <p className="text-aura-micro text-[var(--text-3)]">
-          {today}
-        </p>
-        <h1 className="text-aura-title text-[var(--text-1)]">
-          {greeting}, {firstName}.
-        </h1>
-        <p className="text-sm text-[var(--text-2)] max-w-[55ch]">
-          {subtitle
-            ? `${subtitle}. Here's what's on your plate today.`
-            : "Here's what's on your plate today — attendance, approvals, and your team at a glance."}
-        </p>
-      </div>
-      <Link href="/approvals/inbox" prefetch={false} className="self-start sm:self-end">
-        <Button variant={hasInbox ? 'primary' : 'outline'} size="md">
-          <Inbox className="mr-2 h-4 w-4" aria-hidden="true"/>
-          Inbox
-          {hasInbox && (
-            <span className="ml-2 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-aura-control text-2xs font-semibold bg-[var(--accent)] text-white">
-              {inboxCount}
-            </span>
-          )}
-        </Button>
-      </Link>
-    </Reveal>
-  );
-}
-
-// ── Stats row (borders, not cards) ───────────────────────────────────────────
 function StatsRow({attendancePercentage, presentDays, pendingActions, teamOnLeave}: {
   attendancePercentage: number;
   presentDays: number;
@@ -427,59 +342,25 @@ function StatsRow({attendancePercentage, presentDays, pendingActions, teamOnLeav
   teamOnLeave: number;
 }) {
   const items = [
-    {label: 'Attendance this month', value: `${Math.round(attendancePercentage)}%`, icon: CheckCircle2, tone: 'neutral' as const},
-    {label: 'Days present', value: presentDays, icon: CalendarDays, tone: 'neutral' as const},
-    {label: 'Pending actions', value: pendingActions, icon: Clock, tone: pendingActions > 0 ? 'warning' as const : 'neutral' as const},
-    {label: 'Team on leave today', value: teamOnLeave, icon: User, tone: 'neutral' as const},
+    {label: 'Attendance this month', value: `${Math.round(attendancePercentage)}%`, icon: CheckCircle2, tone: 'default' as const},
+    {label: 'Days present', value: presentDays, icon: CalendarDays, tone: 'default' as const},
+    {label: 'Pending actions', value: pendingActions, icon: Clock, tone: pendingActions > 0 ? 'warning' as const : 'default' as const},
+    {label: 'Team on leave today', value: teamOnLeave, icon: User, tone: 'default' as const},
   ];
 
   return (
-    <Stagger className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-soft)] divide-y sm:divide-y-0 sm:divide-x divide-[var(--border-soft)]" aria-label="Your month at a glance">
+    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Your month at a glance">
       {items.map((item) => (
-        <StaggerItem key={item.label} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0 hover:bg-[var(--surface-sunken)] transition-colors">
-          <div className="flex items-center gap-2 text-[var(--text-3)]">
-            <item.icon className="h-3.5 w-3.5" aria-hidden="true"/>
-            <span className="text-aura-micro">{item.label}</span>
-          </div>
-          <p
-            className={`mt-3 text-aura-stat tabular-nums ${
-              item.tone === 'warning'
-                ? 'text-[var(--warn-fg)]'
-                : 'text-[var(--text-1)]'
-            }`}
-          >
-            {item.value}
-          </p>
-        </StaggerItem>
+        <Card key={item.label} padding="sm">
+          <Stat
+            label={item.label}
+            value={item.value}
+            tone={item.tone}
+            icon={<item.icon className="h-4 w-4" aria-hidden="true"/>}
+            iconTone={item.tone === 'warning' ? 'warning' : 'neutral'}
+          />
+        </Card>
       ))}
-    </Stagger>
-  );
-}
-
-// ── Attention strip (single-line, not a card) ────────────────────────────────
-function AttentionStrip({count}: {count: number}) {
-  return (
-    <motion.aside
-      initial={{opacity: 0, y: 6}}
-      animate={{opacity: 1, y: 0}}
-      transition={{duration: 0.45, ease: EASE, delay: 0.24}}
-      role="status"
-      aria-live="polite"
-      className="flex items-center justify-between gap-4 rounded-aura-lg border border-[var(--warn-bd)] bg-[var(--warn-bg)] px-5 py-4 hover-lift"
-    >
-      <div className="flex items-center gap-4 text-sm">
-        <Clock className="h-4 w-4 shrink-0 text-[var(--warn-fg)]" aria-hidden="true"/>
-        <p className="text-[var(--text-1)]">
-          <span className="font-semibold">{count}</span>{' '}
-          {count === 1 ? 'item is' : 'items are'} waiting on your action.
-        </p>
-      </div>
-      <Link href="/approvals/inbox" prefetch={false}>
-        <Button variant="outline" size="sm">
-          Review
-          <ArrowRight className="ml-1.5 h-3.5 w-3.5" aria-hidden="true"/>
-        </Button>
-      </Link>
-    </motion.aside>
+    </section>
   );
 }

@@ -1,0 +1,10 @@
+export {ListPageSkeleton} from './ListPageSkeleton';
+export type {ListPageSkeletonProps} from './ListPageSkeleton';
+export {DetailPageSkeleton} from './DetailPageSkeleton';
+export type {DetailPageSkeletonProps} from './DetailPageSkeleton';
+export {FormPageSkeleton} from './FormPageSkeleton';
+export type {FormPageSkeletonProps} from './FormPageSkeleton';
+export {DashboardSkeleton} from './DashboardSkeleton';
+export type {DashboardSkeletonProps} from './DashboardSkeleton';
+export {SkeletonRegion} from './SkeletonRegion';
+export type {SkeletonRegionProps} from './SkeletonRegion';

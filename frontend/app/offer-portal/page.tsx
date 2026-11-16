@@ -26,6 +26,7 @@ import {
 import {formatCurrency} from '@/lib/utils';
 import {formatDate as formatCanonicalDate} from '@/lib/utils/format/date';
 import {safeUrl} from '@/lib/utils/safeUrl';
+import {getRecaptchaToken} from '@/lib/utils/recaptcha';
 
 const acceptOfferSchema = z.object({
   confirmedJoiningDate: z.string().min(1, 'Please confirm your joining date'),
@@ -107,6 +108,7 @@ function OfferPortalPage() {
         data: {
           email: offer.email,
           confirmedJoiningDate: formData.confirmedJoiningDate || undefined,
+          captchaToken: await getRecaptchaToken('offer_accept'),
         },
       });
       setOffer({
@@ -131,6 +133,7 @@ function OfferPortalPage() {
         data: {
           email: offer.email,
           declineReason: declineReason || undefined,
+          captchaToken: await getRecaptchaToken('offer_decline'),
         },
       });
       setOffer({

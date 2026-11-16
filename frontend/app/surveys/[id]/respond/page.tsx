@@ -5,7 +5,7 @@ import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {ArrowLeft, CheckCircle, ChevronLeft, ChevronRight, Send, ShieldCheck,} from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
-import {Badge, Button, Card, CardContent, Textarea,} from '@/components/ui';
+import {Badge, Button, Card, CardContent, Progress, Skeleton, Textarea,} from '@/components/ui';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
@@ -158,7 +158,7 @@ function LikertQuestion({
           key={val}
           type="button"
           onClick={() => onChange({ratingValue: val})}
-          className={`flex flex-col items-center gap-1 rounded-lg border p-4 min-w-[80px] transition-colors ${
+          className={`flex flex-col items-center gap-1 rounded-lg border p-4 min-w-20 transition-colors ${
             answer.ratingValue === val
               ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-300'
               : 'border-[var(--border-main)] hover:bg-[var(--bg-card-hover)] text-[var(--text-primary)]'
@@ -384,7 +384,7 @@ export default function SurveyRespondPage() {
         <motion.div className="mx-auto max-w-3xl space-y-6" {...dsMotion.pageEnter}>
           {/* Survey header */}
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => router.push('/surveys')}>
+            <Button variant="outline" size="sm" onClick={() => router.push('/surveys')} aria-label="Back">
               <ArrowLeft className={iconSize.button}/>
             </Button>
             <div>
@@ -416,12 +416,7 @@ export default function SurveyRespondPage() {
                 </span>
                 <span className={typography.caption}>{progress}%</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-[var(--bg-surface)]">
-                <div
-                  className="h-2 rounded-full bg-accent-600 transition-all duration-300"
-                  style={{width: `${progress}%`}}
-                />
-              </div>
+              <Progress value={progress} label="Survey progress"/>
             </div>
           )}
 
@@ -429,20 +424,17 @@ export default function SurveyRespondPage() {
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="h-32 animate-pulse rounded-lg bg-[var(--bg-surface)]"
-                />
+                <Skeleton key={i} className="h-32 rounded-lg"/>
               ))}
             </div>
           ) : total === 0 ? (
-            <Card className="card-aura">
+            <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <p className={typography.sectionTitle}>No questions in this survey</p>
               </CardContent>
             </Card>
           ) : (
-            <Card className="card-aura">
+            <Card>
               <CardContent className="p-6">
                 <div className="space-y-6">
                   <div className="flex items-start gap-2">
@@ -485,7 +477,7 @@ export default function SurveyRespondPage() {
                 <Button
                   onClick={handleSubmit}
                   disabled={submitMutation.isPending}
-                >
+                 aria-label="Launch">
                   <Send className={`${iconSize.button} mr-2`}/>
                   {submitMutation.isPending ? 'Submitting...' : 'Submit'}
                 </Button>

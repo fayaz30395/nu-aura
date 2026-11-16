@@ -13,7 +13,6 @@ import {useEditLock, useUpdateWikiPage, useWikiPage, useWikiSpaces,} from '@/lib
 import {notifications} from '@mantine/notifications';
 import {LoadingOverlay, MultiSelect, Select, Skeleton, TextInput} from '@mantine/core';
 import {ArrowLeft, RefreshCw, Save} from 'lucide-react';
-import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import EditLockWarning from '@/components/fluence/EditLockWarning';
 import {useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
@@ -136,12 +135,6 @@ export default function EditWikiPage() {
               color: 'green',
             });
             router.push(`/fluence/wiki/${page.id}`);
-          },
-          onError: (error: unknown) => {
-            const message = isAxiosError(error) && typeof error.response?.data === 'object' && error.response?.data !== null && 'message' in error.response.data
-              ? (error.response.data as { message?: string }).message ?? 'Failed to update wiki page'
-              : 'Failed to update wiki page';
-            notifications.show({title: 'Error', message, color: 'red'});
           },
         }
       );

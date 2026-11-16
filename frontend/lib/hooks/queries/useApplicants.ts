@@ -66,6 +66,7 @@ export function useCreateApplicant() {
         queryClient.invalidateQueries({queryKey: applicantKeys.pipeline(data.jobOpeningId)});
       }
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -88,6 +89,7 @@ export function useUpdateApplicantStatus() {
       }
       queryClient.invalidateQueries({queryKey: applicantKeys.detail(data.id)});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -107,6 +109,7 @@ export function useRateApplicant() {
       queryClient.invalidateQueries({queryKey: applicantKeys.detail(data.id)});
       queryClient.invalidateQueries({queryKey: applicantKeys.all});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -124,6 +127,7 @@ export function useDeleteApplicant() {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: applicantKeys.all});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',

@@ -1,19 +1,18 @@
 import type {Metadata, Viewport} from 'next';
 import {headers} from 'next/headers';
+import {Geist, Geist_Mono} from 'next/font/google';
 import {ColorSchemeScript} from '@mantine/core';
 import {getThemeScript} from '@/lib/theme/theme-script';
 import './globals.css';
 import {Providers} from './providers';
+import {PersistentShell} from '@/components/layout/PersistentShell';
 
-// Aura redesign typography.
-//
-// Keep the CSS variables stable without next/font/google so restricted CI,
-// Vercel/Railway deploy hooks, and offline smoke builds do not fail while
-// fetching Google Fonts. The actual font families are declared in globals.css
-// with system fallbacks.
-//   --font-sans     Open Sans   (body)
-//   --font-display  Montserrat  (display / headings, 600–800)
-//   --font-mono     Roboto Mono (all numerics — money, IDs, stats, counts; tabular-nums)
+// Brand fonts are fetched once at build time and self-hosted from /_next/static,
+// so the CSP (font-src 'self') is unchanged. The variables are consumed by the
+// --font-sans / --font-display / --font-mono stacks in globals.css, which keep
+// system fallbacks. Builds therefore need network access to Google Fonts.
+const fontSans = Geist({subsets: ['latin'], display: 'swap', variable: '--font-brand-sans'});
+const fontMono = Geist_Mono({subsets: ['latin'], display: 'swap', variable: '--font-brand-mono'});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://hrms-frontend-vert.vercel.app'),
@@ -40,7 +39,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#2952A3',
+  themeColor: '#F5F5F7',
 };
 
 export default async function RootLayout({
@@ -62,7 +61,11 @@ export default async function RootLayout({
   const nonce = process.env.NODE_ENV === 'production' ? requestNonce : undefined;
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${fontSans.variable} ${fontMono.variable}`}
+    >
     <head>
       {/* FOUC prevention — runs synchronously before paint */}
       <script nonce={nonce} dangerouslySetInnerHTML={{__html: getThemeScript()}}/>
@@ -70,10 +73,8 @@ export default async function RootLayout({
     </head>
     <body
       className="font-sans overflow-x-hidden antialiased bg-[var(--bg-page)] text-[var(--text-primary)]">
-    {/* Skip link targets #main-content — the <main> content region inside
-        AppLayout — so it bypasses the product rail + nav panel. The wrapper
-        below is the fallback target id for public/auth pages that render no
-        AppLayout shell (and therefore no inner <main id="main-content">). */}
+    {/* Skip link targets #main-content, the <main> inside the persistent
+        shell, so it bypasses the product rail + nav panel. */}
     <a
       href="#main-content"
       className="skip-link"
@@ -81,11 +82,7 @@ export default async function RootLayout({
       Skip to content
     </a>
     <Providers>
-      <div id="page-root" className="relative fade-slide-up">
-        <div className="stagger-children">
-          {children}
-        </div>
-      </div>
+      <PersistentShell>{children}</PersistentShell>
     </Providers>
     </body>
     </html>

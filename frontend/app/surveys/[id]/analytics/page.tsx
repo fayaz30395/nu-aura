@@ -6,7 +6,7 @@ import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {ArrowLeft, BarChart3, MessageSquare, PieChart as PieChartIcon, TrendingUp, Users,} from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
-import {Button, Card, CardContent,} from '@/components/ui';
+import {Button, Card, CardContent, Skeleton,} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -17,9 +17,7 @@ import {chartColors, iconSize, motion as dsMotion, typography,} from '@/lib/them
 // S10-K: recharts (~180 KB gz) is lazy-loaded — per-question chart subtree
 // extracted into SurveyAnalyticsCharts.tsx so survey analytics only ships the
 // chart bundle on this route (and only client-side).
-const ChartFallback = () => (
-  <div className="h-64 bg-[var(--bg-secondary)] rounded-lg animate-pulse"/>
-);
+const ChartFallback = () => <Skeleton className="h-64 rounded-lg"/>;
 
 const SurveyBarChart = dynamic(
   () => import('./SurveyAnalyticsCharts').then((m) => ({default: m.SurveyBarChart})),
@@ -31,14 +29,11 @@ const SurveyPieChart = dynamic(
   {ssr: false, loading: ChartFallback}
 );
 
+// Calm, muted series only: no saturated fills, status colours kept for real status.
 const PIE_COLORS = [
   chartColors.primary,
   chartColors.secondary,
-  chartColors.success,
   chartColors.warning,
-  chartColors.danger,
-  chartColors.info,
-  chartColors.accent,
   chartColors.muted,
 ];
 
@@ -83,7 +78,7 @@ export default function SurveyAnalyticsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => router.push(`/surveys/${surveyId}`)}
-              >
+               aria-label="Back">
                 <ArrowLeft className={iconSize.button}/>
               </Button>
               <div>
@@ -102,15 +97,12 @@ export default function SurveyAnalyticsPage() {
           {isLoading ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="h-24 animate-pulse rounded-lg bg-[var(--bg-surface)]"
-                />
+                <Skeleton key={i} className="h-24 rounded-lg"/>
               ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Card className="card-aura">
+              <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
@@ -124,7 +116,7 @@ export default function SurveyAnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card className="card-aura">
+              <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
@@ -140,7 +132,7 @@ export default function SurveyAnalyticsPage() {
                 </CardContent>
               </Card>
 
-              <Card className="card-aura">
+              <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
                     <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
@@ -188,7 +180,7 @@ export default function SurveyAnalyticsPage() {
 
                 return (
                   <motion.div key={stat.questionId} variants={dsMotion.staggerItem.variants}>
-                    <Card className="card-aura">
+                    <Card>
                       <CardContent className="p-6">
                         <div className="mb-4 flex items-start justify-between">
                           <div className="flex items-start gap-2">
@@ -248,7 +240,7 @@ export default function SurveyAnalyticsPage() {
           {/* Empty state */}
           {!isLoading &&
             (!analytics?.questionStats || analytics.questionStats.length === 0) && (
-              <Card className="card-aura">
+              <Card>
                 <CardContent>
                   <EmptyState
                     icon={<BarChart3 className="h-8 w-8"/>}

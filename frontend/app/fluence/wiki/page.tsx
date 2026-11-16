@@ -33,7 +33,10 @@ import {
   useWikiPages,
   useWikiSpaces,
 } from '@/lib/hooks/queries/useFluence';
-import {usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
+import {QueryErrorCard, QueryState} from '@/components/ui/QueryState';
+import {getErrorMessage} from '@/lib/utils/error-handler';
 import {SpaceFormDrawer, type SpaceFormValues} from '@/components/fluence/SpaceFormDrawer';
 import {DeleteSpaceModal} from '@/components/fluence/DeleteSpaceModal';
 import {SpacePermissionsDrawer} from '@/components/fluence/SpacePermissionsDrawer';
@@ -60,7 +63,7 @@ const SPACE_MANAGER_ROLES = [
 
 export default function WikiPage() {
   const router = useRouter();
-  const {hasAnyRole, isAdmin} = usePermissions();
+  const {hasAnyRole, hasPermission, isAdmin} = usePermissions();
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -75,12 +78,20 @@ export default function WikiPage() {
   const [permissionsSpace, setPermissionsSpace] = useState<WikiSpace | null>(null);
 
   // Queries
-  const {data: spacesData, isLoading: spacesLoading} = useWikiSpaces(0, 100);
-  const {data: pagesData, isLoading: pagesLoading} = useWikiPages(
-    selectedSpaceId,
-    0,
-    20
-  );
+  const {
+    data: spacesData,
+    isLoading: spacesLoading,
+    isError: spacesError,
+    error: spacesErrorDetail,
+    refetch: refetchSpaces,
+  } = useWikiSpaces(0, 100);
+  const {
+    data: pagesData,
+    isLoading: pagesLoading,
+    isError: pagesError,
+    error: pagesErrorDetail,
+    refetch: refetchPages,
+  } = useWikiPages(selectedSpaceId, 0, 20);
 
   // Mutations
   const createSpace = useCreateWikiSpace();
@@ -92,6 +103,12 @@ export default function WikiPage() {
 
   // Can this user manage spaces?
   const canManageSpaces = isAdmin || hasAnyRole(...SPACE_MANAGER_ROLES);
+
+  // Empty-state action is offered only to users who can create pages (same gate as the header button).
+  const canCreatePage = hasPermission(Permissions.KNOWLEDGE_WIKI_CREATE);
+  const emptyPageAction = canCreatePage
+    ? {actionLabel: 'New Page', onAction: () => router.push('/fluence/wiki/new')}
+    : {};
 
   const visibilityIcon: Record<string, typeof Globe> = {
     PUBLIC: Globe,
@@ -173,13 +190,6 @@ export default function WikiPage() {
                 color: 'green',
               });
             },
-            onError: () => {
-              notifications.show({
-                title: 'Error',
-                message: 'Failed to update space. Please try again.',
-                color: 'red',
-              });
-            },
           }
         );
       } else {
@@ -198,13 +208,6 @@ export default function WikiPage() {
                 title: 'Space created',
                 message: `"${data.name}" is ready to use.`,
                 color: 'green',
-              });
-            },
-            onError: () => {
-              notifications.show({
-                title: 'Error',
-                message: 'Failed to create space. Please try again.',
-                color: 'red',
               });
             },
           }
@@ -229,13 +232,6 @@ export default function WikiPage() {
             title: 'Delete request submitted',
             message: 'An approval request has been sent to the space owner.',
             color: 'blue',
-          });
-        },
-        onError: () => {
-          notifications.show({
-            title: 'Error',
-            message: 'Failed to delete space. Please try again.',
-            color: 'red',
           });
         },
       });
@@ -263,14 +259,17 @@ export default function WikiPage() {
                 Create and manage knowledge base documentation
               </p>
             </div>
-            <Button
-              onClick={() => router.push('/fluence/wiki/new')}
-              variant="primary"
-              className="gap-2"
-            >
-              <Plus className={iconSize.button}/>
-              New Page
-            </Button>
+            <PermissionGate permission={Permissions.KNOWLEDGE_WIKI_CREATE}>
+              <Button
+                data-testid="wiki-new-page"
+                onClick={() => router.push('/fluence/wiki/new')}
+                variant="primary"
+                className="gap-2"
+              >
+                <Plus className={iconSize.button}/>
+                New Page
+              </Button>
+            </PermissionGate>
           </div>
 
           {/* Content Grid: Sidebar + Main */}
@@ -443,47 +442,53 @@ export default function WikiPage() {
               </div>
 
               {/* Pages Grid or Loading/Empty States */}
-              {pagesLoading ? (
-                <Stagger className={layout.grid2}>
-                  {[1, 2, 3, 4].map((i) => (
-                    <StaggerItem key={i}>
-                      <div
-                        className={`${card.base} ${card.paddingLarge} h-48 animate-pulse`}
-                      />
-                    </StaggerItem>
-                  ))}
-                </Stagger>
-              ) : filteredPages.length === 0 ? (
-                <div
-                  className={`${card.base} ${card.paddingLarge} border-dashed border-2 border-[var(--border-main)]`}
+              {spacesError || pagesError ? (
+                <QueryErrorCard
+                  message={getErrorMessage(spacesError ? spacesErrorDetail : pagesErrorDetail)}
+                  onRetry={() => {
+                    void refetchSpaces();
+                    void refetchPages();
+                  }}
+                />
+              ) : pagesLoading || filteredPages.length === 0 ? (
+                <QueryState
+                  query={{
+                    data: pagesLoading ? undefined : pages,
+                    isPending: pagesLoading,
+                    isError: false,
+                    refetch: refetchPages,
+                  }}
+                  skeleton={
+                    <Stagger className={layout.grid2}>
+                      {[1, 2, 3, 4].map((i) => (
+                        <StaggerItem key={i}>
+                          <div
+                            className={`${card.base} ${card.paddingLarge} h-48 animate-pulse`}
+                          />
+                        </StaggerItem>
+                      ))}
+                    </Stagger>
+                  }
+                  isEmpty={(list) => list.length === 0}
+                  empty={{
+                    icon: <BookOpen className={iconSize.statCard}/>,
+                    title: 'No pages in this space',
+                    ...emptyPageAction,
+                  }}
                 >
-                  <div className="py-16 text-center">
+                  {() => (
                     <div
-                      className="flex items-center justify-center w-12 h-12 rounded-lg bg-[var(--bg-secondary)] mx-auto mb-4">
-                      <BookOpen
-                        className={`${iconSize.statCard} text-[var(--text-muted)]`}
-                      />
+                      className={`${card.base} ${card.paddingLarge} border-dashed border-2 border-[var(--border-main)]`}
+                    >
+                      <div className="py-16 text-center">
+                        <h3 className={`${typography.sectionTitle} mb-1`}>No pages found</h3>
+                        <p className={`${typography.bodySecondary} mb-6`}>
+                          Try adjusting your search terms
+                        </p>
+                      </div>
                     </div>
-                    <h3 className={`${typography.sectionTitle} mb-1`}>
-                      {searchQuery ? 'No pages found' : 'No pages yet'}
-                    </h3>
-                    <p className={`${typography.bodySecondary} mb-6`}>
-                      {searchQuery
-                        ? 'Try adjusting your search terms'
-                        : 'Start by creating your first wiki page'}
-                    </p>
-                    {!searchQuery && (
-                      <Button
-                        onClick={() => router.push('/fluence/wiki/new')}
-                        variant="primary"
-                        className="gap-2"
-                      >
-                        <Plus className={iconSize.button}/>
-                        Create Page
-                      </Button>
-                    )}
-                  </div>
-                </div>
+                  )}
+                </QueryState>
               ) : (
                 <Stagger className={layout.grid2}>
                   {filteredPages.map((page) => {

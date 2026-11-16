@@ -6,7 +6,6 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
 import {TicketSLA} from '@/lib/services/hrms/helpdesk-sla.service';
-import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
@@ -45,7 +44,6 @@ const slaFormSchema = z.object({
 type SLAFormData = z.infer<typeof slaFormSchema>;
 
 export default function HelpdeskSLAPage() {
-  const toast = useToast();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'slas' | 'escalations'>('dashboard');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -103,11 +101,8 @@ export default function HelpdeskSLAPage() {
       setShowForm(false);
       setEditingId(null);
       resetFormHandler();
-    } catch (error: unknown) {
-      toast.error(
-        (error as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || 'Failed to save SLA'
-      );
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -140,22 +135,16 @@ export default function HelpdeskSLAPage() {
       await deleteMutation.mutateAsync(slaToDelete.id);
       setShowDeleteConfirm(false);
       setSlaToDelete(null);
-    } catch (error: unknown) {
-      toast.error(
-        (error as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || 'Failed to delete SLA'
-      );
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
   const handleAcknowledge = async (escalationId: string) => {
     try {
       await acknowledgeMutation.mutateAsync(escalationId);
-    } catch (error: unknown) {
-      toast.error(
-        (error as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message || 'Failed to acknowledge escalation'
-      );
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 

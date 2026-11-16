@@ -62,6 +62,14 @@ function TopBarContent({
   const {data: persistedUnread = 0} = useUnreadNotificationCount(canReadNotifications);
   const unreadCount = useMemo(() => Math.max(wsUnread, persistedUnread), [wsUnread, persistedUnread]);
 
+  // Pages hard-code a "Dashboard" crumb -> /dashboard, which needs DASHBOARD:VIEW + ANALYTICS:VIEW.
+  // Without both, that link bounces to ?denied=1 and fires an "Access Denied" toast for a plain click.
+  const canOpenOrgDashboard = hasPermission(Permissions.DASHBOARD_VIEW) && hasPermission(Permissions.ANALYTICS_VIEW);
+  const crumbHref = useCallback(
+    (href?: string) => (href === '/dashboard' && !canOpenOrgDashboard ? '/me/dashboard' : href),
+    [canOpenOrgDashboard]
+  );
+
   // Memoize callbacks to prevent child re-renders
   const handleNotificationClose = useCallback(() => setIsNotificationsOpen(false), []);
   const handleUserMenuClose = useCallback(() => setIsUserMenuOpen(false), []);
@@ -85,14 +93,14 @@ function TopBarContent({
     <header
       role="banner"
       data-print-hide="true"
-      className="sticky top-0 z-20 flex h-[60px] flex-shrink-0 items-center gap-4 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] pl-4 pr-[22px] backdrop-blur-[14px]"
+      className="sticky top-0 z-20 flex h-[60px] flex-shrink-0 items-center gap-2 border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--surface)_86%,transparent)] px-4 backdrop-blur-[14px] sm:gap-4 sm:pr-[22px]"
     >
       {/* Mobile hamburger (< md) */}
       <button
         type="button"
         onClick={onMobileMenu}
         aria-label="Open navigation"
-        className="grid h-[34px] w-[34px] place-items-center rounded-[9px] text-[var(--text-2)] transition-[background-color] duration-[var(--t-fast)] hover:bg-[var(--surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] md:hidden"
+        className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-[9px] text-[var(--text-2)] transition-[background-color] duration-[var(--t-fast)] hover:bg-[var(--surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] md:hidden"
       >
         <Menu className="h-[19px] w-[19px]"/>
       </button>
@@ -102,7 +110,7 @@ function TopBarContent({
         type="button"
         onClick={onTogglePanel}
         aria-label="Toggle navigation panel"
-        className="hidden h-[34px] w-[34px] place-items-center rounded-[9px] text-[var(--text-2)] transition-[background-color] duration-[var(--t-fast)] hover:bg-[var(--surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] md:grid"
+        className="hidden h-9 w-9 flex-shrink-0 place-items-center rounded-[9px] text-[var(--text-2)] transition-[background-color] duration-[var(--t-fast)] hover:bg-[var(--surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] md:grid"
       >
         <PanelLeft className="h-[19px] w-[19px]"/>
       </button>
@@ -111,21 +119,21 @@ function TopBarContent({
       {breadcrumbs.length > 0 && (
         <nav
           aria-label="Breadcrumb"
-          className="mr-2 flex min-w-0 flex-1 items-center gap-[7px] overflow-hidden whitespace-nowrap text-[13px]"
+          className="flex min-w-0 flex-1 items-center gap-[7px] overflow-hidden whitespace-nowrap text-[13px] sm:mr-2"
         >
           {breadcrumbs.map((c, i) => {
             const isLast = i === breadcrumbs.length - 1;
             return (
               <React.Fragment key={`${c.label}-${i}`}>
                 {i > 0 && (
-                  <span className="text-[var(--border-strong)]" aria-hidden>
+                  <span className="hidden text-[var(--border-strong)] sm:inline" aria-hidden>
                     <ChevronRight className="block h-[14px] w-[14px]"/>
                   </span>
                 )}
                 {c.href && !isLast ? (
                   <Link
-                    href={c.href}
-                    className="max-w-[18ch] truncate font-medium text-[var(--text-3)] transition-colors hover:text-[var(--text-2)]"
+                    href={crumbHref(c.href) ?? c.href}
+                    className="hidden max-w-[18ch] truncate font-medium text-[var(--text-3)] transition-colors hover:text-[var(--text-2)] sm:inline"
                   >
                     {c.label}
                   </Link>
@@ -134,8 +142,8 @@ function TopBarContent({
                     aria-current={isLast ? 'page' : undefined}
                     className={cn(
                       isLast
-                        ? 'font-semibold text-[var(--text-1)]'
-                        : 'max-w-[18ch] truncate font-medium text-[var(--text-3)]'
+                        ? 'min-w-0 truncate font-semibold text-[var(--text-1)]'
+                        : 'hidden max-w-[18ch] truncate font-medium text-[var(--text-3)] sm:inline'
                     )}
                   >
                     {c.label}
@@ -147,7 +155,7 @@ function TopBarContent({
         </nav>
       )}
 
-      <div className="flex-1"/>
+      {breadcrumbs.length === 0 && <div className="flex-1"/>}
 
       {/* ⌘K search trigger */}
       <button
@@ -168,7 +176,7 @@ function TopBarContent({
         type="button"
         onClick={onOpenCommand}
         aria-label="Search"
-        className="grid h-9 w-9 place-items-center rounded-[10px] text-[var(--text-2)] transition-[background-color] duration-[var(--t-fast)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] sm:hidden"
+        className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-[10px] text-[var(--text-2)] transition-[background-color] duration-[var(--t-fast)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] sm:hidden"
       >
         <Search className="h-[18px] w-[18px]"/>
       </button>
@@ -181,7 +189,7 @@ function TopBarContent({
         <button
           type="button"
           onClick={() => setIsNotificationsOpen((v) => !v)}
-          className="notification-btn relative grid h-9 w-9 place-items-center rounded-[10px] border border-transparent text-[var(--text-2)] transition-[background-color,color] duration-[var(--t-fast)] ease-[var(--ease)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+          className="notification-btn relative grid h-9 w-9 flex-shrink-0 place-items-center rounded-[10px] border border-transparent text-[var(--text-2)] transition-[background-color,color] duration-[var(--t-fast)] ease-[var(--ease)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
           data-testid="notification-bell"
           data-ws-connected={isWsConnected ? 'true' : 'false'}
           aria-label="Notifications"

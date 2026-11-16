@@ -183,7 +183,7 @@ const avatarColorFor = (name: string): string => {
 function AssigneeAvatar({name}: { name: string }) {
   return (
     <span
-      className={`grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full text-[10px] font-semibold text-white ${avatarColorFor(name)}`}
+      className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-2xs font-semibold text-white ${avatarColorFor(name)}`}
       aria-hidden
     >
       {getInitials(name)}
@@ -588,7 +588,7 @@ export default function AssetManagementPage() {
                   );
                 })}
               </div>
-              <div className="relative ml-auto w-full sm:w-[220px]">
+              <div className="relative ml-auto w-full sm:w-56">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-3)]"/>
                 <input
                   type="text"
@@ -639,7 +639,7 @@ export default function AssetManagementPage() {
                   </thead>
                   <tbody>
                   {filteredAssets.map((asset) => (
-                    <tr key={asset.id} className="h-[58px]">
+                    <tr key={asset.id} className="h-14">
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           <div className={ASSET_TILE_CLASS}>
@@ -652,7 +652,7 @@ export default function AssetManagementPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <span className="tnum text-[12.5px] text-[var(--text-2)]">
+                        <span className="tnum text-xs text-[var(--text-2)]">
                           {asset.serialNumber || '—'}
                         </span>
                       </td>
@@ -675,7 +675,7 @@ export default function AssetManagementPage() {
                         <StatusBadge status={asset.status} domain={ASSET_STATUS}/>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <span className="tnum text-[12.5px] text-[var(--text-2)]">
+                        <span className="tnum text-xs text-[var(--text-2)]">
                           {formatDate(asset.purchaseDate)}
                         </span>
                       </td>
@@ -806,7 +806,7 @@ export default function AssetManagementPage() {
           <Reveal className="self-start">
             <Card padding="lg">
               <div className="mb-3">
-                <h2 className="text-[15px] font-bold text-[var(--text-1)]">By category</h2>
+                <h2 className="text-base font-bold text-[var(--text-1)]">By category</h2>
                 <p className="text-xs text-[var(--text-3)]">Inventory mix</p>
               </div>
               {categoryBreakdown.length > 0 ? (
@@ -817,11 +817,11 @@ export default function AssetManagementPage() {
 
               <hr className="my-5 border-[var(--border-soft)]"/>
 
-              <h2 className="mb-3 text-[15px] font-bold text-[var(--text-1)]">Lifecycle</h2>
+              <h2 className="mb-3 text-base font-bold text-[var(--text-1)]">Lifecycle</h2>
               <div className="flex flex-col gap-4">
                 {lifecycle.map((row) => (
                   <div key={row.label}>
-                    <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
+                    <div className="mb-1.5 flex items-center justify-between text-xs">
                       <span className="font-semibold text-[var(--text-2)]">{row.label}</span>
                       <span className="tnum text-[var(--text-3)]">{row.pct}%</span>
                     </div>

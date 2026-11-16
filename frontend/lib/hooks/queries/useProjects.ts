@@ -93,6 +93,7 @@ export function useCreateProject() {
       queryClient.invalidateQueries({queryKey: projectKeys.lists()});
       toast.success('Project Created', 'New project has been created successfully');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -112,6 +113,7 @@ export function useUpdateProject() {
       queryClient.invalidateQueries({queryKey: projectKeys.lists()});
       toast.success('Project Updated', 'Project details have been updated');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -129,6 +131,7 @@ export function useDeleteProject() {
       queryClient.invalidateQueries({queryKey: projectKeys.lists()});
       toast.success('Project Deleted', 'Project has been removed');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -148,6 +151,7 @@ export function useAssignEmployee() {
       queryClient.invalidateQueries({queryKey: projectKeys.detail(projectId)});
       toast.success('Employee Assigned', 'Employee has been assigned to the project');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -167,6 +171,7 @@ export function useRemoveEmployee() {
       queryClient.invalidateQueries({queryKey: projectKeys.detail(projectId)});
       toast.success('Employee Removed', 'Employee has been removed from the project');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -233,6 +238,7 @@ export function useCreateHrmsProject() {
       queryClient.invalidateQueries({queryKey: hrmsProjectKeys.lists()});
       toast.success('Project Created', 'New project has been created successfully');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -252,6 +258,7 @@ export function useUpdateHrmsProject() {
       queryClient.invalidateQueries({queryKey: hrmsProjectKeys.lists()});
       toast.success('Project Updated', 'Project has been updated successfully');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Update Failed', error.message || 'Failed to update project');
     },
@@ -270,6 +277,7 @@ export function useActivateHrmsProject() {
       queryClient.invalidateQueries({queryKey: hrmsProjectKeys.lists()});
       toast.success('Project Activated', 'Project status has been set to active');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -289,6 +297,7 @@ export function useCloseHrmsProject() {
       queryClient.invalidateQueries({queryKey: hrmsProjectKeys.lists()});
       toast.success('Project Closed', 'Project has been closed');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -367,6 +376,7 @@ export function useAssignToProject() {
       });
       toast.success('Resource Allocated', 'Employee has been allocated to the project');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },
@@ -394,6 +404,7 @@ export function useEndAllocation() {
       });
       toast.success('Allocation Ended', 'Employee allocation has been ended');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Something went wrong');
     },

@@ -214,7 +214,7 @@ function CreatePanel({onClose, onCreate}: {onClose: () => void; onCreate: (r: Ap
             <span className="block text-xs font-medium text-[var(--text-secondary)] mb-2">Scopes</span>
             <ScopeSelector selected={scopes} onChange={setScopes}/>
             {scopes.length === 0 && (
-              <p className="text-[10px] text-[var(--text-muted)] mt-1">No scopes = full access</p>
+              <p className="text-2xs text-[var(--text-muted)] mt-1">No scopes = full access</p>
             )}
           </div>
 
@@ -227,7 +227,7 @@ function CreatePanel({onClose, onCreate}: {onClose: () => void; onCreate: (r: Ap
               onChange={e => setExpiresAt(e.target.value)}
               className="h-8 text-sm"
             />
-            <p className="text-[10px] text-[var(--text-muted)] mt-1">Leave blank for no expiry</p>
+            <p className="text-2xs text-[var(--text-muted)] mt-1">Leave blank for no expiry</p>
           </div>
 
           {error && (
@@ -317,19 +317,19 @@ function ApiKeyCard({apiKey}: {apiKey: ApiKeyResponse}) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-[var(--text-primary)] truncate">{apiKey.name}</span>
-            <Badge variant={isActive ? 'success' : 'default'} className="text-[10px] shrink-0">
+            <Badge variant={isActive ? 'success' : 'default'} className="text-2xs shrink-0">
               {isActive ? 'Active' : 'Revoked'}
             </Badge>
           </div>
           <div className="flex items-center gap-3 mt-0.5">
             <span className="text-xs font-mono text-[var(--text-muted)]">{apiKey.maskedKey}</span>
             {apiKey.lastUsedAt && (
-              <span className="text-[10px] text-[var(--text-muted)]">
+              <span className="text-2xs text-[var(--text-muted)]">
                 Last used {formatDate(apiKey.lastUsedAt)}
               </span>
             )}
             {apiKey.expiresAt && (
-              <span className="text-[10px] text-[var(--text-muted)]">
+              <span className="text-2xs text-[var(--text-muted)]">
                 Expires {formatDate(apiKey.expiresAt)}
               </span>
             )}
@@ -349,7 +349,7 @@ function ApiKeyCard({apiKey}: {apiKey: ApiKeyResponse}) {
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[10px] font-medium text-[var(--text-muted)] uppercase tracking-wide">Scopes</span>
+              <span className="text-2xs font-medium text-[var(--text-muted)] uppercase tracking-wide">Scopes</span>
               {isActive && !editingScopes && (
                 <button
                   type="button"
@@ -358,7 +358,7 @@ function ApiKeyCard({apiKey}: {apiKey: ApiKeyResponse}) {
                     setPendingScopes(apiKey.scopes ?? []);
                     setEditingScopes(true);
                   }}
-                  className="text-[10px] text-accent-600 hover:text-accent-700"
+                  className="text-2xs text-accent-600 hover:text-accent-700"
                 >
                   Edit
                 </button>
@@ -377,7 +377,7 @@ function ApiKeyCard({apiKey}: {apiKey: ApiKeyResponse}) {
                 {(apiKey.scopes ?? []).length === 0
                   ? <span className="text-xs text-[var(--text-muted)]">Full access (no scope restriction)</span>
                   : (apiKey.scopes ?? []).map(s => (
-                      <span key={s} className="px-1.5 py-0.5 rounded text-[10px] bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400 font-mono border border-accent-200 dark:border-accent-800">
+                      <span key={s} className="px-1.5 py-0.5 rounded text-2xs bg-accent-50 dark:bg-accent-900/20 text-accent-700 dark:text-accent-400 font-mono border border-accent-200 dark:border-accent-800">
                         {s}
                       </span>
                     ))
@@ -502,7 +502,7 @@ export default function ApiKeysPage() {
                 <Key className="w-4 h-4 text-success-600"/>
               </div>
               <div>
-                <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wide">Active Keys</p>
+                <p className="text-2xs text-[var(--text-muted)] uppercase tracking-wide">Active Keys</p>
                 <p className="text-sm font-semibold text-[var(--text-primary)]">{isLoading ? '—' : activeCount}</p>
               </div>
             </CardContent>
@@ -513,7 +513,7 @@ export default function ApiKeysPage() {
                 <Key className="w-4 h-4 text-[var(--text-muted)]"/>
               </div>
               <div>
-                <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wide">Total Keys</p>
+                <p className="text-2xs text-[var(--text-muted)] uppercase tracking-wide">Total Keys</p>
                 <p className="text-sm font-semibold text-[var(--text-primary)]">{isLoading ? '—' : keyList.length}</p>
               </div>
             </CardContent>
@@ -524,7 +524,7 @@ export default function ApiKeysPage() {
                 <Key className="w-4 h-4 text-accent-600"/>
               </div>
               <div>
-                <p className="text-[10px] text-[var(--text-muted)] uppercase tracking-wide">With Scopes</p>
+                <p className="text-2xs text-[var(--text-muted)] uppercase tracking-wide">With Scopes</p>
                 <p className="text-sm font-semibold text-[var(--text-primary)]">
                   {isLoading ? '—' : keyList.filter(k => (k.scopes?.length ?? 0) > 0).length}
                 </p>

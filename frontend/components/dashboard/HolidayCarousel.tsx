@@ -79,7 +79,7 @@ export function HolidayCarousel({
   if (isLoading) {
     return (
       <div
-        className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100">
+        className="relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 text-[var(--text-primary)]">
         <div className="row-between mb-2">
           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Holidays</span>
           <span className="text-xs opacity-60">View All</span>
@@ -96,7 +96,7 @@ export function HolidayCarousel({
   if (displayedHolidays.length === 0) {
     return (
       <div
-        className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100">
+        className="relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 text-[var(--text-primary)]">
         <div className="row-between mb-2">
           <span className="text-xs font-semibold uppercase tracking-wider opacity-80">Holidays</span>
           <a href="/holidays" className="text-xs opacity-60 hover:opacity-100 transition-opacity">View All</a>
@@ -113,7 +113,7 @@ export function HolidayCarousel({
 
   return (
     <div
-      className="relative overflow-hidden rounded-lg bg-accent-50 dark:bg-accent-900/30 p-4 text-accent-900 dark:text-accent-100"
+      className="relative overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-4 text-[var(--text-primary)]"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >

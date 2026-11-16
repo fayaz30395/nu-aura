@@ -217,6 +217,14 @@ export function useCancelLeaveRequest() {
         });
       }
     },
+    meta: {skipGlobalError: true},
+    onError: () => {
+      notifications.show({
+        title: 'Error',
+        message: "Couldn't cancel this leave request",
+        color: 'red',
+      });
+    },
   });
 }
 
@@ -298,6 +306,7 @@ export function useRequestLeaveEncashment() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Encashment Failed',

@@ -14,7 +14,7 @@ import {EmptyState} from '@/components/ui/EmptyState';
 // Chart skeleton displayed while the recharts bundle lazy-loads.
 // Recharts uses browser-only SVG/ResizeObserver APIs so ssr: false is required.
 const ChartSkeleton = () => (
-  <div className="w-full h-[300px] animate-pulse bg-surface-100 dark:bg-surface-800 rounded-lg"/>
+  <div className="w-full h-72 animate-pulse bg-surface-100 dark:bg-surface-800 rounded-lg"/>
 );
 
 const ExpenseTrendChart = dynamic(

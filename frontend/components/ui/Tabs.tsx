@@ -69,7 +69,7 @@ export function Tabs<T extends string = string>({tabs, value, onChange, classNam
               }
             }}
             className={cn(
-              '-mb-px inline-flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-semibold',
+              '-mb-px inline-flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium',
               'transition-[color,border-color] duration-[var(--t-fast)] ease-[var(--ease)] outline-none',
               'focus-visible:shadow-[var(--sh-focus)] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--ring-primary)]',
               isActive
@@ -82,7 +82,7 @@ export function Tabs<T extends string = string>({tabs, value, onChange, classNam
             {t.count != null ? (
               <span
                 className={cn(
-                  'tnum rounded-full px-1.5 py-px text-xs font-bold',
+                  'tnum rounded-full px-1.5 py-px text-xs font-medium',
                   isActive
                     ? 'bg-[var(--accent-soft)] text-[var(--accent-text)]'
                     : 'bg-[var(--surface-2)] text-[var(--text-3)]'

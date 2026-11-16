@@ -112,7 +112,7 @@ function StatusTracker({signatureRequestId, onCancel, isCancelling}: StatusTrack
       await sendMutation.mutateAsync(signatureRequestId);
       notifications.show({title: 'Sent', message: 'Offer sent for signature', color: 'green'});
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to send for signature', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -300,14 +300,8 @@ export function OfferESignModal({
         message: 'Signature request created. Click "Send for Signature" to deliver it.',
         color: 'green',
       });
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message:
-          (err as { response?: { data?: { message?: string } } })?.response?.data?.message ||
-          'Failed to create signature request',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -317,7 +311,7 @@ export function OfferESignModal({
       notifications.show({title: 'Cancelled', message: 'Signature request cancelled.', color: 'orange'});
       setCreatedRequestId(null);
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to cancel request.', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 

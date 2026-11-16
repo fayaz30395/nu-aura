@@ -167,15 +167,15 @@ export default function SettingsPage() {
       <div className="flex items-center gap-4">
         {Icon && (
           <div
-            className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-[11px] border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-2)]">
-            <Icon className="h-[18px] w-[18px]"/>
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface-2)] text-[var(--text-2)]">
+            <Icon className="h-4 w-4"/>
           </div>
         )}
         <div>
           <label className="text-sm font-semibold text-[var(--text-1)]">
             {label}
           </label>
-          <p className="mt-0.5 text-[12.5px] leading-snug text-[var(--text-3)]">
+          <p className="mt-0.5 text-xs leading-snug text-[var(--text-3)]">
             {description}
           </p>
         </div>
@@ -220,7 +220,7 @@ export default function SettingsPage() {
           {/* Section nav */}
           <Reveal>
             <Card padding="sm" className="lg:sticky lg:top-4">
-              <nav aria-label="Settings sections" className="flex flex-col gap-[2px]">
+              <nav aria-label="Settings sections" className="flex flex-col gap-0.5">
                 {SETTINGS_NAV.map((s) => {
                   const Icon = s.icon;
                   const isActive = section === s.id;
@@ -236,8 +236,8 @@ export default function SettingsPage() {
                           : 'font-medium text-[var(--text-2)] hover:bg-[var(--surface-hover)]'
                       }`}
                     >
-                      <span className="grid h-[17px] w-[17px] shrink-0 place-items-center">
-                        <Icon className={`h-[17px] w-[17px] ${isActive ? 'text-[var(--accent-text)]' : 'text-[var(--text-3)]'}`}/>
+                      <span className="grid h-4 w-4 shrink-0 place-items-center">
+                        <Icon className={`h-4 w-4 ${isActive ? 'text-[var(--accent-text)]' : 'text-[var(--text-3)]'}`}/>
                       </span>
                       <span className="flex-1 text-left">{s.label}</span>
                     </button>
@@ -296,7 +296,7 @@ export default function SettingsPage() {
                           <span className="block text-sm font-semibold text-[var(--text-1)]">
                             Dark Mode
                           </span>
-                          <p className="mt-0.5 text-[12.5px] text-[var(--text-3)]">
+                          <p className="mt-0.5 text-xs text-[var(--text-3)]">
                             Switch between light and dark theme
                           </p>
                         </div>
@@ -329,7 +329,7 @@ export default function SettingsPage() {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-semibold text-[var(--text-1)]">Google SSO (Single Sign-On)</p>
-                          <p className="mt-0.5 text-[12.5px] leading-snug text-[var(--text-3)]">
+                          <p className="mt-0.5 text-xs leading-snug text-[var(--text-3)]">
                             Your account is authenticated via Google Workspace for your organisation&apos;s domain.
                             Password management is handled through your Google account.
                           </p>
@@ -367,12 +367,12 @@ export default function SettingsPage() {
                         <div
                           className="flex flex-wrap items-center justify-between gap-4 rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface-2)] p-4 skeuo-surface">
                           <div className="flex items-center gap-4">
-                            <div className="grid h-[38px] w-[38px] shrink-0 place-items-center rounded-[var(--r-control)] bg-[var(--accent-soft)]">
+                            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[var(--r-control)] bg-[var(--accent-soft)]">
                               <Globe className="h-5 w-5 text-[var(--accent-text)]"/>
                             </div>
                             <div>
                               <p className="text-sm font-semibold text-[var(--text-1)]">SAML 2.0 Identity Provider</p>
-                              <p className="mt-0.5 text-[12.5px] leading-snug text-[var(--text-3)]">
+                              <p className="mt-0.5 text-xs leading-snug text-[var(--text-3)]">
                                 Connect Okta, Azure AD, OneLogin, or any SAML 2.0 compatible IdP for enterprise SSO
                               </p>
                             </div>
@@ -410,15 +410,15 @@ export default function SettingsPage() {
                       value={activeNotificationTab}
                       onChange={setActiveNotificationTab}
                       tabs={[
-                        {id: 'channels', label: 'Delivery Channels', icon: <Globe className="h-[15px] w-[15px]"/>},
-                        {id: 'categories', label: 'Notification Types', icon: <Bell className="h-[15px] w-[15px]"/>},
+                        {id: 'channels', label: 'Delivery Channels', icon: <Globe className="h-4 w-4"/>},
+                        {id: 'categories', label: 'Notification Types', icon: <Bell className="h-4 w-4"/>},
                       ]}
                     />
 
                     {/* Channel Settings */}
                     {activeNotificationTab === 'channels' && (
                       <div className="space-y-0.5 pt-1">
-                        <p className="mb-2 text-[12.5px] text-[var(--text-3)]">
+                        <p className="mb-2 text-xs text-[var(--text-3)]">
                           Choose how you want to receive notifications
                         </p>
                         <ToggleSwitch
@@ -448,7 +448,7 @@ export default function SettingsPage() {
                     {/* Category Settings */}
                     {activeNotificationTab === 'categories' && (
                       <div className="space-y-0.5 pt-1">
-                        <p className="mb-2 text-[12.5px] text-[var(--text-3)]">
+                        <p className="mb-2 text-xs text-[var(--text-3)]">
                           Choose which types of notifications you want to receive
                         </p>
                         <ToggleSwitch

@@ -5,8 +5,16 @@
 
 import {render, screen} from '@testing-library/react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {AdminGate, HRGate, ManagerGate, PermissionGate} from '../PermissionGate';
+import {AdminGate, HRGate, ManagerGate, PageDeniedFallback, PermissionGate} from '../PermissionGate';
 import {usePermissions} from '@/lib/hooks/usePermissions';
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({replace: vi.fn(), push: vi.fn()}),
+}));
+
+vi.mock('@/components/layout/AppLayout', () => ({
+  AppLayout: ({children}: { children: React.ReactNode }) => <div>{children}</div>,
+}));
 
 // Define test permission/role constants directly to avoid full module import issues
 const Permissions = {
@@ -930,5 +938,34 @@ describe('ManagerGate', () => {
     );
 
     expect(screen.queryByText('Manager Section')).not.toBeInTheDocument();
+  });
+
+  describe('page-level denied fallback', () => {
+    it('renders the page-denied fallback when the permission check fails', () => {
+      mockUsePermissions.mockReturnValue({
+        hasPermission: vi.fn(() => false),
+        hasAnyPermission: vi.fn(() => false),
+        hasAllPermissions: vi.fn(() => false),
+        hasRole: vi.fn(() => false),
+        hasAnyRole: vi.fn(() => false),
+        hasAllRoles: vi.fn(() => false),
+        isAdmin: false,
+        isManager: false,
+        isReady: true,
+        isPermissionReady: true,
+      });
+
+      render(
+        <PermissionGate permission={Permissions.PAYROLL_VIEW} fallback={<PageDeniedFallback/>}>
+          <div>Payroll Page</div>
+        </PermissionGate>
+      );
+
+      expect(screen.queryByText('Payroll Page')).not.toBeInTheDocument();
+      expect(screen.getByTestId('page-denied')).toHaveTextContent(
+        'Ask your HR admin for access to this NU-AURA page.'
+      );
+      expect(screen.getByRole('heading', {name: 'Access restricted'})).toBeInTheDocument();
+    });
   });
 });

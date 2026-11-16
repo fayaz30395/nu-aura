@@ -167,7 +167,7 @@ export default function ExitInterviewPage() {
       });
       setMode('view');
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to schedule interview', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -197,7 +197,7 @@ export default function ExitInterviewPage() {
       });
       setMode('view');
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to record feedback', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 

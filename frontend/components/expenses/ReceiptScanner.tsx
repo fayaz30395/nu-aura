@@ -55,6 +55,7 @@ export function ReceiptScanner({onConfirm, onCancel}: ReceiptScannerProps) {
   }, []);
 
   const startScan = useCallback((file: File) => {
+    if (scanMutation.isPending) return;
     setStage('scanning');
     scanMutation.mutate(file, {
       onSuccess: (result: OcrResult) => {

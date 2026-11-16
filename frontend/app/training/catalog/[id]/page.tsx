@@ -1,5 +1,6 @@
 'use client';
 
+import {Progress} from '@/components/ui';
 import {useEffect, useRef, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
@@ -59,14 +60,7 @@ const CONTENT_TYPE_ICON: Record<string, React.ReactNode> = {
 // ─── Progress Bar ─────────────────────────────────────────────────────────────
 
 function ProgressBar({value}: { value: number }) {
-  return (
-    <div className="w-full bg-[var(--bg-muted)] rounded-full h-2">
-      <div
-        className="bg-accent-600 h-2 rounded-full transition-all duration-300"
-        style={{width: `${Math.min(100, Math.max(0, value))}%`}}
-      />
-    </div>
-  );
+  return <Progress value={value} label="Training progress"/>;
 }
 
 // ─── Video Player ─────────────────────────────────────────────────────────────

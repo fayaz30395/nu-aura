@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
               attendancePie={[
                 {name: 'Present', value: analytics.attendance.present, color: chartColors.success()},
                 {name: 'On Leave', value: analytics.attendance.onLeave, color: chartColors.warning()},
-                {name: 'Absent', value: analytics.attendance.absent, color: chartColors.danger()},
+                {name: 'Absent', value: analytics.attendance.absent, color: chartColors.muted()},
               ].filter((d) => d.value > 0)}
               departments={analytics.headcount.departmentDistribution || []}
               leave={analytics.leave.distribution || []}
@@ -209,7 +209,7 @@ function PageHeader({
       className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
     >
       <div className="space-y-2 max-w-2xl">
-        <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-[var(--text-muted)]">
+        <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">
           Analytics
         </p>
         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--text-heading)] leading-[1.05]">
@@ -371,7 +371,7 @@ function BentoCharts({
         icon={Activity}
         accent
       >
-        <div className="h-[260px]">
+        <div className="h-64">
           {attendanceTrend.length > 0 ? (
             <AnalyticsAttendanceTrendChart data={attendanceTrend}/>
           ) : (
@@ -391,7 +391,7 @@ function BentoCharts({
         description="Attendance breakdown"
         icon={UserCheck}
       >
-        <div className="h-[260px] flex items-center">
+        <div className="h-64 flex items-center">
           {attendancePie.length > 0 ? (
             <AnalyticsAttendancePieChart data={attendancePie}/>
           ) : (
@@ -411,7 +411,7 @@ function BentoCharts({
         description="Employees by department"
         icon={Users}
       >
-        <div className="h-[260px]">
+        <div className="h-64">
           {departments.length > 0 ? (
             <AnalyticsDeptBarChart data={departments}/>
           ) : (
@@ -431,7 +431,7 @@ function BentoCharts({
         description="Requests by category"
         icon={Calendar}
       >
-        <div className="h-[260px]">
+        <div className="h-64">
           {leave.length > 0 ? (
             <AnalyticsLeavePieChart data={leave} colors={COLORS}/>
           ) : (
@@ -451,7 +451,7 @@ function BentoCharts({
         description="Employee count over time"
         icon={TrendingUp}
       >
-        <div className="h-[260px]">
+        <div className="h-64">
           {headcountTrend.length > 0 ? (
             <AnalyticsHeadcountChart data={headcountTrend}/>
           ) : (
@@ -473,7 +473,7 @@ function BentoCharts({
           icon={DollarSign}
           accent
         >
-          <div className="h-[280px]">
+          <div className="h-72">
             <AnalyticsPayrollChart data={payrollTrend}/>
           </div>
         </BentoTile>
@@ -527,11 +527,11 @@ function BentoTile({
 function BentoSkeleton() {
   return (
     <div className="grid gap-4 grid-cols-1 lg:grid-cols-12">
-      <Skeleton className="lg:col-span-8 h-[340px] rounded-xl"/>
-      <Skeleton className="lg:col-span-4 h-[340px] rounded-xl"/>
-      <Skeleton className="lg:col-span-5 h-[340px] rounded-xl"/>
-      <Skeleton className="lg:col-span-4 h-[340px] rounded-xl"/>
-      <Skeleton className="lg:col-span-3 h-[340px] rounded-xl"/>
+      <Skeleton className="lg:col-span-8 h-80 rounded-xl"/>
+      <Skeleton className="lg:col-span-4 h-80 rounded-xl"/>
+      <Skeleton className="lg:col-span-5 h-80 rounded-xl"/>
+      <Skeleton className="lg:col-span-4 h-80 rounded-xl"/>
+      <Skeleton className="lg:col-span-3 h-80 rounded-xl"/>
     </div>
   );
 }
@@ -616,7 +616,7 @@ function LeaveSummaryList({
         <h2 className="text-xl font-semibold tracking-tight text-[var(--text-heading)]">
           Leave requests
         </h2>
-        <p className="text-2xs font-medium uppercase tracking-[0.18em] text-[var(--text-muted)]">
+        <p className="text-2xs font-medium uppercase tracking-widest text-[var(--text-muted)]">
           Current cycle
         </p>
       </div>

@@ -64,6 +64,7 @@ export function useCreateScorecardMutation() {
       });
       return data;
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -87,6 +88,7 @@ export function useUpdateScorecardMutation() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -109,6 +111,7 @@ export function useSubmitScorecardMutation() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',
@@ -132,6 +135,7 @@ export function useCreateScorecardTemplateMutation() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({
         title: 'Error',

@@ -3,6 +3,8 @@
 import {useEffect, useState} from 'react';
 import {CheckCircle2, Clock, LogIn, LogOut} from 'lucide-react';
 import {Reveal} from '@/components/motion';
+import {buttonVariants} from '@/components/ui/Button';
+import {cn} from '@/lib/utils';
 
 interface TimeClockWidgetProps {
   isCheckedIn: boolean;
@@ -154,11 +156,7 @@ export function TimeClockWidget({
           <button
             onClick={isCheckedIn ? onCheckOut : onCheckIn}
             disabled={isLoading}
-            className={`relative flex w-full items-center justify-center gap-2.5 rounded-aura-control py-4 px-4 text-sm font-semibold transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${
-              isCheckedIn
-                ? 'bg-[var(--surface-aura-2)] text-[var(--text-1)] border border-[var(--border)] hover:bg-[var(--surface-hover)] hover:border-[var(--border-aura-strong)] hover:shadow-sh-md hover:-translate-y-0.5'
-                : 'text-white border-0 bg-[var(--accent)] shadow-sh-md hover:shadow-sh-lg'
-            } disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]`}
+            className={cn(buttonVariants({variant: isCheckedIn ? 'secondary' : 'primary', size: 'lg'}), 'w-full')}
             aria-label={isCheckedIn ? 'Clock out' : 'Clock in'}
           >
             {isCheckedIn ? (

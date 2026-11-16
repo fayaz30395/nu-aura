@@ -3,8 +3,10 @@
  * Run with: npx vitest run components/auth/__tests__/AuthGuard.test.tsx
  */
 
-import type {ReactElement} from 'react';
-import {render, screen, waitFor} from '@testing-library/react';
+import {type ReactElement, useEffect} from 'react';
+import {act, render, screen, waitFor} from '@testing-library/react';
+import {hydrateRoot} from 'react-dom/client';
+import {renderToString} from 'react-dom/server';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 import {AuthGuard} from '../AuthGuard';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -49,6 +51,26 @@ const testUser = {
   roles: [],
 };
 
+// Stable router + controllable pathname (the global setup mock pins pathname to '/')
+const nav = vi.hoisted(() => ({
+  pathname: '/',
+  replace: vi.fn(),
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: nav.replace,
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+  }),
+  usePathname: () => nav.pathname,
+  useSearchParams: () => new URLSearchParams(),
+  useParams: () => ({}),
+}));
+
 // Mock useAuth hook
 vi.mock('@/lib/hooks/useAuth', () => ({
   useAuth: vi.fn(),
@@ -79,6 +101,7 @@ const renderAuthGuard = (ui: ReactElement) => render(ui);
 describe('AuthGuard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    nav.pathname = '/';
     mockIsPublicRoute.mockReturnValue(false);
     mockFindRouteConfig.mockReturnValue(null);
   });
@@ -976,5 +999,265 @@ describe('AuthGuard', () => {
         expect(screen.getByText('General Content')).toBeInTheDocument();
       });
     });
+  });
+
+  describe('authorization follows the current pathname (P0-2)', () => {
+    const ALLOWED = '/employees';
+    const FORBIDDEN = '/payroll';
+
+    const permissionsFor = (overrides: Record<string, unknown> = {}) => ({
+      hasPermission: vi.fn((p: string) => p === Permissions.EMPLOYEE_READ),
+      hasAnyPermission: vi.fn(() => false),
+      hasAllPermissions: vi.fn(() => false),
+      hasRole: vi.fn(),
+      hasAnyRole: vi.fn(() => false),
+      hasAllRoles: vi.fn(() => false),
+      isAdmin: false,
+      isHR: false,
+      isManager: false,
+      isReady: true,
+      roles: [Roles.EMPLOYEE],
+      ...overrides,
+    });
+
+    beforeEach(() => {
+      mockFindRouteConfig.mockImplementation((path: string) => {
+        if (path === ALLOWED) return {requiresAuth: true, permission: Permissions.EMPLOYEE_READ};
+        if (path === FORBIDDEN) return {requiresAuth: true, permission: Permissions.PAYROLL_PROCESS};
+        return null;
+      });
+      mockUseAuth.mockReturnValue({
+        user: testUser,
+        isAuthenticated: true,
+        hasHydrated: true,
+        restoreSession: vi.fn(() => Promise.resolve(true)),
+      });
+    });
+
+    /** Stand-in for a page: records every render and mount (where its queries would fire). */
+    const trackedPage = (label: string) => {
+      const onRender = vi.fn();
+      const onMount = vi.fn();
+      function Page() {
+        onRender();
+        useEffect(() => {
+          onMount();
+        }, []);
+        return <div>{label}</div>;
+      }
+      return {Page, onRender, onMount};
+    };
+
+    it('never renders a forbidden route after navigating from a permitted one', () => {
+      mockUsePermissions.mockReturnValue(permissionsFor());
+      const allowed = trackedPage('Employees Page');
+      const forbidden = trackedPage('Payroll Page');
+
+      nav.pathname = ALLOWED;
+      const {rerender} = render(
+        <AuthGuard>
+          <allowed.Page/>
+        </AuthGuard>
+      );
+      expect(screen.getByText('Employees Page')).toBeInTheDocument();
+      expect(nav.replace).not.toHaveBeenCalled();
+
+      nav.pathname = FORBIDDEN;
+      rerender(
+        <AuthGuard>
+          <forbidden.Page/>
+        </AuthGuard>
+      );
+
+      expect(forbidden.onRender).not.toHaveBeenCalled();
+      expect(forbidden.onMount).not.toHaveBeenCalled();
+      expect(screen.queryByText('Payroll Page')).not.toBeInTheDocument();
+      expect(screen.getByText('Access Restricted')).toBeInTheDocument();
+      expect(nav.replace).toHaveBeenCalledWith('/me/dashboard?denied=1');
+    });
+
+    it('renders a permitted route again after navigating away from a forbidden one', () => {
+      mockUsePermissions.mockReturnValue(permissionsFor());
+
+      nav.pathname = FORBIDDEN;
+      const {rerender} = render(
+        <AuthGuard>
+          <div>Payroll Page</div>
+        </AuthGuard>
+      );
+      expect(screen.getByText('Access Restricted')).toBeInTheDocument();
+
+      nav.pathname = ALLOWED;
+      rerender(
+        <AuthGuard>
+          <div>Employees Page</div>
+        </AuthGuard>
+      );
+      expect(screen.getByText('Employees Page')).toBeInTheDocument();
+      expect(screen.queryByText('Access Restricted')).not.toBeInTheDocument();
+    });
+
+    it('renders a permitted route on the first render without redirecting', () => {
+      mockUsePermissions.mockReturnValue(permissionsFor());
+      nav.pathname = ALLOWED;
+
+      render(
+        <AuthGuard>
+          <div>Employees Page</div>
+        </AuthGuard>
+      );
+
+      expect(screen.getByText('Employees Page')).toBeInTheDocument();
+      expect(nav.replace).not.toHaveBeenCalled();
+    });
+
+    it('redirects unauthenticated users to login with a returnUrl and never renders children', async () => {
+      mockUsePermissions.mockReturnValue(permissionsFor());
+      mockUseAuth.mockReturnValue({
+        user: null,
+        isAuthenticated: false,
+        hasHydrated: true,
+        restoreSession: vi.fn(() => Promise.resolve(false)),
+      });
+      const page = trackedPage('Payroll Page');
+      nav.pathname = FORBIDDEN;
+
+      render(
+        <AuthGuard>
+          <page.Page/>
+        </AuthGuard>
+      );
+
+      await waitFor(() => {
+        expect(nav.replace).toHaveBeenCalledWith('/auth/login?returnUrl=%2Fpayroll');
+      });
+      expect(nav.replace).not.toHaveBeenCalledWith('/me/dashboard?denied=1');
+      expect(page.onRender).not.toHaveBeenCalled();
+    });
+
+    it('shows the loading state, not children, while permissions are hydrating', () => {
+      mockUsePermissions.mockReturnValue(permissionsFor({isReady: false}));
+      const page = trackedPage('Employees Page');
+      nav.pathname = ALLOWED;
+
+      render(
+        <AuthGuard loadingComponent={<div>Loading guard</div>}>
+          <page.Page/>
+        </AuthGuard>
+      );
+
+      expect(screen.getByText('Loading guard')).toBeInTheDocument();
+      expect(page.onRender).not.toHaveBeenCalled();
+      expect(nav.replace).not.toHaveBeenCalled();
+    });
+
+    it('keeps rendering /me/* children while permissions are hydrating', () => {
+      mockUsePermissions.mockReturnValue(permissionsFor({isReady: false}));
+      nav.pathname = '/me/dashboard';
+
+      render(
+        <AuthGuard loadingComponent={<div>Loading guard</div>}>
+          <div>My Dashboard</div>
+        </AuthGuard>
+      );
+
+      expect(screen.getByText('My Dashboard')).toBeInTheDocument();
+    });
+
+    it('lets SuperAdmin through a restricted route after navigation', () => {
+      mockUsePermissions.mockReturnValue(
+        permissionsFor({hasPermission: vi.fn(() => false), roles: [Roles.SUPER_ADMIN]})
+      );
+
+      nav.pathname = ALLOWED;
+      const {rerender} = render(
+        <AuthGuard>
+          <div>Employees Page</div>
+        </AuthGuard>
+      );
+      nav.pathname = FORBIDDEN;
+      rerender(
+        <AuthGuard>
+          <div>Payroll Page</div>
+        </AuthGuard>
+      );
+
+      expect(screen.getByText('Payroll Page')).toBeInTheDocument();
+      expect(nav.replace).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('SSR hydration', () => {
+    const basePermissions = {
+      hasPermission: vi.fn(() => true),
+      hasAnyPermission: vi.fn(() => true),
+      hasAllPermissions: vi.fn(() => true),
+      hasRole: vi.fn(),
+      hasAnyRole: vi.fn(() => true),
+      hasAllRoles: vi.fn(() => true),
+      roles: [Roles.EMPLOYEE],
+    };
+
+    // Server: persist storage is unavailable, so the store never hydrates.
+    const useServerState = () => {
+      mockUseAuth.mockReturnValue({
+        user: null,
+        isAuthenticated: false,
+        hasHydrated: false,
+        restoreSession: vi.fn(() => Promise.resolve(true)),
+      });
+      mockUsePermissions.mockReturnValue({...basePermissions, isReady: false});
+    };
+
+    // Client: sessionStorage rehydrates synchronously before the first render.
+    const useClientState = () => {
+      mockUseAuth.mockReturnValue({
+        user: testUser,
+        isAuthenticated: true,
+        hasHydrated: true,
+        restoreSession: vi.fn(() => Promise.resolve(true)),
+      });
+      mockUsePermissions.mockReturnValue({...basePermissions, isReady: true});
+    };
+
+    it.each(['/employees', '/me/dashboard'])(
+      'hydrates %s without a mismatch and renders children after mount',
+      async (path) => {
+        nav.pathname = path;
+        const ui = (
+          <AuthGuard>
+            <div>Hydrated Content</div>
+          </AuthGuard>
+        );
+
+        useServerState();
+        const serverHtml = renderToString(ui);
+        expect(serverHtml).not.toContain('Hydrated Content');
+
+        const container = document.createElement('div');
+        container.innerHTML = serverHtml;
+        document.body.appendChild(container);
+
+        useClientState();
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const recoverableErrors: unknown[] = [];
+        let root: ReturnType<typeof hydrateRoot> | undefined;
+        try {
+          await act(async () => {
+            root = hydrateRoot(container, ui, {
+              onRecoverableError: (error) => recoverableErrors.push(error),
+            });
+          });
+
+          expect(recoverableErrors).toEqual([]);
+          expect(consoleError).not.toHaveBeenCalled();
+          expect(container.textContent).toContain('Hydrated Content');
+        } finally {
+          consoleError.mockRestore();
+          act(() => root?.unmount());
+          container.remove();
+        }
+      }
+    );
   });
 });

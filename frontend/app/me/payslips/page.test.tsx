@@ -1,6 +1,7 @@
 import React from 'react';
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {MantineProvider} from '@mantine/core';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import MyPayslipsPage from './page';
 import {formatCurrency} from '@/lib/utils';
@@ -91,9 +92,11 @@ function serve(opts: { status: unknown | Error }) {
 function renderPage() {
   const client = new QueryClient({defaultOptions: {queries: {retry: false}}});
   return render(
-    <QueryClientProvider client={client}>
-      <MyPayslipsPage/>
-    </QueryClientProvider>
+    <MantineProvider>
+      <QueryClientProvider client={client}>
+        <MyPayslipsPage/>
+      </QueryClientProvider>
+    </MantineProvider>
   );
 }
 
@@ -183,5 +186,34 @@ describe('/me/payslips with the real API response shape', () => {
     expect(await screen.findByText(
       'Some payslips are not yet available. Your totals include released periods only.')).toBeTruthy();
     expect(document.body.textContent).not.toMatch(/\d+ periods? (is|are) not yet released/);
+  });
+});
+
+const toastError = vi.hoisted(() => vi.fn());
+vi.mock('@/components/ui/Toast', () => ({
+  useToast: () => ({success: vi.fn(), error: toastError, warning: vi.fn(), info: vi.fn(), showToast: vi.fn()}),
+}));
+
+describe('payslip PDF download', () => {
+  beforeEach(() => {
+    apiGet.mockReset();
+    toastError.mockReset();
+  });
+
+  it('shows an error toast and saves nothing when the PDF is 0 bytes', async () => {
+    serve({status: releaseStatus([], [1, 2])});
+    const baseImpl = apiGet.getMockImplementation()!;
+    apiGet.mockImplementation(async (url: string) =>
+      url.endsWith('/pdf') ? {data: new Blob([])} : baseImpl(url)
+    );
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    renderPage();
+    await waitFor(() => expect(screen.getByText(formatMonthYear(`${YEAR}-01-01`))).toBeTruthy());
+
+    fireEvent.click(screen.getAllByTestId('payslip-download')[0]);
+
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith('Payslip PDF is empty, contact HR'));
+    expect(clickSpy).not.toHaveBeenCalled();
+    clickSpy.mockRestore();
   });
 });

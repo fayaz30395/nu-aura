@@ -14,7 +14,6 @@ import {LoadingOverlay, MultiSelect, Select, Skeleton, Textarea, TextInput} from
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ArrowLeft} from 'lucide-react';
-import {isAxiosError} from '@/lib/utils/type-guards';
 import AccessControlSection from '@/components/fluence/AccessControlSection';
 import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
 
@@ -109,16 +108,6 @@ export default function CreateBlogPost() {
               color: 'green',
             });
             router.push(`/fluence/blogs/${post.id}`);
-          },
-          onError: (error: unknown) => {
-            const message = isAxiosError(error) && typeof error.response?.data === 'object' && error.response?.data !== null && 'message' in error.response.data
-              ? (error.response.data as { message?: string }).message ?? 'Failed to create blog post'
-              : 'Failed to create blog post';
-            notifications.show({
-              title: 'Error',
-              message,
-              color: 'red',
-            });
           },
         }
       );

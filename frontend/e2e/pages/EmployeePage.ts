@@ -73,7 +73,7 @@ export class EmployeePage extends BasePage {
     super(page);
 
     // Page elements
-    this.pageHeading = page.locator('h1:has-text("Employee Management")');
+    this.pageHeading = page.getByRole('heading', {level: 1, name: 'Employees'});
     this.addEmployeeButton = page.locator('button:has-text("Add Employee")');
     this.importButton = page.locator('button:has-text("Import")');
     this.searchInput = page.locator('#employee-search');
@@ -114,7 +114,7 @@ export class EmployeePage extends BasePage {
     this.employmentTypeSelect = page.locator('label:has-text("Employment Type")').locator('..').locator('select');
     this.departmentSelect = page.locator('label:has-text("Department")').locator('..').locator('select');
     this.levelSelect = page.locator('label:has-text("Employee Level")').locator('..').locator('select');
-    this.jobRoleSelect = page.locator('label:has-text("Job Role")').locator('..').locator('select');
+    this.jobRoleSelect = page.locator('#emp-job-role');
     this.joiningDateInput = page.locator('label:has-text("Joining Date")').locator('..').locator('input');
     this.confirmationDateInput = page.locator('label:has-text("Confirmation Date")').locator('..').locator('input');
     this.managerSelect = page.locator('label:has-text("Reporting Manager")').locator('..').locator('select');
@@ -228,10 +228,16 @@ export class EmployeePage extends BasePage {
       }
     }
     if (data.level) await this.levelSelect.selectOption(data.level);
-    if (data.jobRole) await this.jobRoleSelect.selectOption(data.jobRole);
+    if (data.jobRole) await this.selectJobRole(data.jobRole);
     if (data.joiningDate) await this.joiningDateInput.fill(data.joiningDate);
     if (data.confirmationDate) await this.confirmationDateInput.fill(data.confirmationDate);
     if (data.manager) await this.managerSelect.selectOption(data.manager);
+  }
+
+  /** Job Role is a searchable combobox; options carry the enum value in a `value` attribute. */
+  async selectJobRole(value: string) {
+    await this.jobRoleSelect.click();
+    await this.page.locator(`[role="option"][value="${value}"]`).click();
   }
 
   /**
@@ -265,6 +271,8 @@ export class EmployeePage extends BasePage {
    */
   async closeModal() {
     await this.cancelButton.click();
+    // The modal animates out; wait for the exit before callers assert on visibility.
+    await this.modal.waitFor({state: 'hidden', timeout: 5000}).catch(() => undefined);
   }
 
   /**
@@ -295,7 +303,8 @@ export class EmployeePage extends BasePage {
    * Click view employee by index
    */
   async viewEmployee(index: number = 0) {
-    await this.tableRows.nth(index).locator('button:has-text("View")').click();
+    await this.tableRows.nth(index).getByRole('button', {name: 'Row actions'}).click();
+    await this.page.getByRole('menuitem', {name: 'View profile'}).click();
     await this.page.waitForURL(/\/employees\/[^/]+$/, {timeout: 15000});
   }
 
@@ -303,7 +312,8 @@ export class EmployeePage extends BasePage {
    * Click delete employee by index
    */
   async deleteEmployee(index: number = 0) {
-    await this.tableRows.nth(index).locator('button:has-text("Delete")').click();
+    await this.tableRows.nth(index).getByRole('button', {name: 'Row actions'}).click();
+    await this.page.getByRole('menuitem', {name: 'Delete'}).click();
     await this.deleteModal.waitFor({state: 'visible'});
   }
 

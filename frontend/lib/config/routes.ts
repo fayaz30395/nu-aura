@@ -1,4 +1,5 @@
 import {Permissions} from '../hooks/usePermissions';
+import {CLIENT_PUBLIC_ROUTES} from './public-routes';
 
 /**
  * Route protection configuration
@@ -31,20 +32,7 @@ export interface RouteConfig {
 /**
  * Public routes that don't require authentication
  */
-export const PUBLIC_ROUTES: string[] = [
-  '/auth/login',
-  '/auth/forgot-password',
-  '/careers',
-  '/careers/',
-  '/offer-portal',
-  '/preboarding',
-  '/preboarding/portal/[token]',
-  '/sign/[token]',
-  '/exit-interview/[token]',
-  '/terms',
-  '/privacy',
-  '/',
-];
+export const PUBLIC_ROUTES: string[] = [...CLIENT_PUBLIC_ROUTES];
 
 /**
  * Protected route configurations
@@ -517,6 +505,13 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   {
     path: '/onboarding',
     anyPermission: [Permissions.EMPLOYEE_CREATE, Permissions.EMPLOYEE_UPDATE, Permissions.SYSTEM_ADMIN],
+  },
+
+  // Preboarding HR console (the candidate portal /preboarding/portal/[token] stays public).
+  // Matches the backend list endpoint (@RequiresPermission PREBOARDING_VIEW); MANAGE implies VIEW.
+  {
+    path: '/preboarding',
+    anyPermission: [Permissions.PREBOARDING_VIEW, Permissions.SYSTEM_ADMIN],
   },
 
   // Feedback 360

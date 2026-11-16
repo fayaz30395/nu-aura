@@ -10,7 +10,6 @@ import {useCreateContract} from '@/lib/hooks/queries/useContracts';
 import {Button, Card, Input, Select, Textarea} from '@mantine/core';
 import {DateInput} from '@mantine/dates';
 import {ArrowLeft} from 'lucide-react';
-import {notifications} from '@mantine/notifications';
 import {createLogger} from '@/lib/utils/logger';
 import {getLocalDateString} from '@/lib/utils/dateUtils';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -71,7 +70,6 @@ export default function CreateContractPage() {
       router.push('/contracts');
     } catch (error) {
       log.error('Error creating contract:', error);
-      notifications.show({title: 'Error', message: 'Failed to create contract. Please try again.', color: 'red'});
     }
   };
 

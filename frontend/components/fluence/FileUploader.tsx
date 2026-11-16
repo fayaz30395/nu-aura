@@ -181,6 +181,7 @@ export function FileUploader({onUpload, isUploading = false, className}: FileUpl
             variant="ghost"
             size="sm"
             className="ml-auto p-1"
+            aria-label="Dismiss error"
             onClick={(e) => {
               e.stopPropagation();
               setError(null);

@@ -1,6 +1,7 @@
 'use client';
 
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {createPortal} from 'react-dom';
 import {AnimatePresence, motion} from 'framer-motion';
 import {modalVariants, overlayVariants} from '@/lib/animation';
 import {useReducedMotionSafe} from '@/lib/animation';
@@ -62,6 +63,9 @@ export function ConfirmDialog({
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [reasonValue, setReasonValue] = useState('');
   const {pick} = useReducedMotionSafe();
+  // Portal to <body>: transformed ancestors (page/shell animation) would otherwise anchor position:fixed to themselves.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // Reset the reason textarea each time the dialog is opened so stale values
   // don't leak between separate confirm flows.
@@ -177,7 +181,9 @@ export function ConfirmDialog({
     }
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -194,7 +200,7 @@ export function ConfirmDialog({
             aria-modal="true"
             aria-labelledby="confirm-dialog-title"
             aria-describedby="confirm-dialog-description"
-            className="bg-[var(--bg-card)] rounded-lg shadow-dropdown max-w-md w-full p-6"
+            className="bg-[var(--bg-elevated)] border border-[var(--border-subtle)] rounded-2xl shadow-[var(--sh-overlay)] max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
             initial="initial"
             animate="animate"
@@ -202,19 +208,19 @@ export function ConfirmDialog({
             variants={pick(modalVariants)}
           >
         <div className="flex gap-4">
-          <div className={`flex-shrink-0 w-12 h-12 rounded-full ${style.bgClass} flex items-center justify-center`}>
+          <div className={`flex-shrink-0 w-10 h-10 rounded-full ${style.bgClass} flex items-center justify-center`}>
             {style.icon}
           </div>
           <div className="flex-1">
             <h3
               id="confirm-dialog-title"
-              className="text-lg font-semibold text-[var(--text-primary)] mb-2"
+              className="text-base font-semibold text-[var(--text-primary)] mb-1"
             >
               {title}
             </h3>
             <p
               id="confirm-dialog-description"
-              className="text-body-secondary mb-6"
+              className="text-[13px] text-[var(--text-secondary)] mb-6"
             >
               {message}
             </p>
@@ -240,13 +246,13 @@ export function ConfirmDialog({
                 />
               </div>
             )}
-            <div className="flex gap-2">
+            <div className="flex justify-end gap-3">
               <button ref={cancelButtonRef}
                       type="button"
                       onClick={onClose}
                       disabled={loading}
                       aria-label={`${cancelText} button`}
-                      className="press-scale flex-1 px-4 py-2.5 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ring-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      className="press-scale px-4 py-2 border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-card-hover)] disabled:opacity-50 disabled:cursor-not-allowed font-medium text-[var(--text-secondary)] transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ring-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 {cancelText}
               </button>
@@ -256,7 +262,7 @@ export function ConfirmDialog({
                 disabled={loading || reasonInvalid}
                 aria-label={`${confirmText} button`}
                 aria-busy={loading}
-                className={`press-scale flex-1 px-4 py-2.5 ${style.buttonClass} text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-[background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ring-primary)] flex items-center justify-center gap-2`}
+                className={`press-scale px-4 py-2 ${style.buttonClass} text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed font-medium transition-[background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-standard)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--ring-primary)] flex items-center justify-center gap-2`}
               >
                 {loading ? (
                   <>
@@ -277,6 +283,7 @@ export function ConfirmDialog({
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

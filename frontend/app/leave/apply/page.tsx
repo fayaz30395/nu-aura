@@ -1,12 +1,14 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
-import {motion} from 'framer-motion';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
+import {Box, Checkbox, Group, NativeSelect, Radio, Textarea} from '@mantine/core';
 import {DateInput} from '@mantine/dates';
 import {AppLayout} from '@/components/layout';
+import {Button} from '@/components/ui/Button';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -14,6 +16,7 @@ import {useActiveLeaveTypes, useCreateLeaveRequest, useEmployeeBalancesForYear} 
 import {HalfDayPeriod} from '@/lib/types/hrms/leave';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
+import {LeaveBalanceSummary} from './_components/LeaveBalanceSummary';
 
 const leaveFormSchema = z.object({
   leaveTypeId: z.string().min(1, 'Please select a leave type'),
@@ -26,6 +29,8 @@ const leaveFormSchema = z.object({
 });
 
 type LeaveFormData = z.infer<typeof leaveFormSchema>;
+
+const BREADCRUMBS = [{label: 'Leave', href: '/leave'}, {label: 'Apply'}];
 
 export default function ApplyLeavePage() {
   const toast = useToast();
@@ -66,11 +71,6 @@ export default function ApplyLeavePage() {
     return isHalfDay ? 0.5 : diffDays;
   };
 
-  const getAvailableBalance = () => {
-    if (!leaveTypeId) return null;
-    return balances.find(b => b.leaveTypeId === leaveTypeId);
-  };
-
   const onSubmit = async (data: LeaveFormData) => {
     try {
       if (!user?.employeeId) {
@@ -95,257 +95,141 @@ export default function ApplyLeavePage() {
       toast.success('Leave request submitted successfully!');
       reset();
       router.push('/leave');
-    } catch (error: unknown) {
-      toast.error((error as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || 'Failed to submit leave request');
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
-  const balance = getAvailableBalance();
+  const balance = leaveTypeId ? balances.find(b => b.leaveTypeId === leaveTypeId) : undefined;
   const totalDays = calculateDays();
+  const pending = createLeaveRequest.isPending || isSubmitting;
+  const insufficientBalance = Boolean(balance) && totalDays > (balance?.available ?? 0);
 
   return (
     <AppLayout activeMenuItem="leave">
-      <motion.div
-        initial={{opacity: 0, y: 12}}
-        animate={{opacity: 1, y: 0}}
-        transition={{duration: 0.25, ease: 'easeOut'}}
-        className="max-w-4xl mx-auto"
-      >
-        <div className="mb-6">
-          <button
-            onClick={() => router.back()}
-            className="text-accent-700 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 flex items-center gap-2"
-          >
-            ← Back
-          </button>
-        </div>
+      <Box maw={720} className="flex flex-col gap-6">
+        <PageHeader
+          title="Apply for Leave"
+          description="Submit a leave request for your manager's approval."
+          breadcrumbs={BREADCRUMBS}
+        />
 
-        <h1 className="text-xl font-bold">Apply for Leave</h1>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="skeuo-card p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Leave Type */}
-            <div className="md:col-span-2">
-              <label htmlFor="leave-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Leave Type *
-              </label>
-              <select
-                id="leave-type"
-                aria-label="Leave Type"
-                {...register('leaveTypeId')}
-                className="input-aura"
-              >
-                <option value="">Select Leave Type</option>
-                {leaveTypes.map((type) => (
-                  <option key={type.id} value={type.id}>
-                    {type.leaveName} {type.isPaid ? '(Paid)' : '(Unpaid)'}
-                  </option>
-                ))}
-              </select>
-              {errors.leaveTypeId && <p className="text-danger-500 text-sm mt-1">{errors.leaveTypeId.message}</p>}
-              {balance && (() => {
-                const total = balance.available + balance.used + balance.pending;
-                const circ = 2 * Math.PI * 18;
-                const avail = total > 0 ? (balance.available / total) * circ : 0;
-                const pend = total > 0 ? (balance.pending / total) * circ : 0;
-                const used = total > 0 ? (balance.used / total) * circ : 0;
-                return (
-                  <div className="mt-3 flex items-center gap-4 p-3 rounded-[var(--r-md)] bg-[var(--surface-sunken)] border border-[var(--border-soft)]">
-                    <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
-                      {/* Background */}
-                      <circle cx="22" cy="22" r="18" fill="none"
-                        stroke="var(--border)" strokeWidth="6"/>
-                      {/* Used (red) — starts at top */}
-                      {used > 0 && (
-                        <circle cx="22" cy="22" r="18" fill="none"
-                          stroke="var(--danger-500,#ef4444)" strokeWidth="6"
-                          strokeDasharray={`${used} ${circ - used}`}
-                          strokeDashoffset={circ * 0.25}
-                          strokeLinecap="butt"/>
-                      )}
-                      {/* Pending (amber) — after used */}
-                      {pend > 0 && (
-                        <circle cx="22" cy="22" r="18" fill="none"
-                          stroke="var(--warning-500,#f59e0b)" strokeWidth="6"
-                          strokeDasharray={`${pend} ${circ - pend}`}
-                          strokeDashoffset={circ * 0.25 - used}
-                          strokeLinecap="butt"/>
-                      )}
-                      {/* Available (green) — remaining */}
-                      {avail > 0 && (
-                        <circle cx="22" cy="22" r="18" fill="none"
-                          stroke="var(--success-500,#22c55e)" strokeWidth="6"
-                          strokeDasharray={`${avail} ${circ - avail}`}
-                          strokeDashoffset={circ * 0.25 - used - pend}
-                          strokeLinecap="butt"/>
-                      )}
-                    </svg>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
-                        <span className="flex items-center gap-1.5 text-[var(--success-600,#16a34a)] font-semibold">
-                          <span className="inline-block w-2 h-2 rounded-full bg-[var(--success-500,#22c55e)]"/>
-                          {balance.available}d available
-                        </span>
-                        {balance.pending > 0 && (
-                          <span className="flex items-center gap-1.5 text-[var(--warning-600,#d97706)]">
-                            <span className="inline-block w-2 h-2 rounded-full bg-[var(--warning-500,#f59e0b)]"/>
-                            {balance.pending}d pending
-                          </span>
-                        )}
-                        {balance.used > 0 && (
-                          <span className="flex items-center gap-1.5 text-[var(--text-3)]">
-                            <span className="inline-block w-2 h-2 rounded-full bg-[var(--danger-500,#ef4444)]"/>
-                            {balance.used}d used
-                          </span>
-                        )}
-                      </div>
-                      {totalDays > 0 && (
-                        <p className={`text-xs mt-1 font-medium ${totalDays > balance.available ? 'text-[var(--danger-500,#ef4444)]' : 'text-[var(--text-2)]'}`}>
-                          {totalDays > balance.available
-                            ? `⚠ Requesting ${totalDays}d exceeds ${balance.available}d available`
-                            : `${balance.available - totalDays}d remaining after this request`}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })()}
-            </div>
-
-            {/* Start Date */}
-            <div>
-              <label htmlFor="leave-start-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Start Date *
-              </label>
-              <Controller
-                name="startDate"
-                control={control}
-                render={({field}) => (
-                  <DateInput
-                    id="leave-start-date"
-                    value={field.value || null}
-                    onChange={(d) => field.onChange(d ?? '')}
-                    valueFormat="YYYY-MM-DD"
-                    placeholder="YYYY-MM-DD"
-                    clearable
-                    size="sm"
-                  />
-                )}
-              />
-              {errors.startDate && <p className="text-danger-500 text-sm mt-1">{errors.startDate.message}</p>}
-            </div>
-
-            {/* End Date */}
-            <div>
-              <label htmlFor="leave-end-date" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                End Date *
-              </label>
-              <Controller
-                name="endDate"
-                control={control}
-                render={({field}) => (
-                  <DateInput
-                    id="leave-end-date"
-                    value={field.value || null}
-                    onChange={(d) => field.onChange(d ?? '')}
-                    minDate={startDate ? new Date(startDate) : undefined}
-                    valueFormat="YYYY-MM-DD"
-                    placeholder="YYYY-MM-DD"
-                    clearable
-                    size="sm"
-                  />
-                )}
-              />
-              {errors.endDate && <p className="text-danger-500 text-sm mt-1">{errors.endDate.message}</p>}
-            </div>
-
-            {/* Half Day */}
-            <div className="md:col-span-2">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  {...register('isHalfDay')}
-                  className="w-4 h-4 text-accent-700"
-                />
-                <span className="text-sm font-medium text-[var(--text-secondary)]">Half Day Leave</span>
-              </label>
-            </div>
-
-            {/* Half Day Period */}
-            {isHalfDay && (
-              <div className="md:col-span-2">
-                <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                  Half Day Period *
-                </span>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="FIRST_HALF"
-                      {...register('halfDayPeriod')}
-                      className="w-4 h-4 text-accent-700"
-                    />
-                    <span className="text-body-secondary">First Half (Morning)</span>
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <input
-                      type="radio"
-                      value="SECOND_HALF"
-                      {...register('halfDayPeriod')}
-                      className="w-4 h-4 text-accent-700"
-                    />
-                    <span className="text-body-secondary">Second Half (Afternoon)</span>
-                  </label>
-                </div>
-                {errors.halfDayPeriod && <p className="text-danger-500 text-sm mt-1">{errors.halfDayPeriod.message}</p>}
-              </div>
-            )}
-
-            {/* Total Days */}
-            <div className="md:col-span-2 bg-accent-50 dark:bg-accent-950/30 p-4 rounded-lg">
-              <div className="text-body-secondary">Total Days Requested:</div>
-              <div className="text-xl font-bold text-accent-700 dark:text-accent-400">{totalDays} days</div>
-            </div>
-
-            {/* Reason */}
-            <div className="md:col-span-2">
-              <label htmlFor="leave-reason" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Reason *
-              </label>
-              <textarea
-                id="leave-reason"
-                {...register('reason')}
-                rows={4}
-                className="input-aura"
-                placeholder="Please provide a reason for your leave..."
-              />
-              {errors.reason && <p className="text-danger-500 text-sm mt-1">{errors.reason.message}</p>}
-            </div>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4 rounded-lg border border-border bg-card p-4 sm:p-6">
+          <div className="flex flex-col gap-2">
+            <NativeSelect
+              id="leave-type"
+              label="Leave type"
+              withAsterisk
+              error={errors.leaveTypeId?.message}
+              {...register('leaveTypeId')}
+              data={[
+                {value: '', label: 'Select leave type'},
+                ...leaveTypes.map((type) => ({
+                  value: type.id,
+                  label: `${type.leaveName} ${type.isPaid ? '(Paid)' : '(Unpaid)'}`,
+                })),
+              ]}
+            />
+            {balance && <LeaveBalanceSummary balance={balance} requestedDays={totalDays}/>}
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-4 mt-6">
-            <PermissionGate permission={Permissions.LEAVE_REQUEST}>
-              <button
-                type="submit"
-                disabled={createLeaveRequest.isPending || isSubmitting || !leaveTypeId}
-                className="btn-primary !h-auto disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              >
-                {createLeaveRequest.isPending || isSubmitting ? 'Submitting...' : 'Submit Leave Request'}
-              </button>
-            </PermissionGate>
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="btn-secondary"
-            >
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Controller
+              name="startDate"
+              control={control}
+              render={({field}) => (
+                <DateInput
+                  id="leave-start-date"
+                  label="Start date"
+                  withAsterisk
+                  value={field.value || null}
+                  onChange={(d) => field.onChange(d ?? '')}
+                  onBlur={field.onBlur}
+                  valueFormat="YYYY-MM-DD"
+                  placeholder="YYYY-MM-DD"
+                  clearable
+                  error={errors.startDate?.message}
+                />
+              )}
+            />
+            <Controller
+              name="endDate"
+              control={control}
+              render={({field}) => (
+                <DateInput
+                  id="leave-end-date"
+                  label="End date"
+                  withAsterisk
+                  value={field.value || null}
+                  onChange={(d) => field.onChange(d ?? '')}
+                  onBlur={field.onBlur}
+                  minDate={startDate || undefined}
+                  valueFormat="YYYY-MM-DD"
+                  placeholder="YYYY-MM-DD"
+                  clearable
+                  error={errors.endDate?.message}
+                />
+              )}
+            />
+          </div>
+
+          <Checkbox label="Half day leave" {...register('isHalfDay')}/>
+
+          {isHalfDay && (
+            <Controller
+              name="halfDayPeriod"
+              control={control}
+              render={({field}) => (
+                <Radio.Group
+                  label="Half day period"
+                  withAsterisk
+                  name={field.name}
+                  value={field.value ?? ''}
+                  onChange={(v) => field.onChange(v as LeaveFormData['halfDayPeriod'])}
+                  error={errors.halfDayPeriod?.message}
+                >
+                  <Group gap="md" mt="xs">
+                    <Radio value="FIRST_HALF" label="First half (morning)"/>
+                    <Radio value="SECOND_HALF" label="Second half (afternoon)"/>
+                  </Group>
+                </Radio.Group>
+              )}
+            />
+          )}
+
+          <div className="flex items-center justify-between rounded-md border border-border bg-surface-aura-sunken px-4 py-2">
+            <span className="text-sm text-text-2">Total days requested</span>
+            <span className="text-lg font-semibold tabular-nums text-text-1">{totalDays} days</span>
+          </div>
+
+          <Textarea
+            id="leave-reason"
+            label="Reason"
+            withAsterisk
+            autosize
+            minRows={4}
+            placeholder="Please provide a reason for your leave..."
+            error={errors.reason?.message}
+            {...register('reason')}
+          />
+
+          <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border pt-4">
+            {insufficientBalance && (
+              <p className="mr-auto text-xs font-medium text-status-err-fg">
+                Insufficient balance for {totalDays} days
+              </p>
+            )}
+            <Button type="button" variant="secondary" onClick={() => router.back()}>
               Cancel
-            </button>
+            </Button>
+            <PermissionGate permission={Permissions.LEAVE_REQUEST}>
+              <Button type="submit" variant="primary" isLoading={pending} disabled={pending || !leaveTypeId || insufficientBalance}>
+                Submit Leave Request
+              </Button>
+            </PermissionGate>
           </div>
         </form>
-      </motion.div>
+      </Box>
     </AppLayout>
   );
 }

@@ -443,8 +443,8 @@ function RegisterDeviceModal({onClose}: { onClose: () => void }) {
         await registerMutation.mutateAsync(data as BiometricDeviceRequest);
         toast.success('Device registered successfully');
         onClose();
-      } catch (err) {
-        toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to register device');
+      } catch {
+        // The global MutationCache handler shows the error toast.
       }
     },
     [registerMutation, onClose, toast]
@@ -974,8 +974,8 @@ function GenerateApiKeyModal({
         }
         toast.success('API key generated successfully');
         onClose();
-      } catch (err) {
-        toast.error((err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to generate API key');
+      } catch {
+        // The global MutationCache handler shows the error toast.
       }
     },
     [generateMutation, onClose, onKeyGenerated, toast]

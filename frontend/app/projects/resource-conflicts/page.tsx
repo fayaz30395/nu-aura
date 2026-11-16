@@ -60,6 +60,7 @@ export default function ResourceConflictsPage() {
       setScanResults(data);
       queryClient.invalidateQueries({queryKey: ['resource-conflicts']});
     },
+    meta: {skipGlobalError: true},
     onError: () => notifications.show({title: 'Error', message: 'Failed to scan resource conflicts', color: 'red'}),
   });
 

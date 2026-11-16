@@ -308,14 +308,14 @@ function SavedReportCard({report, onSelect}: {
         <div className="mb-3.5 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span
-              className="grid h-[38px] w-[38px] place-items-center rounded-[10px]"
+              className="grid h-10 w-10 place-items-center rounded-xl"
               style={{
                 background: `color-mix(in srgb, ${report.color} 14%, transparent)`,
                 color: report.color,
               }}
               aria-hidden="true"
             >
-              <Icon className="h-[19px] w-[19px]" />
+              <Icon className="h-5 w-5" />
             </span>
             <div className="min-w-0">
               <p className="truncate font-display text-sm font-bold text-[var(--text-1)]">
@@ -339,7 +339,7 @@ function SavedReportCard({report, onSelect}: {
           </Button>
         </div>
 
-        <div className="h-[52px]">
+        <div className="h-12">
           <Sparkline
             data={report.spark}
             color={report.color}
@@ -349,7 +349,7 @@ function SavedReportCard({report, onSelect}: {
         </div>
 
         <div className="mt-3 flex items-center justify-between border-t border-[var(--border-soft)] pt-3">
-          <span className="text-[11.5px] text-[var(--text-3)]">Updated {report.updated}</span>
+          <span className="text-2xs text-[var(--text-3)]">Updated {report.updated}</span>
           <span className="inline-flex items-center gap-1 text-sm font-medium text-[var(--accent)] transition-transform group-hover:translate-x-0.5">
             Open
             <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -369,7 +369,7 @@ function ScheduledDeliveriesCard({rows}: {rows: ScheduledDelivery[]}) {
       transition={{duration: 0.45, ease: EASE, delay: 0.2}}
     >
       <Card padding="none" className="overflow-hidden">
-        <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-0 pt-[18px]">
+        <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-0 pt-4">
           <div className="space-y-0.5">
             <h2 className="font-display text-base font-bold tracking-tight text-[var(--text-1)]">
               Scheduled deliveries
@@ -407,7 +407,7 @@ function ScheduledDeliveriesCard({rows}: {rows: ScheduledDelivery[]}) {
                       <span className="font-medium text-[var(--text-1)]">{s.owner}</span>
                     </div>
                   </td>
-                  <td className="num px-5 py-3.5 text-[12.5px] tabular-nums text-[var(--text-2)]">{s.next}</td>
+                  <td className="num px-5 py-3.5 text-xs tabular-nums text-[var(--text-2)]">{s.next}</td>
                   <td className="px-5 py-3.5">
                     <Badge variant="primary" size="sm">{s.fmt}</Badge>
                   </td>
@@ -428,7 +428,7 @@ function ScheduledDeliveriesCard({rows}: {rows: ScheduledDelivery[]}) {
 
 function ScheduleTh({children}: {children: React.ReactNode}) {
   return (
-    <th className="px-5 py-3 text-left text-[10.5px] font-bold uppercase tracking-[0.1em] text-[var(--text-3)]">
+    <th className="px-5 py-3 text-left text-2xs font-bold uppercase tracking-widest text-[var(--text-3)]">
       {children}
     </th>
   );
@@ -464,7 +464,7 @@ function OwnerAvatar({name}: {name: string}) {
   const tint = tintFor(name);
   return (
     <span
-      className="grid h-[26px] w-[26px] shrink-0 place-items-center rounded-full text-[10px] font-bold"
+      className="grid h-6 w-6 shrink-0 place-items-center rounded-full text-2xs font-bold"
       style={{
         background: `color-mix(in srgb, ${tint} 16%, transparent)`,
         color: tint,
@@ -538,7 +538,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
       <ModalHeader onClose={onClose}>
         <div className="flex items-center gap-4">
           <div
-            className="grid h-10 w-10 place-items-center rounded-[10px]"
+            className="grid h-10 w-10 place-items-center rounded-xl"
             style={{
               background: `color-mix(in srgb, ${report.color} 14%, transparent)`,
               color: report.color,
@@ -548,7 +548,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
           </div>
           <div>
             <h2 className="font-semibold text-[var(--text-1)]">{report.title}</h2>
-            <p className="text-[10.5px] font-bold uppercase tracking-[0.1em] text-[var(--text-3)]">
+            <p className="text-2xs font-bold uppercase tracking-widest text-[var(--text-3)]">
               {report.category}
             </p>
           </div>
@@ -583,7 +583,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                     <p className={`text-sm font-medium ${selected ? 'text-[var(--text-1)]' : 'text-[var(--text-2)]'}`}>
                       {f.label}
                     </p>
-                    <p className="num text-[11px] tabular-nums text-[var(--text-3)]">{f.ext}</p>
+                    <p className="num text-2xs tabular-nums text-[var(--text-3)]">{f.ext}</p>
                   </div>
                   {selected && (
                     <Check className="absolute right-2 top-2 h-3.5 w-3.5 text-[var(--accent)]" aria-hidden="true" />
@@ -601,7 +601,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
             </span>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label htmlFor="report-date-from" className="mb-1 block text-[11px] text-[var(--text-3)]">From</label>
+                <label htmlFor="report-date-from" className="mb-1 block text-2xs text-[var(--text-3)]">From</label>
                 <DateInput
                   id="report-date-from"
                   value={startDate || null}
@@ -614,7 +614,7 @@ const DownloadModal: React.FC<DownloadModalProps> = ({report, onClose, onDownloa
                 />
               </div>
               <div>
-                <label htmlFor="report-date-to" className="mb-1 block text-[11px] text-[var(--text-3)]">To</label>
+                <label htmlFor="report-date-to" className="mb-1 block text-2xs text-[var(--text-3)]">To</label>
                 <DateInput
                   id="report-date-to"
                   value={endDate || null}

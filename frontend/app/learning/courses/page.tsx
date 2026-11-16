@@ -17,7 +17,7 @@ export default function CoursesRedirectPage() {
 
   return (
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
-      <Card className="card-aura fade-slide-up auth-delay-40 float-subtle">
+      <Card className="fade-slide-up auth-delay-40 float-subtle">
         <CardContent className="py-10">
           <div className="flex items-start gap-4">
             <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-300">

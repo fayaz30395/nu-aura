@@ -70,6 +70,7 @@ export function useCreateTimesheet() {
       });
       toast.success('Timesheet Created', 'New timesheet has been created successfully');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Failed to create timesheet');
     },
@@ -89,6 +90,7 @@ export function useSubmitTimesheet() {
       queryClient.invalidateQueries({queryKey: timesheetKeys.detail(id)});
       toast.success('Timesheet Submitted', 'Timesheet has been submitted for approval');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Submission Failed', error.message || 'Failed to submit timesheet');
     },
@@ -109,6 +111,7 @@ export function useApproveTimesheet() {
       queryClient.invalidateQueries({queryKey: timesheetKeys.detail(id)});
       toast.success('Timesheet Approved', 'Timesheet has been approved');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Approval Failed', error.message || 'Failed to approve timesheet');
     },
@@ -129,6 +132,7 @@ export function useRejectTimesheet() {
       queryClient.invalidateQueries({queryKey: timesheetKeys.detail(id)});
       toast.info('Timesheet Rejected', 'Timesheet has been rejected');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Rejection Failed', error.message || 'Failed to reject timesheet');
     },
@@ -150,6 +154,7 @@ export function useAddTimeEntry() {
       queryClient.invalidateQueries({queryKey: timesheetKeys.detail(timesheetId)});
       toast.success('Time Entry Added', 'Time entry has been recorded');
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       toast.error('Operation Failed', error.message || 'Failed to add time entry');
     },

@@ -27,6 +27,7 @@ import {useMyCertificates} from '@/lib/hooks/queries/useLearning';
 import type {Certificate} from '@/lib/services/grow/lms.service';
 import {safeWindowOpen} from '@/lib/utils/url';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {Card} from '@/components/ui/Card';
 import {LIFECYCLE_STATUS} from '@/lib/status/vocabulary';
 import {formatDate} from '@/lib/utils/format/date';
 
@@ -211,9 +212,10 @@ export default function CertificateGalleryPage() {
         ) : filteredCerts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredCerts.map((cert) => (
-              <div
+              <Card
                 key={cert.id}
-                className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-card)] overflow-hidden hover:shadow-[var(--shadow-card-hover)] transition-shadow border border-warning-200 dark:border-warning-800"
+                as="article"
+                className="border-warning-200 dark:border-warning-800"
               >
                 {/* Header */}
                 <div className="p-6">
@@ -320,7 +322,7 @@ export default function CertificateGalleryPage() {
                     <ExternalLink className="h-3 w-3"/>
                   </a>
                 </div>
-              </div>
+              </Card>
             ))}
           </div>
         ) : (

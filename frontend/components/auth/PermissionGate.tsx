@@ -67,7 +67,7 @@ interface PermissionGateProps {
  *   </PermissionGate>
  */
 export function PageDeniedFallback({
-                                     message = "You don't have permission to view this page.",
+                                     message = "Ask your HR admin for access to this NU-AURA page.",
                                    }: { message?: string }): ReactNode {
   const router = useRouter();
   // F-005: render the access-denied state INSIDE the app shell (sidebar/header) with a
@@ -84,8 +84,8 @@ export function PageDeniedFallback({
           >
             <ShieldAlert className="w-7 h-7 text-danger-700 dark:text-danger-300"/>
           </div>
-          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">Access Restricted</h1>
-          <p role="status" aria-live="polite" className="text-[var(--text-secondary)] mb-2">
+          <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-2">Access restricted</h1>
+          <p role="status" aria-live="polite" data-testid="page-denied" className="text-[var(--text-secondary)] mb-2">
             {message}
           </p>
           <p className="text-sm text-[var(--text-muted)] mb-6">
@@ -126,9 +126,8 @@ export function PermissionGate({
     isPermissionReady,
   } = usePermissions();
 
-  // Show loading state while auth is hydrating. We render a visible
-  // placeholder (not null) so that smoke tests and assistive tech can
-  // observe that the page is mounted and waiting on auth.
+  // While auth hydrates, render a screen-reader-only status (not null) so assistive tech and
+  // smoke tests can observe the mount; the visible loading state belongs to the shell skeleton.
   //
   // BUG-L3: this waits for `isPermissionReady`, not `isReady`. `isReady` is TRUE while `user`
   // is still absent (AuthGuard needs it that way), and at that moment `permissions` is [] —
@@ -139,17 +138,14 @@ export function PermissionGate({
   if (!isPermissionReady) {
     if (showWhileLoading) return children;
     return (
-      <div
-        role="status"
-        aria-live="polite"
-        className="loading-state rounded-lg border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-6 py-5"
-      >
-        Loading...
-      </div>
+      <span role="status" aria-live="polite" className="sr-only">
+        Checking permissions…
+      </span>
     );
   }
 
-  // SuperAdmin / TenantAdmin bypasses ALL permission and role gates
+  // SuperAdmin (SUPER_ADMIN role or SYSTEM:ADMIN) bypasses ALL permission and role gates.
+  // TENANT_ADMIN does not — it relies on its explicit permissions.
   if (isAdmin) {
     return children;
   }

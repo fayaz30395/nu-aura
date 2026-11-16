@@ -1,156 +1,97 @@
 'use client';
 
 import {useState} from 'react';
-import {AnimatePresence, motion} from 'framer-motion';
+import {ActionIcon, Modal} from '@mantine/core';
 import {ClipboardCheck, Eye} from 'lucide-react';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
-import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {ResponsiveTable, type Column} from '@/components/ui/ResponsiveTable';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LEAVE_STATUS} from '@/lib/status/vocabulary';
+import {formatDateShort} from '@/lib/utils/format/date';
 import {RegularizationRequest} from './types';
 import {RequestTimeline} from './RequestTimeline';
 import {formatRelativeTime, formatTime} from './utils';
-import {formatDateShort} from '@/lib/utils/format/date';
+
+const COLUMNS: Column<RegularizationRequest>[] = [
+  {
+    key: 'date',
+    header: 'Date',
+    mobilePriority: 'primary',
+    accessor: (r) => <span className="font-medium text-text-1">{formatDateShort(r.attendanceDate)}</span>,
+  },
+  {
+    key: 'original',
+    header: 'Original time',
+    mobilePriority: 'hidden',
+    accessor: (r) => (
+      <div className="flex flex-col text-xs text-text-2">
+        <span>In: {r.originalCheckIn ? formatTime(r.originalCheckIn) : 'Not marked'}</span>
+        <span>Out: {r.originalCheckOut ? formatTime(r.originalCheckOut) : 'Not marked'}</span>
+      </div>
+    ),
+  },
+  {
+    key: 'reason',
+    header: 'Reason',
+    mobileLabel: 'Reason',
+    accessor: (r) => <span className="block max-w-xs truncate text-text-2" title={r.reason}>{r.reason}</span>,
+  },
+  {
+    key: 'status',
+    header: 'Status',
+    mobileLabel: 'Status',
+    accessor: (r) => <StatusBadge status={r.status} domain={LEAVE_STATUS}/>,
+  },
+  {
+    key: 'requested',
+    header: 'Requested',
+    mobilePriority: 'hidden',
+    accessor: (r) => <span className="text-text-2">{formatRelativeTime(r.requestedOn)}</span>,
+  },
+];
 
 interface RequestsTableProps {
   requests: RegularizationRequest[];
-  loading: boolean;
   statusFilter: 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED';
   onNewRequest: () => void;
 }
 
-export function RequestsTable({requests, loading, statusFilter, onNewRequest}: RequestsTableProps) {
-  const [expandedRequestId, setExpandedRequestId] = useState<string | null>(null);
+export function RequestsTable({requests, statusFilter, onNewRequest}: RequestsTableProps) {
+  const [detail, setDetail] = useState<RegularizationRequest | null>(null);
+  const filterLabel = statusFilter.toLowerCase();
 
   return (
-    <Card className="card-aura">
-      <CardHeader>
-        <CardTitle className="text-section-title">Your Regularization Requests</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {loading ? (
-          <SkeletonTable rows={5} columns={6}/>
-        ) : requests.length === 0 ? (
+    <section className="flex flex-col gap-4" aria-labelledby="your-regularization-requests">
+      <h2 id="your-regularization-requests" className="text-base font-semibold text-text-1">
+        Your regularization requests
+      </h2>
+      <ResponsiveTable
+        columns={COLUMNS}
+        data={requests}
+        keyExtractor={(r) => r.id}
+        stickyHeader
+        emptyState={
           <EmptyState
             icon={<ClipboardCheck className="h-6 w-6"/>}
-            iconColor="bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400"
-            title={statusFilter === 'ALL' ? 'No requests yet' : `No ${statusFilter.toLowerCase()} requests`}
+            title={statusFilter === 'ALL' ? 'No requests yet' : `No ${filterLabel} requests`}
             description={
               statusFilter === 'ALL'
                 ? 'Submit a regularization request to correct your attendance records'
-                : `You don't have any ${statusFilter.toLowerCase()} regularization requests`
+                : `You don't have any ${filterLabel} regularization requests`
             }
             actionLabel="Submit Request"
             onAction={onNewRequest}
           />
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[var(--bg-secondary)]/50">
-              <tr>
-                <th
-                  className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Date
-                </th>
-                <th
-                  className="hidden md:table-cell px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Original Time
-                </th>
-                <th
-                  className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Reason
-                </th>
-                <th
-                  className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Status
-                </th>
-                <th
-                  className="hidden md:table-cell px-6 py-2 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Requested
-                </th>
-                <th
-                  className="px-4 md:px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                  Action
-                </th>
-              </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border-main)]">
-              <AnimatePresence>
-                {requests.map((request: RegularizationRequest) => (
-                  <motion.tr
-                    key={request.id}
-                    initial={{opacity: 0, y: 8}}
-                    animate={{opacity: 1, y: 0}}
-                    exit={{opacity: 0, y: -8}}
-                    transition={{duration: 0.25, ease: 'easeOut'}}
-                    className="hover:bg-[var(--bg-secondary)]/50 transition-colors"
-                  >
-                    <td className="px-4 md:px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                      {formatDateShort(request.attendanceDate)}
-                    </td>
-                    <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
-                      <div className="text-xs">
-                        In: {request.originalCheckIn ? formatTime(request.originalCheckIn) : 'Not marked'}
-                      </div>
-                      <div className="text-xs">
-                        Out: {request.originalCheckOut ? formatTime(request.originalCheckOut) : 'Not marked'}
-                      </div>
-                    </td>
-                    <td className="px-4 md:px-6 py-4 text-body-secondary">
-                      <div className="max-w-xs truncate" title={request.reason}>
-                        {request.reason}
-                      </div>
-                    </td>
-                    <td className="px-4 md:px-6 py-4">
-                      <StatusBadge status={request.status} domain={LEAVE_STATUS}/>
-                    </td>
-                    <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
-                      {formatRelativeTime(request.requestedOn)}
-                    </td>
-                    <td className="px-4 md:px-6 py-4 text-right">
-                      <motion.button
-                        onClick={() =>
-                          setExpandedRequestId(expandedRequestId === request.id ? null : request.id)
-                        }
-                        aria-label={expandedRequestId === request.id ? 'Collapse request details' : 'View request details'}
-                        className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                        whileHover={{scale: 1.05}}
-                        whileTap={{scale: 0.95}}
-                      >
-                        <Eye className="h-4 w-4"/>
-                      </motion.button>
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-
-              {/* Expanded Detail Row */}
-              <AnimatePresence>
-                {requests.map((request: RegularizationRequest) =>
-                  expandedRequestId === request.id ? (
-                    <motion.tr
-                      key={`${request.id}-detail`}
-                      initial={{opacity: 0, height: 0}}
-                      animate={{opacity: 1, height: 'auto'}}
-                      exit={{opacity: 0, height: 0}}
-                      transition={{duration: 0.25, ease: 'easeOut'}}
-                    >
-                      <td
-                        colSpan={6}
-                        className="px-4 md:px-6 py-6 bg-[var(--bg-secondary)]/50 border-t border-[var(--border-main)]"
-                      >
-                        <RequestTimeline request={request}/>
-                      </td>
-                    </motion.tr>
-                  ) : null
-                )}
-              </AnimatePresence>
-              </tbody>
-            </table>
-          </div>
+        }
+        renderRowActions={(r) => (
+          <ActionIcon variant="subtle" color="gray" size={32} aria-label="View request details" onClick={() => setDetail(r)}>
+            <Eye size={16} aria-hidden/>
+          </ActionIcon>
         )}
-      </CardContent>
-    </Card>
+      />
+      <Modal opened={!!detail} onClose={() => setDetail(null)} title="Request details" size="lg" centered>
+        {detail && <RequestTimeline request={detail}/>}
+      </Modal>
+    </section>
   );
 }

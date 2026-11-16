@@ -1,9 +1,9 @@
 'use client';
 
-import React, {memo} from 'react';
+import React from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
-import {MOTION_EASE} from '@/lib/animation';
+import type {Column} from '@/components/ui/ResponsiveTable';
 import {Candidate} from '@/lib/types/hire/recruitment';
 import {CandidateMatchResponse} from '@/lib/types/hire/ai-recruitment';
 import {
@@ -26,9 +26,8 @@ import {getMatchScoreColor, getStageColor} from './utils';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
-interface CandidateTableRowProps {
+export interface CandidateRowActionsProps {
   candidate: Candidate;
-  visibleColumns: Set<string>;
   matchScore?: CandidateMatchResponse;
   aiLoadingState: string | null;
   onView: (candidate: Candidate) => void;
@@ -44,99 +43,28 @@ interface CandidateTableRowProps {
   onESign: (candidate: Candidate) => void;
 }
 
-/**
- * Individual candidate table row — memoized to prevent re-renders
- * when sibling rows change (e.g., AI loading state on another row).
- */
-export const CandidateTableRow = memo(function CandidateTableRow({
-                                                                   candidate,
-                                                                   visibleColumns,
-                                                                   matchScore,
-                                                                   aiLoadingState,
-                                                                   onView,
-                                                                   onEdit,
-                                                                   onDelete,
-                                                                   onOffer,
-                                                                   onAccept,
-                                                                   onDecline,
-                                                                   onCalculateMatch,
-                                                                   onScreeningSummary,
-                                                                   onSynthesizeFeedback,
-                                                                   onViewScorecard,
-                                                                   onESign,
-                                                                 }: CandidateTableRowProps) {
+/** Row actions for the candidates table. Hover/focus reveals the buttons; handlers unchanged. */
+export function CandidateRowActions({
+  candidate,
+  matchScore,
+  aiLoadingState,
+  onView,
+  onEdit,
+  onDelete,
+  onOffer,
+  onAccept,
+  onDecline,
+  onCalculateMatch,
+  onScreeningSummary,
+  onSynthesizeFeedback,
+  onViewScorecard,
+  onESign,
+}: Omit<CandidateRowActionsProps, 'visibleColumns'>) {
   const router = useRouter();
-
   return (
-    <motion.tr
-      whileHover={{backgroundColor: 'var(--surface-hover)'}}
-      transition={{duration: 0.16, ease: MOTION_EASE.outExpo}}
-      className="group h-14 cursor-pointer border-b border-[var(--border-soft)] transition-colors"
-      onClick={() => router.push(`/recruitment/candidates/${candidate.id}`)}
-    >
-      {/* Candidate Info */}
-      <td className="px-6 py-4">
-        <div className="flex items-center gap-2">
-          <motion.div
-            className="h-10 w-10 shrink-0 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center"
-          >
-            <span className="text-sm font-semibold text-accent-700 dark:text-accent-300">
-              {candidate.firstName.charAt(0).toUpperCase()}{candidate.lastName.charAt(0).toUpperCase()}
-            </span>
-          </motion.div>
-          <div className="min-w-0">
-            <div className="text-sm font-medium text-[var(--text-1)]">{candidate.fullName}</div>
-            <div className="text-xs text-[var(--text-3)] truncate">{candidate.email}</div>
-          </div>
-        </div>
-      </td>
-
-      {/* Job */}
-      {visibleColumns.has('job') && (
-        <td className="px-6 py-4">
-          <div className="text-sm font-medium text-[var(--text-1)]">{candidate.jobTitle || '—'}</div>
-          <div className="text-xs text-[var(--text-3)] font-mono">{candidate.candidateCode || '—'}</div>
-        </td>
-      )}
-
-      {/* Experience */}
-      {visibleColumns.has('experience') && (
-        <td className="px-6 py-4">
-          <div className="text-sm text-[var(--text-2)]">
-            {candidate.totalExperience ? <span className="font-mono tabular-nums">{candidate.totalExperience}</span> : '—'}{candidate.totalExperience && ' yrs'}
-          </div>
-        </td>
-      )}
-
-      {/* Stage */}
-      {visibleColumns.has('stage') && (
-        <td className="px-6 py-4 text-center">
-          {candidate.currentStage && (
-            <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full ${getStageColor(candidate.currentStage)}`}>
-              {candidate.currentStage.replace(/_/g, ' ')}
-            </span>
-          )}
-        </td>
-      )}
-
-      {/* Status */}
-      <td className="px-6 py-4 text-center">
-        <StatusBadge status={candidate.status || ''} />
-      </td>
-
-      {/* Source */}
-      {visibleColumns.has('source') && (
-        <td className="px-6 py-4">
-          <span className="text-sm text-[var(--text-2)]">
-            {candidate.source?.replace(/_/g, ' ') || '—'}
-          </span>
-        </td>
-      )}
-
-      {/* Actions */}
-      <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+    <div className="group flex justify-end" onClick={(e) => e.stopPropagation()}>
         <motion.div
-          className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100"
+          className="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
           initial={{opacity: 0}}
           animate={{opacity: 1}}
           transition={{duration: 0.16}}
@@ -186,7 +114,7 @@ export const CandidateTableRow = memo(function CandidateTableRow({
               transition={{duration: 0.12}}
               className="absolute right-0 top-full mt-2 w-56 bg-[var(--surface)] border border-[var(--border)] rounded-lg shadow-[var(--sh-pop)] opacity-0 invisible group-hover/actions:opacity-100 group-hover/actions:visible transition-all z-50"
             >
-              <div className="px-3 py-2 text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">AI Actions</div>
+              <div className="px-3 py-2 text-2xs font-bold text-[var(--text-3)] uppercase tracking-wider">AI Actions</div>
               <button
                 onClick={() => onCalculateMatch(candidate)}
                 disabled={aiLoadingState === `match-${candidate.id}`}
@@ -283,7 +211,76 @@ export const CandidateTableRow = memo(function CandidateTableRow({
             </motion.div>
           </div>
         </motion.div>
-      </td>
-    </motion.tr>
+    </div>
   );
-});
+}
+
+const CELL_CLASS = 'text-sm font-medium text-[var(--text-1)]';
+
+/** Column definitions; optional columns follow the column-visibility toggle. */
+export function buildCandidateColumns(visibleColumns: Set<string>): Column<Candidate>[] {
+  const columns: Column<Candidate>[] = [
+    {
+      key: 'candidate',
+      header: 'Candidate',
+      accessor: (candidate) => (
+        <div className="flex items-center gap-2">
+          <div className="h-10 w-10 shrink-0 rounded-lg bg-accent-100 dark:bg-accent-900/30 flex items-center justify-center">
+            <span className="text-sm font-semibold text-accent-700 dark:text-accent-300">
+              {candidate.firstName.charAt(0).toUpperCase()}{candidate.lastName.charAt(0).toUpperCase()}
+            </span>
+          </div>
+          <div className="min-w-0">
+            <div className={CELL_CLASS}>{candidate.fullName}</div>
+            <div className="text-xs text-[var(--text-3)] truncate">{candidate.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: 'job',
+      header: 'Job',
+      accessor: (candidate) => (
+        <>
+          <div className={CELL_CLASS}>{candidate.jobTitle || '—'}</div>
+          <div className="text-xs text-[var(--text-3)] font-mono">{candidate.candidateCode || '—'}</div>
+        </>
+      ),
+    },
+    {
+      key: 'experience',
+      header: 'Experience',
+      accessor: (candidate) => (
+        <div className="text-sm text-[var(--text-2)]">
+          {candidate.totalExperience ? <span className="font-mono tabular-nums">{candidate.totalExperience}</span> : '—'}{candidate.totalExperience && ' yrs'}
+        </div>
+      ),
+    },
+    {
+      key: 'stage',
+      header: 'Stage',
+      align: 'center',
+      accessor: (candidate) => candidate.currentStage && (
+        <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full ${getStageColor(candidate.currentStage)}`}>
+          {candidate.currentStage.replace(/_/g, ' ')}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      align: 'center',
+      accessor: (candidate) => <StatusBadge status={candidate.status || ''} />,
+    },
+    {
+      key: 'source',
+      header: 'Source',
+      accessor: (candidate) => (
+        <span className="text-sm text-[var(--text-2)]">
+          {candidate.source?.replace(/_/g, ' ') || '—'}
+        </span>
+      ),
+    },
+  ];
+  return columns.filter((column) => ['candidate', 'status'].includes(column.key) || visibleColumns.has(column.key));
+}

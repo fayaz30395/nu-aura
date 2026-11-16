@@ -144,7 +144,7 @@ function ComponentModal({
       reset();
       onClose();
     } catch {
-      notifications.show({message: 'Failed to save component', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -291,7 +291,7 @@ function ComponentsTable({
               <Table.Td>
                 <span className="text-sm text-[var(--text-primary)]">{c.name}</span>
                 {c.description && (
-                  <p className="text-caption mt-0.5 truncate max-w-[200px]">
+                  <p className="text-caption mt-0.5 truncate max-w-50">
                     {c.description}
                   </p>
                 )}
@@ -405,7 +405,7 @@ export default function PayrollComponentsPage() {
       await deleteComponent.mutateAsync(deleteTarget.id);
       notifications.show({message: `Deleted "${deleteTarget.name}"`, color: 'green'});
     } catch {
-      notifications.show({message: 'Delete failed', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     } finally {
       setDeleteTarget(null);
     }

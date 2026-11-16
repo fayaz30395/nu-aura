@@ -71,7 +71,7 @@ export default function OrganizationHealthPage() {
   if (!hasPermission(Permissions.REPORT_VIEW)) {
     return (
       <AppLayout activeMenuItem="analytics">
-        <div className="flex min-h-[320px] items-center justify-center">
+        <div className="flex min-h-80 items-center justify-center">
           <Card className="max-w-md">
             <CardContent className="pt-6 text-center">
               <h2 className="text-lg font-semibold text-[var(--text-primary)]">Redirecting to dashboard</h2>
@@ -90,7 +90,7 @@ export default function OrganizationHealthPage() {
   if (error || !data) {
     return (
       <AppLayout activeMenuItem="analytics">
-        <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex items-center justify-center min-h-96">
           <Card className="max-w-md border-danger-100 dark:border-danger-900/30">
             <CardContent className="pt-6 text-center">
               <AlertCircle className="h-12 w-12 text-danger-500 mx-auto mb-4"/>
@@ -109,7 +109,7 @@ export default function OrganizationHealthPage() {
 
   return (
     <AppLayout activeMenuItem="analytics">
-      <div className="p-6 space-y-8 max-w-[1600px] mx-auto">
+      <div className="p-6 space-y-8 max-w-screen-2xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <motion.div

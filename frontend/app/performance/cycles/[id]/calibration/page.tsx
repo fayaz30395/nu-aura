@@ -5,28 +5,18 @@ import {useParams} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {apiClient} from '@/lib/api/client';
-import {
-  Alert,
-  Badge,
-  Button,
-  Card,
-  Center,
-  Group,
-  Loader,
-  NumberInput,
-  Paper,
-  Progress,
-  SimpleGrid,
-  Stack,
-  Table,
-  Text,
-  Title,
-} from '@mantine/core';
+import {Badge, Button, NumberInput, Progress} from '@mantine/core';
 import {notifications} from '@mantine/notifications';
-import {IconAlertCircle, IconCheck} from '@tabler/icons-react';
+import {IconCheck} from '@tabler/icons-react';
+import {Scale} from 'lucide-react';
 import type {CalibrationEmployee, CalibrationResponse} from '@/lib/types/grow/performance';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
+import {type Column, ResponsiveTable} from '@/components/ui/ResponsiveTable';
 
 const RATING_LABELS: Record<number, { label: string; color: string }> = {
   1: {label: 'Needs Improvement', color: 'red'},
@@ -45,12 +35,22 @@ async function saveCalibrationRating(reviewId: string, finalRating: number) {
   await apiClient.put(`/review-cycles/reviews/${reviewId}/calibration-rating?finalRating=${finalRating}`);
 }
 
+function RatingBadge({rating, variant = 'light'}: {rating?: number; variant?: 'light' | 'filled'}) {
+  if (!rating) return <span className="text-sm text-text-2">—</span>;
+  return (
+    <Badge color={RATING_LABELS[rating]?.color ?? 'gray'} variant={variant} radius="sm"
+           title={RATING_LABELS[rating]?.label}>
+      {rating}
+    </Badge>
+  );
+}
+
 export default function CalibrationPage() {
   const {id: cycleId} = useParams<{ id: string }>();
   const queryClient = useQueryClient();
   const [draftRatings, setDraftRatings] = useState<Record<string, number>>({});
 
-  const {data, isLoading, error} = useQuery({
+  const calibrationQuery = useQuery({
     queryKey: ['calibration', cycleId],
     queryFn: () => fetchCalibration(cycleId),
   });
@@ -72,19 +72,76 @@ export default function CalibrationPage() {
       });
       queryClient.invalidateQueries({queryKey: ['calibration', cycleId]});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to save rating', color: 'red'});
     },
   });
 
-  if (isLoading) return <Center h={300}><Loader/></Center>;
-  if (error || !data) return (
-    <Alert icon={<IconAlertCircle size={16}/>} color="red">
-      Failed to load calibration data
-    </Alert>
-  );
+  const data = calibrationQuery.data;
+  const totalEmployees = data?.totalEmployees || 0;
 
-  const totalEmployees = data.totalEmployees || 0;
+  const buildColumns = (employees: CalibrationEmployee[]): Column<CalibrationEmployee>[] => {
+    const columns: Column<CalibrationEmployee>[] = [
+      {
+        key: 'employee',
+        header: 'Employee',
+        mobilePriority: 'primary',
+        accessor: (emp) => <span className="font-medium text-text-1">{emp.employeeName}</span>,
+      },
+      {key: 'self', header: 'Self Rating', align: 'center', accessor: (emp) => <RatingBadge rating={emp.selfRating}/>},
+      {
+        key: 'manager',
+        header: 'Manager Rating',
+        align: 'center',
+        accessor: (emp) => <RatingBadge rating={emp.managerRating}/>,
+      },
+      {
+        key: 'final',
+        header: 'Final Rating',
+        align: 'center',
+        accessor: (emp) => {
+          const displayRating = draftRatings[emp.reviewId] ?? emp.finalRating;
+          return emp.editable ? (
+            <NumberInput
+              aria-label="Rating (1-5)"
+              min={1}
+              max={5}
+              value={displayRating ?? ''}
+              onChange={(val) => setDraftRatings((prev) => ({...prev, [emp.reviewId]: Number(val)}))}
+              w={96}
+              className="mx-auto"
+            />
+          ) : (
+            <RatingBadge rating={displayRating} variant="filled"/>
+          );
+        },
+      },
+    ];
+    if (employees.some((e) => e.editable)) {
+      columns.push({
+        key: 'actions',
+        header: 'Actions',
+        align: 'center',
+        accessor: (emp) => {
+          if (!emp.editable) return null;
+          const draftVal = draftRatings[emp.reviewId];
+          return (
+            <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
+              <Button
+                disabled={draftVal == null || draftVal === emp.finalRating}
+                loading={saveMutation.isPending && saveMutation.variables?.reviewId === emp.reviewId}
+                onClick={() => saveMutation.mutate({reviewId: emp.reviewId, rating: draftVal!})}
+              >
+                Save
+              </Button>
+            </PermissionGate>
+          );
+        },
+      });
+    }
+    return columns;
+  };
 
   return (
     <AppLayout
@@ -95,113 +152,54 @@ export default function CalibrationPage() {
         {label: 'Calibration'},
       ]}
     >
-      <Stack gap="lg" p="md">
-        <Group justify="space-between">
-          <div>
-            <Title order={2} className="">Calibration</Title>
-            <Text c="dimmed" size="sm">{data.cycleName} ({totalEmployees} employees)</Text>
-          </div>
-        </Group>
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <PageHeader
+          title="Calibration"
+          description={data ? `${data.cycleName} (${totalEmployees} employees)` : undefined}
+        />
 
-        {/* Rating Distribution */}
-        <SimpleGrid cols={5} spacing="sm">
-          {[1, 2, 3, 4, 5].map((rating) => {
-            const count = data.distribution[rating] ?? 0;
-            const pct = totalEmployees > 0 ? Math.round((count / totalEmployees) * 100) : 0;
-            const meta = RATING_LABELS[rating];
-            return (
-              <Card key={rating} withBorder padding="sm" className="skeuo-card">
-                <Stack gap={4}>
-                  <Group justify="space-between">
-                    <Badge color={meta.color} variant="light" size="sm">{rating}</Badge>
-                    <Text fw={700} size="lg">{count}</Text>
-                  </Group>
-                  <Text size="xs" c="dimmed">{meta.label}</Text>
-                  <Progress value={pct} color={meta.color} size="xs"/>
-                  <Text size="xs" ta="right">{pct}%</Text>
-                </Stack>
-              </Card>
-            );
-          })}
-        </SimpleGrid>
+        <QueryState
+          query={calibrationQuery}
+          skeleton={<ListPageSkeleton showHeader={false} showFilters={false} rows={6} columns={5}/>}
+          errorTitle="Failed to load calibration data"
+        >
+          {(calibration) => (
+            <>
+              <section aria-label="Rating distribution" className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                {[1, 2, 3, 4, 5].map((rating) => {
+                  const count = calibration.distribution[rating] ?? 0;
+                  const pct = totalEmployees > 0 ? Math.round((count / totalEmployees) * 100) : 0;
+                  const meta = RATING_LABELS[rating];
+                  return (
+                    <div key={rating} className="flex flex-col gap-2 rounded-lg border border-border bg-card p-4">
+                      <div className="flex items-center justify-between">
+                        <Badge color={meta.color} variant="light" radius="sm" size="sm">{rating}</Badge>
+                        <span className="text-lg font-semibold tabular-nums text-text-1">{count}</span>
+                      </div>
+                      <span className="text-xs text-text-2">{meta.label}</span>
+                      <Progress value={pct} color={meta.color} size="xs" aria-label={`${meta.label}: ${pct}%`}/>
+                      <span className="text-right text-xs tabular-nums text-text-2">{pct}%</span>
+                    </div>
+                  );
+                })}
+              </section>
 
-        {/* Calibration Table */}
-        <Paper withBorder>
-          <Table striped highlightOnHover className="table-aura">
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Employee</Table.Th>
-                <Table.Th>Self Rating</Table.Th>
-                <Table.Th>Manager Rating</Table.Th>
-                <Table.Th>Final Rating</Table.Th>
-                {data.employees.some((e) => e.editable) && <Table.Th>Actions</Table.Th>}
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {data.employees.map((emp: CalibrationEmployee) => {
-                const draftVal = draftRatings[emp.reviewId];
-                const displayRating = draftVal ?? emp.finalRating;
-                return (
-                  <Table.Tr key={emp.reviewId}>
-                    <Table.Td>{emp.employeeName}</Table.Td>
-                    <Table.Td>
-                      {emp.selfRating ? (
-                        <Badge color={RATING_LABELS[emp.selfRating]?.color ?? 'gray'} variant="light">
-                          {emp.selfRating}
-                        </Badge>
-                      ) : <Text c="dimmed" size="sm">—</Text>}
-                    </Table.Td>
-                    <Table.Td>
-                      {emp.managerRating ? (
-                        <Badge color={RATING_LABELS[emp.managerRating]?.color ?? 'gray'} variant="light">
-                          {emp.managerRating}
-                        </Badge>
-                      ) : <Text c="dimmed" size="sm">—</Text>}
-                    </Table.Td>
-                    <Table.Td>
-                      {emp.editable ? (
-                        <NumberInput
-                          aria-label="Rating (1-5)"
-                          min={1}
-                          max={5}
-                          value={displayRating ?? ''}
-                          onChange={(val) =>
-                            setDraftRatings((prev) => ({...prev, [emp.reviewId]: Number(val)}))
-                          }
-                          w={80}
-                          size="xs"
-                        />
-                      ) : (
-                        displayRating ? (
-                          <Badge color={RATING_LABELS[displayRating]?.color ?? 'gray'} variant="filled">
-                            {displayRating}
-                          </Badge>
-                        ) : <Text c="dimmed" size="sm">—</Text>
-                      )}
-                    </Table.Td>
-                    {emp.editable && (
-                      <Table.Td>
-                        <PermissionGate permission={Permissions.CALIBRATION_MANAGE}>
-                          <Button
-                            size="xs"
-                            disabled={draftVal == null || draftVal === emp.finalRating}
-                            loading={saveMutation.isPending}
-                            onClick={() =>
-                              saveMutation.mutate({reviewId: emp.reviewId, rating: draftVal!})
-                            }
-                          >
-                            Save
-                          </Button>
-                        </PermissionGate>
-                      </Table.Td>
-                    )}
-                  </Table.Tr>
-                );
-              })}
-            </Table.Tbody>
-          </Table>
-        </Paper>
-      </Stack>
+              <ResponsiveTable
+                columns={buildColumns(calibration.employees)}
+                data={calibration.employees}
+                keyExtractor={(emp) => emp.reviewId}
+                emptyState={
+                  <EmptyState
+                    icon={<Scale className="h-full w-full"/>}
+                    title="No reviews found"
+                    description="Activate the cycle to generate reviews for employees."
+                  />
+                }
+              />
+            </>
+          )}
+        </QueryState>
+      </div>
     </AppLayout>
   );
 }

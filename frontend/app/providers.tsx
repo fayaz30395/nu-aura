@@ -5,11 +5,9 @@ import {GoogleOAuthProvider} from '@react-oauth/google';
 import {MotionConfig} from 'framer-motion';
 import {useEffect, useState} from 'react';
 import dynamic from 'next/dynamic';
-import {Notifications} from '@mantine/notifications';
 import {DarkModeProvider, MantineThemeProvider} from '@/components/layout';
+import {ToastHost} from '@/components/layout/ToastHost';
 import {ErrorBoundary} from '@/components/ui/ErrorBoundary';
-import {ToastProvider} from '@/components/ui/Toast';
-import {ToastProvider as NotificationsToastProvider} from '@/components/notifications/ToastProvider';
 import {AuthGuard} from '@/components/auth/AuthGuard';
 import {useTokenRefresh} from '@/lib/hooks/useTokenRefresh';
 import {useSessionTimeout} from '@/lib/hooks/useSessionTimeout';
@@ -58,22 +56,18 @@ export function Providers({children}: { children: React.ReactNode }) {
   const content = (
     <MotionConfig reducedMotion="user">
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <NotificationsToastProvider>
-          <DarkModeProvider>
-            <MantineThemeProvider>
-              <Notifications position="top-right" autoClose={5000}/>
-              <WebSocketProvider>
-                <TokenRefreshManager>
-                  <AuthGuard>
-                    {children}
-                  </AuthGuard>
-                </TokenRefreshManager>
-              </WebSocketProvider>
-            </MantineThemeProvider>
-          </DarkModeProvider>
-        </NotificationsToastProvider>
-      </ToastProvider>
+      <DarkModeProvider>
+        <MantineThemeProvider>
+          <ToastHost/>
+          <WebSocketProvider>
+            <TokenRefreshManager>
+              <AuthGuard>
+                {children}
+              </AuthGuard>
+            </TokenRefreshManager>
+          </WebSocketProvider>
+        </MantineThemeProvider>
+      </DarkModeProvider>
     </QueryClientProvider>
     </MotionConfig>
   );

@@ -2,23 +2,26 @@
 
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {useForm} from 'react-hook-form';
-import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
-import {useAuth} from '@/lib/hooks/useAuth';
+import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {AlertCircle, CheckCircle, Clock, Loader2, PlusCircle, XCircle} from 'lucide-react';
-import {EmptyState} from '@/components/ui/EmptyState';
+import {AlertCircle, Ban, CheckCircle, Clock, PlusCircle, XCircle} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
-import {Modal} from '@mantine/core';
-import {AppLayout} from '@/components/layout';
-import {Reveal} from '@/components/motion';
-import {Card, CardContent} from '@/components/ui/Card';
-import {Button} from '@/components/ui/Button';
-import {TablePagination} from '@/components/ui';
-import {SkeletonTable} from '@/components/ui/Skeleton';
+import {Button, Modal, Tabs, Textarea} from '@mantine/core';
+import {DateInput} from '@mantine/dates';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {AppLayout} from '@/components/layout';
+import {Callout} from '@/components/ui/Callout';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {ResponsiveTable, TablePagination, type Column} from '@/components/ui/ResponsiveTable';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
+import {StatusBadge} from '@/components/ui/StatusBadge';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useAuth} from '@/lib/hooks/useAuth';
 import {apiClient} from '@/lib/api/client';
+import type {StatusMeta} from '@/lib/status/vocabulary';
 
 interface CompOffRequest {
   id: string;
@@ -41,7 +44,7 @@ interface PageResponse<T> {
   number: number;
 }
 
-// ─── Zod Schema ────────────────────────────────────────────────────────────────
+type CompOffTab = 'my' | 'pending';
 
 const compOffSchema = z.object({
   attendanceDate: z.string().min(1, 'Please select an attendance date'),
@@ -50,27 +53,49 @@ const compOffSchema = z.object({
 
 type CompOffFormData = z.infer<typeof compOffSchema>;
 
-// ─── Status config ──────────────────────────────────────────────────────────────
-
-const statusConfig: Record<string, { color: string; icon: typeof Clock; label: string }> = {
-  PENDING: {color: 'text-warning-600 tint-warning', icon: AlertCircle, label: 'Pending'},
-  APPROVED: {color: 'text-accent-600 tint-info', icon: CheckCircle, label: 'Approved'},
-  REJECTED: {color: 'text-danger-600 tint-danger', icon: XCircle, label: 'Rejected'},
-  CREDITED: {color: 'text-success-600 tint-success', icon: CheckCircle, label: 'Credited'},
+const COMP_OFF_STATUS: Record<string, StatusMeta> = {
+  PENDING: {label: 'Pending', tone: 'warning', icon: AlertCircle},
+  APPROVED: {label: 'Approved', tone: 'info', icon: CheckCircle},
+  REJECTED: {label: 'Rejected', tone: 'danger', icon: XCircle},
+  CREDITED: {label: 'Credited', tone: 'success', icon: CheckCircle},
 };
 
-function CompOffGate({message}: { message: string }) {
-  return (
-    <AppLayout>
-      <div className="flex min-h-[280px] items-center justify-center">
-        <div className="card-aura flex items-center gap-2 p-4">
-          <Loader2 className="h-4 w-4 animate-spin text-[var(--accent-primary)] motion-reduce:animate-none"/>
-          <span className="text-body-secondary">{message}</span>
-        </div>
-      </div>
-    </AppLayout>
-  );
-}
+const COLUMNS: Column<CompOffRequest>[] = [
+  {
+    key: 'date',
+    header: 'Date',
+    mobilePriority: 'primary',
+    accessor: (r) => <span className="font-medium text-text-1">{r.attendanceDate}</span>,
+  },
+  {
+    key: 'overtime',
+    header: 'Overtime',
+    mobileLabel: 'Overtime',
+    numeric: true,
+    accessor: (r) => `${Math.floor(r.overtimeMinutes / 60)}h ${r.overtimeMinutes % 60}m`,
+  },
+  {
+    key: 'days',
+    header: 'Days',
+    mobileLabel: 'Days',
+    numeric: true,
+    accessor: (r) => <span className="font-semibold text-text-1">{r.compOffDays}</span>,
+  },
+  {
+    key: 'reason',
+    header: 'Reason',
+    mobilePriority: 'hidden',
+    accessor: (r) => <span className="block max-w-xs truncate text-text-2">{r.reason ?? '—'}</span>,
+  },
+  {
+    key: 'status',
+    header: 'Status',
+    mobileLabel: 'Status',
+    accessor: (r) => <StatusBadge status={r.status} meta={COMP_OFF_STATUS[r.status] ?? {label: r.status, tone: 'neutral', icon: Ban}}/>,
+  },
+];
+
+const SKELETON = <ListPageSkeleton rows={5} columns={5} showHeader={false} showFilters={false}/>;
 
 export default function CompOffPage() {
   const router = useRouter();
@@ -84,58 +109,52 @@ export default function CompOffPage() {
     Permissions.ATTENDANCE_MANAGE,
   );
 
+  // Kept: the /attendance/comp-off route config gates on REGULARIZE/APPROVE, not these permissions.
   useEffect(() => {
     if (isPermissionReady && !hasAccess) {
       router.replace('/me/dashboard?denied=1');
     }
   }, [isPermissionReady, hasAccess, router]);
 
-  const [activeTab, setActiveTab] = useState<'my' | 'pending'>('my');
+  const [activeTab, setActiveTab] = useState<CompOffTab>('my');
   const [pendingPage, setPendingPage] = useState(0);
   const [pendingPageSize, setPendingPageSize] = useState(20);
   const {user} = useAuth();
   const employeeId = user?.employeeId;
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: {errors},
-  } = useForm<CompOffFormData>({
+  const {control, handleSubmit, reset, register, formState: {errors}} = useForm<CompOffFormData>({
     resolver: zodResolver(compOffSchema),
     defaultValues: {attendanceDate: '', reason: ''},
   });
 
-  const {data: myRequests, isLoading: loadingMy} = useQuery<CompOffRequest[]>({
+  const myQuery = useQuery<CompOffRequest[]>({
     queryKey: ['comp-off', 'my', employeeId],
     queryFn: () => apiClient.get<CompOffRequest[]>(`/comp-off/my-pending/${employeeId}`).then(r => r.data),
     enabled: !!employeeId,
   });
 
-  const {data: pendingRequests, isLoading: loadingPending} = useQuery<PageResponse<CompOffRequest>>({
+  const pendingQuery = useQuery<PageResponse<CompOffRequest>>({
     queryKey: ['comp-off', 'pending', pendingPage, pendingPageSize],
     queryFn: () => apiClient.get<PageResponse<CompOffRequest>>('/comp-off/pending', {
-      params: {
-        page: pendingPage,
-        size: pendingPageSize
-      }
+      params: {page: pendingPage, size: pendingPageSize},
     }).then(r => r.data),
     enabled: activeTab === 'pending' && !!employeeId,
   });
 
   const requestMutation = useMutation({
-    mutationFn: (data: { employeeId: string; attendanceDate: string; reason?: string }) =>
+    mutationFn: (data: {employeeId: string; attendanceDate: string; reason?: string}) =>
       apiClient.post('/comp-off/request', data),
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['comp-off']});
       setShowRequestModal(false);
       reset();
     },
+    meta: {skipGlobalError: true},
     onError: () => notifications.show({title: 'Error', message: 'Failed to submit comp-off request', color: 'red'}),
   });
 
   const approveMutation = useMutation({
-    mutationFn: ({id, action}: { id: string; action: 'approve' | 'reject' }) =>
+    mutationFn: ({id, action}: {id: string; action: 'approve' | 'reject'}) =>
       apiClient.post(`/comp-off/${id}/${action}`, {reviewerId: employeeId, note: ''}),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({queryKey: ['comp-off']});
@@ -146,24 +165,16 @@ export default function CompOffPage() {
         color: variables.action === 'approve' ? 'green' : 'orange',
       });
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to process comp-off request', color: 'red'});
     },
   });
 
-  if (!isPermissionReady) {
-    return <CompOffGate message="Preparing comp-off workspace..."/>;
-  }
-
-  if (!hasAccess) {
-    return <CompOffGate message="Redirecting to your dashboard..."/>;
-  }
-
-  if (!employeeId) {
-    return <CompOffGate message="Loading your employee profile..."/>;
-  }
+  const ready = isPermissionReady && hasAccess && !!employeeId;
 
   const onSubmitForm = (data: CompOffFormData) => {
+    if (!employeeId) return;
     requestMutation.mutate({employeeId, attendanceDate: data.attendanceDate, reason: data.reason});
   };
 
@@ -172,194 +183,150 @@ export default function CompOffPage() {
     reset();
   };
 
-  const requests = activeTab === 'my' ? myRequests ?? [] : pendingRequests?.content ?? [];
-  const isLoading = activeTab === 'my' ? loadingMy : loadingPending;
+  const emptyState = (
+    <EmptyState
+      icon={<Clock className="h-full w-full"/>}
+      title="No comp-off requests"
+      description={
+        activeTab === 'my'
+          ? 'Worked overtime? Request a comp-off credit for that day.'
+          : 'There are no comp-off requests waiting for approval.'
+      }
+      actionLabel={activeTab === 'my' ? 'Request comp-off' : undefined}
+      onAction={activeTab === 'my' ? () => setShowRequestModal(true) : undefined}
+      size="compact"
+    />
+  );
 
   return (
     <AppLayout>
-      <div className="p-6 max-w-5xl mx-auto space-y-6">
-        {/* Header */}
-        <Reveal className="row-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Compensatory Off</h1>
-            <p className="text-[var(--text-muted)] mt-1">Request and manage comp-off credits for overtime
-              work</p>
-          </div>
-          <Button onClick={() => setShowRequestModal(true)}>
-            <PlusCircle className="w-4 h-4 mr-2"/>
-            Request Comp-Off
-          </Button>
-        </Reveal>
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+        <PageHeader
+          title="Compensatory Off"
+          description="Request and manage comp-off credits for overtime work"
+          breadcrumbs={[{label: 'Attendance', href: '/attendance'}, {label: 'Comp-Off'}]}
+          actions={
+            ready ? (
+              <Button leftSection={<PlusCircle size={16} aria-hidden/>} onClick={() => setShowRequestModal(true)}>
+                Request Comp-Off
+              </Button>
+            ) : undefined
+          }
+        />
 
-        {/* Info card */}
-        <Reveal delay={0.06}>
-        <Card className="border-accent-200 tint-info skeuo-card">
-          <CardContent className="pt-4">
-            <div className="flex gap-4">
-              <AlertCircle className="w-5 h-5 text-accent-600 shrink-0 mt-0.5"/>
-              <div className="text-sm text-accent-800">
-                <strong>Eligibility:</strong> Minimum 60 minutes overtime required. Half-day credited for 4h+, full day
-                for 8h+.
-                Requests are auto-approved after 7 days if no manager action.
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        </Reveal>
+        <Callout tone="info" title="Eligibility">
+          Minimum 60 minutes overtime required. Half-day credited for 4h+, full day for 8h+. Requests are
+          auto-approved after 7 days if no manager action.
+        </Callout>
 
-        {/* Tabs */}
-        <div className="flex gap-2 border-b">
-          {['my', 'pending'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => {
-                setActiveTab(tab as 'my' | 'pending');
-                setPendingPage(0);
-              }}
-              className={`cursor-pointer pb-2 px-4 text-sm font-medium border-b-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                activeTab === tab
-                  ? 'border-accent-600 text-accent-600'
-                  : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
-              }`}
-            >
-              {tab === 'my' ? 'My Requests' : 'Pending Approval'}
-            </button>
-          ))}
-        </div>
+        {!ready ? (
+          SKELETON
+        ) : (
+          <Tabs
+            value={activeTab}
+            onChange={(v) => {
+              if (!v) return;
+              setActiveTab(v as CompOffTab);
+              setPendingPage(0);
+            }}
+            keepMounted={false}
+          >
+            <Tabs.List>
+              <Tabs.Tab value="my">My Requests</Tabs.Tab>
+              <Tabs.Tab value="pending">Pending Approval</Tabs.Tab>
+            </Tabs.List>
 
-        {/* Requests table */}
-        <Reveal delay={0.12}>
-        <Card className="skeuo-card">
-          <CardContent className="p-0">
-            {isLoading ? (
-              <div className="p-4"><SkeletonTable rows={5} columns={5}/></div>
-            ) : requests.length === 0 ? (
-              <EmptyState
-                icon={<Clock className="w-full h-full" />}
-                title="No Comp-Off Requests"
-                description="There are no comp-off requests to display."
-                size="compact"
-              />
-            ) : (
-              <table className="w-full text-sm table-aura">
-                <thead>
-                <tr className="border-b bg-[var(--bg-surface)] text-[var(--text-secondary)]">
-                  <th scope="col" className="px-4 py-2 text-left font-medium">Date</th>
-                  <th scope="col" className="px-4 py-2 text-left font-medium">Overtime</th>
-                  <th scope="col" className="px-4 py-2 text-left font-medium">Days</th>
-                  <th scope="col" className="px-4 py-2 text-left font-medium">Reason</th>
-                  <th scope="col" className="px-4 py-2 text-left font-medium">Status</th>
-                  {activeTab === 'pending' && (
-                    <th scope="col" className="px-4 py-2 text-left font-medium">Action</th>
-                  )}
-                </tr>
-                </thead>
-                <tbody>
-                {requests.map((req: CompOffRequest) => {
-                  const cfg = statusConfig[req.status] ?? statusConfig.PENDING;
-                  const Icon = cfg.icon;
-                  return (
-                    <tr key={req.id} className="border-b hover:bg-[var(--bg-surface)]">
-                      <td className="px-4 py-4 font-medium">{req.attendanceDate}</td>
-                      <td className="px-4 py-4">
-                        {Math.floor(req.overtimeMinutes / 60)}h {req.overtimeMinutes % 60}m
-                      </td>
-                      <td className="px-4 py-4 font-semibold text-accent-700">{req.compOffDays}</td>
-                      <td className="px-4 py-4 text-[var(--text-secondary)] max-w-xs truncate">{req.reason ?? '—'}</td>
-                      <td className="px-4 py-4">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium badge-status ${cfg.color}`}>
-                            <Icon className="w-3.5 h-3.5"/>
-                            {cfg.label}
-                          </span>
-                      </td>
-                      {activeTab === 'pending' && (
-                        <td className="px-4 py-4">
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-success-700 border-success-200"
-                              disabled={approveMutation.isPending}
-                              onClick={() => approveMutation.mutate({id: req.id, action: 'approve'})}
-                            >
-                              Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-danger-700 border-danger-200"
-                              disabled={approveMutation.isPending}
-                              onClick={() => approveMutation.mutate({id: req.id, action: 'reject'})}
-                            >
-                              Reject
-                            </Button>
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  );
-                })}
-                </tbody>
-              </table>
-            )}
+            <Tabs.Panel value="my" pt="md">
+              <QueryState query={myQuery} skeleton={SKELETON} errorTitle="Couldn't load your comp-off requests">
+                {(data) => (
+                  <ResponsiveTable
+                    columns={COLUMNS}
+                    data={data ?? []}
+                    keyExtractor={(r) => r.id}
+                    stickyHeader
+                    emptyState={emptyState}
+                  />
+                )}
+              </QueryState>
+            </Tabs.Panel>
 
-            {activeTab === 'pending' && (pendingRequests?.totalElements ?? 0) > 0 && (
-              <div className="px-4 pb-4">
-                <TablePagination
-                  currentPage={pendingPage}
-                  totalPages={pendingRequests?.totalPages ?? 0}
-                  totalItems={pendingRequests?.totalElements ?? 0}
-                  pageSize={pendingPageSize}
-                  onPageChange={setPendingPage}
-                  onPageSizeChange={(size) => {
-                    setPendingPageSize(size);
-                    setPendingPage(0);
-                  }}
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        </Reveal>
+            <Tabs.Panel value="pending" pt="md">
+              <QueryState query={pendingQuery} skeleton={SKELETON} errorTitle="Couldn't load pending comp-off requests">
+                {(data) => (
+                  <div className="flex flex-col gap-4">
+                    <ResponsiveTable
+                      columns={COLUMNS}
+                      data={data.content ?? []}
+                      keyExtractor={(r) => r.id}
+                      stickyHeader
+                      emptyState={emptyState}
+                      rowActionsMenu={(r) => [
+                        {
+                          label: 'Approve',
+                          onClick: () => approveMutation.mutate({id: r.id, action: 'approve'}),
+                          disabled: approveMutation.isPending,
+                        },
+                        {
+                          label: 'Reject',
+                          color: 'red',
+                          onClick: () => approveMutation.mutate({id: r.id, action: 'reject'}),
+                          disabled: approveMutation.isPending,
+                        },
+                      ]}
+                    />
+                    {(data.totalElements ?? 0) > 0 && (
+                      <TablePagination
+                        currentPage={pendingPage}
+                        totalPages={data.totalPages ?? 0}
+                        totalItems={data.totalElements ?? 0}
+                        pageSize={pendingPageSize}
+                        onPageChange={setPendingPage}
+                        onPageSizeChange={(size) => {
+                          setPendingPageSize(size);
+                          setPendingPage(0);
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
+              </QueryState>
+            </Tabs.Panel>
+          </Tabs>
+        )}
       </div>
 
-      {/* Request Modal */}
-      <Modal
-        opened={showRequestModal}
-        onClose={handleModalClose}
-        title="Request Comp-Off"
-        size="md"
-        centered
-      >
-        <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
-          <div>
-            <label htmlFor="comp-off-attendance-date" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Attendance Date *</label>
-            <input
-              id="comp-off-attendance-date"
-              type="date"
-              {...register('attendanceDate')}
-              className={`input-aura ${errors.attendanceDate ? 'border-danger-500' : ''}`}
-            />
-            {errors.attendanceDate && (
-              <p className="mt-1 text-xs text-danger-500">{errors.attendanceDate.message}</p>
+      <Modal opened={showRequestModal} onClose={handleModalClose} title="Request Comp-Off" size="md" centered>
+        <form onSubmit={handleSubmit(onSubmitForm)} noValidate className="flex flex-col gap-4">
+          <Controller
+            name="attendanceDate"
+            control={control}
+            render={({field}) => (
+              <DateInput
+                id="comp-off-attendance-date"
+                label="Attendance date"
+                withAsterisk
+                description="Must be a day with recorded overtime ≥ 60 minutes"
+                value={field.value || null}
+                onChange={(d) => field.onChange(d ?? '')}
+                onBlur={field.onBlur}
+                valueFormat="YYYY-MM-DD"
+                placeholder="YYYY-MM-DD"
+                clearable
+                error={errors.attendanceDate?.message}
+              />
             )}
-            <p className="text-caption mt-1">Must be a day with recorded overtime ≥ 60 minutes</p>
-          </div>
-          <div>
-            <label htmlFor="comp-off-reason" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Reason</label>
-            <textarea
-              id="comp-off-reason"
-              {...register('reason')}
-              rows={3}
-              placeholder="Optional: why you worked overtime"
-              className="input-aura"
-            />
-          </div>
-          <div className="flex gap-4 justify-end pt-2">
-            <Button type="button" variant="outline" onClick={handleModalClose} className="btn-secondary">Cancel</Button>
-            <Button type="submit" disabled={requestMutation.isPending} className="btn-primary">
-              {requestMutation.isPending ? 'Submitting...' : 'Submit Request'}
+          />
+          <Textarea
+            id="comp-off-reason"
+            label="Reason"
+            rows={3}
+            placeholder="Optional: why you worked overtime"
+            {...register('reason')}
+          />
+          <div className="flex justify-end gap-2 border-t border-border pt-4">
+            <Button type="button" variant="default" onClick={handleModalClose}>Cancel</Button>
+            <Button type="submit" loading={requestMutation.isPending} disabled={requestMutation.isPending}>
+              Submit Request
             </Button>
           </div>
         </form>

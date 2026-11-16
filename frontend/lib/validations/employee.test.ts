@@ -18,13 +18,9 @@ describe('Employee Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('requires employeeCode', () => {
-      const {employeeCode: _employeeCode, ...data} = validEmployee;
-      const result = createEmployeeSchema.safeParse(data);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0].path).toContain('employeeCode');
-      }
+    it('allows blank employeeCode', () => {
+      const result = createEmployeeSchema.safeParse({...validEmployee, employeeCode: ''});
+      expect(result.success).toBe(true);
     });
 
     it('validates employeeCode format', () => {

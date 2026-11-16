@@ -74,6 +74,7 @@ export function useCreateGoal() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -99,6 +100,7 @@ export function useUpdateGoal() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -124,6 +126,7 @@ export function useUpdateGoalProgress() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -148,6 +151,7 @@ export function useApproveGoal() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',
@@ -171,6 +175,7 @@ export function useDeleteGoal() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({
         title: 'Error',

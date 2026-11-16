@@ -387,8 +387,8 @@ test.describe('Leave Approval Chain', () => {
     const select = page.locator('select[name="leaveTypeId"]');
     await select.selectOption({index: 1}); // first non-blank option
 
-    await page.locator('label:has-text("Start Date")').locator('..').locator('input').fill(dateStr);
-    await page.locator('label:has-text("End Date")').locator('..').locator('input').fill(dateStr);
+    await page.getByLabel(/^Start date/).fill(dateStr);
+    await page.getByLabel(/^End date/).fill(dateStr);
     await page.locator('textarea[placeholder*="reason"]').fill(reason);
     await page.locator('button:has-text("Submit Leave Request")').click();
     await page.waitForURL(/\/leave(?!\/apply)/, {timeout: 15000}).catch(() => {});

@@ -66,8 +66,8 @@ async function submitLeaveViaUI(
   }
 
   // Dates (Mantine DateInput renders an input under the label)
-  const startInput = page.locator('label:has-text("Start Date")').locator('..').locator('input');
-  const endInput = page.locator('label:has-text("End Date")').locator('..').locator('input');
+  const startInput = page.getByLabel(/^Start date/);
+  const endInput = page.getByLabel(/^End date/);
   await startInput.fill(startDate);
   await endInput.fill(endDate);
 

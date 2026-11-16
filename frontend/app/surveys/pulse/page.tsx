@@ -6,6 +6,9 @@ import {Checkbox} from '@mantine/core';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent} from '@/components/ui/Card';
+import {Badge} from '@/components/ui/Badge';
+import {Skeleton} from '@/components/ui/Skeleton';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Select} from '@/components/ui/Select';
@@ -32,12 +35,9 @@ const STATUS_LABELS: Record<string, string> = {
   DRAFT: 'Draft', SCHEDULED: 'Scheduled', ACTIVE: 'Active',
   COMPLETED: 'Completed', CANCELLED: 'Cancelled',
 };
-const STATUS_COLORS: Record<string, string> = {
-  DRAFT: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
-  SCHEDULED: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-  ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-  COMPLETED: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
-  CANCELLED: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400',
+const STATUS_VARIANTS: Record<string, 'default' | 'info' | 'success' | 'primary' | 'danger'> = {
+  DRAFT: 'default', SCHEDULED: 'info', ACTIVE: 'success',
+  COMPLETED: 'primary', CANCELLED: 'danger',
 };
 const TYPE_LABELS: Record<string, string> = {
   ENGAGEMENT: 'Engagement', SATISFACTION: 'Satisfaction', ONBOARDING: 'Onboarding',
@@ -175,7 +175,7 @@ function SurveyRow({survey}: {survey: PulseSurveyResponse}) {
 
   const invalidate = () => queryClient.invalidateQueries({queryKey: getGetAllSurveysQueryKey()});
 
-  const statusCls = STATUS_COLORS[survey.status ?? ''] ?? 'bg-[var(--bg-secondary)] text-[var(--text-muted)]';
+  const statusVariant = STATUS_VARIANTS[survey.status ?? ''] ?? 'default';
   const canPublish = survey.status === PulseSurveyResponseStatus.DRAFT || survey.status === PulseSurveyResponseStatus.SCHEDULED;
   const canClose = survey.status === PulseSurveyResponseStatus.ACTIVE;
   const canDelete = survey.status === PulseSurveyResponseStatus.DRAFT || survey.status === PulseSurveyResponseStatus.CANCELLED;
@@ -188,18 +188,18 @@ function SurveyRow({survey}: {survey: PulseSurveyResponse}) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-sm font-medium text-[var(--text-primary)] truncate max-w-56">{survey.title}</span>
-          <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${statusCls}`}>
+          <Badge variant={statusVariant} className="text-xs">
             {STATUS_LABELS[survey.status ?? ''] ?? survey.status}
-          </span>
+          </Badge>
           {survey.isAnonymous && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 dark:bg-slate-800">Anon</span>
+            <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-[var(--text-muted)]">Anon</span>
           )}
         </div>
         <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-          <span className="text-[10px] text-[var(--text-muted)]">{TYPE_LABELS[survey.surveyType ?? ''] ?? survey.surveyType}</span>
-          {survey.startDate && <span className="text-[10px] text-[var(--text-muted)]">{survey.startDate} – {survey.endDate}</span>}
+          <span className="text-xs text-[var(--text-muted)]">{TYPE_LABELS[survey.surveyType ?? ''] ?? survey.surveyType}</span>
+          {survey.startDate && <span className="text-xs text-[var(--text-muted)]">{survey.startDate} – {survey.endDate}</span>}
           {survey.totalResponses != null && (
-            <span className="text-[10px] text-[var(--text-muted)]">
+            <span className="text-xs text-[var(--text-muted)]">
               {survey.totalResponses}/{survey.totalInvited ?? '?'} responses
               {survey.responseRate != null && ` (${Math.round(survey.responseRate)}%)`}
             </span>
@@ -210,17 +210,17 @@ function SurveyRow({survey}: {survey: PulseSurveyResponse}) {
         {canPublish && (
           <Button size="sm" onClick={() => publishMut.mutate({surveyId: survey.id!}, {onSuccess: invalidate})}
             disabled={publishMut.isPending}
-            className="h-6 text-[10px] px-2">Publish</Button>
+            >Publish</Button>
         )}
         {canClose && (
           <Button size="sm" variant="outline" onClick={() => closeMut.mutate({surveyId: survey.id!}, {onSuccess: invalidate})}
             disabled={closeMut.isPending}
-            className="h-6 text-[10px] px-2 text-amber-600 border-amber-300">Close</Button>
+            >Close</Button>
         )}
         {canDelete && (
-          <Button size="sm" variant="outline" onClick={() => deleteMut.mutate({surveyId: survey.id!}, {onSuccess: invalidate})}
+          <Button size="sm" variant="destructive" onClick={() => deleteMut.mutate({surveyId: survey.id!}, {onSuccess: invalidate})}
             disabled={deleteMut.isPending}
-            className="h-6 text-[10px] px-2 text-red-600 border-red-300 hover:bg-red-50">Del</Button>
+            >Del</Button>
         )}
       </div>
     </div>
@@ -279,19 +279,21 @@ export default function PulseSurveysPage() {
 
         {isLoading ? (
           <div className="space-y-2">
-            {[1, 2, 3].map(i => <div key={i} className="h-16 rounded-lg bg-[var(--bg-secondary)] animate-pulse"/>)}
+            {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 rounded-lg"/>)}
           </div>
         ) : surveys.length === 0 ? (
           <Card>
-            <CardContent className="py-16 text-center">
-              <ClipboardList className="w-8 h-8 text-[var(--text-muted)] mx-auto mb-2"/>
-              <p className="text-sm text-[var(--text-muted)]">
-                {statusFilter === 'ALL' ? 'No pulse surveys yet' : `No ${STATUS_LABELS[statusFilter]?.toLowerCase()} surveys`}
-              </p>
+            <CardContent className="py-16">
+              <EmptyState
+                icon={<ClipboardList className="w-8 h-8"/>}
+                title={statusFilter === 'ALL' ? 'No pulse surveys yet' : `No ${STATUS_LABELS[statusFilter]?.toLowerCase()} surveys`}
+              />
               {statusFilter === 'ALL' && isAdmin && (
-                <Button size="sm" variant="outline" onClick={() => setShowCreate(true)} className="mt-4">
-                  Create First Survey
-                </Button>
+                <div className="flex justify-center">
+                  <Button size="sm" variant="outline" onClick={() => setShowCreate(true)} className="mt-4">
+                    Create First Survey
+                  </Button>
+                </div>
               )}
             </CardContent>
           </Card>

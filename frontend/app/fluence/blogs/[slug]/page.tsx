@@ -104,7 +104,6 @@ export default function BlogPostDetailPage() {
     if (!post) return;
     publishPost.mutate(post.id, {
       onSuccess: () => notifications.show({title: 'Published', message: 'Blog post is now live', color: 'green'}),
-      onError: () => notifications.show({title: 'Error', message: 'Failed to publish post', color: 'red'}),
     });
   }, [post, publishPost]);
 
@@ -112,7 +111,6 @@ export default function BlogPostDetailPage() {
     if (!post) return;
     archivePost.mutate(post.id, {
       onSuccess: () => notifications.show({title: 'Archived', message: 'Blog post archived', color: 'green'}),
-      onError: () => notifications.show({title: 'Error', message: 'Failed to archive post', color: 'red'}),
     });
   }, [post, archivePost]);
 

@@ -198,7 +198,7 @@ function DeliveryPanel({webhookId, onClose}: {webhookId: string; onClose: () => 
   const deliveries: WebhookDeliveryResponse[] = (data as unknown as {content?: WebhookDeliveryResponse[]})?.content ?? [];
 
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="fixed inset-y-0 right-0 w-[480px] bg-[var(--bg-primary)] border-l border-[var(--border-main)] shadow-xl z-50 flex flex-col">
+    <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="fixed inset-y-0 right-0 w-[min(480px,100vw)] bg-[var(--bg-primary)] border-l border-[var(--border-main)] shadow-xl z-50 flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2">
           <Activity className="w-4 h-4 text-[var(--text-muted)]"/>
@@ -217,9 +217,6 @@ function DeliveryPanel({webhookId, onClose}: {webhookId: string; onClose: () => 
             if (!d.id) return;
             retryMutation.mutate({deliveryId: d.id}, {
               onSuccess: () => toast.success('Delivery queued for retry'),
-              onError: (err: unknown) => toast.error(
-                (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to queue retry'
-              ),
             });
           }}/>
         ))}
@@ -256,14 +253,11 @@ function CreateWebhookPanel({onClose, onCreated}: {onClose: () => void; onCreate
         toast.success('Webhook created');
         onCreated();
       },
-      onError: (err: unknown) => toast.error(
-        (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to create webhook'
-      ),
     });
   };
 
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="fixed inset-y-0 right-0 w-[520px] bg-[var(--bg-primary)] border-l border-[var(--border-main)] shadow-xl z-50 flex flex-col">
+    <div role="dialog" aria-modal="true" aria-labelledby={titleId} className="fixed inset-y-0 right-0 w-[min(520px,100vw)] bg-[var(--bg-primary)] border-l border-[var(--border-main)] shadow-xl z-50 flex flex-col">
       <div className="flex items-center justify-between p-4 border-b border-[var(--border-main)]">
         <div className="flex items-center gap-2">
           <Plus className="w-4 h-4 text-[var(--text-muted)]"/>
@@ -307,7 +301,7 @@ function CreateWebhookPanel({onClose, onCreated}: {onClose: () => void; onCreate
           <Textarea
             id="wh-headers"
             {...register('customHeaders')}
-            className="text-xs font-mono min-h-[60px] resize-y"
+            className="text-xs font-mono min-h-16 resize-y"
             placeholder={'{"X-My-Header": "value"}'}
           />
           {errors.customHeaders && <p className="text-xs text-danger-500">{errors.customHeaders.message}</p>}
@@ -394,16 +388,10 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
     if (isActive) {
       deactivateMutation.mutate({id: webhook.id}, {
         onSuccess: () => {toast.success('Webhook paused'); refetchList();},
-        onError: (err: unknown) => toast.error(
-          (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to pause webhook'
-        ),
       });
     } else {
       activateMutation.mutate({id: webhook.id}, {
         onSuccess: () => {toast.success('Webhook activated'); refetchList();},
-        onError: (err: unknown) => toast.error(
-          (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to activate webhook'
-        ),
       });
     }
   };
@@ -412,9 +400,6 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
     if (!webhook.id) return;
     deleteMutation.mutate({id: webhook.id}, {
       onSuccess: () => {toast.success('Webhook deleted'); refetchList();},
-      onError: (err: unknown) => toast.error(
-        (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to delete webhook'
-      ),
     });
   };
 
@@ -425,9 +410,6 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
         setShowSecret(data?.newSecret ?? null);
         toast.success('Secret rotated — copy the new secret now');
       },
-      onError: (err: unknown) => toast.error(
-        (err as {response?: {data?: {message?: string}}})?.response?.data?.message || 'Failed to rotate secret'
-      ),
     });
   };
 
@@ -464,12 +446,12 @@ function WebhookCard({webhook, onDeliveries}: {webhook: WebhookResponse; onDeliv
             )}
             <div className="mt-2 flex flex-wrap gap-1">
               {(webhook.events ?? []).slice(0, 5).map(e => (
-                <span key={e} className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono bg-[var(--bg-secondary)] text-[var(--text-muted)]">
+                <span key={e} className="inline-block px-1.5 py-0.5 rounded text-2xs font-mono bg-[var(--bg-secondary)] text-[var(--text-muted)]">
                   {e}
                 </span>
               ))}
               {(webhook.events ?? []).length > 5 && (
-                <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-[var(--bg-secondary)] text-[var(--text-muted)]">
+                <span className="inline-block px-1.5 py-0.5 rounded text-2xs bg-[var(--bg-secondary)] text-[var(--text-muted)]">
                   +{(webhook.events?.length ?? 0) - 5} more
                 </span>
               )}

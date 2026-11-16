@@ -55,10 +55,8 @@ export interface FormModalState {
 export {formatCurrency} from '@/lib/utils';
 
 export function formatDate(dateString: string | null | undefined) {
-  if (!dateString) return '—';
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '—';
-  return formatDateCanonical(date);
+  if (!dateString) return '';
+  return formatDateCanonical(dateString);
 }
 
 export function getStatusColor(status: string) {

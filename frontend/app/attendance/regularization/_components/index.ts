@@ -9,3 +9,4 @@ export type {RegularizationFormData} from './CreateRequestModal';
 export {RejectRequestModal} from './RejectRequestModal';
 export type {RejectReasonData} from './RejectRequestModal';
 export type {RegularizationRequest, RegularizationStats} from './types';
+export {WorkRequestsPanel} from './WorkRequestsPanel';

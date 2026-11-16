@@ -82,6 +82,7 @@ export function useCreateImplicitRoleRule() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to create implicit role rule:', error);
       notifications.show({
@@ -111,6 +112,7 @@ export function useUpdateImplicitRoleRule(ruleId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to update implicit role rule:', error);
       notifications.show({
@@ -138,6 +140,7 @@ export function useDeleteImplicitRoleRule() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to delete implicit role rule:', error);
       notifications.show({
@@ -166,6 +169,7 @@ export function useRecomputeAll() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to recompute implicit roles:', error);
       notifications.show({
@@ -194,6 +198,7 @@ export function useBulkActivateRules() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to activate rules:', error);
       notifications.show({
@@ -222,6 +227,7 @@ export function useBulkDeactivateRules() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to deactivate rules:', error);
       notifications.show({

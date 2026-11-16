@@ -6,15 +6,16 @@ import {initialsFor} from './avatar';
 interface EmployeeAvatarProps {
   name: string;
   /** Pixel size of the (square, rounded) avatar. */
-  size?: 22 | 38 | 68;
+  size?: 22 | 32 | 38 | 68;
   /** Optional photo URL — falls back to name-hashed initials. */
   src?: string;
 }
 
 const SIZE_CLASS: Record<NonNullable<EmployeeAvatarProps['size']>, {box: string; text: string}> = {
-  22: {box: 'h-[22px] w-[22px]', text: 'text-[8px]'},
-  38: {box: 'h-[38px] w-[38px]', text: 'text-[14px]'},
-  68: {box: 'h-[68px] w-[68px]', text: 'text-[26px]'},
+  22: {box: 'h-6 w-6', text: 'text-3xs'},
+  32: {box: 'h-8 w-8', text: 'text-xs'},
+  38: {box: 'h-10 w-10', text: 'text-sm'},
+  68: {box: 'h-16 w-16', text: 'text-2xl'},
 };
 
 const AVATAR_CLASSES = [
@@ -63,7 +64,7 @@ export function EmployeeAvatar({name, size = 38, src}: EmployeeAvatarProps) {
   return (
     <span
       aria-hidden
-      className={`grid shrink-0 place-items-center rounded-full font-[family-name:var(--font-display)] font-bold tracking-[-0.01em] text-white ${sizeClass.box} ${sizeClass.text} ${bgClass}`}
+      className={`grid shrink-0 place-items-center rounded-full font-[family-name:var(--font-display)] font-bold tracking-tight text-white ${sizeClass.box} ${sizeClass.text} ${bgClass}`}
     >
       {initialsFor(name)}
     </span>

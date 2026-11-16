@@ -38,6 +38,7 @@ export function useCreatePip() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.all, 'pip']});
       notifications.show({title: 'Success', message: 'PIP created successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to create PIP', color: 'red'});
     },
@@ -54,6 +55,7 @@ export function useRecordPipCheckIn() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.all, 'pip']});
       notifications.show({title: 'Success', message: 'Check-in recorded successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to record check-in', color: 'red'});
     },
@@ -70,6 +72,7 @@ export function useClosePip() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.all, 'pip']});
       notifications.show({title: 'Success', message: 'PIP closed successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to close PIP', color: 'red'});
     },

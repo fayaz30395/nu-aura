@@ -7,6 +7,7 @@ import {okrService} from '@/lib/services/grow/okr.service';
 import {KeyResult, Objective} from '@/lib/types/grow/performance';
 import {notifications} from '@mantine/notifications';
 import {performanceKeys} from './performanceKeys';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 // ─── OKR / Performance Revolution Hooks ────────────────────────────────────
 
@@ -44,7 +45,10 @@ export function useMyObjectives() {
 }
 
 export function useCompanyObjectives() {
+  // Backend requires OKR:VIEW_ALL; skip the call (no 403) for roles without it.
+  const {hasPermission} = usePermissions();
   return useQuery({
+    enabled: hasPermission(Permissions.OKR_VIEW_ALL),
     queryKey: [...performanceKeys.okr(), 'company'],
     queryFn: () => okrService.getCompanyObjectives(),
     staleTime: 5 * 60 * 1000,
@@ -70,6 +74,7 @@ export function useCreateObjective() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'company']});
       notifications.show({title: 'Success', message: 'Objective created successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to create objective', color: 'red'});
     },
@@ -87,6 +92,7 @@ export function useUpdateObjective() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'company']});
       notifications.show({title: 'Success', message: 'Objective updated successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to update objective', color: 'red'});
     },
@@ -103,6 +109,7 @@ export function useDeleteObjective() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'company']});
       notifications.show({title: 'Success', message: 'Objective deleted successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to delete objective', color: 'red'});
     },
@@ -118,6 +125,7 @@ export function useApproveObjective() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'my']});
       notifications.show({title: 'Success', message: 'Objective approved', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to approve objective', color: 'red'});
     },
@@ -134,6 +142,7 @@ export function useUpdateObjectiveStatus() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'my']});
       notifications.show({title: 'Success', message: 'Objective status updated', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to update status', color: 'red'});
     },
@@ -150,6 +159,7 @@ export function useAddKeyResult() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'my']});
       notifications.show({title: 'Success', message: 'Key result added successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to add key result', color: 'red'});
     },
@@ -166,6 +176,7 @@ export function useUpdateKeyResultProgress() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'my']});
       notifications.show({title: 'Success', message: 'Key result progress updated', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to update progress', color: 'red'});
     },
@@ -181,6 +192,7 @@ export function useDeleteKeyResult() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr(), 'my']});
       notifications.show({title: 'Success', message: 'Key result deleted successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to delete key result', color: 'red'});
     },
@@ -196,6 +208,7 @@ export function useCreateCheckIn() {
       queryClient.invalidateQueries({queryKey: [...performanceKeys.okr()]});
       notifications.show({title: 'Success', message: 'Check-in recorded successfully', color: 'green'});
     },
+    meta: {skipGlobalError: true},
     onError: (error: Error) => {
       notifications.show({title: 'Error', message: error.message || 'Failed to record check-in', color: 'red'});
     },

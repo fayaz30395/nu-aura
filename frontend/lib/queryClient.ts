@@ -17,7 +17,9 @@ export function getQueryClient(): QueryClient {
   if (!queryClientInstance) {
     queryClientInstance = new QueryClient({
       mutationCache: new MutationCache({
-        onError: (error) => {
+        onError: (error, _variables, _context, mutation) => {
+          // Mutations whose own onError already toasts opt out so a failure shows one toast.
+          if (mutation.meta?.skipGlobalError === true) return;
           createQueryErrorHandler()(error as Error);
         },
       }),

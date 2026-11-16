@@ -38,6 +38,8 @@ import {
   useSubmitTimesheet,
   useTimesheetEntries
 } from '@/lib/hooks/queries/useTimesheets';
+import {CopyLastWeekButton} from '@/components/timesheets/CopyLastWeekButton';
+import {TimesheetTabPanel, TimesheetTabSwitcher, type TimesheetTabId} from '@/components/timesheets/TimesheetTabs';
 import {useProjects} from '@/lib/hooks/queries/useProjects';
 import {ActivityType, CreateTimeEntryRequest, Timesheet} from '@/lib/types/hrms/timesheet';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -87,6 +89,7 @@ export default function TimesheetsPage() {
   const addTimeEntryMutation = useAddTimeEntry();
 
   const [error, setError] = useState<string | null>(queryError?.message || null);
+  const [activeTab, setActiveTab] = useState<TimesheetTabId>('all');
 
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -249,6 +252,11 @@ export default function TimesheetsPage() {
   }
 
   const currentWeekTimesheet = getCurrentWeekTimesheet();
+  const previousWeekTimesheet = (() => {
+    const prev = new Date(currentWeekStart);
+    prev.setDate(prev.getDate() - 7);
+    return timesheets.find(ts => ts.weekStartDate === toLocalDateString(prev));
+  })();
   const weekDates = getWeekDates();
 
   // Stats
@@ -322,6 +330,20 @@ export default function TimesheetsPage() {
           </Card>
         )}
 
+        <TimesheetTabSwitcher value={activeTab} onChange={setActiveTab} timesheets={timesheets}/>
+
+        {activeTab !== 'all' && user?.employeeId && (
+          <TimesheetTabPanel
+            tab={activeTab}
+            employeeId={user.employeeId}
+            timesheets={timesheets}
+            isLoading={isLoading}
+            projectNames={Object.fromEntries(projects.map((p) => [p.id, p.name]))}
+            onOpen={(ts) => { setActiveTab('all'); handleViewTimesheet(ts); }}
+          />
+        )}
+
+        {activeTab === 'all' && (<>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card>
@@ -370,7 +392,7 @@ export default function TimesheetsPage() {
           <CardContent className="p-4">
             <div className="row-between mb-4">
               <div className="flex items-center gap-4">
-                <Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
+                <Button variant="outline" size="sm" aria-label="Previous week" onClick={() => navigateWeek('prev')}>
                   <ChevronLeft className="h-4 w-4"/>
                 </Button>
                 <div className="text-center">
@@ -381,7 +403,7 @@ export default function TimesheetsPage() {
                     {formatDate(weekDates[0].toISOString())} - {formatDate(weekDates[6].toISOString())}
                   </p>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => navigateWeek('next')}>
+                <Button variant="outline" size="sm" aria-label="Next week" onClick={() => navigateWeek('next')}>
                   <ChevronRight className="h-4 w-4"/>
                 </Button>
               </div>
@@ -409,10 +431,10 @@ export default function TimesheetsPage() {
               <table className="w-full text-sm">
                 <thead>
                 <tr className="border-b border-[var(--border-main)]">
-                  <th scope="col" className="px-4 py-2 text-left font-medium text-[var(--text-secondary)] min-w-[200px]">Project
+                  <th scope="col" className="px-4 py-2 text-left font-medium text-[var(--text-secondary)] min-w-50">Project
                   </th>
                   {weekDates.map((date, i) => (
-                    <th key={i} scope="col" className={`px-2 py-2 text-center font-medium min-w-[80px] ${
+                    <th key={i} scope="col" className={`px-2 py-2 text-center font-medium min-w-20 ${
                       date.getDay() === 0 || date.getDay() === 6
                         ? 'text-[var(--text-muted)] bg-[var(--bg-secondary)]'
                         : 'text-[var(--text-secondary)]'
@@ -421,7 +443,7 @@ export default function TimesheetsPage() {
                       <div className="text-sm">{date.getDate()}</div>
                     </th>
                   ))}
-                  <th scope="col" className="px-4 py-2 text-center font-semibold text-[var(--text-primary)] min-w-[70px]">Total</th>
+                  <th scope="col" className="px-4 py-2 text-center font-semibold text-[var(--text-primary)] min-w-16">Total</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -524,6 +546,16 @@ export default function TimesheetsPage() {
                   )}
                 </div>
                 <div className="flex gap-2">
+                  {user?.employeeId && (
+                    <PermissionGate permission={Permissions.TIMESHEET_SUBMIT}>
+                      <CopyLastWeekButton
+                        employeeId={user.employeeId}
+                        currentTimesheet={currentWeekTimesheet}
+                        currentEntries={entriesForCurrentWeek}
+                        previousTimesheet={previousWeekTimesheet}
+                      />
+                    </PermissionGate>
+                  )}
                   {currentWeekTimesheet.status === 'DRAFT' && (
                     <PermissionGate permission={Permissions.TIMESHEET_SUBMIT}>
                       <Button size="sm" onClick={handleAddEntry}>
@@ -574,7 +606,7 @@ export default function TimesheetsPage() {
                           )}
                         </div>
                         <StatusBadge status={timesheet.status} domain={TIMESHEET_STATUS}/>
-                        <Button size="sm" variant="outline" onClick={() => handleViewTimesheet(timesheet)}>
+                        <Button size="sm" variant="outline" aria-label="View timesheet" onClick={() => handleViewTimesheet(timesheet)}>
                           <Eye className="h-4 w-4"/>
                         </Button>
                       </div>
@@ -603,6 +635,7 @@ export default function TimesheetsPage() {
             )}
           </div>
         </div>
+        </>)}
 
         {/* Create Timesheet Modal */}
         <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} size="sm">

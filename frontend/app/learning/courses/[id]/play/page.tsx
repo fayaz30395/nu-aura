@@ -1,5 +1,6 @@
 'use client';
 
+import {Progress} from '@/components/ui';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Spinner} from '@/components/ui/Spinner';
 import DOMPurify from 'dompurify';
@@ -449,11 +450,8 @@ export default function CoursePlayerPage() {
             )}
             {/* Progress bar */}
             <div className="hidden sm:flex items-center gap-2">
-              <div className="w-32 h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-accent-600 rounded-full transition-all duration-500"
-                  style={{width: `${overallProgress}%`}}
-                />
+              <div className="w-32">
+                <Progress value={overallProgress} label="Course progress"/>
               </div>
               <span className="text-caption font-medium">{overallProgress}%</span>
             </div>

@@ -117,12 +117,14 @@ export default function JobBoardsPage() {
       setShowPostModal(false);
       resetPostForm({jobId: '', boards: ['NAUKRI']});
     },
+    meta: {skipGlobalError: true},
     onError: () => notifications.show({title: 'Error', message: 'Failed to post job to boards', color: 'red'}),
   });
 
   const pauseMutation = useMutation({
     mutationFn: (id: string) => apiClient.post(`/recruitment/job-boards/${id}/pause`),
     onSuccess: () => queryClient.invalidateQueries({queryKey: ['job-board-postings']}),
+    meta: {skipGlobalError: true},
     onError: () => notifications.show({title: 'Error', message: 'Failed to pause job board posting', color: 'red'}),
   });
 

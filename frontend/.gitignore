@@ -22,3 +22,6 @@ login-branch.mjs
 login-check-step.mjs
 login-dump.mjs
 login-probe.mjs
+
+# E2E auth state (never commit)
+e2e/.auth/

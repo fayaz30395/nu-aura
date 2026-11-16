@@ -45,6 +45,8 @@ export interface NavPanelProps {
   onUpsell?: () => void;
   /** When true the upsell banner is hidden (workspace already includes GROW). */
   hasGrow?: boolean;
+  /** Layout overrides, e.g. full-width inside the mobile drawer. */
+  className?: string;
 }
 
 function isItemActive(item: SidebarItem, activeId?: string): boolean {
@@ -67,9 +69,9 @@ function NavRow({
   const href = item.href ?? item.children?.find((c) => c.href)?.href;
 
   const rowClass = cn(
-    'group relative flex w-full items-center gap-[11px] rounded-[9px] px-[10px] py-2 text-left text-[13px] font-medium',
-    'transform-gpu transition-[background-color,color,transform] duration-[var(--t-fast)] ease-[var(--ease)]',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]',
+    'group relative flex h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-[13px] font-medium',
+    'transition-[background-color,color] duration-[var(--t-fast)] ease-[var(--ease)] motion-reduce:transition-none',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-300)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--nav)]',
     active
       ? 'bg-[var(--nav-active)] font-semibold text-white'
       : 'text-[var(--on-rail)] hover:bg-[var(--nav-soft)] hover:text-white'
@@ -91,7 +93,7 @@ function NavRow({
       {item.badge != null && (
         <span
           className={cn(
-            'num rounded-full px-[7px] py-px text-[11px] font-bold leading-tight text-white',
+            'num rounded-full px-1.5 py-px text-2xs font-bold text-white',
             // Approvals (or any flagged) badge = red; others = neutral chip.
             item.id === 'approvals'
               ? 'bg-[var(--err-fg)]'
@@ -139,6 +141,7 @@ export function NavPanel({
                            workspaceSub = 'Pro Plan',
                            onUpsell,
                            hasGrow = false,
+                           className,
                          }: NavPanelProps) {
   const product = getShellProduct(activeApp);
 
@@ -149,7 +152,8 @@ export function NavPanel({
       className={cn(
         'relative z-30 flex flex-shrink-0 flex-col overflow-hidden border-r border-white/[0.05] bg-[var(--nav)] text-[var(--on-rail)]',
         'transition-[width] duration-[var(--t-slow)] ease-[var(--ease)]',
-        collapsed ? 'w-0 border-0' : 'w-[232px]'
+        collapsed ? 'w-0 border-0' : 'w-[232px]',
+        className
       )}
     >
       {/* Product header */}
@@ -164,7 +168,7 @@ export function NavPanel({
             <div className="truncate font-display text-[15px] font-bold tracking-[-0.01em] text-white">
               {product.name}
             </div>
-            <div className="mt-px text-[10.5px] tracking-[0.02em] text-[var(--on-rail-dim)]">
+            <div className="mt-px text-2xs tracking-wide text-[var(--on-rail-dim)]">
               {product.tag}
             </div>
           </div>
@@ -183,7 +187,7 @@ export function NavPanel({
           <span className="block truncate text-[12.5px] font-semibold text-white">
             {workspaceName}
           </span>
-          <span className="block truncate text-[10.5px] text-[var(--on-rail-dim)]">
+          <span className="block truncate text-2xs text-[var(--on-rail-dim)]">
             {workspaceSub}
           </span>
         </span>
@@ -214,18 +218,18 @@ export function NavPanel({
       {/* Upsell footer — hidden when workspace already includes GROW */}
       {!hasGrow && (
         <div className="border-t border-white/[0.05] px-3.5 py-2.5">
-          <div className="rounded-[11px] border border-white/[0.07] bg-[linear-gradient(150deg,rgba(104,132,220,0.16),rgba(139,92,246,0.10))] p-4">
+          <div className="rounded-[11px] border border-white/[0.07] bg-white/[0.04] p-4">
             <div className="flex items-center gap-1.5 text-[12.5px] font-bold text-white">
               <Sparkles className="h-3.5 w-3.5 text-[var(--accent-300)]"/>
               Unlock NU-Grow
             </div>
-            <div className="mb-[9px] mt-[3px] text-[11px] leading-[1.5] text-[var(--on-rail)]">
+            <div className="mb-2 mt-1 text-2xs text-[var(--on-rail)]">
               Reviews, OKRs &amp; learning in one place.
             </div>
             <button
               type="button"
               onClick={onUpsell}
-              className="inline-flex h-7 items-center rounded-[8px] bg-white/[0.08] px-3 text-[12px] font-semibold text-white transition-[background-color,transform] duration-[var(--t-fast)] ease-[var(--ease)] hover:bg-white/[0.14] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
+              className="inline-flex h-7 items-center rounded-lg bg-white/[0.08] px-3 text-xs font-semibold text-white transition-[background-color,transform] duration-[var(--t-fast)] ease-[var(--ease)] hover:bg-white/[0.14] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
             >
               Start trial
             </button>

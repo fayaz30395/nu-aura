@@ -1,26 +1,7 @@
-import {AppLayout} from '@/components/layout';
-import {SkeletonCard, SkeletonStatCard} from '@/components/ui/Skeleton';
+'use client';
 
-export default function AgenciesLoading() {
-  return (
-    <AppLayout>
-      <div className="page-shell-centered fade-slide-up auth-delay-20">
-        <div className="space-y-6">
-          <div className="h-12 bg-[var(--bg-secondary)] rounded-lg w-64"/>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <SkeletonStatCard/>
-            <SkeletonStatCard/>
-            <SkeletonStatCard/>
-            <SkeletonStatCard/>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SkeletonCard/>
-            <SkeletonCard/>
-            <SkeletonCard/>
-            <SkeletonCard/>
-          </div>
-        </div>
-      </div>
-    </AppLayout>
-  );
+import {ListPageSkeleton} from '@/components/ui/skeletons';
+
+export default function Loading() {
+  return <ListPageSkeleton rows={8} columns={6}/>;
 }

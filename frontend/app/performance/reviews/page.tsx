@@ -1,293 +1,67 @@
 'use client';
 
 import {useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
-
-// Standard competency framework used for self-assessments
-const SELF_ASSESSMENT_COMPETENCIES: Array<{name: string; label: string}> = [
-  {name: 'Technical Skills', label: 'Technical Skills'},
-  {name: 'Behavioral Skills', label: 'Behavioral Skills'},
-  {name: 'Leadership', label: 'Leadership'},
-  {name: 'Domain Knowledge', label: 'Domain Knowledge'},
-  {name: 'Problem Solving', label: 'Problem Solving'},
-];
-import {
-  CheckCircle2,
-  ClipboardList,
-  Clock,
-  FileEdit,
-  ShieldCheck,
-  Send,
-  UserCheck,
-  XCircle,
-} from 'lucide-react';
+import {Button, NativeSelect} from '@mantine/core';
+import {ClipboardList, Plus, UserCheck} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {PageTransition} from '@/components/motion';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
-import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
-import {
-  useCreateReview,
-  useDeleteReview,
-  useEmployeeReviews,
-  useSubmitSelfAssessment,
-  useUpdateReview,
-} from '@/lib/hooks/queries/useReviews';
-import {PerformanceReview, ReviewRequest, ReviewStatus, ReviewType} from '@/lib/types/grow/performance';
-import {useAuth} from '@/lib/hooks/useAuth';
-import {createLogger} from '@/lib/utils/logger';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
-import {formatDate} from '@/lib/utils/format/date';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {useEmployeeReviews} from '@/lib/hooks/queries/useReviews';
+import {useAuth} from '@/lib/hooks/useAuth';
+import type {PerformanceReview, ReviewStatus, ReviewType} from '@/lib/types/grow/performance';
+import {ReviewCard} from './_components/ReviewCard';
+import {ReviewFormModal} from './_components/ReviewFormModal';
+import {REVIEW_STATUS_OPTIONS, REVIEW_TYPE_OPTIONS, type ReviewFormData} from './_components/reviewForm';
+import {useReviewActions} from './_hooks/useReviewActions';
 
-const log = createLogger('ReviewsPage');
-
-// ─── Validation Schemas ───────────────────────────────────────────────────────
-
-const reviewFormSchema = z.object({
-  employeeId: z.string().min(1, 'Employee ID is required'),
-  reviewerId: z.string().min(1, 'Reviewer ID is required'),
-  cycleId: z.string().optional().or(z.literal('')),
-  reviewType: z.enum(['SELF', 'MANAGER', 'PEER', 'SUBORDINATE', 'SKIP_LEVEL'] as const) as z.ZodType<ReviewType>,
-  status: z.enum(['DRAFT', 'SUBMITTED', 'IN_REVIEW', 'COMPLETED', 'APPROVED', 'REJECTED'] as const) as z.ZodType<ReviewStatus>,
-  reviewPeriodStart: z.string().min(1, 'Review period start is required'),
-  reviewPeriodEnd: z.string().min(1, 'Review period end is required'),
-  overallRating: z.coerce.number().min(1, 'Rating must be at least 1').max(5, 'Max 5'),
-  strengths: z.string().optional().or(z.literal('')),
-  areasForImprovement: z.string().optional().or(z.literal('')),
-  goals: z.string().optional().or(z.literal('')),
-  reviewerComments: z.string().optional().or(z.literal('')),
-  employeeComments: z.string().optional().or(z.literal('')),
-}).refine(data => new Date(data.reviewPeriodEnd) > new Date(data.reviewPeriodStart), {
-  message: 'Review period end must be after start',
-  path: ['reviewPeriodEnd'],
-});
-
-type ReviewFormData = z.infer<typeof reviewFormSchema>;
+const TYPE_FILTER_OPTIONS = [{value: 'ALL', label: 'All Types'}, ...REVIEW_TYPE_OPTIONS];
+const STATUS_FILTER_OPTIONS = [{value: 'ALL', label: 'All Status'}, ...REVIEW_STATUS_OPTIONS];
+const BREADCRUMBS = [{label: 'Performance', href: '/performance'}, {label: 'Reviews'}];
 
 export default function PerformanceReviewsPage() {
   const {user} = useAuth();
+  const {hasPermission} = usePermissions();
   const reviewsQuery = useEmployeeReviews(user?.employeeId || '');
-  const createReviewMutation = useCreateReview();
-  const updateReviewMutation = useUpdateReview();
-  const submitSelfAssessmentMutation = useSubmitSelfAssessment();
-  const deleteReviewMutation = useDeleteReview();
+  const {saveReview, deleteReview, isSaving, isDeleting} = useReviewActions(user?.employeeId);
 
   const [showModal, setShowModal] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedReview, setSelectedReview] = useState<PerformanceReview | null>(null);
+  const [deletingReview, setDeletingReview] = useState<PerformanceReview | null>(null);
   const [filterType, setFilterType] = useState<ReviewType | 'ALL'>('ALL');
   const [filterStatus, setFilterStatus] = useState<ReviewStatus | 'ALL'>('ALL');
 
-  // Per-competency ratings for self-assessment form (1–5 scale)
-  const [competencyRatings, setCompetencyRatings] = useState<Record<string, number>>(
-    () => Object.fromEntries(SELF_ASSESSMENT_COMPETENCIES.map((c) => [c.name, 3]))
-  );
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: {errors, isSubmitting},
-  } = useForm<ReviewFormData>({
-    resolver: zodResolver(reviewFormSchema),
-    defaultValues: {
-      employeeId: '',
-      reviewerId: '',
-      cycleId: '',
-      reviewType: 'SELF',
-      status: 'DRAFT',
-      reviewPeriodStart: '',
-      reviewPeriodEnd: '',
-      overallRating: 0,
-      strengths: '',
-      areasForImprovement: '',
-      goals: '',
-      reviewerComments: '',
-      employeeComments: '',
-    },
-  });
-
-  const reviews = reviewsQuery.data || [];
-  const loading = reviewsQuery.isLoading || createReviewMutation.isPending || updateReviewMutation.isPending || submitSelfAssessmentMutation.isPending || deleteReviewMutation.isPending;
-
-  const handleFormSubmit = async (formData: ReviewFormData) => {
-    try {
-      const reviewData = {
-        ...formData,
-        cycleId: formData.cycleId || '',
-        employeeId: user?.employeeId || '',
-        reviewerId: formData.reviewerId || user?.employeeId || '',
-        strengths: formData.strengths || '',
-        areasForImprovement: formData.areasForImprovement || '',
-        goals: formData.goals || '',
-        reviewerComments: formData.reviewerComments || '',
-        employeeComments: formData.employeeComments || '',
-      };
-
-      if (selectedReview?.reviewType === 'SELF') {
-        const mappedCompetencies = SELF_ASSESSMENT_COMPETENCIES.map((c) => ({
-          competencyName: c.name,
-          rating: competencyRatings[c.name] ?? 3,
-          comments: formData.employeeComments || '',
-        }));
-        const avgRating = mappedCompetencies.reduce((sum, c) => sum + c.rating, 0) / mappedCompetencies.length;
-        await submitSelfAssessmentMutation.mutateAsync({
-          reviewId: selectedReview.id,
-          data: {
-            competencyRatings: mappedCompetencies,
-            overallComments: formData.employeeComments || formData.strengths || '',
-            goalAchievementPercent: Math.min(100, Math.max(0, Math.round(avgRating * 20))),
-          },
-        });
-      } else if (selectedReview) {
-        await updateReviewMutation.mutateAsync({id: selectedReview.id, data: reviewData as ReviewRequest});
-      } else {
-        await createReviewMutation.mutateAsync(reviewData as ReviewRequest);
-      }
-
-      setShowModal(false);
-      resetFormHandler();
-    } catch (error: unknown) {
-      log.error('Error saving review:', error);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!selectedReview) return;
-    try {
-      await deleteReviewMutation.mutateAsync(selectedReview.id);
-      setShowDeleteConfirm(false);
-      setSelectedReview(null);
-    } catch (error: unknown) {
-      log.error('Error deleting review:', error);
-    }
+  const openCreateModal = () => {
+    setSelectedReview(null);
+    setShowModal(true);
   };
 
   const openEditModal = (review: PerformanceReview) => {
     setSelectedReview(review);
-    reset({
-      employeeId: review.employeeId,
-      reviewerId: review.reviewerId,
-      cycleId: review.cycleId || '',
-      reviewType: review.reviewType,
-      status: review.status,
-      reviewPeriodStart: review.reviewPeriodStart,
-      reviewPeriodEnd: review.reviewPeriodEnd,
-      overallRating: review.overallRating,
-      strengths: review.strengths || '',
-      areasForImprovement: review.areasForImprovement || '',
-      goals: review.goals || '',
-      reviewerComments: review.reviewerComments || '',
-      employeeComments: review.employeeComments || '',
-    });
     setShowModal(true);
   };
 
-  const openDeleteConfirm = (review: PerformanceReview) => {
-    setSelectedReview(review);
-    setShowDeleteConfirm(true);
-  };
-
-  const resetFormHandler = () => {
+  const closeModal = () => {
+    setShowModal(false);
     setSelectedReview(null);
-    setCompetencyRatings(Object.fromEntries(SELF_ASSESSMENT_COMPETENCIES.map((c) => [c.name, 3])));
-    reset({
-      employeeId: '',
-      reviewerId: '',
-      cycleId: '',
-      reviewType: 'SELF',
-      status: 'DRAFT',
-      reviewPeriodStart: '',
-      reviewPeriodEnd: '',
-      overallRating: 0,
-      strengths: '',
-      areasForImprovement: '',
-      goals: '',
-      reviewerComments: '',
-      employeeComments: '',
-    });
   };
 
-  const getStatusColor = (status: ReviewStatus) => {
-    switch (status) {
-      case 'DRAFT':
-        return 'badge-status status-neutral';
-      case 'SUBMITTED':
-        return 'badge-status status-info';
-      case 'IN_REVIEW':
-        return 'badge-status status-warning';
-      case 'COMPLETED':
-        return 'badge-status status-success';
-      case 'APPROVED':
-        return 'badge-status status-success';
-      case 'REJECTED':
-        return 'badge-status status-danger';
-      default:
-        return 'badge-status status-neutral';
-    }
+  const handleFormSubmit = async (formData: ReviewFormData, competencyRatings: Record<string, number>) => {
+    if (await saveReview(formData, selectedReview, competencyRatings)) closeModal();
   };
 
-  const getStatusIcon = (status: ReviewStatus) => {
-    switch (status) {
-      case 'DRAFT':
-        return <FileEdit className="h-3.5 w-3.5"/>;
-      case 'SUBMITTED':
-        return <Send className="h-3.5 w-3.5"/>;
-      case 'IN_REVIEW':
-        return <Clock className="h-3.5 w-3.5"/>;
-      case 'COMPLETED':
-        return <CheckCircle2 className="h-3.5 w-3.5"/>;
-      case 'APPROVED':
-        return <ShieldCheck className="h-3.5 w-3.5"/>;
-      case 'REJECTED':
-        return <XCircle className="h-3.5 w-3.5"/>;
-      default:
-        return <FileEdit className="h-3.5 w-3.5"/>;
-    }
+  const handleDelete = async () => {
+    if (!deletingReview) return;
+    if (await deleteReview(deletingReview)) setDeletingReview(null);
   };
-
-  const getTypeColor = (type: ReviewType) => {
-    switch (type) {
-      case 'SELF':
-        return 'badge-status status-info';
-      case 'MANAGER':
-        return 'badge-status status-warning';
-      case 'PEER':
-        return 'badge-status status-success';
-      case 'SUBORDINATE':
-        return 'badge-status status-neutral';
-      case 'SKIP_LEVEL':
-        return 'badge-status status-danger';
-      default:
-        return 'badge-status status-neutral';
-    }
-  };
-
-  const renderRatingStars = (rating?: number) => {
-    const stars = [];
-    const ratingValue = rating || 0;
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span key={i}
-              className={i <= ratingValue ? 'text-warning-500' : 'text-[var(--text-muted)] dark:text-[var(--text-secondary)]'}>
-          ★
-        </span>
-      );
-    }
-    return <div className="flex gap-1">{stars}</div>;
-  };
-
-  const filteredReviews = reviews.filter(review => {
-    if (filterType !== 'ALL' && review.reviewType !== filterType) return false;
-    if (filterStatus !== 'ALL' && review.status !== filterStatus) return false;
-    return true;
-  });
 
   if (!user?.employeeId) {
     return (
-      <AppLayout activeMenuItem="performance">
+      <AppLayout activeMenuItem="performance" breadcrumbs={BREADCRUMBS}>
         <EmptyState
           icon={<UserCheck className="h-8 w-8"/>}
           title="No Employee Profile Linked"
@@ -299,440 +73,102 @@ export default function PerformanceReviewsPage() {
     );
   }
 
+  const filtersActive = filterType !== 'ALL' || filterStatus !== 'ALL';
+  const canCreate = hasPermission(Permissions.REVIEW_CREATE);
+
   return (
-    <AppLayout activeMenuItem="performance">
-      <PageTransition className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold">Performance Reviews</h1>
-          <PermissionGate permission={Permissions.REVIEW_CREATE}>
-            <button
-              onClick={() => {
-                resetFormHandler();
-                setShowModal(true);
-              }}
-              className="btn-primary px-4 py-2 rounded-lg"
-            >
-              Create Review
-            </button>
-          </PermissionGate>
+    <AppLayout activeMenuItem="performance" breadcrumbs={BREADCRUMBS}>
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+        <PageHeader
+          title="Performance Reviews"
+          description="Track self, manager and peer reviews across review periods."
+          actions={
+            <PermissionGate permission={Permissions.REVIEW_CREATE}>
+              <Button leftSection={<Plus className="h-4 w-4" aria-hidden/>} onClick={openCreateModal}>
+                Create Review
+              </Button>
+            </PermissionGate>
+          }
+        />
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:max-w-2xl">
+          <NativeSelect
+            id="review-filter-type"
+            label="Filter by Type"
+            data={TYPE_FILTER_OPTIONS}
+            value={filterType}
+            onChange={(e) => setFilterType(e.currentTarget.value as ReviewType | 'ALL')}
+          />
+          <NativeSelect
+            id="review-filter-status"
+            label="Filter by Status"
+            data={STATUS_FILTER_OPTIONS}
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.currentTarget.value as ReviewStatus | 'ALL')}
+          />
         </div>
 
-        <div className="card-aura p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="review-filter-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Filter by Type
-              </label>
-              <select
-                id="review-filter-type"
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value as ReviewType | 'ALL')}
-                className="w-full input-aura"
-              >
-                <option value="ALL">All Types</option>
-                <option value="SELF">Self Review</option>
-                <option value="MANAGER">Manager Review</option>
-                <option value="PEER">Peer Review</option>
-                <option value="SUBORDINATE">Subordinate Review</option>
-                <option value="SKIP_LEVEL">Skip Level</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="review-filter-status" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                Filter by Status
-              </label>
-              <select
-                id="review-filter-status"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value as ReviewStatus | 'ALL')}
-                className="w-full input-aura"
-              >
-                <option value="ALL">All Status</option>
-                <option value="DRAFT">Draft</option>
-                <option value="SUBMITTED">Submitted</option>
-                <option value="IN_REVIEW">In Review</option>
-                <option value="COMPLETED">Completed</option>
-                <option value="APPROVED">Approved</option>
-                <option value="REJECTED">Rejected</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="text-[var(--text-secondary)]">Loading reviews...</div>
-          </div>
-        ) : filteredReviews.length === 0 ? (
-          <div className="card-aura">
-            <EmptyState
-              icon={<ClipboardList className="h-8 w-8"/>}
-              title="No reviews found"
-              description="Adjust your filters or create a new performance review to get started."
-              actionLabel="Create Your First Review"
-              onAction={() => {
-                resetFormHandler();
-                setShowModal(true);
-              }}
-            />
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredReviews.map((review) => (
-              <div key={review.id} className="card-aura card-interactive hover-lift p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <div className="flex gap-2 mb-4">
-                      <span className={getTypeColor(review.reviewType)}>
-                        {review.reviewType}
-                      </span>
-                      <span className={getStatusColor(review.status)}>
-                        {getStatusIcon(review.status)}
-                        {review.status}
-                      </span>
-                    </div>
-                    <div className="text-body-secondary">
-                      Period: {review.reviewPeriodStart ? formatDate(review.reviewPeriodStart) : 'N/A'} - {review.reviewPeriodEnd ? formatDate(review.reviewPeriodEnd) : 'N/A'}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-body-secondary mb-1">Overall Rating</div>
-                    {renderRatingStars(review.overallRating)}
-                    <div className="text-lg font-bold mt-1">{(review.overallRating || 0).toFixed(1)}/5.0</div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  {review.strengths && (
-                    <div>
-                      <div className="text-sm font-semibold text-[var(--text-secondary)] mb-1">Strengths</div>
-                      <p className="text-body-secondary line-clamp-2">{review.strengths}</p>
-                    </div>
-                  )}
-                  {review.areasForImprovement && (
-                    <div>
-                      <div className="text-sm font-semibold text-[var(--text-secondary)] mb-1">Areas for Improvement
-                      </div>
-                      <p className="text-body-secondary line-clamp-2">{review.areasForImprovement}</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex gap-2 mt-4">
-                  {review.reviewType === 'SELF' && review.status === 'DRAFT' && (
-                    <PermissionGate permission={Permissions.REVIEW_SUBMIT}>
-                      <button
-                        onClick={() => openEditModal(review)}
-                        className="flex-1 px-4 py-2 tint-success text-success-700 dark:text-success-400 rounded hover:opacity-80 text-sm font-medium"
-                      >
-                        Start Self Assessment
-                      </button>
-                    </PermissionGate>
-                  )}
-                  <PermissionGate permission={Permissions.REVIEW_UPDATE}>
-                    <button
-                      onClick={() => openEditModal(review)}
-                      className="flex-1 px-4 py-2 tint-info text-accent-700 dark:text-accent-400 rounded hover:opacity-80 text-sm font-medium"
-                    >
-                      View/Edit
-                    </button>
-                  </PermissionGate>
-                  <PermissionGate permission={Permissions.REVIEW_DELETE}>
-                    <button
-                      onClick={() => openDeleteConfirm(review)}
-                      className="flex-1 px-4 py-2 tint-danger text-danger-600 rounded hover:opacity-80 text-sm font-medium"
-                    >
-                      Delete
-                    </button>
-                  </PermissionGate>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <Modal
-          isOpen={showModal}
-          onClose={() => {
-            setShowModal(false);
-            resetFormHandler();
-          }}
-          size="xl"
+        <QueryState
+          query={reviewsQuery}
+          skeleton={<ListPageSkeleton showHeader={false} showFilters={false} rows={4} columns={3}/>}
+          errorTitle="Couldn't load reviews"
         >
-          {(() => {
-            const isEditable = !selectedReview || selectedReview.status === 'DRAFT';
-            return (
-              <>
-                <ModalHeader
-                  onClose={() => {
-                    setShowModal(false);
-                    resetFormHandler();
+          {(data) => {
+            const reviews = (data ?? []).filter((review) =>
+              (filterType === 'ALL' || review.reviewType === filterType) &&
+              (filterStatus === 'ALL' || review.status === filterStatus));
+
+            if (reviews.length === 0) {
+              return filtersActive ? (
+                <EmptyState
+                  icon={<ClipboardList className="h-8 w-8"/>}
+                  title="No reviews found"
+                  description="No reviews match the selected filters."
+                  actionLabel="Clear filters"
+                  onAction={() => {
+                    setFilterType('ALL');
+                    setFilterStatus('ALL');
                   }}
-                >
-                  {selectedReview ? (isEditable ? 'Edit Review' : 'View Review') : 'Create Review'}
-                </ModalHeader>
-                <form onSubmit={handleSubmit(handleFormSubmit)}>
-                  <ModalBody>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label htmlFor="review-type" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Review Type *
-                          </label>
-                          <select
-                            id="review-type"
-                            {...register('reviewType')}
-                            disabled={!isEditable}
-                            className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                          >
-                            <option value="SELF">Self Review</option>
-                            <option value="MANAGER">Manager Review</option>
-                            <option value="PEER">Peer Review</option>
-                            <option value="SUBORDINATE">Subordinate Review</option>
-                            <option value="SKIP_LEVEL">Skip Level</option>
-                          </select>
-                          {errors.reviewType && (
-                            <p className="text-danger-500 text-sm mt-1">{errors.reviewType.message}</p>
-                          )}
-                        </div>
+                />
+              ) : (
+                <EmptyState
+                  icon={<ClipboardList className="h-8 w-8"/>}
+                  title="No reviews found"
+                  description="Adjust your filters or create a new performance review to get started."
+                  {...(canCreate ? {actionLabel: 'Create Your First Review', onAction: openCreateModal} : {})}
+                />
+              );
+            }
 
-                        <div>
-                          <label htmlFor="review-period-start" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Review Period Start *
-                          </label>
-                          <input
-                            id="review-period-start"
-                            type="date"
-                            {...register('reviewPeriodStart')}
-                            disabled={!isEditable}
-                            className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                          />
-                          {errors.reviewPeriodStart && (
-                            <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodStart.message}</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label htmlFor="review-period-end" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Review Period End *
-                          </label>
-                          <input
-                            id="review-period-end"
-                            type="date"
-                            {...register('reviewPeriodEnd')}
-                            disabled={!isEditable}
-                            className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                          />
-                          {errors.reviewPeriodEnd && (
-                            <p className="text-danger-500 text-sm mt-1">{errors.reviewPeriodEnd.message}</p>
-                          )}
-                        </div>
-
-                        <div>
-                          <label htmlFor="review-rating" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                            Overall Rating (1-5) *
-                          </label>
-                          <input
-                            id="review-rating"
-                            type="number"
-                            min="1"
-                            max="5"
-                            step="0.1"
-                            {...register('overallRating')}
-                            disabled={!isEditable}
-                            className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                          />
-                          {errors.overallRating && (
-                            <p className="text-danger-500 text-sm mt-1">{errors.overallRating.message}</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div>
-                        <label htmlFor="review-strengths" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Strengths
-                        </label>
-                        <textarea
-                          id="review-strengths"
-                          rows={3}
-                          {...register('strengths')}
-                          disabled={!isEditable}
-                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                        />
-                        {errors.strengths && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.strengths.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="review-areas-improvement" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Areas for Improvement
-                        </label>
-                        <textarea
-                          id="review-areas-improvement"
-                          rows={3}
-                          {...register('areasForImprovement')}
-                          disabled={!isEditable}
-                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                        />
-                        {errors.areasForImprovement && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.areasForImprovement.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="review-goals" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Goals
-                        </label>
-                        <textarea
-                          id="review-goals"
-                          rows={3}
-                          {...register('goals')}
-                          disabled={!isEditable}
-                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                        />
-                        {errors.goals && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.goals.message}</p>
-                        )}
-                      </div>
-
-                      {selectedReview?.reviewType === 'SELF' && (
-                        <div>
-                          <p className="text-sm font-semibold text-[var(--text-secondary)] mb-3">Competency Ratings (1–5)</p>
-                          <div className="space-y-3">
-                            {SELF_ASSESSMENT_COMPETENCIES.map((comp) => (
-                              <div key={comp.name} className="flex items-center gap-3">
-                                <label
-                                  htmlFor={`competency-${comp.name}`}
-                                  className="flex-1 text-sm text-[var(--text-secondary)]"
-                                >
-                                  {comp.label}
-                                </label>
-                                <input
-                                  id={`competency-${comp.name}`}
-                                  type="number"
-                                  min={1}
-                                  max={5}
-                                  step={1}
-                                  disabled={!isEditable}
-                                  value={competencyRatings[comp.name] ?? 3}
-                                  onChange={(e) =>
-                                    setCompetencyRatings((prev) => ({
-                                      ...prev,
-                                      [comp.name]: Math.min(5, Math.max(1, Number(e.target.value))),
-                                    }))
-                                  }
-                                  className="w-20 input-aura px-2 py-1 rounded-lg text-center disabled:opacity-60 disabled:cursor-not-allowed"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      <div>
-                        <label htmlFor="review-reviewer-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Reviewer Comments
-                        </label>
-                        <textarea
-                          id="review-reviewer-comments"
-                          rows={3}
-                          {...register('reviewerComments')}
-                          disabled={!isEditable}
-                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                        />
-                        {errors.reviewerComments && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.reviewerComments.message}</p>
-                        )}
-                      </div>
-
-                      <div>
-                        <label htmlFor="review-employee-comments" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">
-                          Employee Comments
-                        </label>
-                        <textarea
-                          id="review-employee-comments"
-                          rows={3}
-                          {...register('employeeComments')}
-                          disabled={!isEditable}
-                          className="w-full input-aura px-4 py-2 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
-                        />
-                        {errors.employeeComments && (
-                          <p className="text-danger-500 text-sm mt-1">{errors.employeeComments.message}</p>
-                        )}
-                      </div>
-                    </div>
-                  </ModalBody>
-                  <ModalFooter>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowModal(false);
-                        resetFormHandler();
-                      }}
-                      className="flex-1 btn-secondary px-4 py-2 rounded-lg"
-                    >
-                      {isEditable ? 'Cancel' : 'Close'}
-                    </button>
-                    {isEditable && (
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="flex-1 btn-primary px-4 py-2 rounded-lg disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                      >
-                        {isSubmitting ? 'Saving...' : selectedReview ? 'Update' : 'Create'}
-                      </button>
-                    )}
-                  </ModalFooter>
-                </form>
-              </>
+            return (
+              <div className="flex flex-col gap-4">
+                {reviews.map((review) => (
+                  <ReviewCard key={review.id} review={review} onEdit={openEditModal} onDelete={setDeletingReview}/>
+                ))}
+              </div>
             );
-          })()}
-        </Modal>
-
-        <Modal
-          isOpen={showDeleteConfirm && !!selectedReview}
-          onClose={() => {
-            setShowDeleteConfirm(false);
-            setSelectedReview(null);
           }}
-          size="sm"
-        >
-          <ModalHeader
-            onClose={() => {
-              setShowDeleteConfirm(false);
-              setSelectedReview(null);
-            }}
-          >
-            Delete Review?
-          </ModalHeader>
-          <ModalBody>
-            <p className="text-[var(--text-secondary)]">
-              This action cannot be undone. The review will be permanently deleted.
-            </p>
-          </ModalBody>
-          <ModalFooter>
-            <button
-              onClick={() => {
-                setShowDeleteConfirm(false);
-                setSelectedReview(null);
-              }}
-              className="flex-1 btn-secondary px-4 py-2 rounded-lg"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleDelete}
-              disabled={loading}
-              className="flex-1 btn-primary px-4 py-2 rounded-lg bg-danger-600 hover:bg-danger-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              {loading ? 'Deleting...' : 'Delete'}
-            </button>
-          </ModalFooter>
-        </Modal>
-      </PageTransition>
+        </QueryState>
+      </div>
+
+      <ReviewFormModal
+        isOpen={showModal}
+        review={selectedReview}
+        isSaving={isSaving}
+        onClose={closeModal}
+        onSubmit={handleFormSubmit}
+      />
+
+      <ConfirmDialog
+        isOpen={!!deletingReview}
+        onClose={() => setDeletingReview(null)}
+        onConfirm={handleDelete}
+        title="Delete Review?"
+        message="This action cannot be undone. The review will be permanently deleted."
+        confirmText="Delete"
+        type="danger"
+        loading={isDeleting}
+      />
     </AppLayout>
   );
 }

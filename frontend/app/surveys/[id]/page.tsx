@@ -38,6 +38,7 @@ import {
   Textarea,
 } from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Skeleton} from '@/components/ui/Skeleton';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useLaunchSurvey, useSurveyDetail} from '@/lib/hooks/queries/useSurveys';
@@ -174,7 +175,7 @@ export default function SurveyDetailPage() {
         {/* Back + Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => router.push('/surveys')}>
+            <Button variant="outline" size="sm" onClick={() => router.push('/surveys')} aria-label="Back">
               <ArrowLeft className={iconSize.button}/>
             </Button>
             <div>
@@ -208,7 +209,7 @@ export default function SurveyDetailPage() {
                 Analytics
               </Button>
               {isDraft && (
-                <Button onClick={handlePublish} disabled={launchMutation.isPending}>
+                <Button onClick={handlePublish} disabled={launchMutation.isPending} aria-label="Launch">
                   <Send className={`${iconSize.button} mr-2`}/>
                   Publish
                 </Button>
@@ -220,7 +221,7 @@ export default function SurveyDetailPage() {
         {/* Survey info cards */}
         {survey && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card className="card-aura">
+            <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
@@ -235,7 +236,7 @@ export default function SurveyDetailPage() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="card-aura">
+            <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-success-100 p-4 dark:bg-success-900">
@@ -248,7 +249,7 @@ export default function SurveyDetailPage() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="card-aura">
+            <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-accent-100 p-4 dark:bg-accent-900">
@@ -261,7 +262,7 @@ export default function SurveyDetailPage() {
                 </div>
               </CardContent>
             </Card>
-            <Card className="card-aura">
+            <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-warning-100 p-4 dark:bg-warning-900">
@@ -280,7 +281,7 @@ export default function SurveyDetailPage() {
         )}
 
         {/* Questions section */}
-        <Card className="card-aura">
+        <Card>
           <CardContent className="p-6">
             <div className="row-between mb-6">
               <h2 className={typography.sectionTitle}>
@@ -299,10 +300,7 @@ export default function SurveyDetailPage() {
             {isLoading ? (
               <div className="space-y-4">
                 {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="h-16 animate-pulse rounded-lg bg-[var(--bg-surface)]"
-                  />
+                  <Skeleton key={i} className="h-16 rounded-lg"/>
                 ))}
               </div>
             ) : !questions || questions.length === 0 ? (
@@ -331,13 +329,13 @@ export default function SurveyDetailPage() {
                         <div className="flex-1 min-w-0">
                           <p className={typography.body}>{question.questionText}</p>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="badge-status status-info text-xs">
+                            <Badge variant="info" className="text-xs">
                               {question.questionType ? question.questionType.replace('_', ' ') : '-'}
-                            </span>
+                            </Badge>
                             {question.isRequired && (
-                              <span className="badge-status status-warning text-xs">
+                              <Badge variant="warning" className="text-xs">
                                 Required
-                              </span>
+                              </Badge>
                             )}
                             {question.options && question.options.length > 0 && (
                               <span className={typography.caption}>
@@ -353,7 +351,7 @@ export default function SurveyDetailPage() {
                               variant="outline"
                               className="text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-900/20"
                               onClick={() => setDeleteConfirmId(question.id)}
-                            >
+                             aria-label="Delete">
                               <Trash2 className={iconSize.button}/>
                             </Button>
                           )}

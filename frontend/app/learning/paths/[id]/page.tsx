@@ -1,5 +1,6 @@
 'use client';
 
+import {Progress} from '@/components/ui';
 import {useEffect} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -9,6 +10,7 @@ import {AppLayout} from '@/components/layout';
 import {apiClient} from '@/lib/api/client';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {Card} from '@/components/ui/Card';
 
 interface LearningPath {
   id: string;
@@ -81,7 +83,7 @@ export default function LearningPathDetailPage() {
             description="This learning path could not be found."
           />
         ) : (
-          <div className="card-aura p-6 space-y-6">
+          <Card padding="md" className="space-y-6">
             <div>
               <h1 className="text-2xl font-bold text-[var(--text-primary)]">{path.title}</h1>
               {path.description && (
@@ -106,12 +108,7 @@ export default function LearningPathDetailPage() {
                   <span className="text-xs font-medium text-[var(--text-secondary)]">Progress</span>
                   <span className="text-xs font-bold text-[var(--text-primary)]">{path.progressPercentage}%</span>
                 </div>
-                <div className="w-full h-2 bg-[var(--bg-surface)] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-accent-600 transition-all duration-300"
-                    style={{width: `${path.progressPercentage}%`}}
-                  />
-                </div>
+                <Progress value={path.progressPercentage} label="Path progress"/>
               </div>
             )}
 
@@ -129,7 +126,7 @@ export default function LearningPathDetailPage() {
                 </>
               )}
             </button>
-          </div>
+          </Card>
         )}
       </div>
     </AppLayout>

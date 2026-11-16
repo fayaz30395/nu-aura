@@ -6,23 +6,56 @@
    NU-AURA DESIGN SYSTEM — Studio Slate
 
    Philosophy: Precision, Warmth, Clarity. Flat modern surfaces
-   with a vivid blue accent. Color is a functional signal, not
+   with a refined blue accent. Color is a functional signal, not
    decoration. No skeuomorphic depth — clean, purposeful, fast.
 
-   Anchor: #2952A3 (NU-AURA Blue, hue ~228 — vivid, accessible)
+   Anchor: neutral Apple-style system, refined blue accent #2563EB (dark #6EA8FE)
    Principle: Flat, modern, vibrant. Studio-grade precision.
    ================================================================ */
 
 @layer base {
   :root {
     /* ── Typography (Aura redesign) ────────────────────────────────
-       Offline-safe stacks: keep the Aura type hierarchy without making
-       production builds depend on runtime Google Fonts downloads. */
-    --font-sans: "Open Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-display: "Montserrat", "Open Sans", system-ui, sans-serif;
-    --font-mono: "Roboto Mono", "SF Mono", Monaco, Consolas, monospace;
+       --font-brand-* are set by next/font (self-hosted) on <html> in
+       app/layout.tsx. They must live on the same element as :root for these
+       stacks to resolve, so keep the next/font classes on <html>. */
+    --font-sans: var(--font-brand-sans, "Geist"), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-display: var(--font-brand-sans, "Geist"), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: var(--font-brand-mono, "Geist Mono"), ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     --font-body: var(--font-sans);
     --font-head: var(--font-display);
+
+    /* ── Type scale (design contract) ──
+       Tailwind text-2xs/3xs/xs/xl/title read these. Tailwind's text-sm/base/lg
+       keep their default sizes (14/16/18) so existing pages do not shift; the
+       contract sm/base/lg steps are available here as vars only. */
+    --font-size-2xs: 11px;   --line-height-2xs: 16px;
+    --font-size-xs: 12px;    --line-height-xs: 16px;
+    --font-size-sm: 13px;    --line-height-sm: 20px;
+    --font-size-base: 14px;  --line-height-base: 20px;
+    --font-size-lg: 16px;    --line-height-lg: 24px;
+    --font-size-xl: 20px;    --line-height-xl: 28px;
+    --font-size-title: 24px; --line-height-title: 32px;
+    --font-weight-heading: 600;
+    /* ── Display type tokens (Geist) ── */
+    --text-display: 40px;      --lh-display: 44px;      --tracking-display: -0.025em;
+    --text-page-heading: 30px; --lh-page-heading: 36px; --tracking-heading: -0.02em;
+    --text-section: 22px;      --lh-section: 28px;
+    --text-card: 17px;         --lh-card: 24px;
+    --text-body: 14px;         --lh-body: 20px;
+    --text-secondary-size: 13px;
+    --text-caption: 12px;      --lh-caption: 16px;
+
+    /* ── Radius (design contract) ── */
+    --radius-sm: 6px;   /* badges, inner input parts */
+    --radius-md: 8px;   /* buttons, inputs, menus */
+    --radius-lg: 12px;  /* cards, panels */
+    --radius-xl: 16px;  /* modals, drawers */
+
+    /* ── Control heights (design contract) ── */
+    --control-sm: 32px;
+    --control-md: 36px; /* default */
+    --control-lg: 40px;
 
     /* ════════════════════════════════════════════════════════════════
        LIGHT TOKENS (canonical default)
@@ -44,78 +77,110 @@
        ════════════════════════════════════════════════════════════════ */
 
     /* ── Aura accent scale (NU-AURA Blue, hue ~228) ── */
-    --aura-accent-50:  #f0f3fc;
-    --aura-accent-100: #dce3f8;
-    --aura-accent-200: #bcc9f2;
-    --aura-accent-300: #92a8e8;
-    --aura-accent-400: #6884dc;
-    --aura-accent-500: #4463cf;
-    --aura-accent-600: #3350b8;
-    --aura-accent-700: #2952A3;
-    --aura-accent-800: #244288;
-    --aura-accent-900: #1d356d;
-    --aura-accent-950: #121f44;
+    --aura-accent-50:  #eff4ff;
+    --aura-accent-100: #dbe7fe;
+    --aura-accent-200: #bfd3fd;
+    --aura-accent-300: #93b4fa;
+    --aura-accent-400: #6ea8fe;
+    --aura-accent-500: #3b82f6;
+    --aura-accent-600: #2563eb;
+    --aura-accent-700: #1d4ed8;
+    --aura-accent-800: #1e40af;
+    --aura-accent-900: #1e3a8a;
+    --aura-accent-950: #172554;
+    /* RGB triplets of the scale above, consumed by tailwind.config.js as
+       rgb(var(--x-rgb) / <alpha-value>). Must stay equal to the hex values;
+       enforced by lib/theme/__tests__/tokens.test.ts. */
+    --aura-accent-50-rgb: 239 244 255;
+    --aura-accent-100-rgb: 219 231 254;
+    --aura-accent-200-rgb: 191 211 253;
+    --aura-accent-300-rgb: 147 180 250;
+    --aura-accent-400-rgb: 110 168 254;
+    --aura-accent-500-rgb: 59 130 246;
+    --aura-accent-600-rgb: 37 99 235;
+    --aura-accent-700-rgb: 29 78 216;
+    --aura-accent-800-rgb: 30 64 175;
+    --aura-accent-900-rgb: 30 58 138;
+    --aura-accent-950-rgb: 23 37 84;
 
     /* ── Aura brand (NULogic) — brand moments only ── */
-    --nu-grad-brand: linear-gradient(120deg, #ED3027 0%, #b53a86 52%, #7B469B 100%);
-    --nu-grad-primary: linear-gradient(135deg, #3a63bd 0%, #244288 100%);
+    --nu-grad-brand: linear-gradient(#2563EB, #2563EB);
+    --nu-grad-primary: linear-gradient(#2563EB, #2563EB);
 
     /* ── Aura product accents (bundle rail) ── */
-    --prod-hrms: #4463cf;
-    --prod-hire: #0ea5a3;
-    --prod-grow: #d97706;
-    --prod-fluence: #8b5cf6;
+    --prod-hrms: #2563EB;
+    --prod-hire: #0F8F8A;
+    --prod-grow: #B7791F;
+    --prod-fluence: #7C5CC4;
+    --prod-hrms-rgb: 37 99 235;
+    --prod-hire-rgb: 15 143 138;
+    --prod-grow-rgb: 183 121 31;
+    --prod-fluence-rgb: 124 92 196;
 
     /* ── Aura semantic surfaces (light) ── */
     /* Deepened to a distinct dark navy (was #2952A3) so the brand reads as
        "dark blue" rather than mid blue, per the NuLogic gradient/white/dark-blue
        palette direction — reuses the existing accent-800/900 ramp values so
        contrast is already verified. */
-    --accent: #244288;
-    --accent-hover: #1d356d;
-    --accent-soft: #eef2fc;
-    --accent-text: #244288;
+    --accent: #2563EB;
+    --accent-hover: #1D4ED8;
+    --accent-rgb: 37 99 235;
+    --accent-hover-rgb: 29 78 216;
+    --accent-soft: #EAF0FE;
+    --accent-text: #1D4ED8;
+    --surface-elevated: #FFFFFF;
+    --text-tertiary: var(--text-3);
+    --accent-subtle: var(--accent-soft);
+    --focus-ring: var(--ring);
+    --overlay: var(--bg-overlay);
+    --sh-overlay: 0 12px 32px rgba(17, 17, 19, 0.16);
 
-    --bg-app: #f4f6fb;
-    --bg-canvas: #f9fafd;
-    --surface: #ffffff;
-    --surface-aura-2: #f4f6fb;
-    --surface-hover: #eef1f8;
-    --surface-sunken: #f0f3f9;
-    --rail: #0c1120;
-    --rail-2: #0a0e1a;
-    --nav: #0f1424;
-    --nav-soft: rgba(255, 255, 255, 0.05);
-    --nav-active: rgba(88, 121, 224, 0.18);
+    --bg-app: #F5F5F7;
+    --bg-canvas: #FAFAFC;
+    --surface: #FFFFFF;
+    --surface-aura-2: #FAFAFC;
+    --surface-hover: #EFEFF2;
+    --surface-sunken: #EFEFF2;
+    --rail: #141416;
+    --rail-2: #0E0E10;
+    --nav: #1D1D1F;
+    --nav-soft: rgba(255, 255, 255, 0.06);
+    --nav-active: rgba(255, 255, 255, 0.12);
 
-    --text-1: #0e1225;
-    --text-2: #3a3f57;
-    --text-3: #6b7190;
-    --on-rail: #aeb4cc;
-    --on-rail-dim: #787f9e; /* a11y: WCAG AA (>=4.5:1) on the warm-dark rail */
+    --text-1: #1D1D1F;
+    --text-2: #48484D;
+    --text-3: #68686D;
+    --on-rail: #C7C7CC;
+    --on-rail-dim: #A1A1AA; /* a11y: WCAG AA (>=4.5:1) on the warm-dark rail */
 
-    --border: #e4e7f0;
-    --border-soft: #eef0f6;
-    --border-aura-strong: #d4d8e6;
+    --border: #E5E5EA;
+    --border-soft: #EEEEF2;
+    --border-aura-strong: #D1D1D6;
 
     /* ── Aura status ── */
-    --ok-bg: #effaf3;   --ok-fg: #167c45;   --ok-bd: #c9eed7;
-    --warn-bg: #fff7ec; --warn-fg: #b15a09; --warn-bd: #fbe2bd;
-    --err-bg: #fef1f1;  --err-fg: #cf2f2f;  --err-bd: #fbd5d5;
-    --info-bg: #eef2fc; --info-fg: #2952A3; --info-bd: #d3def7;
-    --neutral-bg: #eef1f6; --neutral-fg: #4e5270; --neutral-bd: #e0e4ee;
+    --ok-bg: #EAF6EF;   --ok-fg: #1F7A45;   --ok-bd: #C8E6D4;
+    --warn-bg: #FFF6E5; --warn-fg: #8F5F12; --warn-bd: #F3DDB0;
+    --err-bg: #FCEDEF;  --err-fg: #C62F3E;  --err-bd: #F4CBD0;
+    --info-bg: #EDF1F8; --info-fg: #44659A; --info-bd: #D3DDEC;
+    --neutral-bg: #EFEFF2; --neutral-fg: #55555B; --neutral-bd: #E0E0E5;
 
     /* ── Aura charts ── */
-    --chart-1: #2952A3;
-    --chart-2: #6884dc;
-    --chart-3: #0ea5a3;
-    --chart-4: #d97706;
+    --chart-1: #2563EB;
+    --chart-2: #6B7FA8;
+    --chart-3: #1F8A4C;
+    --chart-4: #B7791F;
     --chart-5: var(--prod-fluence);
-    --chart-axis: #9aa0b8;
+    --chart-axis: #8E8E93;
 
-    /* ── Aura radii ── */
-    --r-xs: 5px; --r-sm: 7px; --r-md: 9px; --r-lg: 12px; --r-xl: 16px; --r-2xl: 22px; --r-full: 999px;
-    --r-control: 12px;       /* buttons / inputs — matches DESIGN.md control radius + the .btn-* (rounded-xl) classes */
+    /* ── Aura radii → aliased to the contract radius scale ── */
+    --r-xs: 4px;
+    --r-sm: var(--radius-sm);
+    --r-md: var(--radius-md);
+    --r-lg: var(--radius-lg);
+    --r-xl: var(--radius-xl);
+    --r-2xl: 22px;
+    --r-full: 999px;
+    --r-control: var(--radius-md); /* buttons / inputs: Mantine, ui/Button, .btn-*, .input-aura */
 
     /* ── Aura spacing (4px base) ── */
     --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
@@ -126,7 +191,7 @@
     --sh-md: 0 1px 0 rgba(255, 255, 255, 0.55) inset, 0 2px 6px rgba(16, 22, 44, 0.06), 0 8px 22px rgba(16, 22, 44, 0.07);
     --sh-lg: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 12px 34px rgba(16, 22, 44, 0.12), 0 4px 10px rgba(16, 22, 44, 0.06);
     --sh-pop: 0 18px 50px rgba(12, 18, 40, 0.22), 0 6px 16px rgba(12, 18, 40, 0.12);
-    --ring: rgba(41, 82, 163, 0.22);
+    --ring: rgba(37, 99, 235, 0.35);
     --sh-focus: 0 0 0 3px var(--ring);
     --inset-input: inset 0 1px 2px rgba(16, 22, 44, 0.05);
 
@@ -142,9 +207,9 @@
     --ease: var(--ease-standard);
 
     /* ── Aura type metrics (page title / stat value / micro-label) ── */
-    --aura-title-size: 28px;
-    --aura-title-weight: 700;
-    --aura-title-tracking: -0.02em;
+    --aura-title-size: var(--font-size-title);
+    --aura-title-weight: var(--font-weight-heading);
+    --aura-title-tracking: -0.01em;
     --aura-stat-size: 29px;
     --aura-stat-weight: 700;
     --aura-micro-size: 10.5px;
@@ -170,7 +235,7 @@
     /* ── NULogic Gradients (Aura brand moments) ──────── */
     --nu-gradient-logo: var(--nu-grad-brand);
     --nu-gradient-primary: var(--nu-grad-primary);
-    --nu-gradient-dark: linear-gradient(150deg, #0c1120 0%, #14193a 55%, #2a1d49 100%);
+    --nu-gradient-dark: linear-gradient(#1C1C1F, #1C1C1F);
     --nu-gradient-brand: var(--nu-grad-brand);
 
     /* ── Surface Hierarchy → ALIASED to Aura surfaces ──────────────
@@ -183,13 +248,12 @@
     --bg-page: var(--bg-app);            /* #f4f6fb */
     --bg-input: var(--surface);          /* #ffffff */
     --bg-sidebar: var(--nav);            /* #0f1424 — Aura nav panel */
-    --bg-overlay: rgba(12, 17, 32, 0.42);
+    --bg-overlay: rgba(17, 17, 19, 0.42);
     --surface-2: var(--surface-aura-2);  /* #f4f6fb */
-    --skeleton-base: #e7eaf3;
+    --skeleton-base: #E8E8ED;
 
     /* ── Background Atmosphere (Aura accent wash) ─────────────── */
-    --bg-pattern: radial-gradient(1000px 500px at 0% 0%, rgba(41, 82, 163, 0.04), transparent 60%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), var(--bg-app) 50%);
+    --bg-pattern: linear-gradient(var(--bg-app), var(--bg-app));
     --bg-pattern-size: auto, auto;
 
     /* ── Text Hierarchy → ALIASED to Aura text ramp ──────────── */
@@ -230,8 +294,8 @@
        dark-blue direction, applied via bg-[image:var(...)] in Button.tsx and
        .btn-primary below so it never breaks any existing background-color-only
        consumer of --btn-primary-bg. */
-    --btn-primary-gradient: linear-gradient(135deg, #3a63bd 0%, #1d356d 100%);
-    --btn-primary-gradient-hover: linear-gradient(135deg, #4463cf 0%, #244288 100%);
+    --btn-primary-gradient: none;
+    --btn-primary-gradient-hover: none;
 
     /* ── Sidebar → ALIASED to Aura nav rail ──────────────────── */
     --sidebar-active-bg: var(--nav-active);
@@ -252,13 +316,13 @@
     --radius-shell: 1.35rem;
     --radius-panel: 1rem;
     --radius-pill: 999px;
-    --shell-gradient-start: #f0f3fc;
-    --shell-gradient-end: #eef2fc;
+    --shell-gradient-start: #F5F5F7;
+    --shell-gradient-end: #EFEFF2;
 
     /* ── Ring / Focus → ALIASED to Aura ring ─────────────────── */
     --ring-primary: var(--ring);
-    --ring-danger: rgba(207, 47, 47, 0.25);
-    --ring-success: rgba(22, 124, 69, 0.25);
+    --ring-danger: rgba(198, 47, 62, 0.30);
+    --ring-success: rgba(31, 122, 69, 0.30);
 
     /* ── Semantic Colors → ALIASED to Aura status ────────────── */
     --status-success-bg: var(--ok-bg);
@@ -278,7 +342,7 @@
     --status-neutral-border: var(--neutral-bd);
 
     /* ── Header → ALIASED to translucent Aura surface ────────── */
-    --header-bg: rgba(255, 255, 255, 0.85);
+    --header-bg: rgba(245, 245, 247, 0.85);
     --header-border: var(--border);
     --header-text: var(--text-1);
     --header-text-muted: var(--text-3);
@@ -306,7 +370,7 @@
     --gradient-skeuo-button: none;
     --gradient-skeuo-card: none;
     --glass-bg: rgba(255, 255, 255, 0.92);
-    --glass-border: rgba(41, 82, 163, 0.12);
+    --glass-border: rgba(29, 29, 31, 0.08);
     --glass-blur: 14px;
     --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
 
@@ -319,7 +383,7 @@
     --chart-info: var(--chart-3);       /* #0ea5a3 */
     --chart-accent: var(--chart-5);     /* #8b5cf6 */
     --chart-muted: var(--border-aura-strong);
-    --chart-grid: #eaecf3;
+    --chart-grid: #E8E8ED;
     --chart-tooltip-bg: var(--surface);
     --chart-tooltip-border: var(--border);
     --chart-tooltip-text: var(--text-1);
@@ -331,16 +395,19 @@
        single source of truth — keep Framer Motion in sync via
        lib/animation.ts.
        ──────────────────────────────────────────────────────────── */
-    --motion-fast: 120ms;
-    --motion-base: 200ms;
-    --motion-slow: 320ms;
-    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --motion-fast: 150ms;  /* hover, press, toggle — ease-standard */
+    --motion-base: 200ms;  /* popover, toast, content enter — ease-out */
+    --motion-slow: 250ms;  /* drawer, modal — ease-out */
+    --motion-stagger: 30ms;
+    --motion-stagger-max: 5; /* index cap: at most 6 children are offset */
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --ease-out-expo: cubic-bezier(0.2, 0, 0, 1);
+    --ease-out: var(--ease-out-expo);
     /* De-bounced to ease-out-expo. The brand is calm and quietly confident, so
        bounce/elastic easing is banned (DESIGN.md). The name is kept for its call
        sites (Sidebar, MobileBottomNav, .motion-scale-in); the curve no longer
        overshoots. */
-    --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.2, 0, 0, 1);
 
     /* Elevation tokens (flat Studio Slate — alias the 3-tier system
        so downstream agents can use a stable, intent-named scale). */
@@ -350,7 +417,7 @@
     --shadow-hover: var(--shadow-card-hover);
 
     /* Distances for entrance motion (compositor-friendly transform). */
-    --motion-rise-distance: 8px;
+    --motion-rise-distance: 4px;
     --motion-lift-distance: -2px;
     --motion-press-scale: 0.98;
 
@@ -436,47 +503,55 @@
   .dark,
   :root[data-theme="dark"] {
     /* ── Aura dark base tokens ── */
-    --accent: #6884dc;
-    --accent-hover: #7e96e4;
-    --accent-soft: rgba(104, 132, 220, 0.14);
-    --accent-text: #92a8e8;
+    --accent: #6EA8FE;
+    --accent-hover: #8DBBFF;
+    --accent-rgb: 110 168 254;
+    --accent-hover-rgb: 141 187 255;
+    --accent-soft: rgba(110, 168, 254, 0.14);
+    --accent-text: #8DBBFF;
+    --surface-elevated: #2C2C30;
+    --sh-overlay: 0 12px 32px rgba(0, 0, 0, 0.5);
 
-    --bg-app: #070a14;
-    --bg-canvas: #0a0e1a;
-    --surface: #11162a;
-    --surface-aura-2: #0d1322;
-    --surface-hover: #182040;
-    --surface-sunken: #0a0e1a;
-    --rail: #06080f;
-    --rail-2: #04060c;
-    --nav: #080b16;
-    --nav-soft: rgba(255, 255, 255, 0.04);
-    --nav-active: rgba(104, 132, 220, 0.20);
+    --bg-app: #111113;
+    --bg-canvas: #141416;
+    --surface: #1C1C1F;
+    --surface-aura-2: #242428;
+    --surface-hover: #2C2C30;
+    --surface-sunken: #0E0E10;
+    --rail: #0E0E10;
+    --rail-2: #0A0A0B;
+    --nav: #17171A;
+    --nav-soft: rgba(255, 255, 255, 0.05);
+    --nav-active: rgba(255, 255, 255, 0.12);
 
-    --text-1: #eef1f9;
-    --text-2: #b7bdd4;
-    --text-3: #7e85a3;
-    --on-rail: #aeb4cc;
-    --on-rail-dim: #787f9e; /* a11y: WCAG AA (>=4.5:1) on the warm-dark rail */
+    --text-1: #F5F5F7;
+    --text-2: #D1D1D6;
+    --text-3: #A1A1AA;
+    --on-rail: #C7C7CC;
+    --on-rail-dim: #A1A1AA; /* a11y: WCAG AA (>=4.5:1) on the warm-dark rail */
 
-    --border: #1e2540;
-    --border-soft: #161c33;
-    --border-aura-strong: #2b3358;
+    --border: #34343A;
+    --border-soft: #2A2A2F;
+    --border-aura-strong: #44444B;
 
-    --ok-bg: rgba(22, 124, 69, 0.16);  --ok-fg: #57d08c;  --ok-bd: rgba(22, 124, 69, 0.34);
-    --warn-bg: rgba(177, 90, 9, 0.16); --warn-fg: #f0a955; --warn-bd: rgba(177, 90, 9, 0.34);
-    --err-bg: rgba(207, 47, 47, 0.16); --err-fg: #f08484; --err-bd: rgba(207, 47, 47, 0.34);
-    --info-bg: rgba(104, 132, 220, 0.14); --info-fg: #92a8e8; --info-bd: rgba(104, 132, 220, 0.30);
-    --neutral-bg: rgba(255, 255, 255, 0.06); --neutral-fg: #b7bdd4; --neutral-bd: rgba(255, 255, 255, 0.10);
+    --ok-bg: rgba(76, 195, 138, 0.14);  --ok-fg: #4CC38A;  --ok-bd: rgba(76, 195, 138, 0.30);
+    --warn-bg: rgba(229, 181, 103, 0.14); --warn-fg: #E5B567; --warn-bd: rgba(229, 181, 103, 0.30);
+    --err-bg: rgba(240, 112, 124, 0.14); --err-fg: #F0707C; --err-bd: rgba(240, 112, 124, 0.30);
+    --info-bg: rgba(143, 169, 212, 0.14); --info-fg: #8FA9D4; --info-bd: rgba(143, 169, 212, 0.30);
+    --neutral-bg: rgba(255, 255, 255, 0.06); --neutral-fg: #D1D1D6; --neutral-bd: rgba(255, 255, 255, 0.10);
 
-    --chart-axis: #5b6280;
+    --chart-axis: #6E6E73;
+    --chart-3: #4CC38A;
+    --chart-4: #E5B567;
+    --chart-1: #6EA8FE;
+    --chart-2: #8FA9D4;
 
     --sh-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
     --sh-sm: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 1px 3px rgba(0, 0, 0, 0.5);
     --sh-md: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.55);
     --sh-lg: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 16px 40px rgba(0, 0, 0, 0.6);
     --sh-pop: 0 24px 60px rgba(0, 0, 0, 0.7), 0 8px 18px rgba(0, 0, 0, 0.5);
-    --ring: rgba(104, 132, 220, 0.32);
+    --ring: rgba(110, 168, 254, 0.40);
     --inset-input: inset 0 1px 2px rgba(0, 0, 0, 0.35);
 
     /* ── Surface Hierarchy → ALIASED to Aura dark surfaces ──── */
@@ -488,13 +563,12 @@
     --bg-page: var(--bg-app);            /* #070a14 */
     --bg-input: var(--surface);          /* #11162a */
     --bg-sidebar: var(--nav);            /* #080b16 */
-    --bg-overlay: rgba(4, 6, 12, 0.80);
+    --bg-overlay: rgba(0, 0, 0, 0.60);
     --surface-2: var(--surface-aura-2);  /* #0d1322 */
-    --skeleton-base: #1a2138;
+    --skeleton-base: #2A2A2F;
 
     /* ── Background Atmosphere (Deep Aura wash) ──────────────── */
-    --bg-pattern: radial-gradient(800px 400px at 0% 0%, rgba(104, 132, 220, 0.08), transparent 60%),
-    linear-gradient(180deg, var(--bg-app), var(--bg-app) 50%);
+    --bg-pattern: linear-gradient(var(--bg-app), var(--bg-app));
     --bg-pattern-size: auto, auto;
 
     /* ── Text Hierarchy → ALIASED to Aura dark text ramp ────── */
@@ -511,17 +585,17 @@
     --border-focus: var(--accent);         /* #6884dc */
 
     /* ── Accent Scale (Dark — Aura: lighter steps for visibility) ── */
-    --accent-50: rgba(104, 132, 220, 0.10);
-    --accent-100: rgba(104, 132, 220, 0.18);
-    --accent-200: #1d356d;
-    --accent-300: #244288;
-    --accent-400: #3350b8;
-    --accent-500: #4463cf;
-    --accent-600: #6884dc;
-    --accent-700: #92a8e8;
-    --accent-800: #bcc9f2;
-    --accent-900: #dce3f8;
-    --accent-950: #f0f3fc;
+    --accent-50: rgba(110, 168, 254, 0.10);
+    --accent-100: rgba(110, 168, 254, 0.18);
+    --accent-200: #1E3A8A;
+    --accent-300: #1E40AF;
+    --accent-400: #1D4ED8;
+    --accent-500: #2563EB;
+    --accent-600: #6EA8FE;
+    --accent-700: #8DBBFF;
+    --accent-800: #BFD3FD;
+    --accent-900: #DBE7FE;
+    --accent-950: #EFF4FF;
     --accent-primary: var(--accent);          /* #6884dc */
     --accent-primary-hover: var(--accent-hover); /* #7e96e4 */
     --accent-primary-subtle: var(--accent-soft);
@@ -529,10 +603,10 @@
        failing WCAG AA on filled buttons. Deepen the *button fill* to a still-
        saturated blue (#4463cf → 5.3:1) while leaving accent text/borders/rings
        on the brighter #6884dc, which need to stay light against dark surfaces. */
-    --btn-primary-bg: var(--aura-accent-500);   /* #4463cf — white label 5.3:1 */
-    --btn-primary-bg-hover: var(--aura-accent-600); /* #3350b8 — white label 7.0:1 */
-    --btn-primary-gradient: linear-gradient(135deg, #4463cf 0%, #244288 100%);
-    --btn-primary-gradient-hover: linear-gradient(135deg, #6884dc 0%, #3350b8 100%);
+    --btn-primary-bg: var(--aura-accent-600);   /* #4463cf — white label 5.3:1 */
+    --btn-primary-bg-hover: var(--aura-accent-700); /* #3350b8 — white label 7.0:1 */
+    --btn-primary-gradient: linear-gradient(135deg, #CF222B 0%, #A31B23 100%);
+    --btn-primary-gradient-hover: linear-gradient(135deg, #E62A32 0%, #B81D26 100%);
 
     /* ── Sidebar → ALIASED to Aura dark nav rail ───────────── */
     --sidebar-active-bg: var(--nav-active);
@@ -553,8 +627,8 @@
 
     /* ── Ring / Focus → ALIASED to Aura dark ring ──────────── */
     --ring-primary: var(--ring);
-    --ring-danger: rgba(240, 132, 132, 0.35);
-    --ring-success: rgba(87, 208, 140, 0.35);
+    --ring-danger: rgba(240, 112, 124, 0.35);
+    --ring-success: rgba(76, 195, 138, 0.35);
 
     /* ── Semantic Colors → ALIASED to Aura dark status ─────── */
     --status-success-bg: var(--ok-bg);
@@ -574,7 +648,7 @@
     --status-neutral-border: var(--neutral-bd);
 
     /* ── Header → ALIASED to translucent Aura dark surface ─── */
-    --header-bg: rgba(7, 10, 20, 0.85);
+    --header-bg: rgba(17, 17, 19, 0.85);
     --header-border: var(--border);
     --header-text: var(--text-1);
     --header-text-muted: var(--text-3);
@@ -601,8 +675,8 @@
     --gradient-skeuo-surface: none;
     --gradient-skeuo-button: none;
     --gradient-skeuo-card: none;
-    --glass-bg: rgba(17, 22, 42, 0.90);
-    --glass-border: rgba(104, 132, 220, 0.12);
+    --glass-bg: rgba(28, 28, 31, 0.90);
+    --glass-border: rgba(255, 255, 255, 0.08);
     --glass-blur: 14px;
     --skeuo-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 
@@ -615,14 +689,14 @@
     --chart-info: var(--chart-3);       /* #0ea5a3 */
     --chart-accent: var(--chart-5);     /* #8b5cf6 */
     --chart-muted: var(--border-aura-strong);
-    --chart-grid: #1a2138;
+    --chart-grid: #2A2A2F;
     --chart-tooltip-bg: var(--surface);
     --chart-tooltip-border: var(--border);
     --chart-tooltip-text: var(--text-1);
     --radius-shell: 1.35rem;
     --radius-panel: 1rem;
     --radius-pill: 999px;
-    --shell-gradient-start: rgba(104, 132, 220, 0.08);
+    --shell-gradient-start: rgba(110, 168, 254, 0.08);
     --shell-gradient-end: var(--bg-app);
   }
 
@@ -631,8 +705,8 @@
   *::before,
   *::after {
     transition-property: background-color, border-color, color, fill, stroke;
-    transition-duration: 180ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: var(--motion-fast);
+    transition-timing-function: var(--ease-standard);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -640,6 +714,9 @@
     *::before,
     *::after {
       transition-duration: 0ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
     }
   }
 
@@ -670,17 +747,20 @@
     @apply font-semibold tracking-tight;
     color: var(--text-heading);
     font-family: var(--font-head), var(--font-body), system-ui, sans-serif;
-    letter-spacing: -0.01em;
+    letter-spacing: var(--tracking-heading);
     line-height: 1.2;
   }
 
   h1 {
-    font-size: clamp(1.75rem, 2.15vw, 2.85rem);
-    letter-spacing: -0.03em;
+    font-size: var(--font-size-title);
+    line-height: var(--line-height-title);
+    font-weight: var(--font-weight-heading);
   }
 
   h2 {
-    font-size: clamp(1.45rem, 1.8vw, 2rem);
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-xl);
+    font-weight: var(--font-weight-heading);
   }
 
   h3 {
@@ -713,7 +793,7 @@
   /* ── Page Enter Animation ─────────────────────────────────── */
   @media (prefers-reduced-motion: no-preference) {
     main {
-      animation: pageEnter 260ms ease-out;
+      animation: pageEnter var(--motion-base) var(--ease-out);
     }
   }
 }
@@ -837,7 +917,7 @@
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    background: linear-gradient(140deg, rgba(41, 82, 163, 0.10), transparent 45%);
+    background: linear-gradient(140deg, rgba(37, 99, 235, 0.10), transparent 45%);
     opacity: 0.7;
   }
 
@@ -867,15 +947,15 @@
 
   .auth-shell .shell-panel,
   .auth-shell .shell-panel:hover {
-    border-color: rgba(41, 82, 163, 0.26);
-    box-shadow: var(--shadow-card), 0 0 0 1px rgba(41, 82, 163, 0.14) inset;
+    border-color: rgba(37, 99, 235, 0.26);
+    box-shadow: var(--shadow-card), 0 0 0 1px rgba(37, 99, 235, 0.14) inset;
   }
 
   .auth-shell .shell-panel:hover {
-    border-color: rgba(41, 82, 163, 0.36);
+    border-color: rgba(37, 99, 235, 0.36);
     box-shadow:
       var(--shadow-card-hover),
-      0 0 0 1px rgba(41, 82, 163, 0.2) inset;
+      0 0 0 1px rgba(37, 99, 235, 0.2) inset;
   }
 
   .page-shell-centered {
@@ -1249,18 +1329,20 @@
   .text-stat-large {
     @apply text-3xl font-semibold tabular-nums;
     color: var(--text-primary);
-    font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
   }
 
   .text-stat-medium {
     @apply text-2xl font-semibold tabular-nums;
     color: var(--text-primary);
-    font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
   }
 
   /* ── Form Input (Flat, clean) ────────────────────────────────── */
   .input-aura {
-    @apply w-full h-9 px-3.5 text-sm rounded-xl;
+    @apply w-full h-9 px-3.5 text-sm rounded-[var(--r-control)];
     background-color: var(--bg-input);
     border: 1px solid var(--border-main);
     color: var(--text-primary);
@@ -1283,12 +1365,12 @@
 
   /* ── Button System (Flat, solid, clean states) ───────────────── */
   .btn-primary {
-    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-xl;
+    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-[var(--r-control)];
     background-color: var(--btn-primary-bg);
     background-image: var(--btn-primary-gradient);
     color: #ffffff;
     border: none;
-    box-shadow: 0 1px 2px rgba(41, 82, 163, 0.25), 0 2px 8px rgba(41, 82, 163, 0.18);
+    box-shadow: 0 1px 2px rgba(37, 99, 235, 0.25), 0 2px 8px rgba(37, 99, 235, 0.18);
     transition: background-color 180ms ease-out, background-image 180ms ease-out, transform 100ms ease-out, box-shadow 120ms ease-out, filter 180ms ease-out;
   }
 
@@ -1304,7 +1386,7 @@
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-xl;
+    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-[var(--r-control)];
     background-color: var(--bg-card);
     color: var(--text-primary);
     border: 1px solid var(--border-main);
@@ -1323,7 +1405,7 @@
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-xl;
+    @apply inline-flex items-center justify-center px-3.5 h-9 text-sm font-semibold rounded-[var(--r-control)];
     background-color: transparent;
     color: var(--text-secondary);
     border: none;
@@ -1539,24 +1621,13 @@
 }
 
 @layer utilities {
-  /* ── Typography Micro-Scale Utilities ──────────────────────── */
-  .text-2xs {
-    font-size: 0.625rem; /* 10px */
-    line-height: 0.875rem; /* 14px */
-  }
-
-  .text-3xs {
-    font-size: 0.6875rem; /* 11px */
-    line-height: 1rem; /* 16px */
-  }
-
   /* ── Numeric utility (Aura) ──────────────────────────────────
      Apply to ALL numeric contexts — money, IDs, stats, counts.
-     Roboto Mono + tabular-nums = aligned, non-jittering figures. */
+     Geist Sans + tabular-nums = aligned, non-jittering figures. */
   .num,
   .tabular-nums,
   .tnum {
-    font-family: var(--font-mono), ui-monospace, "SF Mono", Menlo, monospace;
+    font-family: var(--font-sans), system-ui, sans-serif;
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum" 1;
   }
@@ -1569,12 +1640,13 @@
     font-size: var(--aura-title-size);
     font-weight: var(--aura-title-weight);
     letter-spacing: var(--aura-title-tracking);
-    line-height: 1.15;
+    line-height: var(--line-height-title);
     color: var(--text-1);
   }
 
   .text-aura-stat {
-    font-family: var(--font-mono), ui-monospace, Menlo, monospace;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
     font-size: var(--aura-stat-size);
     font-weight: var(--aura-stat-weight);
     font-variant-numeric: tabular-nums;
@@ -1591,44 +1663,18 @@
 
   /* ── Staggered Reveal (Purposeful Motion) ────────────────────── */
   .page-reveal {
-    animation: riseIn 280ms ease-out both;
+    animation: fade-rise var(--motion-base) var(--ease-out) both;
   }
 
   .stagger-children > * {
-    animation: riseIn 320ms ease-out both;
+    animation: fade-rise var(--motion-base) var(--ease-out) both;
   }
 
-  .stagger-children > *:nth-child(1) {
-    animation-delay: 0ms;
-  }
-
-  .stagger-children > *:nth-child(2) {
-    animation-delay: 60ms;
-  }
-
-  .stagger-children > *:nth-child(3) {
-    animation-delay: 120ms;
-  }
-
-  .stagger-children > *:nth-child(4) {
-    animation-delay: 180ms;
-  }
-
-  .stagger-children > *:nth-child(5) {
-    animation-delay: 240ms;
-  }
-
-  .stagger-children > *:nth-child(6) {
-    animation-delay: 300ms;
-  }
-
-  .stagger-children > *:nth-child(7) {
-    animation-delay: 360ms;
-  }
-
-  .stagger-children > *:nth-child(8) {
-    animation-delay: 420ms;
-  }
+  .stagger-children > *:nth-child(2) { animation-delay: calc(var(--motion-stagger) * 1); }
+  .stagger-children > *:nth-child(3) { animation-delay: calc(var(--motion-stagger) * 2); }
+  .stagger-children > *:nth-child(4) { animation-delay: calc(var(--motion-stagger) * 3); }
+  .stagger-children > *:nth-child(5) { animation-delay: calc(var(--motion-stagger) * 4); }
+  .stagger-children > *:nth-child(n+6) { animation-delay: calc(var(--motion-stagger) * var(--motion-stagger-max)); }
 
   @media (prefers-reduced-motion: reduce) {
     .page-reveal,
@@ -1742,7 +1788,7 @@
      - .link-underline     accent underline that grows on hover/focus
      ════════════════════════════════════════════════════════════════ */
   .motion-rise {
-    animation: fade-rise var(--motion-slow) var(--ease-out-expo) both;
+    animation: fade-rise var(--motion-base) var(--ease-out) both;
   }
 
   .motion-fade {
@@ -1940,18 +1986,18 @@ html, body {
 @keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.995);
+    transform: translateY(var(--motion-rise-distance));
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes riseIn {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(var(--motion-rise-distance));
   }
   to {
     opacity: 1;
@@ -1971,7 +2017,7 @@ html, body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(var(--motion-rise-distance));
   }
   to {
     opacity: 1;
@@ -1983,7 +2029,7 @@ html, body {
 @keyframes fade-rise {
   from {
     opacity: 0;
-    transform: translateY(var(--motion-rise-distance, 8px));
+    transform: translateY(var(--motion-rise-distance, 4px));
   }
   to {
     opacity: 1;
@@ -2011,15 +2057,6 @@ html, body {
   }
 }
 
-@keyframes panelFloat {
-  0%, 100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -10px, 0);
-  }
-}
-
 /* ── Shimmer Loading Skeleton ──────────────────────────────────────── */
 .skeleton-shimmer {
   position: relative;
@@ -2043,19 +2080,12 @@ html, body {
   animation: shimmer 1.8s ease-in-out infinite;
 }
 
+/* .float-subtle is intentionally a no-op: the contract bans infinite
+   decorative motion. The class stays so existing markup keeps compiling. */
 @media (prefers-reduced-motion: no-preference) {
   .fade-slide-up {
-    animation: fadeInUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: fade-rise var(--motion-base) var(--ease-out) both;
   }
-
-  .float-subtle {
-    animation: panelFloat 6s ease-in-out infinite;
-  }
-
-  .auth-shell .float-subtle {
-    animation: none;
-  }
-
 }
 
 :root .skeleton-shimmer::after {
@@ -2198,7 +2228,7 @@ html, body {
 .fluence-editor-content .ProseMirror a {
   color: var(--accent-primary);
   text-decoration: underline;
-  text-decoration-color: rgba(41, 82, 163, 0.3);
+  text-decoration-color: rgba(37, 99, 235, 0.3);
   text-underline-offset: 2px;
   cursor: pointer;
   transition: color 150ms ease-out, text-decoration-color 150ms ease-out;
@@ -2295,4 +2325,61 @@ html, body {
   a[href^="#"]::after {
     content: "";
   }
+}
+
+/* Active Mantine tab (replaces nested '&[data-active]' theme selector) */
+.mantine-Tabs-tab[data-active] {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ── Date pickers (@mantine/dates): accent selected day, subtle today marker ──
+   Mantine names the class per host component (mantine-DatePickerInput-day, ...). */
+button[class*="-day "] {
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  transition: background-color 150ms, color 150ms;
+}
+button[class*="-day "]:hover:not([data-selected]):not([data-in-range]):not([data-disabled]) {
+  background-color: var(--surface-hover);
+}
+button[class*="-day "][data-today]:not([data-selected]):not([data-in-range]) {
+  background-color: var(--accent-subtle);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+button[class*="-day "][data-in-range]:not([data-selected]) {
+  background-color: var(--accent-subtle);
+  color: var(--accent-text);
+  border-radius: 0;
+}
+button[class*="-day "][data-selected],
+button[class*="-day "][data-selected]:hover {
+  background-color: var(--btn-primary-bg);
+  color: #fff;
+}
+button[class*="-day "][data-outside],
+button[class*="-day "][data-disabled] {
+  color: var(--text-tertiary);
+}
+button[class*="-day "]:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+button[class*="-calendarHeaderControl"] {
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+}
+button[class*="-calendarHeaderLevel"] {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+[class*="-weekday "] {
+  color: var(--text-muted);
+}
+.mantine-Popover-dropdown:has([class*="-calendarHeader "]) {
+  background-color: var(--surface-elevated);
+  border-color: var(--border-subtle);
+  box-shadow: var(--sh-overlay);
+  border-radius: var(--radius-md);
 }

@@ -133,7 +133,7 @@ function PoliciesTab() {
         icon: <IconCheck size={14}/>
       });
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to publish policy', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -142,7 +142,7 @@ function PoliciesTab() {
       await archiveMutation.mutateAsync(policy.id);
       notifications.show({title: 'Archived', message: `${policy.name} has been archived`, color: 'gray'});
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to archive policy', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -257,7 +257,7 @@ function ChecklistsTab() {
         icon: <IconCheck size={14}/>
       });
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to complete checklist', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -347,7 +347,7 @@ function MyAcknowledgmentsTab() {
         icon: <IconCheck size={14}/>
       });
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to acknowledge policy', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -414,7 +414,7 @@ function AlertsTab() {
       await updateMutation.mutateAsync({id: alert.id, status: 'RESOLVED', resolution: 'Resolved via dashboard'});
       notifications.show({title: 'Resolved', message: alert.title, color: 'green', icon: <IconCheck size={14}/>});
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to resolve alert', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -423,7 +423,7 @@ function AlertsTab() {
       await escalateMutation.mutateAsync(alert.id);
       notifications.show({title: 'Escalated', message: alert.title, color: 'orange'});
     } catch {
-      notifications.show({title: 'Error', message: 'Failed to escalate alert', color: 'red'});
+      // The global MutationCache handler shows the error toast.
     }
   };
 

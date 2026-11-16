@@ -1,5 +1,6 @@
 'use client';
 
+import {Progress} from '@/components/ui';
 import React from 'react';
 import {useRouter} from 'next/navigation';
 import {Award, BookOpen, Download, Loader2, Play} from 'lucide-react';
@@ -45,7 +46,7 @@ export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTr
   return (
     <div className="space-y-4">
       {enrollments.map((enrollment) => (
-        <Card key={enrollment.id} className="card-aura">
+        <Card key={enrollment.id}>
           <CardContent className="p-4">
             <div className="flex justify-between items-start">
               <div className="flex-1">
@@ -69,12 +70,7 @@ export function MyTrainingsTab({enrollments, loading, onNavigateToCatalog}: MyTr
                       <span>Progress</span>
                       <span>{enrollment.attendancePercentage || 0}%</span>
                     </div>
-                    <div className="w-full bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full h-2">
-                      <div
-                        className="bg-accent-500 h-2 rounded-full transition-all duration-300"
-                        style={{width: `${enrollment.attendancePercentage || 0}%`}}
-                      />
-                    </div>
+                    <Progress value={enrollment.attendancePercentage || 0} label="Training progress"/>
                   </div>
                 )}
 

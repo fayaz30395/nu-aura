@@ -4,14 +4,8 @@ import {useEffect, useState} from 'react';
 import Link from 'next/link';
 import {ArrowRight, Calendar} from 'lucide-react';
 import {Reveal} from '@/components/motion';
-
-// wave-3 N: Safari <=16.1 lacks color-mix() support. Default to the
-// modern value on first paint (matches SSR), swap to rgba() after mount
-// on browsers that don't support it.
-function supportsColorMix(): boolean {
-  if (typeof window === 'undefined' || typeof CSS === 'undefined' || !CSS.supports) return true;
-  return CSS.supports('background', 'color-mix(in srgb, red, blue)');
-}
+import {buttonVariants} from '@/components/ui/Button';
+import {cn} from '@/lib/utils';
 
 interface LeaveBalance {
   leaveTypeId: string;
@@ -73,18 +67,10 @@ function CircularProgress({used, total}: { used: number; total: number }) {
 export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isHydrated, setIsHydrated] = useState(false);
-  // wave-3 N: fallback to rgba() on Safari <=16.1 (no color-mix support).
-  const [useFallback, setUseFallback] = useState(false);
   useEffect(() => {
     setIsHydrated(true);
-    if (!supportsColorMix()) setUseFallback(true);
   }, []);
   if (!isHydrated) return null;
-
-  // --accent-primary #2563EB ≈ rgb(37, 99, 235); 22% mix ≈ rgba(37, 99, 235, 0.22)
-  const buttonShadow = useFallback
-    ? '0 2px 8px rgba(37, 99, 235, 0.22)' // fallback for Safari <=16.1
-    : '0 2px 8px color-mix(in srgb, var(--accent-primary) 22%, transparent)';
 
   // Never fabricate balances: if the API returns none, show a truthful empty state
   // (matches the /leave page) instead of placeholder numbers.
@@ -159,17 +145,14 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
           <Link
             href="/leave/apply"
             prefetch={false}
-            className="block w-full rounded-aura-control py-2.5 text-center text-xs font-semibold text-white transition-all duration-200 bg-[var(--accent)] hover:shadow-sh-md hover:-translate-y-0.5 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
-            style={{
-              boxShadow: buttonShadow,
-            }}
+            className={cn(buttonVariants({variant: 'primary', size: 'md'}), 'w-full')}
           >
             Request Leave
           </Link>
           <Link
             href="/leave/my-leaves"
             prefetch={false}
-            className="block w-full rounded-aura-control border border-[var(--border)] py-2.5 text-center text-xs font-medium text-[var(--text-2)] hover:bg-[var(--surface-hover)] hover:border-[var(--border-aura-strong)] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+            className={cn(buttonVariants({variant: 'secondary', size: 'md'}), 'w-full')}
           >
             View All Balances
           </Link>

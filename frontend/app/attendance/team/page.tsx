@@ -2,72 +2,38 @@
 
 import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {
-  AlertCircle,
-  ArrowLeft,
-  CheckCircle,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  Download,
-  Fingerprint,
-  Globe,
-  Grid3X3,
-  List,
-  Printer,
-  RefreshCw,
-  Smartphone,
-  Users,
-  XCircle,
-} from 'lucide-react';
-import {EmptyState} from '@/components/ui/EmptyState';
+import {ActionIcon, Button, NativeSelect, TextInput} from '@mantine/core';
+import {ChevronLeft, ChevronRight, Download, Grid3X3, List, Printer, RefreshCw, Search, Users} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
-import {Reveal, Stagger, StaggerItem} from '@/components/motion';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
-import {Button} from '@/components/ui/Button';
-import {Input} from '@/components/ui/Input';
-import {Stat} from '@/components/ui/Stat';
-import {SkeletonCard, SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
+import {PageDeniedFallback} from '@/components/auth/PermissionGate';
+import {EmptyState} from '@/components/ui/EmptyState';
+import {PageHeader} from '@/components/ui/PageHeader';
+import {QueryState} from '@/components/ui/QueryState';
+import {Segmented} from '@/components/ui/Segmented';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
 import {AttendanceRecord} from '@/lib/types/hrms/attendance';
 import {getLocalDateString} from '@/lib/utils/dateUtils';
 import {useAttendanceByDate} from '@/lib/hooks/queries/useAttendance';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
-import dynamic from 'next/dynamic';
-import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
-import {formatDate, formatLongDate, formatWeekday, formatWeekdayDate} from '@/lib/utils/format/date';
-import {Loader2} from 'lucide-react';
+import {formatDate, formatLongDate, formatWeekday} from '@/lib/utils/format/date';
+import {
+  computeStatusStats,
+  exportTeamCsv,
+  filterAndSort,
+  SortConfig,
+  SortKey,
+  STATUS_FILTER_OPTIONS,
+} from './_components/teamAttendanceUtils';
+import {TeamAttendanceGrid, TeamAttendanceTable} from './_components/TeamAttendanceViews';
+import {TeamAttendanceStats, TeamStatusDistribution} from './_components/TeamAttendanceSummary';
 
-const TeamStatusChart = dynamic(
-  () => import('./TeamStatusChart'),
-  {loading: () => <ChartLoadingFallback/>, ssr: false}
-);
+const BREADCRUMBS = [{label: 'Attendance', href: '/attendance'}, {label: 'Team'}];
 
-interface StatusStats {
-  present: number;
-  absent: number;
-  late: number;
-  onLeave: number;
-  halfDay: number;
-  total: number;
-}
-
-interface SortConfig {
-  key: keyof AttendanceRecord | null;
-  direction: 'asc' | 'desc';
-}
-
-function TeamAttendanceGate({message}: {message: string}) {
-  return (
-    <AppLayout activeMenuItem="attendance">
-      <div className="flex min-h-[280px] items-center justify-center">
-        <div className="card-aura flex items-center gap-2 p-4">
-          <Loader2 className="h-4 w-4 animate-spin text-[var(--accent-primary)] motion-reduce:animate-none"/>
-          <span className="text-body-secondary">{message}</span>
-        </div>
-      </div>
-    </AppLayout>
-  );
+function shiftDate(date: string, days: number) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return getLocalDateString(d);
 }
 
 export default function TeamAttendancePage() {
@@ -76,750 +42,183 @@ export default function TeamAttendancePage() {
   const {hasPermission, isReady: permissionsReady} = usePermissions();
   const hasTeamAccess = hasPermission(Permissions.ATTENDANCE_VIEW_TEAM) || hasPermission(Permissions.ATTENDANCE_VIEW_ALL);
 
-  // BUG-L6-007: Page-level permission gate for team attendance
   useEffect(() => {
     if (!hasHydrated || !permissionsReady) return;
-    if (!isAuthenticated) {
-      router.replace('/auth/login');
-      return;
-    }
-    if (!hasPermission(Permissions.ATTENDANCE_VIEW_TEAM) && !hasPermission(Permissions.ATTENDANCE_VIEW_ALL)) {
-      router.replace('/me/dashboard?denied=1');
-    }
-  }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
+    if (!isAuthenticated) router.replace('/auth/login');
+  }, [hasHydrated, permissionsReady, isAuthenticated, router]);
 
   const [selectedDate, setSelectedDate] = useState(getLocalDateString());
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [sortConfig, setSortConfig] = useState<SortConfig>({key: null, direction: 'asc'});
 
-  const {data: attendanceResponse, isLoading: loading, error, refetch} = useAttendanceByDate(
-    selectedDate,
-    0,
-    100
+  const attendanceQuery = useAttendanceByDate(selectedDate, 0, 100);
+  const records = useMemo<AttendanceRecord[]>(() => attendanceQuery.data?.content ?? [], [attendanceQuery.data]);
+  const visibleRecords = useMemo(
+    () => filterAndSort(records, searchTerm, statusFilter, sortConfig),
+    [records, searchTerm, statusFilter, sortConfig]
   );
+  const filtersActive = searchTerm !== '' || statusFilter !== 'all';
 
-  // Stable reference: prevents dependent useMemo hooks from re-running on every render.
-  const records = useMemo<AttendanceRecord[]>(() => attendanceResponse?.content ?? [], [attendanceResponse]);
-
-  const formatTime = (dateString?: string): string => {
-    if (!dateString) return '--:--';
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const calculateStats = (): StatusStats => {
-    const present = records.filter(r => r.status === 'PRESENT').length;
-    const absent = records.filter(r => r.status === 'ABSENT').length;
-    const late = records.filter(r => r.status === 'LATE').length;
-    const onLeave = records.filter(r => r.status === 'LEAVE' || r.status === 'ON_LEAVE').length;
-    const halfDay = records.filter(r => r.status === 'HALF_DAY').length;
-    const total = records.length;
-
-    return {present, absent, late, onLeave, halfDay, total};
-  };
-
-  const stats = calculateStats();
-
-  const filteredAndSortedRecords = useMemo(() => {
-    const filtered = records.filter(record => {
-      const matchesSearch = record.employeeId.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || record.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-
-    if (sortConfig.key !== null) {
-      filtered.sort((a, b) => {
-        const aValue = a[sortConfig.key as keyof AttendanceRecord];
-        const bValue = b[sortConfig.key as keyof AttendanceRecord];
-
-        if (aValue === null || aValue === undefined) return 1;
-        if (bValue === null || bValue === undefined) return -1;
-
-        if (typeof aValue === 'string') {
-          return sortConfig.direction === 'asc'
-            ? aValue.localeCompare(String(bValue))
-            : String(bValue).localeCompare(aValue);
-        }
-
-        if (typeof aValue === 'number') {
-          return sortConfig.direction === 'asc' ? (aValue as number) - (bValue as number) : (bValue as number) - (aValue as number);
-        }
-
-        return 0;
-      });
-    }
-
-    return filtered;
-  }, [records, searchTerm, statusFilter, sortConfig]);
-
-  const handleSort = (key: keyof AttendanceRecord) => {
-    setSortConfig(prev => ({
+  const handleSort = (key: SortKey) => {
+    setSortConfig((prev) => ({
       key: prev.key === key ? null : key,
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
     }));
   };
 
-  const chartData = [
-    {name: 'Present', value: stats.present, fill: 'var(--chart-success)'},
-    {name: 'Absent', value: stats.absent, fill: 'var(--chart-danger)'},
-    {name: 'Late', value: stats.late, fill: 'var(--chart-accent)'},
-    {name: 'Leave', value: stats.onLeave, fill: 'var(--chart-info)'},
-  ].filter(item => item.value > 0);
+  const header = (
+    <PageHeader
+      title="Team Attendance"
+      description={`Monitor your team's attendance records for ${formatLongDate(selectedDate)}.`}
+      breadcrumbs={BREADCRUMBS}
+      actions={
+        <>
+          <Button variant="default" leftSection={<Printer size={16} aria-hidden="true"/>} onClick={() => window.print()}>
+            Print
+          </Button>
+          <Button
+            variant="default"
+            leftSection={<Download size={16} aria-hidden="true"/>}
+            onClick={() => exportTeamCsv(visibleRecords, selectedDate)}
+            disabled={visibleRecords.length === 0}
+          >
+            Export CSV
+          </Button>
+        </>
+      }
+    />
+  );
 
-  const chartDotClass: Record<string, string> = {
-    'var(--chart-success)': 'bg-[var(--chart-success)]',
-    'var(--chart-danger)': 'bg-[var(--chart-danger)]',
-    'var(--chart-accent)': 'bg-[var(--chart-accent)]',
-    'var(--chart-info)': 'bg-[var(--chart-info)]',
-  };
-
-  const exportToCSV = () => {
-    const headers = ['Employee ID', 'Check-In', 'Check-Out', 'Work Hours', 'Status', 'Late (min)', 'Source'];
-    const rows = filteredAndSortedRecords.map(record => [
-      record.employeeId,
-      formatTime(record.checkInTime),
-      formatTime(record.checkOutTime),
-      record.totalWorkHours?.toFixed(2) || '--',
-      record.status || 'PRESENT',
-      record.lateByMinutes || '--',
-      record.checkInSource || 'N/A',
-    ]);
-
-    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-    const blob = new Blob([csv], {type: 'text/csv'});
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `team-attendance-${selectedDate}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  };
-
-  const getSourceIcon = (source?: string) => {
-    if (!source) return null;
-    const sourceUpper = source.toUpperCase();
-    if (sourceUpper.includes('MOBILE')) return <Smartphone className="h-4 w-4"/>;
-    if (sourceUpper.includes('WEB')) return <Globe className="h-4 w-4"/>;
-    if (sourceUpper.includes('BIOMETRIC')) return <Fingerprint className="h-4 w-4"/>;
-    return null;
-  };
-
-  const goToPreviousDate = () => {
-    const date = new Date(selectedDate);
-    date.setDate(date.getDate() - 1);
-    setSelectedDate(getLocalDateString(date));
-  };
-
-  const goToNextDate = () => {
-    const date = new Date(selectedDate);
-    date.setDate(date.getDate() + 1);
-    setSelectedDate(getLocalDateString(date));
-  };
-
-  const goToToday = () => {
-    setSelectedDate(getLocalDateString());
-  };
-
-  // Permission guard
-  if (!hasHydrated || !permissionsReady) {
-    return <TeamAttendanceGate message="Preparing team attendance..."/>;
-  }
-
-  if (!isAuthenticated) {
-    return <TeamAttendanceGate message="Redirecting to sign in..."/>;
+  if (!hasHydrated || !permissionsReady || !isAuthenticated) {
+    return (
+      <AppLayout activeMenuItem="attendance">
+        <ListPageSkeleton/>
+      </AppLayout>
+    );
   }
 
   if (!hasTeamAccess) {
-    return <TeamAttendanceGate message="Redirecting to your dashboard..."/>;
+    return (
+      <AppLayout activeMenuItem="attendance">
+        <PageDeniedFallback/>
+      </AppLayout>
+    );
   }
+
+  const emptyState = (
+    <EmptyState
+      icon={<Users className="h-full w-full"/>}
+      title={filtersActive ? 'No records match your filters' : 'No attendance records'}
+      description={filtersActive ? 'Try a different search or status.' : 'No attendance records found for this date.'}
+      actionLabel={filtersActive ? 'Clear filters' : 'Go to today'}
+      onAction={() => {
+        if (filtersActive) {
+          setSearchTerm('');
+          setStatusFilter('all');
+        } else {
+          setSelectedDate(getLocalDateString());
+        }
+      }}
+      size="compact"
+    />
+  );
 
   return (
     <AppLayout activeMenuItem="attendance">
-      <Reveal className="space-y-8">
-        {/* Header with Breadcrumb */}
-        <div className="flex flex-col gap-4">
-          <button
-            onClick={() => router.push('/attendance')}
-            className="press-scale flex items-center gap-2 text-body-secondary hover:text-[var(--text-primary)] transition-colors w-fit"
-          >
-            <ArrowLeft className="h-4 w-4"/>
-            Back to Attendance
-          </button>
-          <div>
-            <h1 className="text-page-title text-[var(--text-primary)]">Team Attendance</h1>
-            <p className="text-[var(--text-muted)] text-sm mt-2">
-              Monitor your team&apos;s attendance records for {formatLongDate(selectedDate)}
-            </p>
-          </div>
-        </div>
+      <div className="flex flex-col gap-6">
+        {header}
 
-        {/* Error Alert */}
-        {error && (
-          <Reveal className="bg-danger-50 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 rounded-lg p-4 flex items-start gap-2">
-            <AlertCircle className="w-5 h-5 text-danger-600 dark:text-danger-400 mt-0.5 flex-shrink-0"/>
-            <div className="flex-1">
-              <p
-                className="text-sm text-danger-800 dark:text-danger-300">{error?.message || 'Failed to load team attendance.'}</p>
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card p-4">
+          <div className="flex items-center gap-2">
+            <ActionIcon variant="subtle" color="gray" size="lg" aria-label="Previous day" onClick={() => setSelectedDate(shiftDate(selectedDate, -1))}>
+              <ChevronLeft size={16}/>
+            </ActionIcon>
+            <div className="min-w-max text-center" aria-live="polite">
+              <p className="text-sm font-semibold text-text-1">{formatDate(selectedDate)}</p>
+              <p className="text-xs text-text-3">{formatWeekday(selectedDate)}</p>
             </div>
-          </Reveal>
-        )}
-
-        {/* Date Navigation Bar */}
-        <Reveal
-          className="card-aura bg-[var(--bg-card)] rounded-lg px-6 py-4 row-between gap-4 flex-wrap"
-          delay={0.1}
-        >
-          <div className="flex items-center gap-4">
-            <button
-              onClick={goToPreviousDate}
-              className="cursor-pointer p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              aria-label="Previous day"
-              title="Previous day"
-            >
-              <ChevronLeft className="h-4 w-4 text-[var(--text-secondary)]"/>
-            </button>
-            <div className="text-center min-w-max">
-              <p className="text-sm font-semibold text-[var(--text-primary)]">
-                {formatDate(selectedDate)}
-              </p>
-              <p className="text-caption">
-                {formatWeekday(selectedDate)}
-              </p>
-            </div>
-            <button
-              onClick={goToNextDate}
-              className="cursor-pointer p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              aria-label="Next day"
-              title="Next day"
-            >
-              <ChevronRight className="h-4 w-4 text-[var(--text-secondary)]"/>
-            </button>
-            <Button
-              onClick={goToToday}
-              variant="outline"
-              size="sm"
-              className="ml-2 text-xs"
-            >
+            <ActionIcon variant="subtle" color="gray" size="lg" aria-label="Next day" onClick={() => setSelectedDate(shiftDate(selectedDate, 1))}>
+              <ChevronRight size={16}/>
+            </ActionIcon>
+            <Button variant="default" size="xs" onClick={() => setSelectedDate(getLocalDateString())}>
               Today
             </Button>
           </div>
-
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setViewMode('table')}
-              variant={viewMode === 'table' ? 'default' : 'outline'}
-              size="sm"
-              className="flex items-center gap-2"
+          <div className="flex items-center gap-2">
+            <Segmented
+              aria-label="View mode"
+              value={viewMode}
+              onChange={setViewMode}
+              options={[
+                {value: 'table', label: 'Table', icon: <List className="h-4 w-4" aria-hidden="true"/>},
+                {value: 'grid', label: 'Grid', icon: <Grid3X3 className="h-4 w-4" aria-hidden="true"/>},
+              ]}
+            />
+            <ActionIcon
+              variant="default"
+              size="lg"
+              aria-label="Refresh"
+              onClick={() => attendanceQuery.refetch()}
+              loading={attendanceQuery.isFetching}
             >
-              <List className="h-4 w-4"/>
-              <span className="hidden sm:inline">Table</span>
-            </Button>
-            <Button
-              onClick={() => setViewMode('grid')}
-              variant={viewMode === 'grid' ? 'default' : 'outline'}
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Grid3X3 className="h-4 w-4"/>
-              <span className="hidden sm:inline">Grid</span>
-            </Button>
-            <Button
-              onClick={() => refetch()}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className="h-4 w-4"/>
-            </Button>
-            <Button
-              onClick={exportToCSV}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Download className="h-4 w-4"/>
-              <span className="hidden sm:inline">CSV</span>
-            </Button>
+              <RefreshCw size={16}/>
+            </ActionIcon>
           </div>
-        </Reveal>
+        </div>
 
-        {/* Stats Cards */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Array.from({length: 4}).map((_, i) => (
-              <SkeletonStatCard key={i}/>
-            ))}
-          </div>
-        ) : (
-          <Stagger
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-            stagger={0.05}
-            delayChildren={0.15}
-          >
-            {/* Present Card */}
-            <StaggerItem>
-              <Card className="card-aura h-full">
-                <CardContent className="p-6 flex flex-col gap-4">
-                  <div
-                    className="w-10 h-10 rounded-lg bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
-                    <CheckCircle className="h-5 w-5 text-success-600 dark:text-success-400"/>
-                  </div>
-                  <Stat
-                    label="Present"
-                    value={stats.present}
-                    tone="success"
-                    caption={
-                      <span className="text-success-600 dark:text-success-400 font-medium">
-                        {stats.total > 0 ? `${Math.round((stats.present / stats.total) * 100)}%` : '0%'}
-                      </span>
-                    }
-                  />
-                </CardContent>
-              </Card>
-            </StaggerItem>
+        <QueryState
+          query={attendanceQuery}
+          skeleton={<ListPageSkeleton rows={8} columns={7} showHeader={false} showFilters={false}/>}
+          errorTitle="Couldn't load team attendance"
+        >
+          {() => {
+            const stats = computeStatusStats(records);
+            return (
+              <div className="flex flex-col gap-6">
+                <TeamAttendanceStats stats={stats}/>
+                <TeamStatusDistribution stats={stats}/>
 
-            {/* Absent Card */}
-            <StaggerItem>
-              <Card className="card-aura h-full">
-                <CardContent className="p-6 flex flex-col gap-4">
-                  <div
-                    className="w-10 h-10 rounded-lg bg-danger-50 dark:bg-danger-950/30 flex items-center justify-center">
-                    <XCircle className="h-5 w-5 text-danger-600 dark:text-danger-400"/>
-                  </div>
-                  <Stat
-                    label="Absent"
-                    value={stats.absent}
-                    tone="danger"
-                    caption={
-                      <span className="text-danger-600 dark:text-danger-400 font-medium">
-                        {stats.total > 0 ? `${Math.round((stats.absent / stats.total) * 100)}%` : '0%'}
-                      </span>
-                    }
-                  />
-                </CardContent>
-              </Card>
-            </StaggerItem>
-
-            {/* Late Card */}
-            <StaggerItem>
-              <Card className="card-aura h-full">
-                <CardContent className="p-6 flex flex-col gap-4">
-                  <div
-                    className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
-                    <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
-                  </div>
-                  <Stat
-                    label="Late"
-                    value={stats.late}
-                    tone="warning"
-                    caption={
-                      <span className="text-warning-600 dark:text-warning-400 font-medium">
-                        {stats.total > 0 ? `${Math.round((stats.late / stats.total) * 100)}%` : '0%'}
-                      </span>
-                    }
-                  />
-                </CardContent>
-              </Card>
-            </StaggerItem>
-
-            {/* On Leave Card */}
-            <StaggerItem>
-              <Card className="card-aura h-full">
-                <CardContent className="p-6 flex flex-col gap-4">
-                  <div
-                    className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-accent-600 dark:text-accent-400"/>
-                  </div>
-                  <Stat
-                    label="On Leave"
-                    value={stats.onLeave}
-                    tone="muted"
-                    caption={
-                      <span className="text-accent-600 dark:text-accent-400 font-medium">
-                        {stats.total > 0 ? `${Math.round((stats.onLeave / stats.total) * 100)}%` : '0%'}
-                      </span>
-                    }
-                  />
-                </CardContent>
-              </Card>
-            </StaggerItem>
-          </Stagger>
-        )}
-
-        {/* Status Distribution Chart */}
-        {!loading && chartData.length > 0 && (
-          <Reveal delay={0.25}>
-            <Card className="card-aura">
-              <CardHeader>
-                <CardTitle className="text-card-title">Status Distribution</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <TeamStatusChart chartData={chartData}/>
-                <div className="flex flex-wrap gap-4 mt-6 justify-center">
-                  {chartData.map((item) => (
-                    <div key={item.name} className="flex items-center gap-2">
-                      <div className={`h-3 w-3 rounded-full ${chartDotClass[item.fill] ?? 'bg-[var(--text-3)]'}`}/>
-                      <span className="text-xs text-[var(--text-secondary)]">
-                        {item.name} ({item.value})
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </Reveal>
-        )}
-
-        {/* Search & Filter Controls */}
-        {!loading && records.length > 0 && (
-          <Reveal
-            className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center"
-            delay={0.3}
-          >
-            <div className="flex-1">
-              <Input
-                placeholder="Search by employee ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="text-sm"
-                aria-label="Search by employee ID"
-              />
-            </div>
-            <select
-              aria-label="Filter by status"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-[var(--border-main)] bg-[var(--bg-input)] text-[var(--text-primary)] rounded-lg focus:ring-2 focus:ring-accent-500/20 focus:border-accent-500 text-sm"
-            >
-              <option value="all">All Statuses</option>
-              <option value="PRESENT">Present</option>
-              <option value="ABSENT">Absent</option>
-              <option value="LATE">Late</option>
-              <option value="LEAVE">Leave</option>
-              <option value="HALF_DAY">Half Day</option>
-            </select>
-          </Reveal>
-        )}
-
-        {/* Table View */}
-        {viewMode === 'table' && (
-          <Reveal delay={0.35}>
-            <Card className="card-aura">
-              <CardHeader>
-                <CardTitle className="text-card-title flex items-center gap-2">
-                  <Users className="h-5 w-5"/>
-                  Team Attendance
-                  Records {filteredAndSortedRecords.length > 0 && `(${filteredAndSortedRecords.length})`}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                {loading ? (
-                  <SkeletonTable rows={8} columns={7}/>
-                ) : filteredAndSortedRecords.length === 0 ? (
-                  <EmptyState
-                    icon={<Users className="w-full h-full" />}
-                    title={records.length === 0 ? 'No Attendance Records' : 'No Records Match Filters'}
-                    description={records.length === 0
-                      ? 'No attendance records found for this date.'
-                      : 'Try adjusting your filters to see more results.'}
-                    size="compact"
-                  />
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-[var(--bg-secondary)]/50 border-b border-[var(--border-main)]">
-                      <tr>
-                        <th
-                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
-                          onClick={() => handleSort('employeeId')}>
-                          Employee {sortConfig.key === 'employeeId' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th
-                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
-                          onClick={() => handleSort('checkInTime')}>
-                          Check In {sortConfig.key === 'checkInTime' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th
-                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
-                          onClick={() => handleSort('checkOutTime')}>
-                          Check Out {sortConfig.key === 'checkOutTime' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th
-                          className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
-                          onClick={() => handleSort('totalWorkHours')}>
-                          Work
-                          Hours {sortConfig.key === 'totalWorkHours' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th
-                          className="px-6 py-4 text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide cursor-pointer hover:text-[var(--text-secondary)]"
-                          onClick={() => handleSort('status')}>
-                          Status {sortConfig.key === 'status' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th
-                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                          Source
-                        </th>
-                        <th
-                          className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                          Remarks
-                        </th>
-                      </tr>
-                      </thead>
-                      <tbody className="divide-y divide-[var(--border-main)]">
-                      {filteredAndSortedRecords.map((record) => (
-                        <tr
-                          key={record.id}
-                          className="h-11 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)]/50 transition-colors"
-                        >
-                          <td className="px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                            {record.employeeId.substring(0, 12)}
-                          </td>
-                          <td className="px-6 py-4 text-body-secondary">
-                            {formatTime(record.checkInTime)}
-                          </td>
-                          <td className="px-6 py-4 text-body-secondary">
-                            {formatTime(record.checkOutTime)}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <span
-                                className="text-[var(--text-secondary)] min-w-max">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
-                              <div className="w-16 h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
-                                <div
-                                  className="h-full bg-success-500 transition-all"
-                                  style={{
-                                    width: `${Math.min(((record.totalWorkHours || 0) / 8) * 100, 100)}%`,
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-center">
-                              <span className={`badge-status ${
-                                record.status === 'PRESENT' ? 'status-success' :
-                                  record.status === 'ABSENT' ? 'status-danger' :
-                                    record.status === 'LATE' ? 'status-warning' :
-                                      record.status === 'LEAVE' ? 'status-info' :
-                                        record.status === 'HALF_DAY' ? 'status-warning' :
-                                          'status-neutral'
-                              } text-xs`}>
-                                {record.lateByMinutes && record.lateByMinutes > 0 && (
-                                  <span className="bg-current/20 px-1.5 py-0.5 rounded text-xs">
-                                    +{record.lateByMinutes}m
-                                  </span>
-                                )}
-                                {record.status || 'PRESENT'}
-                              </span>
-                          </td>
-                          <td className="px-6 py-4 text-body-secondary">
-                            <div className="flex items-center gap-2">
-                              {getSourceIcon(record.checkInSource)}
-                              {record.checkInSource ? record.checkInSource.substring(0, 1).toUpperCase() + record.checkInSource.substring(1).toLowerCase() : 'N/A'}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-body-secondary">
-                            {record.isRegularization && (
-                              <span
-                                className="text-warning-600 dark:text-warning-400 font-medium text-xs">Regularized</span>
-                            )}
-                            {record.remarks && (
-                              <div className="text-caption truncate max-w-xs" title={record.remarks}>
-                                {record.remarks}
-                              </div>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                      </tbody>
-                    </table>
+                {records.length > 0 && (
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+                    <TextInput
+                      className="flex-1"
+                      label="Search"
+                      placeholder="Search by employee ID..."
+                      aria-label="Search by employee ID"
+                      leftSection={<Search size={16} aria-hidden="true"/>}
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.currentTarget.value)}
+                    />
+                    <NativeSelect
+                      label="Status"
+                      aria-label="Filter by status"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.currentTarget.value)}
+                      data={STATUS_FILTER_OPTIONS}
+                      className="sm:w-48"
+                    />
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          </Reveal>
-        )}
 
-        {/* Grid View */}
-        {viewMode === 'grid' && (
-          <Reveal delay={0.35}>
-            <h2 className="text-card-title text-[var(--text-primary)] mb-4 flex items-center gap-2">
-              <Users className="h-5 w-5"/>
-              Team Attendance Grid {filteredAndSortedRecords.length > 0 && `(${filteredAndSortedRecords.length})`}
-            </h2>
-            {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Array.from({length: 6}).map((_, i) => (
-                  <SkeletonCard key={i}/>
-                ))}
+                <section aria-labelledby="team-records-title" className="flex flex-col gap-4">
+                  <h2 id="team-records-title" className="text-base font-semibold text-text-1">
+                    Team attendance records{visibleRecords.length > 0 ? ` (${visibleRecords.length})` : ''}
+                  </h2>
+                  {viewMode === 'table' ? (
+                    <TeamAttendanceTable records={visibleRecords} sort={sortConfig} onSort={handleSort} emptyState={emptyState}/>
+                  ) : visibleRecords.length === 0 ? (
+                    emptyState
+                  ) : (
+                    <TeamAttendanceGrid records={visibleRecords}/>
+                  )}
+                </section>
               </div>
-            ) : filteredAndSortedRecords.length === 0 ? (
-              <EmptyState
-                icon={<Users className="w-full h-full" />}
-                title={records.length === 0 ? 'No Attendance Records' : 'No Records Match Filters'}
-                description={records.length === 0
-                  ? 'No attendance records found for this date.'
-                  : 'Try adjusting your filters to see more results.'}
-                size="compact"
-              />
-            ) : (
-              <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" stagger={0.03}>
-                {filteredAndSortedRecords.map((record) => (
-                  <StaggerItem key={record.id}>
-                    <Card
-                      className={`card-aura h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 ${
-                        record.status === 'PRESENT' ? 'border-t-success-500' :
-                          record.status === 'ABSENT' ? 'border-t-danger-500' :
-                            record.status === 'LATE' ? 'border-t-warning-500' :
-                              record.status === 'LEAVE' ? 'border-t-accent-500' :
-                                record.status === 'HALF_DAY' ? 'border-t-warning-500' :
-                                  'border-t-[var(--border-main)]'
-                      }`}>
-                      <CardContent className="p-6 flex flex-col gap-4">
-                        <div className="flex items-start justify-between gap-2">
-                          <div
-                            className="w-12 h-12 rounded-full bg-accent-100 dark:bg-accent-500/10 text-accent-700 dark:text-accent-400 flex items-center justify-center font-bold text-sm flex-shrink-0">
-                            {record.employeeId.substring(0, 2).toUpperCase()}
-                          </div>
-                          <span className={`badge-status ${
-                            record.status === 'PRESENT' ? 'status-success' :
-                              record.status === 'ABSENT' ? 'status-danger' :
-                                record.status === 'LATE' ? 'status-warning' :
-                                  record.status === 'LEAVE' ? 'status-info' :
-                                    record.status === 'HALF_DAY' ? 'status-warning' :
-                                      'status-neutral'
-                          } text-xs whitespace-nowrap`}>
-                            {record.status || 'PRESENT'}
-                          </span>
-                        </div>
-
-                        <div className="flex flex-col gap-1">
-                          <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
-                            {record.employeeId.substring(0, 16)}
-                          </p>
-                          <p className="text-caption">
-                            {formatWeekdayDate(record.attendanceDate)}
-                          </p>
-                        </div>
-
-                        <div className="space-y-2 border-t border-[var(--border-main)] pt-4">
-                          <div className="flex gap-4 text-xs">
-                            <div className="flex-1">
-                              <p className="text-[var(--text-muted)] font-medium mb-1">Check-In</p>
-                              <p
-                                className="text-[var(--text-primary)] font-semibold">{formatTime(record.checkInTime)}</p>
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-[var(--text-muted)] font-medium mb-1">Check-Out</p>
-                              <p
-                                className="text-[var(--text-primary)] font-semibold">{formatTime(record.checkOutTime)}</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="row-between text-xs">
-                            <span className="text-[var(--text-muted)] font-medium">Work Hours</span>
-                            <span
-                              className="font-semibold text-[var(--text-primary)]">{record.totalWorkHours?.toFixed(1) || '--'}h</span>
-                          </div>
-                          <div className="w-full h-2 bg-[var(--bg-secondary)] rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-gradient-to-r from-accent-400 to-accent-600 transition-all"
-                              style={{
-                                width: `${Math.min(((record.totalWorkHours || 0) / 8) * 100, 100)}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        {record.lateByMinutes && record.lateByMinutes > 0 && (
-                          <div
-                            className="px-4 py-2 rounded-lg bg-warning-50 dark:bg-warning-950/20 border border-warning-200 dark:border-warning-800">
-                            <p className="text-xs font-medium text-warning-700 dark:text-warning-400">
-                              Late by {record.lateByMinutes} minutes
-                            </p>
-                          </div>
-                        )}
-
-                        {record.checkInSource && (
-                          <div className="flex items-center gap-2 text-caption">
-                            {getSourceIcon(record.checkInSource)}
-                            <span>{record.checkInSource.substring(0, 1).toUpperCase() + record.checkInSource.substring(1).toLowerCase()}</span>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </StaggerItem>
-                ))}
-              </Stagger>
-            )}
-          </Reveal>
-        )}
-
-        {/* Quick Links */}
-        <Stagger
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          stagger={0.05}
-          delayChildren={0.45}
-        >
-          <StaggerItem>
-            <Card
-              isClickable
-              onClick={() => router.push('/attendance')}
-              className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-accent-500"
-            >
-              <CardContent className="p-6">
-                <div
-                  className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
-                  <Clock className="h-5 w-5 text-accent-700 dark:text-accent-400"/>
-                </div>
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">My Attendance</h3>
-                <p className="text-caption">View your own records</p>
-              </CardContent>
-            </Card>
-          </StaggerItem>
-
-          <StaggerItem>
-            <Card
-              isClickable
-              onClick={() => router.push('/attendance/regularization')}
-              className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-warning-500"
-            >
-              <CardContent className="p-6">
-                <div
-                  className="w-10 h-10 rounded-lg bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center mb-4">
-                  <AlertCircle className="h-5 w-5 text-warning-600 dark:text-warning-400"/>
-                </div>
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Regularizations</h3>
-                <p className="text-caption">Review corrections</p>
-              </CardContent>
-            </Card>
-          </StaggerItem>
-
-          <StaggerItem>
-            <Card
-              isClickable
-              onClick={() => window.print()}
-              className="card-interactive h-full hover:shadow-[var(--shadow-dropdown)] transition-all border-t-4 border-t-accent-700"
-            >
-              <CardContent className="p-6">
-                <div
-                  className="w-10 h-10 rounded-lg bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center mb-4">
-                  <Printer className="h-5 w-5 text-accent-800 dark:text-accent-600"/>
-                </div>
-                <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">Print Report</h3>
-                <p className="text-caption">Generate PDF</p>
-              </CardContent>
-            </Card>
-          </StaggerItem>
-        </Stagger>
-      </Reveal>
+            );
+          }}
+        </QueryState>
+      </div>
     </AppLayout>
   );
 }

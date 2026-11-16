@@ -28,13 +28,6 @@ export function WatchButton({pageId, size = 'md'}: WatchButtonProps) {
           color: data.watching ? 'blue' : 'gray',
         });
       },
-      onError: () => {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to update watch status. Please try again.',
-          color: 'red',
-        });
-      },
     });
   };
 

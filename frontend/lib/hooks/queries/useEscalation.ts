@@ -47,6 +47,7 @@ export function useUpsertEscalationConfig(workflowId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to save escalation config:', error);
       notifications.show({
@@ -75,6 +76,7 @@ export function useDeleteEscalationConfig(workflowId: string) {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error) => {
       logger.error('Failed to delete escalation config:', error);
       notifications.show({

@@ -10,8 +10,10 @@ import {z} from 'zod';
 import {CalendarDays, ChevronLeft, ChevronRight, Pencil, Plus, Trash2} from 'lucide-react';
 import {Holiday, HolidayRequest, HolidayType} from '@/lib/types/hrms/attendance';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {PermissionGate} from '@/components/auth/PermissionGate';
 import {ConfirmDialog} from '@/components/ui';
+import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {Select} from '@/components/ui/Select';
@@ -270,7 +272,7 @@ export default function HolidaysPage() {
               >
                 <ChevronLeft className="h-4 w-4"/>
               </button>
-              <span className="text-sm font-semibold text-[var(--text-primary)] min-w-[4rem] text-center">
+              <span className="text-sm font-semibold text-[var(--text-primary)] min-w-16 text-center">
               {selectedYear}
             </span>
               <button
@@ -282,21 +284,23 @@ export default function HolidaysPage() {
               </button>
             </div>
 
-            {/* Admin: Add Holiday */}
-            {isAdmin && (
-              <button
+            {/* Add Holiday: gated by the backend LEAVE:MANAGE permission */}
+            <PermissionGate permission={Permissions.LEAVE_MANAGE}>
+              <Button
+                size="sm"
+                className="gap-2"
+                data-testid="holiday-add"
                 onClick={() => {
                   resetForm();
                   form.reset({...form.getValues(), holidayDate: `${selectedYear}-01-01`});
                   setEditingHoliday(null);
                   setShowModal(true);
                 }}
-                className="flex items-center gap-2 bg-accent-500 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
               >
                 <Plus className="h-4 w-4"/>
                 Add Holiday
-              </button>
-            )}
+              </Button>
+            </PermissionGate>
           </div>
         </div>
 
@@ -370,7 +374,7 @@ export default function HolidaysPage() {
             onClick={() => setFilterType('ALL')}
             className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
               filterType === 'ALL'
-                ? 'bg-accent-500 text-white'
+                ? 'bg-accent text-white'
                 : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
             }`}
           >
@@ -385,7 +389,7 @@ export default function HolidaysPage() {
                 onClick={() => setFilterType(type)}
                 className={`px-4 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   filterType === type
-                    ? 'bg-accent-500 text-white'
+                    ? 'bg-accent text-white'
                     : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)]'
                 }`}
               >
@@ -660,28 +664,28 @@ export default function HolidaysPage() {
 
                   {/* Form Actions */}
                   <div className="flex justify-end gap-4 pt-4 border-t border-[var(--border-subtle)]">
-                    <button
+                    <Button
                       type="button"
+                      variant="secondary"
                       onClick={() => {
                         setShowModal(false);
                         setEditingHoliday(null);
                         resetForm();
                       }}
-                      className="px-4 py-2 border border-[var(--border-main)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="submit"
-                      disabled={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
-                      className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      variant="primary"
+                      isLoading={form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending}
                     >
                       {form.formState.isSubmitting || createMutation.isPending || updateMutation.isPending
                         ? 'Saving...'
                         : editingHoliday
                           ? 'Update Holiday'
                           : 'Create Holiday'}
-                    </button>
+                    </Button>
                   </div>
                 </form>
             </ModalBody>

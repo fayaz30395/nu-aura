@@ -79,7 +79,6 @@ export default function LinkedInPostsPage() {
       toast.success('Post Deleted', 'The LinkedIn post has been deleted.');
     } catch (error) {
       logger.error('Failed to delete post:', error);
-      toast.error('Delete Failed', 'Unable to delete the post. Please try again.');
     }
   };
 
@@ -441,10 +440,6 @@ function CreateLinkedInPostModal({post, onClose, onSuccess}: CreateLinkedInPostM
       onSuccess();
     } catch (err: unknown) {
       logger.error(`Failed to ${isEditing ? 'update' : 'create'} post:`, err);
-      const errorMessage = (err as {
-        response?: { data?: { message?: string } }
-      })?.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} post`;
-      toast.error(isEditing ? 'Update Failed' : 'Create Failed', errorMessage);
     }
   };
 

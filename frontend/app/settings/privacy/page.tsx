@@ -74,7 +74,7 @@ function RequestCard({req}: {req: DsrRequestResponse}) {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-[var(--text-primary)]">{meta?.label ?? req.requestType}</span>
-          <Badge variant={statusVariant(req.status)} className="text-[10px]">{req.status}</Badge>
+          <Badge variant={statusVariant(req.status)} className="text-2xs">{req.status}</Badge>
         </div>
         {req.reason && <p className="text-xs text-[var(--text-secondary)] truncate mt-0.5">{req.reason}</p>}
         {req.adminNotes && (
@@ -82,9 +82,9 @@ function RequestCard({req}: {req: DsrRequestResponse}) {
         )}
       </div>
       <div className="text-right shrink-0">
-        <p className="text-[10px] text-[var(--text-muted)]">{req.requestedAt ? formatDate(req.requestedAt) : '—'}</p>
+        <p className="text-2xs text-[var(--text-muted)]">{req.requestedAt ? formatDate(req.requestedAt) : '—'}</p>
         {req.completedAt && (
-          <p className="text-[10px] text-[var(--text-muted)]">Done {formatDate(req.completedAt)}</p>
+          <p className="text-2xs text-[var(--text-muted)]">Done {formatDate(req.completedAt)}</p>
         )}
       </div>
     </div>
@@ -157,7 +157,7 @@ function EmployeeView() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{meta.label}</p>
-                    <p className="text-[10px] text-[var(--text-muted)] font-mono">{meta.article}</p>
+                    <p className="text-2xs text-[var(--text-muted)] font-mono">{meta.article}</p>
                   </div>
                 </div>
                 <p className="text-xs text-[var(--text-secondary)] mb-3">{meta.description}</p>
@@ -260,7 +260,7 @@ function AdminView() {
       <CardHeader className="pb-3">
         <div className="flex items-center gap-3">
           <CardTitle className="text-sm mr-auto">Pending DSR Requests</CardTitle>
-          <Badge variant="warning" className="text-[10px]">{requests.length} pending</Badge>
+          <Badge variant="warning" className="text-2xs">{requests.length} pending</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -288,7 +288,7 @@ function AdminView() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-[var(--text-primary)]">{meta?.label ?? req.requestType}</span>
-                      <span className="text-[10px] font-mono text-[var(--text-muted)]">{meta?.article}</span>
+                      <span className="text-2xs font-mono text-[var(--text-muted)]">{meta?.article}</span>
                     </div>
                     <p className="text-xs text-[var(--text-muted)] mt-0.5">
                       Requested {req.requestedAt ? formatDate(req.requestedAt) : '—'}

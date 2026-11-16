@@ -4,9 +4,32 @@
  * Single source of truth for spacing, typography, and layout patterns.
  * Import these constants instead of hardcoding Tailwind classes.
  *
- * STRICT 8px GRID: 4, 8, 16, 24, 32, 48, 64px
- * BANNED: gap-4, p-4, p-6, gap-6, space-y-4, space-y-6, text-[10px], text-[11px]
+ * Spacing follows the presets below. Type, radius, control and motion values
+ * come from the CSS tokens in app/globals.css; the JS motion tokens here mirror
+ * --motion-* / --ease-* and are re-exported by lib/animation.ts.
  */
+
+// ── Motion tokens (seconds; Framer uses seconds, CSS uses ms) ──────────
+// Kept dependency-free so server components importing this module stay
+// framer-motion-free.
+export const MOTION_DURATION = {
+  fast: 0.12,
+  base: 0.2,
+  slow: 0.28,
+} as const;
+
+export const MOTION_EASE = {
+  standard: [0.4, 0, 0.2, 1],
+  outExpo: [0.16, 1, 0.3, 1],
+  // Alias of outExpo (no overshoot); name kept for existing Framer call sites.
+  spring: [0.16, 1, 0.3, 1],
+} as const;
+
+/** Matches --motion-rise-distance. */
+export const MOTION_RISE_DISTANCE = 4;
+
+/** Matches --motion-stagger. */
+export const MOTION_STAGGER = 0.03;
 
 // ── Page Layout ────────────────────────────────────────
 export const layout = {
@@ -25,7 +48,7 @@ export const layout = {
 // ── Typography Classes ─────────────────────────────────
 export const typography = {
   /** 24px — Page title */
-  pageTitle: 'text-2xl font-bold tracking-tight text-[var(--text-primary)]',
+  pageTitle: 'text-2xl font-semibold tracking-tight text-[var(--text-primary)]',
   /** 18px — Section heading */
   sectionTitle: 'text-lg font-semibold text-[var(--text-primary)]',
   /** 16px — Card title */
@@ -97,9 +120,9 @@ export const chartColors = {
 export const motion = {
   /** Page entrance animation */
   pageEnter: {
-    initial: {opacity: 0, y: 8},
+    initial: {opacity: 0, y: MOTION_RISE_DISTANCE},
     animate: {opacity: 1, y: 0},
-    transition: {duration: 0.25, ease: 'easeOut'},
+    transition: {duration: MOTION_DURATION.base, ease: MOTION_EASE.outExpo},
   },
   /** Staggered container */
   staggerContainer: {
@@ -107,19 +130,19 @@ export const motion = {
     animate: 'visible',
     variants: {
       hidden: {},
-      visible: {transition: {staggerChildren: 0.06}},
+      visible: {transition: {staggerChildren: MOTION_STAGGER}},
     },
   },
   /** Staggered child item */
   staggerItem: {
     variants: {
-      hidden: {opacity: 0, y: 8},
-      visible: {opacity: 1, y: 0, transition: {duration: 0.25, ease: 'easeOut'}},
+      hidden: {opacity: 0, y: MOTION_RISE_DISTANCE},
+      visible: {opacity: 1, y: 0, transition: {duration: MOTION_DURATION.base, ease: MOTION_EASE.outExpo}},
     },
   },
   /** Card hover */
   cardHover: {
-    whileHover: {y: -2, transition: {duration: 0.2}},
+    whileHover: {y: -2, transition: {duration: MOTION_DURATION.fast, ease: MOTION_EASE.standard}},
   },
   /** Button tap feedback */
   buttonTap: {

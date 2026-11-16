@@ -141,9 +141,12 @@ export default function AdminReportsPage() {
   };
 
   function handleDownload(report: DownloadReport) {
-    setDownloading(report.hookKey);
     const hook = downloadMap[report.hookKey];
-    hook.mutate(defaultRequest, {onSettled: () => setDownloading(null)});
+    if (hook.isPending) return;
+    setDownloading(report.hookKey);
+    hook.mutate(defaultRequest, {
+      onSettled: () => setDownloading((current) => (current === report.hookKey ? null : current)),
+    });
   }
 
   function frequencyLabel(freq: string): string {
@@ -168,7 +171,7 @@ export default function AdminReportsPage() {
           <h2 className="text-sm font-semibold text-[var(--text-primary)] mb-2">Quick Downloads</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             {REPORTS.map((report) => {
-              const isDownloading = downloading === report.hookKey;
+              const isDownloading = downloading === report.hookKey || downloadMap[report.hookKey].isPending;
               return (
                 <div
                   key={report.key}

@@ -1,35 +1,47 @@
 'use client';
 
 import {useState} from 'react';
-import {AnimatePresence, motion} from 'framer-motion';
-import {ClipboardCheck, Eye, ThumbsDown, ThumbsUp} from 'lucide-react';
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
-import {SkeletonTable} from '@/components/ui/Skeleton';
+import {Modal} from '@mantine/core';
+import {ClipboardCheck} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryState} from '@/components/ui/QueryState';
+import {ResponsiveTable, type Column} from '@/components/ui/ResponsiveTable';
+import {ListPageSkeleton} from '@/components/ui/skeletons';
 import {useToast} from '@/components/ui/Toast';
 import {useApproveRegularization, usePendingRegularizations} from '@/lib/hooks/queries/useAttendance';
 import {AttendanceRecord} from '@/lib/types/hrms/attendance';
 import {logger} from '@/lib/utils/logger';
+import {formatDateShort} from '@/lib/utils/format/date';
 import {RegularizationRequest} from './types';
 import {RequestTimeline} from './RequestTimeline';
 import {formatRelativeTime} from './utils';
-import {formatDateShort} from '@/lib/utils/format/date';
 
-interface TeamRequestsViewProps {
-  onReject: (id: string) => void;
-}
+const COLUMNS: Column<RegularizationRequest>[] = [
+  {
+    key: 'employee',
+    header: 'Employee',
+    mobilePriority: 'primary',
+    accessor: (r) => <span className="font-medium text-text-1">{r.employeeId}</span>,
+  },
+  {key: 'date', header: 'Date', mobileLabel: 'Date', accessor: (r) => formatDateShort(r.attendanceDate)},
+  {
+    key: 'reason',
+    header: 'Reason',
+    mobilePriority: 'hidden',
+    accessor: (r) => <span className="block max-w-xs truncate text-text-2" title={r.reason}>{r.reason}</span>,
+  },
+  {
+    key: 'requested',
+    header: 'Requested on',
+    mobilePriority: 'hidden',
+    accessor: (r) => <span className="text-text-2">{formatRelativeTime(r.requestedOn)}</span>,
+  },
+];
 
-export function TeamRequestsView({onReject}: TeamRequestsViewProps) {
-  const approveMutation = useApproveRegularization();
-  const {success, error} = useToast();
-  const [expandedRequestId, setExpandedRequestId] = useState<string | null>(null);
-
-  const {data: pendingTeamRequests, isLoading} = usePendingRegularizations(0, 50);
-
-  // Convert to RegularizationRequest format
-  const teamRequests: RegularizationRequest[] = (pendingTeamRequests?.content || [])
-    .filter((record: AttendanceRecord) => record.regularizationRequested && !record.regularizationApproved)
-    .map((record: AttendanceRecord) => ({
+function toTeamRequests(records: AttendanceRecord[]): RegularizationRequest[] {
+  return records
+    .filter((record) => record.regularizationRequested && !record.regularizationApproved)
+    .map((record) => ({
       id: record.id,
       employeeId: record.employeeId,
       attendanceDate: record.attendanceDate,
@@ -42,157 +54,63 @@ export function TeamRequestsView({onReject}: TeamRequestsViewProps) {
       approvedOn: record.approvedAt,
       remarks: record.remarks,
     })) as RegularizationRequest[];
+}
+
+interface TeamRequestsViewProps {
+  onReject: (id: string) => void;
+}
+
+export function TeamRequestsView({onReject}: TeamRequestsViewProps) {
+  const approveMutation = useApproveRegularization();
+  const {success, error} = useToast();
+  const [detail, setDetail] = useState<RegularizationRequest | null>(null);
+  const pendingQuery = usePendingRegularizations(0, 50);
 
   const handleApprove = async (id: string) => {
     try {
       await approveMutation.mutateAsync(id);
       success('Regularization request approved successfully!');
     } catch (err: unknown) {
-      const errorMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      const displayMsg = errorMsg || 'Failed to approve regularization request. Please try again.';
-      error(displayMsg);
+      const errorMsg = (err as {response?: {data?: {message?: string}}})?.response?.data?.message;
+      error(errorMsg || 'Failed to approve regularization request. Please try again.');
       logger.error('Failed to approve request:', err);
     }
   };
 
   return (
-    <Card className="card-aura">
-      <CardHeader>
-        <CardTitle className="text-section-title">Pending Regularization Requests from Team</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {isLoading ? (
-          <SkeletonTable rows={5} columns={6}/>
-        ) : teamRequests.length === 0 ? (
-          <EmptyState
-            icon={<ClipboardCheck className="h-6 w-6"/>}
-            iconColor="bg-accent-50 dark:bg-accent-950/30 text-accent-600 dark:text-accent-400"
-            title="No pending requests"
-            description="All regularization requests from your team have been processed"
+    <section className="flex flex-col gap-4" aria-labelledby="team-regularization-requests">
+      <h2 id="team-regularization-requests" className="text-base font-semibold text-text-1">
+        Pending regularization requests from team
+      </h2>
+      <QueryState
+        query={pendingQuery}
+        skeleton={<ListPageSkeleton rows={5} columns={4} showHeader={false} showFilters={false}/>}
+        errorTitle="Couldn't load team requests"
+      >
+        {(data) => (
+          <ResponsiveTable
+            columns={COLUMNS}
+            data={toTeamRequests(data?.content ?? [])}
+            keyExtractor={(r) => r.id}
+            stickyHeader
+            emptyState={
+              <EmptyState
+                icon={<ClipboardCheck className="h-6 w-6"/>}
+                title="No pending requests"
+                description="All regularization requests from your team have been processed"
+              />
+            }
+            rowActionsMenu={(r) => [
+              {label: 'Approve', onClick: () => handleApprove(r.id), disabled: approveMutation.isPending},
+              {label: 'Reject', onClick: () => onReject(r.id), color: 'red'},
+              {label: 'View details', onClick: () => setDetail(r)},
+            ]}
           />
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-[var(--bg-secondary)]/50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
-                  Employee
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 md:px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
-                  Date
-                </th>
-                <th
-                  scope="col"
-                  className="hidden md:table-cell px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
-                  Reason
-                </th>
-                <th
-                  scope="col"
-                  className="hidden md:table-cell px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
-                  Requested On
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 md:px-6 py-2 text-right text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">
-                  Action
-                </th>
-              </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border-main)]">
-              <AnimatePresence>
-                {teamRequests.map((request: RegularizationRequest) => (
-                  <motion.tr
-                    key={request.id}
-                    initial={{opacity: 0, y: 8}}
-                    animate={{opacity: 1, y: 0}}
-                    exit={{opacity: 0, y: -8}}
-                    transition={{duration: 0.25, ease: 'easeOut'}}
-                    className="hover:bg-[var(--bg-secondary)]/50 transition-colors"
-                  >
-                    <td className="px-4 md:px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                      {request.employeeId}
-                    </td>
-                    <td className="px-4 md:px-6 py-4 text-sm font-medium text-[var(--text-primary)]">
-                      {formatDateShort(request.attendanceDate)}
-                    </td>
-                    <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
-                      <div className="max-w-xs truncate" title={request.reason}>
-                        {request.reason}
-                      </div>
-                    </td>
-                    <td className="hidden md:table-cell px-6 py-4 text-body-secondary">
-                      {formatRelativeTime(request.requestedOn)}
-                    </td>
-                    <td className="px-4 md:px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <motion.button
-                          onClick={() => handleApprove(request.id)}
-                          disabled={approveMutation.isPending}
-                          aria-label="Approve request"
-                          className="p-2 rounded-lg hover:bg-[var(--status-success-bg)]/20 transition-colors text-[var(--status-success-text)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          whileHover={{scale: 1.05}}
-                          whileTap={{scale: 0.95}}
-                          title="Approve"
-                        >
-                          <ThumbsUp className="h-4 w-4"/>
-                        </motion.button>
-                        <motion.button
-                          onClick={() => onReject(request.id)}
-                          aria-label="Reject request"
-                          className="p-2 rounded-lg hover:bg-[var(--status-danger-bg)]/20 transition-colors text-[var(--status-danger-text)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          whileHover={{scale: 1.05}}
-                          whileTap={{scale: 0.95}}
-                          title="Reject"
-                        >
-                          <ThumbsDown className="h-4 w-4"/>
-                        </motion.button>
-                        <motion.button
-                          onClick={() =>
-                            setExpandedRequestId(expandedRequestId === request.id ? null : request.id)
-                          }
-                          aria-label={expandedRequestId === request.id ? 'Collapse request details' : 'View request details'}
-                          className="p-2 rounded-lg hover:bg-[var(--bg-secondary)] transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                          whileHover={{scale: 1.05}}
-                          whileTap={{scale: 0.95}}
-                        >
-                          <Eye className="h-4 w-4"/>
-                        </motion.button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-
-              {/* Expanded Detail Row */}
-              <AnimatePresence>
-                {teamRequests.map((request: RegularizationRequest) =>
-                  expandedRequestId === request.id ? (
-                    <motion.tr
-                      key={`${request.id}-detail`}
-                      initial={{opacity: 0, height: 0}}
-                      animate={{opacity: 1, height: 'auto'}}
-                      exit={{opacity: 0, height: 0}}
-                      transition={{duration: 0.25, ease: 'easeOut'}}
-                    >
-                      <td
-                        colSpan={5}
-                        className="px-4 md:px-6 py-6 bg-[var(--bg-secondary)]/50 border-t border-[var(--border-main)]"
-                      >
-                        <RequestTimeline request={request}/>
-                      </td>
-                    </motion.tr>
-                  ) : null
-                )}
-              </AnimatePresence>
-              </tbody>
-            </table>
-          </div>
         )}
-      </CardContent>
-    </Card>
+      </QueryState>
+      <Modal opened={!!detail} onClose={() => setDetail(null)} title="Request details" size="lg" centered>
+        {detail && <RequestTimeline request={detail}/>}
+      </Modal>
+    </section>
   );
 }

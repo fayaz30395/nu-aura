@@ -14,9 +14,9 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({className, children, label, error, helper, selectSize = 'md', disabled, ...props}, ref) => {
     const sizeStyles = {
-      sm: 'h-[calc(var(--control-height)-10px)] min-h-[calc(var(--control-height)-10px)] text-sm pl-4 pr-9',
-      md: 'h-[var(--control-height)] min-h-[var(--control-height)] text-sm pl-4 pr-9',
-      lg: 'h-[calc(var(--control-height)+8px)] min-h-[calc(var(--control-height)+8px)] text-base pl-4 pr-10',
+      sm: 'h-9 min-h-9 text-sm pl-3 pr-9',
+      md: 'h-10 min-h-10 text-sm pl-3 pr-9',
+      lg: 'h-11 min-h-11 text-base pl-3.5 pr-10',
     };
     const hasError = Boolean(error);
 
@@ -25,9 +25,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label
             className={cn(
-              'block text-sm font-medium mb-1.5 transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
+              'block text-[13px] font-medium mb-1 transition-colors duration-[var(--motion-fast)] ease-[var(--ease-standard)]',
               error
-                ? 'text-danger-600 dark:text-danger-400'
+                ? 'text-[var(--err-fg)]'
                 : 'text-[var(--text-secondary)]'
             )}
           >
@@ -42,7 +42,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             className={cn(
               // Aura: 10px control radius + inset top shadow, token-driven accent focus.
               // Compositor-safe: only border-color + box-shadow transition.
-              'w-full appearance-none rounded-aura-control border bg-[var(--bg-input)] shadow-[var(--inset-input)] transition-[border-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
+              'w-full appearance-none rounded-[var(--radius-md)] border bg-[var(--bg-input)] transition-[border-color,box-shadow] duration-[var(--motion-base)] ease-[var(--ease-standard)]',
               'text-[var(--text-primary)]',
               // Size
               sizeStyles[selectSize],
@@ -51,9 +51,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               // Hover state
               !hasError && !disabled && 'hover:border-[var(--border-strong)]',
               // Focus state — Aura accent border + soft focus ring
-              !hasError && 'focus:border-[var(--accent)] focus:shadow-[var(--inset-input),var(--sh-focus)]',
+              !hasError && 'focus:border-[var(--accent)] focus:shadow-[var(--sh-focus)]',
               // Error state
-              hasError && 'border-danger-500 focus:border-danger-500 focus:shadow-[var(--inset-input),0_0_0_3px_var(--ring-danger)]',
+              hasError && 'border-[var(--err-fg)] focus:border-[var(--err-fg)] focus:shadow-[0_0_0_3px_var(--ring-danger)]',
               // Disabled
               disabled && 'bg-[var(--surface-sunken)] cursor-not-allowed opacity-60',
               // Remove default outline
@@ -71,7 +71,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             'text-[var(--text-muted)]',
             // Animate rotation + accent on focus (transform/color only — compositor-safe)
             'transition-[transform,color] duration-[var(--motion-base)] ease-[var(--ease-out-expo)]',
-            'group-focus-within:-rotate-180 group-focus-within:text-[var(--accent)]',
+            'group-focus-within:text-[var(--accent)]',
             hasError && 'group-focus-within:text-danger-500',
             disabled && 'opacity-60'
           )}/>
@@ -80,9 +80,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         {(error || helper) && (
           <p
             className={cn(
-              'motion-fade text-sm mt-1.5',
+              'motion-fade text-xs mt-1',
               error
-                ? 'text-danger-600 dark:text-danger-400'
+                ? 'text-[var(--err-fg)]'
                 : 'text-[var(--text-muted)]'
             )}
           >

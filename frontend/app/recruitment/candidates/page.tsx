@@ -1,4 +1,5 @@
 'use client';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 import React, {Suspense, useCallback, useEffect, useMemo, useState} from 'react';
 import dynamic from 'next/dynamic';
@@ -8,7 +9,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {notifications} from '@mantine/notifications';
 import {PageTransition, Reveal} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
-import {Card, CardContent} from '@/components/ui/Card';
+import {ResponsiveTable} from '@/components/ui/ResponsiveTable';
+import {EmptyState} from '@/components/ui/EmptyState';
 import {Button} from '@/components/ui/Button';
 import {ColumnVisibilityToggle, loadColumnVisibility, type ToggleableColumn} from '@/components/ui/ColumnVisibilityToggle';
 import {
@@ -51,13 +53,13 @@ import {
   ResumeParseResponse,
 } from '@/lib/types/hire/ai-recruitment';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {getLocalDateString} from '@/lib/utils/dateUtils';
 
 // Extracted sub-components (Loop 3 refactor — FE-016)
 import {CandidateStats} from './CandidateStats';
 import {CandidateFilters} from './CandidateFilters';
-import {CandidateTableRow} from './CandidateTableRow';
+import {CandidateRowActions, buildCandidateColumns} from './CandidateTableRow';
 import {computeStats, filterCandidates} from './utils';
 
 // Co-located modal components — light/always-visible-ish modals stay eager
@@ -157,6 +159,7 @@ function CandidatesPage() {
   const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
     () => loadColumnVisibility('recruitment-candidates', CANDIDATE_TABLE_COLUMNS)
   );
+  const candidateColumns = useMemo(() => buildCandidateColumns(visibleColumns), [visibleColumns]);
   const [confirmedJoiningDate, setConfirmedJoiningDate] = useState('');
   const [declineReason, setDeclineReason] = useState('');
 
@@ -183,7 +186,9 @@ function CandidatesPage() {
 
   // Load initial data
   const {data: employeesData} = useEmployees(0, 100);
-  useActiveLetterTemplates(true);
+  // Backend requires LETTER:TEMPLATE_VIEW; skip the prefetch (no 403) for roles without it.
+  const {hasPermission: canViewLetterTemplates} = usePermissions();
+  useActiveLetterTemplates(canViewLetterTemplates(Permissions.LETTER_TEMPLATE_VIEW));
 
   const candidates = useMemo(() => candidatesData?.content || [], [candidatesData?.content]);
   const jobOpenings = jobOpeningsData?.content || [];
@@ -285,14 +290,8 @@ function CandidatesPage() {
       candidateForm.reset();
       setEditingCandidate(null);
       refetchCandidates();
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message: (err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to save candidate',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -347,14 +346,8 @@ function CandidatesPage() {
       setShowDeleteModal(false);
       setCandidateToDelete(null);
       refetchCandidates();
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message: (err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to delete candidate',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -383,14 +376,8 @@ function CandidatesPage() {
       setCandidateForOffer(null);
       offerForm.reset();
       refetchCandidates();
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message: (err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to create offer',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     }
   };
 
@@ -458,14 +445,8 @@ function CandidatesPage() {
         message: 'Resume parsed successfully',
         color: 'green',
       });
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message: (err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to parse resume',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     } finally {
       setAiLoadingState(null);
     }
@@ -477,14 +458,8 @@ function CandidatesPage() {
       const result = await parseResumeFromUploadMutation.mutateAsync(file);
       setParsedResume(result);
       notifications.show({title: 'Success', message: 'Resume parsed successfully', color: 'green'});
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message: (err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to parse resume',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     } finally {
       setAiLoadingState(null);
     }
@@ -533,14 +508,8 @@ function CandidatesPage() {
         message: 'Match score calculated',
         color: 'green',
       });
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message: (err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to calculate match score',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     } finally {
       setAiLoadingState(null);
     }
@@ -568,14 +537,8 @@ function CandidatesPage() {
         message: 'Screening summary generated',
         color: 'green',
       });
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message: (err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to generate screening summary',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     } finally {
       setAiLoadingState(null);
     }
@@ -603,14 +566,8 @@ function CandidatesPage() {
         message: 'Feedback synthesized',
         color: 'green',
       });
-    } catch (err: unknown) {
-      notifications.show({
-        title: 'Error',
-        message: (err as {
-          response?: { data?: { message?: string } }
-        })?.response?.data?.message || 'Failed to synthesize feedback',
-        color: 'red',
-      });
+    } catch {
+      // The global MutationCache handler shows the error toast.
     } finally {
       setAiLoadingState(null);
     }
@@ -662,12 +619,10 @@ function CandidatesPage() {
   return (
     <AppLayout activeMenuItem="recruitment">
       <PageTransition className="p-6 space-y-6">
-        {/* Header */}
-        <div className="row-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Candidates</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Track and manage candidate applications</p>
-          </div>
+        <PageHeader
+          title="Candidates"
+          description="Track and manage candidate applications"
+          actions={
           <div className="flex gap-2">
             {/* DEF-50: Fix permission from CANDIDATE_VIEW to RECRUITMENT_CREATE for write action */}
             <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
@@ -694,7 +649,8 @@ function CandidatesPage() {
               </Button>
             </PermissionGate>
           </div>
-        </div>
+          }
+        />
 
         {/* Stats Cards */}
         <CandidateStats
@@ -716,80 +672,54 @@ function CandidatesPage() {
         />
 
         {/* Candidates Table */}
-        <div className="flex justify-end">
-          <ColumnVisibilityToggle
-            columns={CANDIDATE_TABLE_COLUMNS}
-            visible={visibleColumns}
-            onChange={setVisibleColumns}
-            storageKey="recruitment-candidates"
-          />
-        </div>
         <Reveal inView>
-        <Card className="bg-[var(--bg-card)]">
-          <CardContent className="p-0">
-            {candidatesLoading ? (
-              <div className="text-center py-12 text-[var(--text-muted)]">Loading candidates...</div>
-            ) : filteredCandidates.length === 0 ? (
-              <div className="text-center py-12">
-                <Users className="h-12 w-12 text-[var(--text-muted)] dark:text-[var(--text-secondary)] mx-auto mb-4"/>
-                <p className="text-[var(--text-muted)]">No candidates found</p>
-                <Button onClick={() => {
+          <ResponsiveTable<Candidate>
+            columns={candidateColumns}
+            data={filteredCandidates}
+            keyExtractor={(candidate) => candidate.id}
+            isLoading={candidatesLoading}
+            onRowClick={(candidate) => router.push(`/recruitment/candidates/${candidate.id}`)}
+            toolbar={
+              <div className="flex justify-end">
+                <ColumnVisibilityToggle
+                  columns={CANDIDATE_TABLE_COLUMNS}
+                  visible={visibleColumns}
+                  onChange={setVisibleColumns}
+                  storageKey="recruitment-candidates"
+                />
+              </div>
+            }
+            emptyState={
+              <EmptyState
+                icon={<Users className="h-12 w-12" />}
+                title="No candidates found"
+                actionLabel="Add First Candidate"
+                onAction={() => {
                   setEditingCandidate(null);
                   candidateForm.reset();
                   setShowAddModal(true);
-                }} className="mt-4">
-                  Add First Candidate
-                </Button>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="border-b border-[var(--border)] bg-[var(--surface-sunken)]">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Candidate</th>
-                    {visibleColumns.has('job') && (
-                      <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Job</th>
-                    )}
-                    {visibleColumns.has('experience') && (
-                      <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Experience</th>
-                    )}
-                    {visibleColumns.has('stage') && (
-                      <th className="px-6 py-3 text-center text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Stage</th>
-                    )}
-                    <th className="px-6 py-3 text-center text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Status</th>
-                    {visibleColumns.has('source') && (
-                      <th className="px-6 py-3 text-left text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Source</th>
-                    )}
-                    <th className="px-6 py-3 text-right text-2xs font-bold text-[var(--text-3)] uppercase tracking-[0.08em]">Actions</th>
-                  </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border-soft)]">
-                  {filteredCandidates.map((candidate) => (
-                    <CandidateTableRow
-                      key={candidate.id}
-                      candidate={candidate}
-                      visibleColumns={visibleColumns}
-                      matchScore={matchScores.get(candidate.id)}
-                      aiLoadingState={aiLoadingState}
-                      onView={handleView}
-                      onEdit={handleStartEdit}
-                      onDelete={handleStartDelete}
-                      onOffer={handleStartOffer}
-                      onAccept={handleStartAccept}
-                      onDecline={handleStartDecline}
-                      onCalculateMatch={handleCalculateMatchScore}
-                      onScreeningSummary={handleGenerateScreeningSummary}
-                      onSynthesizeFeedback={handleSynthesizeFeedback}
-                      onViewScorecard={handleViewScorecard}
-                      onESign={handleStartESign}
-                    />
-                  ))}
-                  </tbody>
-                </table>
-              </div>
+                }}
+              />
+            }
+            renderRowActions={(candidate) => (
+              <CandidateRowActions
+                candidate={candidate}
+                matchScore={matchScores.get(candidate.id)}
+                aiLoadingState={aiLoadingState}
+                onView={handleView}
+                onEdit={handleStartEdit}
+                onDelete={handleStartDelete}
+                onOffer={handleStartOffer}
+                onAccept={handleStartAccept}
+                onDecline={handleStartDecline}
+                onCalculateMatch={handleCalculateMatchScore}
+                onScreeningSummary={handleGenerateScreeningSummary}
+                onSynthesizeFeedback={handleSynthesizeFeedback}
+                onViewScorecard={handleViewScorecard}
+                onESign={handleStartESign}
+              />
             )}
-          </CardContent>
-        </Card>
+          />
         </Reveal>
 
         {/* ==================== MODALS ==================== */}

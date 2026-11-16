@@ -115,6 +115,7 @@ export function useGiveRecognition() {
         color: 'green',
       });
     },
+    meta: {skipGlobalError: true},
     onError: (error: unknown) => {
       notifications.show({
         title: 'Error',
@@ -178,6 +179,7 @@ export function useAddRecognitionComment() {
       queryClient.invalidateQueries({queryKey: recognitionKeys.received()});
       queryClient.invalidateQueries({queryKey: recognitionKeys.given()});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to post comment', color: 'red'});
     },
@@ -196,6 +198,7 @@ export function useDeleteRecognitionComment() {
       queryClient.invalidateQueries({queryKey: recognitionKeys.received()});
       queryClient.invalidateQueries({queryKey: recognitionKeys.given()});
     },
+    meta: {skipGlobalError: true},
     onError: () => {
       notifications.show({title: 'Error', message: 'Failed to delete comment', color: 'red'});
     },

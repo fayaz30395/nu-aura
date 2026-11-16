@@ -80,6 +80,11 @@ import {
 import type {SidebarSection} from '@/components/ui';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
+// The single nav permission predicate. Every nav surface (sidebar, mobile
+// drawer, bottom nav, admin console entry) filters through these.
+export {canAccessNavItem, filterNavItems, hasAdminConsoleAccess} from './navAccess';
+export type {NavAccess, NavGate} from './navAccess';
+
 // ── Pre-allocated icon elements (created once at module level) ──────────────
 const icon = {
   home: <Home className="h-5 w-5"/>,
@@ -245,6 +250,9 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
         {id: 'my-documents', label: 'My Documents', icon: icon.fileText, href: '/me/documents'},
         {id: 'my-skills', label: 'My Skills', icon: icon.zap, href: '/me/skills'},
         {id: 'my-assets', label: 'My Assets', icon: icon.package, href: '/me/assets'},
+        {id: 'my-holidays', label: 'Holidays', icon: icon.calendar, href: '/holidays'},
+        {id: 'my-expenses', label: 'My Expenses', icon: icon.receipt, href: '/expenses', requiredPermission: Permissions.EXPENSE_CREATE},
+        {id: 'my-helpdesk', label: 'Helpdesk', icon: icon.headphones, href: '/helpdesk'},
       ],
     },
     // ─── 3. PEOPLE & ORGANIZATION ───────────────────────────────────

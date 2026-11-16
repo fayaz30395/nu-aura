@@ -8,6 +8,7 @@ import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {
   useAddEvaluation,
   useAllProbations,
@@ -88,6 +89,7 @@ export default function ProbationPage() {
   const [historyPage, setHistoryPage] = useState(0);
   const [evaluateTarget, setEvaluateTarget] = useState<ProbationPeriodResponse | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [failTargetId, setFailTargetId] = useState<string | null>(null);
 
   // Queries
   const {data: activeData, isLoading: isActiveLoading} = useAllProbations(activePage, 20);
@@ -112,20 +114,21 @@ export default function ProbationPage() {
       const extensionDays = Number(daysInput);
       if (!Number.isFinite(extensionDays) || extensionDays <= 0) return;
       const reason = window.prompt('Reason for extension?');
-      if (!reason) return;
+      if (!reason || extendProbation.isPending) return;
       extendProbation.mutate({probationId, data: {extensionDays, reason}});
     },
     [extendProbation]
   );
 
-  const handleFail = useCallback(
-    (probationId: string) => {
-      const reason = window.prompt('Reason for failing probation?');
-      if (!reason) return;
-      if (!window.confirm('Fail this probation? This cannot be undone.')) return;
-      failProbation.mutate({probationId, data: {reason}});
+  const handleFailConfirm = useCallback(
+    (reason?: string) => {
+      if (!failTargetId || !reason || failProbation.isPending) return;
+      failProbation.mutate(
+        {probationId: failTargetId, data: {reason}},
+        {onSuccess: () => setFailTargetId(null)}
+      );
     },
-    [failProbation]
+    [failProbation, failTargetId]
   );
 
   // Form
@@ -390,7 +393,7 @@ export default function ProbationPage() {
                               Extend
                             </button>
                             <button
-                              onClick={() => handleFail(probation.id)}
+                              onClick={() => setFailTargetId(probation.id)}
                               disabled={failProbation.isPending}
                               className="text-xs px-2.5 py-1 rounded-lg bg-danger-100 text-danger-700 hover:bg-danger-200 dark:bg-danger-900/30 dark:text-danger-400 transition-colors disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                             >
@@ -812,6 +815,23 @@ export default function ProbationPage() {
           </PermissionGate>
         )}
       </motion.div>
+
+      <ConfirmDialog
+        isOpen={failTargetId !== null}
+        onClose={() => setFailTargetId(null)}
+        onConfirm={handleFailConfirm}
+        title="Fail probation?"
+        message="This marks the employee's probation as failed. This cannot be undone."
+        confirmText="Fail probation"
+        cancelText="Keep probation"
+        type="danger"
+        loading={failProbation.isPending}
+        reason={{
+          label: 'Reason for failing probation',
+          placeholder: 'Explain why the probation is being failed...',
+          required: true,
+        }}
+      />
     </AppLayout>
   );
 }

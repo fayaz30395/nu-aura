@@ -68,6 +68,8 @@ export interface PerformanceReview {
   reviewPeriodEnd?: string;
   status: ReviewStatus;
   overallRating?: number;
+  selfRating?: number;
+  managerRating?: number;
   strengths?: string;
   areasForImprovement?: string;
   achievements?: string;
