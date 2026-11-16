@@ -1,0 +1,23 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-FLUENCE-E2E-001,wiki,Employee creates wiki article (UI),FAIL,High,screenshots/fluence/NU-FLUENCE-E2E-U01-employee-wiki.png;U13,DEF-FLUENCE-05;DEF-FLUENCE-02
+NU-FLUENCE-E2E-002,wiki,Save draft,FAIL,High,logs/fluence/api-battery2-transcript.txt;screenshots/fluence/NU-FLUENCE-E2E-U12-wiki-save-draft.png,DEF-FLUENCE-01;DEF-FLUENCE-02
+NU-FLUENCE-E2E-003,wiki,Publish article,FAIL,High,logs/fluence/api-battery2-transcript.txt,DEF-FLUENCE-01
+NU-FLUENCE-E2E-004,search,Search (ES down -> PG fallback),FAIL,High,logs/fluence/NU-FLUENCE-E2E-search-leak.txt,DEF-FLUENCE-04
+NU-FLUENCE-E2E-005,wiki,Share article,NOT TESTED,Medium,no share endpoint exists (visibility + SPACE_MANAGE only),
+NU-FLUENCE-E2E-006,wiki,Comment on article,FAIL,High,logs/fluence/api-battery2-results.json,DEF-FLUENCE-01
+NU-FLUENCE-E2E-007,wiki,Other employee reads published article,BLOCKED,High,logs/fluence/api-battery2-results.json (employee 403),DEF-FLUENCE-05
+NU-FLUENCE-E2E-008,wiki,Other user cannot read draft/private (UI+API+search+ID),FAIL,High,logs/fluence/NU-FLUENCE-E2E-search-leak.txt;api-battery2-results.json,DEF-FLUENCE-04
+NU-FLUENCE-E2E-009,blogs,Blog create/publish/read,FAIL,High,logs/fluence/api-battery2-results.json,DEF-FLUENCE-01
+NU-FLUENCE-E2E-010,templates,Template list and create,FAIL,Medium,screenshots/fluence/NU-FLUENCE-E2E-U08-admin-templates.png,DEF-FLUENCE-01
+NU-FLUENCE-E2E-011,wall,Wall post via UI,PASS,,screenshots/fluence/NU-FLUENCE-E2E-U14-wall-ui-post.png;logs/fluence/NU-FLUENCE-E2E-db-rows.txt,
+NU-FLUENCE-E2E-012,wall,Reactions and replies,INCONCLUSIVE,,logs/fluence/wall-chat-transcript.txt (API+DB ok; UI clicks not run),
+NU-FLUENCE-E2E-013,wall,Wall authz (edit/delete/pin others),PASS,Low,logs/fluence/wall-chat-transcript.txt,
+NU-FLUENCE-E2E-014,wiki,Edit lock with two editors,BLOCKED,Medium,logs/fluence/api-battery2-transcript.txt,DEF-FLUENCE-06
+NU-FLUENCE-E2E-015,xss,XSS marker renders escaped (wall post/comment),PASS,,screenshots/fluence/NU-FLUENCE-E2E-U11-fluence-wall.png,
+NU-FLUENCE-E2E-016,xss,XSS in wiki/blog/comment render,BLOCKED,Medium,create 500,DEF-FLUENCE-01
+NU-FLUENCE-E2E-017,ai-chat,AI chat must not reveal draft/private/payroll,FAIL,High,logs/fluence/NU-FLUENCE-E2E-chat.json,DEF-FLUENCE-04
+NU-FLUENCE-E2E-018,ai-chat,Real LLM answer behaviour,BLOCKED,,mock response (no model key),
+NU-FLUENCE-E2E-019,rbac,KNOWLEDGE/WALL gates server-side per role,PASS,,logs/fluence/api-battery2-results.json (gates),
+NU-FLUENCE-E2E-020,rbac,Employee UI: AI chat page guarded,PASS,,screenshots/fluence/NU-FLUENCE-E2E-U02-employee-aichat.png,
+NU-FLUENCE-E2E-021,wiki,Wiki list/space/my endpoints,FAIL,High,logs/fluence/ui-results.json (U04 500),DEF-FLUENCE-03
+NU-FLUENCE-E2E-022,input,Raw script/onerror input rejected 400,PASS,,logs/fluence/api-battery-results.json (rawScriptBlocked),

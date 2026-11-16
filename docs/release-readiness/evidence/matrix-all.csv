@@ -1,0 +1,452 @@
+source,id,area,scenario,status,severity,evidence,defect_id
+matrix-be.csv,NU-BE-001,backend-tests,Full mvn suite (5303 run/772 err/3 skip),BLOCKED,Medium,evidence/logs/NU-BE-001-mvn-test.txt,DEF-BE-01
+matrix-be.csv,NU-BE-002,backend-tests,78 Docker-dependent classes,BLOCKED,Medium,evidence/logs/NU-BE-002-docker-blocked-classes.txt,DEF-BE-01
+matrix-be.csv,NU-BE-003,tenancy,RLS non-bypass proof tests skipped,NOT TESTED,High,evidence/logs/NU-BE-001-mvn-test.txt,DEF-BE-01
+matrix-be.csv,NU-BE-004,tenancy,Tenant isolation unit/arch tests (52 classes),PASS,Info,evidence/logs/NU-BE-001-mvn-test.txt,
+matrix-be.csv,NU-BE-010,deps,Dependency tree,PASS,Info,evidence/logs/NU-BE-010-dependency-tree.txt,
+matrix-be.csv,NU-BE-011,deps,OWASP dependency-check offline,BLOCKED,Info,evidence/logs/NU-BE-011-owasp-dc.txt,
+matrix-be.csv,NU-BE-020,deps,CVE review resolved versions,INCONCLUSIVE,High,10-api-test-results.md,DEF-BE-04
+matrix-be.csv,NU-BE-030,flyway,Checksums files vs local DB,FAIL,Medium,evidence/logs/NU-BE-030-flyway-checksums.txt,DEF-BE-02
+matrix-be.csv,NU-BE-031,flyway,V329-V341 integrity,PASS,Info,evidence/logs/NU-BE-031-flyway-v329-v341.txt,
+matrix-fluence.csv,NU-FLUENCE-E2E-001,wiki,Employee creates wiki article (UI),FAIL,High,screenshots/fluence/NU-FLUENCE-E2E-U01-employee-wiki.png;U13,DEF-FLUENCE-05;DEF-FLUENCE-02
+matrix-fluence.csv,NU-FLUENCE-E2E-002,wiki,Save draft,FAIL,High,logs/fluence/api-battery2-transcript.txt;screenshots/fluence/NU-FLUENCE-E2E-U12-wiki-save-draft.png,DEF-FLUENCE-01;DEF-FLUENCE-02
+matrix-fluence.csv,NU-FLUENCE-E2E-003,wiki,Publish article,FAIL,High,logs/fluence/api-battery2-transcript.txt,DEF-FLUENCE-01
+matrix-fluence.csv,NU-FLUENCE-E2E-004,search,Search (ES down -> PG fallback),FAIL,High,logs/fluence/NU-FLUENCE-E2E-search-leak.txt,DEF-FLUENCE-04
+matrix-fluence.csv,NU-FLUENCE-E2E-005,wiki,Share article,NOT TESTED,Medium,no share endpoint exists (visibility + SPACE_MANAGE only),
+matrix-fluence.csv,NU-FLUENCE-E2E-006,wiki,Comment on article,FAIL,High,logs/fluence/api-battery2-results.json,DEF-FLUENCE-01
+matrix-fluence.csv,NU-FLUENCE-E2E-007,wiki,Other employee reads published article,BLOCKED,High,logs/fluence/api-battery2-results.json (employee 403),DEF-FLUENCE-05
+matrix-fluence.csv,NU-FLUENCE-E2E-008,wiki,Other user cannot read draft/private (UI+API+search+ID),FAIL,High,logs/fluence/NU-FLUENCE-E2E-search-leak.txt;api-battery2-results.json,DEF-FLUENCE-04
+matrix-fluence.csv,NU-FLUENCE-E2E-009,blogs,Blog create/publish/read,FAIL,High,logs/fluence/api-battery2-results.json,DEF-FLUENCE-01
+matrix-fluence.csv,NU-FLUENCE-E2E-010,templates,Template list and create,FAIL,Medium,screenshots/fluence/NU-FLUENCE-E2E-U08-admin-templates.png,DEF-FLUENCE-01
+matrix-fluence.csv,NU-FLUENCE-E2E-011,wall,Wall post via UI,PASS,,screenshots/fluence/NU-FLUENCE-E2E-U14-wall-ui-post.png;logs/fluence/NU-FLUENCE-E2E-db-rows.txt,
+matrix-fluence.csv,NU-FLUENCE-E2E-012,wall,Reactions and replies,INCONCLUSIVE,,logs/fluence/wall-chat-transcript.txt (API+DB ok; UI clicks not run),
+matrix-fluence.csv,NU-FLUENCE-E2E-013,wall,Wall authz (edit/delete/pin others),PASS,Low,logs/fluence/wall-chat-transcript.txt,
+matrix-fluence.csv,NU-FLUENCE-E2E-014,wiki,Edit lock with two editors,BLOCKED,Medium,logs/fluence/api-battery2-transcript.txt,DEF-FLUENCE-06
+matrix-fluence.csv,NU-FLUENCE-E2E-015,xss,XSS marker renders escaped (wall post/comment),PASS,,screenshots/fluence/NU-FLUENCE-E2E-U11-fluence-wall.png,
+matrix-fluence.csv,NU-FLUENCE-E2E-016,xss,XSS in wiki/blog/comment render,BLOCKED,Medium,create 500,DEF-FLUENCE-01
+matrix-fluence.csv,NU-FLUENCE-E2E-017,ai-chat,AI chat must not reveal draft/private/payroll,FAIL,High,logs/fluence/NU-FLUENCE-E2E-chat.json,DEF-FLUENCE-04
+matrix-fluence.csv,NU-FLUENCE-E2E-018,ai-chat,Real LLM answer behaviour,BLOCKED,,mock response (no model key),
+matrix-fluence.csv,NU-FLUENCE-E2E-019,rbac,KNOWLEDGE/WALL gates server-side per role,PASS,,logs/fluence/api-battery2-results.json (gates),
+matrix-fluence.csv,NU-FLUENCE-E2E-020,rbac,Employee UI: AI chat page guarded,PASS,,screenshots/fluence/NU-FLUENCE-E2E-U02-employee-aichat.png,
+matrix-fluence.csv,NU-FLUENCE-E2E-021,wiki,Wiki list/space/my endpoints,FAIL,High,logs/fluence/ui-results.json (U04 500),DEF-FLUENCE-03
+matrix-fluence.csv,NU-FLUENCE-E2E-022,input,Raw script/onerror input rejected 400,PASS,,logs/fluence/api-battery-results.json (rawScriptBlocked),
+matrix-grow.csv,NU-GROW-E2E-001,grow,HR creates review cycle via UI,PASS,,logs/grow/NU-GROW-E2E-001.txt,
+matrix-grow.csv,NU-GROW-E2E-002,grow,HR activates cycle for Recruitment dept via UI,PASS,,logs/grow/NU-GROW-E2E-002.txt,
+matrix-grow.csv,NU-GROW-E2E-003,grow,"Employee submits self-assessment (ratings 4,3 => avg round 4)",PASS,,logs/grow/NU-GROW-E2E-003.txt,
+matrix-grow.csv,NU-GROW-E2E-004,grow,Edit self-assessment after submit rejected,PASS,,logs/grow/NU-GROW-E2E-004.txt,
+matrix-grow.csv,NU-GROW-E2E-005,grow,Alternate edit path PUT /reviews/{id} after submit blocked for employee,PASS,,logs/grow/NU-GROW-E2E-005.txt,
+matrix-grow.csv,NU-GROW-E2E-006,grow,Manager review before MANAGER_REVIEW stage rejected (skipped step),PASS,,logs/grow/NU-GROW-E2E-006.txt,
+matrix-grow.csv,NU-GROW-E2E-007,grow,Employee cannot submit manager review about self,PASS,,logs/grow/NU-GROW-E2E-007.txt,
+matrix-grow.csv,NU-GROW-E2E-008,grow,Employee cannot submit another employee's self-assessment,PASS,,logs/grow/NU-GROW-E2E-008.txt,
+matrix-grow.csv,NU-GROW-E2E-009,grow,Employee/manager cannot advance or complete cycle,FAIL,High,logs/grow/NU-GROW-E2E-009.txt,DEF-GROW-04
+matrix-grow.csv,NU-GROW-E2E-010,grow,HR advances cycle ACTIVE->MANAGER_REVIEW,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-010.txt,
+matrix-grow.csv,NU-GROW-E2E-011,grow,Self-assessment after self stage closed rejected,PASS,,logs/grow/NU-GROW-E2E-011.txt,
+matrix-grow.csv,NU-GROW-E2E-012,grow,Non-assigned user (HR) cannot submit manager review for review owned by other manager,PASS,,logs/grow/NU-GROW-E2E-012.txt,
+matrix-grow.csv,NU-GROW-E2E-013,grow,"Manager review: rating 9 rejected (400), rating 4 accepted, DB IN_REVIEW",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-013.txt,
+matrix-grow.csv,NU-GROW-E2E-014,grow,Manager review cannot be edited after submit,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-014.txt,
+matrix-grow.csv,NU-GROW-E2E-015,grow,Calibration rating rejected before CALIBRATION stage,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-015.txt,
+matrix-grow.csv,NU-GROW-E2E-016,grow,"Calibration: rating 6 => 400; manager => 403; HR rating 3 accepted, DB final_rating=3",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-016.txt,
+matrix-grow.csv,NU-GROW-E2E-017,grow,Employee cannot read cycle calibration data (all employees ratings),PASS,,logs/grow/NU-GROW-E2E-017.txt,
+matrix-grow.csv,NU-GROW-E2E-018,grow,HR reads calibration report,PASS,,logs/grow/NU-GROW-E2E-018.txt,
+matrix-grow.csv,NU-GROW-E2E-019,grow,HR completes cycle; advance/complete after COMPLETED rejected,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-019.txt,
+matrix-grow.csv,NU-GROW-E2E-020,grow,Completed cycle cannot be reopened via PUT status=ACTIVE,FAIL,Medium,logs/grow/NU-GROW-E2E-020.txt,DEF-GROW-06
+matrix-grow.csv,NU-GROW-E2E-021,grow,Employee cannot list all reviews (GET /reviews),PASS,,logs/grow/NU-GROW-E2E-021.txt,
+matrix-grow.csv,NU-GROW-E2E-022,grow,Employee cannot read another employee's reviews,PASS,,logs/grow/NU-GROW-E2E-022.txt,
+matrix-grow.csv,NU-GROW-E2E-023,grow,Employee cannot read another's review by id,PASS,,logs/grow/NU-GROW-E2E-023.txt,
+matrix-grow.csv,NU-GROW-E2E-024,grow,Peer employee (anshuman) cannot read arun review by id,PASS,,logs/grow/NU-GROW-E2E-024.txt,
+matrix-grow.csv,NU-GROW-E2E-025,grow,Manager (sumit) cannot read non-report suresh's review,FAIL,Critical,logs/grow/NU-GROW-E2E-025.txt,DEF-GROW-05
+matrix-grow.csv,NU-GROW-E2E-026,grow,Recruiter (suresh) cannot read arun review,PASS,,logs/grow/NU-GROW-E2E-026.txt,
+matrix-grow.csv,NU-GROW-E2E-027,grow,Payroll/finance cannot read arun review,PASS,,logs/grow/NU-GROW-E2E-027.txt,
+matrix-grow.csv,NU-GROW-E2E-028,grow,Employee cannot read another's pending reviews (/pending/{reviewerId}),PASS,,logs/grow/NU-GROW-E2E-028.txt,
+matrix-grow.csv,NU-GROW-E2E-029,grow,Manager can read own report review (positive control),PASS,,logs/grow/NU-GROW-E2E-029.txt,
+matrix-grow.csv,NU-GROW-E2E-030,grow,Employee reads own review (positive control),PASS,,logs/grow/NU-GROW-E2E-030.txt,
+matrix-grow.csv,NU-GROW-E2E-031,grow,API: HR creates + activates second cycle (Recruitment dept),PASS,,logs/grow/NU-GROW-E2E-031.txt,
+matrix-grow.csv,NU-GROW-E2E-032,grow,"Self-assessment ratings 5,2 -> avg 3.5 stored as int (rounding check)",PASS,,logs/grow/NU-GROW-E2E-032.txt,
+matrix-grow.csv,NU-GROW-E2E-033,grow,HR advances ACTIVE -> MANAGER_REVIEW,PASS,,logs/grow/NU-GROW-E2E-033.txt,
+matrix-grow.csv,NU-GROW-E2E-034,grow,"Manager review: rating 9 => 400, 4 accepted, DB IN_REVIEW/4",PASS,,logs/grow/NU-GROW-E2E-034.txt,
+matrix-grow.csv,NU-GROW-E2E-035,grow,Manager review not editable after submit,PASS,,logs/grow/NU-GROW-E2E-035.txt,
+matrix-grow.csv,NU-GROW-E2E-036,grow,Employee must not see manager rating/comments before ratings published (stage MANAGER_REVIEW),FAIL,Medium,logs/grow/NU-GROW-E2E-036.txt,DEF-GROW-08
+matrix-grow.csv,NU-GROW-E2E-037,grow,HR_MANAGER (jagadeesh) can set calibration rating (UI lets HR_MANAGER calibrate?),FAIL,Medium,logs/grow/NU-GROW-E2E-037.txt,DEF-GROW-09
+matrix-grow.csv,NU-GROW-E2E-038,grow,"Calibration by HR_ADMIN: 6 => 400, manager => 403, 3 accepted, DB final_rating=3",PASS,,logs/grow/NU-GROW-E2E-038.txt,
+matrix-grow.csv,NU-GROW-E2E-039,grow,After RATINGS_PUBLISHED employee sees own final rating (positive),PASS,,logs/grow/NU-GROW-E2E-039.txt,
+matrix-grow.csv,NU-GROW-E2E-040,grow,HR completes cycle; DB COMPLETED,PASS,,logs/grow/NU-GROW-E2E-040.txt,
+matrix-grow.csv,NU-GROW-E2E-041,grow,"No review mutation after cycle COMPLETED (self, calibration)",PASS,,logs/grow/NU-GROW-E2E-041.txt,
+matrix-grow.csv,NU-GROW-E2E-042,grow,REPRO: completed cycle reopened via PUT status=ACTIVE must be rejected,FAIL,Medium,logs/grow/NU-GROW-E2E-042.txt,DEF-GROW-06
+matrix-grow.csv,NU-GROW-E2E-043,grow,REPRO: manager (sumit) must not read non-report (suresh) review; suresh.manager_id=550e8400-e29b-41d4-a716-446655440040,FAIL,High,logs/grow/NU-GROW-E2E-043.txt,DEF-GROW-05
+matrix-grow.csv,NU-GROW-E2E-043b,grow,REPRO: manager lists non-report employee reviews,PASS,,logs/grow/NU-GROW-E2E-043b.txt,
+matrix-grow.csv,NU-GROW-E2E-044,grow,REPRO: a line MANAGER must not be able to advance org-wide review cycle,FAIL,High,logs/grow/NU-GROW-E2E-044.txt,DEF-GROW-04
+matrix-grow.csv,NU-GROW-E2E-045,grow,"Skipped steps: completing a cycle mid-stage (no calibration/publish, DRAFT reviews pending) should be rejected",FAIL,Medium,logs/grow/NU-GROW-E2E-045.txt,DEF-GROW-07
+matrix-grow.csv,NU-GROW-E2E-059,grow,Plain EMPLOYEE (arun) can create own personal OKR (Keka parity: employees set goals),FAIL,Medium,logs/grow/NU-GROW-E2E-059.txt,DEF-GROW-10
+matrix-grow.csv,NU-GROW-E2E-060,grow,Manager creates objective (API),PASS,,logs/grow/NU-GROW-E2E-060.txt,
+matrix-grow.csv,NU-GROW-E2E-060b,grow,Owner adds a key result to own objective,FAIL,High,logs/grow/NU-GROW-E2E-060b.txt,DEF-GROW-01
+matrix-grow.csv,NU-GROW-E2E-061,grow,"Progress calc by hand (KR1 50/200=25, KR2 80/100=80, w60/40 => 47.00)",BLOCKED,,logs/grow/NU-GROW-E2E-061.txt,DEF-GROW-01
+matrix-grow.csv,NU-GROW-E2E-062,grow,Progress clamps / over-target,BLOCKED,,logs/grow/NU-GROW-E2E-062.txt,
+matrix-grow.csv,NU-GROW-E2E-063,grow,Progress update writes check-in row,BLOCKED,,logs/grow/NU-GROW-E2E-063.txt,
+matrix-grow.csv,NU-GROW-E2E-064,grow,KR start==target division by zero,BLOCKED,,logs/grow/NU-GROW-E2E-064.txt,
+matrix-grow.csv,NU-GROW-E2E-066,grow,Peer cannot update another's KR progress,BLOCKED,,logs/grow/NU-GROW-E2E-066.txt,
+matrix-grow.csv,NU-GROW-E2E-067,grow,Peer cannot delete another's KR,BLOCKED,,logs/grow/NU-GROW-E2E-067.txt,
+matrix-grow.csv,NU-GROW-E2E-068,grow,Peer reading a PRIVATE-visibility individual objective of another employee,FAIL,Medium,logs/grow/NU-GROW-E2E-068.txt,DEF-GROW-12
+matrix-grow.csv,NU-GROW-E2E-069,grow,Employee cannot read company-wide objectives (OKR_VIEW_ALL),PASS,,logs/grow/NU-GROW-E2E-069.txt,
+matrix-grow.csv,NU-GROW-E2E-070,grow,Employee cannot approve own objective,PASS,,logs/grow/NU-GROW-E2E-070.txt,
+matrix-grow.csv,NU-GROW-E2E-071,grow,Unrelated recruiter cannot approve arun objective,PASS,,logs/grow/NU-GROW-E2E-071.txt,
+matrix-grow.csv,NU-GROW-E2E-072,grow,HR_MANAGER approves objective; DB status,PASS,,logs/grow/NU-GROW-E2E-072.txt,
+matrix-grow.csv,NU-GROW-E2E-073,grow,Finance/payroll user cannot read arun private objective,PASS,,logs/grow/NU-GROW-E2E-073.txt,
+matrix-grow.csv,NU-GROW-E2E-074,grow,Peer cannot add KR to another's objective,PASS,,logs/grow/NU-GROW-E2E-074.txt,
+matrix-grow.csv,NU-GROW-E2E-075,grow,Peer cannot delete another's objective,PASS,,logs/grow/NU-GROW-E2E-075.txt,
+matrix-grow.csv,NU-GROW-E2E-090,grow,HR creates anonymous 360 cycle (minPeers=2),PASS,,logs/grow/NU-GROW-E2E-090.txt,
+matrix-grow.csv,NU-GROW-E2E-091,grow,HR activates 360 cycle,PASS,,logs/grow/NU-GROW-E2E-091.txt,
+matrix-grow.csv,NU-GROW-E2E-092,grow,HR nominates 2 peers + manager for arun,FAIL,,logs/grow/NU-GROW-E2E-092.txt,DEF-GROW-02
+matrix-grow.csv,NU-GROW-E2E-093,grow,HR lists requests,BLOCKED,,logs/grow/NU-GROW-E2E-093.txt,
+matrix-grow.csv,NU-GROW-E2E-095,grow,Reviewers (2 peers + manager) submit responses; DB rows,BLOCKED,,logs/grow/NU-GROW-E2E-095.txt,
+matrix-grow.csv,NU-GROW-E2E-096,grow,Non-nominated user cannot submit response against another reviewer's request,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-096.txt,
+matrix-grow.csv,NU-GROW-E2E-097,grow,Final response cannot be overwritten after submit,BLOCKED,,logs/grow/NU-GROW-E2E-097.txt,
+matrix-grow.csv,NU-GROW-E2E-098,grow,Reviewee cannot read raw response of a peer reviewer (direct API by requestId),BLOCKED,,logs/grow/NU-GROW-E2E-098.txt,
+matrix-grow.csv,NU-GROW-E2E-099,grow,Reviewee cannot list cycle requests (reviewer identities),PASS,,logs/grow/NU-GROW-E2E-099.txt,
+matrix-grow.csv,NU-GROW-E2E-100,grow,Reviewee cannot read all summaries of cycle,PASS,,logs/grow/NU-GROW-E2E-100.txt,
+matrix-grow.csv,NU-GROW-E2E-101,grow,Other peer (mani) cannot read anshuman's response,BLOCKED,,logs/grow/NU-GROW-E2E-101.txt,
+matrix-grow.csv,NU-GROW-E2E-102,grow,"Before HR shares, reviewee my-summaries is empty",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-102.txt,
+matrix-grow.csv,NU-GROW-E2E-103,grow,Generated summary (HR view) aggregates; raw peer comments/identities check,BLOCKED,,logs/grow/NU-GROW-E2E-103.txt,
+matrix-grow.csv,NU-GROW-E2E-104,grow,After share: reviewee sees summary with NO raw rater identity/anonymous comments,BLOCKED,,logs/grow/NU-GROW-E2E-104.txt,
+matrix-grow.csv,NU-GROW-E2E-106,grow,Employee cannot nominate reviewers for own 360,PASS,,logs/grow/NU-GROW-E2E-106.txt,
+matrix-grow.csv,NU-GROW-E2E-107,grow,Employee cannot share/unshare summaries,PASS,,logs/grow/NU-GROW-E2E-107.txt,
+matrix-grow.csv,NU-GROW-E2E-108,grow,Finance/payroll cannot read 360 summaries,PASS,,logs/grow/NU-GROW-E2E-108.txt,
+matrix-grow.csv,NU-GROW-E2E-109,grow,Recruiter cannot read 360 requests,PASS,,logs/grow/NU-GROW-E2E-109.txt,
+matrix-grow.csv,NU-GROW-E2E-110,grow,"After HR closes 360 cycle, late responses rejected",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-110.txt,
+matrix-grow.csv,NU-GROW-E2E-120,grow,HR_ADMIN (admin@) can create a course (LMS:COURSE_MANAGE is SUPER_ADMIN-only in DB),FAIL,High,logs/grow/NU-GROW-E2E-120.txt,DEF-GROW-09
+matrix-grow.csv,NU-GROW-E2E-121,grow,HR creates/publishes own course and quiz end-to-end,BLOCKED,,logs/grow/NU-GROW-E2E-121.txt,
+matrix-grow.csv,NU-GROW-E2E-122,grow,Employee self-enrols,PASS,,logs/grow/NU-GROW-E2E-122.txt,
+matrix-grow.csv,NU-GROW-E2E-123,grow,Duplicate enrolment rejected,PASS,,logs/grow/NU-GROW-E2E-123.txt,
+matrix-grow.csv,NU-GROW-E2E-124,grow,Unauthorised: employee enrols ANOTHER employee (employeeId param) must be rejected,PASS,,logs/grow/NU-GROW-E2E-124.txt,
+matrix-grow.csv,NU-GROW-E2E-125,grow,Employee cannot update ANOTHER employee's enrolment progress (cert fraud),PASS,,logs/grow/NU-GROW-E2E-125.txt,
+matrix-grow.csv,NU-GROW-E2E-126,grow,Employee marks course 50 then 100% via progress API; DB COMPLETED; certificate issued,FAIL,Medium,logs/grow/NU-GROW-E2E-126.txt,DEF-GROW-11
+matrix-grow.csv,NU-GROW-E2E-127,grow,Progress regression after completion rejected,FAIL,Low,logs/grow/NU-GROW-E2E-127.txt,DEF-GROW-11
+matrix-grow.csv,NU-GROW-E2E-128,grow,Employee sees own certificate,FAIL,,logs/grow/NU-GROW-E2E-128.txt,DEF-GROW-11
+matrix-grow.csv,NU-GROW-E2E-129,grow,Certificate verification endpoint (authenticated other user),BLOCKED,,logs/grow/NU-GROW-E2E-129.txt,
+matrix-grow.csv,NU-GROW-E2E-130,grow,Employee cannot list a course's enrolments (other learners),PASS,,logs/grow/NU-GROW-E2E-130.txt,
+matrix-grow.csv,NU-GROW-E2E-131,grow,Employee cannot read another's enrolment progress,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-131.txt,
+matrix-grow.csv,NU-GROW-E2E-132,grow,Employee cannot create course,PASS,,logs/grow/NU-GROW-E2E-132.txt,
+matrix-grow.csv,NU-GROW-E2E-133,grow,Recruiter cannot archive course,PASS,,logs/grow/NU-GROW-E2E-133.txt,
+matrix-grow.csv,NU-GROW-E2E-134,grow,Employee cannot read course completion stats,PASS,,logs/grow/NU-GROW-E2E-134.txt,
+matrix-grow.csv,NU-GROW-E2E-140,grow,HR creates anonymous pulse survey with 1 question,FAIL,,logs/grow/NU-GROW-E2E-140.txt,DEF-GROW-03
+matrix-grow.csv,NU-GROW-E2E-141,grow,publish survey,BLOCKED,,logs/grow/NU-GROW-E2E-141.txt,
+matrix-grow.csv,NU-GROW-E2E-142,grow,employees submit responses,BLOCKED,,logs/grow/NU-GROW-E2E-142.txt,
+matrix-grow.csv,NU-GROW-E2E-143,grow,anonymous: no respondent id stored,BLOCKED,,logs/grow/NU-GROW-E2E-143.txt,
+matrix-grow.csv,NU-GROW-E2E-144,grow,duplicate submission rejected,BLOCKED,,logs/grow/NU-GROW-E2E-144.txt,
+matrix-grow.csv,NU-GROW-E2E-145,grow,min-response suppression (<5),BLOCKED,,logs/grow/NU-GROW-E2E-145.txt,
+matrix-grow.csv,NU-GROW-E2E-146,grow,employee cannot read analytics,BLOCKED,,logs/grow/NU-GROW-E2E-146.txt,
+matrix-grow.csv,NU-GROW-E2E-147,grow,employee cannot create survey,BLOCKED,,logs/grow/NU-GROW-E2E-147.txt,
+matrix-grow.csv,NU-GROW-E2E-148,grow,recruiter cannot close,BLOCKED,,logs/grow/NU-GROW-E2E-148.txt,
+matrix-grow.csv,NU-GROW-E2E-149,grow,closed survey rejects,BLOCKED,,logs/grow/NU-GROW-E2E-149.txt,
+matrix-grow.csv,NU-GROW-E2E-150,grow,HR creates wellness program,PASS,,logs/grow/NU-GROW-E2E-150.txt,
+matrix-grow.csv,NU-GROW-E2E-151,grow,HR adds challenge,PASS,,logs/grow/NU-GROW-E2E-151.txt,
+matrix-grow.csv,NU-GROW-E2E-152,grow,Employee joins wellness challenge (WELLNESS:CREATE is HR-only in DB),FAIL,,logs/grow/NU-GROW-E2E-152.txt,DEF-GROW-10
+matrix-grow.csv,NU-GROW-E2E-153,grow,Employee logs 8000 steps,FAIL,,logs/grow/NU-GROW-E2E-153.txt,DEF-GROW-10
+matrix-grow.csv,NU-GROW-E2E-154,grow,Negative health-log value rejected,BLOCKED,,logs/grow/NU-GROW-E2E-154.txt,
+matrix-grow.csv,NU-GROW-E2E-155,grow,Cannot log health data for challenge not joined / on behalf of another employee,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-155.txt,
+matrix-grow.csv,NU-GROW-E2E-156,grow,Health logs are private: another employee's GET /health-logs must not contain arun's entries,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-156.txt,
+matrix-grow.csv,NU-GROW-E2E-157,grow,Employee cannot create wellness program,PASS,,logs/grow/NU-GROW-E2E-157.txt,
+matrix-grow.csv,NU-GROW-E2E-158,grow,Leaderboard shows only enabled-challenge aggregates (info),INCONCLUSIVE,,logs/grow/NU-GROW-E2E-158.txt,
+matrix-grow.csv,NU-GROW-E2E-160,grow,HR_ADMIN creates training program (TRAINING:CREATE only SUPER_ADMIN/TENANT_ADMIN),FAIL,,logs/grow/NU-GROW-E2E-160.txt,DEF-GROW-09
+matrix-grow.csv,NU-GROW-E2E-161,grow,Employee cannot create training program,PASS,,logs/grow/NU-GROW-E2E-161.txt,
+matrix-grow.csv,NU-GROW-E2E-162,grow,Employee cannot read another employee's training enrolments,PASS,,logs/grow/NU-GROW-E2E-162.txt,
+matrix-grow.csv,NU-GROW-E2E-163,grow,Employee cannot mark training complete (HR action),PASS,,logs/grow/NU-GROW-E2E-163.txt,
+matrix-grow.csv,NU-GROW-E2E-180,grow,UI: employee My Reviews shows own SELF (SUBMITTED) and MANAGER (DRAFT) review for test cycle,PASS,,logs/grow/NU-GROW-E2E-180.txt,DEF-GROW-13
+matrix-grow.csv,NU-GROW-E2E-181,grow,UI: HR sees test cycles on /performance/cycles,PASS,,logs/grow/NU-GROW-E2E-181.txt,
+matrix-grow.csv,NU-GROW-E2E-182,grow,UI: manager sees own OKR objective on /performance/okr,PASS,,logs/grow/NU-GROW-E2E-182.txt,
+matrix-grow.csv,NU-GROW-E2E-183,grow,UI: employee learning dashboard shows enrolled course,PASS,,logs/grow/NU-GROW-E2E-183.txt,
+matrix-grow.csv,NU-GROW-E2E-184,grow,UI: employee /wellness shows HR-created program,PASS,,logs/grow/NU-GROW-E2E-184.txt,
+matrix-grow.csv,NU-GROW-E2E-185,grow,UI: /performance/360-feedback for employee,INCONCLUSIVE,,logs/grow/NU-GROW-E2E-185.txt,
+matrix-grow.csv,NU-GROW-E2E-186,grow,UI: employee denied /performance/calibration,PASS,,logs/grow/NU-GROW-E2E-186.txt,
+matrix-grow.csv,NU-GROW-E2E-190,grow,DEPARTMENT scope with empty departmentIds activates cycle for ALL employees,NOT TESTED,,logs/grow/NU-GROW-E2E-190.txt,DEF-GROW-14
+matrix-grow.csv,NU-GROW-E2E-191,grow,"Goals, PIP, competency matrix, 9-box, learning paths, quizzes, mobile viewports, UI self-review submit + manager review form clicks",NOT TESTED,,logs/grow/NU-GROW-E2E-191.txt,
+matrix-hire.csv,NU-HIRE-E2E-001,NU-Hire,Create job opening (DRAFT) as RECRUITMENT_ADMIN,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-002,NU-Hire,Requisition approval workflow before publish,BLOCKED,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-003,NU-Hire,Publish opening (status OPEN),PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-003b,NU-Hire,PUT job-opening with omitted optional fields must not wipe salary/location/hiringManager,FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-04
+matrix-hire.csv,NU-HIRE-E2E-004a,NU-Hire,Public careers WITHOUT tenant header (what the /careers page sends) lists NuLogic demo job,FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-06
+matrix-hire.csv,NU-HIRE-E2E-004,NU-Hire,Public career API lists published job (unauthenticated),PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-005,NU-Hire,Public job detail exposes no internal fields (salary band/hiringManager/tenantId),PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-006,NU-Hire,Public apply (unauth) with invalid/absent reCAPTCHA token is rejected and creates no candidate,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-007,NU-Hire,Public apply happy path + duplicate-application block,BLOCKED,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-008a,NU-Hire,Resume upload valid PDF (control),INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-008,NU-Hire,Resume bad type (.exe / application/x-msdownload) rejected,INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-008b,NU-Hire,Resume type spoof: exe bytes declared application/pdf rejected,INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-009,NU-Hire,Resume path-traversal filename (../../etc/NUAURA_TEST.pdf) handled safely (rejected or sanitized),INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-010,NU-Hire,Resume oversize (21 MB PDF) rejected,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-010b,NU-Hire,DOCUMENT:UPLOAD permission (documents/resume store) available to HR roles,FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-08
+matrix-hire.csv,NU-HIRE-E2E-011a,NU-Hire,Create candidate without candidateCode (field is optional in DTO),FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-05
+matrix-hire.csv,NU-HIRE-E2E-011,NU-Hire,Add 3 candidates (NUAURA_TEST_*) via API as RECRUITMENT_ADMIN,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-012,NU-Hire,Create applicant records linking candidates to job,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-013a,NU-Hire,Pipeline move to generic enum stage SCREENING (Java RecruitmentStage value; FE kanban uses it),FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-02
+matrix-hire.csv,NU-HIRE-E2E-013-RECRUITERS_PHONE_CALL,NU-Hire,Pipeline move candidate Alpha -> RECRUITERS_PHONE_CALL,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-013-PANEL_REVIEW,NU-Hire,Pipeline move candidate Alpha -> PANEL_REVIEW,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-013-PANEL_SHORTLISTED,NU-Hire,Pipeline move candidate Alpha -> PANEL_SHORTLISTED,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-013-TECHNICAL_INTERVIEW_SCHEDULED,NU-Hire,Pipeline move candidate Alpha -> TECHNICAL_INTERVIEW_SCHEDULED,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-013s,NU-Hire,Skip-ahead guard: TECH_INTERVIEW_SCHEDULED -> OFFER_NDA_TO_BE_RELEASED (>2 stages) blocked,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-014,NU-Hire,"Schedule interview with interviewer assigned (Sumit, MANAGER)",PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-015a,NU-Hire,Assigned interviewer submits scorecard (template id path = nil UUID probe),INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-015t,NU-Hire,Create scorecard template as HR_MANAGER,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-015,NU-Hire,Assigned interviewer submits scorecard,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-016,NU-Hire,Duplicate scorecard (same interviewer+interview) blocked,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-017,NU-Hire,Non-interviewer (HR_MANAGER) cannot submit scorecard for interview assigned to Sumit,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-017b,NU-Hire,Non-interviewer (RECRUITMENT_ADMIN) cannot submit scorecard,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-018,NU-Hire,Reject applicant Bravo,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-019,NU-Hire,Select applicant Charlie,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-019a,NU-Hire,Configure RECRUITMENT_OFFER approval workflow (approver Jagadeesh HR_MANAGER) as TENANT_ADMIN,FAIL,Critical,evidence/logs/hire/results-final.json,DEF-HIRE-01
+matrix-hire.csv,NU-HIRE-E2E-019b,NU-Hire,Offer must NOT be creatable for a REJECTED applicant/candidate (Bravo),FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-01
+matrix-hire.csv,NU-HIRE-E2E-020,NU-Hire,Generate offer for selected candidate,FAIL,Critical,evidence/logs/hire/results-final.json,DEF-HIRE-01
+matrix-hire.csv,NU-HIRE-E2E-021a,NU-Hire,Offer approval request appears in approver (HR_MANAGER) inbox,BLOCKED,,evidence/logs/hire/results-final.json,DEF-HIRE-01
+matrix-hire.csv,NU-HIRE-E2E-021,NU-Hire,Offer approved by workflow approver,BLOCKED,,evidence/logs/hire/results-final.json,DEF-HIRE-01
+matrix-hire.csv,NU-HIRE-E2E-022,NU-Hire,Plain EMPLOYEE cannot accept/decline offer on behalf of candidate,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-023,NU-Hire,Offer accepted (recruiter records acceptance),BLOCKED,,evidence/logs/hire/results-final.json,DEF-HIRE-01
+matrix-hire.csv,NU-HIRE-E2E-024-hradmin,NU-Hire,hradmin (HR/recruiter role) creating an offer e-signature request,FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-03
+matrix-hire.csv,NU-HIRE-E2E-024-recadmin,NU-Hire,recadmin (HR/recruiter role) creating an offer e-signature request,FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-03
+matrix-hire.csv,NU-HIRE-E2E-024-hrmgr,NU-Hire,hrmgr (HR/recruiter role) creating an offer e-signature request,FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-03
+matrix-hire.csv,NU-HIRE-E2E-024z,NU-Hire,E-sign request with signerId only (email derived from employee),FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-07
+matrix-hire.csv,NU-HIRE-E2E-024,NU-Hire,TENANT_ADMIN creates e-signature request for offer with named signer (Arun),PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-025,NU-Hire,Send signature request,FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-09
+matrix-hire.csv,NU-HIRE-E2E-026,NU-Hire,Non-named user (TENANT_ADMIN holds ESIGNATURE:SIGN) cannot sign Arun approval,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-028,NU-Hire,"Named signer (Arun, EMPLOYEE) signs own approval",FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-03
+matrix-hire.csv,NU-HIRE-E2E-027,NU-Hire,Unrelated HR_MANAGER cannot sign,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-028x,NU-Hire,External (candidate) token signing /esignature/external/{token}/sign,BLOCKED,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-029,NU-Hire,HR creates employee record for accepted candidate (no auto convert endpoint exists),PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-031,NU-Hire,HR initiates onboarding for new employee,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-032,NU-Hire,Onboarding checklist tasks present for the process,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-033,NU-Hire,Employee record readable by HR after creation,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-040-emp,NU-Hire,"Candidate PII as EMPLOYEE: list + by-id (candidate Alpha, interviewed by Sumit)",PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-040-mgr,NU-Hire,"Candidate PII as MANAGER (interviewer): list + by-id (candidate Alpha, interviewed by Sumit)",FAIL,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-040-hrmgr,NU-Hire,"Candidate PII as HR_MANAGER: list + by-id (candidate Alpha, interviewed by Sumit)",PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-041,NU-Hire,Interviewer(MANAGER) reads candidate PII of non-assigned candidate Bravo(not assigned),FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-10
+matrix-hire.csv,NU-HIRE-E2E-050,NU-Hire,Create staffing agency (RECRUITMENT_ADMIN),PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-051,NU-Hire,EMPLOYEE cannot list agencies,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-052,NU-Hire,EMPLOYEE cannot create job opening,PASS,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-053,NU-Hire,MANAGER job-openings list access (informational),INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-029c,NU-Hire,HR converts accepted candidate to employee (conversion feature),FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-11
+matrix-hire.csv,NU-HIRE-E2E-060,NU-Hire,Agency boundary: agency submissions / agency-user isolation,NOT TESTED,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-061,NU-Hire,Payroll role (finance@) direct API denial of candidate PII,NOT TESTED,,evidence/logs/hire/results-final.json,
+matrix-hire.csv,NU-HIRE-E2E-UI-001-careers-public,NU-Hire,Public career page (unauth) lists published job,FAIL,Medium,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-001-careers-public*.png,DEF-HIRE-06
+matrix-hire.csv,NU-HIRE-E2E-UI-002-jobs,NU-Hire,Recruiter job list shows opening,PASS,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-002-jobs*.png,
+matrix-hire.csv,NU-HIRE-E2E-UI-003-candidates,NU-Hire,Candidates list shows added candidates,PASS,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-003-candidates*.png,
+matrix-hire.csv,NU-HIRE-E2E-UI-004-pipeline,NU-Hire,Pipeline board shows Alpha,FAIL,High,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-004-pipeline*.png,DEF-HIRE-02
+matrix-hire.csv,NU-HIRE-E2E-UI-005-interviews,NU-Hire,Interviews page shows scheduled interview,PASS,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-005-interviews*.png,
+matrix-hire.csv,NU-HIRE-E2E-UI-006-agencies,NU-Hire,Agency list shows agency,PASS,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-006-agencies*.png,
+matrix-hire.csv,NU-HIRE-E2E-UI-007-scorecards-mgr,NU-Hire,Interviewer scorecards page loads,INCONCLUSIVE,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-007-scorecards-mgr*.png,
+matrix-hire.csv,NU-HIRE-E2E-UI-008-onboarding,NU-Hire,Onboarding list shows new hire,INCONCLUSIVE,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-008-onboarding*.png,
+matrix-hire.csv,NU-HIRE-E2E-UI-009-recruitment-emp-denied,NU-Hire,"EMPLOYEE must NOT see candidates in UI (PASS means data visible=FAIL, inverted below)",INCONCLUSIVE,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-009-recruitment-emp-denied*.png,
+matrix-hire.csv,NU-HIRE-E2E-UI-010-careers-mobile,NU-Hire,Public career page at 390x844,FAIL,Medium,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-010-careers-mobile*.png,DEF-HIRE-06
+matrix-hrms.csv,NU-HRMS-E2E-001,env,FE dev bundle API base is docker host http://backend:8080 -> browser login impossible without proxy,FAIL,Medium,logs/hrms/NU-HRMS-E2E-010-create-employee.json (failed ws/info backend:8080); screenshots/NU-HRMS-E2E-000-login-page.png,DEF-HRMS-ENV
+matrix-hrms.csv,NU-HRMS-E2E-002,auth,"Page load + login share 5/min/IP AUTH bucket (/auth/me,/refresh,/login) -> 429 -> forced logout",FAIL,High,logs/hrms/NU-HRMS-E2E-020-login-429.txt,DEF-HRMS-01
+matrix-hrms.csv,NU-HRMS-E2E-010,J1 employee,"HR admin creates NUAURA_TEST employee via UI (empty-submit validation, dept, designation, manager, submit)",PASS,,screenshots/NU-HRMS-E2E-011..014; logs/NU-HRMS-E2E-010-create-employee.json; DB row verified,
+matrix-hrms.csv,NU-HRMS-E2E-011,J1 role,HR admin assigns EMPLOYEE role to new user,FAIL,High,"logs/hrms/NU-HRMS-E2E-011-role-assign.json (500, RLS on user_roles)",DEF-HRMS-02
+matrix-hrms.csv,NU-HRMS-E2E-020,J1 login,New employee first login via UI -> forced change-password; weak pw rejected; pw changed; terminated check later,PASS,,screenshots/NU-HRMS-E2E-021..023; DB password_change_required=f,
+matrix-hrms.csv,NU-HRMS-E2E-030,J1 My Space,New employee My Space dashboard/profile/attendance/leaves load,PASS,,screenshots/NU-HRMS-E2E-030-me-*.png; logs/NU-HRMS-E2E-030-employee-journey.json,
+matrix-hrms.csv,NU-HRMS-E2E-031,J1 attendance,Employee check-in via UI -> API 201 -> DB row PRESENT,PASS,,screenshots/NU-HRMS-E2E-031; DB attendance_records,
+matrix-hrms.csv,NU-HRMS-E2E-032,J1 attendance,Employee check-out via UI,FAIL,Medium,logs/NU-HRMS-E2E-037-approve-journey.json (only Check In shown; client date vs tenant date),DEF-HRMS-08
+matrix-hrms.csv,NU-HRMS-E2E-033,J1 attendance,"Check-out via API -> duration stored, double checkout 400",PASS,,logs/NU-HRMS-E2E-080-leave-rules.json,
+matrix-hrms.csv,NU-HRMS-E2E-034,J1 leave,Employee applies CL 2 days via UI; submit disabled when empty; balance created lazily 7/pending 2/avail 5,PASS,,"screenshots/NU-HRMS-E2E-033..036; DB leave_requests, leave_balances",
+matrix-hrms.csv,NU-HRMS-E2E-035,J1 leave,Manager sumit sees request and approves via UI; DB APPROVED approved_by=sumit; balance used 2 avail 5; employee UI+API show Approved,PASS,,screenshots/NU-HRMS-E2E-037..0391; logs/NU-HRMS-E2E-037-approve-journey.json,
+matrix-hrms.csv,NU-HRMS-E2E-036,leave,Cancel approved leave restores balance (7/0/0),PASS,,DB (j9c) ,
+matrix-hrms.csv,NU-HRMS-E2E-037,leave,Cancel pending restores pending; cancel requires reason param,PASS,,logs/NU-HRMS-E2E-081-reject.json,
+matrix-hrms.csv,NU-HRMS-E2E-040,leave reject,Manager rejects (UI+API),FAIL,High,"logs/hrms/NU-HRMS-E2E-081-reject.json (403 twice; HR_ADMIN reject 200, balance released)",DEF-HRMS-03
+matrix-hrms.csv,NU-HRMS-E2E-041,leave rules,Overlap with approved leave rejected,PASS,,logs/NU-HRMS-E2E-080-leave-rules.json,
+matrix-hrms.csv,NU-HRMS-E2E-042,leave rules,Holiday-only / weekend-only range rejected,PASS,,same,
+matrix-hrms.csv,NU-HRMS-E2E-043,leave rules,Insufficient balance rejected,PASS,,same (message shown),
+matrix-hrms.csv,NU-HRMS-E2E-044,leave rules,CL max 3 days/request enforced,FAIL,Medium,same (4 working days accepted),DEF-HRMS-04
+matrix-hrms.csv,NU-HRMS-E2E-045,leave rules,Past-dated leave rejected,FAIL,Medium,same (2025-01-06 accepted),DEF-HRMS-04
+matrix-hrms.csv,NU-HRMS-E2E-046,leave rules,"End<start, short reason, half-day w/o period rejected",PASS,,same,
+matrix-hrms.csv,NU-HRMS-E2E-047,leave authz,Self-approve and peer approve -> 403,PASS,,same,
+matrix-hrms.csv,NU-HRMS-E2E-050,attendance,"Regularization: invalid times 400, blank reason 400, submit->PENDING, self-approve 403, manager approve->PRESENT",PASS,,logs/NU-HRMS-E2E-090-misc.json,
+matrix-hrms.csv,NU-HRMS-E2E-051,attendance,Regularization future date rejected,FAIL,Low,same (2030 date accepted),DEF-HRMS-09
+matrix-hrms.csv,NU-HRMS-E2E-052,attendance,Regularized times honour tenant timezone,INCONCLUSIVE,Low,"stored 17:30/02:30 for 09:00/18:00 input; JVM tz -03 vs tenant IST, local env",
+matrix-hrms.csv,NU-HRMS-E2E-060,holidays,"Holiday CRUD, validation, employee create 403, employee list 200",PASS,,logs/NU-HRMS-E2E-050-admin-crud.json,
+matrix-hrms.csv,NU-HRMS-E2E-061,holidays,Duplicate holiday date rejected (400 no message),PASS,Low,same,
+matrix-hrms.csv,NU-HRMS-E2E-062,departments,Department create/dup 409/blank 400/employee 403,PASS,,same,
+matrix-hrms.csv,NU-HRMS-E2E-063,departments,Parent cycle / self-parent rejected; parent can be cleared; delete after child delete,FAIL,Medium,logs/NU-HRMS-E2E-051-dept-cycle.json,DEF-HRMS-05
+matrix-hrms.csv,NU-HRMS-E2E-064,designations,Designation CRUD,NOT TESTED,,no designation entity: free-text field on employee,
+matrix-hrms.csv,NU-HRMS-E2E-070,employee edit,Admin edit designation/level/manager persisted; self cannot change designation via /me,PASS,,logs/NU-HRMS-E2E-090-misc.json,
+matrix-hrms.csv,NU-HRMS-E2E-071,org hierarchy,Manager cannot be self or create a cycle,FAIL,Medium,same (self-manager and sumit<->nt1 cycle both 200),DEF-HRMS-06
+matrix-hrms.csv,NU-HRMS-E2E-072,org hierarchy,Hierarchy/subordinates endpoints and UI page render,PASS,,screenshots/NU-HRMS-E2E-090-ui-org-hierarchy.png,
+matrix-hrms.csv,NU-HRMS-E2E-080,termination,"Terminated: status+user INACTIVE, old token 401 on all calls, new login 401 'User is disabled'",PASS,,logs/NU-HRMS-E2E-100-termination.json,
+matrix-hrms.csv,NU-HRMS-E2E-090,expenses,Create/validate/submit/manager approve/reject(reason required)/double approve 409/self-approve 403,PASS,,logs/NU-HRMS-E2E-070-expense-asset-contract-benefit.json,
+matrix-hrms.csv,NU-HRMS-E2E-091,assets,"Allocate to employee, employee sees it, double assign 400, return, dup code 400, employee assign 403",PASS,,same,
+matrix-hrms.csv,NU-HRMS-E2E-092,contracts,"Create contract (validation, employee 403)",PASS,,same,
+matrix-hrms.csv,NU-HRMS-E2E-093,contracts,HR_ADMIN activates/terminates contract,FAIL,Low,same (403 on mark-active/terminate; DRAFT left),DEF-HRMS-10
+matrix-hrms.csv,NU-HRMS-E2E-094,benefits,Plans/enrollment flow,BLOCKED,,0 active plans seeded; FE calls missing /benefits/plans/active (404); /benefits-enhanced/plans/eligible 400 for new employee,DEF-HRMS-10
+matrix-hrms.csv,NU-HRMS-E2E-100,My Space all roles,"My Space dashboard/profile/attendance/leaves reachable for 11 demo roles (hradmin,hrmgr,tadmin,mgr,tl,emp,emp2,saran,raj,fin,rec)",PASS,,logs/NU-HRMS-E2E-040-myspace-all-roles.json; screenshots/NU-HRMS-E2E-040-*,
+matrix-hrms.csv,NU-HRMS-E2E-101,My Space,/me/documents redirects to /auth/login after load for all roles (finance also 403 on self-service doc APIs),INCONCLUSIVE,Medium,logs/hrms/NU-HRMS-E2E-041 screenshots; harness caches /auth/me,DEF-HRMS-11
+matrix-hrms.csv,NU-HRMS-E2E-110,IDOR,Employee A (arun) vs B (anshuman)/NT1: 19 direct API read/write calls,PASS,,logs/NU-HRMS-E2E-060-idor-employee-vs-employee.json (all 403; list endpoint scoped to 0 rows),
+matrix-hrms.csv,NU-HRMS-E2E-111,IDOR,Expense claim create FOR other employee,INCONCLUSIVE,,"400 on empty body, not retested with valid body",
+matrix-hrms.csv,NU-HRMS-E2E-120,UI,Console/network errors on admin pages,FAIL,Low,logs/NU-HRMS-E2E-090-misc.json ui_bag (Mantine style warning; custom-fields 403; benefits 404),DEF-HRMS-10
+matrix-hrms.csv,NU-HRMS-E2E-130,responsive,Viewports 1280/768/390 and empty/loading/error states sweep,NOT TESTED,,time; only 1440x900 used,
+matrix-pay.csv,NU-PAY-001,employee,Create employee with bank account+IFSC (HR_ADMIN API),FAIL,High,logs/NU-PAY-000-employee-create-ifsc-too-long.txt,DEF-PAY-01
+matrix-pay.csv,NU-PAY-002,rbac,PUT /users/{id}/roles as HR_ADMIN (assign EMPLOYEE),FAIL,High,"see defects-pay.md DEF-PAY-02 (6/6 calls 500, RLS WITH CHECK)",DEF-PAY-02
+matrix-pay.csv,NU-PAY-003,employee,New employee gets role + usable login,FAIL,Medium,createEmployee assigns no role; mustChangePassword forced,DEF-PAY-03
+matrix-pay.csv,NU-PAY-010,salary,"Salary structure validation: negative basic/allowance/PF rejected, zero basic",PASS,Low,"logs/NU-PAY-010-preview-2026-04.txt (zero basic accepted, inactive)",
+matrix-pay.csv,NU-PAY-011,calc,Bulk preview A-F gross/ded/net == hand calc,PASS,,logs/NU-PAY-010-preview-2026-04.txt,
+matrix-pay.csv,NU-PAY-012,calc,"Bulk process A,C,D,E,F,B persisted; gross/ded/net == hand calc; adjustments consumed once",PASS,,"logs/NU-PAY-012-bulk-process-2026-04.txt, NU-PAY-013-payslip-rows-2026-04.txt",
+matrix-pay.csv,NU-PAY-014,statutory,"Statutory apply A,E,D,F: PF/ESI/PT/TDS == hand calc of code formulas",PASS,,logs/NU-PAY-014-statutory-apply-2026-04.txt,
+matrix-pay.csv,NU-PAY-015,statutory,Run processing applies PF/ESI/PT/TDS automatically,FAIL,High,"payslip PF/PT/IT copied from static structure, no ESI; apply is manual per payslip + manual state param",DEF-PAY-09
+matrix-pay.csv,NU-PAY-016,statutory,"TDS vs current-law worked example (A, D)",FAIL,High,"logs/NU-PAY-014; FY2024-25 slabs, no std deduction",DEF-PAY-08
+matrix-pay.csv,NU-PAY-017,lop,Approved unpaid (LOP) leave creates payroll deduction (2 repros),FAIL,Critical,logs/NU-PAY-021-lop-event-dropped.txt,DEF-PAY-04
+matrix-pay.csv,NU-PAY-018,reimb,Approved expense creates reimbursement adjustment,FAIL,Critical,logs/NU-PAY-022-expense-adjustment-lost.txt,DEF-PAY-04
+matrix-pay.csv,NU-PAY-019,overtime,Approved overtime creates earning adjustment,NOT TESTED,,arithmetic tested via SQL-inserted row only; same publish path as DEF-PAY-04,
+matrix-pay.csv,NU-PAY-020,proration,Mid-month joiner prorated,FAIL,High,logs/NU-PAY-013 (C pays 35000 full month for 16-Apr joiner),DEF-PAY-10
+matrix-pay.csv,NU-PAY-021,proration,Mid-month leaver paid for worked days,INCONCLUSIVE,Medium,"logs/NU-PAY-040 (RESIGNED employee skipped, no payslip; F&F not executed)",
+matrix-pay.csv,NU-PAY-022,edge,Negative net pay blocked,FAIL,Medium,F net -3000.00 persisted and released,DEF-PAY-11
+matrix-pay.csv,NU-PAY-023,rounding,"Rounding HALF_UP, 2dp",PASS,Low,E overtime 340.92 vs exact 340.91 (intermediate rate rounding),
+matrix-pay.csv,NU-PAY-025,preflight,Tenant-wide process blocked when active employees lack structure,PASS,,logs/NU-PAY-011-create-run-and-async-process.txt (async Kafka path itself BLOCKED: Kafka off),
+matrix-pay.csv,NU-PAY-030,gating,"Unreleased payslip hidden: UI, direct API, PDF, ID guess, list, year, dashboard",PASS,,logs/NU-PAY-030-gating-unreleased-employee.txt; UI NU-PAY-070,
+matrix-pay.csv,NU-PAY-031,gating,Released payslip visible to owner with correct values (API+UI),PASS,,logs/NU-PAY-031-release-and-postrelease.txt; screenshots/NU-PAY-070-employee-payslips-ui.png,
+matrix-pay.csv,NU-PAY-032,pdf,Released payslip PDF is a valid non-empty PDF (API + UI download),FAIL,Critical,logs/NU-PAY-032-pdf-empty.txt; NU-PAY-070-employee-ui.txt,DEF-PAY-05
+matrix-pay.csv,NU-PAY-033,authz,Employee/manager/recruiter cannot read others' payslips/structures/runs,PASS,,logs/NU-PAY-030..031,
+matrix-pay.csv,NU-PAY-034,authz,404-vs-403 oracle for other employees' payslip ids,FAIL,Low,"unreleased->404, released->403",DEF-PAY-12
+matrix-pay.csv,NU-PAY-035,state,Approved/locked run immutable (apply/delete/re-approve/reprocess/update),PASS,,"logs/NU-PAY-031, NU-PAY-050",
+matrix-pay.csv,NU-PAY-036,authz,Maker-checker (processor != approver),FAIL,Medium,processedBy == approvedBy,DEF-PAY-13
+matrix-pay.csv,NU-PAY-037,authz,Employee cannot process/approve/lock,PASS,,logs/NU-PAY-031,
+matrix-pay.csv,NU-PAY-040,reports,"Statutory filings generate (PF ECR, ESI, PT, 24Q, Form16, LWF) as finance and HR_ADMIN",FAIL,High,logs/NU-PAY-050-lock-probes-filings.txt (12/12 HTTP 400),DEF-PAY-06
+matrix-pay.csv,NU-PAY-041,reports,Payroll register / run summary report,FAIL,Medium,"404 on /runs/{id}/summary,/register; custom report builder NOT TESTED",DEF-PAY-16
+matrix-pay.csv,NU-PAY-050,audit,Audit trail of payroll mutations,FAIL,Medium,"logs/NU-PAY-060-audit.txt (no PAYROLL_RUN CREATE, no PAYSLIP apply/create rows)",DEF-PAY-14
+matrix-pay.csv,NU-PAY-060,ui,Payroll runs page shows correct period and gross,FAIL,Medium,screenshots/NU-PAY-071-finance-runs-ui.png,DEF-PAY-07
+matrix-pay.csv,NU-PAY-061,pdf,Payslip PDF header uses tenant identity,FAIL,Medium,code-confirmed PayslipPdfService addCompanyHeader hardcoded 'COMPANY NAME' (not rendered: DEF-PAY-05),DEF-PAY-15
+matrix-pay.csv,NU-KEKA-001,keka,Payslip release gating,PASS,,NU-PAY-030/031,
+matrix-pay.csv,NU-KEKA-002,keka,Bank advice / payment file,NOT IMPLEMENTED,High,logs/NU-PAY-050 probes 404; no code,
+matrix-pay.csv,NU-KEKA-003,keka,Arrears / supplementary pay,NOT IMPLEMENTED,High,"no code, no API to create adjustments",
+matrix-pay.csv,NU-KEKA-004,keka,Loan EMI recovered via payroll,NOT IMPLEMENTED,High,"logs/NU-PAY-040-loan-leaver-may.txt (EMI 10661.85 correct; June payslip no EMI, outstanding unchanged)",
+matrix-pay.csv,NU-KEKA-005,keka,Timesheet locking (entry + period),FAIL,Medium,logs/NU-KEKA-005-timesheet-lock.txt (entry lock PASS; no period lock); UI NOT TESTED,DEF-PAY-17
+matrix-rbac.csv,NU-SEC-RBAC-001,roles,Role inventory in DB vs RoleHierarchy (19 explicit + 7 implicit = 26 expected),FAIL,Medium,09-rbac-audit.md#1,DEF-RBAC-05
+matrix-rbac.csv,NU-SEC-RBAC-002,matrix,Build role x permission-group matrix from role_permissions as app role hrms_user (NuLogic tenant),PASS,,09-rbac-audit.md#2,
+matrix-rbac.csv,NU-SEC-RBAC-003,roles,Roles with zero permissions,FAIL,Low,09-rbac-audit.md#3,DEF-RBAC-04
+matrix-rbac.csv,NU-SEC-RBAC-004,grants,Dangerous grants (EMPLOYEE/TEAM_LEAD/MANAGER/RECRUITMENT_ADMIN holding payroll/admin perms),PASS,,09-rbac-audit.md#4,
+matrix-rbac.csv,NU-SEC-RBAC-005,grants,Payroll maker-checker: PROCESS+APPROVE held by same roles,FAIL,Medium,09-rbac-audit.md#4,DEF-RBAC-07
+matrix-rbac.csv,NU-SEC-RBAC-006,self,My Space / self-service perms present for every role,FAIL,High,evidence/logs/NU-SEC-RBAC-100-live-get-probe.txt,DEF-RBAC-01
+matrix-rbac.csv,NU-SEC-RBAC-007,grants,Permissions used in code held only by SUPER_ADMIN (49),FAIL,High,09-rbac-audit.md#5,DEF-RBAC-02
+matrix-rbac.csv,NU-SEC-RBAC-008,codes,@RequiresPermission codes absent from permissions table,FAIL,Low,09-rbac-audit.md#6,DEF-RBAC-03
+matrix-rbac.csv,NU-SEC-RBAC-009,codes,Legacy lowercase dotted permission rows (33) and duplicate role_permissions rows (51 pairs),FAIL,Low,09-rbac-audit.md#6,DEF-RBAC-08
+matrix-rbac.csv,NU-SEC-RBAC-010,code-drift,RoleHierarchy defaults vs DB role_permissions (8 roles),FAIL,High,09-rbac-audit.md#7,DEF-RBAC-01
+matrix-rbac.csv,NU-SEC-RBAC-100,api,Live GET probe: 6 demo accounts x 14 endpoints,PASS,,evidence/logs/NU-SEC-RBAC-100-live-get-probe.txt,
+matrix-rbac.csv,NU-SEC-RBAC-101,api,MANAGER read scope TEAM (sumit sees 16 of 37 employees),PASS,,evidence/logs/NU-SEC-RBAC-101-manager-employee-scope.txt,
+matrix-rbac.csv,NU-SEC-RBAC-110,escalation,Escalation attempts (role create with SYSTEM:ADMIN; assign SUPER_ADMIN; low-priv assign roles) all denied,PASS,,evidence/logs/NU-SEC-RBAC-200-escalation-attempts.txt (tenant-rbac2 run; read not re-run),
+matrix-rbac.csv,NU-SEC-RBAC-111,escalation,Lookalike role codes (super_admin / trailing space / zero-width) accepted by POST /roles (201),FAIL,Medium,evidence/logs/NU-SEC-RBAC-200-escalation-attempts.txt + DB read,DEF-RBAC-06
+matrix-rbac.csv,NU-SEC-RBAC-112,escalation,Legacy alias system.admin on custom role does not grant SYSTEM:ADMIN,PASS,Low,evidence/logs/NU-SEC-RBAC-240-legacy-alias-escalation.txt,DEF-RBAC-09
+matrix-rbac.csv,NU-SEC-RBAC-120,authz,EMPLOYEE:UPDATE scope bypass via EMPLOYEE:VIEW_ALL (MANAGER/PAYROLL_ADMIN/RECRUITMENT_ADMIN edit any employee),NOT TESTED,Medium,EmployeeController.java:241-259 (code only; no write run),DEF-RBAC-10
+matrix-rbac.csv,NU-SEC-RBAC-130,session,Logout revokes access+refresh tokens,PASS,,evidence/logs/NU-SEC-RBAC-220-logout-token-revocation.txt,
+matrix-rbac.csv,NU-SEC-RBAC-131,session,Deactivated user token rejected after ~30s (10 polls x3s),PASS,Low,evidence/logs/NU-SEC-RBAC-230-deactivated-user.txt,
+matrix-rbac.csv,NU-SEC-RBAC-132,cache,Role permission grant visible to existing session,INCONCLUSIVE,Medium,evidence/logs/NU-SEC-RBAC-210-cache-invalidation-timing.txt,DEF-RBAC-11
+matrix-rbac.csv,NU-SEC-RBAC-140,provisioning,New tenant provisioning seeds roles,FAIL,Medium,TenantProvisioningService.java:103-116,DEF-RBAC-04
+matrix-secgate.csv,NU-SEC-GATE-001,A-checklist,row-level-security,PASS,-,logs/NU-SEC-GATE-A01-rls-catalog.txt,
+matrix-secgate.csv,NU-SEC-GATE-002,A-checklist,stop-idor-bugs (claimed pending),PASS,Medium,logs/NU-SEC-GATE-F10-employee-authz-sample.txt,claim confirmed partial
+matrix-secgate.csv,NU-SEC-GATE-003,A-checklist,never-trust-the-frontend (claimed pending),FAIL,Low,code: LmsController:119-219 etc.,DEF-SECGATE-22
+matrix-secgate.csv,NU-SEC-GATE-004,A-checklist,auth-on-every-api-route,PASS,Medium,logs/NU-SEC-GATE-F06-controllers-without-authz.txt,DEF-SECGATE-10
+matrix-secgate.csv,NU-SEC-GATE-005,A-checklist,hide-admin-pages-properly,FAIL,Low,logs/NU-SEC-GATE-A05-fe-admin-gating.txt,DEF-SECGATE-20
+matrix-secgate.csv,NU-SEC-GATE-006,A-checklist,rate-limiting,PASS,Medium,logs/NU-SEC-GATE-F14b-ratelimit-xff.txt,DEF-SECGATE-08
+matrix-secgate.csv,NU-SEC-GATE-007,A-checklist,captcha-on-public-forms,FAIL,Medium,application.yml:347 application-prod.yml:270,DEF-SECGATE-06
+matrix-secgate.csv,NU-SEC-GATE-008,A-checklist,lock-down-cors,PASS,-,logs/NU-SEC-GATE-F03-cors.txt,
+matrix-secgate.csv,NU-SEC-GATE-009,A-checklist,security-headers,PASS,Low,logs/NU-SEC-GATE-F01-headers.txt,DEF-SECGATE-21
+matrix-secgate.csv,NU-SEC-GATE-010,A-checklist,https-everywhere (config only),INCONCLUSIVE,Medium,application-render.yml:146,remote TLS BLOCKED
+matrix-secgate.csv,NU-SEC-GATE-011,A-checklist,sanitize-user-input,PASS,Low,logs/NU-SEC-GATE-F16-xss-stored.txt,live announcements/wiki NOT TESTED; DEF-SECGATE-05 (dompurify)
+matrix-secgate.csv,NU-SEC-GATE-012,A-checklist,parameterized-queries,PASS,-,logs/NU-SEC-GATE-F15-injection-errors.txt,
+matrix-secgate.csv,NU-SEC-GATE-013,A-checklist,check-file-upload-types,INCONCLUSIVE,Medium,logs/NU-SEC-GATE-F13-upload.txt,413 PASS; type/magic BLOCKED; DEF-SECGATE-06
+matrix-secgate.csv,NU-SEC-GATE-014,A-checklist,log-admin-actions,PASS,Medium,logs/NU-SEC-GATE-A01-rls-catalog.txt,DEF-SECGATE-09
+matrix-secgate.csv,NU-SEC-GATE-015,A-checklist,debug-mode-off-in-prod,PASS,Medium,logs/NU-SEC-GATE-F02-actuator.txt,DEF-SECGATE-11
+matrix-secgate.csv,NU-SEC-GATE-016,A-checklist,private-storage-buckets,PASS,-,"code: FileUploadController:138,159,187,198",
+matrix-secgate.csv,NU-SEC-GATE-017,A-checklist,update-vulnerable-packages (claimed pending),FAIL,High,logs/NU-FE-004-audit.txt,DEF-SECGATE-05; DEF-SECGATE-12; DEF-SECGATE-13
+matrix-secgate.csv,NU-SEC-GATE-018,A-checklist,verify-webhook-signatures,PASS,-,logs/NU-SEC-GATE-F18-public-bucket-webhooks.txt,
+matrix-secgate.csv,NU-SEC-GATE-019,A-checklist,claude-security-review (process claim),NOT TESTED,-,not verifiable,
+matrix-secgate.csv,NU-SEC-GATE-020,B-encryption,key rotation drain (previous-key rows),FAIL,High,"EncryptionBackfillService.java:53,77-83,157",DEF-SECGATE-04
+matrix-secgate.csv,NU-SEC-GATE-021,B-encryption,"old/new ciphertext compat (unit tests named, not executed)",INCONCLUSIVE,-,EncryptedStringConverterTest (mvn owned by be-tests),
+matrix-secgate.csv,NU-SEC-GATE-022,B-encryption,V298/V301 sentinel handling and re-encrypt endpoints,FAIL,High,logs/NU-SEC-GATE-B1-converter-sentinel-probe.txt,DEF-SECGATE-03
+matrix-secgate.csv,NU-SEC-GATE-023,B-encryption,rollback path,FAIL,Medium,V298/V301 no rollback,DEF-SECGATE-03
+matrix-secgate.csv,NU-SEC-GATE-024,B-encryption,plaintext/secret logging,PASS,-,code review,
+matrix-secgate.csv,NU-SEC-GATE-025,B-encryption,render default key fail-open (:? placeholder),FAIL,High,logs/NU-SEC-GATE-B1-converter-sentinel-probe.txt,DEF-SECGATE-02
+matrix-secgate.csv,NU-SEC-GATE-026,B-encryption,key interpretation consistency (Base64 vs raw),FAIL,Medium,EncryptionService.java:54-78,DEF-SECGATE-04
+matrix-secgate.csv,NU-SEC-GATE-030,C-secrets,"tree scan (regex, gitleaks absent)",PASS,-,logs/NU-SEC-GATE-C1-tree-scan.txt,
+matrix-secgate.csv,NU-SEC-GATE-031,C-secrets,history scan last 300 commits,FAIL,Low,logs/NU-SEC-GATE-C2-history-scan.txt,DEF-SECGATE-18
+matrix-secgate.csv,NU-SEC-GATE-032,C-secrets,tracked auth-state files,FAIL,Low,logs/NU-SEC-GATE-C1-tree-scan.txt,DEF-SECGATE-18
+matrix-secgate.csv,NU-SEC-GATE-033,C-secrets,committed env/key files,PASS,-,git ls-files,
+matrix-secgate.csv,NU-SEC-GATE-034,C-secrets,rotation evidence (metadata),BLOCKED,-,remote secret stores,
+matrix-secgate.csv,NU-SEC-GATE-040,D-demo,fresh prod-config DB: all seeded users locked,PASS,-,logs/NU-SEC-GATE-D2-fresh-prod-users.txt,
+matrix-secgate.csv,NU-SEC-GATE-041,D-demo,runtime demo-credential gate,PASS,-,"AuthService.java:119-151,299",
+matrix-secgate.csv,NU-SEC-GATE-042,D-demo,re-salted demo password evades gating,FAIL,Medium,logs/NU-SEC-GATE-D3-local-hash-classes.txt,DEF-SECGATE-07
+matrix-secgate.csv,NU-SEC-GATE-043,D-demo,FE bundle exposure of demo password,FAIL,High,"frontend/.next/static login chunk; login/page.tsx:46,146",DEF-SECGATE-01
+matrix-secgate.csv,NU-SEC-GATE-044,D-demo,seeded users that exist regardless of flag (20),PASS,Medium,logs/NU-SEC-GATE-D2-fresh-prod-users.txt,DEF-SECGATE-07
+matrix-secgate.csv,NU-SEC-GATE-045,D-demo,prod demo-account state (R1),BLOCKED,Critical-if-true,needs authorization,R1
+matrix-secgate.csv,NU-SEC-GATE-050,E-deps,pom pins vs Boot 3.5.14,PASS,-,logs/NU-SEC-GATE-E1-jar-inventory.txt,
+matrix-secgate.csv,NU-SEC-GATE-051,E-deps,mixed BouncyCastle / OpenSAML / POI,FAIL,Medium,logs/NU-SEC-GATE-E1-jar-inventory.txt,DEF-SECGATE-12
+matrix-secgate.csv,NU-SEC-GATE-052,E-deps,frontend prod deps audit,FAIL,High,logs/NU-FE-004-audit.txt,DEF-SECGATE-05
+matrix-secgate.csv,NU-SEC-GATE-053,E-deps,Spring 6.2.18 CVEs decision,FAIL,Medium,docs/security/gate-status-2026-10-10.md,DEF-SECGATE-13
+matrix-secgate.csv,NU-SEC-GATE-060,F-owasp,security headers,PASS,Low,logs/NU-SEC-GATE-F01-headers.txt,DEF-SECGATE-21
+matrix-secgate.csv,NU-SEC-GATE-061,F-owasp,actuator/swagger exposure (dev profile),FAIL,Medium,logs/NU-SEC-GATE-F02-actuator.txt,DEF-SECGATE-11
+matrix-secgate.csv,NU-SEC-GATE-062,F-owasp,CORS,PASS,-,logs/NU-SEC-GATE-F03-cors.txt,
+matrix-secgate.csv,NU-SEC-GATE-063,F-owasp,error/stack-trace leakage,FAIL,Low,logs/NU-SEC-GATE-F15-injection-errors.txt,DEF-SECGATE-17
+matrix-secgate.csv,NU-SEC-GATE-064,F-owasp,unauthenticated surface,PASS,-,logs/NU-SEC-GATE-F05-unauth-surface.txt,
+matrix-secgate.csv,NU-SEC-GATE-065,F-owasp,controllers lacking authz annotation,PASS,Medium,logs/NU-SEC-GATE-F06-controllers-without-authz.txt,DEF-SECGATE-10
+matrix-secgate.csv,NU-SEC-GATE-066,F-owasp,CSRF double submit,PASS,-,logs/NU-SEC-GATE-F08-csrf.txt,
+matrix-secgate.csv,NU-SEC-GATE-067,F-owasp,JWT tamper / alg=none / weak keys,PASS,-,logs/NU-SEC-GATE-F09-jwt-tamper.txt,
+matrix-secgate.csv,NU-SEC-GATE-068,F-owasp,bearer header fallback,PASS,-,logs/NU-SEC-GATE-F09-jwt-tamper.txt,
+matrix-secgate.csv,NU-SEC-GATE-069,F-owasp,token type confusion,PASS,-,logs/NU-SEC-GATE-F09-jwt-tamper.txt,
+matrix-secgate.csv,NU-SEC-GATE-070,F-owasp,post-logout token reuse,PASS,-,logs/NU-SEC-GATE-F12-session-lifecycle.txt,
+matrix-secgate.csv,NU-SEC-GATE-071,F-owasp,refresh rotation,PASS,-,logs/NU-SEC-GATE-F12-session-lifecycle.txt,
+matrix-secgate.csv,NU-SEC-GATE-072,F-owasp,refresh reuse detection,FAIL,Low,logs/NU-SEC-GATE-F12-session-lifecycle.txt,DEF-SECGATE-19
+matrix-secgate.csv,NU-SEC-GATE-073,F-owasp,open redirect (static),PASS,-,login/page.tsx:159-170,
+matrix-secgate.csv,NU-SEC-GATE-074,F-owasp,SSRF static,PASS,-,SsrfProtectionUtils.java,
+matrix-secgate.csv,NU-SEC-GATE-075,F-owasp,SSRF live via webhook,NOT TESTED,-,logs/NU-SEC-GATE-F17-ssrf.txt,needs SYSTEM_ADMIN
+matrix-secgate.csv,NU-SEC-GATE-076,F-owasp,SQLi static,PASS,-,grep,
+matrix-secgate.csv,NU-SEC-GATE-077,F-owasp,SQLi live,PASS,-,logs/NU-SEC-GATE-F15-injection-errors.txt,
+matrix-secgate.csv,NU-SEC-GATE-078,F-owasp,stored XSS plain-text field,PASS,Low,logs/NU-SEC-GATE-F16-xss-stored.txt,
+matrix-secgate.csv,NU-SEC-GATE-079,F-owasp,stored XSS announcements/wiki,NOT TESTED,-,logs/NU-SEC-GATE-F16-xss-stored.txt,403 for demo HR_MANAGER
+matrix-secgate.csv,NU-SEC-GATE-080,F-owasp,file upload type/size/traversal,BLOCKED,-,logs/NU-SEC-GATE-F13-upload.txt,413 PASS only
+matrix-secgate.csv,NU-SEC-GATE-081,F-owasp,mass assignment /employees/me,PASS,-,logs/NU-SEC-GATE-F11-mass-assignment.txt,
+matrix-secgate.csv,NU-SEC-GATE-082,F-owasp,mass assignment entity-bound bodies,FAIL,Low,code,DEF-SECGATE-22
+matrix-secgate.csv,NU-SEC-GATE-083,F-owasp,malformed input envelopes,PASS,-,logs/NU-SEC-GATE-F15-injection-errors.txt,
+matrix-secgate.csv,NU-SEC-GATE-084,F-owasp,password reset design,PASS,Low,AuthService.java:889-990,DEF-SECGATE-16
+matrix-secgate.csv,NU-SEC-GATE-085,F-owasp,forgot-password enumeration,PASS,-,logs/NU-SEC-GATE-F14-ratelimit-lockout.txt,
+matrix-secgate.csv,NU-SEC-GATE-086,F-owasp,AUTH rate limit,PASS,-,logs/NU-SEC-GATE-F14b-ratelimit-xff.txt,
+matrix-secgate.csv,NU-SEC-GATE-087,F-owasp,XFF rotation bypass,FAIL,Medium,logs/NU-SEC-GATE-F14b-ratelimit-xff.txt,DEF-SECGATE-08
+matrix-secgate.csv,NU-SEC-GATE-088,F-owasp,PUBLIC rate limit,PASS,-,logs/NU-SEC-GATE-F18-public-bucket-webhooks.txt,
+matrix-secgate.csv,NU-SEC-GATE-089,F-owasp,lockout / captcha gate,INCONCLUSIVE,-,logs/NU-SEC-GATE-F14b-ratelimit-xff.txt,5-strike lock behind captcha gate
+matrix-secgate.csv,NU-SEC-GATE-090,F-owasp,audit tamper via API,PASS,-,code,
+matrix-secgate.csv,NU-SEC-GATE-091,F-owasp,audit tamper at DB privilege,FAIL,Medium,logs/NU-SEC-GATE-A01-rls-catalog.txt,DEF-SECGATE-09
+matrix-secgate.csv,NU-SEC-GATE-092,F-owasp,IDOR employee by id,PASS,-,logs/NU-SEC-GATE-F10-employee-authz-sample.txt,
+matrix-secgate.csv,NU-SEC-GATE-093,F-owasp,EMPLOYEE authz sample,PASS,-,logs/NU-SEC-GATE-F10-employee-authz-sample.txt,
+matrix-secgate.csv,NU-SEC-GATE-094,F-owasp,directory search PII exposure,FAIL,Medium,logs/NU-SEC-GATE-F10-employee-authz-sample.txt,DEF-SECGATE-10
+matrix-secgate.csv,NU-SEC-GATE-095,F-owasp,websocket origin/auth live,NOT TESTED,-,WebSocketConfig.java:101-104,
+matrix-secgate.csv,NU-SEC-GATE-096,F-owasp,FE admin gating forged JWT,FAIL,Low,logs/NU-SEC-GATE-A05-fe-admin-gating.txt,DEF-SECGATE-20
+matrix-secgate.csv,NU-SEC-GATE-097,F-owasp,webhook signatures live,PASS,-,logs/NU-SEC-GATE-F18-public-bucket-webhooks.txt,
+matrix-secgate.csv,NU-SEC-GATE-098,F-owasp,public careers apply malformed body,FAIL,Low,logs/NU-SEC-GATE-F18-public-bucket-webhooks.txt,DEF-SECGATE-15
+matrix-secgate.csv,NU-SEC-GATE-100,G-deploy,outbox FAILED alert/replay,FAIL,Medium,"OutboxEventProcessor.java:44,127-130",DEF-SECGATE-14
+matrix-secgate.csv,NU-SEC-GATE-101,G-deploy,"remote deploy checks (TLS, headers, env, health)",BLOCKED,-,needs user authorization,
+matrix-tenant.csv,NU-SEC-TENANT-010,tenants,Verify 2+ isolated tenants exist / seed NUAURA_TEST_Alpha+Beta with admin+employee users each,PASS,,evidence/test-data-tenant.md,
+matrix-tenant.csv,NU-SEC-TENANT-011,tenants,"Seed Alpha victim data: employees, payslip, leave request, candidate, review, private wiki page, uploaded file",PASS,,evidence/test-data-tenant.md,
+matrix-tenant.csv,NU-SEC-TENANT-100,idor,"Cross-tenant IDOR by ID (employee, payslip, leave request, candidate, review, wiki page/space, salary structure, file download) — Beta SA + 2 privileged NuLogic users vs Alpha",PASS,,evidence/logs/NU-SEC-TENANT-100-idor-get-by-id.txt,
+matrix-tenant.csv,NU-SEC-TENANT-101,idor,"Cross-tenant list/search endpoints (employees, candidates, reviews, payslips, users, roles, leave by status/employee) — same attackers",PASS,,evidence/logs/NU-SEC-TENANT-101-list-endpoints.txt,
+matrix-tenant.csv,NU-SEC-TENANT-102,idor,"Cross-tenant writes by ID (update/delete employee, payslip, leave approve/reject, candidate, review, file) — all rejected",PASS,,evidence/logs/NU-SEC-TENANT-102-cross-tenant-writes.txt,
+matrix-tenant.csv,NU-SEC-TENANT-102b,idor,Cross-tenant reference creation (FK pointing at victim's employee/job/cycle) — all rejected by tenant-scoped FK lookup,PASS,,evidence/logs/NU-SEC-TENANT-102b-cross-tenant-reference-create.txt,
+matrix-tenant.csv,NU-SEC-TENANT-103,tamper,"Tenant-id tampering via header/query/body on by-id and list endpoints, authenticated and anonymous",PASS,,evidence/logs/NU-SEC-TENANT-103-tenant-id-tampering.txt,
+matrix-tenant.csv,NU-SEC-TENANT-104,tamper,"JWT claim tampering: tenant claim swap, alg=none, cross-session signature/payload mixing, dual-cookie precedence",PASS,,evidence/logs/NU-SEC-TENANT-104-jwt-claim-tampering.txt,
+matrix-tenant.csv,NU-SEC-TENANT-105,idor,File-download path-traversal variants against tenant-prefix guard,FAIL,Medium,evidence/logs/NU-SEC-TENANT-105-file-guard-variants.txt,DEF-TENANT-03
+matrix-tenant.csv,NU-SEC-TENANT-106,platform,Public careers tenant scoping + SUPER_ADMIN cross-tenant platform-admin surface,PASS,Medium,evidence/logs/NU-SEC-TENANT-106-public-and-platform-surface.txt,DEF-TENANT-04
+matrix-tenant.csv,NU-SEC-TENANT-107,idor,DB-level verification: victim rows unchanged after full attack run; no stray cross-tenant rows created,PASS,,evidence/logs/NU-SEC-TENANT-107-db-verify-after-attacks.txt,
+matrix-tenant.csv,NU-SEC-TENANT-020,rls,"Full-schema RLS read sweep (324 tenant_id tables) as app role hrms_user, 4 GUC states",PASS,High,evidence/logs/NU-SEC-TENANT-020-rls-sweep.txt,
+matrix-tenant.csv,NU-SEC-TENANT-021,rls,"Full-schema + targeted RLS write sweep (UPDATE/DELETE/INSERT) as app role, all inside ROLLBACK; owner-bypass FORCE RLS probe",PASS,Medium,evidence/logs/NU-SEC-TENANT-021-rls-writes.txt,DEF-TENANT-06
+matrix-tenant.csv,NU-SEC-TENANT-022,rls,tenants table has no RLS at all — readable with no GUC,FAIL,Medium,evidence/logs/NU-SEC-TENANT-020-rls-sweep.txt,DEF-TENANT-05
+matrix-tenant.csv,NU-SEC-TENANT-001,auth,Login as a user in a freshly-provisioned-style tenant fails: permission catalog not visible under non-NuLogic tenant GUC,FAIL,High,evidence/logs/NU-SEC-TENANT-001-login-permission-catalog.txt,DEF-TENANT-01
+matrix-tenant.csv,NU-SEC-TENANT-102c,idor,"Wiki page read-path (GET/export/space) returns 500 for owner too — blocked isolation check, not a leak",INCONCLUSIVE,Medium,evidence/logs/NU-SEC-TENANT-100-idor-get-by-id.txt,DEF-TENANT-02
+matrix-verify.csv,NU-VERIFY-01,payroll,Payslip PDF download >0 bytes and starts %PDF (own payslip; other employee gets 403),PASS,,logs/NU-VERIFY-01-payslip-pdf.txt,DEF-PAY-05
+matrix-verify.csv,NU-VERIFY-02,payroll,Unpaid (LOP) leave 3 days reduces pay (K vs identical-structure L: net 41478.27 vs 48000.00),PASS,,logs/NU-VERIFY-06-payroll-run.txt;logs/NU-VERIFY-07-july-payslips-db.txt,DEF-PAY-04
+matrix-verify.csv,NU-VERIFY-03,payroll,Mid-month joiner (16 Jul) prorated 16/31 (gross 25806.45 of 50000),PASS,,logs/NU-VERIFY-07-july-payslips-db.txt,
+matrix-verify.csv,NU-VERIFY-04,hrms,IFSC 11 chars accepted on employee create (201; stored 53 chars after V343),PASS,,logs/NU-VERIFY-02-setup.txt,DEF-PAY-01
+matrix-verify.csv,NU-VERIFY-05,payroll,Maker-checker: processor cannot approve own run (409 x2); second user approves (200),PASS,,logs/NU-VERIFY-08-maker-checker.txt,
+matrix-verify.csv,NU-VERIFY-06,hire,Offer POST returns 2xx and candidate row updated (OFFER_EXTENDED; offered_ctc set) x2,PASS,,logs/NU-VERIFY-09-hire.txt,DEF-HIRE-01
+matrix-verify.csv,NU-VERIFY-07,hire,Interviewer without assignment/hiring-manager role cannot read unassigned candidate (403 x2; controls 200),PASS,,logs/NU-VERIFY-09-hire.txt,DEF-HIRE-10
+matrix-verify.csv,NU-VERIFY-08,grow,OKR key result create returns 200 and row listed x2,PASS,,logs/NU-VERIFY-10-grow.txt,DEF-GROW-01
+matrix-verify.csv,NU-VERIFY-09,grow,Manager cannot read non-report review (403 x2; competencies 403; control 200),PASS,,logs/NU-VERIFY-10-grow.txt,DEF-GROW-05
+matrix-verify.csv,NU-VERIFY-10,fluence,Wiki POST then GET by id,PASS (after fix),,logs/NU-VERIFY-11-fluence.txt,DEF-FLUENCE-03
+matrix-verify.csv,NU-VERIFY-11,fluence,Blog POST then GET,PASS,,logs/NU-VERIFY-11-fluence.txt,DEF-FLUENCE-01
+matrix-verify.csv,NU-VERIFY-12,fluence,Template POST then GET,PASS,,logs/NU-VERIFY-11-fluence.txt,DEF-FLUENCE-01
+matrix-verify.csv,NU-VERIFY-13,fluence,Wiki list,PASS,,logs/NU-VERIFY-11-fluence.txt,DEF-FLUENCE-03
+matrix-verify.csv,NU-VERIFY-14,hrms,PUT /users/{id}/roles as HR admin returns 200 and user_roles row exists x2,PASS,,logs/NU-VERIFY-03-put-user-roles.txt,DEF-HRMS-02
+matrix-verify.csv,NU-VERIFY-15,hrms,LEAVE:REJECT by manager returns 200 REJECTED x2,PASS,,logs/NU-VERIFY-05-leave-reject.txt,DEF-HRMS-03
+matrix-verify.csv,NU-VERIFY-16,secgate,Production build with NEXT_PUBLIC_DEMO_MODE unset has no demo email or password in any of 1406 chunks,PASS,,logs/NU-VERIFY-12-login-bundle.txt,DEF-SECGATE-01
+matrix-verify.csv,NU-VERIFY-17,fluence,GET /wiki/pages/{id}/versions serialises lazy entity,FAIL,Medium,logs/NU-VERIFY-11b-fluence-extra.txt,DEF-VERIFY-01
+matrix-verify.csv,NU-VERIFY-18,fluence,PUT wiki page with missing status/visibility returns 500 not 400,FAIL,Low,logs/NU-VERIFY-11b-fluence-extra.txt,DEF-VERIFY-02
+matrix-verify.csv,NU-VERIFY-19,ops,AuditEventConsumer fails every 5s (detached entity with pre-set id and null version) so audit events are not persisted,FAIL,High,backend-session.log (52 'Failed to persist audit event'),DEF-VERIFY-03

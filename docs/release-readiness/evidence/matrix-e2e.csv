@@ -1,0 +1,18 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-UI-001,Auth,Employee login + My Space (5 pages) + app switcher + logout (cookies cleared, protected route redirects),PASS,,screenshots/NU-UI-001-*.png,
+NU-UI-002,HRMS,Employee applies leave via UI -> manager approves via UI -> employee sees APPROVED + balance 7->5,PASS,,screenshots/NU-UI-002-*.png,
+NU-UI-003a,Payroll,HR/tenant admin sees payroll runs matching DB; employee downloads payslip PDF via UI (valid %PDF 12344 bytes; amount matches DB),PASS,,screenshots/NU-UI-003-*.png,
+NU-UI-003b,Payroll,Employee sees released payslips only (unreleased hidden),INCONCLUSIVE,,no login for an employee with both released and unreleased slips,
+NU-UI-003c,Payroll,TENANT_ADMIN opens /payroll/payslips,FAIL,Medium,screenshots/NU-UI-003-admin-payslips.png,DEF-E2E-03
+NU-UI-004,Hire,Create job + add candidate + create offer via UI (API 201 x3; DB OPEN / SELECTED / OFFER_EXTENDED 750000),PASS,,screenshots/NU-UI-004-*.png,
+NU-UI-005,Grow,Employee creates OKR objective + key result via UI (DB rows verified),PASS,,screenshots/NU-UI-005-*.png,DEF-E2E-04
+NU-UI-006a,Fluence,Employee opens wiki list and reads ORG published page,PASS,,screenshots/NU-UI-006-employee-wiki-*.png,
+NU-UI-006b,Fluence,HR admin creates + publishes wiki page via UI,FAIL,High,screenshots/NU-UI-006-hr-create-fail-repro.png,DEF-E2E-01
+NU-UI-006c,Fluence,Wall post by employee (API 201; UI; DB),PASS,,screenshots/NU-UI-006-employee-wall.png,
+NU-UI-006d,Fluence,Employee must not see other users' PRIVATE/DRAFT wiki pages in list,FAIL,High,logs/NU-UI-006-list-leak.txt,DEF-E2E-02
+NU-UI-007,RBAC,Employee opens 12 /admin/* routes: all redirected; admin APIs 403/404,PASS,,screenshots/NU-UI-007-*.png,
+NU-UI-008a,Responsive,6 pages x 1440x900: no horizontal overflow,PASS,,screenshots/NU-UI-008-*-1440x900.png,
+NU-UI-008b,Responsive,6 pages x 390x844: no horizontal overflow,PASS,,screenshots/NU-UI-008-*-390x844.png,
+NU-UI-008c,Console,Console errors on key pages (excluding WS host noise),FAIL,Low,logs/NU-UI-008-console.json,DEF-E2E-04;DEF-E2E-05
+NU-OPS-PERF-001,Perf,10 users 60s GET mix: p95 18ms error 0%,PASS,,logs/NU-OPS-PERF-load-results.json,
+NU-OPS-PERF-002,Perf,25 users 60s GET mix: p95 12.8ms error 0%,PASS,,logs/NU-OPS-PERF-load-results.json,

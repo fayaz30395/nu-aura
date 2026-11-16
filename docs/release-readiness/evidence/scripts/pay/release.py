@@ -1,0 +1,38 @@
+import sys,json,os,subprocess; sys.path.insert(0,os.path.dirname(__file__))
+import nuapi, gate
+D=os.environ["NUAURA_JAR_DIR"]; ids=json.load(open(D+"/emps.json")); pid=json.load(open(D+"/pids.json")); rid=json.load(open(D+"/runs.json"))["2026-04"]
+fin=nuapi.get('finance@nulogic.io'); A=nuapi.get('nuaura_test_pay_a@nulogic.io')
+P='/api/v1/payroll'
+def j(c,m,p,b=None):
+    code,r=c.call(m,p,b); return code,(str(r)[:140] if not isinstance(r,dict) or 'status' not in r else f"{r.get('status')} {r.get('message')}")
+print("## employee tries to approve/process/lock (expect 403)")
+for p in (f'{P}/runs/{rid}/approve',f'{P}/runs/{rid}/lock',f'{P}/runs/{rid}/process'): print(' A POST',p[-12:],j(A,'POST',p))
+print("## finance (processed the run) approves it — maker-checker?")
+code,r=fin.call('POST',f'{P}/runs/{rid}/approve'); print(' approve',code,{k:r.get(k) for k in('status','processedBy','approvedBy')} if code<300 else r)
+print('## A after release')
+gate.show('A_self',A,'GET',f'{P}/payslips/{pid["A"]}',200)
+gate.show('A_self',A,'GET',f'{P}/payslips/{pid["A"]}/pdf',200)
+gate.show('A_self',A,'GET',f'{P}/payslips/employee/{ids["A"]}/period?year=2026&month=4',200)
+gate.show('A_self',A,'GET',f'{P}/payslips/employee/{ids["A"]}/period/pdf?year=2026&month=4',200)
+gate.show('A_self',A,'GET',f'{P}/payslips/employee/{ids["A"]}/release-status?year=2026',200)
+code,b,ct=A.call('GET',f'{P}/payslips/{pid["A"]}/pdf',raw=True); open(D+'/A_apr.pdf','wb').write(b)
+code,s=A.call('GET',f'{P}/payslips/{pid["A"]}'); json.dump(s,open(D+'/A_slip.json','w'))
+print(' A payslip fields:',{k:s[k] for k in('grossSalary','providentFund','professionalTax','incomeTax','otherDeductions','employeeEsi','totalDeductions','netSalary')})
+code,r=A.call('GET','/api/v1/dashboards/employee'); print(' A dashboard',code,str(r)[:0] or '(body not printed)')
+print('## other users reading A (expect 403/404)')
+for who,em in (('sumit_mgr','sumit@nulogic.io'),('arun_emp','arun@nulogic.io'),('suresh_rec','suresh@nulogic.io')):
+    c=nuapi.get(em)
+    for p in (f'{P}/payslips/{pid["A"]}',f'{P}/payslips/{pid["A"]}/pdf',f'{P}/payslips/employee/{ids["A"]}/period?year=2026&month=4',f'{P}/payslips/employee/{ids["A"]}/period/pdf?year=2026&month=4'):
+        gate.show(who,c,'GET',p,'403/404')
+print('## B reading A + A reading B after release')
+Bc=nuapi.get('nuaura_test_pay_b@nulogic.io')
+gate.show('B_to_A',Bc,'GET',f'{P}/payslips/{pid["A"]}','403/404'); gate.show('A_to_B',A,'GET',f'{P}/payslips/{pid["B"]}','403'); gate.show('A_to_B',A,'GET',f'{P}/payslips/{pid["B"]}/pdf','403')
+print('## immutability after release (finance)')
+print(' apply statutory',j(fin,'POST',f'{P}/statutory/{pid["A"]}/apply?state=Karnataka'))
+print(' delete payslip',j(fin,'DELETE',f'{P}/payslips/{pid["A"]}'))
+print(' re-approve',j(fin,'POST',f'{P}/runs/{rid}/approve'))
+print(' reprocess bulk',j(fin,'POST',f'{P}/runs/bulk/process',{'employeeIds':[ids['A']],'payrollPeriodStart':'2026-04-01','payrollPeriodEnd':'2026-04-30'}))
+print(' delete run',j(fin,'DELETE',f'{P}/runs/{rid}'))
+print(' update run',j(fin,'PUT',f'{P}/runs/{rid}',{'payPeriodMonth':4,'payPeriodYear':2026,'payrollDate':'2026-04-30','remarks':'x'}))
+print(' create payslip into released run',j(fin,'POST',f'{P}/payslips',{'payrollRunId':rid,'employeeId':ids['A'],'payPeriodMonth':4,'payPeriodYear':2026,'payDate':'2026-04-30','basicSalary':1}))
+print(' salary structure update (live structure of released period) ',j(fin,'PUT',f'{P}/salary-structures/'+json.load(open(D+'/ss.json'))['A'],{'employeeId':ids['A'],'effectiveDate':'2026-01-01','basicSalary':50000,'hra':20000,'conveyanceAllowance':1600,'medicalAllowance':1250,'specialAllowance':27150,'providentFund':1800,'professionalTax':200,'incomeTax':5000,'otherDeductions':100,'isActive':True}))

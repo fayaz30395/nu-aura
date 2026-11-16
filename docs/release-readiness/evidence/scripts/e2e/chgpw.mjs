@@ -1,0 +1,14 @@
+import {chromium, newContext, mkLog, watch, FE, STATE, SS} from './lib.mjs';
+import fs from 'fs'; import crypto from 'crypto';
+const b = await chromium.launch(); const c = await newContext(b, {role: 'vfyj'}); const p = await c.newPage();
+const oldpw = fs.readFileSync('/private/tmp/claude-504/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/31fd4514-1941-4084-b1c8-e1a40e6df684/scratchpad/pay/vfy_pw.txt', 'utf8').trim();
+const newpw = 'Nt!' + crypto.randomBytes(9).toString('hex') + 'Aa1';
+fs.writeFileSync(STATE + '/vfyj_pw.txt', newpw, {mode: 0o600});
+let st; p.on('response', r => { if (/change-password$/.test(r.url()) && r.request().method() === 'POST') st = r.status(); });
+await p.goto(FE + '/auth/change-password', {waitUntil: 'domcontentloaded', timeout: 120000}); await p.waitForTimeout(2500);
+const pws = p.locator('input[type=password]'); console.log('pw inputs', await pws.count());
+await pws.nth(0).fill(oldpw); await pws.nth(1).fill(newpw); if (await pws.count() > 2) await pws.nth(2).fill(newpw);
+await p.screenshot({path: `${SS}/probe-chgpw.png`});
+await p.locator('button[type=submit]').click(); await p.waitForTimeout(5000);
+console.log('status', st, new URL(p.url()).pathname, (await p.locator('body').innerText()).slice(-300).replace(/\n/g, ' '));
+await b.close();

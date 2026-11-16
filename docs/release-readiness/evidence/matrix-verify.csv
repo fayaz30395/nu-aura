@@ -1,0 +1,20 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-VERIFY-01,payroll,Payslip PDF download >0 bytes and starts %PDF (own payslip; other employee gets 403),PASS,,logs/NU-VERIFY-01-payslip-pdf.txt,DEF-PAY-05
+NU-VERIFY-02,payroll,Unpaid (LOP) leave 3 days reduces pay (K vs identical-structure L: net 41478.27 vs 48000.00),PASS,,logs/NU-VERIFY-06-payroll-run.txt;logs/NU-VERIFY-07-july-payslips-db.txt,DEF-PAY-04
+NU-VERIFY-03,payroll,Mid-month joiner (16 Jul) prorated 16/31 (gross 25806.45 of 50000),PASS,,logs/NU-VERIFY-07-july-payslips-db.txt,
+NU-VERIFY-04,hrms,IFSC 11 chars accepted on employee create (201; stored 53 chars after V343),PASS,,logs/NU-VERIFY-02-setup.txt,DEF-PAY-01
+NU-VERIFY-05,payroll,Maker-checker: processor cannot approve own run (409 x2); second user approves (200),PASS,,logs/NU-VERIFY-08-maker-checker.txt,
+NU-VERIFY-06,hire,Offer POST returns 2xx and candidate row updated (OFFER_EXTENDED; offered_ctc set) x2,PASS,,logs/NU-VERIFY-09-hire.txt,DEF-HIRE-01
+NU-VERIFY-07,hire,Interviewer without assignment/hiring-manager role cannot read unassigned candidate (403 x2; controls 200),PASS,,logs/NU-VERIFY-09-hire.txt,DEF-HIRE-10
+NU-VERIFY-08,grow,OKR key result create returns 200 and row listed x2,PASS,,logs/NU-VERIFY-10-grow.txt,DEF-GROW-01
+NU-VERIFY-09,grow,Manager cannot read non-report review (403 x2; competencies 403; control 200),PASS,,logs/NU-VERIFY-10-grow.txt,DEF-GROW-05
+NU-VERIFY-10,fluence,Wiki POST then GET by id,PASS (after fix),,logs/NU-VERIFY-11-fluence.txt,DEF-FLUENCE-03
+NU-VERIFY-11,fluence,Blog POST then GET,PASS,,logs/NU-VERIFY-11-fluence.txt,DEF-FLUENCE-01
+NU-VERIFY-12,fluence,Template POST then GET,PASS,,logs/NU-VERIFY-11-fluence.txt,DEF-FLUENCE-01
+NU-VERIFY-13,fluence,Wiki list,PASS,,logs/NU-VERIFY-11-fluence.txt,DEF-FLUENCE-03
+NU-VERIFY-14,hrms,PUT /users/{id}/roles as HR admin returns 200 and user_roles row exists x2,PASS,,logs/NU-VERIFY-03-put-user-roles.txt,DEF-HRMS-02
+NU-VERIFY-15,hrms,LEAVE:REJECT by manager returns 200 REJECTED x2,PASS,,logs/NU-VERIFY-05-leave-reject.txt,DEF-HRMS-03
+NU-VERIFY-16,secgate,Production build with NEXT_PUBLIC_DEMO_MODE unset has no demo email or password in any of 1406 chunks,PASS,,logs/NU-VERIFY-12-login-bundle.txt,DEF-SECGATE-01
+NU-VERIFY-17,fluence,GET /wiki/pages/{id}/versions serialises lazy entity,FAIL,Medium,logs/NU-VERIFY-11b-fluence-extra.txt,DEF-VERIFY-01
+NU-VERIFY-18,fluence,PUT wiki page with missing status/visibility returns 500 not 400,FAIL,Low,logs/NU-VERIFY-11b-fluence-extra.txt,DEF-VERIFY-02
+NU-VERIFY-19,ops,AuditEventConsumer fails every 5s (detached entity with pre-set id and null version) so audit events are not persisted,FAIL,High,backend-session.log (52 'Failed to persist audit event'),DEF-VERIFY-03

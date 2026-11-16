@@ -1,0 +1,83 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-SEC-GATE-001,A-checklist,row-level-security,PASS,-,logs/NU-SEC-GATE-A01-rls-catalog.txt,
+NU-SEC-GATE-002,A-checklist,stop-idor-bugs (claimed pending),PASS,Medium,logs/NU-SEC-GATE-F10-employee-authz-sample.txt,claim confirmed partial
+NU-SEC-GATE-003,A-checklist,never-trust-the-frontend (claimed pending),FAIL,Low,code: LmsController:119-219 etc.,DEF-SECGATE-22
+NU-SEC-GATE-004,A-checklist,auth-on-every-api-route,PASS,Medium,logs/NU-SEC-GATE-F06-controllers-without-authz.txt,DEF-SECGATE-10
+NU-SEC-GATE-005,A-checklist,hide-admin-pages-properly,FAIL,Low,logs/NU-SEC-GATE-A05-fe-admin-gating.txt,DEF-SECGATE-20
+NU-SEC-GATE-006,A-checklist,rate-limiting,PASS,Medium,logs/NU-SEC-GATE-F14b-ratelimit-xff.txt,DEF-SECGATE-08
+NU-SEC-GATE-007,A-checklist,captcha-on-public-forms,FAIL,Medium,application.yml:347 application-prod.yml:270,DEF-SECGATE-06
+NU-SEC-GATE-008,A-checklist,lock-down-cors,PASS,-,logs/NU-SEC-GATE-F03-cors.txt,
+NU-SEC-GATE-009,A-checklist,security-headers,PASS,Low,logs/NU-SEC-GATE-F01-headers.txt,DEF-SECGATE-21
+NU-SEC-GATE-010,A-checklist,https-everywhere (config only),INCONCLUSIVE,Medium,application-render.yml:146,remote TLS BLOCKED
+NU-SEC-GATE-011,A-checklist,sanitize-user-input,PASS,Low,logs/NU-SEC-GATE-F16-xss-stored.txt,live announcements/wiki NOT TESTED; DEF-SECGATE-05 (dompurify)
+NU-SEC-GATE-012,A-checklist,parameterized-queries,PASS,-,logs/NU-SEC-GATE-F15-injection-errors.txt,
+NU-SEC-GATE-013,A-checklist,check-file-upload-types,INCONCLUSIVE,Medium,logs/NU-SEC-GATE-F13-upload.txt,413 PASS; type/magic BLOCKED; DEF-SECGATE-06
+NU-SEC-GATE-014,A-checklist,log-admin-actions,PASS,Medium,logs/NU-SEC-GATE-A01-rls-catalog.txt,DEF-SECGATE-09
+NU-SEC-GATE-015,A-checklist,debug-mode-off-in-prod,PASS,Medium,logs/NU-SEC-GATE-F02-actuator.txt,DEF-SECGATE-11
+NU-SEC-GATE-016,A-checklist,private-storage-buckets,PASS,-,"code: FileUploadController:138,159,187,198",
+NU-SEC-GATE-017,A-checklist,update-vulnerable-packages (claimed pending),FAIL,High,logs/NU-FE-004-audit.txt,DEF-SECGATE-05; DEF-SECGATE-12; DEF-SECGATE-13
+NU-SEC-GATE-018,A-checklist,verify-webhook-signatures,PASS,-,logs/NU-SEC-GATE-F18-public-bucket-webhooks.txt,
+NU-SEC-GATE-019,A-checklist,claude-security-review (process claim),NOT TESTED,-,not verifiable,
+NU-SEC-GATE-020,B-encryption,key rotation drain (previous-key rows),FAIL,High,"EncryptionBackfillService.java:53,77-83,157",DEF-SECGATE-04
+NU-SEC-GATE-021,B-encryption,"old/new ciphertext compat (unit tests named, not executed)",INCONCLUSIVE,-,EncryptedStringConverterTest (mvn owned by be-tests),
+NU-SEC-GATE-022,B-encryption,V298/V301 sentinel handling and re-encrypt endpoints,FAIL,High,logs/NU-SEC-GATE-B1-converter-sentinel-probe.txt,DEF-SECGATE-03
+NU-SEC-GATE-023,B-encryption,rollback path,FAIL,Medium,V298/V301 no rollback,DEF-SECGATE-03
+NU-SEC-GATE-024,B-encryption,plaintext/secret logging,PASS,-,code review,
+NU-SEC-GATE-025,B-encryption,render default key fail-open (:? placeholder),FAIL,High,logs/NU-SEC-GATE-B1-converter-sentinel-probe.txt,DEF-SECGATE-02
+NU-SEC-GATE-026,B-encryption,key interpretation consistency (Base64 vs raw),FAIL,Medium,EncryptionService.java:54-78,DEF-SECGATE-04
+NU-SEC-GATE-030,C-secrets,"tree scan (regex, gitleaks absent)",PASS,-,logs/NU-SEC-GATE-C1-tree-scan.txt,
+NU-SEC-GATE-031,C-secrets,history scan last 300 commits,FAIL,Low,logs/NU-SEC-GATE-C2-history-scan.txt,DEF-SECGATE-18
+NU-SEC-GATE-032,C-secrets,tracked auth-state files,FAIL,Low,logs/NU-SEC-GATE-C1-tree-scan.txt,DEF-SECGATE-18
+NU-SEC-GATE-033,C-secrets,committed env/key files,PASS,-,git ls-files,
+NU-SEC-GATE-034,C-secrets,rotation evidence (metadata),BLOCKED,-,remote secret stores,
+NU-SEC-GATE-040,D-demo,fresh prod-config DB: all seeded users locked,PASS,-,logs/NU-SEC-GATE-D2-fresh-prod-users.txt,
+NU-SEC-GATE-041,D-demo,runtime demo-credential gate,PASS,-,"AuthService.java:119-151,299",
+NU-SEC-GATE-042,D-demo,re-salted demo password evades gating,FAIL,Medium,logs/NU-SEC-GATE-D3-local-hash-classes.txt,DEF-SECGATE-07
+NU-SEC-GATE-043,D-demo,FE bundle exposure of demo password,FAIL,High,"frontend/.next/static login chunk; login/page.tsx:46,146",DEF-SECGATE-01
+NU-SEC-GATE-044,D-demo,seeded users that exist regardless of flag (20),PASS,Medium,logs/NU-SEC-GATE-D2-fresh-prod-users.txt,DEF-SECGATE-07
+NU-SEC-GATE-045,D-demo,prod demo-account state (R1),BLOCKED,Critical-if-true,needs authorization,R1
+NU-SEC-GATE-050,E-deps,pom pins vs Boot 3.5.14,PASS,-,logs/NU-SEC-GATE-E1-jar-inventory.txt,
+NU-SEC-GATE-051,E-deps,mixed BouncyCastle / OpenSAML / POI,FAIL,Medium,logs/NU-SEC-GATE-E1-jar-inventory.txt,DEF-SECGATE-12
+NU-SEC-GATE-052,E-deps,frontend prod deps audit,FAIL,High,logs/NU-FE-004-audit.txt,DEF-SECGATE-05
+NU-SEC-GATE-053,E-deps,Spring 6.2.18 CVEs decision,FAIL,Medium,docs/security/gate-status-2026-10-10.md,DEF-SECGATE-13
+NU-SEC-GATE-060,F-owasp,security headers,PASS,Low,logs/NU-SEC-GATE-F01-headers.txt,DEF-SECGATE-21
+NU-SEC-GATE-061,F-owasp,actuator/swagger exposure (dev profile),FAIL,Medium,logs/NU-SEC-GATE-F02-actuator.txt,DEF-SECGATE-11
+NU-SEC-GATE-062,F-owasp,CORS,PASS,-,logs/NU-SEC-GATE-F03-cors.txt,
+NU-SEC-GATE-063,F-owasp,error/stack-trace leakage,FAIL,Low,logs/NU-SEC-GATE-F15-injection-errors.txt,DEF-SECGATE-17
+NU-SEC-GATE-064,F-owasp,unauthenticated surface,PASS,-,logs/NU-SEC-GATE-F05-unauth-surface.txt,
+NU-SEC-GATE-065,F-owasp,controllers lacking authz annotation,PASS,Medium,logs/NU-SEC-GATE-F06-controllers-without-authz.txt,DEF-SECGATE-10
+NU-SEC-GATE-066,F-owasp,CSRF double submit,PASS,-,logs/NU-SEC-GATE-F08-csrf.txt,
+NU-SEC-GATE-067,F-owasp,JWT tamper / alg=none / weak keys,PASS,-,logs/NU-SEC-GATE-F09-jwt-tamper.txt,
+NU-SEC-GATE-068,F-owasp,bearer header fallback,PASS,-,logs/NU-SEC-GATE-F09-jwt-tamper.txt,
+NU-SEC-GATE-069,F-owasp,token type confusion,PASS,-,logs/NU-SEC-GATE-F09-jwt-tamper.txt,
+NU-SEC-GATE-070,F-owasp,post-logout token reuse,PASS,-,logs/NU-SEC-GATE-F12-session-lifecycle.txt,
+NU-SEC-GATE-071,F-owasp,refresh rotation,PASS,-,logs/NU-SEC-GATE-F12-session-lifecycle.txt,
+NU-SEC-GATE-072,F-owasp,refresh reuse detection,FAIL,Low,logs/NU-SEC-GATE-F12-session-lifecycle.txt,DEF-SECGATE-19
+NU-SEC-GATE-073,F-owasp,open redirect (static),PASS,-,login/page.tsx:159-170,
+NU-SEC-GATE-074,F-owasp,SSRF static,PASS,-,SsrfProtectionUtils.java,
+NU-SEC-GATE-075,F-owasp,SSRF live via webhook,NOT TESTED,-,logs/NU-SEC-GATE-F17-ssrf.txt,needs SYSTEM_ADMIN
+NU-SEC-GATE-076,F-owasp,SQLi static,PASS,-,grep,
+NU-SEC-GATE-077,F-owasp,SQLi live,PASS,-,logs/NU-SEC-GATE-F15-injection-errors.txt,
+NU-SEC-GATE-078,F-owasp,stored XSS plain-text field,PASS,Low,logs/NU-SEC-GATE-F16-xss-stored.txt,
+NU-SEC-GATE-079,F-owasp,stored XSS announcements/wiki,NOT TESTED,-,logs/NU-SEC-GATE-F16-xss-stored.txt,403 for demo HR_MANAGER
+NU-SEC-GATE-080,F-owasp,file upload type/size/traversal,BLOCKED,-,logs/NU-SEC-GATE-F13-upload.txt,413 PASS only
+NU-SEC-GATE-081,F-owasp,mass assignment /employees/me,PASS,-,logs/NU-SEC-GATE-F11-mass-assignment.txt,
+NU-SEC-GATE-082,F-owasp,mass assignment entity-bound bodies,FAIL,Low,code,DEF-SECGATE-22
+NU-SEC-GATE-083,F-owasp,malformed input envelopes,PASS,-,logs/NU-SEC-GATE-F15-injection-errors.txt,
+NU-SEC-GATE-084,F-owasp,password reset design,PASS,Low,AuthService.java:889-990,DEF-SECGATE-16
+NU-SEC-GATE-085,F-owasp,forgot-password enumeration,PASS,-,logs/NU-SEC-GATE-F14-ratelimit-lockout.txt,
+NU-SEC-GATE-086,F-owasp,AUTH rate limit,PASS,-,logs/NU-SEC-GATE-F14b-ratelimit-xff.txt,
+NU-SEC-GATE-087,F-owasp,XFF rotation bypass,FAIL,Medium,logs/NU-SEC-GATE-F14b-ratelimit-xff.txt,DEF-SECGATE-08
+NU-SEC-GATE-088,F-owasp,PUBLIC rate limit,PASS,-,logs/NU-SEC-GATE-F18-public-bucket-webhooks.txt,
+NU-SEC-GATE-089,F-owasp,lockout / captcha gate,INCONCLUSIVE,-,logs/NU-SEC-GATE-F14b-ratelimit-xff.txt,5-strike lock behind captcha gate
+NU-SEC-GATE-090,F-owasp,audit tamper via API,PASS,-,code,
+NU-SEC-GATE-091,F-owasp,audit tamper at DB privilege,FAIL,Medium,logs/NU-SEC-GATE-A01-rls-catalog.txt,DEF-SECGATE-09
+NU-SEC-GATE-092,F-owasp,IDOR employee by id,PASS,-,logs/NU-SEC-GATE-F10-employee-authz-sample.txt,
+NU-SEC-GATE-093,F-owasp,EMPLOYEE authz sample,PASS,-,logs/NU-SEC-GATE-F10-employee-authz-sample.txt,
+NU-SEC-GATE-094,F-owasp,directory search PII exposure,FAIL,Medium,logs/NU-SEC-GATE-F10-employee-authz-sample.txt,DEF-SECGATE-10
+NU-SEC-GATE-095,F-owasp,websocket origin/auth live,NOT TESTED,-,WebSocketConfig.java:101-104,
+NU-SEC-GATE-096,F-owasp,FE admin gating forged JWT,FAIL,Low,logs/NU-SEC-GATE-A05-fe-admin-gating.txt,DEF-SECGATE-20
+NU-SEC-GATE-097,F-owasp,webhook signatures live,PASS,-,logs/NU-SEC-GATE-F18-public-bucket-webhooks.txt,
+NU-SEC-GATE-098,F-owasp,public careers apply malformed body,FAIL,Low,logs/NU-SEC-GATE-F18-public-bucket-webhooks.txt,DEF-SECGATE-15
+NU-SEC-GATE-100,G-deploy,outbox FAILED alert/replay,FAIL,Medium,"OutboxEventProcessor.java:44,127-130",DEF-SECGATE-14
+NU-SEC-GATE-101,G-deploy,"remote deploy checks (TLS, headers, env, health)",BLOCKED,-,needs user authorization,

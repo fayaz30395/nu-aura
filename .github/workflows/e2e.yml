@@ -271,7 +271,7 @@ jobs:
         run: >-
           npx playwright test --config=playwright.live.config.ts
           --project=cred-free
-          --project=setup --project=chromium --workers=2 --retries=3
+          --project=setup --project=smoke --workers=2 --retries=3
           --grep-invert "Visual Regression|snapshot"
           e2e/app-switcher.spec.ts e2e/navigation.spec.ts e2e/dashboard.spec.ts
           e2e/sub-app-smoke.spec.ts e2e/attendance.spec.ts e2e/nu-rbac.spec.ts

@@ -1,0 +1,21 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-SEC-RBAC-001,roles,Role inventory in DB vs RoleHierarchy (19 explicit + 7 implicit = 26 expected),FAIL,Medium,09-rbac-audit.md#1,DEF-RBAC-05
+NU-SEC-RBAC-002,matrix,Build role x permission-group matrix from role_permissions as app role hrms_user (NuLogic tenant),PASS,,09-rbac-audit.md#2,
+NU-SEC-RBAC-003,roles,Roles with zero permissions,FAIL,Low,09-rbac-audit.md#3,DEF-RBAC-04
+NU-SEC-RBAC-004,grants,Dangerous grants (EMPLOYEE/TEAM_LEAD/MANAGER/RECRUITMENT_ADMIN holding payroll/admin perms),PASS,,09-rbac-audit.md#4,
+NU-SEC-RBAC-005,grants,Payroll maker-checker: PROCESS+APPROVE held by same roles,FAIL,Medium,09-rbac-audit.md#4,DEF-RBAC-07
+NU-SEC-RBAC-006,self,My Space / self-service perms present for every role,FAIL,High,evidence/logs/NU-SEC-RBAC-100-live-get-probe.txt,DEF-RBAC-01
+NU-SEC-RBAC-007,grants,Permissions used in code held only by SUPER_ADMIN (49),FAIL,High,09-rbac-audit.md#5,DEF-RBAC-02
+NU-SEC-RBAC-008,codes,@RequiresPermission codes absent from permissions table,FAIL,Low,09-rbac-audit.md#6,DEF-RBAC-03
+NU-SEC-RBAC-009,codes,Legacy lowercase dotted permission rows (33) and duplicate role_permissions rows (51 pairs),FAIL,Low,09-rbac-audit.md#6,DEF-RBAC-08
+NU-SEC-RBAC-010,code-drift,RoleHierarchy defaults vs DB role_permissions (8 roles),FAIL,High,09-rbac-audit.md#7,DEF-RBAC-01
+NU-SEC-RBAC-100,api,Live GET probe: 6 demo accounts x 14 endpoints,PASS,,evidence/logs/NU-SEC-RBAC-100-live-get-probe.txt,
+NU-SEC-RBAC-101,api,MANAGER read scope TEAM (sumit sees 16 of 37 employees),PASS,,evidence/logs/NU-SEC-RBAC-101-manager-employee-scope.txt,
+NU-SEC-RBAC-110,escalation,Escalation attempts (role create with SYSTEM:ADMIN; assign SUPER_ADMIN; low-priv assign roles) all denied,PASS,,evidence/logs/NU-SEC-RBAC-200-escalation-attempts.txt (tenant-rbac2 run; read not re-run),
+NU-SEC-RBAC-111,escalation,Lookalike role codes (super_admin / trailing space / zero-width) accepted by POST /roles (201),FAIL,Medium,evidence/logs/NU-SEC-RBAC-200-escalation-attempts.txt + DB read,DEF-RBAC-06
+NU-SEC-RBAC-112,escalation,Legacy alias system.admin on custom role does not grant SYSTEM:ADMIN,PASS,Low,evidence/logs/NU-SEC-RBAC-240-legacy-alias-escalation.txt,DEF-RBAC-09
+NU-SEC-RBAC-120,authz,EMPLOYEE:UPDATE scope bypass via EMPLOYEE:VIEW_ALL (MANAGER/PAYROLL_ADMIN/RECRUITMENT_ADMIN edit any employee),NOT TESTED,Medium,EmployeeController.java:241-259 (code only; no write run),DEF-RBAC-10
+NU-SEC-RBAC-130,session,Logout revokes access+refresh tokens,PASS,,evidence/logs/NU-SEC-RBAC-220-logout-token-revocation.txt,
+NU-SEC-RBAC-131,session,Deactivated user token rejected after ~30s (10 polls x3s),PASS,Low,evidence/logs/NU-SEC-RBAC-230-deactivated-user.txt,
+NU-SEC-RBAC-132,cache,Role permission grant visible to existing session,INCONCLUSIVE,Medium,evidence/logs/NU-SEC-RBAC-210-cache-invalidation-timing.txt,DEF-RBAC-11
+NU-SEC-RBAC-140,provisioning,New tenant provisioning seeds roles,FAIL,Medium,TenantProvisioningService.java:103-116,DEF-RBAC-04

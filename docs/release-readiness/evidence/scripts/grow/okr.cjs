@@ -1,0 +1,40 @@
+// NU-GROW-E2E-060..080 OKR journey + hand-verified progress math + boundaries
+const L = require('./lib.cjs'); const D = L.db;
+const row = (sql) => (D(sql).split('\n')[1] || ''); const ok = (r, ...c) => c.includes(r.status);
+const rec = (id, sc, pass, note, sev = '') => L.rec(id, sc, pass ? 'PASS' : 'FAIL', note, { sev });
+const num = x => Number(x);
+(async () => {
+  console.log('login mani', await L.apiLogin('mani@nulogic.io')); await L.sleep(13000);
+  let r0 = await L.call('NU-GROW-E2E-059', 'arun', 'POST', '/api/v1/okr/objectives', { title: 'NUAURA_TEST_OKR_emp', startDate: '2026-11-01', endDate: '2026-12-31', objectiveLevel: 'INDIVIDUAL' });
+  rec('NU-GROW-E2E-059', 'Plain EMPLOYEE (arun) can create own personal OKR (Keka parity: employees set goals)', ok(r0, 201, 200), `http=${r0.status} (EMPLOYEE role holds only OKR:VIEW; MANAGER/TEAM_LEAD can create)`, 'Medium');
+  let r = await L.call('NU-GROW-E2E-060', 'sumit', 'POST', '/api/v1/okr/objectives', { title: 'NUAURA_TEST_OKR_' + Date.now().toString().slice(-5), description: 'NUAURA_TEST', startDate: '2026-11-01', endDate: '2026-12-31', objectiveLevel: 'INDIVIDUAL', visibility: 'PRIVATE', checkInFrequency: 'WEEKLY' });
+  const O = r.body && r.body.id; let d = O ? row(`select title,status,owner_id,progress_percentage from objectives where id='${O}'`) : '';
+  rec('NU-GROW-E2E-060', 'Manager creates objective (API)', ok(r, 201, 200) && O, `http=${r.status} db=${d}`);
+  if (!O) { L.save('okr'); return; }
+  const kr = await L.call('NU-GROW-E2E-060b', 'sumit', 'POST', `/api/v1/okr/objectives/${O}/key-results`, { title: 'NUAURA_TEST_KR1', measurementType: 'NUMBER', startValue: 0, targetValue: 200, weight: 60 });
+  rec('NU-GROW-E2E-060b', 'Owner adds a key result to own objective', ok(kr, 201, 200), `http=${kr.status} ${JSON.stringify(kr.body).slice(0, 150)} (server: Detached entity ... KeyResult.version, OkrService.java:254-256)`, 'High');
+  L.rec('NU-GROW-E2E-061', 'Progress calc by hand (KR1 50/200=25, KR2 80/100=80, w60/40 => 47.00)', 'BLOCKED', 'KR creation fails 400 DB_INTEGRITY_VIOLATION (DEF-GROW-01) so no KR exists to compute on; formula read at KeyResult.updateProgress/Objective.calculateProgress only', { sev: '' });
+  L.rec('NU-GROW-E2E-062', 'Progress clamps / over-target', 'BLOCKED', 'same blocker DEF-GROW-01');
+  L.rec('NU-GROW-E2E-063', 'Progress update writes check-in row', 'BLOCKED', 'same blocker DEF-GROW-01');
+  L.rec('NU-GROW-E2E-064', 'KR start==target division by zero', 'BLOCKED', 'same blocker; code risk: KeyResult.java:99-101 divides by (target-start)');
+  L.rec('NU-GROW-E2E-066', "Peer cannot update another's KR progress", 'BLOCKED', 'no KR creatable (DEF-GROW-01)');
+  L.rec('NU-GROW-E2E-067', "Peer cannot delete another's KR", 'BLOCKED', 'no KR creatable (DEF-GROW-01)');
+  r = await L.call('NU-GROW-E2E-068', 'mani', 'GET', `/api/v1/okr/objectives/${O}`);
+  rec('NU-GROW-E2E-068', "Peer reading a PRIVATE-visibility individual objective of another employee", ok(r, 403, 404), `http=${r.status}`, 'Medium');
+  r = await L.call('NU-GROW-E2E-069', 'arun', 'GET', '/api/v1/okr/company/objectives');
+  rec('NU-GROW-E2E-069', 'Employee cannot read company-wide objectives (OKR_VIEW_ALL)', ok(r, 403), `http=${r.status}`);
+  r = await L.call('NU-GROW-E2E-070', 'sumit', 'POST', `/api/v1/okr/objectives/${O}/approve`);
+  rec('NU-GROW-E2E-070', 'Employee cannot approve own objective', ok(r, 403), `http=${r.status}`);
+  r = await L.call('NU-GROW-E2E-071', 'suresh', 'POST', `/api/v1/okr/objectives/${O}/approve`);
+  rec('NU-GROW-E2E-071', 'Unrelated recruiter cannot approve arun objective', ok(r, 403), `http=${r.status}`, 'High');
+  r = await L.call('NU-GROW-E2E-072', 'jagadeesh', 'POST', `/api/v1/okr/objectives/${O}/approve`);
+  d = row(`select status from objectives where id='${O}'`);
+  rec('NU-GROW-E2E-072', "HR_MANAGER approves objective; DB status", ok(r, 200), `http=${r.status} db=${d}`);
+  r = await L.call('NU-GROW-E2E-073', 'finance', 'GET', `/api/v1/okr/objectives/${O}`);
+  rec('NU-GROW-E2E-073', 'Finance/payroll user cannot read arun private objective', ok(r, 403, 404), `http=${r.status}`, 'Medium');
+  r = await L.call('NU-GROW-E2E-074', 'mani', 'POST', `/api/v1/okr/objectives/${O}/key-results`, { title: 'NUAURA_TEST_inject', measurementType: 'NUMBER', startValue: 0, targetValue: 10 });
+  rec('NU-GROW-E2E-074', "Peer cannot add KR to another's objective", ok(r, 403, 404), `http=${r.status}`, 'High');
+  r = await L.call('NU-GROW-E2E-075', 'mani', 'DELETE', `/api/v1/okr/objectives/${O}`);
+  rec('NU-GROW-E2E-075', "Peer cannot delete another's objective", ok(r, 403, 404), `http=${r.status}`, 'High');
+  L.save('okr');
+})();

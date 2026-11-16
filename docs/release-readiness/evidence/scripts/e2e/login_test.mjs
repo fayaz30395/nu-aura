@@ -1,0 +1,14 @@
+import {chromium, newContext, watch, mkLog, FE, STATE} from './lib.mjs';
+import fs from 'fs';
+const [role, email, pwfile] = process.argv.slice(2);
+const pw = fs.readFileSync(pwfile, 'utf8').trim();
+const b = await chromium.launch(); const c = await newContext(b); const p = await c.newPage();
+let st; p.on('response', r => { if (/auth\/login$/.test(r.url()) && r.request().method()==='POST') st = r.status(); });
+await p.goto(FE + '/auth/login', {waitUntil: 'domcontentloaded', timeout: 120000});
+await p.locator('input[type=email]').fill(email); await p.locator('input[type=password]').fill(pw);
+await p.waitForFunction(() => { const x = document.querySelector('button[type=submit]'); return x && !x.disabled; });
+await p.getByRole('button', {name: /sign in/i}).first().click();
+await p.waitForTimeout(6000);
+console.log(role, 'login status', st, new URL(p.url()).pathname);
+if (st === 200) await c.storageState({path: `${STATE}/${role}.json`});
+await b.close();

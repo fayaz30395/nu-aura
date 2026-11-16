@@ -1,0 +1,2 @@
+- W2-05 Leave approvals filters: SKIPPED. `app/leave/approvals/page.tsx` has no filter bar above the table (only the QueryState-wrapped ResponsiveTable and stats), so the spec's target does not exist; needs a plan decision.
+- W2-06 Wiki list states: DONE. `app/fluence/wiki/page.tsx` page list now renders loading/empty via `QueryState` ("No pages in this space", New Page action gated by KNOWLEDGE_WIKI_CREATE); `page.test.tsx` gained an empty-space case; vitest 4/4 pass, eslint clean, no tsc errors in fluence/wiki.

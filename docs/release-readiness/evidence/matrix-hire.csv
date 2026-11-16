@@ -1,0 +1,76 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-HIRE-E2E-001,NU-Hire,Create job opening (DRAFT) as RECRUITMENT_ADMIN,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-002,NU-Hire,Requisition approval workflow before publish,BLOCKED,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-003,NU-Hire,Publish opening (status OPEN),PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-003b,NU-Hire,PUT job-opening with omitted optional fields must not wipe salary/location/hiringManager,FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-04
+NU-HIRE-E2E-004a,NU-Hire,Public careers WITHOUT tenant header (what the /careers page sends) lists NuLogic demo job,FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-06
+NU-HIRE-E2E-004,NU-Hire,Public career API lists published job (unauthenticated),PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-005,NU-Hire,Public job detail exposes no internal fields (salary band/hiringManager/tenantId),PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-006,NU-Hire,Public apply (unauth) with invalid/absent reCAPTCHA token is rejected and creates no candidate,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-007,NU-Hire,Public apply happy path + duplicate-application block,BLOCKED,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-008a,NU-Hire,Resume upload valid PDF (control),INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-008,NU-Hire,Resume bad type (.exe / application/x-msdownload) rejected,INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-008b,NU-Hire,Resume type spoof: exe bytes declared application/pdf rejected,INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-009,NU-Hire,Resume path-traversal filename (../../etc/NUAURA_TEST.pdf) handled safely (rejected or sanitized),INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-010,NU-Hire,Resume oversize (21 MB PDF) rejected,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-010b,NU-Hire,DOCUMENT:UPLOAD permission (documents/resume store) available to HR roles,FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-08
+NU-HIRE-E2E-011a,NU-Hire,Create candidate without candidateCode (field is optional in DTO),FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-05
+NU-HIRE-E2E-011,NU-Hire,Add 3 candidates (NUAURA_TEST_*) via API as RECRUITMENT_ADMIN,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-012,NU-Hire,Create applicant records linking candidates to job,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-013a,NU-Hire,Pipeline move to generic enum stage SCREENING (Java RecruitmentStage value; FE kanban uses it),FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-02
+NU-HIRE-E2E-013-RECRUITERS_PHONE_CALL,NU-Hire,Pipeline move candidate Alpha -> RECRUITERS_PHONE_CALL,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-013-PANEL_REVIEW,NU-Hire,Pipeline move candidate Alpha -> PANEL_REVIEW,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-013-PANEL_SHORTLISTED,NU-Hire,Pipeline move candidate Alpha -> PANEL_SHORTLISTED,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-013-TECHNICAL_INTERVIEW_SCHEDULED,NU-Hire,Pipeline move candidate Alpha -> TECHNICAL_INTERVIEW_SCHEDULED,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-013s,NU-Hire,Skip-ahead guard: TECH_INTERVIEW_SCHEDULED -> OFFER_NDA_TO_BE_RELEASED (>2 stages) blocked,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-014,NU-Hire,"Schedule interview with interviewer assigned (Sumit, MANAGER)",PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-015a,NU-Hire,Assigned interviewer submits scorecard (template id path = nil UUID probe),INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-015t,NU-Hire,Create scorecard template as HR_MANAGER,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-015,NU-Hire,Assigned interviewer submits scorecard,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-016,NU-Hire,Duplicate scorecard (same interviewer+interview) blocked,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-017,NU-Hire,Non-interviewer (HR_MANAGER) cannot submit scorecard for interview assigned to Sumit,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-017b,NU-Hire,Non-interviewer (RECRUITMENT_ADMIN) cannot submit scorecard,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-018,NU-Hire,Reject applicant Bravo,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-019,NU-Hire,Select applicant Charlie,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-019a,NU-Hire,Configure RECRUITMENT_OFFER approval workflow (approver Jagadeesh HR_MANAGER) as TENANT_ADMIN,FAIL,Critical,evidence/logs/hire/results-final.json,DEF-HIRE-01
+NU-HIRE-E2E-019b,NU-Hire,Offer must NOT be creatable for a REJECTED applicant/candidate (Bravo),FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-01
+NU-HIRE-E2E-020,NU-Hire,Generate offer for selected candidate,FAIL,Critical,evidence/logs/hire/results-final.json,DEF-HIRE-01
+NU-HIRE-E2E-021a,NU-Hire,Offer approval request appears in approver (HR_MANAGER) inbox,BLOCKED,,evidence/logs/hire/results-final.json,DEF-HIRE-01
+NU-HIRE-E2E-021,NU-Hire,Offer approved by workflow approver,BLOCKED,,evidence/logs/hire/results-final.json,DEF-HIRE-01
+NU-HIRE-E2E-022,NU-Hire,Plain EMPLOYEE cannot accept/decline offer on behalf of candidate,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-023,NU-Hire,Offer accepted (recruiter records acceptance),BLOCKED,,evidence/logs/hire/results-final.json,DEF-HIRE-01
+NU-HIRE-E2E-024-hradmin,NU-Hire,hradmin (HR/recruiter role) creating an offer e-signature request,FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-03
+NU-HIRE-E2E-024-recadmin,NU-Hire,recadmin (HR/recruiter role) creating an offer e-signature request,FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-03
+NU-HIRE-E2E-024-hrmgr,NU-Hire,hrmgr (HR/recruiter role) creating an offer e-signature request,FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-03
+NU-HIRE-E2E-024z,NU-Hire,E-sign request with signerId only (email derived from employee),FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-07
+NU-HIRE-E2E-024,NU-Hire,TENANT_ADMIN creates e-signature request for offer with named signer (Arun),PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-025,NU-Hire,Send signature request,FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-09
+NU-HIRE-E2E-026,NU-Hire,Non-named user (TENANT_ADMIN holds ESIGNATURE:SIGN) cannot sign Arun approval,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-028,NU-Hire,"Named signer (Arun, EMPLOYEE) signs own approval",FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-03
+NU-HIRE-E2E-027,NU-Hire,Unrelated HR_MANAGER cannot sign,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-028x,NU-Hire,External (candidate) token signing /esignature/external/{token}/sign,BLOCKED,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-029,NU-Hire,HR creates employee record for accepted candidate (no auto convert endpoint exists),PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-031,NU-Hire,HR initiates onboarding for new employee,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-032,NU-Hire,Onboarding checklist tasks present for the process,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-033,NU-Hire,Employee record readable by HR after creation,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-040-emp,NU-Hire,"Candidate PII as EMPLOYEE: list + by-id (candidate Alpha, interviewed by Sumit)",PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-040-mgr,NU-Hire,"Candidate PII as MANAGER (interviewer): list + by-id (candidate Alpha, interviewed by Sumit)",FAIL,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-040-hrmgr,NU-Hire,"Candidate PII as HR_MANAGER: list + by-id (candidate Alpha, interviewed by Sumit)",PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-041,NU-Hire,Interviewer(MANAGER) reads candidate PII of non-assigned candidate Bravo(not assigned),FAIL,High,evidence/logs/hire/results-final.json,DEF-HIRE-10
+NU-HIRE-E2E-050,NU-Hire,Create staffing agency (RECRUITMENT_ADMIN),PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-051,NU-Hire,EMPLOYEE cannot list agencies,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-052,NU-Hire,EMPLOYEE cannot create job opening,PASS,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-053,NU-Hire,MANAGER job-openings list access (informational),INCONCLUSIVE,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-029c,NU-Hire,HR converts accepted candidate to employee (conversion feature),FAIL,Medium,evidence/logs/hire/results-final.json,DEF-HIRE-11
+NU-HIRE-E2E-060,NU-Hire,Agency boundary: agency submissions / agency-user isolation,NOT TESTED,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-061,NU-Hire,Payroll role (finance@) direct API denial of candidate PII,NOT TESTED,,evidence/logs/hire/results-final.json,
+NU-HIRE-E2E-UI-001-careers-public,NU-Hire,Public career page (unauth) lists published job,FAIL,Medium,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-001-careers-public*.png,DEF-HIRE-06
+NU-HIRE-E2E-UI-002-jobs,NU-Hire,Recruiter job list shows opening,PASS,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-002-jobs*.png,
+NU-HIRE-E2E-UI-003-candidates,NU-Hire,Candidates list shows added candidates,PASS,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-003-candidates*.png,
+NU-HIRE-E2E-UI-004-pipeline,NU-Hire,Pipeline board shows Alpha,FAIL,High,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-004-pipeline*.png,DEF-HIRE-02
+NU-HIRE-E2E-UI-005-interviews,NU-Hire,Interviews page shows scheduled interview,PASS,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-005-interviews*.png,
+NU-HIRE-E2E-UI-006-agencies,NU-Hire,Agency list shows agency,PASS,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-006-agencies*.png,
+NU-HIRE-E2E-UI-007-scorecards-mgr,NU-Hire,Interviewer scorecards page loads,INCONCLUSIVE,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-007-scorecards-mgr*.png,
+NU-HIRE-E2E-UI-008-onboarding,NU-Hire,Onboarding list shows new hire,INCONCLUSIVE,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-008-onboarding*.png,
+NU-HIRE-E2E-UI-009-recruitment-emp-denied,NU-Hire,"EMPLOYEE must NOT see candidates in UI (PASS means data visible=FAIL, inverted below)",INCONCLUSIVE,,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-009-recruitment-emp-denied*.png,
+NU-HIRE-E2E-UI-010-careers-mobile,NU-Hire,Public career page at 390x844,FAIL,Medium,evidence/logs/hire/results-final.json; evidence/screenshots/NU-HIRE-UI-010-careers-mobile*.png,DEF-HIRE-06

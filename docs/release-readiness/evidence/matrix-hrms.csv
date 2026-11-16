@@ -1,0 +1,45 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-HRMS-E2E-001,env,FE dev bundle API base is docker host http://backend:8080 -> browser login impossible without proxy,FAIL,Medium,logs/hrms/NU-HRMS-E2E-010-create-employee.json (failed ws/info backend:8080); screenshots/NU-HRMS-E2E-000-login-page.png,DEF-HRMS-ENV
+NU-HRMS-E2E-002,auth,"Page load + login share 5/min/IP AUTH bucket (/auth/me,/refresh,/login) -> 429 -> forced logout",FAIL,High,logs/hrms/NU-HRMS-E2E-020-login-429.txt,DEF-HRMS-01
+NU-HRMS-E2E-010,J1 employee,"HR admin creates NUAURA_TEST employee via UI (empty-submit validation, dept, designation, manager, submit)",PASS,,screenshots/NU-HRMS-E2E-011..014; logs/NU-HRMS-E2E-010-create-employee.json; DB row verified,
+NU-HRMS-E2E-011,J1 role,HR admin assigns EMPLOYEE role to new user,FAIL,High,"logs/hrms/NU-HRMS-E2E-011-role-assign.json (500, RLS on user_roles)",DEF-HRMS-02
+NU-HRMS-E2E-020,J1 login,New employee first login via UI -> forced change-password; weak pw rejected; pw changed; terminated check later,PASS,,screenshots/NU-HRMS-E2E-021..023; DB password_change_required=f,
+NU-HRMS-E2E-030,J1 My Space,New employee My Space dashboard/profile/attendance/leaves load,PASS,,screenshots/NU-HRMS-E2E-030-me-*.png; logs/NU-HRMS-E2E-030-employee-journey.json,
+NU-HRMS-E2E-031,J1 attendance,Employee check-in via UI -> API 201 -> DB row PRESENT,PASS,,screenshots/NU-HRMS-E2E-031; DB attendance_records,
+NU-HRMS-E2E-032,J1 attendance,Employee check-out via UI,FAIL,Medium,logs/NU-HRMS-E2E-037-approve-journey.json (only Check In shown; client date vs tenant date),DEF-HRMS-08
+NU-HRMS-E2E-033,J1 attendance,"Check-out via API -> duration stored, double checkout 400",PASS,,logs/NU-HRMS-E2E-080-leave-rules.json,
+NU-HRMS-E2E-034,J1 leave,Employee applies CL 2 days via UI; submit disabled when empty; balance created lazily 7/pending 2/avail 5,PASS,,"screenshots/NU-HRMS-E2E-033..036; DB leave_requests, leave_balances",
+NU-HRMS-E2E-035,J1 leave,Manager sumit sees request and approves via UI; DB APPROVED approved_by=sumit; balance used 2 avail 5; employee UI+API show Approved,PASS,,screenshots/NU-HRMS-E2E-037..0391; logs/NU-HRMS-E2E-037-approve-journey.json,
+NU-HRMS-E2E-036,leave,Cancel approved leave restores balance (7/0/0),PASS,,DB (j9c) ,
+NU-HRMS-E2E-037,leave,Cancel pending restores pending; cancel requires reason param,PASS,,logs/NU-HRMS-E2E-081-reject.json,
+NU-HRMS-E2E-040,leave reject,Manager rejects (UI+API),FAIL,High,"logs/hrms/NU-HRMS-E2E-081-reject.json (403 twice; HR_ADMIN reject 200, balance released)",DEF-HRMS-03
+NU-HRMS-E2E-041,leave rules,Overlap with approved leave rejected,PASS,,logs/NU-HRMS-E2E-080-leave-rules.json,
+NU-HRMS-E2E-042,leave rules,Holiday-only / weekend-only range rejected,PASS,,same,
+NU-HRMS-E2E-043,leave rules,Insufficient balance rejected,PASS,,same (message shown),
+NU-HRMS-E2E-044,leave rules,CL max 3 days/request enforced,FAIL,Medium,same (4 working days accepted),DEF-HRMS-04
+NU-HRMS-E2E-045,leave rules,Past-dated leave rejected,FAIL,Medium,same (2025-01-06 accepted),DEF-HRMS-04
+NU-HRMS-E2E-046,leave rules,"End<start, short reason, half-day w/o period rejected",PASS,,same,
+NU-HRMS-E2E-047,leave authz,Self-approve and peer approve -> 403,PASS,,same,
+NU-HRMS-E2E-050,attendance,"Regularization: invalid times 400, blank reason 400, submit->PENDING, self-approve 403, manager approve->PRESENT",PASS,,logs/NU-HRMS-E2E-090-misc.json,
+NU-HRMS-E2E-051,attendance,Regularization future date rejected,FAIL,Low,same (2030 date accepted),DEF-HRMS-09
+NU-HRMS-E2E-052,attendance,Regularized times honour tenant timezone,INCONCLUSIVE,Low,"stored 17:30/02:30 for 09:00/18:00 input; JVM tz -03 vs tenant IST, local env",
+NU-HRMS-E2E-060,holidays,"Holiday CRUD, validation, employee create 403, employee list 200",PASS,,logs/NU-HRMS-E2E-050-admin-crud.json,
+NU-HRMS-E2E-061,holidays,Duplicate holiday date rejected (400 no message),PASS,Low,same,
+NU-HRMS-E2E-062,departments,Department create/dup 409/blank 400/employee 403,PASS,,same,
+NU-HRMS-E2E-063,departments,Parent cycle / self-parent rejected; parent can be cleared; delete after child delete,FAIL,Medium,logs/NU-HRMS-E2E-051-dept-cycle.json,DEF-HRMS-05
+NU-HRMS-E2E-064,designations,Designation CRUD,NOT TESTED,,no designation entity: free-text field on employee,
+NU-HRMS-E2E-070,employee edit,Admin edit designation/level/manager persisted; self cannot change designation via /me,PASS,,logs/NU-HRMS-E2E-090-misc.json,
+NU-HRMS-E2E-071,org hierarchy,Manager cannot be self or create a cycle,FAIL,Medium,same (self-manager and sumit<->nt1 cycle both 200),DEF-HRMS-06
+NU-HRMS-E2E-072,org hierarchy,Hierarchy/subordinates endpoints and UI page render,PASS,,screenshots/NU-HRMS-E2E-090-ui-org-hierarchy.png,
+NU-HRMS-E2E-080,termination,"Terminated: status+user INACTIVE, old token 401 on all calls, new login 401 'User is disabled'",PASS,,logs/NU-HRMS-E2E-100-termination.json,
+NU-HRMS-E2E-090,expenses,Create/validate/submit/manager approve/reject(reason required)/double approve 409/self-approve 403,PASS,,logs/NU-HRMS-E2E-070-expense-asset-contract-benefit.json,
+NU-HRMS-E2E-091,assets,"Allocate to employee, employee sees it, double assign 400, return, dup code 400, employee assign 403",PASS,,same,
+NU-HRMS-E2E-092,contracts,"Create contract (validation, employee 403)",PASS,,same,
+NU-HRMS-E2E-093,contracts,HR_ADMIN activates/terminates contract,FAIL,Low,same (403 on mark-active/terminate; DRAFT left),DEF-HRMS-10
+NU-HRMS-E2E-094,benefits,Plans/enrollment flow,BLOCKED,,0 active plans seeded; FE calls missing /benefits/plans/active (404); /benefits-enhanced/plans/eligible 400 for new employee,DEF-HRMS-10
+NU-HRMS-E2E-100,My Space all roles,"My Space dashboard/profile/attendance/leaves reachable for 11 demo roles (hradmin,hrmgr,tadmin,mgr,tl,emp,emp2,saran,raj,fin,rec)",PASS,,logs/NU-HRMS-E2E-040-myspace-all-roles.json; screenshots/NU-HRMS-E2E-040-*,
+NU-HRMS-E2E-101,My Space,/me/documents redirects to /auth/login after load for all roles (finance also 403 on self-service doc APIs),INCONCLUSIVE,Medium,logs/hrms/NU-HRMS-E2E-041 screenshots; harness caches /auth/me,DEF-HRMS-11
+NU-HRMS-E2E-110,IDOR,Employee A (arun) vs B (anshuman)/NT1: 19 direct API read/write calls,PASS,,logs/NU-HRMS-E2E-060-idor-employee-vs-employee.json (all 403; list endpoint scoped to 0 rows),
+NU-HRMS-E2E-111,IDOR,Expense claim create FOR other employee,INCONCLUSIVE,,"400 on empty body, not retested with valid body",
+NU-HRMS-E2E-120,UI,Console/network errors on admin pages,FAIL,Low,logs/NU-HRMS-E2E-090-misc.json ui_bag (Mantine style warning; custom-fields 403; benefits 404),DEF-HRMS-10
+NU-HRMS-E2E-130,responsive,Viewports 1280/768/390 and empty/loading/error states sweep,NOT TESTED,,time; only 1440x900 used,

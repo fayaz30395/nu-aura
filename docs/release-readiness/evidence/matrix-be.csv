@@ -1,0 +1,10 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-BE-001,backend-tests,Full mvn suite (5303 run/772 err/3 skip),BLOCKED,Medium,evidence/logs/NU-BE-001-mvn-test.txt,DEF-BE-01
+NU-BE-002,backend-tests,78 Docker-dependent classes,BLOCKED,Medium,evidence/logs/NU-BE-002-docker-blocked-classes.txt,DEF-BE-01
+NU-BE-003,tenancy,RLS non-bypass proof tests skipped,NOT TESTED,High,evidence/logs/NU-BE-001-mvn-test.txt,DEF-BE-01
+NU-BE-004,tenancy,Tenant isolation unit/arch tests (52 classes),PASS,Info,evidence/logs/NU-BE-001-mvn-test.txt,
+NU-BE-010,deps,Dependency tree,PASS,Info,evidence/logs/NU-BE-010-dependency-tree.txt,
+NU-BE-011,deps,OWASP dependency-check offline,BLOCKED,Info,evidence/logs/NU-BE-011-owasp-dc.txt,
+NU-BE-020,deps,CVE review resolved versions,INCONCLUSIVE,High,10-api-test-results.md,DEF-BE-04
+NU-BE-030,flyway,Checksums files vs local DB,FAIL,Medium,evidence/logs/NU-BE-030-flyway-checksums.txt,DEF-BE-02
+NU-BE-031,flyway,V329-V341 integrity,PASS,Info,evidence/logs/NU-BE-031-flyway-v329-v341.txt,

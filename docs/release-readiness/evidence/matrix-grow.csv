@@ -1,0 +1,130 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-GROW-E2E-001,grow,"HR creates review cycle via UI",PASS,,logs/grow/NU-GROW-E2E-001.txt,
+NU-GROW-E2E-002,grow,"HR activates cycle for Recruitment dept via UI",PASS,,logs/grow/NU-GROW-E2E-002.txt,
+NU-GROW-E2E-003,grow,"Employee submits self-assessment (ratings 4,3 => avg round 4)",PASS,,logs/grow/NU-GROW-E2E-003.txt,
+NU-GROW-E2E-004,grow,"Edit self-assessment after submit rejected",PASS,,logs/grow/NU-GROW-E2E-004.txt,
+NU-GROW-E2E-005,grow,"Alternate edit path PUT /reviews/{id} after submit blocked for employee",PASS,,logs/grow/NU-GROW-E2E-005.txt,
+NU-GROW-E2E-006,grow,"Manager review before MANAGER_REVIEW stage rejected (skipped step)",PASS,,logs/grow/NU-GROW-E2E-006.txt,
+NU-GROW-E2E-007,grow,"Employee cannot submit manager review about self",PASS,,logs/grow/NU-GROW-E2E-007.txt,
+NU-GROW-E2E-008,grow,"Employee cannot submit another employee's self-assessment",PASS,,logs/grow/NU-GROW-E2E-008.txt,
+NU-GROW-E2E-009,grow,"Employee/manager cannot advance or complete cycle",FAIL,High,logs/grow/NU-GROW-E2E-009.txt,DEF-GROW-04
+NU-GROW-E2E-010,grow,"HR advances cycle ACTIVE->MANAGER_REVIEW",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-010.txt,
+NU-GROW-E2E-011,grow,"Self-assessment after self stage closed rejected",PASS,,logs/grow/NU-GROW-E2E-011.txt,
+NU-GROW-E2E-012,grow,"Non-assigned user (HR) cannot submit manager review for review owned by other manager",PASS,,logs/grow/NU-GROW-E2E-012.txt,
+NU-GROW-E2E-013,grow,"Manager review: rating 9 rejected (400), rating 4 accepted, DB IN_REVIEW",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-013.txt,
+NU-GROW-E2E-014,grow,"Manager review cannot be edited after submit",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-014.txt,
+NU-GROW-E2E-015,grow,"Calibration rating rejected before CALIBRATION stage",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-015.txt,
+NU-GROW-E2E-016,grow,"Calibration: rating 6 => 400; manager => 403; HR rating 3 accepted, DB final_rating=3",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-016.txt,
+NU-GROW-E2E-017,grow,"Employee cannot read cycle calibration data (all employees ratings)",PASS,,logs/grow/NU-GROW-E2E-017.txt,
+NU-GROW-E2E-018,grow,"HR reads calibration report",PASS,,logs/grow/NU-GROW-E2E-018.txt,
+NU-GROW-E2E-019,grow,"HR completes cycle; advance/complete after COMPLETED rejected",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-019.txt,
+NU-GROW-E2E-020,grow,"Completed cycle cannot be reopened via PUT status=ACTIVE",FAIL,Medium,logs/grow/NU-GROW-E2E-020.txt,DEF-GROW-06
+NU-GROW-E2E-021,grow,"Employee cannot list all reviews (GET /reviews)",PASS,,logs/grow/NU-GROW-E2E-021.txt,
+NU-GROW-E2E-022,grow,"Employee cannot read another employee's reviews",PASS,,logs/grow/NU-GROW-E2E-022.txt,
+NU-GROW-E2E-023,grow,"Employee cannot read another's review by id",PASS,,logs/grow/NU-GROW-E2E-023.txt,
+NU-GROW-E2E-024,grow,"Peer employee (anshuman) cannot read arun review by id",PASS,,logs/grow/NU-GROW-E2E-024.txt,
+NU-GROW-E2E-025,grow,"Manager (sumit) cannot read non-report suresh's review",FAIL,Critical,logs/grow/NU-GROW-E2E-025.txt,DEF-GROW-05
+NU-GROW-E2E-026,grow,"Recruiter (suresh) cannot read arun review",PASS,,logs/grow/NU-GROW-E2E-026.txt,
+NU-GROW-E2E-027,grow,"Payroll/finance cannot read arun review",PASS,,logs/grow/NU-GROW-E2E-027.txt,
+NU-GROW-E2E-028,grow,"Employee cannot read another's pending reviews (/pending/{reviewerId})",PASS,,logs/grow/NU-GROW-E2E-028.txt,
+NU-GROW-E2E-029,grow,"Manager can read own report review (positive control)",PASS,,logs/grow/NU-GROW-E2E-029.txt,
+NU-GROW-E2E-030,grow,"Employee reads own review (positive control)",PASS,,logs/grow/NU-GROW-E2E-030.txt,
+NU-GROW-E2E-031,grow,"API: HR creates + activates second cycle (Recruitment dept)",PASS,,logs/grow/NU-GROW-E2E-031.txt,
+NU-GROW-E2E-032,grow,"Self-assessment ratings 5,2 -> avg 3.5 stored as int (rounding check)",PASS,,logs/grow/NU-GROW-E2E-032.txt,
+NU-GROW-E2E-033,grow,"HR advances ACTIVE -> MANAGER_REVIEW",PASS,,logs/grow/NU-GROW-E2E-033.txt,
+NU-GROW-E2E-034,grow,"Manager review: rating 9 => 400, 4 accepted, DB IN_REVIEW/4",PASS,,logs/grow/NU-GROW-E2E-034.txt,
+NU-GROW-E2E-035,grow,"Manager review not editable after submit",PASS,,logs/grow/NU-GROW-E2E-035.txt,
+NU-GROW-E2E-036,grow,"Employee must not see manager rating/comments before ratings published (stage MANAGER_REVIEW)",FAIL,Medium,logs/grow/NU-GROW-E2E-036.txt,DEF-GROW-08
+NU-GROW-E2E-037,grow,"HR_MANAGER (jagadeesh) can set calibration rating (UI lets HR_MANAGER calibrate?)",FAIL,Medium,logs/grow/NU-GROW-E2E-037.txt,DEF-GROW-09
+NU-GROW-E2E-038,grow,"Calibration by HR_ADMIN: 6 => 400, manager => 403, 3 accepted, DB final_rating=3",PASS,,logs/grow/NU-GROW-E2E-038.txt,
+NU-GROW-E2E-039,grow,"After RATINGS_PUBLISHED employee sees own final rating (positive)",PASS,,logs/grow/NU-GROW-E2E-039.txt,
+NU-GROW-E2E-040,grow,"HR completes cycle; DB COMPLETED",PASS,,logs/grow/NU-GROW-E2E-040.txt,
+NU-GROW-E2E-041,grow,"No review mutation after cycle COMPLETED (self, calibration)",PASS,,logs/grow/NU-GROW-E2E-041.txt,
+NU-GROW-E2E-042,grow,"REPRO: completed cycle reopened via PUT status=ACTIVE must be rejected",FAIL,Medium,logs/grow/NU-GROW-E2E-042.txt,DEF-GROW-06
+NU-GROW-E2E-043,grow,"REPRO: manager (sumit) must not read non-report (suresh) review; suresh.manager_id=550e8400-e29b-41d4-a716-446655440040",FAIL,High,logs/grow/NU-GROW-E2E-043.txt,DEF-GROW-05
+NU-GROW-E2E-043b,grow,"REPRO: manager lists non-report employee reviews",PASS,,logs/grow/NU-GROW-E2E-043b.txt,
+NU-GROW-E2E-044,grow,"REPRO: a line MANAGER must not be able to advance org-wide review cycle",FAIL,High,logs/grow/NU-GROW-E2E-044.txt,DEF-GROW-04
+NU-GROW-E2E-045,grow,"Skipped steps: completing a cycle mid-stage (no calibration/publish, DRAFT reviews pending) should be rejected",FAIL,Medium,logs/grow/NU-GROW-E2E-045.txt,DEF-GROW-07
+NU-GROW-E2E-059,grow,"Plain EMPLOYEE (arun) can create own personal OKR (Keka parity: employees set goals)",FAIL,Medium,logs/grow/NU-GROW-E2E-059.txt,DEF-GROW-10
+NU-GROW-E2E-060,grow,"Manager creates objective (API)",PASS,,logs/grow/NU-GROW-E2E-060.txt,
+NU-GROW-E2E-060b,grow,"Owner adds a key result to own objective",FAIL,High,logs/grow/NU-GROW-E2E-060b.txt,DEF-GROW-01
+NU-GROW-E2E-061,grow,"Progress calc by hand (KR1 50/200=25, KR2 80/100=80, w60/40 => 47.00)",BLOCKED,,logs/grow/NU-GROW-E2E-061.txt,DEF-GROW-01
+NU-GROW-E2E-062,grow,"Progress clamps / over-target",BLOCKED,,logs/grow/NU-GROW-E2E-062.txt,
+NU-GROW-E2E-063,grow,"Progress update writes check-in row",BLOCKED,,logs/grow/NU-GROW-E2E-063.txt,
+NU-GROW-E2E-064,grow,"KR start==target division by zero",BLOCKED,,logs/grow/NU-GROW-E2E-064.txt,
+NU-GROW-E2E-066,grow,"Peer cannot update another's KR progress",BLOCKED,,logs/grow/NU-GROW-E2E-066.txt,
+NU-GROW-E2E-067,grow,"Peer cannot delete another's KR",BLOCKED,,logs/grow/NU-GROW-E2E-067.txt,
+NU-GROW-E2E-068,grow,"Peer reading a PRIVATE-visibility individual objective of another employee",FAIL,Medium,logs/grow/NU-GROW-E2E-068.txt,DEF-GROW-12
+NU-GROW-E2E-069,grow,"Employee cannot read company-wide objectives (OKR_VIEW_ALL)",PASS,,logs/grow/NU-GROW-E2E-069.txt,
+NU-GROW-E2E-070,grow,"Employee cannot approve own objective",PASS,,logs/grow/NU-GROW-E2E-070.txt,
+NU-GROW-E2E-071,grow,"Unrelated recruiter cannot approve arun objective",PASS,,logs/grow/NU-GROW-E2E-071.txt,
+NU-GROW-E2E-072,grow,"HR_MANAGER approves objective; DB status",PASS,,logs/grow/NU-GROW-E2E-072.txt,
+NU-GROW-E2E-073,grow,"Finance/payroll user cannot read arun private objective",PASS,,logs/grow/NU-GROW-E2E-073.txt,
+NU-GROW-E2E-074,grow,"Peer cannot add KR to another's objective",PASS,,logs/grow/NU-GROW-E2E-074.txt,
+NU-GROW-E2E-075,grow,"Peer cannot delete another's objective",PASS,,logs/grow/NU-GROW-E2E-075.txt,
+NU-GROW-E2E-090,grow,"HR creates anonymous 360 cycle (minPeers=2)",PASS,,logs/grow/NU-GROW-E2E-090.txt,
+NU-GROW-E2E-091,grow,"HR activates 360 cycle",PASS,,logs/grow/NU-GROW-E2E-091.txt,
+NU-GROW-E2E-092,grow,"HR nominates 2 peers + manager for arun",FAIL,,logs/grow/NU-GROW-E2E-092.txt,DEF-GROW-02
+NU-GROW-E2E-093,grow,"HR lists requests",BLOCKED,,logs/grow/NU-GROW-E2E-093.txt,
+NU-GROW-E2E-095,grow,"Reviewers (2 peers + manager) submit responses; DB rows",BLOCKED,,logs/grow/NU-GROW-E2E-095.txt,
+NU-GROW-E2E-096,grow,"Non-nominated user cannot submit response against another reviewer's request",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-096.txt,
+NU-GROW-E2E-097,grow,"Final response cannot be overwritten after submit",BLOCKED,,logs/grow/NU-GROW-E2E-097.txt,
+NU-GROW-E2E-098,grow,"Reviewee cannot read raw response of a peer reviewer (direct API by requestId)",BLOCKED,,logs/grow/NU-GROW-E2E-098.txt,
+NU-GROW-E2E-099,grow,"Reviewee cannot list cycle requests (reviewer identities)",PASS,,logs/grow/NU-GROW-E2E-099.txt,
+NU-GROW-E2E-100,grow,"Reviewee cannot read all summaries of cycle",PASS,,logs/grow/NU-GROW-E2E-100.txt,
+NU-GROW-E2E-101,grow,"Other peer (mani) cannot read anshuman's response",BLOCKED,,logs/grow/NU-GROW-E2E-101.txt,
+NU-GROW-E2E-102,grow,"Before HR shares, reviewee my-summaries is empty",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-102.txt,
+NU-GROW-E2E-103,grow,"Generated summary (HR view) aggregates; raw peer comments/identities check",BLOCKED,,logs/grow/NU-GROW-E2E-103.txt,
+NU-GROW-E2E-104,grow,"After share: reviewee sees summary with NO raw rater identity/anonymous comments",BLOCKED,,logs/grow/NU-GROW-E2E-104.txt,
+NU-GROW-E2E-106,grow,"Employee cannot nominate reviewers for own 360",PASS,,logs/grow/NU-GROW-E2E-106.txt,
+NU-GROW-E2E-107,grow,"Employee cannot share/unshare summaries",PASS,,logs/grow/NU-GROW-E2E-107.txt,
+NU-GROW-E2E-108,grow,"Finance/payroll cannot read 360 summaries",PASS,,logs/grow/NU-GROW-E2E-108.txt,
+NU-GROW-E2E-109,grow,"Recruiter cannot read 360 requests",PASS,,logs/grow/NU-GROW-E2E-109.txt,
+NU-GROW-E2E-110,grow,"After HR closes 360 cycle, late responses rejected",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-110.txt,
+NU-GROW-E2E-120,grow,"HR_ADMIN (admin@) can create a course (LMS:COURSE_MANAGE is SUPER_ADMIN-only in DB)",FAIL,High,logs/grow/NU-GROW-E2E-120.txt,DEF-GROW-09
+NU-GROW-E2E-121,grow,"HR creates/publishes own course and quiz end-to-end",BLOCKED,,logs/grow/NU-GROW-E2E-121.txt,
+NU-GROW-E2E-122,grow,"Employee self-enrols",PASS,,logs/grow/NU-GROW-E2E-122.txt,
+NU-GROW-E2E-123,grow,"Duplicate enrolment rejected",PASS,,logs/grow/NU-GROW-E2E-123.txt,
+NU-GROW-E2E-124,grow,"Unauthorised: employee enrols ANOTHER employee (employeeId param) must be rejected",PASS,,logs/grow/NU-GROW-E2E-124.txt,
+NU-GROW-E2E-125,grow,"Employee cannot update ANOTHER employee's enrolment progress (cert fraud)",PASS,,logs/grow/NU-GROW-E2E-125.txt,
+NU-GROW-E2E-126,grow,"Employee marks course 50 then 100% via progress API; DB COMPLETED; certificate issued",FAIL,Medium,logs/grow/NU-GROW-E2E-126.txt,DEF-GROW-11
+NU-GROW-E2E-127,grow,"Progress regression after completion rejected",FAIL,Low,logs/grow/NU-GROW-E2E-127.txt,DEF-GROW-11
+NU-GROW-E2E-128,grow,"Employee sees own certificate",FAIL,,logs/grow/NU-GROW-E2E-128.txt,DEF-GROW-11
+NU-GROW-E2E-129,grow,"Certificate verification endpoint (authenticated other user)",BLOCKED,,logs/grow/NU-GROW-E2E-129.txt,
+NU-GROW-E2E-130,grow,"Employee cannot list a course's enrolments (other learners)",PASS,,logs/grow/NU-GROW-E2E-130.txt,
+NU-GROW-E2E-131,grow,"Employee cannot read another's enrolment progress",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-131.txt,
+NU-GROW-E2E-132,grow,"Employee cannot create course",PASS,,logs/grow/NU-GROW-E2E-132.txt,
+NU-GROW-E2E-133,grow,"Recruiter cannot archive course",PASS,,logs/grow/NU-GROW-E2E-133.txt,
+NU-GROW-E2E-134,grow,"Employee cannot read course completion stats",PASS,,logs/grow/NU-GROW-E2E-134.txt,
+NU-GROW-E2E-140,grow,"HR creates anonymous pulse survey with 1 question",FAIL,,logs/grow/NU-GROW-E2E-140.txt,DEF-GROW-03
+NU-GROW-E2E-141,grow,"publish survey",BLOCKED,,logs/grow/NU-GROW-E2E-141.txt,
+NU-GROW-E2E-142,grow,"employees submit responses",BLOCKED,,logs/grow/NU-GROW-E2E-142.txt,
+NU-GROW-E2E-143,grow,"anonymous: no respondent id stored",BLOCKED,,logs/grow/NU-GROW-E2E-143.txt,
+NU-GROW-E2E-144,grow,"duplicate submission rejected",BLOCKED,,logs/grow/NU-GROW-E2E-144.txt,
+NU-GROW-E2E-145,grow,"min-response suppression (<5)",BLOCKED,,logs/grow/NU-GROW-E2E-145.txt,
+NU-GROW-E2E-146,grow,"employee cannot read analytics",BLOCKED,,logs/grow/NU-GROW-E2E-146.txt,
+NU-GROW-E2E-147,grow,"employee cannot create survey",BLOCKED,,logs/grow/NU-GROW-E2E-147.txt,
+NU-GROW-E2E-148,grow,"recruiter cannot close",BLOCKED,,logs/grow/NU-GROW-E2E-148.txt,
+NU-GROW-E2E-149,grow,"closed survey rejects",BLOCKED,,logs/grow/NU-GROW-E2E-149.txt,
+NU-GROW-E2E-150,grow,"HR creates wellness program",PASS,,logs/grow/NU-GROW-E2E-150.txt,
+NU-GROW-E2E-151,grow,"HR adds challenge",PASS,,logs/grow/NU-GROW-E2E-151.txt,
+NU-GROW-E2E-152,grow,"Employee joins wellness challenge (WELLNESS:CREATE is HR-only in DB)",FAIL,,logs/grow/NU-GROW-E2E-152.txt,DEF-GROW-10
+NU-GROW-E2E-153,grow,"Employee logs 8000 steps",FAIL,,logs/grow/NU-GROW-E2E-153.txt,DEF-GROW-10
+NU-GROW-E2E-154,grow,"Negative health-log value rejected",BLOCKED,,logs/grow/NU-GROW-E2E-154.txt,
+NU-GROW-E2E-155,grow,"Cannot log health data for challenge not joined / on behalf of another employee",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-155.txt,
+NU-GROW-E2E-156,grow,"Health logs are private: another employee's GET /health-logs must not contain arun's entries",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-156.txt,
+NU-GROW-E2E-157,grow,"Employee cannot create wellness program",PASS,,logs/grow/NU-GROW-E2E-157.txt,
+NU-GROW-E2E-158,grow,"Leaderboard shows only enabled-challenge aggregates (info)",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-158.txt,
+NU-GROW-E2E-160,grow,"HR_ADMIN creates training program (TRAINING:CREATE only SUPER_ADMIN/TENANT_ADMIN)",FAIL,,logs/grow/NU-GROW-E2E-160.txt,DEF-GROW-09
+NU-GROW-E2E-161,grow,"Employee cannot create training program",PASS,,logs/grow/NU-GROW-E2E-161.txt,
+NU-GROW-E2E-162,grow,"Employee cannot read another employee's training enrolments",PASS,,logs/grow/NU-GROW-E2E-162.txt,
+NU-GROW-E2E-163,grow,"Employee cannot mark training complete (HR action)",PASS,,logs/grow/NU-GROW-E2E-163.txt,
+NU-GROW-E2E-180,grow,"UI: employee My Reviews shows own SELF (SUBMITTED) and MANAGER (DRAFT) review for test cycle",PASS,,logs/grow/NU-GROW-E2E-180.txt,DEF-GROW-13
+NU-GROW-E2E-181,grow,"UI: HR sees test cycles on /performance/cycles",PASS,,logs/grow/NU-GROW-E2E-181.txt,
+NU-GROW-E2E-182,grow,"UI: manager sees own OKR objective on /performance/okr",PASS,,logs/grow/NU-GROW-E2E-182.txt,
+NU-GROW-E2E-183,grow,"UI: employee learning dashboard shows enrolled course",PASS,,logs/grow/NU-GROW-E2E-183.txt,
+NU-GROW-E2E-184,grow,"UI: employee /wellness shows HR-created program",PASS,,logs/grow/NU-GROW-E2E-184.txt,
+NU-GROW-E2E-185,grow,"UI: /performance/360-feedback for employee",INCONCLUSIVE,,logs/grow/NU-GROW-E2E-185.txt,
+NU-GROW-E2E-186,grow,"UI: employee denied /performance/calibration",PASS,,logs/grow/NU-GROW-E2E-186.txt,
+NU-GROW-E2E-190,grow,"DEPARTMENT scope with empty departmentIds activates cycle for ALL employees",NOT TESTED,,logs/grow/NU-GROW-E2E-190.txt,DEF-GROW-14
+NU-GROW-E2E-191,grow,"Goals, PIP, competency matrix, 9-box, learning paths, quizzes, mobile viewports, UI self-review submit + manager review form clicks",NOT TESTED,,logs/grow/NU-GROW-E2E-191.txt,

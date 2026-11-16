@@ -1,0 +1,36 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-PAY-001,employee,Create employee with bank account+IFSC (HR_ADMIN API),FAIL,High,logs/NU-PAY-000-employee-create-ifsc-too-long.txt,DEF-PAY-01
+NU-PAY-002,rbac,PUT /users/{id}/roles as HR_ADMIN (assign EMPLOYEE),FAIL,High,"see defects-pay.md DEF-PAY-02 (6/6 calls 500, RLS WITH CHECK)",DEF-PAY-02
+NU-PAY-003,employee,New employee gets role + usable login,FAIL,Medium,createEmployee assigns no role; mustChangePassword forced,DEF-PAY-03
+NU-PAY-010,salary,"Salary structure validation: negative basic/allowance/PF rejected, zero basic",PASS,Low,"logs/NU-PAY-010-preview-2026-04.txt (zero basic accepted, inactive)",
+NU-PAY-011,calc,Bulk preview A-F gross/ded/net == hand calc,PASS,,logs/NU-PAY-010-preview-2026-04.txt,
+NU-PAY-012,calc,"Bulk process A,C,D,E,F,B persisted; gross/ded/net == hand calc; adjustments consumed once",PASS,,"logs/NU-PAY-012-bulk-process-2026-04.txt, NU-PAY-013-payslip-rows-2026-04.txt",
+NU-PAY-014,statutory,"Statutory apply A,E,D,F: PF/ESI/PT/TDS == hand calc of code formulas",PASS,,logs/NU-PAY-014-statutory-apply-2026-04.txt,
+NU-PAY-015,statutory,Run processing applies PF/ESI/PT/TDS automatically,FAIL,High,"payslip PF/PT/IT copied from static structure, no ESI; apply is manual per payslip + manual state param",DEF-PAY-09
+NU-PAY-016,statutory,"TDS vs current-law worked example (A, D)",FAIL,High,"logs/NU-PAY-014; FY2024-25 slabs, no std deduction",DEF-PAY-08
+NU-PAY-017,lop,Approved unpaid (LOP) leave creates payroll deduction (2 repros),FAIL,Critical,logs/NU-PAY-021-lop-event-dropped.txt,DEF-PAY-04
+NU-PAY-018,reimb,Approved expense creates reimbursement adjustment,FAIL,Critical,logs/NU-PAY-022-expense-adjustment-lost.txt,DEF-PAY-04
+NU-PAY-019,overtime,Approved overtime creates earning adjustment,NOT TESTED,,arithmetic tested via SQL-inserted row only; same publish path as DEF-PAY-04,
+NU-PAY-020,proration,Mid-month joiner prorated,FAIL,High,logs/NU-PAY-013 (C pays 35000 full month for 16-Apr joiner),DEF-PAY-10
+NU-PAY-021,proration,Mid-month leaver paid for worked days,INCONCLUSIVE,Medium,"logs/NU-PAY-040 (RESIGNED employee skipped, no payslip; F&F not executed)",
+NU-PAY-022,edge,Negative net pay blocked,FAIL,Medium,F net -3000.00 persisted and released,DEF-PAY-11
+NU-PAY-023,rounding,"Rounding HALF_UP, 2dp",PASS,Low,E overtime 340.92 vs exact 340.91 (intermediate rate rounding),
+NU-PAY-025,preflight,Tenant-wide process blocked when active employees lack structure,PASS,,logs/NU-PAY-011-create-run-and-async-process.txt (async Kafka path itself BLOCKED: Kafka off),
+NU-PAY-030,gating,"Unreleased payslip hidden: UI, direct API, PDF, ID guess, list, year, dashboard",PASS,,logs/NU-PAY-030-gating-unreleased-employee.txt; UI NU-PAY-070,
+NU-PAY-031,gating,Released payslip visible to owner with correct values (API+UI),PASS,,logs/NU-PAY-031-release-and-postrelease.txt; screenshots/NU-PAY-070-employee-payslips-ui.png,
+NU-PAY-032,pdf,Released payslip PDF is a valid non-empty PDF (API + UI download),FAIL,Critical,logs/NU-PAY-032-pdf-empty.txt; NU-PAY-070-employee-ui.txt,DEF-PAY-05
+NU-PAY-033,authz,Employee/manager/recruiter cannot read others' payslips/structures/runs,PASS,,logs/NU-PAY-030..031,
+NU-PAY-034,authz,404-vs-403 oracle for other employees' payslip ids,FAIL,Low,"unreleased->404, released->403",DEF-PAY-12
+NU-PAY-035,state,Approved/locked run immutable (apply/delete/re-approve/reprocess/update),PASS,,"logs/NU-PAY-031, NU-PAY-050",
+NU-PAY-036,authz,Maker-checker (processor != approver),FAIL,Medium,processedBy == approvedBy,DEF-PAY-13
+NU-PAY-037,authz,Employee cannot process/approve/lock,PASS,,logs/NU-PAY-031,
+NU-PAY-040,reports,"Statutory filings generate (PF ECR, ESI, PT, 24Q, Form16, LWF) as finance and HR_ADMIN",FAIL,High,logs/NU-PAY-050-lock-probes-filings.txt (12/12 HTTP 400),DEF-PAY-06
+NU-PAY-041,reports,Payroll register / run summary report,FAIL,Medium,"404 on /runs/{id}/summary,/register; custom report builder NOT TESTED",DEF-PAY-16
+NU-PAY-050,audit,Audit trail of payroll mutations,FAIL,Medium,"logs/NU-PAY-060-audit.txt (no PAYROLL_RUN CREATE, no PAYSLIP apply/create rows)",DEF-PAY-14
+NU-PAY-060,ui,Payroll runs page shows correct period and gross,FAIL,Medium,screenshots/NU-PAY-071-finance-runs-ui.png,DEF-PAY-07
+NU-PAY-061,pdf,Payslip PDF header uses tenant identity,FAIL,Medium,code-confirmed PayslipPdfService addCompanyHeader hardcoded 'COMPANY NAME' (not rendered: DEF-PAY-05),DEF-PAY-15
+NU-KEKA-001,keka,Payslip release gating,PASS,,NU-PAY-030/031,
+NU-KEKA-002,keka,Bank advice / payment file,NOT IMPLEMENTED,High,logs/NU-PAY-050 probes 404; no code,
+NU-KEKA-003,keka,Arrears / supplementary pay,NOT IMPLEMENTED,High,"no code, no API to create adjustments",
+NU-KEKA-004,keka,Loan EMI recovered via payroll,NOT IMPLEMENTED,High,"logs/NU-PAY-040-loan-leaver-may.txt (EMI 10661.85 correct; June payslip no EMI, outstanding unchanged)",
+NU-KEKA-005,keka,Timesheet locking (entry + period),FAIL,Medium,logs/NU-KEKA-005-timesheet-lock.txt (entry lock PASS; no period lock); UI NOT TESTED,DEF-PAY-17

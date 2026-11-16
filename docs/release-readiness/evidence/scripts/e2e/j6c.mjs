@@ -1,0 +1,14 @@
+import {chromium, newContext, watch, mkLog, FE, SS, sql, STATE} from './lib.mjs';
+import fs from 'fs';
+const out = {}; const b = await chromium.launch();
+const E = await newContext(b, {role: 'employee'}); const ep = await E.newPage(); const elog = mkLog(); watch(ep, elog);
+const priv = sql("select id from wiki_pages where title='NUAURA_TEST_private_published'");
+await ep.goto(`${FE}/fluence/wiki`, {waitUntil: 'domcontentloaded', timeout: 120000}); await ep.waitForLoadState('networkidle', {timeout: 30000}).catch(() => {}); await ep.waitForTimeout(1500);
+out.listHasPrivate = await ep.getByText('NUAURA_TEST_private_published').count(); out.listHasPubOrg = await ep.getByText('NUAURA_TEST_pub_org').count();
+await ep.getByText('NUAURA_TEST_pub_org', {exact: true}).first().click(); await ep.waitForLoadState('networkidle', {timeout: 30000}).catch(() => {}); await ep.waitForTimeout(2000);
+const t = await ep.locator('body').innerText(); out.readOrg = {url: new URL(ep.url()).pathname.replace(/[0-9a-f-]{36}/, '{id}'), titleShown: t.includes('NUAURA_TEST_pub_org')};
+await ep.screenshot({path: `${SS}/NU-UI-006-employee-wiki-read.png`});
+out.http1 = elog.http.splice(0);
+await ep.goto(`${FE}/fluence/wiki/${priv}`, {waitUntil: 'domcontentloaded'}); await ep.waitForLoadState('networkidle', {timeout: 30000}).catch(() => {}); await ep.waitForTimeout(1500);
+const t2 = await ep.locator('body').innerText(); out.readPrivate = {shown: t2.includes('NUAURA_TEST_private_published'), tail: t2.slice(-120).replace(/\n/g, ' ')}; out.http2 = elog.http;
+console.log(JSON.stringify(out, null, 1)); fs.writeFileSync(STATE + '/j6c.json', JSON.stringify(out)); await b.close();

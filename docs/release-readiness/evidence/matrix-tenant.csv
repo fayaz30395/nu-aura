@@ -1,0 +1,17 @@
+id,area,scenario,status,severity,evidence,defect_id
+NU-SEC-TENANT-010,tenants,Verify 2+ isolated tenants exist / seed NUAURA_TEST_Alpha+Beta with admin+employee users each,PASS,,evidence/test-data-tenant.md,
+NU-SEC-TENANT-011,tenants,"Seed Alpha victim data: employees, payslip, leave request, candidate, review, private wiki page, uploaded file",PASS,,evidence/test-data-tenant.md,
+NU-SEC-TENANT-100,idor,"Cross-tenant IDOR by ID (employee, payslip, leave request, candidate, review, wiki page/space, salary structure, file download) — Beta SA + 2 privileged NuLogic users vs Alpha",PASS,,evidence/logs/NU-SEC-TENANT-100-idor-get-by-id.txt,
+NU-SEC-TENANT-101,idor,"Cross-tenant list/search endpoints (employees, candidates, reviews, payslips, users, roles, leave by status/employee) — same attackers",PASS,,evidence/logs/NU-SEC-TENANT-101-list-endpoints.txt,
+NU-SEC-TENANT-102,idor,"Cross-tenant writes by ID (update/delete employee, payslip, leave approve/reject, candidate, review, file) — all rejected",PASS,,evidence/logs/NU-SEC-TENANT-102-cross-tenant-writes.txt,
+NU-SEC-TENANT-102b,idor,Cross-tenant reference creation (FK pointing at victim's employee/job/cycle) — all rejected by tenant-scoped FK lookup,PASS,,evidence/logs/NU-SEC-TENANT-102b-cross-tenant-reference-create.txt,
+NU-SEC-TENANT-103,tamper,"Tenant-id tampering via header/query/body on by-id and list endpoints, authenticated and anonymous",PASS,,evidence/logs/NU-SEC-TENANT-103-tenant-id-tampering.txt,
+NU-SEC-TENANT-104,tamper,"JWT claim tampering: tenant claim swap, alg=none, cross-session signature/payload mixing, dual-cookie precedence",PASS,,evidence/logs/NU-SEC-TENANT-104-jwt-claim-tampering.txt,
+NU-SEC-TENANT-105,idor,File-download path-traversal variants against tenant-prefix guard,FAIL,Medium,evidence/logs/NU-SEC-TENANT-105-file-guard-variants.txt,DEF-TENANT-03
+NU-SEC-TENANT-106,platform,Public careers tenant scoping + SUPER_ADMIN cross-tenant platform-admin surface,PASS,Medium,evidence/logs/NU-SEC-TENANT-106-public-and-platform-surface.txt,DEF-TENANT-04
+NU-SEC-TENANT-107,idor,DB-level verification: victim rows unchanged after full attack run; no stray cross-tenant rows created,PASS,,evidence/logs/NU-SEC-TENANT-107-db-verify-after-attacks.txt,
+NU-SEC-TENANT-020,rls,"Full-schema RLS read sweep (324 tenant_id tables) as app role hrms_user, 4 GUC states",PASS,High,evidence/logs/NU-SEC-TENANT-020-rls-sweep.txt,
+NU-SEC-TENANT-021,rls,"Full-schema + targeted RLS write sweep (UPDATE/DELETE/INSERT) as app role, all inside ROLLBACK; owner-bypass FORCE RLS probe",PASS,Medium,evidence/logs/NU-SEC-TENANT-021-rls-writes.txt,DEF-TENANT-06
+NU-SEC-TENANT-022,rls,tenants table has no RLS at all — readable with no GUC,FAIL,Medium,evidence/logs/NU-SEC-TENANT-020-rls-sweep.txt,DEF-TENANT-05
+NU-SEC-TENANT-001,auth,Login as a user in a freshly-provisioned-style tenant fails: permission catalog not visible under non-NuLogic tenant GUC,FAIL,High,evidence/logs/NU-SEC-TENANT-001-login-permission-catalog.txt,DEF-TENANT-01
+NU-SEC-TENANT-102c,idor,"Wiki page read-path (GET/export/space) returns 500 for owner too — blocked isolation check, not a leak",INCONCLUSIVE,Medium,evidence/logs/NU-SEC-TENANT-100-idor-get-by-id.txt,DEF-TENANT-02
