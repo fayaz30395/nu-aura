@@ -3,7 +3,10 @@ package com.nulogic.application.payroll.service;
 import com.nulogic.api.payroll.dto.BulkPayrollProcessResponse;
 import com.nulogic.api.payroll.dto.BulkPayrollRequest;
 import com.nulogic.application.audit.service.AuditLogService;
+import com.nulogic.application.payroll.strategy.StatutoryCalculator;
 import com.nulogic.application.payroll.strategy.StatutoryCalculatorFactory;
+import com.nulogic.application.payroll.strategy.StatutoryResult;
+import com.nulogic.common.exception.ValidationException;
 import com.nulogic.common.exception.BusinessException;
 import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
@@ -94,6 +97,12 @@ class PayrollRunServiceTest {
         tenantContextMock.close();
     }
 
+    private void stubStatutory(StatutoryResult result) {
+        StatutoryCalculator calculator = mock(StatutoryCalculator.class);
+        when(calculator.calculate(any())).thenReturn(result);
+        when(statutoryCalculatorFactory.forTenant(any())).thenReturn(calculator);
+    }
+
     @BeforeEach
     void setUpTenantTimeServiceDefaults() {
         lenient().when(tenantTimeService.today(org.mockito.ArgumentMatchers.nullable(java.util.UUID.class)))
@@ -110,6 +119,7 @@ class PayrollRunServiceTest {
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
         when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of());
+        stubStatutory(new StatutoryResult());
 
         payrollRun = PayrollRun.builder()
                 .payPeriodYear(2025)
@@ -508,8 +518,110 @@ class PayrollRunServiceTest {
     }
 
     @Nested
+    @DisplayName("Payslip computation fixes (proration, statutory, negative net)")
+    class PayslipComputationFixTests {
+
+        private Payslip runSingleEmployee(Employee employee, SalaryStructure structure) {
+            UUID runId = payrollRun.getId();
+            UUID employeeId = employee.getId();
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+            when(payrollRunRepository.save(any(PayrollRun.class))).thenAnswer(inv -> inv.getArgument(0));
+            when(employeeRepository.findByTenantId(tenantId)).thenReturn(List.of(employee));
+            when(payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    tenantId, employeeId, 2025, 1)).thenReturn(false, true);
+            when(salaryStructureRepository.findActiveByEmployeeIdAndDate(
+                    tenantId, employeeId, payrollRun.getPayrollDate())).thenReturn(Optional.of(structure));
+            when(holidayRepository.findAllByTenantIdAndHolidayDateBetween(
+                    eq(tenantId), any(LocalDate.class), any(LocalDate.class))).thenReturn(List.of());
+            when(attendanceRecordRepository.countByTenantIdAndEmployeeIdAndDateBetween(
+                    eq(tenantId), eq(employeeId), any(LocalDate.class), any(LocalDate.class))).thenReturn(0L);
+            when(payrollAdjustmentRepository
+                    .findByTenantIdAndEmployeeIdAndStatusAndEffectiveDateLessThanEqual(
+                            eq(tenantId), eq(employeeId),
+                            eq(PayrollAdjustment.AdjustmentStatus.PENDING), any(LocalDate.class)))
+                    .thenReturn(List.of());
+
+            payrollRunService.processPayrollRun(runId, userId);
+
+            ArgumentCaptor<Payslip> captor = ArgumentCaptor.forClass(Payslip.class);
+            verify(payslipRepository).save(captor.capture());
+            return captor.getValue();
+        }
+
+        private Employee employee(LocalDate joiningDate) {
+            Employee employee = Employee.builder()
+                    .status(Employee.EmployeeStatus.ACTIVE).joiningDate(joiningDate).build();
+            employee.setId(UUID.randomUUID());
+            employee.setTenantId(tenantId);
+            return employee;
+        }
+
+        private SalaryStructure structure(Employee e, String basic, String otherDeductions) {
+            return SalaryStructure.builder().employeeId(e.getId())
+                    .basicSalary(new java.math.BigDecimal(basic))
+                    .otherDeductions(new java.math.BigDecimal(otherDeductions)).build();
+        }
+
+        @Test
+        @DisplayName("Mid-month joiner is paid only from the joining date (16 Jan of 31 days -> 16/31)")
+        void shouldProrateMidMonthJoiner() {
+            Employee e = employee(LocalDate.of(2025, 1, 16));
+            Payslip payslip = runSingleEmployee(e, structure(e, "31000", "0"));
+            assertThat(payslip.getGrossSalary()).isEqualByComparingTo("16000.00");
+        }
+
+        @Test
+        @DisplayName("Employee who joined before the period is paid in full")
+        void shouldNotProrateFullMonthEmployee() {
+            Employee e = employee(LocalDate.of(2024, 6, 1));
+            Payslip payslip = runSingleEmployee(e, structure(e, "31000", "0"));
+            assertThat(payslip.getGrossSalary()).isEqualByComparingTo("31000.00");
+        }
+
+        @Test
+        @DisplayName("PF, ESI and PT come from the statutory calculator, not the structure")
+        void shouldApplyStatutoryDeductionsFromCalculator() {
+            StatutoryResult result = new StatutoryResult();
+            result.getDeductions().put("PF_EMPLOYEE", new java.math.BigDecimal("1800.00"));
+            result.getDeductions().put("ESI_EMPLOYEE", new java.math.BigDecimal("150.00"));
+            result.getDeductions().put("PT", new java.math.BigDecimal("200.00"));
+            stubStatutory(result);
+            Employee e = employee(null);
+            Payslip payslip = runSingleEmployee(e, structure(e, "20000", "0"));
+            assertThat(payslip.getEmployeeEsi()).isEqualByComparingTo("150.00");
+            assertThat(payslip.getTotalDeductions()).isEqualByComparingTo("2150.00");
+            assertThat(payslip.getNetSalary()).isEqualByComparingTo("17850.00");
+        }
+
+        @Test
+        @DisplayName("Negative net pay blocks the run and nothing is saved")
+        void shouldRejectNegativeNetPay() {
+            Employee e = employee(null);
+            assertThatThrownBy(() -> runSingleEmployee(e, structure(e, "10000", "13000")))
+                    .isInstanceOf(ValidationException.class)
+                    .hasMessageContaining("negative net pay");
+            verify(payslipRepository, never()).save(any(Payslip.class));
+        }
+    }
+
+    @Nested
     @DisplayName("Approve Payroll Run")
     class ApprovePayrollRunTests {
+
+        @Test
+        @DisplayName("Maker-checker: the user who processed the run cannot approve it")
+        void shouldRejectApprovalBySameUserWhoProcessed() {
+            UUID runId = payrollRun.getId();
+            payrollRun.setStatus(PayrollStatus.PROCESSING);
+            payrollRun.process(userId, java.time.LocalDateTime.now());
+            when(payrollRunRepository.findByIdAndTenantIdForUpdate(runId, tenantId))
+                    .thenReturn(Optional.of(payrollRun));
+
+            assertThatThrownBy(() -> payrollRunService.approvePayrollRun(runId, userId))
+                    .isInstanceOf(IllegalStateException.class)
+                    .hasMessageContaining("different user");
+        }
 
         @Test
         @DisplayName("Should approve payroll run successfully")
@@ -771,7 +883,7 @@ class PayrollRunServiceTest {
             assertThat(processed.getStatus()).isEqualTo(PayrollStatus.PROCESSED);
 
             // Step 2: Approve (PROCESSED → APPROVED)
-            PayrollRun approved = payrollRunService.approvePayrollRun(runId, userId);
+            PayrollRun approved = payrollRunService.approvePayrollRun(runId, UUID.randomUUID());
             assertThat(approved.getStatus()).isEqualTo(PayrollStatus.APPROVED);
 
             // Step 3: Lock (APPROVED → LOCKED)

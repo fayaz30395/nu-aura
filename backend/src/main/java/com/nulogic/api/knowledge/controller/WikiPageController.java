@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/knowledge/wiki/pages")
+@Transactional // DTO mapping reads lazy space/parent on every endpoint (DEF-FLUENCE-03)
 @RequiredArgsConstructor
 @Tag(name = "Wiki Pages", description = "Wiki page management")
 public class WikiPageController {
@@ -117,6 +119,7 @@ public class WikiPageController {
     @Operation(summary = "Get all wiki pages")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    @Transactional(readOnly = true) // DTO mapping reads lazy space/parent (DEF-FLUENCE-03)
     public ResponseEntity<Page<WikiPageDto>> getAllPages(Pageable pageable) {
         Page<WikiPage> pages = wikiPageService.getAllPages(pageable);
         return ResponseEntity.ok(toDtoBatch(pages));
@@ -128,6 +131,7 @@ public class WikiPageController {
     @Operation(summary = "Get wiki pages authored by the current user")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    @Transactional(readOnly = true) // DTO mapping reads lazy space/parent (DEF-FLUENCE-03)
     public ResponseEntity<Page<WikiPageDto>> getMyPages(Pageable pageable) {
         Page<WikiPage> pages = wikiPageService.getMyPages(pageable);
         return ResponseEntity.ok(toDtoBatch(pages));
@@ -137,6 +141,7 @@ public class WikiPageController {
     @Operation(summary = "Get wiki page by ID")
     @ApiResponses.Success
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    @Transactional // DTO mapping reads lazy space/parent (DEF-FLUENCE-03)
     public ResponseEntity<WikiPageDto> getPageById(@PathVariable UUID pageId) {
         WikiPage page = wikiPageService.getPageById(pageId);
         return ResponseEntity.ok(toDto(page));
@@ -168,6 +173,7 @@ public class WikiPageController {
     @Operation(summary = "Get pages by space")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    @Transactional(readOnly = true) // DTO mapping reads lazy space/parent (DEF-FLUENCE-03)
     public ResponseEntity<Page<WikiPageDto>> getPagesBySpace(
             @PathVariable UUID spaceId,
             Pageable pageable) {
@@ -253,6 +259,7 @@ public class WikiPageController {
     @Operation(summary = "Search wiki pages")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_SEARCH)
+    @Transactional(readOnly = true) // DTO mapping reads lazy space/parent (DEF-FLUENCE-03)
     public ResponseEntity<Page<WikiPageDto>> searchPages(
             @RequestParam String query,
             Pageable pageable) {
@@ -275,6 +282,7 @@ public class WikiPageController {
     @Operation(summary = "Get root pages in a space")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    @Transactional(readOnly = true) // DTO mapping reads lazy space/parent (DEF-FLUENCE-03)
     public ResponseEntity<List<WikiPageDto>> getRootPages(@PathVariable UUID spaceId) {
         List<WikiPage> rootPages = wikiPageService.getRootPages(spaceId);
         return ResponseEntity.ok(rootPages.stream().map(this::toDto).collect(Collectors.toList()));
@@ -284,6 +292,7 @@ public class WikiPageController {
     @Operation(summary = "Get direct children of a page")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
+    @Transactional(readOnly = true) // DTO mapping reads lazy space/parent (DEF-FLUENCE-03)
     public ResponseEntity<List<WikiPageDto>> getChildPages(@PathVariable UUID pageId) {
         List<WikiPage> children = wikiPageService.getChildPages(pageId);
         return ResponseEntity.ok(children.stream().map(this::toDto).collect(Collectors.toList()));
@@ -346,7 +355,8 @@ public class WikiPageController {
     @Operation(summary = "Get page version history")
     @ApiResponses.GetList
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
-    public ResponseEntity<List<?>> getPageVersions(@PathVariable UUID pageId) {
-        return ResponseEntity.ok(wikiPageService.getPageVersionHistory(pageId));
+    public ResponseEntity<List<WikiPageVersionDto>> getPageVersions(@PathVariable UUID pageId) {
+        return ResponseEntity.ok(wikiPageService.getPageVersionHistory(pageId).stream()
+                .map(WikiPageVersionDto::from).toList());
     }
 }

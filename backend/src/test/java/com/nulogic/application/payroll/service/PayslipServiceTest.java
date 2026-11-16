@@ -635,4 +635,103 @@ class PayslipServiceTest {
             verify(payslipRepository).save(payslip);
         }
     }
+
+    /**
+     * Fixture gross = 50000 + 20000 + 1600 + 1250 + 10000 + 5000 = 87850.
+     * Fixture deductions = PF 6000 + PT 200 + IT 5000 + other 1000 = 12200.
+     */
+    @Nested
+    @DisplayName("Employee ESI counted exactly once in net pay")
+    class EmployeeEsiTotalsTests {
+
+        private void stubStatutory(StatutoryDeductions deductions) {
+            StatutoryCalculator calculator = mock(StatutoryCalculator.class);
+            StatutoryResult result = mock(StatutoryResult.class);
+            when(statutoryCalculatorFactory.forTenant(tenantId)).thenReturn(calculator);
+            when(calculator.calculate(any())).thenReturn(result);
+            when(result.legacyIndiaView()).thenReturn(deductions);
+            payslipService.setStatutoryCalculatorFactory(statutoryCalculatorFactory);
+        }
+
+        private StatutoryDeductions deductions() {
+            return StatutoryDeductions.builder()
+                    .employeePf(new BigDecimal("1800.00")).employerPf(new BigDecimal("1800.00"))
+                    .employeeEsi(new BigDecimal("150.00")).employerEsi(new BigDecimal("650.00"))
+                    .professionalTax(new BigDecimal("200.00")).tdsMonthly(new BigDecimal("3000.00"))
+                    .employeeLwf(new BigDecimal("10.00")).employerLwf(new BigDecimal("20.00"))
+                    .build();
+        }
+
+        @Test
+        @DisplayName("applyStatutoryDeductions: employee ESI reduces net; employer PF/ESI do not")
+        void statutoryApplyCountsEmployeeEsiOnly() {
+            payslip.calculateTotals();
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubStatutory(deductions());
+
+            payslipService.applyStatutoryDeductions(payslip.getId(), "Karnataka");
+
+            // PF 1800 + PT 200 + TDS 3000 + other 1000 + employee ESI 150 = 6150
+            assertThat(payslip.getEmployeeEsi()).isEqualByComparingTo("150.00");
+            assertThat(payslip.getTotalDeductions()).isEqualByComparingTo("6150.00");
+            assertThat(payslip.getNetSalary()).isEqualByComparingTo("81700.00");
+            assertThat(payslip.getOtherDeductions()).isEqualByComparingTo("1000");
+        }
+
+        @Test
+        @DisplayName("applyStatutoryDeductions twice does not accumulate ESI")
+        void statutoryApplyIsIdempotent() {
+            payslip.calculateTotals();
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            stubStatutory(deductions());
+
+            payslipService.applyStatutoryDeductions(payslip.getId(), "Karnataka");
+            payslipService.applyStatutoryDeductions(payslip.getId(), "Karnataka");
+
+            assertThat(payslip.getTotalDeductions()).isEqualByComparingTo("6150.00");
+            assertThat(payslip.getNetSalary()).isEqualByComparingTo("81700.00");
+        }
+
+        @Test
+        @DisplayName("updatePayslip keeps the stored employee ESI and counts it once")
+        void updateCountsStoredEsiOnce() {
+            payslip.setEmployeeEsi(new BigDecimal("150.00"));
+            payslip.setEmployerEsi(new BigDecimal("650.00"));
+            payslip.setEmployerPf(new BigDecimal("1800.00"));
+            when(payslipRepository.findByIdAndTenantId(payslip.getId(), tenantId)).thenReturn(Optional.of(payslip));
+            when(payslipRepository.save(any(Payslip.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            Payslip data = Payslip.builder()
+                    .payrollRunId(payrollRunId).employeeId(employeeId)
+                    .payPeriodYear(2025).payPeriodMonth(1).payDate(LocalDate.of(2025, 1, 31))
+                    .basicSalary(new BigDecimal("50000")).hra(new BigDecimal("20000"))
+                    .conveyanceAllowance(new BigDecimal("1600")).medicalAllowance(new BigDecimal("1250"))
+                    .specialAllowance(new BigDecimal("10000")).otherAllowances(new BigDecimal("5000"))
+                    .providentFund(new BigDecimal("6000")).professionalTax(new BigDecimal("200"))
+                    .incomeTax(new BigDecimal("5000")).otherDeductions(new BigDecimal("1000"))
+                    .build();
+
+            Payslip result = payslipService.updatePayslip(payslip.getId(), data);
+
+            // 12200 + employee ESI 150 = 12350; employer 650 + 1800 excluded
+            assertThat(result.getTotalDeductions()).isEqualByComparingTo("12350.00");
+            assertThat(result.getNetSalary()).isEqualByComparingTo("75500.00");
+        }
+
+        @Test
+        @DisplayName("Manual create without ESI is unchanged; employer contributions never reduce net")
+        void createWithoutEmployeeEsi() {
+            payslip.setEmployerEsi(new BigDecimal("650.00"));
+            payslip.setEmployerPf(new BigDecimal("1800.00"));
+            when(payslipRepository.existsByTenantIdAndEmployeeIdAndPayPeriodYearAndPayPeriodMonth(
+                    any(), any(), any(), any())).thenReturn(false);
+            when(payslipRepository.save(any(Payslip.class))).thenAnswer(inv -> inv.getArgument(0));
+
+            Payslip result = payslipService.createPayslip(payslip);
+
+            assertThat(result.getGrossSalary()).isEqualByComparingTo("87850");
+            assertThat(result.getTotalDeductions()).isEqualByComparingTo("12200");
+            assertThat(result.getNetSalary()).isEqualByComparingTo("75650");
+        }
+    }
 }

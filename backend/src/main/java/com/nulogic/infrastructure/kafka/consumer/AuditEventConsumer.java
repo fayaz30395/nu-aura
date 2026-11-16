@@ -162,7 +162,10 @@ public class AuditEventConsumer {
      * Map a single AuditEvent to an AuditLog domain object.
      */
     private AuditLog mapToAuditLog(AuditEvent event) {
-        AuditLog auditLog = AuditLog.builder()
+        // Never pre-set the id: BaseEntity has @GeneratedValue + @Version, so a preset id makes
+        // Spring Data call persist() on a "detached" entity and every audit save fails.
+        // Duplicate delivery is already guarded by IdempotencyService.
+        return AuditLog.builder()
                 .tenantId(event.getTenantId())
                 .entityType(event.getEntityType())
                 .entityId(event.getEntityId())
@@ -175,8 +178,6 @@ public class AuditEventConsumer {
                 .ipAddress(event.getIpAddress())
                 .userAgent(event.getUserAgent())
                 .build();
-        auditLog.setId(UUID.fromString(event.getEventId()));
-        return auditLog;
     }
 
     /**

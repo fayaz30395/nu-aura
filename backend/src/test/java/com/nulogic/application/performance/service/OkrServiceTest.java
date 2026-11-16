@@ -313,9 +313,9 @@ class OkrServiceTest {
 
         when(keyResultRepository.save(any(KeyResult.class))).thenAnswer(invocation -> {
             KeyResult saved = invocation.getArgument(0);
-            if (saved.getId() == null) {
-                saved.setId(UUID.randomUUID());
-            }
+            // DEF-GROW-01: service must not pre-assign the id (merge of versioned entity -> detached error).
+            org.junit.jupiter.api.Assertions.assertNull(saved.getId());
+            saved.setId(UUID.randomUUID()); // JPA assigns on persist
             return saved;
         });
         when(objectiveRepository.findByIdAndTenantId(objectiveId, tenantId))
@@ -327,8 +327,8 @@ class OkrServiceTest {
         KeyResult result = okrService.createKeyResult(newKeyResult);
 
         assertNotNull(result.getId());
-        assertEquals(KeyResultStatus.NOT_STARTED, result.getStatus());
         verify(keyResultRepository).save(any(KeyResult.class));
+        assertEquals(KeyResultStatus.NOT_STARTED, result.getStatus());
     }
 
     @Test

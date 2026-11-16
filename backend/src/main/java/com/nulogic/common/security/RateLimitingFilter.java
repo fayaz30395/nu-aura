@@ -169,6 +169,10 @@ public class RateLimitingFilter extends OncePerRequestFilter {
      * Determines the rate limit type based on the request URI.
      */
     private DistributedRateLimiter.RateLimitType determineRateLimitType(String uri) {
+        // Session bootstrap calls fire on every page load; the 5/min AUTH bucket logs users out.
+        if (uri.equals("/api/v1/auth/me") || uri.equals("/api/v1/auth/refresh")) {
+            return DistributedRateLimiter.RateLimitType.API;
+        }
         if (uri.startsWith("/api/v1/auth")) {
             return DistributedRateLimiter.RateLimitType.AUTH;
         }

@@ -142,11 +142,11 @@ public class Employee extends TenantAware {
     private String bankName;
 
     @Convert(converter = EncryptedStringConverter.class)
-    @Column(length = 50)
+    @Column(length = 255)
     private String bankIfscCode;
 
     @Convert(converter = EncryptedStringConverter.class)
-    @Column(length = 50)
+    @Column(length = 255)
     private String taxId;
 
     public String getFullName() {

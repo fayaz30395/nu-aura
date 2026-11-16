@@ -225,4 +225,84 @@ class WikiPageServiceTest {
 
         assertThat(result.getStatus()).isEqualTo(WikiPage.PageStatus.ARCHIVED);
     }
+
+    @Test
+    @DisplayName("getPageById hides another user's DRAFT page (DEF-FLUENCE-04)")
+    void getPageByIdHidesForeignDraft() {
+        WikiPage page = pageWithStatus(WikiPage.PageStatus.DRAFT);
+        page.setCreatedBy(UUID.randomUUID());
+        SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of(), java.util.Map.of());
+        when(wikiPageRepository.findByIdAndTenantId(pageId, tenantId)).thenReturn(Optional.of(page));
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> service.getPageById(pageId))
+                .hasMessageContaining("not found");
+        verify(wikiPageRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("getPageById hides another user's PRIVATE page even when published")
+    void getPageByIdHidesForeignPrivate() {
+        WikiPage page = pageWithStatus(WikiPage.PageStatus.PUBLISHED);
+        page.setVisibility(WikiPage.VisibilityLevel.PRIVATE);
+        page.setCreatedBy(UUID.randomUUID());
+        SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of(), java.util.Map.of());
+        when(wikiPageRepository.findByIdAndTenantId(pageId, tenantId)).thenReturn(Optional.of(page));
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> service.getPageById(pageId))
+                .hasMessageContaining("not found");
+    }
+
+    @Test
+    @DisplayName("createPage generates a unique slug from the title when none is sent (DEF-E2E-01)")
+    void createPageGeneratesSlug() {
+        WikiPage page = WikiPage.builder().title("My First Page!").content("{}").build();
+        when(wikiPageRepository.existsByTenantIdAndSlug(tenantId, "my-first-page")).thenReturn(true);
+        when(wikiPageRepository.existsByTenantIdAndSlug(tenantId, "my-first-page-2")).thenReturn(false);
+        when(wikiPageRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(wikiPageVersionRepository.countByTenantIdAndPageId(any(), any())).thenReturn(0L);
+        when(wikiPageVersionRepository.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        WikiPage result = service.createPage(page);
+
+        assertThat(result.getSlug()).isEqualTo("my-first-page-2");
+    }
+
+    @Test
+    @DisplayName("createPage keeps a client-sent slug")
+    void createPageKeepsClientSlug() {
+        WikiPage page = WikiPage.builder().title("Anything").slug("custom-slug").content("{}").build();
+        when(wikiPageRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(wikiPageVersionRepository.countByTenantIdAndPageId(any(), any())).thenReturn(0L);
+        when(wikiPageVersionRepository.saveAndFlush(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        assertThat(service.createPage(page).getSlug()).isEqualTo("custom-slug");
+    }
+
+    @Test
+    @DisplayName("getAllPages for a non-approver queries only own pages plus published non-private (DEF-E2E-02)")
+    void getAllPagesFiltersForNonApprover() {
+        UUID userId = UUID.randomUUID();
+        SecurityContext.setCurrentUser(userId, UUID.randomUUID(), Set.of(), java.util.Map.of());
+        var pageable = org.springframework.data.domain.PageRequest.of(0, 10);
+        when(wikiPageRepository.findVisibleToUser(eq(tenantId), eq(userId), any(), any(), eq(false), eq(pageable)))
+                .thenReturn(org.springframework.data.domain.Page.empty());
+
+        service.getAllPages(pageable);
+
+        verify(wikiPageRepository).findVisibleToUser(eq(tenantId), eq(userId), eq(WikiPage.PageStatus.PUBLISHED),
+                eq(WikiPage.VisibilityLevel.PRIVATE), eq(false), eq(pageable));
+    }
+
+    @Test
+    @DisplayName("getPageById throws ResourceNotFoundException (404) for a foreign PRIVATE page (DEF-E2E-07)")
+    void getPageByIdForeignPrivateIsNotFound() {
+        WikiPage page = pageWithStatus(WikiPage.PageStatus.PUBLISHED);
+        page.setVisibility(WikiPage.VisibilityLevel.PRIVATE);
+        page.setCreatedBy(UUID.randomUUID());
+        SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of(), java.util.Map.of());
+        when(wikiPageRepository.findByIdAndTenantId(pageId, tenantId)).thenReturn(Optional.of(page));
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(() -> service.getPageById(pageId))
+                .isInstanceOf(com.nulogic.common.exception.ResourceNotFoundException.class);
+    }
 }

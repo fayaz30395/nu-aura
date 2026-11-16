@@ -349,6 +349,10 @@ public class PayslipService {
         payslip.setProfessionalTax(deductions.getProfessionalTax());
         payslip.setIncomeTax(deductions.getTdsMonthly());
         payslip.calculateTotals();
+        if (payslip.getNetSalary().signum() < 0) {
+            throw new IllegalArgumentException("Statutory deductions would make net pay negative ("
+                    + payslip.getNetSalary() + "); payslip left unchanged");
+        }
 
         payslipRepository.save(payslip);
         return deductions;

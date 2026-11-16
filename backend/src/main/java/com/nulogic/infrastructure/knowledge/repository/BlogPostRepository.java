@@ -44,13 +44,15 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSp
             "WHERE bp.tenant_id = :tenantId " +
             "  AND bp.is_deleted = false " +
             "  AND bp.search_vector @@ websearch_to_tsquery('english', :query) " +
+            "  AND bp.status = 'PUBLISHED' AND (bp.visibility IS NULL OR bp.visibility <> 'PRIVATE') " +
             "ORDER BY ts_rank(bp.search_vector, websearch_to_tsquery('english', :query)) DESC, " +
             "         bp.updated_at DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM blog_posts bp " +
                     "WHERE bp.tenant_id = :tenantId " +
                     "  AND bp.is_deleted = false " +
-                    "  AND bp.search_vector @@ websearch_to_tsquery('english', :query)")
+                    "  AND bp.search_vector @@ websearch_to_tsquery('english', :query) " +
+                    "  AND bp.status = 'PUBLISHED' AND (bp.visibility IS NULL OR bp.visibility <> 'PRIVATE')")
     Page<BlogPost> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
     /**
@@ -69,7 +71,7 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSp
      */
     // SOFT_DELETE_GUARD (S12-F): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT bp.* FROM blog_posts bp " +
-            "WHERE bp.tenant_id = :tenantId AND bp.is_deleted = false AND (" +
+            "WHERE bp.tenant_id = :tenantId AND bp.is_deleted = false AND bp.status = 'PUBLISHED' AND (bp.visibility IS NULL OR bp.visibility <> 'PRIVATE') AND (" +
             "LOWER(bp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(COALESCE(bp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(CAST(bp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%'))" +
@@ -77,7 +79,7 @@ public interface BlogPostRepository extends JpaRepository<BlogPost, UUID>, JpaSp
             "bp.updated_at DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM blog_posts bp " +
-                    "WHERE bp.tenant_id = :tenantId AND bp.is_deleted = false AND (" +
+                    "WHERE bp.tenant_id = :tenantId AND bp.is_deleted = false AND bp.status = 'PUBLISHED' AND (bp.visibility IS NULL OR bp.visibility <> 'PRIVATE') AND (" +
                     "LOWER(bp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
                     "OR LOWER(COALESCE(bp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
                     "OR LOWER(CAST(bp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%')))")

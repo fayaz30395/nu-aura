@@ -60,6 +60,14 @@ class RateLimitingFilterTest {
     }
 
     @Test
+    void authMeAndRefresh_useApiBucketNotAuthBucket() throws Exception {
+        for (int i = 0; i < 12; i++) {
+            assertThat(call("/api/v1/auth/me", "10.0.0.6", null)).isEqualTo(200);
+            assertThat(call("/api/v1/auth/refresh", "10.0.0.6", null)).isEqualTo(200);
+        }
+    }
+
+    @Test
     void genericApi_stillUsesGenericBucket() throws Exception {
         for (int i = 0; i < 30; i++) {
             assertThat(call("/api/v1/employees", "10.0.0.5", null)).isEqualTo(200);

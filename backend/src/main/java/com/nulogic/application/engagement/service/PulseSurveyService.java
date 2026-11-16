@@ -274,7 +274,6 @@ public class PulseSurveyService {
             }
         }
 
-        question.setId(UUID.randomUUID());
         question.setTenantId(tenantId);
 
         return questionRepository.save(question);
@@ -371,7 +370,6 @@ public class PulseSurveyService {
                         .startedAt(tenantTimeService.now(tenantId))
                         .build();
 
-        response.setId(UUID.randomUUID());
         response.setTenantId(tenantId);
 
         return responseRepository.save(response);
@@ -424,7 +422,6 @@ public class PulseSurveyService {
                 }
             }
 
-            answer.setId(UUID.randomUUID());
             answer.setTenantId(tenantId);
             answersToSave.add(answer);
 
@@ -491,7 +488,6 @@ public class PulseSurveyService {
                 .totalInvited(0)
                 .build();
 
-        clone.setId(UUID.randomUUID());
         clone.setTenantId(tenantId);
         clone = surveyRepository.save(clone);
 
@@ -514,7 +510,6 @@ public class PulseSurveyService {
                     .helpText(sq.getHelpText())
                     .isActive(true)
                     .build();
-            clonedQuestion.setId(UUID.randomUUID());
             clonedQuestion.setTenantId(tenantId);
             clonedQuestions.add(clonedQuestion);
         }

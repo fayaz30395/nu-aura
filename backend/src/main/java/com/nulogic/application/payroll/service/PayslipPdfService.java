@@ -1,5 +1,7 @@
 package com.nulogic.application.payroll.service;
 
+import com.nulogic.domain.tenant.Tenant;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.employee.Employee;
@@ -45,6 +47,7 @@ public class PayslipPdfService {
     private final PayslipRepository payslipRepository;
     private final EmployeeRepository employeeRepository;
     private final TenantTimeService tenantTimeService;
+    private final TenantRepository tenantRepository;
 
     /**
      * Generate PDF for a specific payslip
@@ -88,7 +91,7 @@ public class PayslipPdfService {
             document.open();
 
             // Add company header
-            addCompanyHeader(document);
+            addCompanyHeader(document, tenantId);
 
             // Add payslip title
             addPayslipTitle(document, payslip);
@@ -108,6 +111,8 @@ public class PayslipPdfService {
             // Add footer
             addFooter(document, tenantId);
 
+            // Close before reading: the PDF trailer is written on close, so reading earlier yields 0 bytes.
+            document.close();
             return out.toByteArray();
         } catch (RuntimeException e) {
             log.error("Error generating payslip PDF: {}", e.getMessage(), e);
@@ -117,7 +122,7 @@ public class PayslipPdfService {
         }
     }
 
-    private void addCompanyHeader(Document document) throws DocumentException {
+    private void addCompanyHeader(Document document, UUID tenantId) throws DocumentException {
         PdfPTable headerTable = new PdfPTable(1);
         headerTable.setWidthPercentage(100);
 
@@ -126,9 +131,11 @@ public class PayslipPdfService {
         companyCell.setPadding(15f);
         companyCell.setBackgroundColor(PRIMARY_COLOR);
 
-        Paragraph companyName = new Paragraph("COMPANY NAME", new Font(Font.HELVETICA, 18, Font.BOLD, Color.WHITE));
-        companyName.setAlignment(Element.ALIGN_CENTER);
-        companyCell.addElement(companyName);
+        tenantRepository.findById(tenantId).map(Tenant::getName).filter(n -> !n.isBlank()).ifPresent(name -> {
+            Paragraph companyName = new Paragraph(name, new Font(Font.HELVETICA, 18, Font.BOLD, Color.WHITE));
+            companyName.setAlignment(Element.ALIGN_CENTER);
+            companyCell.addElement(companyName);
+        });
 
         Paragraph companyAddress = new Paragraph("123 Business Street, City, State - 123456",
                 new Font(Font.HELVETICA, 10, Font.NORMAL, Color.WHITE));
@@ -226,9 +233,9 @@ public class PayslipPdfService {
         addEarningRow(deductionsTable, "Professional Tax", payslip.getProfessionalTax());
         addEarningRow(deductionsTable, "Income Tax (TDS)", payslip.getIncomeTax());
         addEarningRow(deductionsTable, "Other Deductions", payslip.getOtherDeductions());
+        addEarningRow(deductionsTable, "ESI (Employee)", payslip.getEmployeeEsi());
 
-        // Add empty rows for alignment
-        addEarningRow(deductionsTable, "", null);
+        // Add empty row for alignment
         addEarningRow(deductionsTable, "", null);
 
         // Total deductions

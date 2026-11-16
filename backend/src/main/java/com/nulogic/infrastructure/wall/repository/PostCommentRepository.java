@@ -19,7 +19,7 @@ public interface PostCommentRepository extends JpaRepository<PostComment, UUID> 
             "LEFT JOIN FETCH c.author a " +
             "LEFT JOIN FETCH a.user " +
             "WHERE c.post.id = :postId AND c.tenantId = :tenantId AND c.parentComment IS NULL AND c.isDeleted = false " +
-            "ORDER BY c.createdAt ASC",
+            "ORDER BY c.createdAt DESC",
             countQuery = "SELECT COUNT(c) FROM PostComment c WHERE c.post.id = :postId AND c.tenantId = :tenantId AND c.parentComment IS NULL AND c.isDeleted = false")
     Page<PostComment> findTopLevelCommentsByPostIdAndTenantId(@Param("postId") UUID postId,
                                                                @Param("tenantId") UUID tenantId,

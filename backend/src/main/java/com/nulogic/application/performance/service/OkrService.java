@@ -251,9 +251,6 @@ public class OkrService {
 
     @Transactional
     public KeyResult createKeyResult(KeyResult keyResult) {
-        if (keyResult.getId() == null) {
-            keyResult.setId(UUID.randomUUID());
-        }
         if (keyResult.getStatus() == null) {
             keyResult.setStatus(KeyResult.KeyResultStatus.NOT_STARTED);
         }
@@ -341,7 +338,6 @@ public class OkrService {
                 .notes(notes)
                 .checkInType(OkrCheckIn.CheckInType.PROGRESS_UPDATE)
                 .build();
-        checkIn.setId(UUID.randomUUID());
         checkIn.setTenantId(tenantId);
         checkInRepository.save(checkIn);
 
@@ -388,9 +384,6 @@ public class OkrService {
         UUID tenantId = checkIn.getTenantId() != null
                 ? checkIn.getTenantId()
                 : TenantContext.requireCurrentTenant();
-        if (checkIn.getId() == null) {
-            checkIn.setId(UUID.randomUUID());
-        }
         if (checkIn.getCreatedAt() == null) {
             checkIn.setCreatedAt(tenantTimeService.now(tenantId));
         }

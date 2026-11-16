@@ -89,14 +89,14 @@ public class ReviewCycleController {
     }
 
     @PutMapping("/{id}/complete")
-    @RequiresPermission(Permission.REVIEW_APPROVE)
+    @RequiresPermission(Permission.REVIEW_CREATE)
     public ResponseEntity<ReviewCycleResponse> completeCycle(@PathVariable UUID id) {
         ReviewCycleResponse response = reviewCycleService.completeCycle(id);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/{id}/activate")
-    @RequiresPermission(Permission.REVIEW_APPROVE)
+    @RequiresPermission(Permission.REVIEW_CREATE)
     public ResponseEntity<ReviewCycleResponse> activateCycle(
             @PathVariable UUID id,
             @Valid @RequestBody ActivateCycleRequest request
@@ -110,7 +110,7 @@ public class ReviewCycleController {
      * Advance a cycle to its next stage (PLANNING → SELF_ASSESSMENT → MANAGER_REVIEW → CALIBRATION → RATINGS_PUBLISHED → COMPLETED).
      */
     @PostMapping("/{id}/advance")
-    @RequiresPermission(Permission.REVIEW_APPROVE)
+    @RequiresPermission(Permission.REVIEW_CREATE)
     public ResponseEntity<ReviewCycleResponse> advanceStage(@PathVariable UUID id) {
         log.info("Advancing stage for review cycle {}", id);
         return ResponseEntity.ok(reviewCycleService.advanceStage(id));

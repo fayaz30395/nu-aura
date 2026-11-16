@@ -260,6 +260,10 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
         final String approveLeaveTypeName = approveLeaveType != null ? approveLeaveType.getLeaveName() : "Leave";
         final String approveDates = formatDateRange(saved);
 
+        // DomainEventPublisher defers itself to AFTER_COMMIT; calling it from inside an afterCommit
+        // callback registered a second synchronization that never fired (LOP deduction was lost).
+        publishLeaveApprovedEvent(saved, tenantId, approverId, daysToDeduct);
+
         // Defer non-critical operations to AFTER_COMMIT (same fix as createLeaveRequest)
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -271,9 +275,6 @@ public class LeaveRequestService implements ApprovalCallbackHandler {
                         webSocketNotificationService.notifyLeaveApproved(
                                 approveRecipientUserId, approveLeaveTypeName, approveDates);
                     }
-
-                    // Publish domain event for downstream consumers
-                    publishLeaveApprovedEvent(saved, tenantId, approverId, daysToDeduct);
                 } finally {
                     TenantContext.clear();
                 }

@@ -323,6 +323,12 @@ public class WorkflowService {
 
     // ==================== Workflow Execution ====================
 
+    /** True when startWorkflow would find a definition; lets callers skip it without poisoning their tx. */
+    @Transactional(readOnly = true)
+    public boolean hasApplicableWorkflow(WorkflowExecutionRequest request) {
+        return findApplicableWorkflow(TenantContext.requireCurrentTenant(), request) != null;
+    }
+
     @Transactional
     public WorkflowExecutionResponse startWorkflow(WorkflowExecutionRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();

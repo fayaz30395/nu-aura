@@ -281,6 +281,22 @@ class PerformanceReviewServiceTest {
         }
 
         @Test
+        @DisplayName("Manager holding REVIEW:APPROVE cannot read a review outside their data scope (DEF-GROW-05)")
+        void shouldDenyOutOfScopeManager() {
+            SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Collections.emptySet(),
+                    java.util.Map.of(com.nulogic.common.security.Permission.REVIEW_APPROVE,
+                            com.nulogic.domain.user.RoleScope.ALL));
+            when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
+            when(dataScopeService.getScopeSpecification(anyString()))
+                    .thenReturn((root, query, cb) -> cb.conjunction());
+            when(employeeRepository.exists(any(org.springframework.data.jpa.domain.Specification.class)))
+                    .thenReturn(true, false);
+
+            assertThatThrownBy(() -> performanceReviewService.getReviewById(reviewId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        }
+
+        @Test
         @DisplayName("Should throw exception when review not found by ID")
         void shouldThrowExceptionWhenReviewNotFoundById() {
             UUID invalidId = UUID.randomUUID();
@@ -595,6 +611,10 @@ class PerformanceReviewServiceTest {
         @Test
         @DisplayName("getCompetencies denied for an unrelated employee, nothing read from competency table")
         void competenciesDeniedForStranger() {
+            when(dataScopeService.getScopeSpecification(anyString()))
+                    .thenReturn((root, query, cb) -> cb.conjunction());
+            when(employeeRepository.exists(any(org.springframework.data.jpa.domain.Specification.class)))
+                    .thenReturn(true, false);
             actAs(UUID.randomUUID());
             when(reviewRepository.findByIdAndTenantId(reviewId, tenantId)).thenReturn(Optional.of(review));
 

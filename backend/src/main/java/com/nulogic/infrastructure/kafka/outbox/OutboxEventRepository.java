@@ -34,6 +34,10 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEvent, UUID> 
     @Query("SELECT e FROM OutboxEvent e WHERE e.id = :id AND e.status = 'PENDING'")
     Optional<OutboxEvent> lockPendingById(@Param("id") UUID id);
 
+    /** Tx-local RLS GUC; needed because the REQUIRES_NEW tx begins before the event's tenant is known. */
+    @Query(value = "SELECT set_config('app.current_tenant_id', :tenantId, true)", nativeQuery = true)
+    String applyTenantToTransaction(@Param("tenantId") String tenantId);
+
     @Modifying
     @Query("UPDATE OutboxEvent e SET e.status = 'FAILED', e.retryCount = e.retryCount + 1, e.lastError = :error WHERE e.id = :id")
     void markFailed(@Param("id") UUID id, @Param("error") String error);

@@ -61,6 +61,8 @@ class RecruitmentManagementServiceTest {
     @Mock
     private com.nulogic.application.workflow.service.WorkflowService workflowService;
     @Mock
+    private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
     private com.nulogic.application.audit.service.AuditLogService auditLogService;
     @Mock
     private GoogleMeetService googleMeetService;
@@ -470,6 +472,53 @@ class RecruitmentManagementServiceTest {
             assertThatThrownBy(() -> recruitmentManagementService.updateCandidate(invalidId, request))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("not found");
+        }
+
+        @Test
+        @DisplayName("Unassigned candidate is denied to non-ALL scope user who is neither hiring manager nor interviewer")
+        void shouldDenyUnassignedCandidateToUnrelatedUser() {
+            candidate.setAssignedRecruiterId(null);
+            UUID stranger = UUID.randomUUID();
+            securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(stranger);
+            securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW_ALL))
+                    .thenReturn(RoleScope.TEAM);
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)).thenReturn(Optional.of(jobOpening));
+            when(interviewRepository.findByTenantIdAndCandidateId(tenantId, candidateId)).thenReturn(List.of());
+
+            assertThatThrownBy(() -> recruitmentManagementService.getCandidateById(candidateId))
+                    .isInstanceOf(org.springframework.security.access.AccessDeniedException.class);
+        }
+
+        @Test
+        @DisplayName("Unassigned candidate is readable by its interviewer")
+        void shouldAllowUnassignedCandidateToInterviewer() {
+            candidate.setAssignedRecruiterId(null);
+            UUID interviewer = UUID.randomUUID();
+            interview.setInterviewerId(interviewer);
+            securityContextMock.when(SecurityContext::getCurrentEmployeeId).thenReturn(interviewer);
+            securityContextMock.when(() -> SecurityContext.getPermissionScope(Permission.RECRUITMENT_VIEW_ALL))
+                    .thenReturn(RoleScope.TEAM);
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId)).thenReturn(Optional.of(jobOpening));
+            when(jobOpeningRepository.findById(jobOpeningId)).thenReturn(Optional.of(jobOpening));
+            when(interviewRepository.findByTenantIdAndCandidateId(tenantId, candidateId)).thenReturn(List.of(interview));
+
+            assertThat(recruitmentManagementService.getCandidateById(candidateId).getId()).isEqualTo(candidateId);
+        }
+
+        @Test
+        @DisplayName("createOffer skips workflow start when no RECRUITMENT_OFFER definition exists")
+        void shouldCreateOfferWithoutWorkflowDefinition() {
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
+            when(candidateRepository.save(any(Candidate.class))).thenAnswer(i -> i.getArgument(0));
+            when(workflowService.hasApplicableWorkflow(any())).thenReturn(false);
+            com.nulogic.api.recruitment.dto.CreateOfferRequest req = new com.nulogic.api.recruitment.dto.CreateOfferRequest();
+            req.setOfferedSalary(new BigDecimal("1800000"));
+
+            recruitmentManagementService.createOffer(candidateId, req);
+
+            verify(workflowService, never()).startWorkflow(any());
         }
 
         @Test

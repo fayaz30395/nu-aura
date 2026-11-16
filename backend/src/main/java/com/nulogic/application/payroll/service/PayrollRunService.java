@@ -16,6 +16,9 @@ import com.nulogic.domain.attendance.Holiday;
 import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveRequest;
+import com.nulogic.application.payroll.dto.StatutoryDeductions;
+import com.nulogic.application.payroll.strategy.StatutoryCalculator;
+import com.nulogic.application.payroll.strategy.StatutoryResult;
 import com.nulogic.domain.payroll.PayrollAdjustment;
 import com.nulogic.domain.payroll.PayrollRun;
 import com.nulogic.domain.payroll.PayrollRun.PayrollStatus;
@@ -509,21 +512,24 @@ public class PayrollRunService {
                 tenantId, employee.getId(), context.periodStart(), context.periodEnd(),
                 context.workingDays(), leaveDays);
 
+        // Mid-month joiner: pay only the calendar days from the joining date (e.g. 16 Apr -> 15/30).
+        BigDecimal factor = joinerProrationFactor(employee.getJoiningDate(), context);
+
         Payslip payslip = Payslip.builder()
                 .payrollRunId(payrollRun.getId())
                 .employeeId(employee.getId())
                 .payPeriodMonth(payrollRun.getPayPeriodMonth())
                 .payPeriodYear(payrollRun.getPayPeriodYear())
                 .payDate(payrollRun.getPayrollDate())
-                .basicSalary(defaultAmount(structure.getBasicSalary()))
-                .hra(defaultAmount(structure.getHra()))
-                .conveyanceAllowance(defaultAmount(structure.getConveyanceAllowance()))
-                .medicalAllowance(defaultAmount(structure.getMedicalAllowance()))
-                .specialAllowance(defaultAmount(structure.getSpecialAllowance()))
-                .otherAllowances(defaultAmount(structure.getOtherAllowances()))
+                .basicSalary(prorate(structure.getBasicSalary(), factor))
+                .hra(prorate(structure.getHra(), factor))
+                .conveyanceAllowance(prorate(structure.getConveyanceAllowance(), factor))
+                .medicalAllowance(prorate(structure.getMedicalAllowance(), factor))
+                .specialAllowance(prorate(structure.getSpecialAllowance(), factor))
+                .otherAllowances(prorate(structure.getOtherAllowances(), factor))
                 .providentFund(defaultAmount(structure.getProvidentFund()))
                 .professionalTax(defaultAmount(structure.getProfessionalTax()))
-                .incomeTax(defaultAmount(structure.getIncomeTax()))
+                .incomeTax(prorate(structure.getIncomeTax(), factor))
                 .otherDeductions(defaultAmount(structure.getOtherDeductions()))
                 .workingDays(context.workingDays())
                 .presentDays(presentDays)
@@ -536,8 +542,53 @@ public class PayrollRunService {
         applyPendingAdjustments(payslip, payrollRun, employee.getId(), context.workingDays(),
                 context.periodEnd(), persistAdjustments);
 
+        applyStatutoryDeductions(payslip, employee, payrollRun);
+
         payslip.calculateTotals();
+        if (persistAdjustments && payslip.getNetSalary().signum() < 0) {
+            throw new ValidationException("Payroll blocked: employee " + employee.getId()
+                    + " would have negative net pay (" + payslip.getNetSalary() + ") for "
+                    + payrollRun.getPayPeriodYear() + "/" + payrollRun.getPayPeriodMonth()
+                    + ". Review deductions and reprocess.");
+        }
         return payslip;
+    }
+
+    /**
+     * Wires PF, ESI and professional tax from the tenant's statutory calculator (they were
+     * previously copied from the structure, and ESI never applied). TDS is deliberately left as
+     * typed on the structure: the slab law needs a CA sign-off.
+     */
+    private void applyStatutoryDeductions(Payslip payslip, Employee employee, PayrollRun payrollRun) {
+        payslip.calculateTotals(); // gross incl. adjustments and proration
+        StatutoryResult result = statutoryCalculatorFactory.forTenant(payrollRun.getTenantId())
+                .calculate(new StatutoryCalculator.StatutoryCalculationInput(
+                        employee.getId(), payslip.getGrossSalary(), payslip.getBasicSalary(), null,
+                        employee.getState(), payrollRun.getPayPeriodMonth(), payrollRun.getPayPeriodYear()));
+        StatutoryDeductions d = result.legacyIndiaView();
+        payslip.setEmployeePf(d.getEmployeePf());
+        payslip.setEmployerPf(d.getEmployerPf());
+        payslip.setEmployeeEsi(d.getEmployeeEsi());
+        payslip.setEmployerEsi(d.getEmployerEsi());
+        payslip.setStatutoryProfessionalTax(d.getProfessionalTax());
+        payslip.setStatutoryCalculatedAt(tenantTimeService.now(payrollRun.getTenantId()));
+        payslip.setProvidentFund(d.getEmployeePf());
+        payslip.setProfessionalTax(d.getProfessionalTax());
+    }
+
+    /** Fraction of the month payable to someone who joined inside it; 1 otherwise. */
+    private BigDecimal joinerProrationFactor(LocalDate joiningDate, PeriodContext context) {
+        if (joiningDate == null || !joiningDate.isAfter(context.periodStart())
+                || joiningDate.isAfter(context.periodEnd())) {
+            return BigDecimal.ONE;
+        }
+        int daysInMonth = context.periodEnd().getDayOfMonth();
+        int payableDays = daysInMonth - joiningDate.getDayOfMonth() + 1;
+        return BigDecimal.valueOf(payableDays).divide(BigDecimal.valueOf(daysInMonth), 10, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal prorate(BigDecimal amount, BigDecimal factor) {
+        return defaultAmount(amount).multiply(factor).setScale(2, RoundingMode.HALF_UP);
     }
 
     private record PeriodContext(

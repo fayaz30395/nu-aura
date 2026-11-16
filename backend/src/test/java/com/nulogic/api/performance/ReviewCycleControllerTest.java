@@ -476,13 +476,13 @@ class ReviewCycleControllerTest {
         }
 
         @Test
-        @DisplayName("activateCycle should have REVIEW_APPROVE permission")
-        void activateCycleShouldRequireReviewApprove() throws Exception {
+        @DisplayName("activateCycle should have REVIEW_CREATE permission (HR only, DEF-GROW-04)")
+        void activateCycleShouldRequireReviewCreate() throws Exception {
             var method = ReviewCycleController.class.getMethod("activateCycle",
                     UUID.class, ActivateCycleRequest.class);
             RequiresPermission annotation = method.getAnnotation(RequiresPermission.class);
             Assertions.assertNotNull(annotation, "activateCycle must have @RequiresPermission");
-            Assertions.assertEquals(Permission.REVIEW_APPROVE, annotation.value()[0]);
+            Assertions.assertEquals(Permission.REVIEW_CREATE, annotation.value()[0]);
         }
 
         @Test

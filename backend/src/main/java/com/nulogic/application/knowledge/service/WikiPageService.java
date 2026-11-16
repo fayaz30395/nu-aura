@@ -81,6 +81,9 @@ public class WikiPageService {
         UUID tenantId = TenantContext.getCurrentTenant();
         page.setTenantId(tenantId);
         page.setStatus(WikiPage.PageStatus.DRAFT);
+        if (page.getSlug() == null || page.getSlug().isBlank()) {
+            page.setSlug(uniqueSlug(tenantId, page.getTitle()));
+        }
         page.setViewCount(0);
         page.setLikeCount(0);
         page.setCommentCount(0);
@@ -103,6 +106,22 @@ public class WikiPageService {
         return saved;
     }
 
+    private String uniqueSlug(UUID tenantId, String title) {
+        String base = title == null ? "" : title.toLowerCase(java.util.Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "-").replaceAll("^-+|-+$", "");
+        if (base.length() > 200) {
+            base = base.substring(0, 200).replaceAll("-+$", "");
+        }
+        if (base.isEmpty()) {
+            base = "page";
+        }
+        String candidate = base;
+        for (int n = 2; wikiPageRepository.existsByTenantIdAndSlug(tenantId, candidate); n++) {
+            candidate = base + "-" + n;
+        }
+        return candidate;
+    }
+
     @Transactional
     public WikiPage updatePage(UUID pageId, WikiPage pageData) {
         UUID tenantId = TenantContext.getCurrentTenant();
@@ -116,7 +135,9 @@ public class WikiPageService {
         createPageVersion(page, pageData.getExcerpt(), tenantId, SecurityContext.getCurrentUserId());
 
         page.setTitle(pageData.getTitle());
-        page.setSlug(pageData.getSlug());
+        if (pageData.getSlug() != null && !pageData.getSlug().isBlank()) {
+            page.setSlug(pageData.getSlug());
+        }
         page.setExcerpt(pageData.getExcerpt());
         page.setContent(RichTextSanitizer.sanitizeContent(pageData.getContent()));
         // V152: keep body_text in sync with content for trigram-indexed RAG search.
@@ -136,11 +157,35 @@ public class WikiPageService {
         return updated;
     }
 
+    /**
+     * DEF-FLUENCE-04: owner always; non-published pages only for approvers; PRIVATE pages owner-only.
+     * shortcut: TEAM/RESTRICTED visibility is not membership-checked, add when space membership exists.
+     */
+    private boolean canView(WikiPage page) {
+        UUID userId = SecurityContext.getCurrentUserId();
+        if (userId != null && userId.equals(page.getCreatedBy())) {
+            return true;
+        }
+        if (page.getVisibility() == WikiPage.VisibilityLevel.PRIVATE) {
+            return false;
+        }
+        return page.getStatus() == WikiPage.PageStatus.PUBLISHED
+                || SecurityContext.hasPermission(com.nulogic.common.security.Permission.KNOWLEDGE_WIKI_APPROVE);
+    }
+
+    private WikiPage requireViewable(WikiPage page) {
+        if (!canView(page)) {
+            throw new com.nulogic.common.exception.ResourceNotFoundException("Wiki page not found");
+        }
+        return page;
+    }
+
     @Transactional
     public WikiPage getPageById(UUID pageId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WikiPage page = wikiPageRepository.findByIdAndTenantId(pageId, tenantId)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+        requireViewable(page);
 
         // Track view (tenant-local timestamp via TenantTimeService — see ContractService pattern).
         page.setViewCount(page.getViewCount() + 1);
@@ -156,6 +201,7 @@ public class WikiPageService {
         UUID tenantId = TenantContext.requireCurrentTenant();
         WikiPage page = wikiPageRepository.findByTenantIdAndSpaceIdAndSlug(tenantId, spaceId, slug)
                 .orElseThrow(() -> new IllegalArgumentException("Wiki page not found"));
+        requireViewable(page);
 
         // Track view (tenant-local timestamp via TenantTimeService — see ContractService pattern).
         page.setViewCount(page.getViewCount() + 1);
@@ -169,7 +215,12 @@ public class WikiPageService {
     @Transactional(readOnly = true)
     public Page<WikiPage> getAllPages(Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return wikiPageRepository.findByTenantId(tenantId, pageable);
+        return wikiPageRepository.findVisibleToUser(tenantId, SecurityContext.getCurrentUserId(),
+                WikiPage.PageStatus.PUBLISHED, WikiPage.VisibilityLevel.PRIVATE, isApprover(), pageable);
+    }
+
+    private boolean isApprover() {
+        return SecurityContext.hasPermission(com.nulogic.common.security.Permission.KNOWLEDGE_WIKI_APPROVE);
     }
 
     /**
@@ -187,7 +238,8 @@ public class WikiPageService {
     @Transactional(readOnly = true)
     public Page<WikiPage> getPagesBySpace(UUID spaceId, Pageable pageable) {
         UUID tenantId = TenantContext.getCurrentTenant();
-        return wikiPageRepository.findByTenantIdAndSpaceId(tenantId, spaceId, pageable);
+        return wikiPageRepository.findVisibleToUserInSpace(tenantId, spaceId, SecurityContext.getCurrentUserId(),
+                WikiPage.PageStatus.PUBLISHED, WikiPage.VisibilityLevel.PRIVATE, isApprover(), pageable);
     }
 
     /**
@@ -208,6 +260,7 @@ public class WikiPageService {
         return wikiPageRepository.findByTenantIdAndSpaceId(tenantId, page.getSpace().getId(), pageable)
                 .stream()
                 .filter(p -> !p.getId().equals(pageId))
+                .filter(this::canView)
                 .limit(limit)
                 .collect(Collectors.toList());
     }
@@ -233,7 +286,7 @@ public class WikiPageService {
                 ? PageRequest.of(0, 20)
                 : PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         try {
-            return wikiPageRepository.searchByTenant(tenantId, query, pageable);
+            return wikiPageRepository.searchByTenantForUser(tenantId, query, SecurityContext.getCurrentUserId(), pageable);
         } catch (InvalidDataAccessResourceUsageException e) {
             // Defensive: malformed full-text search expression — return empty page so callers don't 500.
             log.warn("Wiki search rejected by Postgres for tenant {} (query length={}): {}",
@@ -437,7 +490,12 @@ public class WikiPageService {
         UUID tenantId = TenantContext.getCurrentTenant();
 
         // Lightweight projection — skips JSONB content column.
-        List<WikiPageTreeProjection> allPages = wikiPageRepository.findTreeNodesByTenantAndSpace(tenantId, spaceId);
+        boolean seeAll = SecurityContext.hasPermission(com.nulogic.common.security.Permission.KNOWLEDGE_WIKI_APPROVE);
+        // Projection has no owner/visibility; non-approvers see published pages only (DEF-FLUENCE-04).
+        List<WikiPageTreeProjection> allPages = wikiPageRepository.findTreeNodesByTenantAndSpace(tenantId, spaceId)
+                .stream()
+                .filter(n -> seeAll || n.getStatus() == WikiPage.PageStatus.PUBLISHED)
+                .collect(Collectors.toList());
 
         // Group pages by parentId (null key = root pages)
         UUID rootKey = UUID.fromString("00000000-0000-0000-0000-000000000000");

@@ -182,21 +182,22 @@ public class PerformanceReviewService {
      * M-4: Same-tenant IDOR guard. The REVIEW:VIEW gate is held by every employee, and
      * tenant isolation does not enforce per-record ownership. A review (ratings, manager
      * comments, competency scores) may be read only by the review subject employee, the
-     * assigned reviewer, or a caller holding the elevated REVIEW:APPROVE permission
-     * (managers/HR who run the review cycle).
+     * assigned reviewer, or a caller whose REVIEW:VIEW data scope covers the subject
+     * (DEF-GROW-05: REVIEW:APPROVE no longer bypasses scope, managers hold it org-wide).
      */
     private void assertCanViewReview(PerformanceReview review) {
-        if (SecurityContext.hasPermission(Permission.REVIEW_APPROVE)) {
-            return;
-        }
         UUID callerId = SecurityContext.getCurrentEmployeeId();
         if (callerId != null
                 && (callerId.equals(review.getEmployeeId()) || callerId.equals(review.getReviewerId()))) {
             return;
         }
-        log.warn("SECURITY: IDOR attempt — employee {} tried to access review {} (subject={}, reviewer={})",
-                callerId, review.getId(), review.getEmployeeId(), review.getReviewerId());
-        throw new AccessDeniedException("Access denied");
+        try {
+            assertEmployeeInScope(review.getEmployeeId(), TenantContext.getCurrentTenant());
+        } catch (AccessDeniedException e) {
+            log.warn("SECURITY: IDOR attempt — employee {} tried to access review {} (subject={}, reviewer={})",
+                    callerId, review.getId(), review.getEmployeeId(), review.getReviewerId());
+            throw new AccessDeniedException("Access denied");
+        }
     }
 
     /** HR calibration authority (also true for system admins via SecurityContext). */

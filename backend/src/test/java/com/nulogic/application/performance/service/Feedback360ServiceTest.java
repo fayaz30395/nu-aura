@@ -498,7 +498,11 @@ class Feedback360ServiceTest {
                 .thenReturn(Optional.empty());
         when(responseRepository.findSubmittedResponsesForSubject(tenantId, subjectEmployeeId, cycleId))
                 .thenReturn(List.of(selfResponse, managerResponse, peerResponse1, peerResponse2, directReportResponse));
-        when(summaryRepository.save(any(Feedback360Summary.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(summaryRepository.save(any(Feedback360Summary.class))).thenAnswer(invocation -> {
+            Feedback360Summary saved = invocation.getArgument(0);
+            saved.setId(java.util.UUID.randomUUID()); // JPA assigns the id on persist
+            return saved;
+        });
 
         Feedback360Summary result = feedback360Service.generateSummary(tenantId, cycleId, subjectEmployeeId);
 

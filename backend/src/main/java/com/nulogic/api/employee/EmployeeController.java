@@ -10,6 +10,7 @@ import com.nulogic.application.employee.service.EmployeeService;
 import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.RequiresPermission;
 import com.nulogic.common.security.SecurityContext;
+import com.nulogic.domain.user.RoleScope;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -250,7 +251,8 @@ public class EmployeeController {
 
         // Tenant-wide view-all is treated as the privileged "edit anyone" gate for now —
         // EMPLOYEE_MANAGE does not exist in the Permission registry (Blocker noted in report).
-        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+        // Honour the granted scope: a TEAM/DEPARTMENT-scoped VIEW_ALL must not edit anyone.
+        if (SecurityContext.hasPermissionAtLeast(Permission.EMPLOYEE_VIEW_ALL, RoleScope.ALL)) {
             return;
         }
 

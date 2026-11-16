@@ -2,6 +2,7 @@ package com.nulogic.domain.knowledge;
 
 import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnTransformer;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
@@ -44,6 +45,8 @@ public class WikiPage extends TenantAware {
     @Column(columnDefinition = "TEXT")
     private String excerpt;
 
+    // PG rejects varchar into jsonb; cast on write (DEF-FLUENCE-01)
+    @ColumnTransformer(write = "?::jsonb")
     @Column(columnDefinition = "JSONB", nullable = false)
     private String content;
 

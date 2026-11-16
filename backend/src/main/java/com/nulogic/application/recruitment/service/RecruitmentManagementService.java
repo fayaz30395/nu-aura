@@ -573,6 +573,12 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
                         .ifPresent(job -> workflowRequest.setDepartmentId(job.getDepartmentId()));
             }
 
+            if (!workflowService.hasApplicableWorkflow(workflowRequest)) {
+                // A failing startWorkflow would mark this tx rollback-only (DEF-HIRE-01 500).
+                log.warn("No RECRUITMENT_OFFER workflow configured; offer saved without approval workflow: candidate={}",
+                        savedCandidate.getId());
+                return mapToCandidateResponse(savedCandidate);
+            }
             workflowService.startWorkflow(workflowRequest);
             log.info("Workflow started for recruitment offer: candidate={}", savedCandidate.getId());
         } catch (Exception e) { // Intentional broad catch — recruitment processing error boundary
@@ -849,6 +855,22 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
     private void validateCandidateAccess(Candidate candidate, String permission) {
         if (candidate.getAssignedRecruiterId() != null) {
             validateEmployeeAccess(candidate.getAssignedRecruiterId(), permission);
+            return;
+        }
+        // DEF-HIRE-10: unassigned candidates are deny-by-default for non-ALL scopes.
+        if (SecurityContext.isSuperAdmin() || SecurityContext.getPermissionScope(permission) == RoleScope.ALL) {
+            return;
+        }
+        UUID me = SecurityContext.getCurrentEmployeeId();
+        UUID tenantId = TenantContext.getCurrentTenant();
+        boolean isHiringManager = me != null && candidate.getJobOpeningId() != null
+                && jobOpeningRepository.findByIdAndTenantId(candidate.getJobOpeningId(), tenantId)
+                .map(j -> me.equals(j.getHiringManagerId())).orElse(false);
+        boolean isInterviewer = me != null && interviewRepository
+                .findByTenantIdAndCandidateId(tenantId, candidate.getId()).stream()
+                .anyMatch(i -> me.equals(i.getInterviewerId()));
+        if (!isHiringManager && !isInterviewer) {
+            throw new AccessDeniedException("No access to this candidate");
         }
     }
 

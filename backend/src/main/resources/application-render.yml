@@ -208,11 +208,11 @@ app:
       probe:
         fail-on-bypass: true
         allow-bootstrap-skip: false
-    # AES-256 key for EncryptionService (used by SAML IdP config).
-    # SAML is not active on Render — this default keeps the bean from failing.
-    # Override via APP_SECURITY_ENCRYPTION_KEY env var if SAML is ever enabled.
+    # AES-256 key for EncryptionService / CryptoConverter. Deliberately NO default:
+    # Spring does not support `:?` (it would become the literal default value), so an
+    # unset env var leaves the placeholder unresolved and startup fails.
     encryption:
-      key: ${APP_SECURITY_ENCRYPTION_KEY:?APP_SECURITY_ENCRYPTION_KEY must be set}
+      key: ${APP_SECURITY_ENCRYPTION_KEY}
 
   rls:
     datasource-wrapper:

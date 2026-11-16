@@ -52,13 +52,15 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
             "WHERE wp.tenant_id = :tenantId " +
             "  AND wp.is_deleted = false " +
             "  AND wp.search_vector @@ websearch_to_tsquery('english', :query) " +
+            "  AND wp.status = 'PUBLISHED' AND (wp.visibility IS NULL OR wp.visibility <> 'PRIVATE') " +
             "ORDER BY ts_rank(wp.search_vector, websearch_to_tsquery('english', :query)) DESC, " +
             "         wp.updated_at DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
                     "WHERE wp.tenant_id = :tenantId " +
                     "  AND wp.is_deleted = false " +
-                    "  AND wp.search_vector @@ websearch_to_tsquery('english', :query)")
+                    "  AND wp.search_vector @@ websearch_to_tsquery('english', :query) " +
+                    "  AND wp.status = 'PUBLISHED' AND (wp.visibility IS NULL OR wp.visibility <> 'PRIVATE')")
     Page<WikiPage> searchByTenant(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
 
     /**
@@ -77,7 +79,7 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
      */
     // SOFT_DELETE_GUARD (S12-F): native query needs explicit filter since @Where is bypassed
     @Query(value = "SELECT wp.* FROM wiki_pages wp " +
-            "WHERE wp.tenant_id = :tenantId AND wp.is_deleted = false AND (" +
+            "WHERE wp.tenant_id = :tenantId AND wp.is_deleted = false AND wp.status = 'PUBLISHED' AND (wp.visibility IS NULL OR wp.visibility <> 'PRIVATE') AND (" +
             "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(CAST(wp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%'))" +
@@ -85,11 +87,41 @@ public interface WikiPageRepository extends JpaRepository<WikiPage, UUID>, JpaSp
             "wp.updated_at DESC",
             nativeQuery = true,
             countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
-                    "WHERE wp.tenant_id = :tenantId AND wp.is_deleted = false AND (" +
+                    "WHERE wp.tenant_id = :tenantId AND wp.is_deleted = false AND wp.status = 'PUBLISHED' AND (wp.visibility IS NULL OR wp.visibility <> 'PRIVATE') AND (" +
                     "LOWER(wp.title) LIKE LOWER(CONCAT('%', :query, '%')) " +
                     "OR LOWER(COALESCE(wp.excerpt, '')) LIKE LOWER(CONCAT('%', :query, '%')) " +
                     "OR LOWER(CAST(wp.content AS TEXT)) LIKE LOWER(CONCAT('%', :query, '%')))")
     Page<WikiPage> searchByTenantBroad(@Param("tenantId") UUID tenantId, @Param("query") String query, Pageable pageable);
+
+    /** DEF-E2E-02: own pages, plus others' non-PRIVATE pages that are published (or any status when approver). */
+    @Query("SELECT wp FROM WikiPage wp WHERE wp.tenantId = :tenantId AND (wp.createdBy = :userId OR " +
+            "((wp.visibility IS NULL OR wp.visibility <> :privateLevel) AND (wp.status = :published OR :approver = true)))")
+    Page<WikiPage> findVisibleToUser(@Param("tenantId") UUID tenantId, @Param("userId") UUID userId,
+                                     @Param("published") WikiPage.PageStatus published,
+                                     @Param("privateLevel") WikiPage.VisibilityLevel privateLevel,
+                                     @Param("approver") boolean approver, Pageable pageable);
+
+    @Query("SELECT wp FROM WikiPage wp WHERE wp.tenantId = :tenantId AND wp.space.id = :spaceId AND (wp.createdBy = :userId OR " +
+            "((wp.visibility IS NULL OR wp.visibility <> :privateLevel) AND (wp.status = :published OR :approver = true)))")
+    Page<WikiPage> findVisibleToUserInSpace(@Param("tenantId") UUID tenantId, @Param("spaceId") UUID spaceId,
+                                            @Param("userId") UUID userId,
+                                            @Param("published") WikiPage.PageStatus published,
+                                            @Param("privateLevel") WikiPage.VisibilityLevel privateLevel,
+                                            @Param("approver") boolean approver, Pageable pageable);
+
+    /** Same as searchByTenant but also returns the caller's own pages in any status/visibility. */
+    @Query(value = "SELECT wp.* FROM wiki_pages wp " +
+            "WHERE wp.tenant_id = :tenantId AND wp.is_deleted = false " +
+            "  AND wp.search_vector @@ websearch_to_tsquery('english', :query) " +
+            "  AND (wp.created_by = :userId OR (wp.status = 'PUBLISHED' AND (wp.visibility IS NULL OR wp.visibility <> 'PRIVATE'))) " +
+            "ORDER BY ts_rank(wp.search_vector, websearch_to_tsquery('english', :query)) DESC, wp.updated_at DESC",
+            nativeQuery = true,
+            countQuery = "SELECT COUNT(*) FROM wiki_pages wp " +
+                    "WHERE wp.tenant_id = :tenantId AND wp.is_deleted = false " +
+                    "  AND wp.search_vector @@ websearch_to_tsquery('english', :query) " +
+                    "  AND (wp.created_by = :userId OR (wp.status = 'PUBLISHED' AND (wp.visibility IS NULL OR wp.visibility <> 'PRIVATE')))")
+    Page<WikiPage> searchByTenantForUser(@Param("tenantId") UUID tenantId, @Param("query") String query,
+                                         @Param("userId") UUID userId, Pageable pageable);
 
     long countByTenantIdAndSpaceId(UUID tenantId, UUID spaceId);
 

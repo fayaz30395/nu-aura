@@ -114,6 +114,7 @@ public class OutboxEventProcessor {
         UUID tenantId = outboxEvent.getTenantId();
         if (tenantId != null) {
             TenantContext.setCurrentTenant(tenantId);
+            outboxEventRepository.applyTenantToTransaction(tenantId.toString());
         }
         try {
             dispatch(outboxEvent);

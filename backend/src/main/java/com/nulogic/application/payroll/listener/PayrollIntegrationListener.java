@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -36,7 +37,7 @@ public class PayrollIntegrationListener {
      * Amount = overtimeHours * overtimeRate (multiplier represents pay rate factor, e.g. 1.5x).
      */
     @EventListener
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW) // events fire after the publisher's tx committed
     public void onOvertimeApproved(OvertimeApprovedEvent event) {
         log.info("Overtime approved for employee {} — creating payroll earning adjustment",
                 event.getEmployeeId());
@@ -69,7 +70,7 @@ public class PayrollIntegrationListener {
      * FIX-002: When an expense is approved, create a reimbursement earning for the next payroll.
      */
     @EventListener
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW) // events fire after the publisher's tx committed
     public void onExpenseApproved(ExpenseApprovedEvent event) {
         log.info("Expense claim {} approved for employee {} — creating reimbursement adjustment",
                 event.getClaimNumber(), event.getEmployeeId());
@@ -106,7 +107,7 @@ public class PayrollIntegrationListener {
      * Only creates a deduction when the leave type is NOT paid (isPaidLeave = false).
      */
     @EventListener
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW) // events fire after the publisher's tx committed
     public void onLeaveApproved(LeaveApprovedEvent event) {
         if (event.isPaidLeave()) {
             log.debug("Paid leave approved for employee {} — no payroll deduction needed", event.getEmployeeId());

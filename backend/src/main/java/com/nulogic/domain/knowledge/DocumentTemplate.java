@@ -2,6 +2,7 @@ package com.nulogic.domain.knowledge;
 
 import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.Column;
+import org.hibernate.annotations.ColumnTransformer;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
@@ -36,12 +37,18 @@ public class DocumentTemplate extends TenantAware {
     @Column(length = 100)
     private String category;
 
+    // PG rejects varchar into jsonb; cast on write (DEF-FLUENCE-01)
+    @ColumnTransformer(write = "?::jsonb")
     @Column(columnDefinition = "JSONB", nullable = false)
     private String content;
 
+    // PG rejects varchar into jsonb; cast on write (DEF-FLUENCE-01)
+    @ColumnTransformer(write = "?::jsonb")
     @Column(columnDefinition = "JSONB")
     private String templateVariables;
 
+    // PG rejects varchar into jsonb; cast on write (DEF-FLUENCE-01)
+    @ColumnTransformer(write = "?::jsonb")
     @Column(columnDefinition = "JSONB")
     private String sampleData;
 

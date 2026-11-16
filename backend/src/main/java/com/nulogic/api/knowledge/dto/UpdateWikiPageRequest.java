@@ -1,5 +1,6 @@
 package com.nulogic.api.knowledge.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +25,11 @@ public class UpdateWikiPageRequest {
     @Size(max = 100000, message = "Content must not exceed 100000 characters")
     private String content;
 
+    @NotBlank(message = "Visibility is required")
     @Size(max = 20, message = "Visibility must not exceed 20 characters")
     private String visibility;
 
+    @NotBlank(message = "Status is required")
     @Size(max = 20, message = "Status must not exceed 20 characters")
     private String status;
 

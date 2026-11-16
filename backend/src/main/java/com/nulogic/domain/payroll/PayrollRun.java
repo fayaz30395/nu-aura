@@ -102,6 +102,9 @@ public class PayrollRun extends TenantAware {
         if (this.status != PayrollStatus.PROCESSED) {
             throw new IllegalStateException("Only processed payroll runs can be approved");
         }
+        if (approvedBy != null && approvedBy.equals(this.processedBy)) {
+            throw new IllegalStateException("Payroll run must be approved by a different user than the one who processed it");
+        }
         this.status = PayrollStatus.APPROVED;
         this.approvedBy = approvedBy;
         this.approvedAt = now;

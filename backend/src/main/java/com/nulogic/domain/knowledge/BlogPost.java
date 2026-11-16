@@ -2,6 +2,7 @@ package com.nulogic.domain.knowledge;
 
 import com.nulogic.common.entity.TenantAware;
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnTransformer;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLRestriction;
@@ -43,6 +44,8 @@ public class BlogPost extends TenantAware {
     @Column(name = "featured_image_url", length = 500)
     private String featuredImageUrl;
 
+    // PG rejects varchar into jsonb; cast on write (DEF-FLUENCE-01)
+    @ColumnTransformer(write = "?::jsonb")
     @Column(columnDefinition = "JSONB", nullable = false)
     private String content;
 

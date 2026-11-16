@@ -131,6 +131,8 @@ public class Payslip extends TenantAware {
         if (professionalTax != null) totalDeductions = totalDeductions.add(professionalTax);
         if (incomeTax != null) totalDeductions = totalDeductions.add(incomeTax);
         if (otherDeductions != null) totalDeductions = totalDeductions.add(otherDeductions);
+        // Employee ESI only; employer PF/ESI are employer cost and must never reduce net pay.
+        if (employeeEsi != null) totalDeductions = totalDeductions.add(employeeEsi);
 
         this.netSalary = grossSalary.subtract(totalDeductions);
     }

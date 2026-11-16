@@ -96,7 +96,7 @@ class AuditEventConsumerTest {
         ArgumentCaptor<AuditLog> captor = ArgumentCaptor.forClass(AuditLog.class);
         verify(auditLogRepository).save(captor.capture());
         AuditLog saved = captor.getValue();
-        assertThat(saved.getId()).isEqualTo(UUID.fromString(event.getEventId()));
+        assertThat(saved.getId()).isNull(); // id must be DB-generated (preset id broke persist)
         assertThat(saved.getTenantId()).isEqualTo(event.getTenantId());
         assertThat(saved.getEntityType()).isEqualTo("Employee");
         assertThat(saved.getEntityId()).isEqualTo(event.getEntityId());

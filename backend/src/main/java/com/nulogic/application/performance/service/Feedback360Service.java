@@ -129,9 +129,6 @@ public class Feedback360Service {
 
     @Transactional
     public Feedback360Request createRequest(Feedback360Request request) {
-        if (request.getId() == null) {
-            request.setId(UUID.randomUUID());
-        }
         if (request.getStatus() == null) {
             request.setStatus(RequestStatus.PENDING);
         }
@@ -298,9 +295,6 @@ public class Feedback360Service {
     @Transactional
     public Feedback360Response createOrUpdateResponse(Feedback360Response response) {
         LocalDateTime now = tenantNow(response.getTenantId());
-        if (response.getId() == null) {
-            response.setId(UUID.randomUUID());
-        }
         if (response.getCreatedAt() == null) {
             response.setCreatedAt(now);
         }
@@ -370,7 +364,6 @@ public class Feedback360Service {
         LocalDateTime now = tenantNow(tenantId);
         Feedback360Summary summary = existing.orElseGet(() -> {
             Feedback360Summary newSummary = new Feedback360Summary();
-            newSummary.setId(UUID.randomUUID());
             newSummary.setTenantId(tenantId);
             newSummary.setCycleId(cycleId);
             newSummary.setSubjectEmployeeId(subjectEmployeeId);
