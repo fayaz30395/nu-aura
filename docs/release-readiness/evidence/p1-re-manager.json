@@ -1,0 +1,695 @@
+{
+ "runId": "NUAURA_TEST_P1_385218",
+ "startedAt": "2026-11-18T18:59:45.218Z",
+ "commit": "f212ff78",
+ "browser": "chromium 148.0.7778.96 / playwright 1.60.0",
+ "env": {
+  "FE": "http://localhost:3000",
+  "BE": "http://localhost:8080"
+ },
+ "viewports": {
+  "desktop": {
+   "width": 1440,
+   "height": 900
+  },
+  "mobile": {
+   "width": 390,
+   "height": 844
+  }
+ },
+ "allowlists": {
+  "console": [
+   "/\\[ApiClient\\] Error: GET \\S+ undefined canceled/ - axios request cancelled when the component unmounts (React dev double-mount); no user impact"
+  ],
+  "http": [
+   "/^40[13] (GET|POST) \\/api\\/v1\\/auth\\/(me|refresh)/ - session refresh handshake"
+  ]
+ },
+ "reconciliation": {
+  "catalogue": 290,
+  "app": 289,
+  "static": 249,
+  "dynamic": 40,
+  "inCatalogueNotApp": [
+   "/auth/logout"
+  ],
+  "inAppNotCatalogue": []
+ },
+ "blockedDynamic": [
+  {
+   "route": "/calendar/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/contracts/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/employees/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/employees/[id]/compensation",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/employees/[id]/edit",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/exit-interview/[token]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/expenses/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/blogs/[slug]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/blogs/[slug]/edit",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/templates/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/wiki/[slug]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/wiki/[slug]/edit",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/helpdesk/tickets/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/learning/courses/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/learning/courses/[id]/play",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/learning/courses/[id]/quiz/[quizId]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/learning/paths/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/loans/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/offboarding/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/offboarding/[id]/exit-interview",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/offboarding/[id]/fnf",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/onboarding/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/onboarding/templates/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/payroll/runs/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/performance/cycles/[id]/calibration",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/performance/cycles/[id]/nine-box",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/preboarding/portal/[token]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/projects/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/recruitment/agencies/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/recruitment/candidates/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/recruitment/candidates/[id]/offer",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/sign/[token]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/surveys/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/surveys/[id]/analytics",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/surveys/[id]/respond",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/time-tracking/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/time-tracking/[id]/edit",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/training/catalog/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/travel/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/workflows/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  }
+ ],
+ "roles": {
+  "manager": {
+   "email": "sumit@nulogic.io",
+   "roles": [
+    "SKIP_LEVEL_MANAGER",
+    "MANAGER",
+    "REPORTING_MANAGER"
+   ],
+   "permissions": 110,
+   "results": [
+    {
+     "route": "/expenses/advances",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/advances",
+     "ms": 8435,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/advances",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/advances",
+     "ms": 5145,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/analytics",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/analytics",
+     "ms": 5498,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Analytics | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/analytics",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/analytics",
+     "ms": 5135,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Analytics | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/dashboard",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/dashboard",
+     "ms": 5356,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 8,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/dashboard",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/dashboard",
+     "ms": 5140,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 8,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates",
+     "ms": 5368,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates",
+     "ms": 5151,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/offboarding/fnf",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5235,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/offboarding/fnf",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5093,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/projects/psa",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/psa",
+     "ms": 5326,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "PSA Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/psa",
+     "ms": 5091,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "PSA Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa/invoices",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/psa/invoices",
+     "ms": 5836,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Invoices | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa/invoices",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/psa/invoices",
+     "ms": 5147,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Invoices | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/headcount",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/reports/headcount",
+     "ms": 5543,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/headcount",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/reports/headcount",
+     "ms": 5087,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/sso",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/settings",
+     "ms": 5142,
+     "fail": [
+      "authz: 403 GET /api/v1/auth/saml/config",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/auth/saml/config",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/sso",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/settings",
+     "ms": 5092,
+     "fail": [
+      "console(1): Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "http": [
+      {
+       "h": "429 GET /api/v1/auth/saml/config",
+       "cls": "other"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/tasks",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/tasks",
+     "ms": 5139,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Tasks | NU-AURA"
+     }
+    },
+    {
+     "route": "/tasks",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/tasks",
+     "ms": 5089,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Tasks | NU-AURA"
+     }
+    },
+    {
+     "route": "/travel",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/travel",
+     "ms": 5448,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Travel | NU-AURA"
+     }
+    },
+    {
+     "route": "/travel",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/travel",
+     "ms": 5073,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Travel | NU-AURA"
+     }
+    }
+   ]
+  }
+ },
+ "finishedAt": "2026-11-18T19:02:02.757Z"
+}

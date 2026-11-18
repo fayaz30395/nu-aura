@@ -51,7 +51,7 @@ export const domChecks = () => ({
   brokenImages: [...document.images].filter(i => i.complete && i.naturalWidth === 0 && i.src && !i.src.startsWith('data:'))
     .map(i => i.getAttribute('src')?.slice(0, 100)).slice(0, 5),
   // Mantine <Progress> bars (leave balances) use role=progressbar and decorative pulse dots are aria-hidden: neither is a loading state.
-  spinners: [...document.querySelectorAll('[role="progressbar"]:not([class*="mantine-Progress"]), .animate-spin, .animate-pulse:not([aria-hidden="true"]), [class*="skeleton" i], [aria-busy="true"], [data-loading="true"]')]
+  spinners: [...document.querySelectorAll('[role="progressbar"]:not([class*="mantine-Progress"]):not([aria-valuenow]), .animate-spin, .animate-pulse:not([aria-hidden="true"]), [class*="skeleton" i], [aria-busy="true"], [data-loading="true"]')]
     .filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0; }).length,
   title: document.title,
 });

@@ -1,0 +1,1 @@
+spin | NOT-A-BUG | none | /learning/paths and /training/my-learning render content (path/course cards with real progress bars) and do fire API calls (/lms/learning-paths, /lms/my-courses). Sweep flagged role=progressbar (Progress component) as a spinner. Fix belongs in the sweep detector (ui-helpers.mjs:54 excludes only mantine-Progress), not the app.
