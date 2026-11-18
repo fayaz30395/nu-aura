@@ -3,6 +3,7 @@
 import {useRouter} from 'next/navigation';
 import {AdminPageContent} from '@/components/layout';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryErrorCard} from '@/components/ui/QueryState';
 import {usePayrollRuns, useSalaryStructures} from '@/lib/hooks/queries/usePayroll';
 import {
   AlertCircle,
@@ -124,8 +125,8 @@ function statusBadgeClass(status: PayrollRunStatus): string {
 
 export default function AdminPayrollPage() {
   const router = useRouter();
-  const {data: runsPage, isLoading: runsLoading} = usePayrollRuns(0, 5);
-  const {data: structuresPage, isLoading: structuresLoading} = useSalaryStructures(0, 5);
+  const {data: runsPage, isLoading: runsLoading, isError: runsError, refetch: refetchRuns, isFetching: runsFetching} = usePayrollRuns(0, 5);
+  const {data: structuresPage, isLoading: structuresLoading, isError: structuresError, refetch: refetchStructures, isFetching: structuresFetching} = useSalaryStructures(0, 5);
 
   const runs = runsPage?.content ?? [];
   const structures = structuresPage?.content ?? [];
@@ -168,6 +169,8 @@ export default function AdminPayrollPage() {
                 <p className="text-caption mb-1">{label}</p>
                 <div className="h-8 w-16 rounded bg-[var(--skeleton-base)] animate-pulse"/>
               </>
+            ) : (label === 'Salary Structures' ? structuresError && !structuresPage : runsError && !runsPage) ? (
+              <Stat label={label} value="—" tone={tone}/>
             ) : (
               <Stat label={label} value={value} tone={tone}/>
             )}
@@ -184,7 +187,7 @@ export default function AdminPayrollPage() {
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">Recent Payroll Runs</h2>
               <Link
                 href="/payroll/runs"
-                className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs text-accent-700 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 View all <ChevronRight className="h-3 w-3"/>
               </Link>
@@ -199,6 +202,8 @@ export default function AdminPayrollPage() {
                   </div>
                 ))}
               </div>
+            ) : runsError && !runsPage ? (
+              <QueryErrorCard onRetry={() => void refetchRuns()} retrying={runsFetching}/>
             ) : runs.length === 0 ? (
               <EmptyState
                 icon={<Banknote className="h-8 w-8"/>}
@@ -243,7 +248,7 @@ export default function AdminPayrollPage() {
               </h2>
               <Link
                 href="/payroll/salary-structures"
-                className="text-xs text-accent-500 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs text-accent-700 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 View all <ChevronRight className="h-3 w-3"/>
               </Link>
@@ -257,6 +262,8 @@ export default function AdminPayrollPage() {
                   </div>
                 ))}
               </div>
+            ) : structuresError && !structuresPage ? (
+              <QueryErrorCard onRetry={() => void refetchStructures()} retrying={structuresFetching}/>
             ) : structures.length === 0 ? (
               <EmptyState
                 icon={<Layers className="h-8 w-8"/>}

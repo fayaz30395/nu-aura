@@ -29,6 +29,7 @@ import {
 } from '@/components/ui';
 import {SkeletonStatCard, SkeletonTable} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {QueryErrorCard} from '@/components/ui/QueryState';
 import {TIMESHEET_STATUS} from '@/lib/status/vocabulary';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
@@ -75,7 +76,7 @@ export default function TimesheetsPage() {
   const {user, isAuthenticated, hasHydrated} = useAuth();
 
   // React Query hooks
-  const {data: timesheets = [], isLoading, error: queryError} = useEmployeeTimesheets(
+  const {data: timesheets = [], isLoading, error: queryError, refetch: refetchTimesheets, isFetching: timesheetsFetching} = useEmployeeTimesheets(
     user?.employeeId || '',
     isAuthenticated && hasHydrated && !!user?.employeeId
   );
@@ -289,6 +290,14 @@ export default function TimesheetsPage() {
           </div>
           <SkeletonTable rows={6} columns={5}/>
         </div>
+      </AppLayout>
+    );
+  }
+
+  if (queryError && timesheets.length === 0 && user?.employeeId) {
+    return (
+      <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="timesheets">
+        <QueryErrorCard onRetry={() => void refetchTimesheets()} retrying={timesheetsFetching}/>
       </AppLayout>
     );
   }

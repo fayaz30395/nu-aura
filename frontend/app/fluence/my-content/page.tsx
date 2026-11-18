@@ -6,6 +6,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {BarChart3, Calendar, Eye, FileText, Heart, MessageCircle, Pen, Plus, RefreshCw, Star,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
+import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Stat} from '@/components/ui/Stat';
 import {useFluenceFavorites, useMyBlogPosts, useMyWikiPages,} from '@/lib/hooks/queries/useFluence';
 import type {BlogPost, FluenceFavorite, WikiPage} from '@/lib/types/platform/fluence';
@@ -56,24 +57,28 @@ export default function MyContentPage() {
             </p>
           </div>
           <div className="flex gap-2 flex-shrink-0">
-            <Button
-              variant="primary"
-              size="sm"
-              className="gap-2"
-              onClick={() => router.push('/fluence/wiki/new')}
-            >
-              <Plus className={iconSize.button}/>
-              New Page
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              className="gap-2"
-              onClick={() => router.push('/fluence/blogs/new')}
-            >
-              <Plus className={iconSize.button}/>
-              New Post
-            </Button>
+            <PermissionGate permission={Permissions.KNOWLEDGE_WIKI_CREATE}>
+              <Button
+                variant="primary"
+                size="sm"
+                className="gap-2"
+                onClick={() => router.push('/fluence/wiki/new')}
+              >
+                <Plus className={iconSize.button}/>
+                New Page
+              </Button>
+            </PermissionGate>
+            <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE}>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="gap-2"
+                onClick={() => router.push('/fluence/blogs/new')}
+              >
+                <Plus className={iconSize.button}/>
+                New Post
+              </Button>
+            </PermissionGate>
           </div>
         </div>
 
@@ -175,14 +180,14 @@ export default function MyContentPage() {
                 <WikiPageList
                   pages={myWikiPages}
                   onNavigate={(id) => router.push(`/fluence/wiki/${id}`)}
-                  onCreate={() => router.push('/fluence/wiki/new')}
+                  onCreate={hasPermission(Permissions.KNOWLEDGE_WIKI_CREATE) ? () => router.push('/fluence/wiki/new') : undefined}
                 />
               )}
               {activeTab === 'blog' && (
                 <BlogPostList
                   posts={myBlogPosts}
                   onNavigate={(id) => router.push(`/fluence/blogs/${id}`)}
-                  onCreate={() => router.push('/fluence/blogs/new')}
+                  onCreate={hasPermission(Permissions.KNOWLEDGE_BLOG_CREATE) ? () => router.push('/fluence/blogs/new') : undefined}
                 />
               )}
               {activeTab === 'favorites' && (
@@ -247,7 +252,7 @@ function WikiPageList({
                       }: {
   pages: WikiPage[];
   onNavigate: (id: string) => void;
-  onCreate: () => void;
+  onCreate?: () => void;
 }) {
   if (pages.length === 0) {
     return (
@@ -255,11 +260,8 @@ function WikiPageList({
         icon={FileText}
         title="No wiki pages yet"
         description="Create your first wiki page to get started"
-        actionLabel="New Page"
-        // BUG-F1: this used to be an empty handler with a comment claiming the parent
-        // handled it; nothing did. The one user guaranteed to see this empty state is a
-        // brand-new user, and the primary CTA did nothing when clicked.
-        onAction={onCreate}
+        // BUG-F1: the CTA must do something; only show it when the user can create.
+        {...(onCreate ? {actionLabel: 'New Page', onAction: onCreate} : {})}
       />
     );
   }
@@ -300,7 +302,7 @@ function BlogPostList({
                       }: {
   posts: BlogPost[];
   onNavigate: (id: string) => void;
-  onCreate: () => void;
+  onCreate?: () => void;
 }) {
   if (posts.length === 0) {
     return (
@@ -308,8 +310,7 @@ function BlogPostList({
         icon={Pen}
         title="No blog posts yet"
         description="Write your first blog post to share with the team"
-        actionLabel="New Post"
-        onAction={onCreate}
+        {...(onCreate ? {actionLabel: 'New Post', onAction: onCreate} : {})}
       />
     );
   }
@@ -540,8 +541,8 @@ interface EmptyStateProps {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
-  actionLabel: string;
-  onAction: () => void;
+  actionLabel?: string;
+  onAction?: () => void;
 }
 
 function EmptyState({
@@ -565,14 +566,16 @@ function EmptyState({
       <p className={`${typography.bodySecondary} text-center mt-2 max-w-xs`}>
         {description}
       </p>
-      <Button
-        variant="secondary"
-        size="sm"
-        className="mt-4"
-        onClick={onAction}
-      >
-        {actionLabel}
-      </Button>
+      {actionLabel && onAction && (
+        <Button
+          variant="secondary"
+          size="sm"
+          className="mt-4"
+          onClick={onAction}
+        >
+          {actionLabel}
+        </Button>
+      )}
     </motion.div>
   );
 }

@@ -48,13 +48,8 @@ public class DevSecurityConfig {
                 .securityMatcher("/actuator/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Safe endpoints — always permitted
-                        .requestMatchers(
-                                "/actuator/health", "/actuator/health/**",
-                                "/actuator/info",
-                                "/actuator/metrics", "/actuator/metrics/**",
-                                "/actuator/prometheus"
-                        ).permitAll()
+                        // Only health is anonymous; info/metrics/prometheus need sign-in (S-005)
+                        .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         // Sensitive endpoints — explicitly denied
                         .requestMatchers(
                                 "/actuator/env", "/actuator/env/**",

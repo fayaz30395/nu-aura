@@ -319,6 +319,7 @@ export default function GanttChartPage() {
             <Button
               variant="outline"
               size="sm"
+              aria-label="Previous month"
               onClick={() => {
                 const d = new Date(startDate);
                 d.setMonth(d.getMonth() - 1);
@@ -337,6 +338,7 @@ export default function GanttChartPage() {
             <Button
               variant="outline"
               size="sm"
+              aria-label="Next month"
               onClick={() => {
                 const d = new Date(startDate);
                 d.setMonth(d.getMonth() + 1);
@@ -363,7 +365,7 @@ export default function GanttChartPage() {
 
         {/* Gantt Chart */}
         <Card>
-          <CardContent className="p-0 overflow-x-auto">
+          <CardContent className="p-0 overflow-x-auto" tabIndex={0} role="region" aria-label="Gantt chart">
             <div className="min-w-[1200px]">
               {/* Timeline Header */}
               <div className="flex border-b border-[var(--border-main)]">

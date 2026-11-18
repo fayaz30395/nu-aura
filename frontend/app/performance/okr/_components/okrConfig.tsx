@@ -29,6 +29,9 @@ export const objectiveFormSchema = z.object({
   objectiveLevel: z.string().min(1),
   weight: z.number().min(0).max(10),
   isStretchGoal: z.boolean(),
+}).refine(d => !d.startDate || !d.endDate || d.endDate >= d.startDate, {
+  message: 'End date must be after start date',
+  path: ['endDate'],
 });
 
 export type ObjectiveFormData = z.infer<typeof objectiveFormSchema>;

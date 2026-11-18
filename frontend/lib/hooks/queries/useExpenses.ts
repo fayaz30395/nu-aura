@@ -76,7 +76,7 @@ export function useMyExpenseClaims(
     enabled: !!employeeId,
     staleTime: 60 * 1000,
     retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
   });
 }
 
@@ -87,7 +87,7 @@ export function useAllExpenseClaims(page: number = 0, size: number = 20, enabled
     enabled,
     staleTime: 60 * 1000,
     retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
   });
 }
 
@@ -98,7 +98,7 @@ export function usePendingExpenseClaims(page: number = 0, size: number = 50, ena
     enabled,
     staleTime: 30 * 1000,
     retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
   });
 }
 
@@ -109,7 +109,7 @@ export function useExpenseStatistics(employeeId?: string) {
     enabled: !!employeeId,
     staleTime: 5 * 60 * 1000,
     retry: 2,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 3000),
   });
 }
 

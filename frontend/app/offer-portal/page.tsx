@@ -160,7 +160,9 @@ function OfferPortalPage() {
     return <OfferPortalLoading/>;
   }
 
-  if (error && !offer) {
+  const errorMessage = !token ? 'Invalid or expired offer link' : error;
+
+  if (errorMessage && !offer) {
     return (
       <div
         className="page-shell-centered motion-rise bg-gradient-to-br from-accent-50 to-surface-100 dark:from-surface-900 dark:to-surface-800 p-4">
@@ -173,7 +175,7 @@ function OfferPortalPage() {
             <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">
               Unable to Load Offer
             </h1>
-            <p className="text-[var(--text-muted)]">{error}</p>
+            <p className="text-[var(--text-muted)]">{errorMessage}</p>
           </CardContent>
         </Card>
       </div>

@@ -119,10 +119,14 @@ function TemplatePanel({
       setError('Template name is required');
       return;
     }
+    if (toCriterionRequests().length === 0) {
+      setError('Add at least one criterion');
+      return;
+    }
     setError('');
     const data = {name: name.trim(), description: description.trim() || undefined, isDefault, criteria: toCriterionRequests()};
     const onSuccess = () => {invalidate(); onClose();};
-    const onError = () => setError('Failed to save template');
+    const onError = () => setError('Failed to save template. You may not have permission to manage scorecards.');
     if (template?.id) {
       updateMutation.mutate({id: template.id, data}, {onSuccess, onError});
     } else {
@@ -174,7 +178,7 @@ function TemplatePanel({
   );
 }
 
-function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; onEdit: () => void}) {
+function TemplateCard({template, onEdit, canManage}: {template: ScorecardTemplateResponse; onEdit: () => void; canManage: boolean}) {
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteMutation = useDeleteTemplate();
@@ -219,7 +223,7 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
               </div>
             )}
           </div>
-          <div className="flex items-center gap-1 shrink-0">
+          {canManage && <div className="flex items-center gap-1 shrink-0">
             <button type="button" aria-label="Edit scorecard" onClick={onEdit} className="w-7 h-7 flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded hover:bg-[var(--bg-secondary)]">
               <Edit2 className="w-3.5 h-3.5"/>
             </button>
@@ -237,7 +241,7 @@ function TemplateCard({template, onEdit}: {template: ScorecardTemplateResponse; 
                 <Trash2 className="w-3.5 h-3.5"/>
               </button>
             )}
-          </div>
+          </div>}
         </div>
       </CardContent>
     </Card>
@@ -251,6 +255,7 @@ export default function ScorecardsPage() {
   const [panelTemplate, setPanelTemplate] = useState<ScorecardTemplateResponse | null | 'new'>(null);
 
   const canViewScorecards = hasAnyPermission('SCORECARD:VIEW');
+  const canManage = hasAnyPermission('SCORECARD:TEMPLATE_MANAGE');
   const canLoadPage = isPermissionReady && canViewScorecards;
 
   const {data: templates, isLoading} = useListTemplates1({query: {enabled: canLoadPage && isAuthenticated && hasHydrated}});
@@ -267,8 +272,8 @@ export default function ScorecardsPage() {
           <p className="text-sm text-[var(--text-secondary)]">
             You do not have permission to view interview scorecard templates.
           </p>
-          <Button variant="outline" onClick={() => router.push('/recruitment')}>
-            Back to recruitment
+          <Button variant="outline" onClick={() => router.push('/me/dashboard')}>
+            Back to dashboard
           </Button>
         </div>
       </AppLayout>
@@ -282,7 +287,7 @@ export default function ScorecardsPage() {
           title="Interview Scorecards"
           description="Manage scorecard templates used to evaluate candidates consistently."
           actions={
-            canLoadPage ? (
+            canLoadPage && canManage ? (
               <Button size="sm" onClick={() => setPanelTemplate('new')} className="flex items-center gap-1.5">
                 <Plus className="w-3.5 h-3.5"/>
                 New Template
@@ -318,7 +323,7 @@ export default function ScorecardsPage() {
                 </CardHeader>
                 <CardContent className="p-4 pt-0 grid grid-cols-1 md:grid-cols-2 gap-3">
                   {list.filter(t => t.isDefault).map(t => (
-                    <TemplateCard key={t.id} template={t} onEdit={() => setPanelTemplate(t)}/>
+                    <TemplateCard key={t.id} template={t} canManage={canManage} onEdit={() => setPanelTemplate(t)}/>
                   ))}
                 </CardContent>
               </Card>
@@ -329,7 +334,7 @@ export default function ScorecardsPage() {
               </CardHeader>
               <CardContent className="p-4 pt-0 grid grid-cols-1 md:grid-cols-2 gap-3">
                 {list.map(t => (
-                  <TemplateCard key={t.id} template={t} onEdit={() => setPanelTemplate(t)}/>
+                  <TemplateCard key={t.id} template={t} canManage={canManage} onEdit={() => setPanelTemplate(t)}/>
                 ))}
               </CardContent>
             </Card>

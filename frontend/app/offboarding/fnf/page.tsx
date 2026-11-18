@@ -185,6 +185,7 @@ export default function FnFManagementPage() {
                 className="min-w-[200px] flex-1"
               />
               <Select
+                aria-label="Filter by status"
                 placeholder="Filter by status"
                 data={STATUS_OPTIONS}
                 value={statusFilter}

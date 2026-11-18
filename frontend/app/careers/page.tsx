@@ -1,24 +1,8 @@
 import type {Metadata} from 'next';
 import CareersClient from './CareersClient';
+import {mapPublicJobs, type PublicCareerJob} from '@/lib/utils/careers-mapper';
 
-interface Job {
-  id: string;
-  title: string;
-  department: string;
-  location: string;
-  employmentType: 'Full-time' | 'Part-time' | 'Contract' | 'Internship';
-  postedDate: string;
-  description: string;
-  fullDescription: string;
-  requirements: string[];
-  responsibilities: string[];
-  salaryRange?: string;
-  experience: 'Entry-level' | 'Mid-level' | 'Senior' | 'Lead';
-}
-
-interface JobsResponse {
-  jobs: Job[];
-}
+type Job = PublicCareerJob;
 
 async function fetchPublicJobs(): Promise<Job[]> {
   const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api/v1';
@@ -27,8 +11,7 @@ async function fetchPublicJobs(): Promise<Job[]> {
       next: {revalidate: 60}, // ISR — revalidate every 60 seconds
     });
     if (!res.ok) return [];
-    const data: JobsResponse = await res.json();
-    return data.jobs ?? [];
+    return mapPublicJobs(await res.json());
   } catch {
     return [];
   }

@@ -197,8 +197,8 @@ export default function OKRPage() {
 
         <Tabs value={activeTab} onChange={(value) => value && setActiveTab(value as OkrTab)}>
           <Tabs.List>
-            <Tabs.Tab value="my">My Objectives ({myCount})</Tabs.Tab>
-            <Tabs.Tab value="company">Company Objectives ({companyCount})</Tabs.Tab>
+            <Tabs.Tab aria-controls={undefined} value="my">My Objectives ({myCount})</Tabs.Tab>
+            <Tabs.Tab aria-controls={undefined} value="company">Company Objectives ({companyCount})</Tabs.Tab>
           </Tabs.List>
         </Tabs>
 

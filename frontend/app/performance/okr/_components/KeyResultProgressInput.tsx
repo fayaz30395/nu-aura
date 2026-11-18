@@ -22,11 +22,14 @@ export function KeyResultProgressInput({title, value, min, max, disabled, onComm
   }, [value]);
 
   const commit = async () => {
-    const next = typeof draft === 'number' ? draft : parseFloat(draft);
-    if (!Number.isFinite(next)) {
+    const parsed = typeof draft === 'number' ? draft : parseFloat(draft);
+    if (!Number.isFinite(parsed)) {
       setDraft(value);
       return;
     }
+    // Enter commits before Mantine's blur clamp runs, so cap here (G-008).
+    const next = Math.min(Math.max(parsed, Math.min(min, max)), Math.max(min, max));
+    setDraft(next);
     if (next === value) return;
     const saved = await onCommit(next);
     if (!saved) setDraft(value);

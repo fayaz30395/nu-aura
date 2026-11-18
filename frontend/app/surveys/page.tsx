@@ -170,12 +170,13 @@ export default function SurveysPage() {
       endDate: formData.endDate ? `${formData.endDate}T23:59:59` : undefined,
     } as SurveyRequest;
 
+    // Keep the dialog open on failure so the input is not lost; errors surface via the global toast.
+    const onSuccess = () => setIsModalOpen(false);
     if (editingSurvey) {
-      updateMutation.mutate({surveyId: editingSurvey.id, data: submitData});
+      updateMutation.mutate({surveyId: editingSurvey.id, data: submitData}, {onSuccess});
     } else {
-      createMutation.mutate(submitData);
+      createMutation.mutate(submitData, {onSuccess});
     }
-    setIsModalOpen(false);
   };
 
   const handleLaunchSurvey = (surveyId: string) => {
@@ -292,12 +293,14 @@ export default function SurveysPage() {
               <Input
                 type="text"
                 placeholder="Search surveys..."
+                aria-label="Search surveys"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
             </div>
             <Select
+              aria-label="Filter by status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="w-full sm:w-40"
@@ -310,6 +313,7 @@ export default function SurveysPage() {
               ))}
             </Select>
             <Select
+              aria-label="Filter by type"
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value)}
               className="w-full sm:w-40"

@@ -30,6 +30,7 @@ const CLIENT_BEFORE = [
   '/reset-password',
   '/careers',
   '/careers/',
+  '/careers/[slug]',
   '/offer-portal',
   '/preboarding/portal/[token]',
   '/sign/[token]',

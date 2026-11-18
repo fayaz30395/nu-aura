@@ -11,6 +11,8 @@
  * sent to an error tracking service (Sentry, Rollbar, etc.).
  */
 
+import {notifications} from '@mantine/notifications';
+
 import {isProduction} from '@/lib/config';
 import {logger} from './logger';
 
@@ -338,8 +340,6 @@ export function createQueryErrorHandler() {
     // Show Mantine notification to user
     // Dynamic import to avoid circular dependencies and SSR issues
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const {notifications} = require('@mantine/notifications');
       const category = categorizeError(error);
       const message = getErrorMessage(error);
       const userMessage = getUserMessage(category, message);

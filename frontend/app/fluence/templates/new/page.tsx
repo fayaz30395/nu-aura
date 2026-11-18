@@ -2,7 +2,7 @@
 
 import {useCallback, useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {Controller, useForm} from 'react-hook-form';
+import {Controller, type FieldErrors, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import dynamic from 'next/dynamic';
@@ -159,8 +159,8 @@ export default function CreateTemplatePage() {
   };
 
   // Validation error handler — shows toast so user knows what went wrong
-  const onValidationError = () => {
-    const firstError = errors.name?.message || errors.description?.message || 'Please check your input';
+  const onValidationError = (formErrors: FieldErrors<CreateTemplateFormInput>) => {
+    const firstError = formErrors.name?.message || formErrors.description?.message || 'Please check your input';
     notifications.show({
       title: 'Validation Error',
       message: firstError,
@@ -183,6 +183,7 @@ export default function CreateTemplatePage() {
       ]}
     >
       <motion.div {...dsMotion.pageEnter} className="fluence-page-editor">
+        <h1 className="sr-only">New Template</h1>
         {/* ── Top Action Bar ──────────────────────────────────────── */}
         <div className="fluence-page-topbar">
           <div className="fluence-page-topbar-left">

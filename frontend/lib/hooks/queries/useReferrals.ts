@@ -20,18 +20,20 @@ export const referralKeys = {
 
 // ========== QUERIES ==========
 
-export function useMyReferrals() {
+export function useMyReferrals(enabled = true) {
   return useQuery({
     queryKey: referralKeys.myReferrals(),
     queryFn: () => referralService.getMyReferrals(),
+    enabled,
     staleTime: 5 * 60 * 1000,
   });
 }
 
-export function useAllReferrals(page = 0, size = 20) {
+export function useAllReferrals(page = 0, size = 20, enabled = true) {
   return useQuery({
     queryKey: referralKeys.listPaginated(page, size),
     queryFn: () => referralService.getAllReferrals(page, size),
+    enabled,
     staleTime: 5 * 60 * 1000,
   });
 }

@@ -11,6 +11,7 @@ import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryErrorCard} from '@/components/ui/QueryState';
 import {SkeletonTable} from '@/components/ui/Skeleton';
 import {MapPin} from 'lucide-react';
 import {
@@ -74,7 +75,7 @@ export default function OfficeLocationsPage() {
   const [locationToDelete, setLocationToDelete] = React.useState<OfficeLocation | null>(null);
 
   // React Query hooks
-  const {data: locationsRaw = [], isLoading} = useOfficeLocations();
+  const {data: locationsRaw = [], isLoading, isError, refetch, isFetching} = useOfficeLocations();
   const locations = Array.isArray(locationsRaw) ? locationsRaw : [];
   const createMutation = useCreateOfficeLocation();
   const updateMutation = useUpdateOfficeLocation();
@@ -189,7 +190,7 @@ export default function OfficeLocationsPage() {
               setEditingId(null);
               setShowForm(true);
             }}
-            className="px-4 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            className="px-4 py-2 bg-accent-600 dark:bg-accent-500 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
           >
             Add Location
           </button>
@@ -309,7 +310,7 @@ export default function OfficeLocationsPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || createMutation.isPending || updateMutation.isPending}
-                  className="px-6 py-2 bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  className="px-6 py-2 bg-accent-600 dark:bg-accent-500 text-white rounded-lg hover:bg-accent-700 disabled:opacity-50 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                 >
                   {isSubmitting || createMutation.isPending || updateMutation.isPending ? 'Saving...' : (editingId ? 'Update' : 'Create')}
                 </button>
@@ -397,11 +398,15 @@ export default function OfficeLocationsPage() {
               {locations.length === 0 && (
                 <tr>
                   <td colSpan={6}>
+                    {isError ? (
+                      <QueryErrorCard onRetry={() => void refetch()} retrying={isFetching}/>
+                    ) : (
                     <EmptyState
                       icon={<MapPin className="w-8 h-8"/>}
                       title="No office locations"
                       description="Add your first location to enable geofencing."
                     />
+                    )}
                   </td>
                 </tr>
               )}

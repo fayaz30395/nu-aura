@@ -10,6 +10,7 @@ import {
   EntityType,
 } from '@/lib/types/core/custom-fields';
 import CustomFieldRenderer from './CustomFieldRenderer';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 interface CustomFieldsSectionProps {
   entityType: EntityType;
@@ -20,7 +21,14 @@ interface CustomFieldsSectionProps {
   className?: string;
 }
 
-export default function CustomFieldsSection({
+// UI-011: roles without CUSTOM_FIELD:VIEW would get a 403 on every load, so render nothing for them.
+export default function CustomFieldsSection(props: CustomFieldsSectionProps) {
+  const {hasPermission, isPermissionReady} = usePermissions();
+  if (!isPermissionReady || !hasPermission(Permissions.CUSTOM_FIELD_VIEW)) return null;
+  return <CustomFieldsSectionInner {...props} />;
+}
+
+function CustomFieldsSectionInner({
                                               entityType,
                                               entityId,
                                               onChange,

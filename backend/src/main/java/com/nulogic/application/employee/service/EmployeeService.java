@@ -697,8 +697,16 @@ public class EmployeeService {
                 Employee.EmployeeLevel.CXO
         );
         List<Employee> managers = employeeRepository.findManagersByTenantId(tenantId, managerLevels);
+        // Picker DTO only: never expose personal/financial fields through this endpoint.
         return managers.stream()
-                .map(EmployeeResponse::fromEmployee)
+                .map(m -> EmployeeResponse.builder()
+                        .id(m.getId())
+                        .employeeCode(m.getEmployeeCode())
+                        .firstName(m.getFirstName())
+                        .lastName(m.getLastName())
+                        .fullName(m.getFullName())
+                        .designation(m.getDesignation())
+                        .build())
                 .collect(Collectors.toList());
     }
 

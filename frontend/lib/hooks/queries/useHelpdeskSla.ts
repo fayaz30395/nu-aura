@@ -93,8 +93,9 @@ export function useTicketMetrics(ticketId: string, enabled: boolean = true) {
 /**
  * Fetch SLA dashboard data
  */
-export function useSLADashboard() {
+export function useSLADashboard(enabled: boolean = true) {
   return useQuery({
+    enabled,
     queryKey: helpdeskSlaKeys.dashboard(),
     queryFn: () => helpdeskSLAService.getDashboard(),
     staleTime: 5 * 60 * 1000,

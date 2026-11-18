@@ -111,6 +111,12 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
             }
         }
 
+        if (request.getJobOpeningId() != null && request.getEmail() != null
+                && candidateRepository.existsByTenantIdAndJobOpeningIdAndEmailIgnoreCase(
+                tenantId, request.getJobOpeningId(), request.getEmail())) {
+            throw new IllegalArgumentException("A candidate with email " + request.getEmail() + " already exists for this job opening");
+        }
+
         // IDOR fix: validate jobOpeningId belongs to the current tenant before linking.
         if (request.getJobOpeningId() != null) {
             jobOpeningRepository.findByIdAndTenantId(request.getJobOpeningId(), tenantId)

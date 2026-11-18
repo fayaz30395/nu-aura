@@ -26,7 +26,10 @@ const preBoardingFormSchema = z.object({
   firstName: z.string().min(1, 'First name required'),
   lastName: z.string().optional().or(z.literal('')),
   email: z.string().email('Invalid email address'),
-  joiningDate: z.string().min(1, 'Joining date required'),
+  joiningDate: z.string().min(1, 'Joining date required').refine(
+    (d) => d >= new Date().toLocaleDateString('en-CA'),
+    'Joining date cannot be in the past',
+  ),
   designation: z.string().optional().or(z.literal('')),
 });
 

@@ -388,7 +388,7 @@ export default function LeaveTypesManagementPage() {
                     </button>
                     <button
                       onClick={() => handleToggleActive(leaveType)}
-                      className="text-warning-600 hover:text-warning-900 mr-4"
+                      className="text-warning-700 dark:text-warning-400 hover:text-warning-900 dark:hover:text-warning-300 mr-4"
                     >
                       {leaveType.isActive ? 'Deactivate' : 'Activate'}
                     </button>

@@ -97,14 +97,14 @@ export function EmptyState({
         )}
 
         {/* Title */}
-        <h3
+        <h2
           className={cn(
             'font-semibold text-center max-w-xs text-[var(--text-primary)]',
             isCompact ? 'text-sm mb-1' : 'text-base mb-1'
           )}
         >
           {title}
-        </h3>
+        </h2>
 
         {/* Description */}
         {description && (

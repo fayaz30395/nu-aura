@@ -12,6 +12,7 @@ import com.nulogic.domain.audit.AuditLog.AuditAction;
 import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.domain.user.RoleScope;
+import com.nulogic.infrastructure.employee.repository.DepartmentRepository;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.recruitment.repository.CandidateRepository;
 import com.nulogic.infrastructure.recruitment.repository.JobOpeningRepository;
@@ -36,6 +37,7 @@ public class JobOpeningService {
     private final JobOpeningRepository jobOpeningRepository;
     private final CandidateRepository candidateRepository;
     private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
     private final DataScopeService dataScopeService;
     private final AuditLogService auditLogService;
     private final TenantTimeService tenantTimeService;
@@ -51,12 +53,7 @@ public class JobOpeningService {
         if (jobCode == null || jobCode.isBlank()) {
             jobCode = generateUniqueJobCode(tenantId);
         } else if (jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, jobCode)) {
-            // Provided code collides — append suffix to make it unique
-            String base = jobCode;
-            int suffix = 2;
-            while (jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, jobCode)) {
-                jobCode = base + "-" + suffix++;
-            }
+            throw new IllegalArgumentException("Job opening with code " + jobCode + " already exists");
         }
         log.info("Creating job opening {} for tenant {}", jobCode, tenantId);
         request.setJobCode(jobCode);
@@ -219,7 +216,11 @@ public class JobOpeningService {
             }
         }
 
-        return page.map(jo -> mapToJobOpeningResponseBatch(jo, managerNames, candidateCounts));
+        return page.map(jo -> {
+            JobOpeningResponse r = mapToJobOpeningResponseBatch(jo, managerNames, candidateCounts);
+            r.setDepartmentName(departmentName(jo.getDepartmentId()));
+            return r;
+        });
     }
 
     private JobOpeningResponse mapToJobOpeningResponseBatch(JobOpening jobOpening,
@@ -279,6 +280,11 @@ public class JobOpeningService {
         jobOpeningRepository.delete(jobOpening);
     }
 
+    private String departmentName(UUID departmentId) {
+        return departmentId == null ? null
+                : departmentRepository.findById(departmentId).map(d -> d.getName()).orElse(null);
+    }
+
     // ==================== Mapper ====================
 
     JobOpeningResponse mapToJobOpeningResponse(JobOpening jobOpening) {
@@ -298,7 +304,7 @@ public class JobOpeningService {
                 .jobCode(jobOpening.getJobCode())
                 .jobTitle(jobOpening.getJobTitle())
                 .departmentId(jobOpening.getDepartmentId())
-                .departmentName(null)
+                .departmentName(departmentName(jobOpening.getDepartmentId()))
                 .location(jobOpening.getLocation())
                 .employmentType(jobOpening.getEmploymentType())
                 .experienceRequired(jobOpening.getExperienceRequired())

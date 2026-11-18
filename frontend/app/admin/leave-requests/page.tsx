@@ -274,7 +274,7 @@ export default function AdminLeaveRequestsPage() {
                             setSelectedRequest(request);
                             setShowApproveModal(true);
                           }}
-                          className="text-success-600 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                          className="text-success-700 dark:text-success-400 hover:text-success-900 dark:hover:text-success-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                         >
                           Approve
                         </button>

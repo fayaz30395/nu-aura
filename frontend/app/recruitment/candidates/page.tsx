@@ -22,6 +22,7 @@ import {
   CreateOfferRequest
 } from '@/lib/types/hire/recruitment';
 import {Plus, Sparkles, Users} from 'lucide-react';
+import {QueryErrorCard} from '@/components/ui/QueryState';
 import {recruitmentService} from '@/lib/services/hire/recruitment.service';
 import {
   useCalculateMatchScore,
@@ -172,7 +173,7 @@ function CandidatesPage() {
 
   // ==================== Queries & Mutations ====================
 
-  const {data: candidatesData, isLoading: candidatesLoading, refetch: refetchCandidates} = useCandidates(0, 100);
+  const {data: candidatesData, isLoading: candidatesLoading, isError: candidatesError, isFetching: candidatesFetching, refetch: refetchCandidates} = useCandidates(0, 100);
   const {data: jobOpeningsData} = useJobOpenings(0, 100);
   const createCandidateMutation = useCreateCandidate();
   const updateCandidateMutation = useUpdateCandidate();
@@ -689,7 +690,9 @@ function CandidatesPage() {
                 />
               </div>
             }
-            emptyState={
+            emptyState={candidatesError && !candidatesData ? (
+              <QueryErrorCard onRetry={() => void refetchCandidates()} retrying={candidatesFetching}/>
+            ) : (
               <EmptyState
                 icon={<Users className="h-12 w-12" />}
                 title="No candidates found"
@@ -700,7 +703,7 @@ function CandidatesPage() {
                   setShowAddModal(true);
                 }}
               />
-            }
+            )}
             renderRowActions={(candidate) => (
               <CandidateRowActions
                 candidate={candidate}

@@ -56,7 +56,7 @@ function GapDetails({gaps}: {gaps: SkillGapDetail[]}) {
   );
 }
 
-export function GapAnalysisPanel({gapQuery}: {gapQuery: UseQueryResult<SkillGapReport>}) {
+export function GapAnalysisPanel({gapQuery}: {gapQuery: UseQueryResult<SkillGapReport, unknown>}) {
   return (
     <Card as="section" className={PANEL_CLASS}>
       <h2 className="text-base font-semibold text-text-1">Gap Analysis</h2>

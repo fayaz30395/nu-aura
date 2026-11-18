@@ -246,9 +246,9 @@ export default function RegularizationPage() {
 
         <Tabs value={section} onChange={(v) => v && setSection(v as typeof section)}>
           <Tabs.List>
-            <Tabs.Tab value="wfh">Work From Home / On Duty</Tabs.Tab>
-            <Tabs.Tab value="regularization">Regularization</Tabs.Tab>
-            <Tabs.Tab value="remote">Remote Clock-in</Tabs.Tab>
+            <Tabs.Tab aria-controls={undefined} value="wfh">Work From Home / On Duty</Tabs.Tab>
+            <Tabs.Tab aria-controls={undefined} value="regularization">Regularization</Tabs.Tab>
+            <Tabs.Tab aria-controls={undefined} value="remote">Remote Clock-in</Tabs.Tab>
           </Tabs.List>
         </Tabs>
 

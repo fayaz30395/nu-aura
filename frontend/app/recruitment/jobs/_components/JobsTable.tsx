@@ -10,8 +10,10 @@ import {PRIORITY_OPTIONS, PRIORITY_TONE} from './job-options';
 const priorityLabel = (value: string) => PRIORITY_OPTIONS.find((o) => o.value === value)?.label ?? value;
 
 function salaryRange(job: JobOpening): string {
+  // 0 means "not set" (the API stores 0 when no salary is given).
   if (job.minSalary && job.maxSalary) return `${job.minSalary.toLocaleString()} – ${job.maxSalary.toLocaleString()}`;
-  return job.minSalary?.toLocaleString() || job.maxSalary?.toLocaleString() || '—';
+  const single = job.minSalary || job.maxSalary;
+  return single ? single.toLocaleString() : '—';
 }
 
 const COLUMNS: Column<JobOpening>[] = [

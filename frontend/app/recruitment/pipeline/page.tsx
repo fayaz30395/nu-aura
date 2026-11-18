@@ -37,7 +37,7 @@ import {QueryErrorCard} from '@/components/ui/QueryState';
 import type {StatusTone} from '@/lib/status/vocabulary';
 import {applicantService} from '@/lib/services/hire/applicant.service';
 import {useQueryClient} from '@tanstack/react-query';
-import {useJobOpenings} from '@/lib/hooks/queries/useRecruitment';
+import {useCandidates, useJobOpenings} from '@/lib/hooks/queries/useRecruitment';
 import {applicantKeys, usePipelineByJob} from '@/lib/hooks/queries/useApplicants';
 import type {Applicant, ApplicantRequest, ApplicantStatusUpdate, PipelineData,} from '@/lib/types/hire/applicant';
 import {ApplicationSource, ApplicationStatus,} from '@/lib/types/hire/applicant';
@@ -190,7 +190,7 @@ const getDaysSince = (dateStr?: string | null): number | null => {
   const date = new Date(dateStr);
   if (isNaN(date.getTime())) return null;
   const diff = Date.now() - date.getTime();
-  return Math.floor(diff / (1000 * 60 * 60 * 24));
+  return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
 };
 
 const getTimeInStage = (dateStr?: string | null): string => {
@@ -509,6 +509,8 @@ export default function ApplicantPipelinePage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const jobOpeningsQuery = useJobOpenings(0, 200);
+  const candidatesQuery = useCandidates(0, 200);
+  const candidateOptions = candidatesQuery.data?.content ?? [];
   const [selectedJobId, setSelectedJobId] = useState<string>('');
   // Default to the first job opening without an extra render cycle: derive the
   // effective id directly so usePipelineByJob can fire as soon as the job list
@@ -584,7 +586,7 @@ export default function ApplicantPipelinePage() {
 
   const handleAddApplicant = async () => {
     if (!newApplicant.candidateId.trim()) {
-      setAddError('Candidate ID is required');
+      setAddError('Please select a candidate');
       return;
     }
     if (!newApplicant.jobOpeningId) {
@@ -1133,12 +1135,23 @@ export default function ApplicantPipelinePage() {
                 </div>
               )}
 
-              <Input
-                label="Candidate ID *"
-                placeholder="Enter candidate ID"
-                value={newApplicant.candidateId}
-                onChange={e => setNewApplicant(prev => ({...prev, candidateId: e.target.value}))}
-              />
+              <div>
+                <label htmlFor="applicant-candidate" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">
+                  Candidate *
+                </label>
+                <Select
+                  id="applicant-candidate"
+                  value={newApplicant.candidateId}
+                  onChange={e => setNewApplicant(prev => ({...prev, candidateId: e.target.value}))}
+                >
+                  <option value="">Select candidate</option>
+                  {candidateOptions.map(c => (
+                    <option key={c.id} value={c.id}>
+                      {c.fullName || `${c.firstName} ${c.lastName}`} ({c.email})
+                    </option>
+                  ))}
+                </Select>
+              </div>
 
               <div>
                 <label htmlFor="applicant-job-opening" className="block text-sm font-medium text-[var(--text-secondary)] mb-1.5">

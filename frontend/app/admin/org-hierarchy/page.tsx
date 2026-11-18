@@ -244,9 +244,8 @@ export default function OrgHierarchyPage() {
                   )}
                 </div>
                 {hasSubordinates && (
-                  <button
-                    aria-label={isExpanded ? 'Collapse' : 'Expand'}
-                    aria-expanded={isExpanded}
+                  <span
+                    aria-hidden="true"
                     className="ml-2 flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full hover:bg-white/30 dark:hover:bg-white/10 transition-colors"
                   >
                     <svg
@@ -258,7 +257,7 @@ export default function OrgHierarchyPage() {
                             d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                             clipRule="evenodd"/>
                     </svg>
-                  </button>
+                  </span>
                 )}
               </div>
 

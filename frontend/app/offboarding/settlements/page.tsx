@@ -74,7 +74,7 @@ export default function SettlementApprovalQueuePage() {
         <Stack gap="lg" p="md">
           <Group justify="space-between" align="flex-start">
             <div>
-              <Title order={2} className="text-[var(--text-primary)]">Settlement Approvals</Title>
+              <Title order={1} className="text-[var(--text-primary)]">Settlement Approvals</Title>
               <Text size="sm" c="dimmed">Full &amp; Final settlements awaiting approval</Text>
             </div>
             <Button variant="subtle" leftSection={<IconRefresh size={16}/>} onClick={() => refetch()} className="cursor-pointer">

@@ -4,7 +4,7 @@ import {useCallback, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {SkeletonCard, SkeletonTable} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -67,8 +67,11 @@ export default function ReferralsPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Queries
-  const {data: myReferrals = [], isLoading: isMyLoading} = useMyReferrals();
-  const {data: allReferralsData, isLoading: isAllLoading} = useAllReferrals(managePage, 20);
+  const {hasPermission} = usePermissions();
+  const canManage = hasPermission(Permissions.REFERRAL_MANAGE);
+  const {data: myReferrals = [], isLoading: isMyLoading} = useMyReferrals(hasPermission(Permissions.REFERRAL_VIEW));
+  // The list-all endpoint needs REFERRAL:MANAGE; employees would get a 403 on every load.
+  const {data: allReferralsData, isLoading: isAllLoading} = useAllReferrals(managePage, 20, canManage);
   const {data: policies = [], isLoading: isPoliciesLoading} = useActivePolicies();
   const {data: dashboard, isLoading: _isDashLoading} = useReferralDashboard();
 

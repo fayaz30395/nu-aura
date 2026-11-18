@@ -8,10 +8,13 @@ const optionalUuid = z
   .optional()
   .refine(
     (val) => !val || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val),
-    'Invalid ID format'
+    'Please select a valid option'
   );
-const requiredUuid = z.string().uuid('Invalid ID format');
-const optionalNumber = z.coerce.number().optional();
+const requiredUuid = z.string().uuid('Please select a valid option');
+// Empty inputs registered with valueAsNumber arrive as NaN; treat them as "not provided".
+const emptyToUndefined = (v: unknown) =>
+  v === '' || v === null || (typeof v === 'number' && Number.isNaN(v)) ? undefined : v;
+const optionalNumber = z.preprocess(emptyToUndefined, z.coerce.number().optional());
 const optionalUrl = z
   .string()
   .optional()
@@ -25,7 +28,7 @@ const optionalUrl = z
 export const createJobOpeningSchema = z.object({
   jobCode: z.string().min(1, 'Job code is required').max(50),
   jobTitle: z.string().min(1, 'Job title is required').max(200),
-  departmentId: z.string().min(1, 'Department is required').uuid('Invalid ID format'),
+  departmentId: z.string().min(1, 'Department is required').uuid('Please select a valid option'),
   location: optionalString,
   employmentType: z
     .enum(['FULL_TIME', 'PART_TIME', 'CONTRACT', 'TEMPORARY', 'INTERNSHIP'])
@@ -43,7 +46,10 @@ export const createJobOpeningSchema = z.object({
   closingDate: optionalString,
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
   isActive: z.boolean().optional(),
-});
+}).refine(
+  (d) => d.minSalary == null || d.maxSalary == null || d.minSalary <= d.maxSalary,
+  {message: 'Minimum salary cannot exceed maximum salary', path: ['maxSalary']}
+);
 
 export type CreateJobOpeningFormData = z.infer<typeof createJobOpeningSchema>;
 
@@ -68,7 +74,7 @@ export const createCandidateSchema = z.object({
   totalExperience: optionalNumber,
   currentCtc: optionalNumber,
   expectedCtc: optionalNumber,
-  noticePeriodDays: z.coerce.number().min(0).max(365).optional(),
+  noticePeriodDays: z.preprocess(emptyToUndefined, z.coerce.number().min(0, 'Must be 0 or more').max(365, 'Must be 365 or less').optional()),
   resumeUrl: optionalUrl,
   source: z
     .enum([
@@ -136,7 +142,7 @@ export const createInterviewSchema = z.object({
   status: z
     .enum(['SCHEDULED', 'RESCHEDULED', 'COMPLETED', 'CANCELLED', 'NO_SHOW'])
     .optional(),
-  feedback: optionalString,
+  feedback: z.string().nullish(),
   rating: z.coerce.number().min(1).max(5).optional(),
   result: z.enum(['SELECTED', 'REJECTED', 'ON_HOLD', 'PENDING']).optional(),
   notes: optionalString,

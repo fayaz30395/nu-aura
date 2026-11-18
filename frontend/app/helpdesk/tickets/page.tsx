@@ -309,7 +309,7 @@ export default function TicketListPage() {
           </Card>
         ) : (
           <Card className="p-0 overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tickets table">
               <table className="w-full">
                 <thead>
                 <tr className="border-b border-[var(--border-main)] bg-[var(--bg-surface)]">

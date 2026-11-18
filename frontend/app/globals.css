@@ -2383,3 +2383,7 @@ button[class*="-calendarHeaderLevel"] {
   box-shadow: var(--sh-overlay);
   border-radius: var(--radius-md);
 }
+
+/* Toast host must not intercept clicks on the page beneath it; individual toasts stay interactive. */
+.mantine-Notifications-root { pointer-events: none; }
+.mantine-Notifications-root .mantine-Notification-root { pointer-events: auto; }

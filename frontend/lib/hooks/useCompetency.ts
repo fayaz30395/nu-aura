@@ -198,7 +198,11 @@ export function useSkillGapAnalysis(employeeId: string) {
     queryFn: () => skillGapService.analyze(employeeId),
     enabled: !!employeeId,
     staleTime: 10 * 60 * 1000,
-    retry: 2,
+    // 4xx (e.g. 403) will not succeed on retry
+    retry: (count: number, error: unknown) => {
+      const status = (error as {response?: {status?: number}})?.response?.status;
+      return !(status && status >= 400 && status < 500) && count < 2;
+    },
     retryDelay: (attemptIndex: number) => Math.min(1000 * 2 ** attemptIndex, 10000),
   });
 }

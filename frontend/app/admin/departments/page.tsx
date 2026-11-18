@@ -261,7 +261,7 @@ export default function DepartmentsPage() {
             />
           </div>
         ) : (
-          <Reveal className="card-aura overflow-hidden">
+          <Reveal className="card-aura overflow-x-auto">
             <table className="table-aura w-full text-sm">
               <thead>
               <tr className="border-b border-[var(--border-subtle)]">

@@ -641,10 +641,13 @@ export default function OneOnOnePage() {
               {/* Detail Tabs */}
               <div
                 className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] skeuo-card">
-                <div className="flex border-b border-[var(--border-main)]">
+                <div role="tablist" aria-label="Meeting details" className="flex border-b border-[var(--border-main)]">
                   {(['agenda', 'actions', 'notes', 'feedback'] as const).map((tab) => (
                     <button
                       key={tab}
+                      type="button"
+                      role="tab"
+                      aria-selected={detailTab === tab}
                       onClick={() => setDetailTab(tab)}
                       className={`flex-1 px-4 py-4 text-sm font-medium transition-colors capitalize ${
                         detailTab === tab
@@ -1679,7 +1682,7 @@ export default function OneOnOnePage() {
         {/* Tabs + Filters */}
         <div
           className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] shadow-[var(--shadow-card)] skeuo-card mb-6">
-          <div className="flex border-b border-[var(--border-main)]">
+          <div role="tablist" aria-label="Meeting views" className="flex border-b border-[var(--border-main)]">
             {([
               {key: 'upcoming', label: 'Upcoming'},
               {key: 'all', label: 'All Meetings'},
@@ -1688,6 +1691,9 @@ export default function OneOnOnePage() {
             ] as const).map((tab) => (
               <button
                 key={tab.key}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab.key}
                 onClick={() => {
                   setActiveTab(tab.key);
                   setPage(0);

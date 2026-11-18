@@ -747,6 +747,11 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.RECRUITMENT_VIEW, Permissions.RECRUITMENT_MANAGE],
   },
   {
+    path: '/recruitment/career-page',
+    anyPermission: [Permissions.RECRUITMENT_MANAGE, Permissions.RECRUITMENT_CREATE],
+    anyRole: ['SUPER_ADMIN', 'TENANT_ADMIN', 'HR_ADMIN', 'HR_MANAGER', 'RECRUITMENT_ADMIN'],
+  },
+  {
     path: '/recruitment/job-boards',
     anyPermission: [Permissions.RECRUITMENT_MANAGE, Permissions.SYSTEM_ADMIN],
   },
@@ -976,7 +981,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   // Employee referrals
   {
     path: '/referrals',
-    anyPermission: [Permissions.REFERRAL_VIEW, Permissions.REFERRAL_CREATE],
+    anyPermission: [Permissions.REFERRAL_VIEW, Permissions.REFERRAL_CREATE, Permissions.REFERRAL_MANAGE],
   },
 
   // Restricted holidays

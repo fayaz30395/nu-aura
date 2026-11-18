@@ -46,6 +46,8 @@ export function getQueryClient(): QueryClient {
             if (typeof status === 'number' && TERMINAL_4XX.includes(status)) return false;
             return failureCount < 1;
           },
+          // Q-010: one retry after 500ms so a failing API surfaces its error in a few seconds.
+          retryDelay: 500,
           refetchOnWindowFocus: false,
         },
         mutations: {

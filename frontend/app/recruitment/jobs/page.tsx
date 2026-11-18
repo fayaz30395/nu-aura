@@ -92,6 +92,11 @@ export default function JobOpeningsPage() {
   };
 
   const onSubmit = async (data: CreateJobOpeningFormData) => {
+    // Only for new jobs: editing a job that has already passed its closing date must still save.
+    if (!editingJob && data.closingDate && data.closingDate < new Date().toLocaleDateString('en-CA')) {
+      form.setError('closingDate', {message: 'Closing date cannot be in the past'});
+      return;
+    }
     try {
       const payload: CreateJobOpeningRequest = {
         jobCode: data.jobCode ?? '',

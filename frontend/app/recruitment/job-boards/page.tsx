@@ -102,7 +102,7 @@ export default function JobBoardsPage() {
   const {data: openJobs} = useQuery<{ content: JobOpening[] }>({
     queryKey: ['jobs', 'open'],
     queryFn: async (): Promise<{ content: JobOpening[] }> => {
-      const response = await apiClient.get<{ content: JobOpening[] }>('/recruitment/jobs?status=OPEN');
+      const response = await apiClient.get<{ content: JobOpening[] }>('/recruitment/job-openings/status/OPEN');
       return response.data;
     },
   });

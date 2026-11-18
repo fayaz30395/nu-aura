@@ -38,6 +38,34 @@ import {
   WikiSpace,
 } from '../../types/platform/fluence';
 
+// Backend stores editor content as a JSON string; the UI works with the parsed object.
+interface FluenceDocumentDto {
+  contentId: string;
+  contentType?: string;
+  title: string;
+  excerpt?: string;
+  authorName?: string;
+  updatedAt?: string | number;
+}
+
+function parseContent<T extends {content?: unknown}>(item: T): T {
+  if (typeof item.content !== 'string') return item;
+  try {
+    return {...item, content: JSON.parse(item.content)};
+  } catch {
+    return item; // legacy plain-text content
+  }
+}
+
+// Backend DTOs declare content as String and categoryId as UUID: stringify content, drop empty ids.
+function serializeContent<T extends {content?: unknown; categoryId?: string}>(data: T) {
+  return {
+    ...data,
+    ...(data.content !== undefined && typeof data.content !== 'string' && {content: JSON.stringify(data.content)}),
+    ...('categoryId' in data && {categoryId: data.categoryId || undefined}),
+  };
+}
+
 class FluenceService {
   // ─── Wiki Pages ─────────────────────────────────────────────────────────────
 
@@ -63,14 +91,14 @@ class FluenceService {
 
   async getWikiPage(id: string): Promise<WikiPage> {
     const response = await apiClient.get<WikiPage>(`/knowledge/wiki/pages/${id}`);
-    return response.data;
+    return parseContent(response.data);
   }
 
   async getWikiPageBySlug(spaceId: string, slug: string): Promise<WikiPage> {
     const response = await apiClient.get<WikiPage>(
       `/knowledge/wiki/spaces/${spaceId}/pages/${slug}`
     );
-    return response.data;
+    return parseContent(response.data);
   }
 
   async createWikiPage(data: CreateWikiPageRequest): Promise<WikiPage> {
@@ -236,21 +264,21 @@ class FluenceService {
 
   async getBlogPost(id: string): Promise<BlogPost> {
     const response = await apiClient.get<BlogPost>(`/knowledge/blogs/${id}`);
-    return response.data;
+    return parseContent(response.data);
   }
 
   async getBlogPostBySlug(slug: string): Promise<BlogPost> {
     const response = await apiClient.get<BlogPost>(`/knowledge/blogs/slug/${slug}`);
-    return response.data;
+    return parseContent(response.data);
   }
 
   async createBlogPost(data: CreateBlogPostRequest): Promise<BlogPost> {
-    const response = await apiClient.post<BlogPost>('/knowledge/blogs', data);
+    const response = await apiClient.post<BlogPost>('/knowledge/blogs', serializeContent(data));
     return response.data;
   }
 
   async updateBlogPost(id: string, data: UpdateBlogPostRequest): Promise<BlogPost> {
-    const response = await apiClient.put<BlogPost>(`/knowledge/blogs/${id}`, data);
+    const response = await apiClient.put<BlogPost>(`/knowledge/blogs/${id}`, serializeContent(data));
     return response.data;
   }
 
@@ -356,11 +384,11 @@ class FluenceService {
 
   async getTemplate(id: string): Promise<DocumentTemplate> {
     const response = await apiClient.get<DocumentTemplate>(`/knowledge/templates/${id}`);
-    return response.data;
+    return parseContent(response.data);
   }
 
   async createTemplate(data: CreateTemplateRequest): Promise<DocumentTemplate> {
-    const response = await apiClient.post<DocumentTemplate>('/knowledge/templates', data);
+    const response = await apiClient.post<DocumentTemplate>('/knowledge/templates', serializeContent(data));
     return response.data;
   }
 
@@ -368,7 +396,7 @@ class FluenceService {
     id: string,
     data: UpdateTemplateRequest
   ): Promise<DocumentTemplate> {
-    const response = await apiClient.put<DocumentTemplate>(`/knowledge/templates/${id}`, data);
+    const response = await apiClient.put<DocumentTemplate>(`/knowledge/templates/${id}`, serializeContent(data));
     return response.data;
   }
 
@@ -457,15 +485,28 @@ class FluenceService {
   ): Promise<FluenceSearchResponse> {
     const params: Record<string, unknown> = {query, page, size};
     if (type) {
-      params.type = type;
+      params.contentType = type.toLowerCase();
     }
     if (visibility) {
       params.visibility = visibility;
     }
-    const response = await apiClient.get<FluenceSearchResponse>('/fluence/search', {
-      params,
-    });
-    return response.data;
+    const started = Date.now();
+    // Backend returns a Spring Page of FluenceDocument; map it to the UI's result shape.
+    const response = await apiClient.get<Page<FluenceDocumentDto>>('/fluence/search', {params});
+    const results: FluenceSearchResponse['results'] = (response.data?.content ?? []).map((d) => ({
+      id: d.contentId,
+      type: (d.contentType ?? 'wiki').toLowerCase() as FluenceSearchResponse['results'][number]['type'],
+      title: d.title,
+      excerpt: d.excerpt,
+      author: d.authorName,
+      updatedAt: d.updatedAt != null ? new Date(d.updatedAt).toISOString() : '',
+    }));
+    return {
+      results,
+      totalCount: response.data?.totalElements ?? results.length,
+      query,
+      executionTimeMs: Date.now() - started,
+    };
   }
 
   // ─── View Tracking ────────────────────────────────────────────────────────

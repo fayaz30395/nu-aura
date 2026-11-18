@@ -41,6 +41,9 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 
+// Blank inputs/selects arrive as '' and must count as "not provided", not as a failed value.
+const blankToUndefined = (v: unknown) => (v === '' || v === null ? undefined : v);
+
 const agencySchema = z.object({
   name: z.string().min(1, 'Agency name is required').max(200),
   contactPerson: z.string().optional(),
@@ -48,14 +51,14 @@ const agencySchema = z.object({
   phone: z.string().optional(),
   website: z.string().optional(),
   address: z.string().optional(),
-  feeType: z.enum(['FIXED', 'PERCENTAGE', 'RETAINER']).optional(),
-  feeAmount: z.coerce.number().min(0).optional(),
+  feeType: z.preprocess(blankToUndefined, z.enum(['FIXED', 'PERCENTAGE', 'RETAINER']).optional()),
+  feeAmount: z.preprocess(blankToUndefined, z.coerce.number().min(0, 'Must be 0 or more').optional()),
   contractStartDate: z.string().optional(),
   contractEndDate: z.string().optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'BLACKLISTED', 'PENDING_APPROVAL']).optional(),
+  status: z.preprocess(blankToUndefined, z.enum(['ACTIVE', 'INACTIVE', 'BLACKLISTED', 'PENDING_APPROVAL']).optional()),
   specializations: z.string().optional(),
   notes: z.string().optional(),
-  rating: z.coerce.number().min(1).max(5).optional(),
+  rating: z.preprocess(blankToUndefined, z.coerce.number().min(1, 'Rating is 1 to 5').max(5, 'Rating is 1 to 5').optional()),
 });
 
 type AgencyFormValues = z.infer<typeof agencySchema>;

@@ -33,6 +33,12 @@ public class WikiSpaceController {
     private final WikiSpaceApprovalService wikiSpaceApprovalService;
     private final SpacePermissionService spacePermissionService;
 
+    private WikiSpaceDto toDtoWithCount(WikiSpace space) {
+        WikiSpaceDto dto = WikiSpaceDto.fromEntity(space);
+        dto.setPageCount(wikiSpaceService.getPageCountBySpace(space.getId()));
+        return dto;
+    }
+
     @PostMapping
     @Operation(summary = "Create wiki space")
     @ApiResponses.Created
@@ -62,7 +68,7 @@ public class WikiSpaceController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
     public ResponseEntity<WikiSpaceDto> getSpaceById(@PathVariable UUID spaceId) {
         WikiSpace space = wikiSpaceService.getSpaceById(spaceId);
-        return ResponseEntity.ok(WikiSpaceDto.fromEntity(space));
+        return ResponseEntity.ok(toDtoWithCount(space));
     }
 
     @GetMapping
@@ -71,7 +77,7 @@ public class WikiSpaceController {
     @RequiresPermission(Permission.KNOWLEDGE_WIKI_READ)
     public ResponseEntity<Page<WikiSpaceDto>> getAllSpaces(Pageable pageable) {
         Page<WikiSpace> spaces = wikiSpaceService.getAllSpaces(pageable);
-        return ResponseEntity.ok(spaces.map(WikiSpaceDto::fromEntity));
+        return ResponseEntity.ok(spaces.map(this::toDtoWithCount));
     }
 
     @GetMapping("/active")
@@ -82,7 +88,7 @@ public class WikiSpaceController {
         List<WikiSpace> spaces = wikiSpaceService.getActiveSpaces();
         return ResponseEntity.ok(
                 spaces.stream()
-                        .map(WikiSpaceDto::fromEntity)
+                        .map(this::toDtoWithCount)
                         .collect(Collectors.toList())
         );
     }

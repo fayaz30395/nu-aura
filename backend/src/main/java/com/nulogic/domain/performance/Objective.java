@@ -124,7 +124,11 @@ public class Objective extends TenantAware {
     }
 
     private void updateStatus() {
-        if (this.status == ObjectiveStatus.COMPLETED || this.status == ObjectiveStatus.CANCELLED) {
+        if (this.status == ObjectiveStatus.CANCELLED) {
+            return;
+        }
+        // A COMPLETED objective stays completed only while progress is still 100% (lowering a key result reopens it).
+        if (this.status == ObjectiveStatus.COMPLETED && this.progressPercentage.compareTo(BigDecimal.valueOf(100)) >= 0) {
             return;
         }
 

@@ -336,7 +336,7 @@ export default function WorkflowListPage() {
         ) : (
           <Reveal>
             {/* Table */}
-            <div className="overflow-hidden rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)]">
+            <div className="overflow-x-auto rounded-[var(--r-lg)] border border-[var(--border-soft)] bg-[var(--surface)]">
               <table className="w-full text-left text-sm">
                 <thead>
                 <tr className="border-b border-[var(--border-soft)] bg-[var(--surface-hover)]">

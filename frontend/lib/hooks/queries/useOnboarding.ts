@@ -30,10 +30,11 @@ export const onboardingKeys = {
 /**
  * Fetch paginated onboarding processes
  */
-export function useOnboardingProcesses(page: number = 0, size: number = 20) {
+export function useOnboardingProcesses(page: number = 0, size: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: onboardingKeys.processesPaginated(page, size),
     queryFn: () => onboardingService.getAllProcesses(page, size),
+    enabled,
   });
 }
 

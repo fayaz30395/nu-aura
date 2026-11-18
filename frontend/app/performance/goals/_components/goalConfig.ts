@@ -45,10 +45,10 @@ export function goalToForm(goal: Goal): DefaultValues<GoalFormData> {
     goalType: goal.goalType,
     targetValue: goal.targetValue,
     currentValue: goal.currentValue,
-    unit: goal.unit,
+    unit: goal.measurementUnit ?? goal.unit ?? '',
     status: goal.status,
     startDate: goal.startDate,
-    endDate: goal.endDate,
+    endDate: goal.dueDate ?? goal.endDate ?? '',
   };
 }
 

@@ -10,8 +10,10 @@ import {Calendar} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
+import {Modal} from '@mantine/core';
 import {PageTransition, Reveal} from '@/components/motion';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryErrorCard} from '@/components/ui/QueryState';
 import {formatWeekday} from '@/lib/utils/format/date';
 import {format} from 'date-fns';
 import {
@@ -50,7 +52,7 @@ export default function HolidayCalendarManagementPage() {
   const [holidayToDelete, setHolidayToDelete] = useState<Holiday | null>(null);
 
   // React Query hooks
-  const {data: holidays = [], isLoading, error: queryError} = useHolidaysByYear(selectedYear);
+  const {data: holidays = [], isLoading, isError: isHolidaysError, refetch: refetchHolidays, isFetching: holidaysFetching} = useHolidaysByYear(selectedYear);
   const createMutation = useCreateHoliday();
   const updateMutation = useUpdateHoliday();
   const deleteMutation = useDeleteHoliday();
@@ -143,6 +145,12 @@ export default function HolidayCalendarManagementPage() {
       applicableLocations: '',
       applicableDepartments: '',
     });
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingHoliday(null);
+    resetForm();
   };
 
   const handleEdit = (holiday: Holiday) => {
@@ -259,10 +267,10 @@ export default function HolidayCalendarManagementPage() {
         </Reveal>
 
         {/* Error Message */}
-        {(uiError || queryError) && (
+        {uiError && (
           <div
             className="mb-4 bg-danger-50 dark:bg-danger-900/30 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 px-4 py-4 rounded relative">
-            <span className="block sm:inline">{uiError || (queryError as Error)?.message || 'An error occurred'}</span>
+            <span className="block sm:inline">{uiError}</span>
             <button
               onClick={() => setUiError(null)}
               className="absolute top-0 bottom-0 right-0 px-4 py-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -305,6 +313,8 @@ export default function HolidayCalendarManagementPage() {
             <div className="px-6 py-12 text-center text-[var(--text-muted)]">
               Loading holidays for {selectedYear}...
             </div>
+          ) : isHolidaysError && holidays.length === 0 ? (
+            <QueryErrorCard onRetry={() => void refetchHolidays()} retrying={holidaysFetching}/>
           ) : holidays.length === 0 ? (
             <EmptyState
               icon={<Calendar className="h-8 w-8"/>}
@@ -403,27 +413,14 @@ export default function HolidayCalendarManagementPage() {
         />
 
         {/* Add/Edit Holiday Modal */}
-        {showModal && (
-          <div className="fixed inset-0 glass-aura !rounded-none flex items-center justify-center p-4 z-50">
-            <div className="skeuo-card max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-[var(--text-primary)]">
-                    {editingHoliday ? 'Edit Holiday' : 'Add New Holiday'}
-                  </h2>
-                  <button
-                    onClick={() => {
-                      setShowModal(false);
-                      setEditingHoliday(null);
-                      resetForm();
-                    }}
-                    className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] dark:hover:text-[var(--text-muted)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    aria-label="Close dialog"
-                  >
-                    <span className="text-2xl">&times;</span>
-                  </button>
-                </div>
-
+        <Modal
+          opened={showModal}
+          onClose={closeModal}
+          title={editingHoliday ? 'Edit Holiday' : 'Add New Holiday'}
+          size="xl"
+          centered
+        >
+              <div>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                   {/* Basic Information */}
                   <div>
@@ -558,11 +555,7 @@ export default function HolidayCalendarManagementPage() {
                   <div className="flex justify-end space-x-4">
                     <button
                       type="button"
-                      onClick={() => {
-                        setShowModal(false);
-                        setEditingHoliday(null);
-                        resetForm();
-                      }}
+                      onClick={closeModal}
                       className="btn-secondary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
                     >
                       Cancel
@@ -577,9 +570,7 @@ export default function HolidayCalendarManagementPage() {
                   </div>
                 </form>
               </div>
-            </div>
-          </div>
-        )}
+        </Modal>
         </div>
       </div>
     </PageTransition>

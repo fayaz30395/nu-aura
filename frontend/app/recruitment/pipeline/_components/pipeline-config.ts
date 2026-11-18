@@ -105,7 +105,8 @@ export const getDaysSince = (dateStr?: string | null): number | null => {
   if (!dateStr) return null;
   const date = new Date(dateStr);
   if (isNaN(date.getTime())) return null;
-  return Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
+  // Clamp: server clock/date-only values can be slightly ahead of the browser.
+  return Math.max(0, Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24)));
 };
 
 export const getTimeInStage = (dateStr?: string | null): string => {

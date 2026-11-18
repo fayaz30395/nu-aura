@@ -1,5 +1,6 @@
 'use client';
 
+import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {useForm} from 'react-hook-form';
@@ -29,6 +30,7 @@ type TemplateFormData = z.infer<typeof templateFormSchema>;
 
 export default function NewTemplatePage() {
   const router = useRouter();
+  const [created, setCreated] = useState(false);
   const {register, handleSubmit, formState: {errors, isSubmitting, isDirty}} = useForm<TemplateFormData>({
     resolver: zodResolver(templateFormSchema),
     defaultValues: {
@@ -37,12 +39,14 @@ export default function NewTemplatePage() {
     },
   });
 
-  useUnsavedChanges(isDirty);
+  useUnsavedChanges(isDirty && !created);
 
   const onSubmit = async (data: TemplateFormData) => {
     try {
       const template = await onboardingService.createTemplate({name: data.name, description: data.description});
-      router.push(`/onboarding/templates/${template.id}`);
+      // Block a second submit (duplicate template) while the route change is in flight.
+      setCreated(true);
+      router.replace(`/onboarding/templates/${template.id}`);
     } catch (error) {
       log.error('Failed to create template:', error);
       notifications.show({
@@ -126,8 +130,8 @@ export default function NewTemplatePage() {
                   <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
                     <Button
                       type="submit"
-                      isLoading={isSubmitting}
-                      disabled={isSubmitting}
+                      isLoading={isSubmitting || created}
+                      disabled={isSubmitting || created}
                       className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-10"
                       leftIcon={<Save className="h-4 w-4"/>}
                     >

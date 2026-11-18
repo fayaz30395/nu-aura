@@ -183,16 +183,20 @@ export function HolidayCarousel({
 
       {/* Dot Indicators */}
       {displayedHolidays.length > 1 && (
-        <div className="flex justify-center gap-1.5 mt-2 relative z-10">
+        <div className="flex justify-center mt-2 relative z-10">
           {displayedHolidays.map((_, idx) => (
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 ${
-                idx === currentIndex ? 'w-4 bg-accent-600 dark:bg-accent-300' : 'w-1.5 bg-accent-300/60 dark:bg-accent-700/60'
-              }`}
+              className="flex h-6 min-w-6 items-center justify-center rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2"
               aria-label={`Holiday ${idx + 1}`}
-            />
+            >
+              <span
+                className={`h-1.5 rounded-full transition-all ${
+                  idx === currentIndex ? 'w-4 bg-accent-600 dark:bg-accent-300' : 'w-1.5 bg-accent-300/60 dark:bg-accent-700/60'
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

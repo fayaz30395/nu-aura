@@ -505,14 +505,14 @@ export default function AdminEmployeesPage() {
         {[
           {
             icon: Users,
-            value: totalElements,
+            value: employeesError ? '—' : totalElements,
             label: 'Total Employees',
             tint: 'tint-info',
             iconColor: 'text-accent-700'
           },
           {
             icon: CheckCircle,
-            value: employees.filter((e: Employee) => e.status === 'ACTIVE').length,
+            value: employeesError ? '—' : employees.filter((e: Employee) => e.status === 'ACTIVE').length,
             label: 'Active',
             tint: 'tint-success',
             iconColor: 'text-success-600'

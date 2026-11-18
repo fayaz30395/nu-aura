@@ -202,6 +202,7 @@ export const useEmployeeAllocationHistory = (
     queryKey: [...resourceKeys.allocationHistory(employeeId), page, size] as const,
     queryFn: () =>
       resourceManagementService.getEmployeeAllocationHistory(employeeId, page, size),
+    enabled: !!employeeId, // UI-006: no request with an empty employee id
   });
 
 export const useMyPendingApprovals = (

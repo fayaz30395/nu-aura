@@ -39,6 +39,7 @@ import {
   Textarea,
 } from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
 import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import type {RecognitionRequest} from '@/lib/types/grow/recognition';
 import {ReactionType, RecognitionCategory, RecognitionType} from '@/lib/types/grow/recognition';
@@ -61,7 +62,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 
 // Zod schema for recognition form
 const recognitionFormSchema = z.object({
-  receiverId: z.string().min(1, 'Employee ID is required'),
+  receiverId: z.string().min(1, 'Please select an employee'),
   type: z.nativeEnum(RecognitionType),
   category: z.nativeEnum(RecognitionCategory),
   title: z.string().min(1, 'Title is required').max(255, 'Title must be less than 255 characters'),
@@ -257,6 +258,7 @@ export default function RecognitionPage() {
     register,
     handleSubmit,
     reset,
+    setValue,
     watch,
     formState: {errors},
   } = useForm<RecognitionFormData>({
@@ -272,6 +274,8 @@ export default function RecognitionPage() {
       isAnonymous: false,
     },
   });
+
+  const [selectedReceiver, setSelectedReceiver] = useState<{ id: string; name: string } | null>(null);
 
   // Get the active query based on tab
   const getActiveQuery = () => {
@@ -296,6 +300,7 @@ export default function RecognitionPage() {
 
   const handleGiveRecognition = () => {
     reset();
+    setSelectedReceiver(null);
     setIsModalOpen(true);
   };
 
@@ -304,6 +309,7 @@ export default function RecognitionPage() {
       onSuccess: () => {
         setIsModalOpen(false);
         reset();
+        setSelectedReceiver(null);
       },
     });
   };
@@ -311,6 +317,7 @@ export default function RecognitionPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     reset();
+    setSelectedReceiver(null);
   };
 
   // Stats
@@ -709,13 +716,15 @@ export default function RecognitionPage() {
           <ModalBody>
             <div className="space-y-4">
               <div>
-                <label htmlFor="recognition-receiver-id" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                  Employee ID *
-                </label>
-                <Input
-                  id="recognition-receiver-id"
-                  {...register('receiverId')}
-                  placeholder="Enter employee ID to recognize"
+                <EmployeeSearchAutocomplete
+                  label="Employee *"
+                  value={selectedReceiver}
+                  onChange={(employee) => {
+                    setSelectedReceiver(employee);
+                    setValue('receiverId', employee?.id || '', {shouldValidate: true});
+                  }}
+                  placeholder="Search for an employee..."
+                  required
                 />
                 {errors.receiverId && (
                   <p className="text-sm text-danger-500 mt-1">{errors.receiverId.message}</p>

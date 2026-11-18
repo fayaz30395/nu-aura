@@ -54,11 +54,14 @@ const programSchema = z.object({
   ]),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  maxParticipants: z.coerce.number().positive().optional().or(z.literal('')),
-  pointsReward: z.coerce.number().min(0).optional().or(z.literal('')),
+  maxParticipants: z.coerce.number().positive('Must be greater than 0').optional().or(z.literal('')),
+  pointsReward: z.coerce.number().min(0, 'Cannot be negative').optional().or(z.literal('')),
   isFeatured: z.boolean().default(false),
   instructions: z.string().optional(),
   externalLink: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+}).refine(d => !d.startDate || !d.endDate || d.endDate >= d.startDate, {
+  message: 'End date must not be before start date',
+  path: ['endDate'],
 });
 
 type ProgramFormData = z.infer<typeof programSchema>;
@@ -334,6 +337,9 @@ function CreateProgramModal({
                   End Date
                 </label>
                 <Input id="wellness-program-end-date" {...register('endDate')} type="date"/>
+              {errors.endDate && (
+                <p className="text-xs text-danger-500 mt-1">{errors.endDate.message}</p>
+              )}
               </div>
             </div>
 
@@ -343,12 +349,18 @@ function CreateProgramModal({
                   Points Reward
                 </label>
                 <Input id="wellness-program-points-reward" {...register('pointsReward')} type="number" min={0} placeholder="0"/>
+              {errors.pointsReward && (
+                <p className="text-xs text-danger-500 mt-1">{errors.pointsReward.message}</p>
+              )}
               </div>
               <div>
                 <label htmlFor="wellness-program-max-participants" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                   Max Participants
                 </label>
                 <Input id="wellness-program-max-participants" {...register('maxParticipants')} type="number" min={1} placeholder="Unlimited"/>
+              {errors.maxParticipants && (
+                <p className="text-xs text-danger-500 mt-1">{errors.maxParticipants.message}</p>
+              )}
               </div>
             </div>
 
@@ -612,7 +624,7 @@ export default function WellnessAdminPage() {
         permission={Permissions.WELLNESS_MANAGE}
         fallback={
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <p className="text-[var(--text-secondary)] font-medium">Access Denied</p>
+            <h1 className="text-[var(--text-secondary)] font-medium">Access Denied</h1>
             <p className="text-[var(--text-muted)] text-sm mt-1">
               You need WELLNESS_MANAGE permission to access this page.
             </p>

@@ -45,6 +45,7 @@ import {safeUrl} from '@/lib/utils/safeUrl';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryErrorCard} from '@/components/ui/QueryState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonCard} from '@/components/ui/Skeleton';
 import {createLogger} from '@/lib/utils/logger';
@@ -163,7 +164,7 @@ export default function AnnouncementsPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   // React Query hooks
-  const {data: activeData, isLoading: activeLoading} = useActiveAnnouncements(user?.employeeId || '', page, 10);
+  const {data: activeData, isLoading: activeLoading, isError: activeError, refetch: refetchActive, isFetching: activeFetching} = useActiveAnnouncements(user?.employeeId || '', page, 10);
   const {data: pinnedData} = usePinnedAnnouncements();
   const deleteAnnouncementMutation = useDeleteAnnouncement();
   const markReadMutation = useMarkAnnouncementRead();
@@ -405,6 +406,8 @@ export default function AnnouncementsPage() {
                   </StaggerItem>
                 ))}
               </Stagger>
+            ) : activeError && !activeData ? (
+              <QueryErrorCard onRetry={() => void refetchActive()} retrying={activeFetching}/>
             ) : filteredAnnouncements.length === 0 ? (
               <Reveal inView delay={0.1}>
                 <EmptyState

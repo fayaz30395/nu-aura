@@ -2,6 +2,7 @@
 
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
+import {QueryErrorCard} from '@/components/ui/QueryState';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {
@@ -397,7 +398,7 @@ export default function AssetManagementPage() {
 
   // Stats
   const stats = {
-    total: assetsQuery.data?.totalElements || 0,
+    total: assetsQuery.data?.totalElements ?? 0,
     available: filteredAssets.filter((a) => a.status === AssetStatus.AVAILABLE).length,
     assigned: filteredAssets.filter((a) => a.status === AssetStatus.ASSIGNED).length,
     maintenance: filteredAssets.filter((a) => a.status === AssetStatus.IN_MAINTENANCE).length,
@@ -765,6 +766,9 @@ export default function AssetManagementPage() {
             ) : (
               !assetsQuery.isLoading && (
                 <div className="p-6">
+                  {assetsQuery.isError && !assetsQuery.data ? (
+                    <QueryErrorCard onRetry={() => void assetsQuery.refetch()} retrying={assetsQuery.isFetching}/>
+                  ) : (
                   <EmptyState
                     icon={<Package className="h-12 w-12"/>}
                     title="No Assets Found"
@@ -772,6 +776,7 @@ export default function AssetManagementPage() {
                     actionLabel="Add Asset"
                     onAction={() => setShowAddModal(true)}
                   />
+                  )}
                 </div>
               )
             )}

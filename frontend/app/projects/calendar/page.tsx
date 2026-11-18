@@ -471,7 +471,7 @@ export default function ProjectCalendarPage() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">
               <button
                 onClick={() => setViewMode('timeline')}
@@ -520,7 +520,7 @@ export default function ProjectCalendarPage() {
         {/* Controls */}
         <Card>
           <CardContent className="p-4">
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
               {/* Filters */}
               <div className="flex flex-wrap gap-4">
                 <Select
@@ -563,9 +563,9 @@ export default function ProjectCalendarPage() {
               </div>
 
               {/* Navigation Controls */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {viewMode === 'timeline' && (
-                  <div className="flex items-center gap-1 p-1 bg-[var(--bg-secondary)] rounded-lg mr-2">
+                  <div className="flex flex-wrap items-center gap-1 p-1 bg-[var(--bg-secondary)] rounded-lg mr-2">
                     {(['day', 'week', 'month', 'quarter'] as ZoomLevel[]).map((level) => (
                       <button
                         key={level}
@@ -654,6 +654,8 @@ export default function ProjectCalendarPage() {
                               {isProject && (
                                 <button
                                   onClick={() => toggleProjectExpansion(item.id)}
+                                  aria-label={isExpanded ? "Collapse project" : "Expand project"}
+                                  aria-expanded={isExpanded}
                                   className="p-0.5 hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] rounded"
                                 >
                                   <ChevronRight
@@ -800,7 +802,8 @@ export default function ProjectCalendarPage() {
         {/* CALENDAR GRID VIEW */}
         {viewMode === 'calendar' && (
           <Card className="h-[800px]">
-            <CardContent className="p-4 h-full">
+            <CardContent className="p-4 h-full overflow-x-auto">
+              <div className="h-full min-w-[640px]">
               <CalendarGridView
                 currentDate={currentDate}
                 onDateChange={setCurrentDate}
@@ -808,6 +811,7 @@ export default function ProjectCalendarPage() {
                 onEventClick={handleEventClick}
                 viewMode="month"
               />
+              </div>
             </CardContent>
           </Card>
         )}

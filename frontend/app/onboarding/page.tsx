@@ -45,7 +45,7 @@ export default function OnboardingPage() {
     Permissions.ONBOARDING_CREATE,
   );
 
-  const {data, isLoading, isError, error, refetch} = useOnboardingProcesses(0, 100);
+  const {data, isLoading, isError, error, refetch} = useOnboardingProcesses(0, 100, canView);
   // Memoised so the derived useMemo hooks below don't churn every render
   // when `data` is undefined and the fallback `[]` would be a new array each
   // time. Keeps `processes` referentially stable while data is loading.
@@ -93,6 +93,7 @@ export default function OnboardingPage() {
     return (
       <AppLayout breadcrumbs={[{label: 'Onboarding', href: '/onboarding'}]}>
         <div className="mx-auto w-full max-w-7xl px-6 py-16 text-center">
+          <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">Onboarding</h1>
           <p className="text-body-secondary">You do not have access to onboarding.</p>
         </div>
       </AppLayout>

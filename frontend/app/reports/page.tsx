@@ -326,17 +326,6 @@ function SavedReportCard({report, onSelect}: {
               </Badge>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label={`Actions for ${report.title}`}
-            onClick={(e) => {
-              // Kebab is presentation-only here; stop the card's open handler.
-              e.stopPropagation();
-            }}
-          >
-            <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-          </Button>
         </div>
 
         <div className="h-12">
@@ -368,7 +357,7 @@ function ScheduledDeliveriesCard({rows}: {rows: ScheduledDelivery[]}) {
       animate={{opacity: 1, y: 0}}
       transition={{duration: 0.45, ease: EASE, delay: 0.2}}
     >
-      <Card padding="none" className="overflow-hidden">
+      <Card padding="none" className="overflow-x-auto">
         <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-0 pt-4">
           <div className="space-y-0.5">
             <h2 className="font-display text-base font-bold tracking-tight text-[var(--text-1)]">

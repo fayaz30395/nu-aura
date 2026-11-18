@@ -1,7 +1,7 @@
 'use client';
 
 import {Progress} from '@/components/ui';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Spinner} from '@/components/ui/Spinner';
 import Image from 'next/image';
 import {notFound, useParams, useRouter} from 'next/navigation';
@@ -59,20 +59,16 @@ export default function CourseDetailPage() {
     setExpandedModules(new Set([course.modules[0].id]));
   }
 
-  // Load quizzes
-  const loadQuizzes = async () => {
-    try {
-      const response = await apiClient.get<Quiz[]>(`/lms/courses/${id}/quizzes`);
-      setQuizzes(response.data || []);
-    } catch {
-      setQuizzes([]);
-    }
-  };
-
-  // Load quizzes once course is loaded
-  if (course && quizzes.length === 0) {
-    loadQuizzes();
-  }
+  // Load quizzes once per course (a 403/empty result must not re-trigger the request)
+  const courseLoaded = Boolean(course);
+  useEffect(() => {
+    if (!courseLoaded) return;
+    let cancelled = false;
+    apiClient.get<Quiz[]>(`/lms/courses/${id}/quizzes`)
+      .then(response => { if (!cancelled) setQuizzes(response.data || []); })
+      .catch(() => { if (!cancelled) setQuizzes([]); });
+    return () => { cancelled = true; };
+  }, [id, courseLoaded]);
 
   // Find current enrollment
   const enrollment = allEnrollments?.find(e => e.courseId === id) ?? null;

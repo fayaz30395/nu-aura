@@ -119,7 +119,7 @@ export default function OrganizationHealthPage() {
             <h1 className="text-xl font-bold">Organization Health</h1>
             <p className="text-[var(--text-secondary)] mt-1">Executive summary of workforce vitality and performance</p>
           </motion.div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <Button variant="outline" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw className="h-4 w-4"/>}>
               Refresh Data
             </Button>
@@ -192,7 +192,7 @@ export default function OrganizationHealthPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex items-end justify-between mb-4">
+                <div className="flex flex-wrap items-end justify-between gap-2 mb-4">
                   <Stat
                     label="Avg Engagement Score"
                     value={`${engagement.overallEngagementScore}/100`}

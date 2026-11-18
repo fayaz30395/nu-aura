@@ -127,7 +127,7 @@ export default function PayrollPage() {
   return (
     <AppLayout activeMenuItem="payroll">
       <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-4">
-        <PageHeader latest={latest} />
+        <PageHeader latest={latest} failed={Boolean(error)} />
 
         {error && (
           <ErrorBanner
@@ -149,7 +149,7 @@ export default function PayrollPage() {
         {/* KPI row (4) */}
         {isLoading ? (
           <KpiSkeleton />
-        ) : (
+        ) : error ? null : (
           <Stagger className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
             <StaggerItem>
               <Card padding="md" hover className="h-full">
@@ -238,8 +238,10 @@ export default function PayrollPage() {
 }
 
 // ── Header ───────────────────────────────────────────────────────────────────
-function PageHeader({latest}: {latest?: PayrollRun}) {
-  const sub = latest
+function PageHeader({latest, failed}: {latest?: PayrollRun; failed?: boolean}) {
+  const sub = failed
+    ? 'Payroll data unavailable.'
+    : latest
     ? `${latest.runName} · ${STATUS_LABEL[latest.status].toLowerCase()} · pays ${formatDate(latest.paymentDate)}`
     : 'No active cycle — start a new run to begin.';
 

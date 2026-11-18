@@ -254,6 +254,7 @@ function InterviewsPage() {
     setValue: setValueCreate,
     handleSubmit: handleSubmitCreate,
     reset: resetCreate,
+    setError: setErrorCreate,
     formState: {errors: errorsCreate},
   } = useForm<CreateInterviewFormData>({
     resolver: zodResolver(createInterviewSchema),
@@ -267,6 +268,7 @@ function InterviewsPage() {
     setValue: setValueFeedback,
     handleSubmit: handleSubmitFeedback,
     reset: resetFeedback,
+    setError: setErrorFeedback,
     formState: {errors: errorsFeedback},
   } = useForm<CreateInterviewFormData>({
     resolver: zodResolver(createInterviewSchema),
@@ -280,6 +282,11 @@ function InterviewsPage() {
   // Data is now loaded via React Query hooks above — no manual fetch needed
 
   const onSubmitCreate = async (data: CreateInterviewFormData) => {
+    // Checked here, not in the shared schema, which the feedback form also uses for past interviews. Edits keep their time.
+    if (!editingInterview && new Date(data.scheduledAt).getTime() < Date.now()) {
+      setErrorCreate('scheduledAt', {message: 'Interview time cannot be in the past'});
+      return;
+    }
     try {
       const googleToken = createMeetToggle ? getGoogleToken() : null;
       const submitData: CreateInterviewRequest = {
@@ -293,8 +300,8 @@ function InterviewsPage() {
         location: data.location,
         meetingLink: data.meetingLink,
         status: data.status,
-        feedback: data.feedback,
-        rating: data.rating,
+        feedback: data.feedback ?? undefined,
+        rating: data.rating ?? undefined,
         result: data.result,
         notes: data.notes,
         createGoogleMeet: createMeetToggle && !!googleToken,
@@ -331,6 +338,10 @@ function InterviewsPage() {
 
   const onSubmitFeedback = async (data: CreateInterviewFormData) => {
     if (!selectedInterview) return;
+    if (!data.feedback?.trim()) {
+      setErrorFeedback('feedback', {message: 'Feedback is required'});
+      return;
+    }
     try {
       const submitData: CreateInterviewRequest = {
         candidateId: data.candidateId,
@@ -397,14 +408,14 @@ function InterviewsPage() {
       interviewType: interview.interviewType || 'VIDEO',
       scheduledAt: interview.scheduledAt || '',
       durationMinutes: interview.durationMinutes || 60,
-      interviewerId: interview.interviewerId,
-      location: interview.location,
-      meetingLink: interview.meetingLink,
+      interviewerId: interview.interviewerId ?? undefined,
+      location: interview.location ?? undefined,
+      meetingLink: interview.meetingLink ?? undefined,
       status: 'COMPLETED',
-      feedback: interview.feedback,
-      rating: interview.rating,
+      feedback: interview.feedback ?? undefined,
+      rating: interview.rating ?? undefined,
       result: interview.result || 'PENDING',
-      notes: interview.notes,
+      notes: interview.notes ?? undefined,
     };
     resetFeedback(feedbackValues);
     setShowFeedbackModal(true);
@@ -595,6 +606,7 @@ function InterviewsPage() {
     return date.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
+      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
     });
@@ -893,7 +905,7 @@ function InterviewsPage() {
               {editingInterview ? 'Edit Interview' : 'Schedule Interview'}
             </ModalHeader>
             <ModalBody>
-                <form onSubmit={handleSubmitCreate(onSubmitCreate)} className="space-y-6">
+                <form noValidate onSubmit={handleSubmitCreate(onSubmitCreate)} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="interview-candidate" className="block text-sm font-medium text-[var(--text-secondary)] mb-1">Candidate *</label>
@@ -1176,7 +1188,7 @@ function InterviewsPage() {
                     className="text-body-muted mt-1">{selectedInterview.interviewRound} - {formatDateTime(selectedInterview.scheduledAt)}</p>
                 </div>
 
-                <form onSubmit={handleSubmitFeedback(onSubmitFeedback)} className="space-y-6">
+                <form noValidate onSubmit={handleSubmitFeedback(onSubmitFeedback)} className="space-y-6">
                   <div>
                     <span className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Rating (1-5)</span>
                     <div className="flex gap-2">
@@ -1184,6 +1196,8 @@ function InterviewsPage() {
                         <button
                           key={rating}
                           type="button"
+                          aria-label={`Rate ${rating} out of 5`}
+                          aria-pressed={watchFeedback('rating') === rating}
                           onClick={() => setValueFeedback('rating', rating)}
                           className={`p-2 rounded-xl transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                             watchFeedback('rating') === rating

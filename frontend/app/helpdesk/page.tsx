@@ -25,7 +25,9 @@ export default function HelpdeskPage() {
   const router = useRouter();
   const {hasPermission} = usePermissions();
   const isHelpdeskAdmin = hasPermission(Permissions.SYSTEM_ADMIN);
-  const {data: dashboard, isLoading: dashboardLoading, error: dashboardError} = useSLADashboard();
+  // The SLA dashboard endpoint and the SLA tiles need HELPDESK:SLA_MANAGE (backend returns 403 otherwise).
+  const canManageSla = hasPermission(Permissions.HELPDESK_SLA_MANAGE);
+  const {data: dashboard, isLoading: dashboardLoading, error: dashboardError} = useSLADashboard(canManageSla);
   const {data: escalations = []} = useMyPendingEscalations();
   const {data: slasResponse} = useSlaConfigs(0, 100);
 
@@ -161,7 +163,7 @@ export default function HelpdeskPage() {
                     {route: '/helpdesk/sla', icon: Bell, label: 'Escalations', desc: `${escalations.length} pending`},
                     {route: '/helpdesk/sla', icon: BarChart3, label: 'SLA Dashboard', desc: 'View detailed metrics'},
                   ]
-              ).map(({route, icon: Icon, label, desc}) => (
+              ).filter(({route}) => canManageSla || route !== '/helpdesk/sla').map(({route, icon: Icon, label, desc}) => (
                 <Reveal key={label}>
                   <button
                     onClick={() => router.push(route)}

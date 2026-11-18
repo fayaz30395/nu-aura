@@ -596,7 +596,7 @@ function PageHeader({onCreate}: {onCreate: () => void}) {
       initial={{opacity: 0, y: 4}}
       animate={{opacity: 1, y: 0}}
       transition={{duration: 0.4, ease: EASE}}
-      className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end"
+      className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end"
     >
       <div className="space-y-2 max-w-2xl">
         <p className="text-2xs font-semibold uppercase tracking-widest text-[var(--text-muted)]">

@@ -213,8 +213,8 @@ export default function LearningPathsPage() {
                 {/* Content */}
                 <div className="p-6">
                   {/* Title and Status */}
-                  <div className="flex items-start justify-between gap-2 mb-4">
-                    <h2 className="text-xl font-semibold text-[var(--text-primary)] flex-1">{path.title}</h2>
+                  <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
+                    <h2 className="text-xl font-semibold text-[var(--text-primary)] flex-1 min-w-0 break-words">{path.title}</h2>
                     {path.status && (
                       <StatusBadge status={path.status} domain={LEARNING_STATUS}/>
                     )}

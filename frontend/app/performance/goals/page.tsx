@@ -49,8 +49,12 @@ export default function GoalsPage() {
 
   // Failures are reported by the global MutationCache toast; the dialog stays open so the user can retry.
   const handleSave = async (formData: GoalFormData) => {
+    const {unit, endDate, ...rest} = formData;
+    // Backend fields are measurementUnit/dueDate (goals.due_date is NOT NULL).
     const goalData = {
-      ...formData,
+      ...rest,
+      measurementUnit: unit,
+      dueDate: endDate,
       employeeId: user?.employeeId || '',
       description: formData.description || '',
     };

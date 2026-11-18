@@ -331,7 +331,7 @@ export const BulkProcessingWizard: React.FC = () => {
 
               {/* Employee List */}
               <div className="border border-[var(--border)] rounded-[var(--r-lg)] overflow-hidden">
-                <div className="max-h-[400px] overflow-y-auto">
+                <div className="max-h-[400px] overflow-y-auto" tabIndex={0} role="region" aria-label="Employee list">
                   {loading ? (
                     <div className="flex items-center justify-center py-12">
                       <Loader2 className="h-8 w-8 animate-spin text-[var(--accent)]"/>
@@ -553,7 +553,7 @@ export const BulkProcessingWizard: React.FC = () => {
 
               {/* Employee Details Table */}
               <div className="border border-[var(--border)] rounded-[var(--r-lg)] overflow-hidden">
-                <div className="overflow-x-auto max-h-[400px]">
+                <div className="overflow-x-auto max-h-[400px]" tabIndex={0} role="region" aria-label="Results table">
                   <table className="w-full">
                     <thead className="bg-[var(--surface-aura-2)] sticky top-0">
                     <tr>

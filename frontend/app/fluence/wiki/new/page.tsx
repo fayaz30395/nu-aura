@@ -3,7 +3,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
-import {Controller, useForm} from 'react-hook-form';
+import {Controller, type FieldErrors, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import dynamic from 'next/dynamic';
@@ -149,6 +149,15 @@ export default function CreateWikiPage() {
 
   if (!isPermissionReady || !hasAccess) return null;
 
+  const onInvalid = (formErrors: FieldErrors<CreateWikiPageInput>) => {
+    const first = Object.values(formErrors)[0];
+    notifications.show({
+      title: 'Check the form',
+      message: (first?.message as string | undefined) ?? 'Please fix the highlighted fields',
+      color: 'red',
+    });
+  };
+
   const onSaveDraft = async (data: CreateWikiPageInput) => {
     if (!data.content || Object.keys(data.content).length === 0) {
       notifications.show({title: 'Validation Error', message: 'Content cannot be empty', color: 'red'});
@@ -231,6 +240,7 @@ export default function CreateWikiPage() {
       ]}
     >
       <motion.div {...dsMotion.pageEnter} className="fluence-page-editor">
+        <h1 className="sr-only">New Page</h1>
         {/* ── Top Action Bar (Confluence-like) ──────────────────── */}
         <div className="fluence-page-topbar">
           <div className="fluence-page-topbar-left">
@@ -274,7 +284,7 @@ export default function CreateWikiPage() {
 
             <button
               type="button"
-              onClick={handleSubmit(onSaveDraft)}
+              onClick={handleSubmit(onSaveDraft, onInvalid)}
               disabled={isSavingDraft}
               className="inline-flex items-center gap-2 text-sm font-medium text-[var(--text-primary)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50 px-4 py-2 rounded-lg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
             >
@@ -337,7 +347,7 @@ export default function CreateWikiPage() {
           size="md"
           padding="lg"
         >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 h-full flex flex-col">
+          <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6 h-full flex flex-col">
             <div className="flex-1 space-y-6">
               {/* Title preview */}
               <div>

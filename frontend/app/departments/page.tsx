@@ -16,6 +16,7 @@ import {SkeletonTable} from '@/components/ui/Skeleton';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryErrorCard} from '@/components/ui/QueryState';
 import {
   useActivateDepartment,
   useAllDepartments,
@@ -84,7 +85,7 @@ export default function DepartmentsPage() {
   const [pageSize] = React.useState(10);
 
   // React Query hooks
-  const {data: deptData, isLoading} = useAllDepartments(currentPage, pageSize);
+  const {data: deptData, isLoading, isError: isDeptError, refetch: refetchDepts, isFetching: deptFetching} = useAllDepartments(currentPage, pageSize);
   const {data: empData, isError: isEmployeesError} = useEmployees(0, 500);
   const createMutation = useCreateDepartment();
   const updateMutation = useUpdateDepartment();
@@ -391,6 +392,12 @@ export default function DepartmentsPage() {
                           aria-label="Loading departments"/>
                         <span className="text-[var(--text-muted)]">Loading departments...</span>
                       </div>
+                    </td>
+                  </tr>
+                ) : isDeptError && !deptData ? (
+                  <tr>
+                    <td colSpan={7}>
+                      <QueryErrorCard onRetry={() => void refetchDepts()} retrying={deptFetching}/>
                     </td>
                   </tr>
                 ) : filteredDepartments.length === 0 ? (

@@ -16,6 +16,8 @@ interface PublicRoute {
   token?: boolean;
   /** Client also lists `${path}/` because its matcher is exact. */
   clientTrailingSlash?: boolean;
+  /** Client also lists `${path}/[slug]` so unknown sub-paths reach Next's 404 instead of the login redirect. */
+  clientSubpath?: boolean;
 }
 
 const PUBLIC_ROUTE_DEFS: readonly PublicRoute[] = [
@@ -27,7 +29,7 @@ const PUBLIC_ROUTE_DEFS: readonly PublicRoute[] = [
   {path: '/terms'},
   {path: '/privacy'},
   {path: '/offer-portal'},
-  {path: '/careers', clientTrailingSlash: true},
+  {path: '/careers', clientTrailingSlash: true, clientSubpath: true},
   {path: '/preboarding/portal', token: true},
   {path: '/exit-interview', token: true},
   {path: '/sign', token: true},
@@ -40,6 +42,7 @@ export const EDGE_PUBLIC_ROUTES: readonly string[] = Object.freeze(
 export const CLIENT_PUBLIC_ROUTES: readonly string[] = Object.freeze(
   PUBLIC_ROUTE_DEFS.flatMap((r) => {
     if (r.token) return [`${r.path}/[token]`];
-    return r.clientTrailingSlash ? [r.path, `${r.path}/`] : [r.path];
+    const base = r.clientTrailingSlash ? [r.path, `${r.path}/`] : [r.path];
+    return r.clientSubpath ? [...base, `${r.path}/[slug]`] : base;
   }),
 );

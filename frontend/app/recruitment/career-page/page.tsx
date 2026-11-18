@@ -175,7 +175,7 @@ function JobPostingsPanel() {
           <p className="text-xs mt-1">Create job postings in the Jobs section first.</p>
         </div>
       ) : (
-        <div className="border border-[var(--border-main)] rounded-xl overflow-hidden">
+        <div className="border border-[var(--border-main)] rounded-xl overflow-x-auto">
           <table className="w-full">
             <thead className="bg-[var(--bg-secondary)]">
             <tr>

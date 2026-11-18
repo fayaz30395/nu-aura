@@ -194,6 +194,7 @@ export default function TaxDeclarationsPage() {
         </Group>
 
         <Card withBorder radius="md" p="md" className="skeuo-card">
+          <Table.ScrollContainer minWidth={640}>
           <Table verticalSpacing="sm" className="table-aura">
             <Table.Thead>
               <Table.Tr>
@@ -232,6 +233,7 @@ export default function TaxDeclarationsPage() {
               )}
             </Table.Tbody>
           </Table>
+          </Table.ScrollContainer>
         </Card>
 
         {/* Create Tax Declaration Modal */}

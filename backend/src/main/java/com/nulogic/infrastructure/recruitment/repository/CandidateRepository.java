@@ -40,6 +40,8 @@ public interface CandidateRepository extends JpaRepository<Candidate, UUID>, Jpa
 
     boolean existsByTenantIdAndCandidateCode(UUID tenantId, String candidateCode);
 
+    boolean existsByTenantIdAndJobOpeningIdAndEmailIgnoreCase(UUID tenantId, UUID jobOpeningId, String email);
+
     Optional<Candidate> findByEmailAndTenantId(String email, UUID tenantId);
 
     // Paginated versions for large datasets

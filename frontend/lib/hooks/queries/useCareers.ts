@@ -2,6 +2,7 @@
 
 import {useQuery} from '@tanstack/react-query';
 import {publicApiClient} from '@/lib/api/public-client';
+import {mapPublicJobs} from '@/lib/utils/careers-mapper';
 
 interface Job {
   id: string;
@@ -16,10 +17,6 @@ interface Job {
   responsibilities: string[];
   salaryRange?: string;
   experience: 'Entry-level' | 'Mid-level' | 'Senior' | 'Lead';
-}
-
-interface JobsResponse {
-  jobs: Job[];
 }
 
 export interface CareersFilters {
@@ -51,8 +48,8 @@ export function usePublicJobs(filters: CareersFilters) {
       if (filters.type) params.type = filters.type;
       if (filters.q) params.q = filters.q;
 
-      const response = await publicApiClient.get<JobsResponse>('/public/careers/jobs', {params});
-      return response.data.jobs ?? [];
+      const response = await publicApiClient.get('/public/careers/jobs', {params});
+      return mapPublicJobs(response.data);
     },
     staleTime: 30_000, // public page, cache for 30s
   });

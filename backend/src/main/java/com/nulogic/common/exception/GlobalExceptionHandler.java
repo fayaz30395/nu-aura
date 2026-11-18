@@ -92,10 +92,8 @@ public class GlobalExceptionHandler {
     private ErrorResponse buildErrorResponse(HttpStatus status, String error, String message, String path) {
         String requestId = MDC.get("requestId");
         UUID tenantId = TenantContext.getCurrentTenant();
-        // tenantId may be null on auth / pre-context exceptions; fall back to JVM zone.
-        LocalDateTime now = tenantId != null && tenantTimeService != null
-                ? tenantTimeService.now(tenantId)
-                : LocalDateTime.now(); // JVM-local: documented fallback when TenantTimeService isnt available or tenantId is null
+        // S-004: always UTC so error bodies share one zone (403 interceptor body is UTC too).
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneOffset.UTC);
 
         return ErrorResponse.builder()
                 .timestamp(now)

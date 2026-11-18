@@ -24,6 +24,10 @@ const cycleFormSchema = z.object({
 }).refine(data => new Date(data.endDate) > new Date(data.startDate), {
   message: 'End date must be after start date',
   path: ['endDate'],
+}).refine(data => !data.reviewDeadline || !data.startDate || !data.endDate
+  || (data.reviewDeadline >= data.startDate && data.reviewDeadline <= data.endDate), {
+  message: 'Review deadline must be within the cycle dates',
+  path: ['reviewDeadline'],
 });
 
 type CycleFormData = z.infer<typeof cycleFormSchema>;

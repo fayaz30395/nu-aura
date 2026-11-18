@@ -36,6 +36,9 @@ class JobOpeningServiceTest {
     private static MockedStatic<TenantContext> tenantContextMock;
 
     @Mock
+    private com.nulogic.infrastructure.employee.repository.DepartmentRepository departmentRepository;
+
+    @Mock
     private JobOpeningRepository jobOpeningRepository;
     @Mock
     private CandidateRepository candidateRepository;
@@ -122,20 +125,15 @@ class JobOpeningServiceTest {
         }
 
         @Test
-        @DisplayName("Should disambiguate a colliding job code with a numeric suffix")
-        void shouldDisambiguateCollidingJobCode() {
+        @DisplayName("Should reject a colliding job code")
+        void shouldRejectCollidingJobCode() {
             request.setJobCode("ENG");
             when(jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, "ENG"))
                     .thenReturn(true);
-            when(jobOpeningRepository.existsByTenantIdAndJobCode(tenantId, "ENG-2"))
-                    .thenReturn(false);
-            when(jobOpeningRepository.save(any(JobOpening.class)))
-                    .thenAnswer(inv -> inv.getArgument(0));
-            stubResponseMapping();
 
-            JobOpeningResponse result = jobOpeningService.createJobOpening(request);
-
-            assertThat(result.getJobCode()).isEqualTo("ENG-2");
+            assertThatThrownBy(() -> jobOpeningService.createJobOpening(request))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("already exists");
         }
     }
 

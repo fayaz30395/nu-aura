@@ -721,6 +721,7 @@ export default function WikiPageDetailPage() {
                   </h1>
                   <Badge
                     size="sm"
+                    variant="light"
                     color={
                       page.status === 'PUBLISHED'
                         ? 'var(--status-success)'
@@ -768,7 +769,7 @@ export default function WikiPageDetailPage() {
                       <Eye
                         className={`${iconSize.cardInline} flex-shrink-0 group-hover:scale-110 transition-transform`}
                       />
-                      <span className="text-sm font-medium">{page.viewCount || 0} views</span>
+                      <span className="text-sm font-medium">{page.viewCount || 0} {page.viewCount === 1 ? 'view' : 'views'}</span>
                     </button>
                   </Tooltip>
 
@@ -1042,12 +1043,14 @@ export default function WikiPageDetailPage() {
                       {totalCommentCount}
                     </span>
                   </div>
-                  <div className="row-between">
-                    <span className={typography.bodySecondary}>Version</span>
-                    <span className="text-lg font-semibold text-[var(--text-primary)]">
-                      v{page.version}
-                    </span>
-                  </div>
+                  {page.version != null && (
+                    <div className="row-between">
+                      <span className={typography.bodySecondary}>Version</span>
+                      <span className="text-lg font-semibold text-[var(--text-primary)]">
+                        v{page.version}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>

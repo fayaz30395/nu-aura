@@ -155,6 +155,10 @@ export function useSkillGaps(employeeId: string, enabled: boolean = true) {
     enabled: enabled && !!employeeId,
     staleTime: 15 * 60 * 1000, // 15 minutes
     gcTime: 60 * 60 * 1000,
-    retry: 1,
+    // 4xx (e.g. 403) will not succeed on retry
+    retry: (count: number, error: unknown) => {
+      const status = (error as {response?: {status?: number}})?.response?.status;
+      return !(status && status >= 400 && status < 500) && count < 1;
+    },
   });
 }
