@@ -162,7 +162,7 @@ export default function MyLearningPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <span className="font-semibold text-[var(--text-primary)] truncate">
-                            Course ID: {enrollment.courseId}
+                            {enrollment.courseTitle || `Course ${enrollment.courseId}`}
                           </span>
                           <Badge variant={statusBadgeVariant(enrollment.status)}>
                             {statusLabel(enrollment.status)}

@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -113,6 +116,14 @@ public class CourseEnrollmentService {
     @Transactional(readOnly = true)
     public List<CourseEnrollment> getMyEnrollments(UUID tenantId, UUID employeeId) {
         return enrollmentRepository.findByEmployee(tenantId, employeeId);
+    }
+
+    /** Course titles by id in one query; ids not found (or other tenants, via RLS) are omitted. */
+    @Transactional(readOnly = true)
+    public Map<UUID, String> getCourseTitles(Collection<UUID> courseIds) {
+        Map<UUID, String> titles = new HashMap<>();
+        courseRepository.findAllById(courseIds).forEach(c -> titles.put(c.getId(), c.getTitle()));
+        return titles;
     }
 
     /**

@@ -11,6 +11,8 @@ import {FileList} from '@/components/fluence/FileList';
 import {useDeleteAttachment, useRecentAttachments, useUploadAttachment,} from '@/lib/hooks/queries/useFluence';
 import {FluenceAttachment} from '@/lib/types/platform/fluence';
 import {TextInput} from '@mantine/core';
+import {QueryErrorCard} from '@/components/ui/QueryState';
+import {is403Error} from '@/lib/utils/type-guards';
 
 type FileCategory = 'all' | 'documents' | 'images' | 'spreadsheets' | 'other';
 
@@ -41,7 +43,8 @@ function FluenceDriveContent() {
   const [activeCategory, setActiveCategory] = useState<FileCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {data: attachments = [], isLoading} = useRecentAttachments();
+  const {data: attachments = [], isLoading, error: attachmentsError} = useRecentAttachments();
+  const isForbidden = is403Error(attachmentsError);
   const uploadMutation = useUploadAttachment();
   const deleteMutation = useDeleteAttachment();
 
@@ -191,6 +194,11 @@ function FluenceDriveContent() {
               </div>
             </CardContent>
           </Card>
+        ) : isForbidden ? (
+          <QueryErrorCard
+            title="You don't have access to Drive"
+            message="Ask your administrator for wiki read access."
+          />
         ) : (
           <FileList
             attachments={filteredAttachments}
@@ -200,7 +208,7 @@ function FluenceDriveContent() {
         )}
 
         {/* Upload Tip */}
-        {attachments.length === 0 && !isLoading && (
+        {attachments.length === 0 && !isLoading && !isForbidden && (
           <Card className="bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
             <CardContent className="p-6">
               <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2 flex items-center gap-2">

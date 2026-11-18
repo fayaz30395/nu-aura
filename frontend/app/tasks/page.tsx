@@ -24,6 +24,8 @@ import {
   StatusUpdateRequestStatus,
 } from '@/lib/generated/api/model';
 import type {CreateRequest, ListResponse, StatusUpdateRequest} from '@/lib/generated/api/model';
+import {QueryErrorCard} from '@/components/ui/QueryState';
+import {is403Error} from '@/lib/utils/type-guards';
 
 const STATUS_LABELS: Record<string, string> = {
   BACKLOG: 'Backlog', TODO: 'To Do', IN_PROGRESS: 'In Progress',
@@ -232,7 +234,7 @@ export default function TasksPage() {
   const employeeId = user?.employeeId ?? '';
   const enabled = isAuthenticated && hasHydrated && !!employeeId;
 
-  const {data, isLoading} = useListByAssignee(
+  const {data, isLoading, error: tasksError} = useListByAssignee(
     employeeId,
     {pageable: {page: 0, size: 100}},
     {query: {enabled}}
@@ -283,6 +285,11 @@ export default function TasksPage() {
           <div className="space-y-2">
             {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-lg bg-[var(--bg-secondary)] animate-pulse"/>)}
           </div>
+        ) : is403Error(tasksError) ? (
+          <QueryErrorCard
+            title="You don't have access to tasks"
+            message="Ask your administrator for project access."
+          />
         ) : tasks.length === 0 ? (
           <Card>
             <CardContent className="py-16 text-center">

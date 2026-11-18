@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -81,9 +82,11 @@ public class CourseEnrollmentController {
     public List<EnrollmentResponse> getMyEnrollments() {
         UUID tenantId = TenantContext.getCurrentTenant();
         UUID employeeId = SecurityContext.getCurrentEmployeeId();
-        return enrollmentService.getMyEnrollments(tenantId, employeeId)
-                .stream()
-                .map(EnrollmentResponse::fromEntity)
+        List<CourseEnrollment> enrollments = enrollmentService.getMyEnrollments(tenantId, employeeId);
+        Map<UUID, String> titles = enrollmentService.getCourseTitles(
+                enrollments.stream().map(CourseEnrollment::getCourseId).collect(Collectors.toSet()));
+        return enrollments.stream()
+                .map(e -> EnrollmentResponse.fromEntity(e, titles.get(e.getCourseId())))
                 .collect(Collectors.toList());
     }
 

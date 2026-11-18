@@ -11,7 +11,7 @@ import {QueryState} from '@/components/ui/QueryState';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Bone, SkeletonRegion} from '@/components/ui/skeletons/SkeletonRegion';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useOKRGraph, usePerformanceSpider} from '@/lib/hooks/queries/useOkr';
 import {useMyReceivedRecognitions} from '@/lib/hooks/queries/useRecognition';
@@ -40,7 +40,10 @@ export default function PerformanceRevolutionPage() {
   const okrGraphQuery = useOKRGraph();
   const performanceSpiderQuery = usePerformanceSpider(currentUserId);
   const receivedRecognitionsQuery = useMyReceivedRecognitions(0, 3);
-  const skillGapsQuery = useSkillGaps(currentUserId, currentUserId !== 'me');
+  const {hasPermission} = usePermissions();
+  // The skill-gap endpoint needs EMPLOYEE:READ; without it the call 403s, so skip it and hide the card.
+  const canSeeSkillGaps = hasPermission(Permissions.EMPLOYEE_READ);
+  const skillGapsQuery = useSkillGaps(currentUserId, currentUserId !== 'me' && canSeeSkillGaps);
 
   const recentRecognitions = receivedRecognitionsQuery.data?.content || [];
   const topGap = skillGapsQuery.data?.gaps?.[0];
@@ -127,7 +130,7 @@ export default function PerformanceRevolutionPage() {
                 <Users className="h-4 w-4 text-accent-700" aria-hidden="true"/> Development Trajectory
               </h2>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {skillGapsQuery.isLoading ? (
+                {!canSeeSkillGaps ? null : skillGapsQuery.isLoading ? (
                   <SkeletonRegion label="Loading growth opportunities" className={PANEL_CLASS}>
                     <Bone height={12} width="40%" radius="sm"/>
                     <Bone height={16} width="70%" radius="sm" mt={8}/>

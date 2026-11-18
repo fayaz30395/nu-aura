@@ -5,6 +5,7 @@ import {
   BenefitPlan,
   BenefitPlanEnhanced,
   BenefitPlanRequest,
+  BenefitType,
   BenefitsDashboard,
   ClaimRequest,
   EmployeeBenefitsSummary,
@@ -12,6 +13,54 @@ import {
   FlexAllocation,
 } from '../../types/hrms/benefits';
 import {Page} from '../../types/hrms/payroll';
+
+type EnhancedPlanResponse = Omit<BenefitPlanEnhanced, 'code' | 'isActive'> & {
+  code?: string;
+  providerCode?: string;
+  coverageAmount?: number;
+  employeeContribution?: number;
+  employerContribution?: number;
+  effectiveFrom?: string;
+  effectiveTo?: string;
+  isActive?: boolean;
+  active?: boolean;
+  eligibleGrades?: string[] | string;
+  tenantId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+const BENEFIT_TYPE_BY_PLAN_TYPE: Record<string, BenefitType> = {
+  HEALTH_INSURANCE: 'HEALTH',
+  DENTAL: 'DENTAL',
+  VISION: 'VISION',
+  LIFE_INSURANCE: 'LIFE',
+  DISABILITY: 'DISABILITY',
+  RETIREMENT: 'RETIREMENT',
+  FSA: 'FSA',
+  HSA: 'HSA',
+};
+
+function toBenefitPlan(p: EnhancedPlanResponse): BenefitPlan {
+  return {
+    id: p.id,
+    tenantId: p.tenantId ?? '',
+    planCode: p.code ?? p.providerCode ?? '',
+    planName: p.name,
+    description: p.description ?? '',
+    benefitType: BENEFIT_TYPE_BY_PLAN_TYPE[p.planType] ?? 'OTHER',
+    providerName: p.providerName,
+    coverageAmount: p.coverageAmount ?? p.baseCoverageAmount ?? 0,
+    employeeContribution: p.employeeContribution ?? p.baseEmployeeContribution ?? 0,
+    employerContribution: p.employerContribution ?? p.baseEmployerContribution ?? 0,
+    effectiveDate: p.effectiveFrom ?? p.effectiveDate ?? '',
+    expiryDate: p.effectiveTo ?? p.terminationDate,
+    isActive: p.isActive ?? p.active ?? true,
+    eligibilityCriteria: Array.isArray(p.eligibleGrades) ? p.eligibleGrades.join(', ') : p.eligibleGrades,
+    createdAt: p.createdAt ?? '',
+    updatedAt: p.updatedAt ?? '',
+  };
+}
 
 class BenefitsService {
   // ==================== BENEFIT PLANS (Basic API) ====================
@@ -41,21 +90,24 @@ class BenefitsService {
     return response.data;
   }
 
+  // Reads go to /benefits-enhanced (there is no /api/v1/benefits controller) and are mapped to the BenefitPlan shape.
+  // Writes (create/update/activate/deactivate/delete) still target /benefits and need a product decision on the
+  // enhanced request (plan category is required there).
   async getAllPlans(page: number = 0, size: number = 20): Promise<Page<BenefitPlan>> {
-    const response = await apiClient.get<Page<BenefitPlan>>('/benefits/plans', {
+    const response = await apiClient.get<Page<EnhancedPlanResponse>>('/benefits-enhanced/plans', {
       params: {page, size},
     });
-    return response.data;
+    return {...response.data, content: response.data.content.map(toBenefitPlan)};
   }
 
   async getActivePlans(): Promise<BenefitPlan[]> {
-    const response = await apiClient.get<BenefitPlan[]>('/benefits/plans/active');
-    return response.data;
+    const response = await apiClient.get<EnhancedPlanResponse[]>('/benefits-enhanced/plans/active');
+    return response.data.map(toBenefitPlan);
   }
 
-  async getPlansByType(benefitType: string): Promise<BenefitPlan[]> {
-    const response = await apiClient.get<BenefitPlan[]>(`/benefits/plans/type/${benefitType}`);
-    return response.data;
+  async getPlansByType(planType: string): Promise<BenefitPlan[]> {
+    const response = await apiClient.get<EnhancedPlanResponse[]>(`/benefits-enhanced/plans/type/${planType}`);
+    return response.data.map(toBenefitPlan);
   }
 
   async deletePlan(planId: string): Promise<void> {

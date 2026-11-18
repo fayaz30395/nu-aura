@@ -10,6 +10,8 @@ import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryErrorCard} from '@/components/ui/QueryState';
+import {is403Error} from '@/lib/utils/type-guards';
 import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {ContentGrid, type ContentItem} from '@/components/fluence/ContentGrid';
@@ -27,7 +29,7 @@ function FluenceDashboardPageContent() {
   // Fetch recent content
   const {data: wikiData, isLoading: wikiLoading} = useWikiPages(undefined, 0, 6);
   const {data: blogData, isLoading: blogLoading} = useBlogPosts(0, 6);
-  const {data: templatesData, isLoading: templatesLoading} = useFluenceTemplates(0, 3);
+  const {data: templatesData, isLoading: templatesLoading, error: templatesError} = useFluenceTemplates(0, 3);
 
   const recentWiki = (wikiData?.content || []).slice(0, 3);
   const recentBlogs = (blogData?.content || []).slice(0, 3);
@@ -292,7 +294,12 @@ function FluenceDashboardPageContent() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
-                {templates.length === 0 ? (
+                {is403Error(templatesError) ? (
+                  <QueryErrorCard
+                    title="You don't have access to templates"
+                    message="Ask your administrator for template access."
+                  />
+                ) : templates.length === 0 ? (
                   <EmptyState
                     {...EmptyStatePresets.noTemplates}
                     description="Templates speed up creating consistent wiki pages and blog posts."

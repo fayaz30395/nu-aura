@@ -32,6 +32,18 @@ const mockApiClient = apiClient as {
   delete: ReturnType<typeof vi.fn>;
 };
 
+const enhancedPlan = {
+  id: 'plan-1',
+  name: 'Basic Health Plan',
+  description: 'Basic health insurance',
+  planType: 'HEALTH_INSURANCE',
+  coverageAmount: 100000,
+  employeeContribution: 500,
+  employerContribution: 1000,
+  effectiveFrom: '2026-04-01',
+  isActive: true,
+};
+
 describe('benefitsService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -265,39 +277,18 @@ describe('benefitsService', () => {
   });
 
   describe('getAllPlans', () => {
-    it('should fetch all plans with pagination', async () => {
-      const mockPage: Page<BenefitPlan> = {
-        content: [
-          {
-            id: 'plan-1',
-            tenantId: 'tenant-1',
-            planCode: 'HEALTH001',
-            planName: 'Basic Health Plan',
-            description: 'Basic health insurance',
-            benefitType: 'HEALTH',
-            coverageAmount: 100000,
-            employeeContribution: 500,
-            employerContribution: 1000,
-            effectiveDate: '2026-04-01',
-            isActive: true,
-            createdAt: '2026-03-18T00:00:00Z',
-            updatedAt: '2026-03-18T00:00:00Z',
-          },
-        ],
-        totalElements: 1,
-        totalPages: 1,
-        size: 20,
-        number: 0,
-      };
-
-      mockApiClient.get.mockResolvedValueOnce({data: mockPage});
+    it('should fetch plans from benefits-enhanced and map them to BenefitPlan', async () => {
+      mockApiClient.get.mockResolvedValueOnce({
+        data: {content: [enhancedPlan], totalElements: 1, totalPages: 1, size: 20, number: 0},
+      });
 
       const result = await benefitsService.getAllPlans();
 
-      expect(mockApiClient.get).toHaveBeenCalledWith('/benefits/plans', {
+      expect(mockApiClient.get).toHaveBeenCalledWith('/benefits-enhanced/plans', {
         params: {page: 0, size: 20},
       });
       expect(result.content.length).toBe(1);
+      expect(result.content[0]).toMatchObject({planName: 'Basic Health Plan', benefitType: 'HEALTH', isActive: true});
     });
 
     it('should handle getAllPlans error', async () => {
@@ -312,29 +303,11 @@ describe('benefitsService', () => {
 
   describe('getActivePlans', () => {
     it('should fetch active plans only', async () => {
-      const mockPlans: BenefitPlan[] = [
-        {
-          id: 'plan-1',
-          tenantId: 'tenant-1',
-          planCode: 'HEALTH001',
-          planName: 'Basic Health Plan',
-          description: 'Basic health insurance',
-          benefitType: 'HEALTH',
-          coverageAmount: 100000,
-          employeeContribution: 500,
-          employerContribution: 1000,
-          effectiveDate: '2026-04-01',
-          isActive: true,
-          createdAt: '2026-03-18T00:00:00Z',
-          updatedAt: '2026-03-18T00:00:00Z',
-        },
-      ];
-
-      mockApiClient.get.mockResolvedValueOnce({data: mockPlans});
+      mockApiClient.get.mockResolvedValueOnce({data: [enhancedPlan]});
 
       const result = await benefitsService.getActivePlans();
 
-      expect(mockApiClient.get).toHaveBeenCalledWith('/benefits/plans/active');
+      expect(mockApiClient.get).toHaveBeenCalledWith('/benefits-enhanced/plans/active');
       expect(result[0].isActive).toBe(true);
     });
 
@@ -349,31 +322,13 @@ describe('benefitsService', () => {
   });
 
   describe('getPlansByType', () => {
-    it('should fetch plans by benefit type', async () => {
-      const mockPlans: BenefitPlan[] = [
-        {
-          id: 'plan-1',
-          tenantId: 'tenant-1',
-          planCode: 'HEALTH001',
-          planName: 'Basic Health Plan',
-          description: 'Basic health insurance',
-          benefitType: 'HEALTH',
-          coverageAmount: 100000,
-          employeeContribution: 500,
-          employerContribution: 1000,
-          effectiveDate: '2026-04-01',
-          isActive: true,
-          createdAt: '2026-03-18T00:00:00Z',
-          updatedAt: '2026-03-18T00:00:00Z',
-        },
-      ];
+    it('should fetch plans by plan type', async () => {
+      mockApiClient.get.mockResolvedValueOnce({data: [enhancedPlan]});
 
-      mockApiClient.get.mockResolvedValueOnce({data: mockPlans});
-
-      const result = await benefitsService.getPlansByType('HEALTH');
+      const result = await benefitsService.getPlansByType('HEALTH_INSURANCE');
 
       expect(mockApiClient.get).toHaveBeenCalledWith(
-        '/benefits/plans/type/HEALTH'
+        '/benefits-enhanced/plans/type/HEALTH_INSURANCE'
       );
       expect(result[0].benefitType).toBe('HEALTH');
     });

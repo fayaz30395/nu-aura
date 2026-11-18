@@ -1007,7 +1007,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'Analytics',
           icon: icon.barChart3,
           href: '/fluence/analytics',
-          requiredPermission: Permissions.KNOWLEDGE_WIKI_READ
+          requiredPermission: Permissions.KNOWLEDGE_TEMPLATE_READ
         },
         {
           id: 'fluence-ai-chat',
@@ -1158,7 +1158,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           ],
         },
         {
-          id: 'travel', label: 'Travel', icon: icon.plane, href: '/travel', requiredPermission: Permissions.TRAVEL_VIEW,
+          id: 'travel', label: 'Travel', icon: icon.plane, href: '/travel', requiredPermission: Permissions.TRAVEL_VIEW_ALL,
           children: [
             {
               id: 'travel-overview',
@@ -1401,7 +1401,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
               label: 'Attrition',
               href: '/reports/attrition',
               icon: sm.trendingUp,
-              requiredPermission: Permissions.REPORT_VIEW
+              requiredPermission: Permissions.PREDICTIVE_ANALYTICS_VIEW
             },
             {
               id: 'reports-leave',

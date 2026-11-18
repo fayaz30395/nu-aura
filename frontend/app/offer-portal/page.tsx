@@ -46,6 +46,9 @@ function OfferPortalLoading() {
   );
 }
 
+// Deployment-level contact; the public offer payload carries no tenant HR email.
+const HR_CONTACT_EMAIL = process.env.NEXT_PUBLIC_HR_CONTACT_EMAIL;
+
 export default function OfferPortalWrapper() {
   return (
     <Suspense fallback={<OfferPortalLoading/>}>
@@ -388,10 +391,16 @@ function OfferPortalPage() {
           <CardContent className="p-6 text-center">
             <Mail className="h-6 w-6 text-[var(--text-muted)] mx-auto mb-2"/>
             <p className="text-[var(--text-secondary)]">
-              Have questions? Contact HR at{' '}
-              <a href="mailto:hr@company.com" className="text-accent-700 hover:underline">
-                hr@company.com
-              </a>
+              {HR_CONTACT_EMAIL ? (
+                <>
+                  Have questions? Contact HR at{' '}
+                  <a href={`mailto:${HR_CONTACT_EMAIL}`} className="text-accent-700 hover:underline">
+                    {HR_CONTACT_EMAIL}
+                  </a>
+                </>
+              ) : (
+                'Have questions? Please contact the HR team that sent you this offer.'
+              )}
             </p>
           </CardContent>
         </Card>

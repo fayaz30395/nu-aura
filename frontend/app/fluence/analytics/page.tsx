@@ -12,6 +12,8 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader} from '@/components/ui/Card';
 import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {QueryErrorCard} from '@/components/ui/QueryState';
+import {is403Error} from '@/lib/utils/type-guards';
 import {card, chartColors, iconSize, layout, motion as dsMotion, typography,} from '@/lib/theme/design-system';
 import {formatDateShort} from '@/lib/utils/format/date';
 import ActivityFeed from '@/components/fluence/ActivityFeed';
@@ -43,7 +45,7 @@ function FluenceAnalyticsPageContent() {
   // Fetch data
   const {data: wikiData, isLoading: wikiLoading} = useWikiPages(undefined, 0, 100);
   const {data: blogData, isLoading: blogLoading} = useBlogPosts(0, 100);
-  const {data: templatesData, isLoading: templatesLoading} = useFluenceTemplates(0, 100);
+  const {data: templatesData, isLoading: templatesLoading, error: templatesError} = useFluenceTemplates(0, 100);
   const {data: activityData, isLoading: activityLoading} = useActivityFeed(0, 100);
 
   // ── All useMemo hooks must be before any conditional return ──────────────────
@@ -161,6 +163,13 @@ function FluenceAnalyticsPageContent() {
             </div>
           </div>
         </motion.div>
+
+        {is403Error(templatesError) && (
+          <QueryErrorCard
+            title="You don't have access to template data"
+            message="Analytics below exclude templates. Ask your administrator for template access."
+          />
+        )}
 
         {/* KPI Cards Row */}
         {isLoading ? (

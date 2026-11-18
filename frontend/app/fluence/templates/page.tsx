@@ -8,6 +8,7 @@ import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
+import {is403Error} from '@/lib/utils/type-guards';
 import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {card as dsCard, iconSize, input as dsInput, layout, typography,} from '@/lib/theme/design-system';
 import {useFluenceTemplates} from '@/lib/hooks/queries/useFluence';
@@ -27,7 +28,7 @@ export default function TemplatesPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {data: templatesData, isLoading, isError} = useFluenceTemplates(0, 20);
+  const {data: templatesData, isLoading, isError, error} = useFluenceTemplates(0, 20);
 
   const templates: Template[] = useMemo(
     () => templatesData?.content || [],
@@ -114,8 +115,10 @@ export default function TemplatesPage() {
         ) : isError ? (
           <EmptyState
             icon={<FileText className={iconSize.statCard}/>}
-            title="Unable to load templates"
-            description="There was an error fetching templates. Please try again later."
+            title={is403Error(error) ? "You don't have access to templates" : 'Unable to load templates'}
+            description={is403Error(error)
+              ? 'Ask your administrator for template access.'
+              : 'There was an error fetching templates. Please try again later.'}
           />
         ) : templates.length === 0 ? (
           <PermissionGate

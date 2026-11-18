@@ -5,6 +5,7 @@ import {ActionIcon, Badge, Button, Text, Tooltip} from '@mantine/core';
 import {useDisclosure} from '@mantine/hooks';
 import {CheckCircle, Plus, Target, Trash2} from 'lucide-react';
 import {Card} from '@/components/ui/Card';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {QueryState} from '@/components/ui/QueryState';
@@ -115,9 +116,12 @@ function SkillsMatrix({skills, onRemove}: {skills: EmployeeSkill[]; onRemove: (s
 export function MyCompetenciesTab({employeeId}: {employeeId: string}) {
   const [addModalOpened, {open: openAddModal, close: closeAddModal}] = useDisclosure(false);
   const [removeTarget, setRemoveTarget] = useState<EmployeeSkill | null>(null);
+  const {hasPermission} = usePermissions();
 
   const skillsQuery = useEmployeeSkills(employeeId);
-  const gapQuery = useSkillGapAnalysis(employeeId);
+  // The skill-gap endpoint needs EMPLOYEE:READ; without it the call 403s, so skip it and hide the panel.
+  const canSeeGaps = hasPermission(Permissions.EMPLOYEE_READ);
+  const gapQuery = useSkillGapAnalysis(employeeId, canSeeGaps);
   const addSkillMutation = useAddEmployeeSkill(employeeId);
   const removeSkillMutation = useRemoveSkill(employeeId);
 
@@ -169,7 +173,7 @@ export function MyCompetenciesTab({employeeId}: {employeeId: string}) {
                   <h2 className="text-base font-semibold text-text-1">Skills Matrix</h2>
                   <SkillsMatrix skills={skills} onRemove={setRemoveTarget}/>
                 </Card>
-                <GapAnalysisPanel gapQuery={gapQuery}/>
+                {canSeeGaps && <GapAnalysisPanel gapQuery={gapQuery}/>}
               </div>
             </div>
           );

@@ -45,7 +45,7 @@ export function CandidateFormModal({
         {editingCandidate ? 'Edit candidate' : 'Add candidate'}
       </ModalHeader>
       <ModalBody>
-          <form onSubmit={candidateForm.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={candidateForm.handleSubmit(onSubmit)} noValidate className="space-y-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <Input

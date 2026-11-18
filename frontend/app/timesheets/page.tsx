@@ -82,7 +82,7 @@ export default function TimesheetsPage() {
   );
 
   // Entries are validated against PSA projects, so list those (not the generic projects module).
-  const {data: psaProjects = []} = usePsaProjects();
+  const {data: psaProjects = [], isSuccess: projectsLoaded} = usePsaProjects();
   const projects = psaProjects.map((p) => ({id: p.id, name: p.projectName}));
 
   // Mutations
@@ -825,6 +825,11 @@ export default function TimesheetsPage() {
                     </option>
                   ))}
                 </select>
+                {projectsLoaded && projects.length === 0 && (
+                  <p role="status" className="mt-1 text-xs text-[var(--text-muted)]">
+                    No projects are available to book time against. Ask your manager or HR to assign you to a project.
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

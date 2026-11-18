@@ -21,6 +21,7 @@ public class EnrollmentResponse {
     private UUID id;
     private UUID tenantId;
     private UUID courseId;
+    private String courseTitle;
     private UUID employeeId;
     private EnrollmentStatus status;
     private BigDecimal progressPercentage;
@@ -36,6 +37,12 @@ public class EnrollmentResponse {
     private Boolean quizPassed;
     private Integer totalTimeSpentMinutes;
     private LocalDateTime dueDate;
+
+    public static EnrollmentResponse fromEntity(CourseEnrollment e, String courseTitle) {
+        EnrollmentResponse r = fromEntity(e);
+        r.setCourseTitle(courseTitle);
+        return r;
+    }
 
     public static EnrollmentResponse fromEntity(CourseEnrollment e) {
         return EnrollmentResponse.builder()

@@ -83,7 +83,7 @@ export default function TemplatesPage() {
               <div className="relative w-full md:w-1/3">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]"/>
                 <Input
-                  placeholder="Search templates..."
+                  placeholder="Search templates..." aria-label="Search templates"
                   className="pl-12 rounded-lg bg-[var(--bg-input)] border-0 font-bold focus:ring-2 focus:ring-accent-500"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}

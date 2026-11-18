@@ -192,11 +192,11 @@ export function useRemoveCompetency(reviewId: string) {
 
 // ─── Skill Gap Hooks ─────────────────────────────────────────────────────
 
-export function useSkillGapAnalysis(employeeId: string) {
+export function useSkillGapAnalysis(employeeId: string, enabled: boolean = true) {
   return useQuery({
     queryKey: competencyKeys.skillGaps(employeeId),
     queryFn: () => skillGapService.analyze(employeeId),
-    enabled: !!employeeId,
+    enabled: enabled && !!employeeId,
     staleTime: 10 * 60 * 1000,
     // 4xx (e.g. 403) will not succeed on retry
     retry: (count: number, error: unknown) => {

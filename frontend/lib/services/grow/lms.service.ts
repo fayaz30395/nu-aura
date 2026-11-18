@@ -51,6 +51,7 @@ export interface ModuleContent {
 export interface CourseEnrollment {
   id: string;
   courseId: string;
+  courseTitle?: string;
   employeeId: string;
   status: 'ENROLLED' | 'IN_PROGRESS' | 'COMPLETED' | 'DROPPED';
   enrolledAt: string;

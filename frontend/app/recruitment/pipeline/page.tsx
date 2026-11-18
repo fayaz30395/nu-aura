@@ -733,6 +733,7 @@ export default function ApplicantPipelinePage() {
                   </div>
                 ) : (
                   <Select
+                    aria-label="Job opening"
                     value={effectiveJobId}
                     onChange={handleJobChange}
                     disabled={jobOpenings.length === 0}
