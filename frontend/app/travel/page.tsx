@@ -9,7 +9,7 @@ import {useAuth} from '@/lib/hooks/useAuth';
 import {formatCurrency} from '@/lib/utils';
 import {useTravelRequests} from '@/lib/hooks/queries/useTravel';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {TRAVEL_STATUS} from '@/lib/status/vocabulary';
@@ -41,6 +41,7 @@ import {
 export default function TravelPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
+  const {hasPermission} = usePermissions();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<TravelStatus | 'ALL'>('ALL');
   const [typeFilter, setTypeFilter] = useState<TravelType | 'ALL'>('ALL');
@@ -53,7 +54,7 @@ export default function TravelPage() {
     ...(searchTerm && {search: searchTerm}),
   };
 
-  const {data, isLoading, error, refetch} = useTravelRequests(currentPage, 10, filters);
+  const {data, isLoading, error, refetch} = useTravelRequests(currentPage, 10, filters, hasPermission(Permissions.TRAVEL_VIEW_ALL));
 
   useEffect(() => {
     if (!hasHydrated) return;

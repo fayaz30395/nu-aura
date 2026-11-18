@@ -89,13 +89,14 @@ export function useEmployeeLeaveRequests(
 export function useLeaveRequestsByStatus(
   status: LeaveRequestStatus,
   page: number = 0,
-  size: number = 20
+  size: number = 20,
+  enabled: boolean = true
 ) {
   return useQuery({
     queryKey: leaveKeys.requestsByStatus(status, page, size),
     queryFn: () => leaveService.getLeaveRequestsByStatus(status, page, size),
     staleTime: 30 * 1000, // 30 seconds for pending approvals
-    enabled: !!status, // Don't fire if status is empty/undefined
+    enabled: enabled && !!status, // Don't fire if status is empty/undefined
   });
 }
 

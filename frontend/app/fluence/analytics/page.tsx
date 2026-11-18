@@ -5,7 +5,7 @@ import {motion} from 'framer-motion';
 import {Reveal} from '@/components/motion';
 import dynamic from 'next/dynamic';
 import {useRouter} from 'next/navigation';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {BookOpen, Eye, FileText, Heart, MessageCircle, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
@@ -42,10 +42,13 @@ function FluenceAnalyticsPageContent() {
   const router = useRouter();
   // Permission gate handled by <PermissionGate> wrapper in default export.
 
+  const {hasPermission} = usePermissions();
+  const canReadTemplates = hasPermission(Permissions.KNOWLEDGE_TEMPLATE_READ);
+
   // Fetch data
   const {data: wikiData, isLoading: wikiLoading} = useWikiPages(undefined, 0, 100);
   const {data: blogData, isLoading: blogLoading} = useBlogPosts(0, 100);
-  const {data: templatesData, isLoading: templatesLoading, error: templatesError} = useFluenceTemplates(0, 100);
+  const {data: templatesData, isLoading: templatesLoading, error: templatesError} = useFluenceTemplates(0, 100, undefined, canReadTemplates);
   const {data: activityData, isLoading: activityLoading} = useActivityFeed(0, 100);
 
   // ── All useMemo hooks must be before any conditional return ──────────────────
@@ -164,7 +167,7 @@ function FluenceAnalyticsPageContent() {
           </div>
         </motion.div>
 
-        {is403Error(templatesError) && (
+        {(!canReadTemplates || is403Error(templatesError)) && (
           <QueryErrorCard
             title="You don't have access to template data"
             message="Analytics below exclude templates. Ask your administrator for template access."

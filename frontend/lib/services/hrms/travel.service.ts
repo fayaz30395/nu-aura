@@ -49,6 +49,11 @@ class TravelService {
     return response.data;
   }
 
+  async getMyTravelRequests(page: number = 0, size: number = 20): Promise<Page<TravelRequest>> {
+    const response = await apiClient.get<Page<TravelRequest>>('/travel/requests/my', {params: {page, size}});
+    return response.data;
+  }
+
   async getEmployeeTravelRequests(
     employeeId: string,
     page: number = 0,

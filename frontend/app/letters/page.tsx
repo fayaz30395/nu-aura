@@ -38,8 +38,8 @@ import {
   LetterStatus,
   LetterTemplate,
 } from '@/lib/types/hrms/letter';
-import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useRouter} from 'next/navigation';
 import {
@@ -130,6 +130,10 @@ export default function LettersPage() {
   const router = useRouter();
   const toast = useToast();
   const {isAuthenticated, user, hasHydrated} = useAuth();
+  const {hasPermission, isPermissionReady} = usePermissions();
+  // Letters and templates endpoints require LETTER:TEMPLATE_VIEW; candidates (offer letters) require CANDIDATE:VIEW.
+  const canViewLetters = hasPermission(Permissions.LETTER_TEMPLATE_VIEW);
+  const canViewCandidates = hasPermission(Permissions.CANDIDATE_VIEW);
 
   // React Query hooks for data fetching
   const [currentPage, setCurrentPage] = useState(0);
@@ -138,9 +142,9 @@ export default function LettersPage() {
     isLoading: lettersLoading,
     error: lettersError,
     refetch: refetchLetters
-  } = useAllLetters(currentPage, 20, isAuthenticated && hasHydrated);
-  const {data: templatesData, isLoading: _templatesLoading} = useActiveLetterTemplates(isAuthenticated && hasHydrated);
-  const {data: candidatesData, isLoading: _candidatesLoading, refetch: refetchCandidates} = useCandidates(0, 100);
+  } = useAllLetters(currentPage, 20, isAuthenticated && hasHydrated && canViewLetters);
+  const {data: templatesData, isLoading: _templatesLoading} = useActiveLetterTemplates(isAuthenticated && hasHydrated && canViewLetters);
+  const {data: candidatesData, isLoading: _candidatesLoading, refetch: refetchCandidates} = useCandidates(0, 100, canViewCandidates);
 
   // React Query mutations
   const generateLetterMutation = useGenerateLetter();
@@ -406,6 +410,10 @@ export default function LettersPage() {
     {label: 'Dashboard', href: '/dashboard'},
     {label: 'Letter Generation'},
   ];
+
+  if (isPermissionReady && !canViewLetters) {
+    return <PageDeniedFallback/>;
+  }
 
   if (lettersLoading && filteredLetters.length === 0) {
     return (

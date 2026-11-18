@@ -3,7 +3,7 @@
 import {useState} from 'react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {
   useAcceptSwapRequest,
@@ -129,12 +129,13 @@ function SwapCard({
 export default function ShiftSwapsPage() {
   const router = useRouter();
   const {user} = useAuth();
+  const {hasPermission} = usePermissions();
   const employeeId = user?.employeeId ?? '';
   const [activeTab, setActiveTab] = useState<'sent' | 'incoming' | 'approval'>('sent');
 
   const {data: mySwapsData, isLoading: mySwapsLoading} = useMySwapRequests(employeeId);
   const {data: incomingSwaps = [], isLoading: incomingLoading} = useIncomingSwapRequests(employeeId);
-  const {data: pendingApproval = [], isLoading: approvalLoading} = usePendingApprovalSwaps();
+  const {data: pendingApproval = [], isLoading: approvalLoading} = usePendingApprovalSwaps(hasPermission(Permissions.ATTENDANCE_APPROVE));
 
   const acceptMutation = useAcceptSwapRequest();
   const approveMutation = useApproveSwapRequest();

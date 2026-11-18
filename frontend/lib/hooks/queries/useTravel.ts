@@ -37,11 +37,16 @@ export const travelKeys = {
 export function useTravelRequests(
   page: number = 0,
   size: number = 20,
-  filters?: TravelRequestFilters
+  filters?: TravelRequestFilters,
+  viewAll: boolean = true
 ) {
+  // Without TRAVEL:VIEW_ALL the list endpoint 403s; fall back to the caller's own requests
+  // (the /my endpoint takes no filters).
   return useQuery({
-    queryKey: travelKeys.requestsPaginated(page, size, filters),
-    queryFn: () => travelService.getAllTravelRequests(page, size, filters),
+    queryKey: [...travelKeys.requestsPaginated(page, size, filters), viewAll ? 'all' : 'my'],
+    queryFn: () => viewAll
+      ? travelService.getAllTravelRequests(page, size, filters)
+      : travelService.getMyTravelRequests(page, size),
   });
 }
 

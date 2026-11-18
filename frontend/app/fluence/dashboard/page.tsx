@@ -3,7 +3,7 @@
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {BookOpen, Clock, FileText, Pen, Plus, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
@@ -26,10 +26,13 @@ function FluenceDashboardPageContent() {
   // Permission gate is handled by the <PermissionGate> wrapper in the default
   // export. This component only renders when access is granted.
 
+  const {hasPermission} = usePermissions();
+  const canReadTemplates = hasPermission(Permissions.KNOWLEDGE_TEMPLATE_READ);
+
   // Fetch recent content
   const {data: wikiData, isLoading: wikiLoading} = useWikiPages(undefined, 0, 6);
   const {data: blogData, isLoading: blogLoading} = useBlogPosts(0, 6);
-  const {data: templatesData, isLoading: templatesLoading, error: templatesError} = useFluenceTemplates(0, 3);
+  const {data: templatesData, isLoading: templatesLoading, error: templatesError} = useFluenceTemplates(0, 3, undefined, canReadTemplates);
 
   const recentWiki = (wikiData?.content || []).slice(0, 3);
   const recentBlogs = (blogData?.content || []).slice(0, 3);
@@ -294,7 +297,7 @@ function FluenceDashboardPageContent() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
-                {is403Error(templatesError) ? (
+                {!canReadTemplates || is403Error(templatesError) ? (
                   <QueryErrorCard
                     title="You don't have access to templates"
                     message="Ask your administrator for template access."

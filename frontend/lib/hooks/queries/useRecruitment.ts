@@ -123,10 +123,11 @@ export function useDeleteJobOpening() {
 
 // ==================== Candidate Hooks ====================
 
-export function useCandidates(page: number = 0, size: number = 20) {
+export function useCandidates(page: number = 0, size: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: recruitmentKeys.candidatesList(page, size),
     queryFn: () => recruitmentService.getAllCandidates(page, size),
+    enabled,
     staleTime: 3 * 60 * 1000,
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),

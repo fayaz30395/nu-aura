@@ -17,12 +17,17 @@ export const taxKeys = {
 // Get paginated list of tax declarations
 export function useTaxDeclarations(
   page: number = 0,
-  size: number = 20
+  size: number = 20,
+  ownEmployeeId?: string,
+  enabled: boolean = true
 ) {
+  // ownEmployeeId: callers without STATUTORY:VIEW cannot list all, so fetch only their own declarations.
   return useQuery({
-    queryKey: taxKeys.list(page, size),
+    queryKey: ownEmployeeId ? [...taxKeys.list(page, size), ownEmployeeId] : taxKeys.list(page, size),
     queryFn: async () => {
-      const result = await taxService.getAll({page, size});
+      const result = ownEmployeeId
+        ? await taxService.getByEmployee(ownEmployeeId)
+        : await taxService.getAll({page, size});
       // Defensive: ensure we always return an array regardless of backend response shape
       if (Array.isArray(result)) return result;
       if (result && typeof result === 'object' && 'content' in result && Array.isArray((result as Record<string, unknown>).content)) {
@@ -30,6 +35,7 @@ export function useTaxDeclarations(
       }
       return [];
     },
+    enabled,
     staleTime: 2 * 60 * 1000, // 2 minutes
     placeholderData: [] as TaxDeclarationResponse[],
   });

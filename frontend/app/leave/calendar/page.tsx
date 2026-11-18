@@ -73,7 +73,7 @@ export default function LeaveCalendarPage() {
   }, [permReady, hasPermission, router]);
 
   const employeeRequestsQuery = useEmployeeLeaveRequests(user?.employeeId || '', 0, 100, Boolean(hasHydrated && user?.employeeId && viewMode === 'my'));
-  const approvedRequestsQuery = useLeaveRequestsByStatus('APPROVED', 0, 100);
+  const approvedRequestsQuery = useLeaveRequestsByStatus('APPROVED', 0, 100, viewMode === 'team' && (hasPermission(Permissions.LEAVE_VIEW_ALL) || hasPermission(Permissions.LEAVE_VIEW_TEAM)));
   const {data: leaveTypes = []} = useActiveLeaveTypes();
   const activeQuery = viewMode === 'my' ? employeeRequestsQuery : approvedRequestsQuery;
   const leaves = useMemo(() => activeQuery.data?.content ?? [], [activeQuery.data]);
@@ -123,7 +123,9 @@ export default function LeaveCalendarPage() {
             onChange={setViewMode}
             options={[
               {value: 'my', label: 'My Leaves'},
-              {value: 'team', label: 'Team Leaves'},
+              ...(hasPermission(Permissions.LEAVE_VIEW_ALL) || hasPermission(Permissions.LEAVE_VIEW_TEAM)
+                ? [{value: 'team', label: 'Team Leaves'}]
+                : []),
             ]}
           />
         </div>

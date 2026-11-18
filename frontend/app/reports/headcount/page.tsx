@@ -5,8 +5,8 @@ import {Spinner} from '@/components/ui/Spinner';
 import {apiClient} from '@/lib/api/client';
 import {useQuery} from '@tanstack/react-query';
 import {Building2, Download, RefreshCw, TrendingDown, TrendingUp, Users,} from 'lucide-react';
-import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Stat} from '@/components/ui/Stat';
 import {EmptyState} from '@/components/ui/EmptyState';
 
@@ -48,8 +48,12 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default function HeadcountReportPage() {
+  const {hasPermission, isPermissionReady} = usePermissions();
+  // The /analytics/* endpoints require ANALYTICS:VIEW, which REPORT:VIEW holders may lack.
+  const canViewAnalytics = hasPermission(Permissions.ANALYTICS_VIEW);
   const {data, isLoading: loading, error: queryError, refetch} = useQuery<HeadcountData>({
     queryKey: ['headcount-report'],
+    enabled: canViewAnalytics,
     queryFn: async () => {
       const [metricsRes, trendRes, healthRes] = await Promise.all([
         apiClient.get<EmployeeMetrics>('/analytics/employees').catch((): null => null),
@@ -101,6 +105,10 @@ export default function HeadcountReportPage() {
   // compute max for bar width scaling
   const maxDeptCount = Math.max(...byDepartment.map(d => d.count), 1);
   const maxTrendCount = Math.max(...trend.map(t => t.headcount), 1);
+
+  if (isPermissionReady && !canViewAnalytics) {
+    return <PageDeniedFallback/>;
+  }
 
   return (
     <AppLayout activeMenuItem="reports">

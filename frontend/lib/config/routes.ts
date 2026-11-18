@@ -920,6 +920,10 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
     anyPermission: [Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE],
   },
   {
+    path: '/offboarding/fnf',
+    anyPermission: [Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE],
+  },
+  {
     path: '/offboarding/[id]',
     anyPermission: [Permissions.EXIT_VIEW, Permissions.EXIT_MANAGE],
   },

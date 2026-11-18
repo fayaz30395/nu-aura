@@ -13,7 +13,7 @@ import {EmptyStatePresets} from '@/components/ui/empty-state-presets';
 import {card as dsCard, iconSize, input as dsInput, layout, typography,} from '@/lib/theme/design-system';
 import {useFluenceTemplates} from '@/lib/hooks/queries/useFluence';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
 interface Template {
   id: string;
@@ -28,7 +28,11 @@ export default function TemplatesPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {data: templatesData, isLoading, isError, error} = useFluenceTemplates(0, 20);
+  const {hasPermission} = usePermissions();
+  const canReadTemplates = hasPermission(Permissions.KNOWLEDGE_TEMPLATE_READ);
+  const {data: templatesData, isLoading, isError: isQueryError, error} = useFluenceTemplates(0, 20, undefined, canReadTemplates);
+  const isError = isQueryError || !canReadTemplates;
+  const isDenied = !canReadTemplates || is403Error(error);
 
   const templates: Template[] = useMemo(
     () => templatesData?.content || [],
@@ -115,8 +119,8 @@ export default function TemplatesPage() {
         ) : isError ? (
           <EmptyState
             icon={<FileText className={iconSize.statCard}/>}
-            title={is403Error(error) ? "You don't have access to templates" : 'Unable to load templates'}
-            description={is403Error(error)
+            title={isDenied ? "You don't have access to templates" : 'Unable to load templates'}
+            description={isDenied
               ? 'Ask your administrator for template access.'
               : 'There was an error fetching templates. Please try again later.'}
           />

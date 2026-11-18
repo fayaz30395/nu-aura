@@ -11,6 +11,7 @@ import {Select} from '@/components/ui/Select';
 import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
+import {PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
 import {
   getGetInvoicesByStatusQueryKey,
@@ -275,7 +276,7 @@ export default function PSAInvoicesPage() {
   const [panel, setPanel] = useState<PSAInvoice | null | 'new'>(null);
 
   const isAdmin = isReady && hasAnyRole(...ADMIN_ROLES);
-  const enabled = isAuthenticated && hasHydrated;
+  const enabled = isAuthenticated && hasHydrated && isAdmin;
 
   const {data: invoices, isLoading} = useGetInvoicesByStatus(
     activeStatus,
@@ -292,7 +293,7 @@ export default function PSAInvoicesPage() {
   const list: PSAInvoice[] = Array.isArray(invoices) ? invoices : [];
 
   if (hasHydrated && isAuthenticated && isReady && !hasAnyRole(...ADMIN_ROLES)) {
-    return null;
+    return <PageDeniedFallback/>;
   }
 
   return (

@@ -7,7 +7,7 @@ import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
 import {Car, CheckCircle, Filter, MapPin, Plus, Send,} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {MileageLogEntry, MileageStatus, VehicleType,} from '@/lib/types/hrms/expense';
 import {ConfirmDialog, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui';
@@ -55,6 +55,7 @@ const STATUS_COLORS: Record<MileageStatus, string> = {
 
 export default function MileagePage() {
   const {user} = useAuth();
+  const {hasPermission} = usePermissions();
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('my-logs');
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -69,7 +70,7 @@ export default function MileagePage() {
   // Queries
   const myLogsQuery = useEmployeeMileageLogs(user?.employeeId, 0, 50);
   const summaryQuery = useMileageSummary(user?.employeeId, currentYear, currentMonth);
-  const pendingQuery = usePendingMileageApprovals(0, 50);
+  const pendingQuery = usePendingMileageApprovals(0, 50, hasPermission(Permissions.EXPENSE_APPROVE));
   const policiesQuery = useMileagePolicies();
 
   // Mutations

@@ -8,7 +8,7 @@
 import fs from 'fs';
 import {execFileSync} from 'child_process';
 import {chromium, newContext, EV, SS, STATE, FE, BE} from './lib.mjs';
-import {staticRoutes, dynamicRoutes, catalogueRoutes, openAndCheck, VIEWPORTS, globalTimeout, loadRoutePolicy, expectedAccess, whoAmI, ALLOW_CONSOLE, ALLOW_HTTP, classifyHttp} from './ui-helpers.mjs';
+import {staticRoutes, dynamicRoutes, catalogueRoutes, openAndCheck, VIEWPORTS, globalTimeout, loadRoutePolicy, expectedAccess, whoAmI, ALLOW_CONSOLE, ALLOW_HTTP, classifyHttp} from './live2-helpers.mjs';
 
 const arg = (k, d) => { const i = process.argv.indexOf(k); return i > 0 ? process.argv[i + 1] : d; };
 const roles = arg('--roles', 'hradmin,employee,manager').split(',');
@@ -80,7 +80,7 @@ async function sweepRole(role) {
           verdict = fail.length ? 'FAIL' : 'PASS';
         }
       }
-      if (/^FAIL/.test(verdict) && vpName === 'desktop') await page.screenshot({path: `${SS}/ui-p1-${role}-${route.replace(/\//g, '_').replace(/^_$/, 'root')}.png`}).catch(() => {});
+      if (/^FAIL/.test(verdict) && vpName === 'desktop') await page.screenshot({path: `${SS}/live2-p1-${role}-${route.replace(/\//g, '_').replace(/^_$/, 'root')}.png`}).catch(() => {});
       await page.close().catch(() => {});
       const row = {route, vp: vpName, expected, observed, verdict, finalUrl: res.finalUrl, ms: res.ms, fail, http, console: consoleErrs.slice(0, 5).map(s => s.replace(/\s+/g, ' ').slice(0, 200)), checks: res.checks};
       R.results.push(row);

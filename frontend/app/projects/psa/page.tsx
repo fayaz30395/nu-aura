@@ -11,6 +11,7 @@ import {Select} from '@/components/ui/Select';
 import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
+import {PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {usePermissions, Roles} from '@/lib/hooks/usePermissions';
 import {
   getGetAllProjectsQueryKey,
@@ -332,7 +333,7 @@ export default function PSAProjectsPage() {
     : allProjects.filter(p => p.status === statusFilter);
 
   if (hasHydrated && isAuthenticated && isReady && !hasAnyRole(...ADMIN_ROLES, Roles.RECRUITER)) {
-    return null;
+    return <PageDeniedFallback/>;
   }
 
   return (

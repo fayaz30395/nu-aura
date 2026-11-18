@@ -29,7 +29,7 @@ export default function AdminProfileRedirectPage() {
               <ShieldCheck className="h-5 w-5"/>
             </span>
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-[var(--text-primary)]">Redirecting your profile</p>
+              <h1 className="text-sm font-semibold text-[var(--text-primary)]">Redirecting your profile</h1>
               <p className="text-caption">
                 Admin profile is managed from your personal workspace.
               </p>

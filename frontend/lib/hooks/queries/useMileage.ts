@@ -45,10 +45,11 @@ export function useMileageSummary(
   });
 }
 
-export function usePendingMileageApprovals(page: number = 0, size: number = 20) {
+export function usePendingMileageApprovals(page: number = 0, size: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: mileageKeys.pendingApprovals(page, size),
     queryFn: () => mileageService.getPendingApprovals(page, size),
+    enabled,
     staleTime: 30 * 1000,
   });
 }

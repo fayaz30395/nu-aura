@@ -7,7 +7,7 @@ import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
 import {AlertCircle, CheckCircle, Plus, RefreshCw, Send, TrendingUp, Wallet, X} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {AdvanceStatus, ExpenseAdvanceEntity} from '@/lib/types/hrms/expense';
 import {
@@ -73,6 +73,7 @@ const STATUS_COLORS: Record<AdvanceStatus, string> = {
 
 export default function ExpenseAdvancesPage() {
   const {user} = useAuth();
+  const {hasPermission} = usePermissions();
   const [activeTab, setActiveTab] = useState<TabType>('my-advances');
   const [showForm, setShowForm] = useState(false);
   const [showSettleModal, setShowSettleModal] = useState(false);
@@ -83,7 +84,7 @@ export default function ExpenseAdvancesPage() {
   const [allAdvancesFilters, setAllAdvancesFilters] = useState<Record<string, string>>({search: '', status: ''});
 
   const myAdvancesQuery = useMyExpenseAdvances(user?.employeeId, 0, 50);
-  const allAdvancesQuery = useAllExpenseAdvances(allAdvancesPage, ALL_ADVANCES_PAGE_SIZE);
+  const allAdvancesQuery = useAllExpenseAdvances(allAdvancesPage, ALL_ADVANCES_PAGE_SIZE, hasPermission(Permissions.EXPENSE_ADVANCE_MANAGE));
   const myApprovedClaimsQuery = useMyExpenseClaims(user?.employeeId, 0, 50, 'APPROVED');
 
   const createMutation = useCreateExpenseAdvance();

@@ -1221,7 +1221,7 @@ export function buildMenuSections(pendingApprovalCount: number): SidebarSection[
           label: 'My Tasks',
           icon: icon.clipboardCheck,
           href: '/tasks',
-          requiredPermission: Permissions.PROJECT_VIEW
+          requiredPermission: Permissions.TASK_VIEW
         },
         {
           id: 'projects',

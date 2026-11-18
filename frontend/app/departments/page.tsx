@@ -85,8 +85,10 @@ export default function DepartmentsPage() {
   const [pageSize] = React.useState(10);
 
   // React Query hooks
+  // GET /employees needs one of these; without it the headcount column is simply unavailable.
+  const canListEmployees = hasPermission(Permissions.EMPLOYEE_VIEW_ALL) || hasPermission(Permissions.EMPLOYEE_VIEW_DEPARTMENT) || hasPermission(Permissions.EMPLOYEE_VIEW_TEAM);
   const {data: deptData, isLoading, isError: isDeptError, refetch: refetchDepts, isFetching: deptFetching} = useAllDepartments(currentPage, pageSize);
-  const {data: empData, isError: isEmployeesError} = useEmployees(0, 500);
+  const {data: empData, isError: isEmployeesError} = useEmployees(0, 500, 'createdAt', 'DESC', undefined, undefined, canListEmployees);
   const createMutation = useCreateDepartment();
   const updateMutation = useUpdateDepartment();
   const activateMutation = useActivateDepartment();

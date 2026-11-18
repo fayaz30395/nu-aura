@@ -11,6 +11,7 @@ import {Select} from '@/components/ui/Select';
 import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
   getListByAssigneeQueryKey,
   useListByAssignee,
@@ -231,8 +232,10 @@ export default function TasksPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [statusFilter, setStatusFilter] = useState('ALL');
 
+  const {hasPermission} = usePermissions();
+  const canViewTasks = hasPermission(Permissions.TASK_VIEW);
   const employeeId = user?.employeeId ?? '';
-  const enabled = isAuthenticated && hasHydrated && !!employeeId;
+  const enabled = isAuthenticated && hasHydrated && !!employeeId && canViewTasks;
 
   const {data, isLoading, error: tasksError} = useListByAssignee(
     employeeId,
@@ -285,7 +288,7 @@ export default function TasksPage() {
           <div className="space-y-2">
             {[1, 2, 3].map(i => <div key={i} className="h-14 rounded-lg bg-[var(--bg-secondary)] animate-pulse"/>)}
           </div>
-        ) : is403Error(tasksError) ? (
+        ) : !canViewTasks || is403Error(tasksError) ? (
           <QueryErrorCard
             title="You don't have access to tasks"
             message="Ask your administrator for project access."

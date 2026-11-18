@@ -267,10 +267,11 @@ export function useIncomingSwapRequests(employeeId: string) {
   });
 }
 
-export function usePendingApprovalSwaps() {
+export function usePendingApprovalSwaps(enabled: boolean = true) {
   return useQuery({
     queryKey: shiftKeys.pendingApprovalSwaps(),
     queryFn: () => shiftService.getPendingApprovalSwaps(),
+    enabled,
     staleTime: 60 * 1000,
   });
 }

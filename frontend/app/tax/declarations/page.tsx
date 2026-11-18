@@ -67,7 +67,12 @@ export default function TaxDeclarationsPage() {
   }, [hasHydrated, permissionsReady, isAuthenticated, router, hasPermission]);
 
   // Fetch declarations using React Query
-  const {data, isLoading} = useTaxDeclarations(0, 20);
+  const {data, isLoading} = useTaxDeclarations(
+    0,
+    20,
+    hasPermission(Permissions.STATUTORY_VIEW) ? undefined : user?.employeeId,
+    permissionsReady && (hasPermission(Permissions.STATUTORY_VIEW) || !!user?.employeeId)
+  );
   const createMutation = useCreateTaxDeclaration();
 
   // React Hook Form setup

@@ -28,11 +28,13 @@ export function useEmployees(
   sortBy: string = 'createdAt',
   sortDirection: 'ASC' | 'DESC' = 'DESC',
   search?: string,
-  status?: string
+  status?: string,
+  enabled: boolean = true
 ) {
   return useQuery({
     queryKey: employeeKeys.list(page, size, sortBy, sortDirection, search, status),
     queryFn: () => employeeService.getAllEmployees(page, size, sortBy, sortDirection, search, status),
+    enabled,
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 }

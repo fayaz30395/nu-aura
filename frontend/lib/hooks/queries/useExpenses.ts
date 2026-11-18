@@ -178,10 +178,11 @@ export function useMyExpenseAdvances(employeeId: string | undefined, page: numbe
   });
 }
 
-export function useAllExpenseAdvances(page: number = 0, size: number = 20) {
+export function useAllExpenseAdvances(page: number = 0, size: number = 20, enabled: boolean = true) {
   return useQuery({
     queryKey: expenseKeys.allAdvances(page, size),
     queryFn: () => expenseService.getAllAdvances(page, size),
+    enabled,
     staleTime: 60 * 1000,
   });
 }

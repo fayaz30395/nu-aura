@@ -37,8 +37,10 @@ interface ConflictLog {
 
 export default function ResourceConflictsPage() {
   const router = useRouter();
-  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
-  const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.ALLOCATION_VIEW, Permissions.PROJECT_MANAGE);
+  const {hasAnyPermission, hasPermission, isPermissionReady: permissionsReady} = usePermissions();
+  // The conflicts API requires EMPLOYEE:VIEW_ALL, so the page gate must match it.
+  const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.ALLOCATION_VIEW, Permissions.PROJECT_MANAGE)
+    && hasPermission(Permissions.EMPLOYEE_VIEW_ALL);
 
   useEffect(() => {
     if (permissionsReady && !hasAccess) {
@@ -52,6 +54,7 @@ export default function ResourceConflictsPage() {
   const {data: openConflicts, isLoading} = useQuery<ConflictLog[]>({
     queryKey: ['resource-conflicts', 'open'],
     queryFn: () => apiClient.get<ConflictLog[]>('/resource-management/conflicts/open').then(r => r.data),
+    enabled: permissionsReady && hasAccess,
   });
 
   const scanMutation = useMutation({

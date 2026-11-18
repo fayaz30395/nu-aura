@@ -10,6 +10,8 @@ import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {useEmployees, useEmployeeSearch} from '@/lib/hooks/queries/useEmployees';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {PageDeniedFallback} from '@/components/auth/PermissionGate';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import type {Employee} from '@/lib/types/hrms/employee';
 import {Building2, Grid3x3, List, Mail, Phone, Search, Users,} from 'lucide-react';
@@ -164,6 +166,10 @@ export default function TeamDirectoryPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [page, setPage] = useState(0);
 
+  const {hasPermission, isPermissionReady} = usePermissions();
+  // GET /employees and /employees/search need one of these permissions.
+  const canListEmployees = hasPermission(Permissions.EMPLOYEE_VIEW_ALL) || hasPermission(Permissions.EMPLOYEE_VIEW_DEPARTMENT) || hasPermission(Permissions.EMPLOYEE_VIEW_TEAM);
+
   // Fetch departments
   const {data: departments = [], isLoading: departmentsLoading} = useActiveDepartments();
 
@@ -173,13 +179,16 @@ export default function TeamDirectoryPage() {
     page,
     PAGE_SIZE,
     'firstName',
-    'ASC'
+    'ASC',
+    undefined,
+    undefined,
+    canListEmployees
   );
   const {data: searchResponse, isLoading: searchLoading} = useEmployeeSearch(
     search,
     page,
     PAGE_SIZE,
-    isSearching
+    isSearching && canListEmployees
   );
 
   const isLoading = isSearching ? searchLoading : allLoading;
@@ -208,6 +217,10 @@ export default function TeamDirectoryPage() {
     });
     return counts;
   }, [employees, totalElements]);
+
+  if (isPermissionReady && !canListEmployees) {
+    return <PageDeniedFallback message="Ask your HR admin for access to the team directory."/>;
+  }
 
   return (
     <AppLayout activeMenuItem="team-directory">
