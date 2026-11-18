@@ -29,8 +29,9 @@ and so the unauthenticated surface is auditable. See [[Security-Audit]], [[Data-
      `common/config/SecurityConfig.java`. These are *deliberately* prevented from Tomcat
      auto-registration via `FilterRegistrationBean(...).setEnabled(false)` beans (avoids
      CGLIB-proxy breakage from `@EnableAsync` on `OncePerRequestFilter`).
-- **Profiles:** `SecurityConfig` (prod) vs `DevSecurityConfig` (dev) both define a
-  `SecurityFilterChain`. See [[C4-Component]], [[Deployment]].
+- **Profiles:** one `SecurityFilterChain` (`SecurityConfig`) for all profiles. Swagger and
+  actuator need SUPER_ADMIN in dev too; only `/actuator/health` is anonymous and
+  `/actuator/prometheus` accepts the scrape token (S-006; `DevSecurityConfig` removed). See [[C4-Component]], [[Deployment]].
 
 ## Dependencies
 
@@ -227,7 +228,7 @@ own token/HMAC/signature/API-key — this is the unauthenticated attack surface)
 - **Inspect order:** read `SecurityConfig.filterChain` (`addFilterBefore/After` lines) +
   `@Order` on `common/logging/*` and `common/security/SecurityHeadersFilter`,
   `XssRequestWrapperFilter`.
-- **Dev vs prod chain:** `DevSecurityConfig` vs `SecurityConfig` (profile-selected).
+- **Chain:** single `SecurityConfig` chain in every profile (dev-only anonymous chain removed).
 - **Rate-limit tuning:** `RateLimitingFilter` + `DistributedRateLimiter` (Redis); buckets
   configurable per endpoint class.
 - **List all filters:** `grep -rl OncePerRequestFilter backend/src/main/java/com/nulogic`.

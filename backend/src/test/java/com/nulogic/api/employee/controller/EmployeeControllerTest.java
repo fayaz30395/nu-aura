@@ -313,6 +313,25 @@ class EmployeeControllerTest {
         }
 
         @Test
+        @DisplayName("S-002: manager with VIEW_ALL gets directory view of a non-report")
+        void shouldReturnDirectoryViewForNonReport() throws Exception {
+            Map<String, RoleScope> permissions = new HashMap<>();
+            permissions.put(Permission.EMPLOYEE_VIEW_ALL, RoleScope.GLOBAL);
+            SecurityContext.setCurrentUser(UUID.randomUUID(), UUID.randomUUID(), Set.of("MANAGER"), permissions);
+            employeeResponse.setPersonalEmail("john.private@example.com");
+            employeeResponse.setBankName("Some Bank");
+            when(employeeService.getEmployee(eq(employeeId))).thenReturn(employeeResponse);
+
+            mockMvc.perform(get("/api/v1/employees/{id}", employeeId))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.firstName").value("John"))
+                    .andExpect(jsonPath("$.workEmail").value("john.doe@example.com"))
+                    .andExpect(jsonPath("$.personalEmail").doesNotExist())
+                    .andExpect(jsonPath("$.bankName").doesNotExist())
+                    .andExpect(jsonPath("$.managerId").doesNotExist());
+        }
+
+        @Test
         @DisplayName("Should throw for non-existent employee")
         void shouldReturn404ForNonExistent() throws Exception {
             UUID nonExistentId = UUID.randomUUID();

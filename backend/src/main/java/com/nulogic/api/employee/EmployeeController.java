@@ -4,6 +4,7 @@ import com.nulogic.api.employee.dto.AdminEmployeeUpdateRequest;
 import com.nulogic.api.employee.dto.BatchStatusChangeRequest;
 import com.nulogic.api.employee.dto.BatchStatusChangeResponse;
 import com.nulogic.api.employee.dto.CreateEmployeeRequest;
+import com.nulogic.api.employee.dto.EmployeeMinimalResponse;
 import com.nulogic.api.employee.dto.EmployeeResponse;
 import com.nulogic.api.employee.dto.UpdateEmployeeRequest;
 import com.nulogic.application.employee.service.EmployeeService;
@@ -177,13 +178,29 @@ public class EmployeeController {
             @ApiResponse(responseCode = "403", description = "Not authorized to view this employee"),
             @ApiResponse(responseCode = "404", description = "Employee not found")
     })
-    public ResponseEntity<EmployeeResponse> getEmployee(
+    public ResponseEntity<?> getEmployee(
             @Parameter(description = "Employee UUID") @PathVariable UUID id) {
         // CRITICAL-04 FIX: Enforce data-scope on single-record GET to prevent IDOR.
         // SuperAdmin bypass is already handled by PermissionAspect before this code runs.
         enforceEmployeeViewScope(id);
         EmployeeResponse response = employeeService.getEmployee(id);
+        // S-002: full profile only for self, reporting chain, or HR/admin/editors; others get the directory view.
+        if (!canViewFullProfile(id)) {
+            return ResponseEntity.ok(EmployeeMinimalResponse.from(response));
+        }
         return ResponseEntity.ok(response);
+    }
+
+    private boolean canViewFullProfile(UUID targetEmployeeId) {
+        if (SecurityContext.isSuperAdmin() || SecurityContext.isHRManager()
+                || SecurityContext.hasPermissionAtLeast(Permission.EMPLOYEE_UPDATE, RoleScope.ALL)
+                || SecurityContext.hasPermission(Permission.PAYROLL_VIEW_ALL)
+                || SecurityContext.hasPermission(Permission.PAYROLL_PROCESS)) {
+            return true;
+        }
+        UUID currentEmployeeId = SecurityContext.getCurrentEmployeeId();
+        return targetEmployeeId.equals(currentEmployeeId)
+                || SecurityContext.getAllReporteeIds().contains(targetEmployeeId);
     }
 
     /**
@@ -197,8 +214,8 @@ public class EmployeeController {
             return;
         }
 
-        // VIEW_ALL: can see any employee within the tenant
-        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
+        // VIEW_ALL at ALL scope: can see any employee within the tenant (S-002: a TEAM-scoped grant is not ALL)
+        if (SecurityContext.hasPermissionAtLeast(Permission.EMPLOYEE_VIEW_ALL, RoleScope.ALL)) {
             return;
         }
 
@@ -221,7 +238,8 @@ public class EmployeeController {
         }
 
         // VIEW_TEAM: can see direct/indirect reportees
-        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)) {
+        if (SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_TEAM)
+                || SecurityContext.hasPermission(Permission.EMPLOYEE_VIEW_ALL)) {
             Set<UUID> reporteeIds = SecurityContext.getAllReporteeIds();
             if (reporteeIds.contains(targetEmployeeId)) {
                 return;
@@ -310,8 +328,10 @@ public class EmployeeController {
     })
     @Operation(summary = "Get eligible managers",
             description = "Returns active employees at LEAD level and above, for manager-picker dropdowns")
-    public ResponseEntity<List<EmployeeResponse>> getManagers() {
-        return ResponseEntity.ok(employeeService.getManagerEmployees());
+    public ResponseEntity<List<EmployeeMinimalResponse>> getManagers() {
+        // S-001: null-omitting DTO so absent personal fields are not even keys in the JSON.
+        return ResponseEntity.ok(employeeService.getManagerEmployees().stream()
+                .map(EmployeeMinimalResponse::from).toList());
     }
 
     @GetMapping("/{id}/dotted-reports")

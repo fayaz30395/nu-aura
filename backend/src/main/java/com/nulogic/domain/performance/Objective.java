@@ -127,8 +127,8 @@ public class Objective extends TenantAware {
         if (this.status == ObjectiveStatus.CANCELLED) {
             return;
         }
-        // A COMPLETED objective stays completed only while progress is still 100% (lowering a key result reopens it).
-        if (this.status == ObjectiveStatus.COMPLETED && this.progressPercentage.compareTo(BigDecimal.valueOf(100)) >= 0) {
+        // G-009: COMPLETED is sticky; only an explicit status change reopens it.
+        if (this.status == ObjectiveStatus.COMPLETED) {
             return;
         }
 

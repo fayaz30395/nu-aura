@@ -1,0 +1,5 @@
+S-002 | FIXED | api/employee/EmployeeController.java, dto/EmployeeDirectoryResponse.java (new), EmployeeControllerTest | GET /employees/{id} returns full DTO only for self, reporting chain, HR/admin or EMPLOYEE:UPDATE holders; else directory DTO (no nulls). hierarchy/subordinates/list/search still full for VIEW_ALL; UI edit-form hiding NOT done (backend only)
+S-001 | FIXED | EmployeeController.java | /employees/managers returns EmployeeDirectoryResponse (NON_NULL, no personalEmail key)
+S-006 | FIXED | common/config/DevSecurityConfig.java deleted, docs/obsidian/04-Backend/Middleware.md | dev anonymous swagger chain (and the dev actuator chain, which had no JWT filter so could never authenticate) removed; main chain applies SUPER_ADMIN in all profiles
+S-005/prometheus | FIXED | same | main chain: health public, prometheus = scrape token or SUPER_ADMIN, rest SUPER_ADMIN
+G-009 | FIXED | domain/performance/Objective.java | COMPLETED is sticky (conflicts with original G-009 expectation that it reopens; per lead instruction). Not compiled, not run
