@@ -1,5 +1,6 @@
 package com.nulogic.application.knowledge.service;
 
+import com.nulogic.application.knowledge.util.SlugGenerator;
 import com.nulogic.application.knowledge.util.TipTapTextExtractor;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
@@ -59,6 +60,10 @@ public class BlogPostService {
         UUID tenantId = TenantContext.getCurrentTenant();
         post.setTenantId(tenantId);
         post.setStatus(BlogPost.BlogPostStatus.DRAFT);
+        if (post.getSlug() == null || post.getSlug().isBlank()) {
+            post.setSlug(SlugGenerator.unique(post.getTitle(), "post",
+                    s -> blogPostRepository.existsByTenantIdAndSlug(tenantId, s)));
+        }
         post.setViewCount(0);
         post.setLikeCount(0);
         post.setCommentCount(0);
@@ -86,7 +91,9 @@ public class BlogPostService {
         fluenceEditLockService.requireNoConflictingLock(tenantId, "BLOG", postId, SecurityContext.getCurrentUserId());
 
         post.setTitle(postData.getTitle());
-        post.setSlug(postData.getSlug());
+        if (postData.getSlug() != null && !postData.getSlug().isBlank()) {
+            post.setSlug(postData.getSlug());
+        }
         post.setExcerpt(postData.getExcerpt());
         post.setFeaturedImageUrl(postData.getFeaturedImageUrl());
         post.setContent(RichTextSanitizer.sanitizeContent(postData.getContent()));

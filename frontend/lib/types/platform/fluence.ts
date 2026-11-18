@@ -285,7 +285,7 @@ export interface FluenceSearchResult {
   excerpt?: string;
   highlightedContent?: string; // Snippet with search term highlighted
   author?: string;
-  updatedAt: string;
+  updatedAt?: string;
   url?: string; // Route to navigate to
 }
 

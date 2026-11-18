@@ -499,7 +499,9 @@ class FluenceService {
       title: d.title,
       excerpt: d.excerpt,
       author: d.authorName,
-      updatedAt: d.updatedAt != null ? new Date(d.updatedAt).toISOString() : '',
+      updatedAt: d.updatedAt != null && !Number.isNaN(new Date(d.updatedAt).getTime())
+        ? new Date(d.updatedAt).toISOString()
+        : undefined,
     }));
     return {
       results,

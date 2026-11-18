@@ -43,7 +43,6 @@ public class SurveyManagementService {
         }
 
         Survey survey = new Survey();
-        survey.setId(UUID.randomUUID());
         survey.setTenantId(tenantId);
         survey.setSurveyCode(request.getSurveyCode());
         survey.setTitle(request.getTitle());

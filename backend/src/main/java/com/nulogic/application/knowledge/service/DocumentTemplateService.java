@@ -1,5 +1,6 @@
 package com.nulogic.application.knowledge.service;
 
+import com.nulogic.application.knowledge.util.SlugGenerator;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.knowledge.DocumentTemplate;
 import com.nulogic.infrastructure.kafka.events.FluenceContentEvent;
@@ -34,6 +35,10 @@ public class DocumentTemplateService {
     public DocumentTemplate createTemplate(DocumentTemplate template) {
         UUID tenantId = TenantContext.getCurrentTenant();
         template.setTenantId(tenantId);
+        if (template.getSlug() == null || template.getSlug().isBlank()) {
+            template.setSlug(SlugGenerator.unique(template.getName(), "template",
+                    s -> documentTemplateRepository.existsByTenantIdAndSlug(tenantId, s)));
+        }
         template.setIsActive(true);
         template.setIsFeatured(false);
         template.setUsageCount(0);
@@ -53,7 +58,9 @@ public class DocumentTemplateService {
                 .orElseThrow(() -> new IllegalArgumentException("Template not found"));
 
         template.setName(templateData.getName());
-        template.setSlug(templateData.getSlug());
+        if (templateData.getSlug() != null && !templateData.getSlug().isBlank()) {
+            template.setSlug(templateData.getSlug());
+        }
         template.setDescription(templateData.getDescription());
         template.setCategory(templateData.getCategory());
         template.setContent(templateData.getContent());

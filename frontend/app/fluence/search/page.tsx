@@ -48,7 +48,7 @@ interface SearchResult {
   excerpt?: string;
   highlightedContent?: string;
   author?: string;
-  updatedAt: string;
+  updatedAt?: string;
   url?: string;
 }
 
@@ -629,10 +629,12 @@ export default function SearchPage() {
 
                         <div className="flex items-center gap-4 text-caption">
                           {result.author && <span>By {result.author}</span>}
-                          <span className="flex items-center gap-1">
-                            <Clock className={iconSize.meta}/>
-                            {formatDate(result.updatedAt)}
-                          </span>
+                          {result.updatedAt && (
+                            <span className="flex items-center gap-1">
+                              <Clock className={iconSize.meta}/>
+                              {formatDate(result.updatedAt)}
+                            </span>
+                          )}
                         </div>
                       </div>
 
