@@ -1,0 +1,7212 @@
+{
+ "runId": "NUAURA_TEST_P1_192935",
+ "startedAt": "2026-11-18T06:59:52.935Z",
+ "commit": "818a7405",
+ "browser": "chromium 148.0.7778.96 / playwright 1.60.0",
+ "env": {
+  "FE": "http://localhost:3000",
+  "BE": "http://localhost:8080"
+ },
+ "viewports": {
+  "desktop": {
+   "width": 1440,
+   "height": 900
+  },
+  "mobile": {
+   "width": 390,
+   "height": 844
+  }
+ },
+ "allowlists": {
+  "console": [
+   "/\\[ApiClient\\] Error: GET \\S+ undefined canceled/ - axios request cancelled when the component unmounts (React dev double-mount); no user impact"
+  ],
+  "http": [
+   "/^40[13] (GET|POST) \\/api\\/v1\\/auth\\/(me|refresh)/ - session refresh handshake"
+  ]
+ },
+ "reconciliation": {
+  "catalogue": 290,
+  "app": 289,
+  "static": 249,
+  "dynamic": 40,
+  "inCatalogueNotApp": [
+   "/auth/logout"
+  ],
+  "inAppNotCatalogue": []
+ },
+ "blockedDynamic": [
+  {
+   "route": "/calendar/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/contracts/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/employees/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/employees/[id]/compensation",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/employees/[id]/edit",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/exit-interview/[token]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/expenses/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/blogs/[slug]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/blogs/[slug]/edit",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/templates/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/wiki/[slug]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/fluence/wiki/[slug]/edit",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/helpdesk/tickets/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/learning/courses/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/learning/courses/[id]/play",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/learning/courses/[id]/quiz/[quizId]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/learning/paths/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/loans/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/offboarding/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/offboarding/[id]/exit-interview",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/offboarding/[id]/fnf",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/onboarding/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/onboarding/templates/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/payroll/runs/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/performance/cycles/[id]/calibration",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/performance/cycles/[id]/nine-box",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/preboarding/portal/[token]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/projects/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/recruitment/agencies/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/recruitment/candidates/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/recruitment/candidates/[id]/offer",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/sign/[token]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/surveys/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/surveys/[id]/analytics",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/surveys/[id]/respond",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/time-tracking/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/time-tracking/[id]/edit",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/training/catalog/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/travel/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  },
+  {
+   "route": "/workflows/[id]",
+   "reason": "dynamic segment: no seeded fixture mapping in this pass"
+  }
+ ],
+ "roles": {
+  "manager": {
+   "email": "sumit@nulogic.io",
+   "roles": [
+    "SKIP_LEVEL_MANAGER",
+    "MANAGER",
+    "REPORTING_MANAGER"
+   ],
+   "permissions": 110,
+   "results": [
+    {
+     "route": "/admin/benefit-plans",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5238,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/admin/benefit-plans",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5243,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/admin/roles",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5279,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/admin/roles",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5146,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/auth/forgot-password",
+     "vp": "desktop",
+     "expected": "public",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/auth/forgot-password",
+     "ms": 6326,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Forgot Password | NU-AURA"
+     }
+    },
+    {
+     "route": "/auth/forgot-password",
+     "vp": "mobile",
+     "expected": "public",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/auth/forgot-password",
+     "ms": 1071,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Forgot Password | NU-AURA"
+     }
+    },
+    {
+     "route": "/benefits",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/benefits",
+     "ms": 7768,
+     "fail": [
+      "not-found: 404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000001/active",
+      "console(2): Failed to load resource: the server responded with a status of 404 ()"
+     ],
+     "http": [
+      {
+       "h": "404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000001/active",
+       "cls": "not-found"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "[ApiClient] Error: GET /benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000001/active 404 Request failed with status code 404"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Benefits | NU-AURA"
+     }
+    },
+    {
+     "route": "/benefits",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/benefits",
+     "ms": 5314,
+     "fail": [
+      "not-found: 404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000001/active",
+      "console(2): Failed to load resource: the server responded with a status of 404 ()"
+     ],
+     "http": [
+      {
+       "h": "404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000001/active",
+       "cls": "not-found"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "[ApiClient] Error: GET /benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000001/active 404 Request failed with status code 404"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Benefits | NU-AURA"
+     }
+    },
+    {
+     "route": "/calendar",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/calendar",
+     "ms": 5319,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/calendar",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/calendar",
+     "ms": 5184,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/company-spotlight",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/company-spotlight",
+     "ms": 5421,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/company-spotlight",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/company-spotlight",
+     "ms": 5144,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/departments",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/departments",
+     "ms": 5327,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Departments | NU-AURA"
+     }
+    },
+    {
+     "route": "/departments",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/departments",
+     "ms": 5149,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Departments | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/advances",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/expenses/advances",
+     "ms": 10622,
+     "fail": [
+      "authz: 403 GET /api/v1/expenses/advances?page=0&size=20",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/expenses/advances?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /expenses/advances 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/advances",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/expenses/advances",
+     "ms": 5171,
+     "fail": [
+      "authz: 403 GET /api/v1/expenses/advances?page=0&size=20",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/expenses/advances?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /expenses/advances 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/approvals",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/approvals",
+     "ms": 7611,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/approvals",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/approvals",
+     "ms": 5137,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/mileage",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/mileage",
+     "ms": 7003,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/mileage",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/mileage",
+     "ms": 5221,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/reports",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 8583,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/reports",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5178,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/settings",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 8845,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/settings",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5194,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/features",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/features",
+     "ms": 8862,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Features | NU-AURA"
+     }
+    },
+    {
+     "route": "/features",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/features",
+     "ms": 5201,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Features | NU-AURA"
+     }
+    },
+    {
+     "route": "/feedback360",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "redirect",
+     "verdict": "PASS",
+     "finalUrl": "/performance/360-feedback",
+     "ms": 8871,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "360 Feedback"
+     }
+    },
+    {
+     "route": "/feedback360",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "redirect",
+     "verdict": "PASS",
+     "finalUrl": "/performance/360-feedback",
+     "ms": 5220,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "360 Feedback"
+     }
+    },
+    {
+     "route": "/fluence/analytics",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/analytics",
+     "ms": 9130,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC",
+      "console(3): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "In HTML, %s cannot be a descendant of <%s>. This will cause a hydration error.%s <div> p ... <ActivityCard activity={{id:\"06d488...\", ...}}> <@mantine/core/Paper shadow=\"xs\" p=\"md\" radiu",
+      "<%s> cannot contain a nested %s. See this log for the ancestor stack trace. p <div>"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Analytics | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/analytics",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/analytics",
+     "ms": 5171,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC",
+      "console(3): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "In HTML, %s cannot be a descendant of <%s>. This will cause a hydration error.%s <div> p ... <ActivityCard activity={{id:\"06d488...\", ...}}> <@mantine/core/Paper shadow=\"xs\" p=\"md\" radiu",
+      "<%s> cannot contain a nested %s. See this log for the ancestor stack trace. p <div>"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Analytics | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/dashboard",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/dashboard",
+     "ms": 9566,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 9,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/dashboard",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/dashboard",
+     "ms": 5117,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 9,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/drive",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/drive",
+     "ms": 8026,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Drive | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/drive",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/drive",
+     "ms": 5221,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Drive | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/templates",
+     "ms": 5334,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/templates",
+     "ms": 5115,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates/new",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates/new",
+     "ms": 5247,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates/new",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates/new",
+     "ms": 5222,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/wiki/new",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5385,
+     "fail": [
+      "routes.ts says auth ({}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/fluence/wiki/new",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5140,
+     "fail": [
+      "routes.ts says auth ({}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/helpdesk",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5355,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/helpdesk",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5119,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/learning/paths",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/learning/paths",
+     "ms": 5244,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Learning (LMS) | NU-AURA"
+     }
+    },
+    {
+     "route": "/learning/paths",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/learning/paths",
+     "ms": 5109,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Learning (LMS) | NU-AURA"
+     }
+    },
+    {
+     "route": "/leave/calendar",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/leave/calendar",
+     "ms": 9991,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Leave Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/leave/calendar",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/leave/calendar",
+     "ms": 5166,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Leave Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 7636,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/letters",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5129,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/letters/templates",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters/templates",
+     "ms": 10236,
+     "fail": [
+      "authz: 403 GET /api/v1/letters/templates?page=0&size=20",
+      "authz: 403 GET /api/v1/letters/placeholders",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters/templates?page=0&size=20",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters/placeholders",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/placeholders 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letter Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters/templates",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters/templates",
+     "ms": 5162,
+     "fail": [
+      "authz: 403 GET /api/v1/letters/placeholders",
+      "authz: 403 GET /api/v1/letters/templates?page=0&size=20",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters/placeholders",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters/templates?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/placeholders 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letter Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/me/documents",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/me/documents",
+     "ms": 5525,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Documents | NU-AURA"
+     }
+    },
+    {
+     "route": "/me/documents",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/me/documents",
+     "ms": 5116,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Documents | NU-AURA"
+     }
+    },
+    {
+     "route": "/onboarding",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/onboarding",
+     "ms": 5209,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Onboarding | NU-AURA"
+     }
+    },
+    {
+     "route": "/onboarding",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/onboarding",
+     "ms": 5103,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Onboarding | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/competency-matrix",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/competency-matrix",
+     "ms": 10370,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Competency Matrix | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/competency-matrix",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/competency-matrix",
+     "ms": 5186,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Competency Matrix | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/revolution",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/revolution",
+     "ms": 9198,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 6,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Performance Hub | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/revolution",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/revolution",
+     "ms": 5264,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 6,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Performance Hub | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/psa",
+     "ms": 11467,
+     "fail": [
+      "no heading"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 0,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "PSA Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/psa",
+     "ms": 5418,
+     "fail": [
+      "no heading"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 0,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "PSA Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa/invoices",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/psa/invoices",
+     "ms": 8215,
+     "fail": [
+      "authz: 403 GET /api/v1/psa/invoices/status/DRAFT",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()",
+      "no heading"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/psa/invoices/status/DRAFT",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /psa/invoices/status/DRAFT 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 0,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Invoices | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa/invoices",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/psa/invoices",
+     "ms": 5254,
+     "fail": [
+      "authz: 403 GET /api/v1/psa/invoices/status/DRAFT",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()",
+      "no heading"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/psa/invoices/status/DRAFT",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /psa/invoices/status/DRAFT 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 0,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Invoices | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/resource-conflicts",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/resource-conflicts",
+     "ms": 9570,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/resource-conflicts",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/resource-conflicts",
+     "ms": 5201,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/recruitment/job-boards",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5278,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/recruitment/job-boards",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5136,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/referrals",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 9189,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/referrals",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5186,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/reports/attrition",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/reports/attrition",
+     "ms": 9243,
+     "fail": [
+      "authz: 403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /predictive-analytics/attrition/high-risk?minScore=50 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/attrition",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/reports/attrition",
+     "ms": 5200,
+     "fail": [
+      "authz: 403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /predictive-analytics/attrition/high-risk?minScore=50 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/headcount",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/reports/headcount",
+     "ms": 9420,
+     "fail": [
+      "authz: 403 GET /api/v1/analytics/org-health",
+      "authz: 403 GET /api/v1/analytics/headcount-trend?months=12",
+      "authz: 403 GET /api/v1/analytics/employees",
+      "authz: 403 GET /api/v1/analytics/org-health",
+      "authz: 403 GET /api/v1/analytics/employees",
+      "authz: 403 GET /api/v1/analytics/headcount-trend?months=12",
+      "console(12): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/analytics/org-health",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/headcount-trend?months=12",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/employees",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/org-health",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/employees",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/headcount-trend?months=12",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /analytics/org-health 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /analytics/headcount-trend?months=12 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/headcount",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/reports/headcount",
+     "ms": 5150,
+     "fail": [
+      "authz: 403 GET /api/v1/analytics/org-health",
+      "authz: 403 GET /api/v1/analytics/headcount-trend?months=12",
+      "authz: 403 GET /api/v1/analytics/employees",
+      "authz: 403 GET /api/v1/analytics/org-health",
+      "authz: 403 GET /api/v1/analytics/headcount-trend?months=12",
+      "authz: 403 GET /api/v1/analytics/employees",
+      "console(12): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/analytics/org-health",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/headcount-trend?months=12",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/employees",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/org-health",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/headcount-trend?months=12",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/analytics/employees",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /analytics/org-health 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /analytics/headcount-trend?months=12 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/utilization",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/reports/utilization",
+     "ms": 8151,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/utilization",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/reports/utilization",
+     "ms": 5265,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/rbac",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 9475,
+     "fail": [
+      "routes.ts says auth ({}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/settings/rbac",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5176,
+     "fail": [
+      "routes.ts says auth ({}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/settings/security",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/settings/security",
+     "ms": 8243,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 4,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/security",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/settings/security",
+     "ms": 5189,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 4,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/sso",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/settings",
+     "ms": 7737,
+     "fail": [
+      "console(1): Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "http": [
+      {
+       "h": "429 GET /api/v1/auth/saml/config",
+       "cls": "other"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/sso",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/settings",
+     "ms": 5193,
+     "fail": [
+      "console(1): Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "http": [
+      {
+       "h": "429 GET /api/v1/auth/saml/config",
+       "cls": "other"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/shifts/swaps",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/shifts/swaps",
+     "ms": 7576,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Shift Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/shifts/swaps",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/shifts/swaps",
+     "ms": 5211,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Shift Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/tasks",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/tasks",
+     "ms": 8488,
+     "fail": [
+      "authz: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000001?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000001?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000001 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Tasks | NU-AURA"
+     }
+    },
+    {
+     "route": "/tasks",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/tasks",
+     "ms": 5196,
+     "fail": [
+      "authz: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000001?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000001?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000001 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Tasks | NU-AURA"
+     }
+    },
+    {
+     "route": "/tax/declarations",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5403,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/tax/declarations",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5146,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/team-directory",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/team-directory",
+     "ms": 8576,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Team Directory | NU-AURA"
+     }
+    },
+    {
+     "route": "/team-directory",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/team-directory",
+     "ms": 5151,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Team Directory | NU-AURA"
+     }
+    },
+    {
+     "route": "/training/my-learning",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/training/my-learning",
+     "ms": 9317,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Training | NU-AURA"
+     }
+    },
+    {
+     "route": "/training/my-learning",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/training/my-learning",
+     "ms": 5176,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Training | NU-AURA"
+     }
+    },
+    {
+     "route": "/travel",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/travel",
+     "ms": 8525,
+     "fail": [
+      "authz: 403 GET /api/v1/travel/requests?page=0&size=10",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/travel/requests?page=0&size=10",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /travel/requests 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Travel | NU-AURA"
+     }
+    },
+    {
+     "route": "/travel",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/travel",
+     "ms": 5119,
+     "fail": [
+      "authz: 403 GET /api/v1/travel/requests?page=0&size=10",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/travel/requests?page=0&size=10",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /travel/requests 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Travel | NU-AURA"
+     }
+    },
+    {
+     "route": "/wellness/admin",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/wellness/admin",
+     "ms": 9008,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wellness | NU-AURA"
+     }
+    },
+    {
+     "route": "/wellness/admin",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/wellness/admin",
+     "ms": 5211,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wellness | NU-AURA"
+     }
+    }
+   ]
+  },
+  "hradmin": {
+   "email": "admin@nulogic.io",
+   "roles": [
+    "HR_ADMIN"
+   ],
+   "permissions": 205,
+   "results": [
+    {
+     "route": "/admin/benefit-plans",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/admin/benefit-plans",
+     "ms": 5224,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Admin | NU-AURA"
+     }
+    },
+    {
+     "route": "/admin/benefit-plans",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/admin/benefit-plans",
+     "ms": 5252,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Admin | NU-AURA"
+     }
+    },
+    {
+     "route": "/admin/roles",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/me/dashboard",
+     "ms": 5272,
+     "fail": [
+      "authz: 403 GET /api/v1/permissions?pageable%5Bsize%5D=500",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/permissions?pageable%5Bsize%5D=500",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /permissions 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/admin/roles",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/me/dashboard",
+     "ms": 5123,
+     "fail": [
+      "authz: 403 GET /api/v1/permissions?pageable%5Bsize%5D=500",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/permissions?pageable%5Bsize%5D=500",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /permissions 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/auth/forgot-password",
+     "vp": "desktop",
+     "expected": "public",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/auth/forgot-password",
+     "ms": 6311,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Forgot Password | NU-AURA"
+     }
+    },
+    {
+     "route": "/auth/forgot-password",
+     "vp": "mobile",
+     "expected": "public",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/auth/forgot-password",
+     "ms": 1062,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Forgot Password | NU-AURA"
+     }
+    },
+    {
+     "route": "/benefits",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/benefits",
+     "ms": 7779,
+     "fail": [
+      "not-found: 404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active",
+      "console(2): Failed to load resource: the server responded with a status of 404 ()"
+     ],
+     "http": [
+      {
+       "h": "404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active",
+       "cls": "not-found"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "[ApiClient] Error: GET /benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active 404 Request failed with status code 404"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Benefits | NU-AURA"
+     }
+    },
+    {
+     "route": "/benefits",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/benefits",
+     "ms": 5313,
+     "fail": [
+      "not-found: 404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active",
+      "console(2): Failed to load resource: the server responded with a status of 404 ()"
+     ],
+     "http": [
+      {
+       "h": "404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active",
+       "cls": "not-found"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "[ApiClient] Error: GET /benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active 404 Request failed with status code 404"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Benefits | NU-AURA"
+     }
+    },
+    {
+     "route": "/calendar",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/calendar",
+     "ms": 5316,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/calendar",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/calendar",
+     "ms": 5185,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/company-spotlight",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/company-spotlight",
+     "ms": 5421,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/company-spotlight",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/company-spotlight",
+     "ms": 5146,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/departments",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/departments",
+     "ms": 5328,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Departments | NU-AURA"
+     }
+    },
+    {
+     "route": "/departments",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/departments",
+     "ms": 5152,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Departments | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/advances",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/advances",
+     "ms": 10622,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/advances",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/advances",
+     "ms": 5180,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/approvals",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/approvals",
+     "ms": 7606,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/approvals",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/approvals",
+     "ms": 5138,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/mileage",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/mileage",
+     "ms": 7004,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/mileage",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/expenses/mileage",
+     "ms": 5218,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/reports",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 8585,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/reports",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5173,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/settings",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 8848,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/settings",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5194,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/features",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/features",
+     "ms": 8859,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Features | NU-AURA"
+     }
+    },
+    {
+     "route": "/features",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/features",
+     "ms": 5197,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Features | NU-AURA"
+     }
+    },
+    {
+     "route": "/feedback360",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "redirect",
+     "verdict": "PASS",
+     "finalUrl": "/performance/360-feedback",
+     "ms": 8882,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "360 Feedback"
+     }
+    },
+    {
+     "route": "/feedback360",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "redirect",
+     "verdict": "PASS",
+     "finalUrl": "/performance/360-feedback",
+     "ms": 5216,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "360 Feedback"
+     }
+    },
+    {
+     "route": "/fluence/analytics",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/analytics",
+     "ms": 9128,
+     "fail": [
+      "console(2): In HTML, %s cannot be a descendant of <%s>. This will cause a hydration error.%s <div> p ... <ActivityCard activity={{id:\"06d488...\", ...}}>"
+     ],
+     "http": [],
+     "console": [
+      "In HTML, %s cannot be a descendant of <%s>. This will cause a hydration error.%s <div> p ... <ActivityCard activity={{id:\"06d488...\", ...}}> <@mantine/core/Paper shadow=\"xs\" p=\"md\" radiu",
+      "<%s> cannot contain a nested %s. See this log for the ancestor stack trace. p <div>"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Analytics | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/analytics",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/analytics",
+     "ms": 5180,
+     "fail": [
+      "console(2): In HTML, %s cannot be a descendant of <%s>. This will cause a hydration error.%s <div> p ... <ActivityCard activity={{id:\"06d488...\", ...}}>"
+     ],
+     "http": [],
+     "console": [
+      "In HTML, %s cannot be a descendant of <%s>. This will cause a hydration error.%s <div> p ... <ActivityCard activity={{id:\"06d488...\", ...}}> <@mantine/core/Paper shadow=\"xs\" p=\"md\" radiu",
+      "<%s> cannot contain a nested %s. See this log for the ancestor stack trace. p <div>"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Analytics | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/dashboard",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/dashboard",
+     "ms": 9568,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 11,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/dashboard",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/dashboard",
+     "ms": 5109,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 11,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/drive",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/drive",
+     "ms": 8110,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Drive | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/drive",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/drive",
+     "ms": 5213,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Drive | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates",
+     "ms": 5328,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates",
+     "ms": 5141,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates/new",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates/new",
+     "ms": 5255,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates/new",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates/new",
+     "ms": 5215,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/wiki/new",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/wiki/new",
+     "ms": 5380,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/wiki/new",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/wiki/new",
+     "ms": 5148,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/helpdesk",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/helpdesk",
+     "ms": 5349,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Tickets | NU-AURA"
+     }
+    },
+    {
+     "route": "/helpdesk",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/helpdesk",
+     "ms": 5131,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Tickets | NU-AURA"
+     }
+    },
+    {
+     "route": "/learning/paths",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/learning/paths",
+     "ms": 5246,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Learning (LMS) | NU-AURA"
+     }
+    },
+    {
+     "route": "/learning/paths",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/learning/paths",
+     "ms": 5110,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Learning (LMS) | NU-AURA"
+     }
+    },
+    {
+     "route": "/leave/calendar",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/leave/calendar",
+     "ms": 9992,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Leave Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/leave/calendar",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/leave/calendar",
+     "ms": 5166,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Leave Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters",
+     "ms": 7633,
+     "fail": [
+      "authz: 403 GET /api/v1/letters?page=0&size=20",
+      "authz: 403 GET /api/v1/letters/templates/active",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters?page=0&size=20",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters/templates/active",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates/active 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letters | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters",
+     "ms": 5137,
+     "fail": [
+      "authz: 403 GET /api/v1/letters?page=0&size=20",
+      "authz: 403 GET /api/v1/letters/templates/active",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters?page=0&size=20",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters/templates/active",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates/active 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letters | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters/templates",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters/templates",
+     "ms": 10230,
+     "fail": [
+      "authz: 403 GET /api/v1/letters/placeholders",
+      "authz: 403 GET /api/v1/letters/templates?page=0&size=20",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters/placeholders",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters/templates?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/placeholders 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letter Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters/templates",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters/templates",
+     "ms": 5160,
+     "fail": [
+      "authz: 403 GET /api/v1/letters/placeholders",
+      "authz: 403 GET /api/v1/letters/templates?page=0&size=20",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters/placeholders",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters/templates?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/placeholders 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letter Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/me/documents",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/me/documents",
+     "ms": 5526,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Documents"
+     }
+    },
+    {
+     "route": "/me/documents",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/me/documents",
+     "ms": 5117,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Documents | NU-AURA"
+     }
+    },
+    {
+     "route": "/onboarding",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/onboarding",
+     "ms": 5210,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Onboarding | NU-AURA"
+     }
+    },
+    {
+     "route": "/onboarding",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/onboarding",
+     "ms": 5104,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Onboarding | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/competency-matrix",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/competency-matrix",
+     "ms": 10370,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 4,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Competency Matrix | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/competency-matrix",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/competency-matrix",
+     "ms": 5187,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 4,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Competency Matrix | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/revolution",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/revolution",
+     "ms": 9197,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 6,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Performance Hub | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/revolution",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/revolution",
+     "ms": 5262,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 6,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Performance Hub | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/psa",
+     "ms": 11469,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "PSA Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/psa",
+     "ms": 5466,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "PSA Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa/invoices",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/psa/invoices",
+     "ms": 8214,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Invoices | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa/invoices",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/psa/invoices",
+     "ms": 5247,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Invoices | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/resource-conflicts",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/resource-conflicts",
+     "ms": 9573,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/resource-conflicts",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/projects/resource-conflicts",
+     "ms": 5196,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/recruitment/job-boards",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/recruitment/job-boards",
+     "ms": 5284,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Recruitment | NU-AURA"
+     }
+    },
+    {
+     "route": "/recruitment/job-boards",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/recruitment/job-boards",
+     "ms": 5134,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Recruitment | NU-AURA"
+     }
+    },
+    {
+     "route": "/referrals",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 9187,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/referrals",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5186,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/reports/attrition",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/reports/attrition",
+     "ms": 9242,
+     "fail": [
+      "authz: 403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /predictive-analytics/attrition/high-risk?minScore=50 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/attrition",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/reports/attrition",
+     "ms": 5197,
+     "fail": [
+      "authz: 403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /predictive-analytics/attrition/high-risk?minScore=50 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/headcount",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/reports/headcount",
+     "ms": 9419,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/headcount",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/reports/headcount",
+     "ms": 5162,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/utilization",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/reports/utilization",
+     "ms": 8147,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/utilization",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/reports/utilization",
+     "ms": 5266,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Reports | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/rbac",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/me/dashboard",
+     "ms": 9473,
+     "fail": [
+      "authz: 403 GET /api/v1/permissions?pageable%5Bsize%5D=500",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/permissions?pageable%5Bsize%5D=500",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /permissions 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/settings/rbac",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/me/dashboard",
+     "ms": 5177,
+     "fail": [
+      "authz: 403 GET /api/v1/permissions?pageable%5Bsize%5D=500",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/permissions?pageable%5Bsize%5D=500",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /permissions 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/settings/security",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/settings/security",
+     "ms": 8243,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 4,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/security",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/settings/security",
+     "ms": 5182,
+     "fail": [
+      "console(4): Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "http": [
+      {
+       "h": "429 GET /api/v1/auth/mfa/status",
+       "cls": "other"
+      },
+      {
+       "h": "429 GET /api/v1/auth/mfa/status",
+       "cls": "other"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "[ApiClient] Error: GET /auth/mfa/status 429 Request failed with status code 429",
+      "Failed to load resource: the server responded with a status of 429 ()",
+      "[ApiClient] Error: GET /auth/mfa/status 429 Request failed with status code 429"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 4,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/sso",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/settings",
+     "ms": 7738,
+     "fail": [
+      "console(1): Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "http": [
+      {
+       "h": "429 GET /api/v1/auth/saml/config",
+       "cls": "other"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/sso",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/settings",
+     "ms": 5187,
+     "fail": [
+      "console(1): Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "http": [
+      {
+       "h": "429 GET /api/v1/auth/saml/config",
+       "cls": "other"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/shifts/swaps",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/shifts/swaps",
+     "ms": 7588,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Shift Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/shifts/swaps",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/shifts/swaps",
+     "ms": 5208,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Shift Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/tasks",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/tasks",
+     "ms": 8485,
+     "fail": [
+      "authz: 403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /pm/tasks/assignee/48000000-de00-0000-0000-000000000099 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Tasks | NU-AURA"
+     }
+    },
+    {
+     "route": "/tasks",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/tasks",
+     "ms": 5198,
+     "fail": [
+      "authz: 403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /pm/tasks/assignee/48000000-de00-0000-0000-000000000099 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Tasks | NU-AURA"
+     }
+    },
+    {
+     "route": "/tax/declarations",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/tax/declarations",
+     "ms": 5411,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Tax | NU-AURA"
+     }
+    },
+    {
+     "route": "/tax/declarations",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/tax/declarations",
+     "ms": 5147,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Tax | NU-AURA"
+     }
+    },
+    {
+     "route": "/team-directory",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/team-directory",
+     "ms": 8571,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Team Directory | NU-AURA"
+     }
+    },
+    {
+     "route": "/team-directory",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/team-directory",
+     "ms": 5154,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Team Directory | NU-AURA"
+     }
+    },
+    {
+     "route": "/training/my-learning",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/training/my-learning",
+     "ms": 9319,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Training | NU-AURA"
+     }
+    },
+    {
+     "route": "/training/my-learning",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/training/my-learning",
+     "ms": 5174,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Training | NU-AURA"
+     }
+    },
+    {
+     "route": "/travel",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/travel",
+     "ms": 8523,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Travel | NU-AURA"
+     }
+    },
+    {
+     "route": "/travel",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/travel",
+     "ms": 5127,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Travel | NU-AURA"
+     }
+    },
+    {
+     "route": "/wellness/admin",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/wellness/admin",
+     "ms": 9007,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wellness | NU-AURA"
+     }
+    },
+    {
+     "route": "/wellness/admin",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/wellness/admin",
+     "ms": 5209,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wellness | NU-AURA"
+     }
+    }
+   ]
+  },
+  "employee": {
+   "email": "arun@nulogic.io",
+   "roles": [
+    "EMPLOYEE"
+   ],
+   "permissions": 82,
+   "results": [
+    {
+     "route": "/admin/benefit-plans",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5245,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/admin/benefit-plans",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5245,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/admin/roles",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5272,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/admin/roles",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5145,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/auth/forgot-password",
+     "vp": "desktop",
+     "expected": "public",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/auth/forgot-password",
+     "ms": 6320,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Forgot Password | NU-AURA"
+     }
+    },
+    {
+     "route": "/auth/forgot-password",
+     "vp": "mobile",
+     "expected": "public",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/auth/forgot-password",
+     "ms": 1122,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Forgot Password | NU-AURA"
+     }
+    },
+    {
+     "route": "/benefits",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/benefits",
+     "ms": 7708,
+     "fail": [
+      "authz: 403 GET /api/v1/benefits-enhanced/dashboard",
+      "not-found: 404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000009/active",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/benefits-enhanced/dashboard",
+       "cls": "authz"
+      },
+      {
+       "h": "404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000009/active",
+       "cls": "not-found"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /benefits-enhanced/dashboard 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "[ApiClient] Error: GET /benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000009/active 404 Request failed with status code 404"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Benefits | NU-AURA"
+     }
+    },
+    {
+     "route": "/benefits",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/benefits",
+     "ms": 5319,
+     "fail": [
+      "not-found: 404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000009/active",
+      "authz: 403 GET /api/v1/benefits-enhanced/dashboard",
+      "console(4): Failed to load resource: the server responded with a status of 404 ()"
+     ],
+     "http": [
+      {
+       "h": "404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000009/active",
+       "cls": "not-found"
+      },
+      {
+       "h": "403 GET /api/v1/benefits-enhanced/dashboard",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 404 ()",
+      "[ApiClient] Error: GET /benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000009/active 404 Request failed with status code 404",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /benefits-enhanced/dashboard 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Benefits | NU-AURA"
+     }
+    },
+    {
+     "route": "/calendar",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/calendar",
+     "ms": 5315,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/calendar",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/calendar",
+     "ms": 5186,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/company-spotlight",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/company-spotlight",
+     "ms": 5423,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/company-spotlight",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/company-spotlight",
+     "ms": 5146,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard | NU-AURA"
+     }
+    },
+    {
+     "route": "/departments",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/departments",
+     "ms": 5325,
+     "fail": [
+      "authz: 403 GET /api/v1/employees?page=0&size=500&sortBy=createdAt&sortDirection=DESC",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/employees?page=0&size=500&sortBy=createdAt&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /employees 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Departments | NU-AURA"
+     }
+    },
+    {
+     "route": "/departments",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/departments",
+     "ms": 5134,
+     "fail": [
+      "authz: 403 GET /api/v1/employees?page=0&size=500&sortBy=createdAt&sortDirection=DESC",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/employees?page=0&size=500&sortBy=createdAt&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /employees 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Departments | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/advances",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/expenses/advances",
+     "ms": 10630,
+     "fail": [
+      "authz: 403 GET /api/v1/expenses/advances?page=0&size=20",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/expenses/advances?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /expenses/advances 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/advances",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/expenses/advances",
+     "ms": 5156,
+     "fail": [
+      "authz: 403 GET /api/v1/expenses/advances?page=0&size=20",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/expenses/advances?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /expenses/advances 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/approvals",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 7613,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/approvals",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5147,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/mileage",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/expenses/mileage",
+     "ms": 6995,
+     "fail": [
+      "authz: 403 GET /api/v1/expenses/mileage/pending-approvals?page=0&size=50",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/expenses/mileage/pending-approvals?page=0&size=50",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /expenses/mileage/pending-approvals 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/mileage",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/expenses/mileage",
+     "ms": 5192,
+     "fail": [
+      "authz: 403 GET /api/v1/expenses/mileage/pending-approvals?page=0&size=50",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/expenses/mileage/pending-approvals?page=0&size=50",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /expenses/mileage/pending-approvals 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Expenses | NU-AURA"
+     }
+    },
+    {
+     "route": "/expenses/reports",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 8582,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/reports",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5170,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/settings",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 8848,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/expenses/settings",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5192,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/features",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/features",
+     "ms": 8863,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Features | NU-AURA"
+     }
+    },
+    {
+     "route": "/features",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/features",
+     "ms": 5200,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Features | NU-AURA"
+     }
+    },
+    {
+     "route": "/feedback360",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "redirect",
+     "verdict": "PASS",
+     "finalUrl": "/performance/360-feedback",
+     "ms": 8874,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "360 Feedback"
+     }
+    },
+    {
+     "route": "/feedback360",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "redirect",
+     "verdict": "PASS",
+     "finalUrl": "/performance/360-feedback",
+     "ms": 5218,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "360 Feedback"
+     }
+    },
+    {
+     "route": "/fluence/analytics",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/analytics",
+     "ms": 9136,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC",
+      "console(3): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "In HTML, %s cannot be a descendant of <%s>. This will cause a hydration error.%s <div> p ... <ActivityCard activity={{id:\"06d488...\", ...}}> <@mantine/core/Paper shadow=\"xs\" p=\"md\" radiu",
+      "<%s> cannot contain a nested %s. See this log for the ancestor stack trace. p <div>"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Analytics | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/analytics",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/analytics",
+     "ms": 5175,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC",
+      "console(3): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "In HTML, %s cannot be a descendant of <%s>. This will cause a hydration error.%s <div> p ... <ActivityCard activity={{id:\"06d488...\", ...}}> <@mantine/core/Paper shadow=\"xs\" p=\"md\" radiu",
+      "<%s> cannot contain a nested %s. See this log for the ancestor stack trace. p <div>"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 5,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Analytics | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/dashboard",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/dashboard",
+     "ms": 9575,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 9,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/dashboard",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/dashboard",
+     "ms": 5100,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 9,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wiki | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/drive",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/drive",
+     "ms": 7991,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Drive | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/drive",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/drive",
+     "ms": 5215,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Drive | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/templates",
+     "ms": 5327,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/fluence/templates",
+     "ms": 5114,
+     "fail": [
+      "authz: 403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC",
+      "console(1): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates/new",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates/new",
+     "ms": 5250,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/templates/new",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/fluence/templates/new",
+     "ms": 5219,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/fluence/wiki/new",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5382,
+     "fail": [
+      "routes.ts says auth ({}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/fluence/wiki/new",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5143,
+     "fail": [
+      "routes.ts says auth ({}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/helpdesk",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/helpdesk",
+     "ms": 5347,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Tickets | NU-AURA"
+     }
+    },
+    {
+     "route": "/helpdesk",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/helpdesk",
+     "ms": 5132,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Tickets | NU-AURA"
+     }
+    },
+    {
+     "route": "/learning/paths",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/learning/paths",
+     "ms": 15237,
+     "fail": [
+      "spinner after 10s: 1"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 1,
+      "title": "Learning (LMS) | NU-AURA"
+     }
+    },
+    {
+     "route": "/learning/paths",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/learning/paths",
+     "ms": 15218,
+     "fail": [
+      "spinner after 10s: 1"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 1,
+      "title": "Learning (LMS) | NU-AURA"
+     }
+    },
+    {
+     "route": "/leave/calendar",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/leave/calendar",
+     "ms": 5159,
+     "fail": [
+      "authz: 403 GET /api/v1/leave-requests/status/APPROVED?page=0&size=100",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/leave-requests/status/APPROVED?page=0&size=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /leave-requests/status/APPROVED 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Leave Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/leave/calendar",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/leave/calendar",
+     "ms": 5081,
+     "fail": [
+      "authz: 403 GET /api/v1/leave-requests/status/APPROVED?page=0&size=100",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/leave-requests/status/APPROVED?page=0&size=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /leave-requests/status/APPROVED 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Leave Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters",
+     "ms": 5236,
+     "fail": [
+      "authz: 403 GET /api/v1/letters/templates/active",
+      "authz: 403 GET /api/v1/letters?page=0&size=20",
+      "authz: 403 GET /api/v1/recruitment/candidates?page=0&size=100",
+      "authz: 403 GET /api/v1/recruitment/candidates?page=0&size=100",
+      "authz: 403 GET /api/v1/recruitment/candidates?page=0&size=100",
+      "console(10): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters/templates/active",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters?page=0&size=20",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/recruitment/candidates?page=0&size=100",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/recruitment/candidates?page=0&size=100",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/recruitment/candidates?page=0&size=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates/active 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letters | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters",
+     "ms": 5204,
+     "fail": [
+      "authz: 403 GET /api/v1/letters/templates/active",
+      "authz: 403 GET /api/v1/recruitment/candidates?page=0&size=100",
+      "authz: 403 GET /api/v1/letters?page=0&size=20",
+      "authz: 403 GET /api/v1/recruitment/candidates?page=0&size=100",
+      "authz: 403 GET /api/v1/recruitment/candidates?page=0&size=100",
+      "console(10): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters/templates/active",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/recruitment/candidates?page=0&size=100",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters?page=0&size=20",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/recruitment/candidates?page=0&size=100",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/recruitment/candidates?page=0&size=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates/active 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /recruitment/candidates 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letters | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters/templates",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters/templates",
+     "ms": 5130,
+     "fail": [
+      "authz: 403 GET /api/v1/letters/placeholders",
+      "authz: 403 GET /api/v1/letters/templates?page=0&size=20",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters/placeholders",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters/templates?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/placeholders 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letter Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/letters/templates",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/letters/templates",
+     "ms": 5086,
+     "fail": [
+      "authz: 403 GET /api/v1/letters/templates?page=0&size=20",
+      "authz: 403 GET /api/v1/letters/placeholders",
+      "console(4): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/letters/templates?page=0&size=20",
+       "cls": "authz"
+      },
+      {
+       "h": "403 GET /api/v1/letters/placeholders",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/templates 403 Request failed with status code 403",
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /letters/placeholders 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Letter Templates | NU-AURA"
+     }
+    },
+    {
+     "route": "/me/documents",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/me/documents",
+     "ms": 5083,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Documents"
+     }
+    },
+    {
+     "route": "/me/documents",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/me/documents",
+     "ms": 5081,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Documents"
+     }
+    },
+    {
+     "route": "/onboarding",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/onboarding",
+     "ms": 5075,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Onboarding | NU-AURA"
+     }
+    },
+    {
+     "route": "/onboarding",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/onboarding",
+     "ms": 5101,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Onboarding | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/competency-matrix",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/competency-matrix",
+     "ms": 5101,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Competency Matrix | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/competency-matrix",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/competency-matrix",
+     "ms": 5079,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Competency Matrix | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/revolution",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/revolution",
+     "ms": 7777,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 6,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Performance Hub | NU-AURA"
+     }
+    },
+    {
+     "route": "/performance/revolution",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/performance/revolution",
+     "ms": 5261,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 6,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Performance Hub | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/psa",
+     "ms": 11465,
+     "fail": [
+      "no heading"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 0,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "PSA Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/psa",
+     "ms": 5428,
+     "fail": [
+      "no heading"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 0,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "PSA Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa/invoices",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/psa/invoices",
+     "ms": 8215,
+     "fail": [
+      "authz: 403 GET /api/v1/psa/invoices/status/DRAFT",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()",
+      "no heading"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/psa/invoices/status/DRAFT",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /psa/invoices/status/DRAFT 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 0,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Invoices | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/psa/invoices",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/psa/invoices",
+     "ms": 5248,
+     "fail": [
+      "authz: 403 GET /api/v1/psa/invoices/status/DRAFT",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()",
+      "no heading"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/psa/invoices/status/DRAFT",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /psa/invoices/status/DRAFT 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 0,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Invoices | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/resource-conflicts",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/resource-conflicts",
+     "ms": 9573,
+     "fail": [
+      "authz: 403 GET /api/v1/resource-management/conflicts/open",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/resource-management/conflicts/open",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /resource-management/conflicts/open 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/projects/resource-conflicts",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/projects/resource-conflicts",
+     "ms": 5183,
+     "fail": [
+      "authz: 403 GET /api/v1/resource-management/conflicts/open",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/resource-management/conflicts/open",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /resource-management/conflicts/open 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Projects | NU-AURA"
+     }
+    },
+    {
+     "route": "/recruitment/job-boards",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5279,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/recruitment/job-boards",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5141,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/referrals",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/referrals",
+     "ms": 9186,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Referrals | NU-AURA"
+     }
+    },
+    {
+     "route": "/referrals",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/referrals",
+     "ms": 5184,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Referrals | NU-AURA"
+     }
+    },
+    {
+     "route": "/reports/attrition",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 9243,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/reports/attrition",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5199,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/reports/headcount",
+     "vp": "desktop",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 9417,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/reports/headcount",
+     "vp": "mobile",
+     "expected": "deny",
+     "observed": "denied",
+     "verdict": "PASS-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5159,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/reports/utilization",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 8149,
+     "fail": [
+      "routes.ts says allow ({\"path\":\"/reports/utilization\",\"anyPermission\":[\"REPORT:VIEW\",\"PROJECT:VIEW\"]}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/reports/utilization",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5264,
+     "fail": [
+      "routes.ts says allow ({\"path\":\"/reports/utilization\",\"anyPermission\":[\"REPORT:VIEW\",\"PROJECT:VIEW\"]}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/settings/rbac",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 9472,
+     "fail": [
+      "routes.ts says auth ({}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/settings/rbac",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "denied",
+     "verdict": "REVIEW-denied",
+     "finalUrl": "/me/dashboard",
+     "ms": 5184,
+     "fail": [
+      "routes.ts says auth ({}) but page denied -> /me/dashboard"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Dashboard"
+     }
+    },
+    {
+     "route": "/settings/security",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/settings/security",
+     "ms": 8241,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 4,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/security",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/settings/security",
+     "ms": 5181,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 4,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/sso",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/settings",
+     "ms": 7740,
+     "fail": [
+      "console(1): Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "http": [
+      {
+       "h": "429 GET /api/v1/auth/saml/config",
+       "cls": "other"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/settings/sso",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "redirect",
+     "verdict": "FAIL",
+     "finalUrl": "/settings",
+     "ms": 5186,
+     "fail": [
+      "console(1): Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "http": [
+      {
+       "h": "429 GET /api/v1/auth/saml/config",
+       "cls": "other"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 429 ()"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 3,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Settings | NU-AURA"
+     }
+    },
+    {
+     "route": "/shifts/swaps",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/shifts/swaps",
+     "ms": 7584,
+     "fail": [
+      "authz: 403 GET /api/v1/shift-swaps/pending-approval",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/shift-swaps/pending-approval",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /shift-swaps/pending-approval 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Shift Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/shifts/swaps",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/shifts/swaps",
+     "ms": 5202,
+     "fail": [
+      "authz: 403 GET /api/v1/shift-swaps/pending-approval",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/shift-swaps/pending-approval",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /shift-swaps/pending-approval 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Shift Management | NU-AURA"
+     }
+    },
+    {
+     "route": "/tasks",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/tasks",
+     "ms": 8484,
+     "fail": [
+      "authz: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000009 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Tasks | NU-AURA"
+     }
+    },
+    {
+     "route": "/tasks",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/tasks",
+     "ms": 5201,
+     "fail": [
+      "authz: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000009 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "My Tasks | NU-AURA"
+     }
+    },
+    {
+     "route": "/tax/declarations",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/tax/declarations",
+     "ms": 5406,
+     "fail": [
+      "authz: 403 GET /api/v1/tax-declarations?page=0&size=20",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/tax-declarations?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /tax-declarations 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Tax | NU-AURA"
+     }
+    },
+    {
+     "route": "/tax/declarations",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/tax/declarations",
+     "ms": 5135,
+     "fail": [
+      "authz: 403 GET /api/v1/tax-declarations?page=0&size=20",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/tax-declarations?page=0&size=20",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /tax-declarations 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 0,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Tax | NU-AURA"
+     }
+    },
+    {
+     "route": "/team-directory",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/team-directory",
+     "ms": 8569,
+     "fail": [
+      "authz: 403 GET /api/v1/employees?page=0&size=20&sortBy=firstName&sortDirection=ASC",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/employees?page=0&size=20&sortBy=firstName&sortDirection=ASC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /employees 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Team Directory | NU-AURA"
+     }
+    },
+    {
+     "route": "/team-directory",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/team-directory",
+     "ms": 5127,
+     "fail": [
+      "authz: 403 GET /api/v1/employees?page=0&size=20&sortBy=firstName&sortDirection=ASC",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/employees?page=0&size=20&sortBy=firstName&sortDirection=ASC",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /employees 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 2,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Team Directory | NU-AURA"
+     }
+    },
+    {
+     "route": "/training/my-learning",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/training/my-learning",
+     "ms": 19308,
+     "fail": [
+      "spinner after 10s: 1"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 1,
+      "title": "Training | NU-AURA"
+     }
+    },
+    {
+     "route": "/training/my-learning",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/training/my-learning",
+     "ms": 15180,
+     "fail": [
+      "spinner after 10s: 1"
+     ],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 1,
+      "title": "Training | NU-AURA"
+     }
+    },
+    {
+     "route": "/travel",
+     "vp": "desktop",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/travel",
+     "ms": 5230,
+     "fail": [
+      "authz: 403 GET /api/v1/travel/requests?page=0&size=10",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/travel/requests?page=0&size=10",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /travel/requests 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Travel | NU-AURA"
+     }
+    },
+    {
+     "route": "/travel",
+     "vp": "mobile",
+     "expected": "allow",
+     "observed": "rendered",
+     "verdict": "FAIL",
+     "finalUrl": "/travel",
+     "ms": 5305,
+     "fail": [
+      "authz: 403 GET /api/v1/travel/requests?page=0&size=10",
+      "console(2): Failed to load resource: the server responded with a status of 403 ()"
+     ],
+     "http": [
+      {
+       "h": "403 GET /api/v1/travel/requests?page=0&size=10",
+       "cls": "authz"
+      }
+     ],
+     "console": [
+      "Failed to load resource: the server responded with a status of 403 ()",
+      "[ApiClient] Error: GET /travel/requests 403 Request failed with status code 403"
+     ],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Travel | NU-AURA"
+     }
+    },
+    {
+     "route": "/wellness/admin",
+     "vp": "desktop",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/wellness/admin",
+     "ms": 5101,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wellness | NU-AURA"
+     }
+    },
+    {
+     "route": "/wellness/admin",
+     "vp": "mobile",
+     "expected": "auth",
+     "observed": "rendered",
+     "verdict": "PASS",
+     "finalUrl": "/wellness/admin",
+     "ms": 5091,
+     "fail": [],
+     "http": [],
+     "console": [],
+     "checks": {
+      "overflow": null,
+      "headings": 1,
+      "h1": 1,
+      "badText": [],
+      "brokenImages": [],
+      "spinners": 0,
+      "title": "Wellness | NU-AURA"
+     }
+    }
+   ]
+  }
+ },
+ "finishedAt": "2026-11-18T07:10:25.768Z"
+}

@@ -1,0 +1,12 @@
+import {chromium, newContext, FE, SS, mkLog, watch, sql} from './lib.mjs';
+console.log('OFFER_STANDARD per tenant (tenant, active):', sql("select count(*), bool_and(is_active) from letter_templates where code='OFFER_STANDARD'"));
+console.log('demo tenant', sql("select name,category,is_active from letter_templates where code='OFFER_STANDARD'"));
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'manager'}); const p = await ctx.newPage(); const l = mkLog(); watch(p, l);
+await p.goto(FE + '/one-on-one', {waitUntil: 'domcontentloaded', timeout: 180000}); await p.waitForLoadState('networkidle', {timeout: 8000}).catch(() => {}); await p.waitForTimeout(2500);
+await p.getByRole('button', {name: /Schedule Meeting/i}).first().click(); await p.waitForTimeout(3500);
+console.log('authz', JSON.stringify(l.http.filter(x => /^40[13]/.test(x))), 'all http errs', JSON.stringify(l.http.slice(0, 5)));
+const sels = await p.locator('main select').evaluateAll(els => els.map(e => ({n: e.name || e.id, opts: [...e.options].slice(0, 6).map(o => o.text)})));
+console.log('selects', JSON.stringify(sels).slice(0, 500));
+const picker = p.getByText(/participant|employee/i).first(); console.log('picker label', await picker.innerText().catch(() => 'none'));
+const inp=p.getByPlaceholder('Search for a participant'); await inp.fill('a').catch(()=>{}); await p.waitForTimeout(3500); console.log('after search authz', JSON.stringify(l.http.filter(x => /^40[13]/.test(x))), 'options', JSON.stringify(await p.locator('main [class*=absolute] button, main [class*=absolute] li').allInnerTexts().then(a=>a.slice(0,4)).catch(()=>[])));
+await p.screenshot({path: SS + '/live2-v350-mgr-1on1-dlg.png'}); await b.close();
