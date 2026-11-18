@@ -1,0 +1,17 @@
+import {chromium, newContext, FE, mkLog, watch} from './lib.mjs';
+const T='NUAURA_TEST_P3_110279';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'hradmin'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('response', async r => { if (/\/api\/v1\//.test(r.url()) && r.request().method() !== 'GET' && !/auth|analytics/.test(r.url())) console.log('  API', r.status(), r.request().method(), r.url().replace(/^.*\/api/, ''), (await r.text().catch(()=>'')).slice(0, 220)); });
+await p.goto(FE + '/preboarding', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+const D='[role=dialog] ';
+const toast = async () => console.log('  toast:', await p.evaluate(()=>[...document.querySelectorAll('[role=status],[role=alert]')].map(e=>e.innerText.replace(/\s+/g,' ')).join('|')));
+await p.getByRole('button',{name:'Invite Candidate'}).first().click(); await p.waitForTimeout(800);
+await p.getByRole('button',{name:'Send Invitation'}).click(); await p.waitForTimeout(1000);
+console.log('empty:', (await p.locator('body').innerText()).replace(/\s+/g,' ').match(/[A-Za-z ]{0,20}(required|valid)[A-Za-z ]{0,25}/gi));
+await p.locator('[name=firstName]').fill('Test'); await p.locator('[name=lastName]').fill(T+' Pre'); await p.locator('[name=email]').fill('p3.pre@example.test');
+await p.locator('[name=joiningDate]').fill('2020-01-01'); await p.locator('[name=designation]').fill('Eng');
+await p.getByRole('button',{name:'Send Invitation'}).click(); await p.waitForTimeout(3000); await toast();
+console.log('after:', (await p.locator('main').innerText()).replace(/\s+/g,' ').slice(0,500));
+console.log('http', log.http);
+await b.close();

@@ -1,0 +1,14 @@
+import {chromium, newContext, FE, sleep, SS} from './lib.mjs';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'p4emp'}); const p = await ctx.newPage();
+p.on('response', async r => { if (/\/api\//.test(r.url()) && (r.request().method() !== 'GET' || r.status() >= 400)) console.log('NET', r.status(), r.request().method(), r.url().replace(/^https?:\/\/[^/]+/, '').slice(0, 80), (r.request().postData()||'').slice(0,250), r.status() >= 400 ? (await r.text().catch(() => '')).slice(0, 160) : ''); });
+await p.goto(FE + '/okr', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle', {timeout: 20000}).catch(() => {}); await sleep(1500);
+await p.getByRole('button', {name: 'Expand objective'}).first().click(); await sleep(600);
+await p.getByRole('button', {name: 'Add Key Result'}).first().click(); await sleep(800);
+console.log(await p.evaluate(() => [...document.querySelectorAll('[role=dialog] input, [role=dialog] select')].map(e => `${e.type}|${e.name}|${e.placeholder}|${e.id}`).join('  ;  ')));
+await p.locator('[role=dialog] button[type=submit]').click(); await sleep(700);
+console.log('EMPTY->', (await p.locator('[role=dialog]').innerText()).replace(/\s+/g, ' ').slice(0, 200));
+await p.locator('[role=dialog] [name=title]').fill('NUAURA_TEST_P4_kr');
+await p.locator('#key-result-target-value').fill(process.argv[2]||'100'); if (process.argv[3]) await p.locator('#key-result-weight').fill(process.argv[3]);
+await p.locator('[role=dialog] button[type=submit]').click(); await sleep(1800);
+console.log('AFTER->', (await p.evaluate(() => document.querySelector('main').innerText)).replace(/\s+/g, ' ').slice(0, 500));
+await b.close();

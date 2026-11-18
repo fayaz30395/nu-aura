@@ -1,0 +1,207 @@
+{
+ "runId": "NUAURA_TEST_P2_037131",
+ "commit": "c0e2db9a",
+ "browser": "chromium 148.0.7778.96",
+ "env": {
+  "FE": "http://localhost:3000",
+  "BE": "http://localhost:8080"
+ },
+ "startedAt": "2026-11-16T19:57:17.279Z",
+ "finishedAt": "2026-11-16T19:58:44.306Z",
+ "created": [
+  {
+   "entity": "/api/v1/leave-requests",
+   "id": "300d5482-e0f0-4d1a-916d-2d5897756fef"
+  },
+  {
+   "entity": "/api/v1/wall/posts",
+   "id": "e0c0ac32-7f40-4fd2-89e4-62bf5902b5d4"
+  },
+  {
+   "entity": "/api/v1/wall/posts/e0c0ac32-7f40-4fd2-89e4-62bf5902b5d4/comments",
+   "id": "7bcc7551-3684-47b4-b8cd-02d71a71fe9e"
+  },
+  {
+   "entity": "/api/v1/wall/posts/e0c0ac32-7f40-4fd2-89e4-62bf5902b5d4/comments",
+   "id": "3efeceac-5a6d-4470-969b-6f081be4391c"
+  },
+  {
+   "entity": "/api/v1/attendance/work-requests/d62f9401-23e5-4ce9-a254-8a3f64ce4ac1/approve",
+   "id": "d62f9401-23e5-4ce9-a254-8a3f64ce4ac1"
+  },
+  {
+   "entity": "/api/v1/employees",
+   "id": "0a652d79-4456-4bf1-8428-91080d2732ef"
+  }
+ ],
+ "results": [
+  {
+   "id": "E1",
+   "scenario": "EMP dashboard widgets visible",
+   "status": "PASS",
+   "detail": "widgets: Your month at a glance, Today, Your team and time off, Company feed",
+   "console": []
+  },
+  {
+   "id": "E2",
+   "scenario": "EMP clock in/out card present",
+   "status": "PASS",
+   "detail": "button \"Clock In\" visible",
+   "console": []
+  },
+  {
+   "id": "E3",
+   "scenario": "EMP apply leave",
+   "status": "PASS",
+   "detail": "2027-04-06..2027-04-07 HTTP 201, Total days requested, visible in My Leaves",
+   "console": []
+  },
+  {
+   "id": "E4",
+   "scenario": "EMP request WFH on /attendance/regularization",
+   "status": "FAIL",
+   "detail": "page crashed (error boundary) after typing in Reason: %o %s TypeError: Cannot read properties of null (reading 'value') at http://localhost:3000/_next/static/chunks/_15cd-9p2 | API fallback POST work-requests -> 201 | toast: Something went wrong This page ran into an unexpected problem. Try again, or head back to your dashboard. Retry Go to dashboard | 0 1 Issue |  | http: ",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-E4.png",
+   "console": [
+    "%o\n\n%s TypeError: Cannot read properties of null (reading 'value')\n    at http://localhost:3000/_next/static/chunks/_15cd-9p2um4lj._.js:1895:65\n    at basicStateReducer (http://localhost:3000/_next/st"
+   ]
+  },
+  {
+   "id": "E5a",
+   "scenario": "EMP timesheet: top \"Add Entry\" opens entry modal",
+   "status": "FAIL",
+   "detail": "clicking \"Add Entry\" on the week view does nothing (no modal) | toast: Draft | Submitted | Submitted | Draft | Draft | Draft | |  | http: ",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-E5a.png",
+   "console": []
+  },
+  {
+   "id": "E5b",
+   "scenario": "EMP timesheet: add entry via View -> Add Entry",
+   "status": "BLOCKED",
+   "detail": "Project dropdown in \"Add Time Entry\" is empty (no PSA projects for this tenant/employee) - entry cannot be added (see UI bug on timesheets/PSA projects) | toast: Draft | Submitted | Submitted | Draft | Draft | Draft | | | Draft | http: ",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-E5b.png",
+   "console": []
+  },
+  {
+   "id": "E5c",
+   "scenario": "EMP timesheet: copy last week into next week",
+   "status": "BLOCKED",
+   "detail": "\"Copy last week\" disabled on Week of Nov 22 (week already has entries from an earlier run?) | toast: Submitted | Submitted | Submitted | Draft | Draft | Draft | |  | http: ",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-E5c.png",
+   "console": []
+  },
+  {
+   "id": "E5d",
+   "scenario": "EMP timesheet: submit next week for approval",
+   "status": "BLOCKED",
+   "detail": "next week status is \"Submitted\", not Draft | toast: Submitted | Submitted | Submitted | Draft | Draft | Draft | |  | http: ",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-E5d.png",
+   "console": []
+  },
+  {
+   "id": "E6",
+   "scenario": "EMP wall post + comment (newest comment on top)",
+   "status": "FAIL",
+   "detail": "2 comments posted (HTTP 2xx) but 0 shown in thread until reload (after reload: 2) - thread does not refresh | toast: No trending content yet Start creating and sharing to see what is popular. | No recent activity Activity from across your knowledge base will appear here. | |  | http: ",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-E6.png",
+   "console": []
+  },
+  {
+   "id": "E7",
+   "scenario": "EMP payslips page",
+   "status": "PASS",
+   "detail": "heading \"My Payslips\"; empty state",
+   "console": []
+  },
+  {
+   "id": "E8",
+   "scenario": "EMP profile edit (city)",
+   "status": "PASS",
+   "detail": "HTTP 200; city persisted",
+   "console": []
+  },
+  {
+   "id": "M1",
+   "scenario": "MGR approve leave request",
+   "status": "FAIL",
+   "detail": "approve -> 400 {\"timestamp\":\"2026-11-17T01:28:11.718492\",\"status\":400,\"error\":\"Business Rule Violation\",\"message\":\"Insufficient leave balance. Available: 1.00 days, Requested: 2.00 days\",\"errors\":null,\"path\":\"/api/v1/lea | toast: 0 1 Issue |  | http: 400 POST /api/v1/leave-requests/f46db6e7-a7a8-4856-af59-31f629b9f5b9/approve",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-M1.png",
+   "console": [
+    "Failed to load resource: the server responded with a status of 400 ()",
+    "[ApiClient] Error: POST /leave-requests/f46db6e7-a7a8-4856-af59-31f629b9f5b9/approve 400 Request failed with status code 400"
+   ]
+  },
+  {
+   "id": "M2",
+   "scenario": "MGR approve WFH request",
+   "status": "PASS",
+   "detail": "HTTP 200; removed from pending",
+   "console": []
+  },
+  {
+   "id": "M3",
+   "scenario": "MGR team attendance page",
+   "status": "PASS",
+   "detail": "heading \"Team Attendance\"; rows=0",
+   "console": []
+  },
+  {
+   "id": "H1",
+   "scenario": "HR employees list",
+   "status": "PASS",
+   "detail": "20 rows; \"24 people across 3 departments · 1 location\"",
+   "console": []
+  },
+  {
+   "id": "H2",
+   "scenario": "HR create employee",
+   "status": "PASS",
+   "detail": "HTTP 201; NUAURA_TEST_Emp 037131 listed",
+   "console": []
+  },
+  {
+   "id": "H3",
+   "scenario": "HR edit employee",
+   "status": "PASS",
+   "detail": "HTTP 200; middle name shown in list [console: Failed to load resource: the server responded with a status of 403 () | [ApiClient] Error: GET /custom-fields/definitions/entity-type/EMPLOYEE 403 Request faile]",
+   "console": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /custom-fields/definitions/entity-type/EMPLOYEE 403 Request failed with status code 403",
+    "Failed to load custom fields: AxiosError: Request failed with status code 403\n    at settle (http://localhost:3000/_next/static/chunks/node_modules_axios_lib_1yl9f_oq5xg9q._.js:2394:16)\n    at XMLHttp",
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /custom-fields/definitions/entity-type/EMPLOYEE 403 Request failed with status code 403",
+    "Failed to load custom fields: AxiosError: Request failed with status code 403\n    at settle (http://localhost:3000/_next/static/chunks/node_modules_axios_lib_1yl9f_oq5xg9q._.js:2394:16)\n    at XMLHttp",
+    "[ApiClient] Error: GET /employees/0a652d79-4456-4bf1-8428-91080d2732ef/skills undefined canceled",
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /custom-fields/definitions/entity-type/EMPLOYEE 403 Request failed with status code 403",
+    "Failed to load custom fields: AxiosError: Request failed with status code 403\n    at settle (http://localhost:3000/_next/static/chunks/node_modules_axios_lib_1yl9f_oq5xg9q._.js:2394:16)\n    at XMLHttp",
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /custom-fields/definitions/entity-type/EMPLOYEE 403 Request failed with status code 403",
+    "Failed to load custom fields: AxiosError: Request failed with status code 403\n    at settle (http://localhost:3000/_next/static/chunks/node_modules_axios_lib_1yl9f_oq5xg9q._.js:2394:16)\n    at XMLHttp"
+   ]
+  },
+  {
+   "id": "H4",
+   "scenario": "HR create announcement",
+   "status": "FAIL",
+   "detail": "POST announcement -> 403 {\"status\":403,\"error\":\"Forbidden\",\"message\":\"Insufficient permissions. Required any of: [SYSTEM:ADMIN]\",\"timestamp\":\"2026-11-16T19:58:41.303196Z\"} | toast: No Announcements No announcements to display | 1 2 Issues |  | http: 403 POST /api/v1/announcements",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-H4.png",
+   "console": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: POST /announcements 403 Request failed with status code 403",
+    "[Announcements] Failed to create announcement: AxiosError: Request failed with status code 403\n    at settle (http://localhost:3000/_next/static/chunks/node_modules_axios_lib_1yl9f_oq5xg9q._.js:2394:1"
+   ]
+  },
+  {
+   "id": "H5",
+   "scenario": "HR create holiday",
+   "status": "FAIL",
+   "detail": "POST holiday -> 400 {\"timestamp\":\"2026-11-17T01:28:44.183327\",\"status\":400,\"error\":\"Bad Request\",\"message\":\"Holiday already exists for this date\",\"errors\":null,\"path\":\"/api/v1/holidays\",\"requestId\":\"cba9d626-c17c-4933-84 | toast: 0 1 Issue |  | http: 400 POST /api/v1/holidays",
+   "screenshot": "/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p2-H5.png",
+   "console": [
+    "Failed to load resource: the server responded with a status of 400 ()",
+    "[ApiClient] Error: POST /holidays 400 Request failed with status code 400"
+   ]
+  }
+ ]
+}

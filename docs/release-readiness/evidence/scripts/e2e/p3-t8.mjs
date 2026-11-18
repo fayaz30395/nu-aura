@@ -1,0 +1,14 @@
+import {chromium, newContext, FE, mkLog, watch} from './lib.mjs';
+const TAG = 'NUAURA_TEST_P3_110279';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'hradmin'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('response', async r => { if (/\/api\/v1\/recruitment/.test(r.url()) && r.request().method() !== 'GET') console.log('  API', r.status(), r.request().method(), r.url().replace(/^.*\/api/, ''), (await r.text().catch(()=>'')).slice(0, 160)); });
+await p.goto(FE + '/recruitment/pipeline', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+const sel = p.locator('main select').first();
+console.log('options', await sel.locator('option').allInnerTexts());
+await sel.selectOption({label: TAG + ' Backend Engineer (' + TAG + '-J1)'}); await p.waitForTimeout(2500);
+console.log('board', JSON.stringify(await p.evaluate(() => document.querySelector('main').innerText.replace(/\s+/g,' ').slice(0, 900))));
+console.log('btns', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('main button')].filter(e=>e.offsetParent).map(e=>(e.getAttribute('aria-label')||e.innerText).trim().replace(/\s+/g,' ').slice(0,40)).slice(0,40))));
+console.log('http', log.http, 'con', log.console.slice(0,3));
+await p.screenshot({path:'/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p3-pipeline.png'});
+await b.close();

@@ -1,0 +1,10 @@
+import {session, FE} from './p5-lib.mjs';
+const s=await session('hradmin'); const {p}=s;
+await s.go('/fluence/wiki/new');
+console.log('drawers before', await p.locator('.mantine-Drawer-overlay').count());
+await s.shot('d-before');
+await p.getByRole('button',{name:'Publish'}).click(); await s.settle(1500);
+console.log('drawers after empty publish', await p.locator('.mantine-Drawer-overlay').count(), await s.toasts());
+console.log('DRAWER', await p.evaluate(()=>(document.querySelector('.mantine-Drawer-content')?.innerText||'none').replace(/\s+/g,' ').slice(0,500)));
+await s.shot('d-after');
+await s.b.close();

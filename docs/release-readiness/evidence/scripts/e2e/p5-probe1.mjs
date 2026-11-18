@@ -1,0 +1,12 @@
+import {chromium, newContext, FE, mkLog, watch, SS} from './lib.mjs';
+import {isNoise} from './ui-helpers.mjs';
+const TAG='NUAURA_TEST_P5_'+Date.now().toString().slice(-6); console.log(TAG);
+const b = await chromium.launch(); const ctx = await newContext(b,{role:'p5_hradmin'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('request', r=>{ if(r.method()!=='GET' && /\/api\//.test(r.url())) console.log('REQ', r.method(), r.url().replace(/^https?:\/\/[^/]+/,''), (r.postData()||'').slice(0,300)); });
+p.on('response', async r=>{ if(r.request().method()!=='GET' && /\/api\//.test(r.url())) console.log('RES', r.status(), (await r.text().catch(()=>'')).slice(0,250)); });
+await p.goto(FE+'/fluence/wiki',{waitUntil:'domcontentloaded'}); await p.waitForLoadState('networkidle',{timeout:20000}).catch(()=>{});
+await p.getByRole('button',{name:/create space|create new space/i}).first().click(); await p.waitForTimeout(1000);
+console.log('DIALOG', await p.evaluate(()=>[...document.querySelectorAll('[role=dialog] input,[role=dialog] textarea,[role=dialog] button,[role=dialog] select')].map(e=>e.tagName+':'+(e.name||e.placeholder||e.innerText||e.getAttribute('aria-label')||'').slice(0,30))));
+await p.screenshot({path:`${SS}/ui-p5-probe-space.png`});
+await b.close();

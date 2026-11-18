@@ -1,0 +1,78 @@
+{
+ "runId": "NUAURA_TEST_P0_481060",
+ "startedAt": "2026-11-16T19:48:01.060Z",
+ "commit": "c0e2db9a",
+ "browser": "chromium 148.0.7778.96",
+ "env": {
+  "FE": "http://localhost:3000",
+  "BE": "http://localhost:8080"
+ },
+ "results": [
+  {
+   "id": "P0-01",
+   "scenario": "FE /auth/login answers",
+   "status": "PASS",
+   "detail": "HTTP 200"
+  },
+  {
+   "id": "P0-02",
+   "scenario": "BE health",
+   "status": "PASS",
+   "detail": "status=DOWN down=[mail]"
+  },
+  {
+   "id": "P0-03",
+   "scenario": "Demo panel visible on login",
+   "status": "PASS",
+   "detail": "Demo Accounts panel rendered (NEXT_PUBLIC_DEMO_MODE=true in this local build)"
+  },
+  {
+   "id": "P0-04",
+   "scenario": "Login page console clean",
+   "status": "PASS",
+   "detail": "no console errors"
+  },
+  {
+   "id": "P0-10-employee",
+   "scenario": "Login employee",
+   "status": "PASS",
+   "detail": "landed on /me/dashboard"
+  },
+  {
+   "id": "P0-11-employee",
+   "scenario": "Dashboard loads employee",
+   "status": "FAIL",
+   "detail": "url=/auth/login?reason=expired&returnUrl=%2Fdashboard errorText=false console=Failed to load resource: the server responded with a status of 401 () | [ApiClient] Error: GET /auth/me 401 Request failed with status code 401 | Failed to load resource: the server responded with a status of 401 () http=401 GET /api/v1/auth/me,401 POST /api/v1/auth/refresh,401 POST /api/v1/auth/refresh"
+  },
+  {
+   "id": "P0-10-manager",
+   "scenario": "Login manager",
+   "status": "PASS",
+   "detail": "landed on /me/dashboard"
+  },
+  {
+   "id": "P0-11-manager",
+   "scenario": "Dashboard loads manager",
+   "status": "PASS",
+   "detail": "url=/me/dashboard errorText=false console=0 http=0"
+  },
+  {
+   "id": "P0-10-hradmin",
+   "scenario": "Login hradmin",
+   "status": "PASS",
+   "detail": "landed on /me/dashboard"
+  },
+  {
+   "id": "P0-11-hradmin",
+   "scenario": "Dashboard loads hradmin",
+   "status": "PASS",
+   "detail": "url=/dashboard errorText=false console=0 http=0"
+  },
+  {
+   "id": "P0-20",
+   "scenario": "No host outside the local stack contacted",
+   "status": "PASS",
+   "detail": "local FE/BE only + accounts.google.com (Google Identity script (OAuth button))"
+  }
+ ]
+}

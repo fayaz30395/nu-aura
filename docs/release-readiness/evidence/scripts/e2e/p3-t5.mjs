@@ -1,0 +1,12 @@
+import {chromium, newContext, FE, mkLog, watch} from './lib.mjs';
+const TAG = 'NUAURA_TEST_P3_110279';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'hradmin'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('response', async r => { if (/\/api\/v1\/recruitment/.test(r.url()) && r.request().method() !== 'GET') console.log('  API', r.status(), r.request().method(), r.url().replace(/^.*\/api/, ''), (await r.text().catch(()=>'')).slice(0, 220)); });
+await p.goto(FE + '/recruitment/candidates', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+await p.getByRole('button', {name: /^Add Candidate$/}).click(); await p.waitForTimeout(1000);
+console.log(JSON.stringify(await p.evaluate(() => [...document.querySelector('[role=dialog]').querySelectorAll('input,select,textarea,button')].filter(e=>e.offsetParent).map(e => `${e.tagName}:${e.type}:${e.name||e.getAttribute('aria-label')||e.innerText.trim().slice(0,25)}${e.required?'*':''}`))));
+const sub = p.locator('[role=dialog] button[type=submit]');
+await sub.click(); await p.waitForTimeout(1200);
+console.log('empty:', (await p.locator('[role=dialog]').innerText()).replace(/\s+/g,' ').slice(0,400));
+await b.close();

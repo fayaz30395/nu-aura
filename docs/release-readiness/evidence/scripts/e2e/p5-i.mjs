@@ -1,0 +1,12 @@
+import {session, FE} from './p5-lib.mjs';
+const TAG=process.argv[2]; const s=await session('hradmin'); const {p}=s;
+await s.go('/fluence/templates/new');
+await p.locator('textarea[name=name]').fill(TAG+' template');
+await p.locator('.ProseMirror').click(); await p.keyboard.type('Template body '+TAG);
+await p.getByRole('button',{name:'Save Template'}).click(); await s.settle(2500);
+console.log('save1 ->', await s.toasts(), p.url().replace(FE,''));
+await p.getByRole('button',{name:'Settings'}).click(); await s.settle(800);
+console.log('settings', await p.evaluate(()=>(document.querySelector('.mantine-Drawer-content, [role=dialog]')?.innerText||'none').replace(/\s+/g,' ').slice(0,400)));
+await s.shot('i-settings');
+console.log(JSON.stringify(s.errs()));
+await s.b.close();

@@ -1,0 +1,16 @@
+import {chromium, newContext, FE, mkLog, watch} from './lib.mjs';
+const TAG = 'NUAURA_TEST_P3_110279';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'hradmin'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('response', async r => { if (/\/api\/v1\/recruitment/.test(r.url()) && r.request().method() !== 'GET') console.log('  API', r.status(), r.request().method(), r.url().replace(/^.*\/api/, ''), (await r.text().catch(()=>'')).slice(0, 200)); });
+await p.goto(FE + '/recruitment/pipeline', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2000);
+await p.locator('main select').first().selectOption({label: TAG + ' Backend Engineer (' + TAG + '-J1)'}); await p.waitForTimeout(2500);
+const board = async l => console.log(l, (await p.locator('main').innerText()).replace(/\s+/g,' ').replace(/^.*?Hiring Funnel/, 'Funnel').slice(0, 330));
+await board('BEFORE');
+await p.getByRole('button', {name: /^Screening$/}).click(); await p.waitForTimeout(2500); await board('AFTER Screening');
+await p.getByRole('button', {name: 'More options'}).click(); await p.waitForTimeout(800);
+console.log('menu', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('[role=menu] *, [role=menuitem]')].filter(e=>!e.children.length).map(e=>e.innerText.trim()))));
+await p.screenshot({path:'/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/ui-p3-pipeline-moved.png'});
+console.log('btns', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('main button')].filter(e=>e.offsetParent).map(e=>(e.getAttribute('aria-label')||e.innerText).trim().replace(/\s+/g,' ').slice(0,30)))));
+console.log('http', log.http, log.console.slice(0,3));
+await b.close();

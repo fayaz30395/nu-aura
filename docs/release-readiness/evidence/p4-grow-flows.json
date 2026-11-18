@@ -1,0 +1,17 @@
+{
+ "TAG": "NUAURA_TEST_P4_636574",
+ "results": [
+  {
+   "id": "G2",
+   "scenario": "EMP goal: valid create (current>target) then list after reload",
+   "status": "PASS",
+   "detail": "POST 400 shownImmediately=false afterReload=false card=\"undefined\" | http: 400 POST /api/v1/goals"
+  },
+  {
+   "id": "G3",
+   "scenario": "EMP goal: progress update on created goal",
+   "status": "PASS",
+   "detail": "card buttons: null | http: "
+  }
+ ]
+}

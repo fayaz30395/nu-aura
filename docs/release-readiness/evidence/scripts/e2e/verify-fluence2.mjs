@@ -1,0 +1,46 @@
+import {sess, BE} from './verify-lib.mjs';
+import fs from 'fs';
+const s = await sess('verify_hr'); const {p} = s;
+const rec = (id, st, ev) => console.log(`${id} | ${st} | ${ev}`);
+const RAW = /\{\s*"?type"?\s*:\s*"?doc|\\"type\\"/;
+const TS = Date.now().toString().slice(-6);
+const MARK = `verifybody${TS}`;
+// create wiki page via UI
+await s.go('/fluence/wiki/new', 1500);
+await p.locator('textarea[name=title]').fill(`NUAURA_TEST_VERIFY wiki ${TS}`);
+await p.locator('[contenteditable=true]').first().click(); await p.keyboard.type(MARK);
+await p.getByRole('button', {name: /^Publish$/}).first().click(); await p.waitForTimeout(800);
+await p.locator('#wiki-space').click(); await p.waitForTimeout(500);
+await p.locator('[role=option]').first().click(); await p.waitForTimeout(300);
+await p.locator('form button[type=submit]').click(); await p.waitForTimeout(5000);
+console.log('after publish url', p.url(), s.mut.slice(-3));
+const id = p.url().match(/wiki\/([0-9a-f-]{36})/)?.[1];
+let t = await p.evaluate(() => document.body.innerText);
+rec('F-001', !RAW.test(t) && t.includes(MARK) ? 'PASS' : 'FAIL', `new page id=${id}; view contains body text=${t.includes(MARK)} rawJSON=${RAW.test(t)}`);
+await p.screenshot({path: '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/verify-F001.png'});
+await s.go(`/fluence/wiki/${id}/edit`, 4000);
+const ed = await p.evaluate(() => [...document.querySelectorAll('[contenteditable=true]')].map(e => e.innerText).join('|'));
+rec('F-002', !RAW.test(ed) && ed.includes(MARK) ? 'PASS' : 'FAIL', `edit editor text="${ed.slice(0, 80)}"`);
+await p.screenshot({path: '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/verify-F002.png'});
+// blog
+await s.go('/fluence/blogs/new', 1500);
+await p.locator('input[name=title]').fill(`NUAURA_TEST_VERIFY blog ${TS}`);
+await p.locator('[contenteditable=true]').first().click(); await p.keyboard.type('blog body ' + TS);
+await p.getByPlaceholder('Select visibility').click().catch(()=>{}); await p.waitForTimeout(400);
+await p.locator('[role=option]').first().click().catch(()=>{});
+s.mut.length = 0;
+await p.getByRole('button', {name: /Create Post/}).click(); await p.waitForTimeout(4000);
+const bm = s.mut.filter(x => /blogs/.test(x));
+const bid = bm.map(x => x.match(/"id":"([0-9a-f-]{36})"/)?.[1]).find(Boolean);
+rec('F-003', bm.some(x => /^20\d /.test(x)) ? 'PASS' : 'FAIL', `url=${p.url().replace(/^.*3000/, '')} calls=${bm.join(' ; ').slice(0, 300)} toast=${(await p.evaluate(()=>[...document.querySelectorAll('[role=alert],[class*=Notification]')].map(e=>e.innerText).join('|'))).slice(0,100)} blogId=${bid}`);
+await p.screenshot({path: '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/verify-F003.png'});
+// template
+await s.go('/fluence/templates/new', 1500);
+await p.locator('textarea[name=name]').fill(`NUAURA_TEST_VERIFY tmpl ${TS}`);
+await p.locator('[contenteditable=true]').first().click(); await p.keyboard.type('template body ' + TS);
+s.mut.length = 0;
+await p.getByRole('button', {name: /Save Template/}).click(); await p.waitForTimeout(4000);
+const tm = s.mut.filter(x => /templates/.test(x));
+rec('F-004', tm.some(x => /^20\d /.test(x)) ? 'PASS' : 'FAIL', `url=${p.url().replace(/^.*3000/, '')} calls=${tm.join(' ; ').slice(0, 300)}`);
+await p.screenshot({path: '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/verify-F004.png'});
+await s.b.close();

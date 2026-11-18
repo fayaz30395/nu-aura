@@ -1,0 +1,3637 @@
+{
+ "ids": {
+  "course": null,
+  "path": null,
+  "survey": null,
+  "cycle": null,
+  "training": null
+ },
+ "out": [
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/feedback360",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 2014,
+   "f": [
+    "console: 2",
+    "http: 401 GET /api/v1/auth/me"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [
+    "401 GET /api/v1/auth/me"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/feedback360",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 1175,
+   "f": [],
+   "text": "Skip to content 360-Degree Feedback AT 360-Degree Feedback Multi-rater feedback and performance assessment Feedback Cycles (0) Pending Reviews (0) My Results (0) No feedback cycles Once a 360 cycle is launched, it will a",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1554,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1352,
+   "f": [],
+   "text": "Skip to content Goals AT Goals Set, track and update progress on your goals. Create Goal Filter by Type All Types OKR KPI Personal Team Department Organization Filter by Status All Status Draft Active In Progress Complet",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/learning",
+   "finalUrl": "/learning",
+   "ms": 1282,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/learning",
+   "finalUrl": "/learning",
+   "ms": 1482,
+   "f": [],
+   "text": "Skip to content AT LEARNING & DEVELOPMENT Build skills at your pace. Earn credit for the work. Courses, quizzes, certificates, and programs — everything you need to grow on the job. Browse catalog COURSES ENROLLED 1 COMP",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/learning/certificates",
+   "finalUrl": "/learning/certificates",
+   "ms": 1096,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/learning/certificates",
+   "finalUrl": "/learning/certificates",
+   "ms": 918,
+   "f": [],
+   "text": "Skip to content AT Back to Learning My Certificates Collection of all earned certificates and credentials All Time Last 30 Days Last 90 Days Last Year No certificates earned yet Complete courses to earn certificates and ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/learning/courses",
+   "finalUrl": "/learning",
+   "ms": 1219,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/learning/courses",
+   "finalUrl": "/learning",
+   "ms": 1055,
+   "f": [],
+   "text": "Skip to content AT LEARNING & DEVELOPMENT Build skills at your pace. Earn credit for the work. Courses, quizzes, certificates, and programs — everything you need to grow on the job. Browse catalog COURSES ENROLLED 1 COMP",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/learning/paths",
+   "finalUrl": "/learning/paths",
+   "ms": 9015,
+   "f": [
+    "spinner after settle: 1"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/learning/paths",
+   "finalUrl": "/learning/paths",
+   "ms": 8990,
+   "f": [
+    "spinner after settle: 1"
+   ],
+   "text": "Skip to content AT Back to Learning Learning Paths Structured learning journeys to develop specific skills and competencies All Difficulty Levels Beginner Intermediate Advanced Security and Compliance Onboarding In Progr",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 2168,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1630,
+   "f": [],
+   "text": "Skip to content OKR Management AT OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/one-on-one",
+   "finalUrl": "/one-on-one",
+   "ms": 1520,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/one-on-one",
+   "finalUrl": "/one-on-one",
+   "ms": 1609,
+   "f": [],
+   "text": "Skip to content AT 1-on-1 Meetings Schedule, manage, and track your 1-on-1 conversations Schedule Meeting Upcoming 0 Scheduled meetings Pending Actions 0 Items to complete Overdue Actions 0 Past due date Completion Rate ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance",
+   "finalUrl": "/performance",
+   "ms": 1305,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance",
+   "finalUrl": "/performance",
+   "ms": 1338,
+   "f": [],
+   "text": "Skip to content AT Goals, reviews, and growth in one steady rhythm. Track progress, run cycles, and finalise ratings without losing the thread. Set a goal Active goals 0 Goal progress 0% OKR progress 0% Pending reviews 0",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/360-feedback",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 1016,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/360-feedback",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 1408,
+   "f": [],
+   "text": "Skip to content 360-Degree Feedback AT 360-Degree Feedback Multi-rater feedback and performance assessment Feedback Cycles (0) Pending Reviews (0) My Results (0) No feedback cycles Once a 360 cycle is launched, it will a",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/9box",
+   "finalUrl": "/me/dashboard",
+   "ms": 1582,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My Documents My Skills ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/9box",
+   "finalUrl": "/me/dashboard",
+   "ms": 2007,
+   "f": [],
+   "text": "Skip to content AT Good evening, Arun. Monday, November 16 · HR Executive - Recruitment. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE TODAY 0 MON, 16 NO",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/calibration",
+   "finalUrl": "/me/dashboard",
+   "ms": 3096,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My Documents My Skills ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/calibration",
+   "finalUrl": "/me/dashboard",
+   "ms": 1927,
+   "f": [],
+   "text": "Skip to content AT Good evening, Arun. Monday, November 16 · HR Executive - Recruitment. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE TODAY 0 MON, 16 NO",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/competency-framework",
+   "finalUrl": "/performance/competency-framework",
+   "ms": 1822,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/competency-framework",
+   "finalUrl": "/performance/competency-framework",
+   "ms": 1803,
+   "f": [],
+   "text": "Skip to content Competency Framework AT Competency Framework Manage competency ratings for employees within a review cycle. CATEGORIES Technical Behavioral Leadership Domain Problem Solving Review Cycle Select a cycle… S",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/competency-matrix",
+   "finalUrl": "/performance/competency-matrix",
+   "ms": 3585,
+   "f": [
+    "console: 6",
+    "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps 403 Request failed with status code 403",
+    "Failed to load resource: the server responded with a status of 403 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/competency-matrix",
+   "finalUrl": "/performance/competency-matrix",
+   "ms": 3435,
+   "f": [
+    "console: 6",
+    "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+   ],
+   "text": "Skip to content Competency Matrix AT Competency Matrix Manage competency frameworks, assess skills, and identify gaps My Competencies Team View Competency Framework 0 skills recorded Add Skill Skills Matrix No skills rec",
+   "http": [
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps 403 Request failed with status code 403",
+    "Failed to load resource: the server responded with a status of 403 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/cycles",
+   "finalUrl": "/performance/cycles",
+   "ms": 2007,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/cycles",
+   "finalUrl": "/performance/cycles",
+   "ms": 1059,
+   "f": [],
+   "text": "Skip to content Review Cycles AT Review Cycles Plan, activate and track performance review cycles. Filter by Type All Types Annual Semi-Annual Quarterly Monthly Probation Project End Filter by Status All Status Planning ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/feedback",
+   "finalUrl": "/performance/feedback",
+   "ms": 1573,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/feedback",
+   "finalUrl": "/performance/feedback",
+   "ms": 1489,
+   "f": [],
+   "text": "Skip to content Feedback AT Feedback Give and receive ongoing feedback all year. Received Feedback (0) Given Feedback (0) Filter by Type All Types Praise Constructive General Request No received feedback found Feedback c",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1168,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 943,
+   "f": [],
+   "text": "Skip to content Goals AT Goals Set, track and update progress on your goals. Create Goal Filter by Type All Types OKR KPI Personal Team Department Organization Filter by Status All Status Draft Active In Progress Complet",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1049,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1024,
+   "f": [],
+   "text": "Skip to content OKR Management AT OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/okrs",
+   "finalUrl": "/performance/okr",
+   "ms": 2262,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/okrs",
+   "finalUrl": "/performance/okr",
+   "ms": 1127,
+   "f": [],
+   "text": "Skip to content OKR Management AT OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/pip",
+   "finalUrl": "/me/dashboard",
+   "ms": 3482,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My Documents My Skills ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/pip",
+   "finalUrl": "/me/dashboard",
+   "ms": 1171,
+   "f": [],
+   "text": "Skip to content AT Good evening, Arun. Monday, November 16 · HR Executive - Recruitment. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE TODAY 0 MON, 16 NO",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/reviews",
+   "finalUrl": "/performance/reviews",
+   "ms": 1182,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/reviews",
+   "finalUrl": "/performance/reviews",
+   "ms": 1102,
+   "f": [],
+   "text": "Skip to content Reviews AT Performance Reviews Track self, manager and peer reviews across review periods. Filter by Type All Types Self Review Manager Review Peer Review Subordinate Review Skip Level Filter by Status Al",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/performance/revolution",
+   "finalUrl": "/performance/revolution",
+   "ms": 1695,
+   "f": [
+    "console: 4",
+    "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps 403 Request failed with status code 403",
+    "Failed to load resource: the server responded with a status of 403 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/performance/revolution",
+   "finalUrl": "/performance/revolution",
+   "ms": 1423,
+   "f": [
+    "console: 4",
+    "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+   ],
+   "text": "Skip to content Performance Revolution AT Performance Revolution Advanced OKR visualization and 360° performance insights Refresh Share Progress OKR Alignment Galaxy Visual mapping of objectives from Company to Individua",
+   "http": [
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps 403 Request failed with status code 403",
+    "Failed to load resource: the server responded with a status of 403 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/surveys",
+   "finalUrl": "/surveys",
+   "ms": 1029,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/surveys",
+   "finalUrl": "/surveys",
+   "ms": 1001,
+   "f": [],
+   "text": "Skip to content Surveys AT EMPLOYEE ENGAGEMENT Employee Surveys Create and manage employee surveys and feedback collection TOTAL SURVEYS 0 ACTIVE 0 DRAFTS 0 COMPLETED 0 RESPONSES 0 All Status Draft Active Paused Complete",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/surveys/pulse",
+   "finalUrl": "/surveys/pulse",
+   "ms": 1419,
+   "f": [
+    "console: 1"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [
+    "[ApiClient] Error: GET /surveys undefined canceled"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/surveys/pulse",
+   "finalUrl": "/surveys/pulse",
+   "ms": 1141,
+   "f": [
+    "console: 1"
+   ],
+   "text": "Skip to content AT Pulse Surveys Create and manage employee pulse surveys to measure engagement. All Draft Scheduled Active Completed Cancelled No pulse surveys yet Home Performance Learning OKRs Me",
+   "http": [],
+   "con": [
+    "[ApiClient] Error: GET /surveys undefined canceled"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/training",
+   "finalUrl": "/training",
+   "ms": 1077,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/training",
+   "finalUrl": "/training",
+   "ms": 923,
+   "f": [],
+   "text": "Skip to content Training Programs AT Training Programs Enroll in courses and track your learning progress MY ENROLLMENTS 0 IN PROGRESS 0 COMPLETED 0 AVAILABLE PROGRAMS 0 My Trainings Course Catalog Manage Programs Growth",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/training/catalog",
+   "finalUrl": "/training/catalog",
+   "ms": 1299,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/training/catalog",
+   "finalUrl": "/training/catalog",
+   "ms": 954,
+   "f": [],
+   "text": "Skip to content AT Course Catalog Browse and enroll in available courses My Learning Refresh Mandatory only 3 courses Workplace Security Essentials Beginner Security basics every employee needs. 3h 1 enrolled Details Enr",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/training/my-learning",
+   "finalUrl": "/training/my-learning",
+   "ms": 9332,
+   "f": [
+    "spinner after settle: 1"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/training/my-learning",
+   "finalUrl": "/training/my-learning",
+   "ms": 9562,
+   "f": [
+    "spinner after settle: 1"
+   ],
+   "text": "Skip to content AT My Learning Track your enrolled courses and progress Refresh Enrolled 1 In Progress 0 Completed 1 Avg Progress 30% Course ID: 48000000-0e05-0000-0000-000000000001 Completed Enrolled Nov 16, 2026 Comple",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/wellness",
+   "finalUrl": "/wellness",
+   "ms": 1157,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/wellness",
+   "finalUrl": "/wellness",
+   "ms": 1689,
+   "f": [],
+   "text": "Skip to content Wellness AT Employee Wellness Track your health, join challenges, and earn rewards TOTAL POINTS 0 CURRENT STREAK 0 days LEVEL 1 ACTIVE CHALLENGES 0 Quick Log Steps Sleep Water Exercise Meditation Programs",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/wellness/admin",
+   "finalUrl": "/wellness/admin",
+   "ms": 1291,
+   "f": [
+    "no heading"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/wellness/admin",
+   "finalUrl": "/wellness/admin",
+   "ms": 1245,
+   "f": [
+    "no heading"
+   ],
+   "text": "Skip to content Admin AT Access Denied You need WELLNESS_MANAGE permission to access this page. Home Performance Learning OKRs Me",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "desktop",
+   "route": "/app/grow",
+   "finalUrl": "/performance",
+   "ms": 2127,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "employee",
+   "vp": "mobile",
+   "route": "/app/grow",
+   "finalUrl": "/performance",
+   "ms": 1067,
+   "f": [],
+   "text": "Skip to content AT Goals, reviews, and growth in one steady rhythm. Track progress, run cycles, and finalise ratings without losing the thread. Set a goal Active goals 0 Goal progress 0% OKR progress 0% Pending reviews 0",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/feedback360",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Ffeedback360",
+   "ms": 2074,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/feedback360",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Ffeedback360",
+   "ms": 1932,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/goals",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fgoals",
+   "ms": 2355,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/goals",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fgoals",
+   "ms": 2549,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/learning",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Flearning",
+   "ms": 3002,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/learning",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Flearning",
+   "ms": 2101,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/learning/certificates",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Flearning%2Fcertificates",
+   "ms": 2763,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/learning/certificates",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Flearning%2Fcertificates",
+   "ms": 1644,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/learning/courses",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Flearning%2Fcourses",
+   "ms": 2067,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/learning/courses",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Flearning%2Fcourses",
+   "ms": 2021,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/learning/paths",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Flearning%2Fpaths",
+   "ms": 2404,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/learning/paths",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Flearning%2Fpaths",
+   "ms": 2288,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/okr",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fokr",
+   "ms": 1642,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/okr",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fokr",
+   "ms": 1746,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/one-on-one",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fone-on-one",
+   "ms": 2504,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/one-on-one",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fone-on-one",
+   "ms": 2094,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance",
+   "ms": 1828,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance",
+   "ms": 1306,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/360-feedback",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2F360-feedback",
+   "ms": 1721,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/360-feedback",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2F360-feedback",
+   "ms": 1219,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/9box",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2F9box",
+   "ms": 2354,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/9box",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2F9box",
+   "ms": 1343,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/calibration",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fcalibration",
+   "ms": 2077,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/calibration",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fcalibration",
+   "ms": 1420,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/competency-framework",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fcompetency-framework",
+   "ms": 1837,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/competency-framework",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fcompetency-framework",
+   "ms": 1597,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/competency-matrix",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fcompetency-matrix",
+   "ms": 2500,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/competency-matrix",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fcompetency-matrix",
+   "ms": 1276,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/cycles",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fcycles",
+   "ms": 1517,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/cycles",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fcycles",
+   "ms": 1551,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/feedback",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Ffeedback",
+   "ms": 2271,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/feedback",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Ffeedback",
+   "ms": 2656,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/goals",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fgoals",
+   "ms": 2391,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/goals",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fgoals",
+   "ms": 1857,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/okr",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fokr",
+   "ms": 1820,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/okr",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fokr",
+   "ms": 1930,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/okrs",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fokrs",
+   "ms": 3981,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/okrs",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fokrs",
+   "ms": 1480,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/pip",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fpip",
+   "ms": 1576,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/pip",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Fpip",
+   "ms": 2023,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/reviews",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Freviews",
+   "ms": 2021,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/reviews",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Freviews",
+   "ms": 1420,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/performance/revolution",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Frevolution",
+   "ms": 2056,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/performance/revolution",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fperformance%2Frevolution",
+   "ms": 2050,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/surveys",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fsurveys",
+   "ms": 2963,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/surveys",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fsurveys",
+   "ms": 1940,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/surveys/pulse",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fsurveys%2Fpulse",
+   "ms": 2359,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/surveys/pulse",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fsurveys%2Fpulse",
+   "ms": 1605,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/training",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Ftraining",
+   "ms": 2347,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/training",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Ftraining",
+   "ms": 1306,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/training/catalog",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Ftraining%2Fcatalog",
+   "ms": 2243,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/training/catalog",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Ftraining%2Fcatalog",
+   "ms": 1324,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/training/my-learning",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Ftraining%2Fmy-learning",
+   "ms": 1363,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/training/my-learning",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Ftraining%2Fmy-learning",
+   "ms": 1988,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/wellness",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fwellness",
+   "ms": 1465,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/wellness",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fwellness",
+   "ms": 1274,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/wellness/admin",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fwellness%2Fadmin",
+   "ms": 2133,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/wellness/admin",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fwellness%2Fadmin",
+   "ms": 1264,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "desktop",
+   "route": "/app/grow",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fapp%2Fgrow",
+   "ms": 1537,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "manager",
+   "vp": "mobile",
+   "route": "/app/grow",
+   "finalUrl": "/auth/login?reason=expired&returnUrl=%2Fapp%2Fgrow",
+   "ms": 1677,
+   "f": [
+    "console: 6",
+    "http: 401 GET /api/v1/auth/me | 401 POST /api/v1/auth/refresh | 401 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "401 GET /api/v1/auth/me",
+    "401 POST /api/v1/auth/refresh",
+    "401 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 401 ()",
+    "[ApiClient] Error: GET /auth/me 401 Request failed with status code 401",
+    "Failed to load resource: the server responded with a status of 401 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/feedback360",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 1779,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/feedback360",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 1500,
+   "f": [],
+   "text": "Skip to content 360-Degree Feedback AN 360-Degree Feedback Multi-rater feedback and performance assessment New Cycle Feedback Cycles (0) Pending Reviews (0) My Results (0) No feedback cycles Create a new 360-degree feedb",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1725,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1311,
+   "f": [],
+   "text": "Skip to content Goals AN Goals Set, track and update progress on your goals. Create Goal Filter by Type All Types OKR KPI Personal Team Department Organization Filter by Status All Status Draft Active In Progress Complet",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/learning",
+   "finalUrl": "/learning",
+   "ms": 1256,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/learning",
+   "finalUrl": "/learning",
+   "ms": 1208,
+   "f": [],
+   "text": "Skip to content AN LEARNING & DEVELOPMENT Build skills at your pace. Earn credit for the work. Courses, quizzes, certificates, and programs — everything you need to grow on the job. Browse catalog COURSES ENROLLED 0 COMP",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/learning/certificates",
+   "finalUrl": "/me/dashboard",
+   "ms": 1359,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My Documents ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/learning/certificates",
+   "finalUrl": "/me/dashboard",
+   "ms": 1586,
+   "f": [],
+   "text": "Skip to content AN Good evening, Admin. Monday, November 16 · System Administrator. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE TODAY 0 MON, 16 NOV 202",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/learning/courses",
+   "finalUrl": "/learning",
+   "ms": 1800,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/learning/courses",
+   "finalUrl": "/learning",
+   "ms": 2080,
+   "f": [],
+   "text": "Skip to content AN LEARNING & DEVELOPMENT Build skills at your pace. Earn credit for the work. Courses, quizzes, certificates, and programs — everything you need to grow on the job. Browse catalog COURSES ENROLLED 0 COMP",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/learning/paths",
+   "finalUrl": "/learning/paths",
+   "ms": 1117,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/learning/paths",
+   "finalUrl": "/learning/paths",
+   "ms": 1065,
+   "f": [],
+   "text": "Skip to content AN Back to Learning Learning Paths Structured learning journeys to develop specific skills and competencies All Difficulty Levels Beginner Intermediate Advanced Security and Compliance Onboarding Not Star",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1904,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1211,
+   "f": [],
+   "text": "Skip to content OKR Management AN OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/one-on-one",
+   "finalUrl": "/one-on-one",
+   "ms": 1066,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/one-on-one",
+   "finalUrl": "/one-on-one",
+   "ms": 914,
+   "f": [],
+   "text": "Skip to content AN 1-on-1 Meetings Schedule, manage, and track your 1-on-1 conversations Schedule Meeting Upcoming 0 Scheduled meetings Pending Actions 0 Items to complete Overdue Actions 0 Past due date Completion Rate ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance",
+   "finalUrl": "/performance",
+   "ms": 1109,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance",
+   "finalUrl": "/performance",
+   "ms": 919,
+   "f": [],
+   "text": "Skip to content AN Goals, reviews, and growth in one steady rhythm. Track progress, run cycles, and finalise ratings without losing the thread. Set a goal Active goals 0 Goal progress 0% OKR progress 0% Pending reviews 0",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/360-feedback",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 981,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/360-feedback",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 945,
+   "f": [],
+   "text": "Skip to content 360-Degree Feedback AN 360-Degree Feedback Multi-rater feedback and performance assessment New Cycle Feedback Cycles (0) Pending Reviews (0) My Results (0) No feedback cycles Create a new 360-degree feedb",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/9box",
+   "finalUrl": "/performance/9box",
+   "ms": 1132,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/9box",
+   "finalUrl": "/performance/9box",
+   "ms": 901,
+   "f": [],
+   "text": "Skip to content 9-Box Talent Grid AN 9-Box Talent Grid Segment talent by performance and potential Export CSV Review Cycle Select a cycle 0 employees plotted X-axis: Performance = manager review rating.Y-axis: Potential ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/calibration",
+   "finalUrl": "/performance/calibration",
+   "ms": 973,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/calibration",
+   "finalUrl": "/performance/calibration",
+   "ms": 945,
+   "f": [],
+   "text": "Skip to content Calibration AN Calibration & Distribution Review and finalize employee performance ratings Export Publish No review cycles Create a review cycle to start calibrating ratings. Home Performance Learning OKR",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/competency-framework",
+   "finalUrl": "/performance/competency-framework",
+   "ms": 1010,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/competency-framework",
+   "finalUrl": "/performance/competency-framework",
+   "ms": 918,
+   "f": [],
+   "text": "Skip to content Competency Framework AN Competency Framework Manage competency ratings for employees within a review cycle. Add Competency CATEGORIES Technical Behavioral Leadership Domain Problem Solving Review Cycle Se",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/competency-matrix",
+   "finalUrl": "/performance/competency-matrix",
+   "ms": 1023,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/competency-matrix",
+   "finalUrl": "/performance/competency-matrix",
+   "ms": 1438,
+   "f": [],
+   "text": "Skip to content Competency Matrix AN Competency Matrix Manage competency frameworks, assess skills, and identify gaps My Competencies Team View Competency Framework 0 skills recorded | 3 gaps identified Add Skill Skills ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/cycles",
+   "finalUrl": "/performance/cycles",
+   "ms": 1213,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/cycles",
+   "finalUrl": "/performance/cycles",
+   "ms": 962,
+   "f": [],
+   "text": "Skip to content Review Cycles AN Review Cycles Plan, activate and track performance review cycles. Create Cycle Filter by Type All Types Annual Semi-Annual Quarterly Monthly Probation Project End Filter by Status All Sta",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/feedback",
+   "finalUrl": "/performance/feedback",
+   "ms": 1074,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/feedback",
+   "finalUrl": "/performance/feedback",
+   "ms": 932,
+   "f": [],
+   "text": "Skip to content Feedback AN Feedback Give and receive ongoing feedback all year. Give Feedback Received Feedback (0) Given Feedback (0) Filter by Type All Types Praise Constructive General Request No received feedback fo",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1025,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1039,
+   "f": [],
+   "text": "Skip to content Goals AN Goals Set, track and update progress on your goals. Create Goal Filter by Type All Types OKR KPI Personal Team Department Organization Filter by Status All Status Draft Active In Progress Complet",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1326,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1130,
+   "f": [],
+   "text": "Skip to content OKR Management AN OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/okrs",
+   "finalUrl": "/performance/okr",
+   "ms": 1897,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/okrs",
+   "finalUrl": "/performance/okr",
+   "ms": 1212,
+   "f": [],
+   "text": "Skip to content OKR Management AN OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/pip",
+   "finalUrl": "/performance/pip",
+   "ms": 1009,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/pip",
+   "finalUrl": "/performance/pip",
+   "ms": 2681,
+   "f": [],
+   "text": "Skip to content Performance Improvement Plans AN Performance Improvement Plans Manage and track employee PIPs Create PIP Active PIPs 0 Completed 0 Avg Duration 0 days Active Completed Cancelled No PIPs found Create your ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/reviews",
+   "finalUrl": "/performance/reviews",
+   "ms": 1109,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/reviews",
+   "finalUrl": "/performance/reviews",
+   "ms": 1046,
+   "f": [],
+   "text": "Skip to content Reviews AN Performance Reviews Track self, manager and peer reviews across review periods. Create Review Filter by Type All Types Self Review Manager Review Peer Review Subordinate Review Skip Level Filte",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/performance/revolution",
+   "finalUrl": "/performance/revolution",
+   "ms": 1065,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/performance/revolution",
+   "finalUrl": "/performance/revolution",
+   "ms": 1077,
+   "f": [],
+   "text": "Skip to content Performance Revolution AN Performance Revolution Advanced OKR visualization and 360° performance insights Refresh Share Progress OKR Alignment Galaxy Visual mapping of objectives from Company to Individua",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/surveys",
+   "finalUrl": "/surveys",
+   "ms": 1037,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/surveys",
+   "finalUrl": "/surveys",
+   "ms": 1223,
+   "f": [],
+   "text": "Skip to content Surveys AN EMPLOYEE ENGAGEMENT Employee Surveys Create and manage employee surveys and feedback collection Create Survey TOTAL SURVEYS 0 ACTIVE 0 DRAFTS 0 COMPLETED 0 RESPONSES 0 All Status Draft Active P",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/surveys/pulse",
+   "finalUrl": "/surveys/pulse",
+   "ms": 1068,
+   "f": [
+    "console: 1"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [
+    "[ApiClient] Error: GET /surveys undefined canceled"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/surveys/pulse",
+   "finalUrl": "/surveys/pulse",
+   "ms": 926,
+   "f": [
+    "console: 1"
+   ],
+   "text": "Skip to content AN Pulse Surveys Create and manage employee pulse surveys to measure engagement. New Survey All Draft Scheduled Active Completed Cancelled No pulse surveys yet Create First Survey Home Performance Learnin",
+   "http": [],
+   "con": [
+    "[ApiClient] Error: GET /surveys undefined canceled"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/training",
+   "finalUrl": "/training",
+   "ms": 1058,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/training",
+   "finalUrl": "/training",
+   "ms": 934,
+   "f": [],
+   "text": "Skip to content Training Programs AN Training Programs Enroll in courses and track your learning progress MY ENROLLMENTS 0 IN PROGRESS 0 COMPLETED 0 AVAILABLE PROGRAMS 0 My Trainings Course Catalog Manage Programs Growth",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/training/catalog",
+   "finalUrl": "/training/catalog",
+   "ms": 991,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/training/catalog",
+   "finalUrl": "/training/catalog",
+   "ms": 1324,
+   "f": [],
+   "text": "Skip to content AN Course Catalog Browse and enroll in available courses My Learning Refresh Mandatory only 3 courses Workplace Security Essentials Beginner Security basics every employee needs. 3h 1 enrolled Details Enr",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/training/my-learning",
+   "finalUrl": "/training/my-learning",
+   "ms": 1166,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/training/my-learning",
+   "finalUrl": "/training/my-learning",
+   "ms": 1037,
+   "f": [],
+   "text": "Skip to content AN My Learning Track your enrolled courses and progress Refresh Enrolled 0 In Progress 0 Completed 0 Avg Progress 0% No courses yet Browse the course catalog to enroll in a course. Browse Catalog Home Per",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/wellness",
+   "finalUrl": "/wellness",
+   "ms": 1130,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/wellness",
+   "finalUrl": "/wellness",
+   "ms": 1053,
+   "f": [
+    "console: 42",
+    "failed: 41",
+    "no heading"
+   ],
+   "text": "Skip to content",
+   "http": [],
+   "con": [
+    "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+    "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+    "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/wellness/admin",
+   "finalUrl": "/wellness/admin",
+   "ms": 11089,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/wellness/admin",
+   "finalUrl": "/wellness/admin",
+   "ms": 917,
+   "f": [],
+   "text": "Skip to content Admin AN Wellness Admin Create and manage wellness programs and challenges Refresh New Program ACTIVE PROGRAMS 0 ACTIVE CHALLENGES 0 UPCOMING CHALLENGES 0 Programs (0) Challenges (0) No wellness programs ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "desktop",
+   "route": "/app/grow",
+   "finalUrl": "/performance",
+   "ms": 980,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training Learning (LMS) Recogn",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "hradmin",
+   "vp": "mobile",
+   "route": "/app/grow",
+   "finalUrl": "/performance",
+   "ms": 983,
+   "f": [],
+   "text": "Skip to content AN Goals, reviews, and growth in one steady rhythm. Track progress, run cycles, and finalise ratings without losing the thread. Set a goal Active goals 0 Goal progress 0% OKR progress 0% Pending reviews 0",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  }
+ ]
+}

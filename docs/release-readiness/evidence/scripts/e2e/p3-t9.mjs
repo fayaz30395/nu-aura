@@ -1,0 +1,25 @@
+import {chromium, newContext, FE, mkLog, watch} from './lib.mjs';
+const TAG = 'NUAURA_TEST_P3_110279';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'hradmin'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('response', async r => { if (/\/api\/v1\/recruitment/.test(r.url()) && r.request().method() !== 'GET') console.log('  API', r.status(), r.request().method(), r.url().replace(/^.*\/api/, ''), (await r.text().catch(()=>'')).slice(0, 220)); });
+await p.goto(FE + '/recruitment/pipeline', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+// Add Applicant with no job selected
+await p.getByRole('button', {name: 'Add Applicant'}).click(); await p.waitForTimeout(1200);
+console.log('NOJOB dialog:', (await p.locator('[role=dialog]').first().innerText().catch(()=>'(none)')).replace(/\s+/g,' ').slice(0,300), '| toast', await p.evaluate(()=>[...document.querySelectorAll('[role=status],[role=alert]')].map(e=>e.innerText).join('|')));
+await p.keyboard.press('Escape');
+const sel = p.locator('main select').first(); await sel.selectOption({label: TAG + ' Backend Engineer (' + TAG + '-J1)'}); await p.waitForTimeout(2000);
+await p.getByRole('button', {name: 'Add Applicant'}).click(); await p.waitForTimeout(1200);
+const D='[role=dialog] ';
+await p.locator(D+'input:not([type=number])').first().fill('not-a-uuid'); await p.locator(D+'button:has-text("Add Applicant")').last().click(); await p.waitForTimeout(2000);
+console.log('junk id ->', (await p.locator(D).first().innerText().catch(()=>'(closed)')).replace(/\s+/g,' ').match(/(Invalid|required|valid|not found|error)[^.]{0,60}/gi), 'dialogs', await p.locator('[role=dialog]').count());
+const cid = await p.evaluate(async () => { const r = await fetch('http://localhost:8080/api/v1/recruitment/candidates?page=0&size=5',{credentials:'include'}); const j = await r.json(); return j.content?.map(c=>c.id+' '+c.candidateCode); });
+console.log('cands', cid);
+await p.locator(D+'input:not([type=number])').first().fill(cid[0].split(' ')[0]); await p.locator(D+'button:has-text("Add Applicant")').last().click(); await p.waitForTimeout(2500);
+console.log('real cand id -> dialogs', await p.locator('[role=dialog]').count());
+await p.reload(); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2000);
+await p.locator('main select').first().selectOption({label: TAG + ' Backend Engineer (' + TAG + '-J1)'}); await p.waitForTimeout(2500);
+console.log('board', (await p.locator('main').innerText()).replace(/\s+/g,' ').slice(150, 700));
+console.log('btns', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('main button')].filter(e=>e.offsetParent).map(e=>(e.getAttribute('aria-label')||e.innerText).trim().replace(/\s+/g,' ').slice(0,30)))));
+console.log('http', log.http);
+await b.close();

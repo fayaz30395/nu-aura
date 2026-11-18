@@ -1,0 +1,11 @@
+import {session, FE} from './p5-lib.mjs';
+let s=await session('employee'); let p=s.p;
+await s.go('/fluence'); console.log('start url', p.url().replace(FE,'')); await p.getByText('Start a page').first().click({timeout:8000}).catch(e=>console.log('nobtn')); await s.settle(2500); console.log('Start a page ->', p.url().replace(FE,''), await s.toasts());
+await s.go('/fluence/my-content'); await p.getByText('New Page').first().click({timeout:8000}).catch(e=>console.log('nobtn2')); await s.settle(2500); console.log('MyContent New Page ->', p.url().replace(FE,''), await s.toasts());
+await s.go('/fluence/wiki'); console.log('wiki emp btns', await p.evaluate(()=>[...document.querySelectorAll('main button,main a')].map(b=>b.innerText.trim()).filter(Boolean).join('|')));
+await s.go('/tasks'); await p.getByRole('button',{name:/Create First Task|New Task/}).first().click(); await s.settle(1200); console.log('Tasks create dlg', (await s.dlg()).slice(0,200));
+await s.go('/fluence/wall'); const ta=p.locator('main textarea').first(); await ta.fill('Z'.repeat(6000)); console.log('len', await ta.inputValue().then(v=>v.length)); await p.getByRole('button',{name:'Post',exact:true}).last().click(); await s.settle(2000);
+await s.go('/helpdesk/tickets'); console.log('tickets emp', await s.main(300));
+console.log(JSON.stringify(s.errs()).slice(0,300)); await s.b.close();
+s=await session('manager',{net:false}); p=s.p; await s.go('/fluence/blogs/new'); console.log('MGR blogs/new', p.url().replace(FE,''), await s.main(150)); console.log(JSON.stringify(s.errs()).slice(0,300));
+await s.b.close();

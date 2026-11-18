@@ -1,0 +1,14 @@
+import {chromium, newContext, FE, sleep, SS} from './lib.mjs';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: process.env.ROLE || 'p4emp'}); const p = await ctx.newPage();
+const T = 'NUAURA_TEST_P4_REPRO'; const iso = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+await p.goto(FE + '/goals', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle', {timeout: 20000}).catch(() => {}); await sleep(1500);
+await p.getByRole('button', {name: /create goal/i}).first().click(); await sleep(800);
+const f = (n, v) => p.locator(`[role=dialog] [name="${n}"]`).fill(String(v));
+const [gt, st] = process.argv.slice(2);
+await f('title', T + (gt||'')); await p.locator('[name=goalType]').selectOption({index: Number(gt||2)}); await p.locator('[name=status]').selectOption({index: Number(st||0)});
+await f('targetValue', 100); await f('currentValue', 20); await f('unit', '%'); await f('startDate', iso(1)); await f('endDate', iso(60));
+p.on('response', async r => { if (/\/goals/.test(r.url()) && r.request().method() === 'POST') console.log(r.status(), (await r.text()).slice(0, 400), '| req:', (r.request().postData() || '').slice(0, 300)); });
+await p.locator('[role=dialog] button[type=submit]').click(); await sleep(2500);
+console.log('dialogOpen', await p.locator('[role=dialog]').count(), 'text', (await p.locator('[role=dialog]').innerText().catch(() => '')).replace(/\s+/g, ' ').slice(0, 120));
+await p.screenshot({path: `${SS}/ui-p4-goal-create.png`});
+await b.close();

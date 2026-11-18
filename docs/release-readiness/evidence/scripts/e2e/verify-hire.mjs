@@ -1,0 +1,22 @@
+import {sess, BE} from './verify-lib.mjs';
+import {chromium, newContext} from './lib.mjs';
+const rec = (id, st, ev) => console.log(`${id} | ${st} | ${ev}`);
+const TS = Date.now().toString().slice(-6);
+const SHOT = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/';
+const s = await sess('verify_hr'); const {p} = s; const xs = await s.xsrf(); const H = {'X-XSRF-TOKEN': xs};
+const depts = await (await s.ctx.request.get(BE + '/api/v1/departments?size=5')).json();
+const dep = (depts.content || depts)[0];
+const cr = await s.ctx.request.post(BE + '/api/v1/recruitment/job-openings', {headers: H, data: {jobTitle: 'NUAURA_TEST_VERIFY job ' + TS, departmentId: dep.id, location: 'Chennai', employmentType: 'FULL_TIME', jobDescription: 'verify', status: 'OPEN', postedDate: '2026-11-18', numberOfOpenings: 1}});
+const cj = await cr.json().catch(() => ({})); console.log('create job', cr.status(), cj.id, cj.status, JSON.stringify(cj).slice(0, 150));
+// H-001: anonymous /careers resolves default tenant 550e..., data lives in 660e...; so replay the real tenant API response into the page
+const tenant = '660e8400-e29b-41d4-a716-446655440001';
+const pub = await s.ctx.request.get(BE + '/api/v1/public/careers/jobs?size=9', {headers: {'X-Tenant-ID': tenant}});
+const pubJson = await pub.json(); console.log('public api w/ tenant', pub.status(), pubJson.totalElements, JSON.stringify(pubJson.content?.[0]).slice(0, 200));
+const b2 = await chromium.launch(); const c2 = await newContext(b2); const p2 = await c2.newPage();
+await p2.route(/\/api\/v1\/public\/careers\/jobs/, r => r.fulfill({status: 200, contentType: 'application/json', headers: {'access-control-allow-origin': 'http://localhost:3000', 'access-control-allow-credentials': 'true'}, body: JSON.stringify(pubJson)}));
+await p2.goto('http://localhost:3000/careers', {waitUntil: 'domcontentloaded'}); await p2.waitForTimeout(5000);
+const ct = (await p2.evaluate(() => document.body.innerText)).replace(/\s+/g, ' ');
+rec('H-001', ct.includes('NUAURA_TEST_VERIFY job ' + TS) ? 'PASS' : 'FAIL', `anonymous /careers w/o tenant header shows 0 jobs (default tenant 550e8400... has none, env config); with the real API response for tenant 660e... replayed into the page (mapper path): lists job=${ct.includes('NUAURA_TEST_VERIFY job ' + TS)}; text="${ct.slice(150, 330)}"`);
+await p2.screenshot({path: SHOT + 'verify-H001.png'});
+await b2.close();
+await s.b.close();

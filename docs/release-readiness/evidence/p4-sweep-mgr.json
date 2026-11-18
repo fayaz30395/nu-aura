@@ -1,0 +1,1185 @@
+{
+ "ids": {
+  "course": "48000000-0e05-0000-0000-000000000001",
+  "path": "48000000-0e06-0000-0000-000000000001",
+  "survey": null,
+  "cycle": null,
+  "training": null
+ },
+ "out": [
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/feedback360",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 1576,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/feedback360",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 1193,
+   "f": [],
+   "text": "Skip to content 360-Degree Feedback SK 360-Degree Feedback Multi-rater feedback and performance assessment New Cycle Feedback Cycles (0) Pending Reviews (0) My Results (0) No feedback cycles Create a new 360-degree feedb",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1323,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 1185,
+   "f": [],
+   "text": "Skip to content Goals SK Goals Set, track and update progress on your goals. Create Goal Filter by Type All Types OKR KPI Personal Team Department Organization Filter by Status All Status Draft Active In Progress Complet",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/learning",
+   "finalUrl": "/learning",
+   "ms": 987,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/learning",
+   "finalUrl": "/learning",
+   "ms": 917,
+   "f": [],
+   "text": "Skip to content SK LEARNING & DEVELOPMENT Build skills at your pace. Earn credit for the work. Courses, quizzes, certificates, and programs — everything you need to grow on the job. Browse catalog COURSES ENROLLED 0 COMP",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/learning/certificates",
+   "finalUrl": "/learning/certificates",
+   "ms": 1172,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/learning/certificates",
+   "finalUrl": "/learning/certificates",
+   "ms": 940,
+   "f": [],
+   "text": "Skip to content SK Back to Learning My Certificates Collection of all earned certificates and credentials All Time Last 30 Days Last 90 Days Last Year No certificates earned yet Complete courses to earn certificates and ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/learning/courses",
+   "finalUrl": "/learning",
+   "ms": 1074,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/learning/courses",
+   "finalUrl": "/learning",
+   "ms": 983,
+   "f": [],
+   "text": "Skip to content SK LEARNING & DEVELOPMENT Build skills at your pace. Earn credit for the work. Courses, quizzes, certificates, and programs — everything you need to grow on the job. Browse catalog COURSES ENROLLED 0 COMP",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/learning/paths",
+   "finalUrl": "/me/dashboard",
+   "ms": 1163,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My Documents My Skills ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/learning/paths",
+   "finalUrl": "/me/dashboard",
+   "ms": 1202,
+   "f": [],
+   "text": "Skip to content SK Good evening, Sumit. Monday, November 16 · Engineering Manager. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE TODAY 0 MON, 16 NOV 2026",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1208,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1157,
+   "f": [],
+   "text": "Skip to content OKR Management SK OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/one-on-one",
+   "finalUrl": "/me/dashboard",
+   "ms": 1211,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My Documents My Skills ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/one-on-one",
+   "finalUrl": "/me/dashboard",
+   "ms": 1073,
+   "f": [],
+   "text": "Skip to content SK Good evening, Sumit. Monday, November 16 · Engineering Manager. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE TODAY 0 MON, 16 NOV 2026",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance",
+   "finalUrl": "/performance",
+   "ms": 1461,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance",
+   "finalUrl": "/performance",
+   "ms": 978,
+   "f": [],
+   "text": "Skip to content SK Goals, reviews, and growth in one steady rhythm. Track progress, run cycles, and finalise ratings without losing the thread. Set a goal Active goals 0 Goal progress 0% OKR progress 0% Pending reviews 0",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/360-feedback",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 1011,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/360-feedback",
+   "finalUrl": "/performance/360-feedback",
+   "ms": 915,
+   "f": [],
+   "text": "Skip to content 360-Degree Feedback SK 360-Degree Feedback Multi-rater feedback and performance assessment New Cycle Feedback Cycles (0) Pending Reviews (0) My Results (0) No feedback cycles Create a new 360-degree feedb",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/9box",
+   "finalUrl": "/performance/9box",
+   "ms": 959,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/9box",
+   "finalUrl": "/performance/9box",
+   "ms": 1012,
+   "f": [],
+   "text": "Skip to content 9-Box Talent Grid SK 9-Box Talent Grid Segment talent by performance and potential Export CSV Review Cycle Select a cycle 0 employees plotted X-axis: Performance = manager review rating.Y-axis: Potential ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/calibration",
+   "finalUrl": "/me/dashboard",
+   "ms": 1112,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My Documents My Skills ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/calibration",
+   "finalUrl": "/me/dashboard",
+   "ms": 1089,
+   "f": [],
+   "text": "Skip to content SK Good evening, Sumit. Monday, November 16 · Engineering Manager. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE TODAY 0 MON, 16 NOV 2026",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/competency-framework",
+   "finalUrl": "/performance/competency-framework",
+   "ms": 1268,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/competency-framework",
+   "finalUrl": "/performance/competency-framework",
+   "ms": 1331,
+   "f": [],
+   "text": "Skip to content Competency Framework SK Competency Framework Manage competency ratings for employees within a review cycle. Add Competency CATEGORIES Technical Behavioral Leadership Domain Problem Solving Review Cycle Se",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/competency-matrix",
+   "finalUrl": "/performance/competency-matrix",
+   "ms": 3467,
+   "f": [
+    "console: 6",
+    "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps 403 Request failed with status code 403",
+    "Failed to load resource: the server responded with a status of 403 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/competency-matrix",
+   "finalUrl": "/performance/competency-matrix",
+   "ms": 3410,
+   "f": [
+    "console: 6",
+    "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+   ],
+   "text": "Skip to content Competency Matrix SK Competency Matrix Manage competency frameworks, assess skills, and identify gaps My Competencies Team View Competency Framework 0 skills recorded Add Skill Skills Matrix No skills rec",
+   "http": [
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps 403 Request failed with status code 403",
+    "Failed to load resource: the server responded with a status of 403 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/cycles",
+   "finalUrl": "/performance/cycles",
+   "ms": 1187,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/cycles",
+   "finalUrl": "/performance/cycles",
+   "ms": 921,
+   "f": [],
+   "text": "Skip to content Review Cycles SK Review Cycles Plan, activate and track performance review cycles. Create Cycle Filter by Type All Types Annual Semi-Annual Quarterly Monthly Probation Project End Filter by Status All Sta",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/feedback",
+   "finalUrl": "/performance/feedback",
+   "ms": 1127,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/feedback",
+   "finalUrl": "/performance/feedback",
+   "ms": 913,
+   "f": [],
+   "text": "Skip to content Feedback SK Feedback Give and receive ongoing feedback all year. Give Feedback Received Feedback (0) Given Feedback (0) Filter by Type All Types Praise Constructive General Request No received feedback fo",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 946,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/goals",
+   "finalUrl": "/performance/goals",
+   "ms": 995,
+   "f": [],
+   "text": "Skip to content Goals SK Goals Set, track and update progress on your goals. Create Goal Filter by Type All Types OKR KPI Personal Team Department Organization Filter by Status All Status Draft Active In Progress Complet",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 993,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/okr",
+   "finalUrl": "/performance/okr",
+   "ms": 1017,
+   "f": [],
+   "text": "Skip to content OKR Management SK OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/okrs",
+   "finalUrl": "/performance/okr",
+   "ms": 1191,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/okrs",
+   "finalUrl": "/performance/okr",
+   "ms": 977,
+   "f": [],
+   "text": "Skip to content OKR Management SK OKR Management Objectives and Key Results tracking New Objective My Objectives (0) Company Objectives (0) All Levels COMPANY DEPARTMENT TEAM INDIVIDUAL All Statuses DRAFT ACTIVE ON TRACK",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/pip",
+   "finalUrl": "/me/dashboard",
+   "ms": 1123,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My Documents My Skills ",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/pip",
+   "finalUrl": "/me/dashboard",
+   "ms": 1096,
+   "f": [],
+   "text": "Skip to content SK Good evening, Sumit. Monday, November 16 · Engineering Manager. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE TODAY 0 MON, 16 NOV 2026",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/reviews",
+   "finalUrl": "/performance/reviews",
+   "ms": 1401,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/reviews",
+   "finalUrl": "/performance/reviews",
+   "ms": 994,
+   "f": [],
+   "text": "Skip to content Reviews SK Performance Reviews Track self, manager and peer reviews across review periods. Create Review Filter by Type All Types Self Review Manager Review Peer Review Subordinate Review Skip Level Filte",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/performance/revolution",
+   "finalUrl": "/performance/revolution",
+   "ms": 1456,
+   "f": [
+    "console: 4",
+    "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps 403 Request failed with status code 403",
+    "Failed to load resource: the server responded with a status of 403 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/performance/revolution",
+   "finalUrl": "/performance/revolution",
+   "ms": 1397,
+   "f": [
+    "console: 4",
+    "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+   ],
+   "text": "Skip to content Performance Revolution SK Performance Revolution Advanced OKR visualization and 360° performance insights Refresh Share Progress OKR Alignment Galaxy Visual mapping of objectives from Company to Individua",
+   "http": [
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+    "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps 403 Request failed with status code 403",
+    "Failed to load resource: the server responded with a status of 403 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/surveys",
+   "finalUrl": "/surveys",
+   "ms": 1207,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/surveys",
+   "finalUrl": "/surveys",
+   "ms": 918,
+   "f": [],
+   "text": "Skip to content Surveys SK EMPLOYEE ENGAGEMENT Employee Surveys Create and manage employee surveys and feedback collection TOTAL SURVEYS 0 ACTIVE 0 DRAFTS 0 COMPLETED 0 RESPONSES 0 All Status Draft Active Paused Complete",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/surveys/pulse",
+   "finalUrl": "/surveys/pulse",
+   "ms": 1105,
+   "f": [
+    "console: 1"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [
+    "[ApiClient] Error: GET /surveys undefined canceled"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/surveys/pulse",
+   "finalUrl": "/surveys/pulse",
+   "ms": 909,
+   "f": [
+    "console: 1"
+   ],
+   "text": "Skip to content SK Pulse Surveys Create and manage employee pulse surveys to measure engagement. All Draft Scheduled Active Completed Cancelled No pulse surveys yet Home Performance Learning OKRs Me",
+   "http": [],
+   "con": [
+    "[ApiClient] Error: GET /surveys undefined canceled"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/training",
+   "finalUrl": "/training",
+   "ms": 982,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/training",
+   "finalUrl": "/training",
+   "ms": 911,
+   "f": [],
+   "text": "Skip to content Training Programs SK Training Programs Enroll in courses and track your learning progress MY ENROLLMENTS 0 IN PROGRESS 0 COMPLETED 0 AVAILABLE PROGRAMS 0 My Trainings Course Catalog Manage Programs Growth",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/training/catalog",
+   "finalUrl": "/training/catalog",
+   "ms": 1056,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/training/catalog",
+   "finalUrl": "/training/catalog",
+   "ms": 903,
+   "f": [],
+   "text": "Skip to content SK Course Catalog Browse and enroll in available courses My Learning Refresh Mandatory only 3 courses Workplace Security Essentials Beginner Security basics every employee needs. 3h 1 enrolled Details Enr",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/training/my-learning",
+   "finalUrl": "/training/my-learning",
+   "ms": 1055,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/training/my-learning",
+   "finalUrl": "/training/my-learning",
+   "ms": 977,
+   "f": [],
+   "text": "Skip to content SK My Learning Track your enrolled courses and progress Refresh Enrolled 0 In Progress 0 Completed 0 Avg Progress 0% No courses yet Browse the course catalog to enroll in a course. Browse Catalog Home Per",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/wellness",
+   "finalUrl": "/wellness",
+   "ms": 1003,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/wellness",
+   "finalUrl": "/wellness",
+   "ms": 928,
+   "f": [],
+   "text": "Skip to content Wellness SK Employee Wellness Track your health, join challenges, and earn rewards TOTAL POINTS 0 CURRENT STREAK 0 days LEVEL 1 ACTIVE CHALLENGES 0 Quick Log Steps Sleep Water Exercise Meditation Programs",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/wellness/admin",
+   "finalUrl": "/wellness/admin",
+   "ms": 914,
+   "f": [
+    "no heading"
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/wellness/admin",
+   "finalUrl": "/wellness/admin",
+   "ms": 913,
+   "f": [
+    "no heading"
+   ],
+   "text": "Skip to content Admin SK Access Denied You need WELLNESS_MANAGE permission to access this page. Home Performance Learning OKRs Me",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/app/grow",
+   "finalUrl": "/performance",
+   "ms": 1025,
+   "f": [],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/app/grow",
+   "finalUrl": "/performance",
+   "ms": 964,
+   "f": [],
+   "text": "Skip to content SK Goals, reviews, and growth in one steady rhythm. Track progress, run cycles, and finalise ratings without losing the thread. Set a goal Active goals 0 Goal progress 0% OKR progress 0% Pending reviews 0",
+   "http": [],
+   "con": [],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/learning/courses/48000000-0e05-0000-0000-000000000001",
+   "finalUrl": "/learning/courses/48000000-0e05-0000-0000-000000000001",
+   "ms": 32864,
+   "f": [
+    "console: 69792",
+    "http: 403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes | 403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes | 403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes | 403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes | "
+   ],
+   "text": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surveys Competency Matrix",
+   "http": [
+    "403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes",
+    "403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes",
+    "403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes",
+    "403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes",
+    "403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes",
+    "403 GET /api/v1/lms/courses/48000000-0e05-0000-0000-000000000001/quizzes"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "Failed to load resource: the server responded with a status of 403 ()",
+    "[ApiClient] Error: GET /lms/courses/48000000-0e05-0000-0000-000000000001/quizzes 403 Request failed with status code 403"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 1,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/learning/courses/48000000-0e05-0000-0000-000000000001",
+   "finalUrl": "/auth/login?returnUrl=%2Flearning%2Fcourses%2F48000000-0e05-0000-0000-000000000001",
+   "ms": 2521,
+   "f": [
+    "console: 4",
+    "http: 429 GET /api/v1/auth/me | 429 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "429 GET /api/v1/auth/me",
+    "429 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 429 ()",
+    "[ApiClient] Error: GET /auth/me 429 Request failed with status code 429",
+    "Failed to load resource: the server responded with a status of 429 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/learning/courses/48000000-0e05-0000-0000-000000000001/play",
+   "finalUrl": "/auth/login?returnUrl=%2Flearning%2Fcourses%2F48000000-0e05-0000-0000-000000000001%2Fplay",
+   "ms": 5340,
+   "f": [
+    "console: 4",
+    "http: 429 GET /api/v1/auth/me | 429 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "429 GET /api/v1/auth/me",
+    "429 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 429 ()",
+    "[ApiClient] Error: GET /auth/me 429 Request failed with status code 429",
+    "Failed to load resource: the server responded with a status of 429 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/learning/courses/48000000-0e05-0000-0000-000000000001/play",
+   "finalUrl": "/auth/login?returnUrl=%2Flearning%2Fcourses%2F48000000-0e05-0000-0000-000000000001%2Fplay",
+   "ms": 945,
+   "f": [
+    "console: 4",
+    "http: 429 GET /api/v1/auth/me | 429 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "429 GET /api/v1/auth/me",
+    "429 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 429 ()",
+    "[ApiClient] Error: GET /auth/me 429 Request failed with status code 429",
+    "Failed to load resource: the server responded with a status of 429 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "desktop",
+   "route": "/learning/paths/48000000-0e06-0000-0000-000000000001",
+   "finalUrl": "/auth/login?returnUrl=%2Flearning%2Fpaths%2F48000000-0e06-0000-0000-000000000001",
+   "ms": 2225,
+   "f": [
+    "console: 4",
+    "http: 429 GET /api/v1/auth/me | 429 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content N NU-AURA by NULogic Technologies THE ENTERPRISE PEOPLE PLATFORM One login. Four focused workspaces. HRMS, hiring, growth, and knowledge tools in one role-aware workspace. 01 Sign in once Use one identity",
+   "http": [
+    "429 GET /api/v1/auth/me",
+    "429 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 429 ()",
+    "[ApiClient] Error: GET /auth/me 429 Request failed with status code 429",
+    "Failed to load resource: the server responded with a status of 429 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  },
+  {
+   "role": "p4manager",
+   "vp": "mobile",
+   "route": "/learning/paths/48000000-0e06-0000-0000-000000000001",
+   "finalUrl": "/auth/login?returnUrl=%2Flearning%2Fpaths%2F48000000-0e06-0000-0000-000000000001",
+   "ms": 942,
+   "f": [
+    "console: 4",
+    "http: 429 GET /api/v1/auth/me | 429 POST /api/v1/auth/refresh"
+   ],
+   "text": "Skip to content Sign In to NU-AURA Sign in to your NULogic workspace with Google SSO. Work email Password Remember me Forgot password? Sign in OR CONTINUE WITH SSO Google Microsoft Restricted to @nulogic.io accounts. Dem",
+   "http": [
+    "429 GET /api/v1/auth/me",
+    "429 POST /api/v1/auth/refresh"
+   ],
+   "con": [
+    "Failed to load resource: the server responded with a status of 429 ()",
+    "[ApiClient] Error: GET /auth/me 429 Request failed with status code 429",
+    "Failed to load resource: the server responded with a status of 429 ()"
+   ],
+   "checks": {
+    "overflow": null,
+    "h1": 0,
+    "bad": []
+   }
+  }
+ ]
+}

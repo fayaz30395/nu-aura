@@ -1,0 +1,13 @@
+import {session, FE} from './p5-lib.mjs';
+const ID='ba12d612-728f-4717-8f45-1bd60c797c7d'; const s=await session('hradmin'); const {p}=s;
+await s.go(`/fluence/wiki/${ID}/edit`);
+console.log('EDIT main', await s.main(500)); console.log('inputs', await p.evaluate(()=>[...document.querySelectorAll('main input,main textarea')].map(e=>e.tagName+':'+(e.name||e.id||e.placeholder)+'='+e.value.slice(0,40))));
+console.log('editor text', await p.evaluate(()=>document.querySelector('.ProseMirror')?.innerText.slice(0,200)));
+await s.shot('f-edit');
+await p.locator('main input').first().fill('NUAURA_TEST_P5_R2 wiki page EDITED');
+await p.locator('.ProseMirror').click(); await p.keyboard.press('End'); await p.keyboard.type(' appended');
+const btns = await p.evaluate(()=>[...document.querySelectorAll('button')].map(b=>b.innerText.trim()).filter(Boolean)); console.log('btns', btns.join('|'));
+await p.getByRole('button',{name:/^(Save|Update|Save Changes|Publish)/}).first().click(); await s.settle(3000);
+console.log('after save', await s.toasts(), p.url().replace(FE,'')); console.log('main', await s.main(500));
+console.log(JSON.stringify(s.errs()));
+await s.b.close();

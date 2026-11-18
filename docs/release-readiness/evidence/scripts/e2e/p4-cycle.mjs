@@ -1,0 +1,16 @@
+import {chromium, newContext, FE, sleep, SS} from './lib.mjs';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'p4hradmin'}); const p = await ctx.newPage();
+p.on('response', async r => { if (/\/api\//.test(r.url()) && (r.request().method() !== 'GET' || r.status() >= 400)) console.log('NET', r.status(), r.request().method(), r.url().replace(/^https?:\/\/[^/]+/, '').slice(0, 70), (r.request().postData()||'').slice(0,260), r.status() >= 400 ? (await r.text().catch(() => '')).slice(0, 160) : ''); });
+await p.goto(FE + '/performance/cycles', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle', {timeout: 20000}).catch(() => {}); await sleep(1500);
+const d = (s,e,r,sr) => async (name) => { await p.getByRole('button', {name: 'Create Cycle'}).first().click(); await sleep(600);
+  await p.locator('[role=dialog] [name=name]').fill(name);
+  const ins = p.locator('[role=dialog] input[placeholder=YYYY-MM-DD]'); const v=[s,e,r,sr]; for (let i=0;i<4;i++) if (v[i]) await ins.nth(i).fill(v[i]);
+  await p.locator('[role=dialog] button[type=submit]').click(); await sleep(700); if (name.endsWith('cyc3')) await p.screenshot({path: `${SS}/ui-p4-cycle-err.png`}); await sleep(1100);
+  console.log(name, '->', (await p.locator('[role=dialog]').innerText().catch(()=>'(closed)')).replace(/\s+/g,' ').slice(0,260)); 
+  if (await p.locator('[role=dialog]').count()) { await p.screenshot({path: `${SS}/ui-p4-cycle-${name.slice(-3)}.png`}); await p.getByRole('button',{name:'Cancel'}).first().click().catch(()=>{}); await sleep(400);} };
+await d('2027-01-01','2027-03-31','2027-04-15','')('NUAURA_TEST_P4_cyc3');
+await p.screenshot({path: `${SS}/ui-p4-cycle-err.png`});
+console.log('TOAST', (await p.locator('[role=status],[role=alert],[class*=toast i],[class*=Toast]').allInnerTexts()).join('|').slice(0,200));
+await d('2027-01-01','2027-03-31','2027-03-15','')('NUAURA_TEST_P4_cyc4');
+console.log((await p.evaluate(() => document.querySelector('main').innerText)).replace(/\s+/g,' ').slice(0,400));
+await b.close();

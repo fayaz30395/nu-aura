@@ -1,0 +1,23 @@
+import {chromium, newContext, FE, mkLog, watch, SS} from './lib.mjs';
+import {isNoise} from './ui-helpers.mjs';
+const TAG=process.argv[2]||'NUAURA_TEST_P5_A'+Date.now().toString().slice(-5); console.log(TAG);
+const b = await chromium.launch(); const ctx = await newContext(b,{role:'p5_hradmin'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('request', r=>{ if(r.method()!=='GET' && /\/api\//.test(r.url())) console.log('REQ', r.method(), r.url().replace(/^https?:\/\/[^/]+/,''), (r.postData()||'').slice(0,260)); });
+p.on('response', async r=>{ if(r.request().method()!=='GET' && /\/api\//.test(r.url())) console.log('RES', r.status(), (await r.text().catch(()=>'')).slice(0,250)); });
+const toasts=async()=> (await p.evaluate(()=>[...document.querySelectorAll('[class*=Notification], [role=alert], [role=status], [class*=toast i], [data-sonner-toast]')].map(e=>e.innerText).join(' | ').replace(/\s+/g,' ').slice(0,200)));
+const dlg=async()=> (await p.evaluate(()=>(document.querySelector('[role=dialog]')?.innerText||'NO-DIALOG').replace(/\s+/g,' ').slice(0,260)));
+const settle=async()=>{await p.waitForLoadState('networkidle',{timeout:15000}).catch(()=>{}); await p.waitForTimeout(1200);};
+await p.goto(FE+'/fluence/wiki',{waitUntil:'domcontentloaded'}); await settle();
+await p.getByRole('button',{name:/create space|create new space/i}).first().click(); await p.waitForTimeout(800);
+// validation: submit empty
+await p.getByRole('button',{name:'Create Space'}).last().click(); await p.waitForTimeout(1200);
+console.log('EMPTY-SUBMIT toast:', await toasts(), '| dlg:', await dlg()); await p.screenshot({path:`${SS}/ui-p5-a-empty.png`});
+await p.locator('[role=dialog] input[name=name]').fill(TAG+'_space');
+await p.locator('[role=dialog] textarea[name=description]').fill('<img src=x onerror=window.__xss=1> '+TAG);
+await p.getByRole('button',{name:'Create Space'}).last().click(); await p.waitForTimeout(2500); await settle();
+console.log('AFTER CREATE toast:', await toasts(), '| dlg:', await dlg());
+console.log('MAIN:', await p.evaluate(()=>document.querySelector('main').innerText.replace(/\s+/g,' ').slice(0,500)), 'xss=', await p.evaluate(()=>window.__xss));
+await p.screenshot({path:`${SS}/ui-p5-a-space.png`});
+console.log('HTTP', log.http, 'CONSOLE', log.console.filter(s=>!isNoise(s)));
+await b.close();

@@ -1,0 +1,14 @@
+import {session, FE} from './p5-lib.mjs';
+const TAG=process.argv[2]; let s=await session('hradmin'); let p=s.p;
+await s.go('/recognition'); await p.getByRole('button',{name:'Give Recognition'}).first().click(); await s.settle(600);
+await p.locator('[role=dialog] input[name=receiverId]').fill('not-a-real-id'); await p.locator('[role=dialog] input[name=title]').fill(TAG+' rec'); await p.locator('[role=dialog] textarea[name=message]').fill('thanks '+TAG);
+await p.locator('[role=dialog] button:not([aria-label=Close]):not(:has-text("Cancel"))').last().click(); await s.settle(2000);
+console.log('REC bad id ->', await s.toasts(), '|', (await s.dlg()).slice(0,160));
+await p.keyboard.press('Escape'); await s.b.close();
+s=await session('employee'); p=s.p;
+await s.go('/helpdesk'); console.log('HD main', await s.main(400)); console.log('btns', await p.evaluate(()=>[...document.querySelectorAll('main button')].map(b=>b.innerText.trim()).filter(Boolean).join('|')));
+await s.shot('r-helpdesk');
+await s.go('/tasks'); console.log('TASKS', await s.main(500)); await s.shot('r-tasks');
+await s.go('/announcements'); console.log('ANN emp', await s.main(300));
+await s.go('/company-spotlight'); console.log('SPOT emp', await s.main(300));
+await s.b.close();

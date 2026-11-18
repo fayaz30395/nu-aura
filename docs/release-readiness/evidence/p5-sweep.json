@@ -1,0 +1,1861 @@
+[
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence",
+  "finalUrl": "/fluence",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/dashboard",
+  "finalUrl": "/fluence/dashboard",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/wiki",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/wiki/new",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/blogs",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/blogs/new",
+  "finalUrl": "/fluence/blogs/new",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat NU-Fl"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/articles",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/templates",
+  "finalUrl": "/fluence/templates",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/templates/new",
+  "finalUrl": "/fluence/templates/new",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat NU-Fl"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/wall",
+  "finalUrl": "/fluence/wall",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/drive",
+  "finalUrl": "/fluence/drive",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "http": [
+   "403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Drive"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/analytics",
+  "finalUrl": "/fluence/analytics",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/search",
+  "finalUrl": "/fluence/search",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/my-content",
+  "finalUrl": "/fluence/my-content",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/chat",
+  "finalUrl": "/fluence/chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/fluence/ai-chat",
+  "finalUrl": "/fluence/ai-chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/announcements",
+  "finalUrl": "/announcements",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/company-spotlight",
+  "finalUrl": "/company-spotlight",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/recognition",
+  "finalUrl": "/recognition",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training L"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/linkedin-posts",
+  "finalUrl": "/linkedin-posts",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/knowledge",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/nu-calendar",
+  "finalUrl": "/nu-calendar",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/nu-drive",
+  "finalUrl": "/nu-drive",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/nu-mail",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/helpdesk",
+  "finalUrl": "/helpdesk",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "http": [
+   "403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/helpdesk/tickets",
+  "finalUrl": "/helpdesk/tickets",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/helpdesk/knowledge-base",
+  "finalUrl": "/helpdesk/knowledge-base",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/helpdesk/sla",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/tasks",
+  "finalUrl": "/tasks",
+  "f": [
+   "console: 3",
+   "http: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "http": [
+   "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "console": [
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000009 undefined canceled",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000009 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "desktop",
+  "route": "/projects",
+  "finalUrl": "/projects",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AT NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence",
+  "finalUrl": "/fluence",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT NU-FLUENCE The handbook the whole company actually opens. Wikis, blogs, templates, and the wall — structured, searchable, never a blank page. Search Open Wiki ACTIVE SPACES 0 "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/dashboard",
+  "finalUrl": "/fluence/dashboard",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content AT NU-Fluence Knowledge Hub Discover, create, and share knowledge across your organization. Find answers, collaborate, and build collective intelligence. New Wiki Page Write Blog Pos"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/wiki",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Wiki Pages Create and manage knowledge base documentation Spaces No spaces yet No pages in this space Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/wiki/new",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Good evening, Arun. Monday, November 16 · HR Executive - Recruitment. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LE"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/blogs",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Blog & Articles Read and share insights with your team All Posts No posts yet Start building your knowledge base by creating your first blog post Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/blogs/new",
+  "finalUrl": "/fluence/blogs/new",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content New Article AT Create Blog Post Write and publish a new blog post Title Excerpt Category Tags Cover Image URL Optional. Image URL for the blog post cover Visibility Content Typ"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/articles",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Blog & Articles Read and share insights with your team All Posts No posts yet Start building your knowledge base by creating your first blog post Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/templates",
+  "finalUrl": "/fluence/templates",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Templates Reusable document templates for your team No templates Templates will appear here once they have been created. Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/templates/new",
+  "finalUrl": "/fluence/templates/new",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content New Template AT New Template Settings Type / for commands·Select text for formatting Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/wall",
+  "finalUrl": "/fluence/wall",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Activity Wall Share updates, polls, and praise with your team Live Post Poll Praise Organization Department Team Post AT Arun T HR Executive - Recruitment about 2 hours ago NUAUR"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/drive",
+  "finalUrl": "/fluence/drive",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "http": [
+   "403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content Drive AT NU-Fluence Drive Upload, manage, and share files across your knowledge base Drag and drop a file, or click to browse Maximum file size: 50MB All Files 0 Documents 0 Images"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/analytics",
+  "finalUrl": "/fluence/analytics",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Content Analytics Track content performance across NU-Fluence Total Views 0 Total Likes 0 Total Comments 0 Active Content 0 Activity Trend Oct 18 Oct 24 Oct 30 Nov 4 Nov 9"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/search",
+  "finalUrl": "/fluence/search",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Search NU-Fluence Find wiki pages, blog posts, and templates with full-text search All Wiki Pages Blog Posts Templates Filters Start searching Type at least 2 characters to searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/my-content",
+  "finalUrl": "/fluence/my-content",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT My Content View and manage all your pages, posts, and favorites New Page New Post WIKI PAGES 0 BLOG POSTS 0 FAVORITES Wiki Pages 0 Blog Posts 0 Favorites No wiki pages yet Create"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/chat",
+  "finalUrl": "/fluence/chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content AT NU-Fluence AI Ask about company knowledge — answers cite the wiki pages they draw from. Start the conversation by asking a question below. Send Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/fluence/ai-chat",
+  "finalUrl": "/fluence/ai-chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Fluence AI Ask anything about your knowledge base Ask the knowledge base Ask questions about wiki pages, articles, and templates in your workspace. Summarize our onboarding proc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/announcements",
+  "finalUrl": "/announcements",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Announcements Stay updated with company news and important updates All Categories General Policy Update Event Holiday Achievement Urgent Benefits Training Social IT Maintenance He"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/company-spotlight",
+  "finalUrl": "/company-spotlight",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content AT Company Spotlight is not available yet This feature is not enabled in this environment. It will appear here once the spotlight service is rolled out. Home Leave Approvals Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/recognition",
+  "finalUrl": "/recognition",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content Recognition AT Employee Recognition Celebrate achievements and recognize your colleagues Give Recognition My Points 0 Received 0 Given 0 Total Activity 0 Public Feed Receive"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/linkedin-posts",
+  "finalUrl": "/linkedin-posts",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT LinkedIn Posts Curate and manage LinkedIn posts for your company feed No LinkedIn Posts No LinkedIn posts yet. Add one to get started. Home Leave Approvals Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/knowledge",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Wiki Pages Create and manage knowledge base documentation Spaces No spaces yet No pages in this space Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/nu-calendar",
+  "finalUrl": "/nu-calendar",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content NU-Calendar AT NU-Calendar Your Google Calendar events Connect Google Calendar Connect to Google Calendar View and manage your Google Calendar events directly within NULogic. Schedu"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/nu-drive",
+  "finalUrl": "/nu-drive",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content NU-Drive AT NU-Drive Your organization's Google Drive Connect Google Drive Connect to Google Drive Access your organization's Google Drive files directly within NULogic. View, searc"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/nu-mail",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Good evening, Arun. Monday, November 16 · HR Executive - Recruitment. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LE"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/helpdesk",
+  "finalUrl": "/helpdesk",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "http": [
+   "403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Helpdesk Manage SLA policies, escalations, and support metrics Tickets VIEW AND MANAGE SUPPORT TICKETS SLA Policies 0 ACTIVE POLICIES Escalations 0 PENDING SLA Dashboard VI"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/helpdesk/tickets",
+  "finalUrl": "/helpdesk/tickets",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Support Tickets View and manage helpdesk tickets Create Ticket Filters No tickets yet Create your first support ticket to get started Create Ticket Home Leave Approvals Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/helpdesk/knowledge-base",
+  "finalUrl": "/helpdesk/knowledge-base",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Knowledge Base Find answers to common questions Knowledge Base is not available yet This feature is not enabled in this environment. In the meantime, you can raise a ticket from "
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/helpdesk/sla",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AT Good evening, Arun. Monday, November 16 · HR Executive - Recruitment. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LE"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/tasks",
+  "finalUrl": "/tasks",
+  "f": [
+   "console: 3",
+   "http: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "http": [
+   "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "console": [
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000009 undefined canceled",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000009 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content AT My Tasks Track tasks assigned to you. New Task All Backlog To Do In Progress In Review Blocked Done Cancelled No tasks assigned to you Create First Task Home Leave Approvals Me"
+ },
+ {
+  "role": "p5_employee",
+  "vp": "mobile",
+  "route": "/projects",
+  "finalUrl": "/projects",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content Projects AT Projects & Allocations Track projects and manage team allocations. Export Active All On Hold Completed Archived Search Status All statuses Planned In Progress On Hold Com"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence",
+  "finalUrl": "/fluence",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/dashboard",
+  "finalUrl": "/fluence/dashboard",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/wiki",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/wiki/new",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/blogs",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/blogs/new",
+  "finalUrl": "/fluence/blogs/new",
+  "f": [
+   "error: Error: page.evaluate: Execution context was destroyed, most likely because of a navigation",
+   "console: 1",
+   "failed: 1"
+  ],
+  "http": [],
+  "console": [
+   "Failed to load resource: net::ERR_INCOMPLETE_CHUNKED_ENCODING"
+  ],
+  "bodyStart": ""
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/articles",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/templates",
+  "finalUrl": "/fluence/templates",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=20&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/templates/new",
+  "finalUrl": "/fluence/templates/new",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat NU-Fl"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/wall",
+  "finalUrl": "/fluence/wall",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/drive",
+  "finalUrl": "/fluence/drive",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "http": [
+   "403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Drive"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/analytics",
+  "finalUrl": "/fluence/analytics",
+  "f": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/search",
+  "finalUrl": "/fluence/search",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/my-content",
+  "finalUrl": "/fluence/my-content",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/chat",
+  "finalUrl": "/fluence/chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/fluence/ai-chat",
+  "finalUrl": "/fluence/ai-chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/announcements",
+  "finalUrl": "/announcements",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/company-spotlight",
+  "finalUrl": "/company-spotlight",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/recognition",
+  "finalUrl": "/recognition",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback Training Recognition Surve"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/linkedin-posts",
+  "finalUrl": "/linkedin-posts",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/knowledge",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Drive Search Analytics AI Chat Searc"
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/nu-calendar",
+  "finalUrl": "/nu-calendar",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/nu-drive",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/nu-mail",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/helpdesk",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/helpdesk/tickets",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/helpdesk/knowledge-base",
+  "finalUrl": "/helpdesk/knowledge-base",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/helpdesk/sla",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/tasks",
+  "finalUrl": "/tasks",
+  "f": [
+   "console: 3",
+   "http: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000001?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "http": [
+   "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000001?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "console": [
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000001 undefined canceled",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000001 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_manager",
+  "vp": "desktop",
+  "route": "/projects",
+  "finalUrl": "/projects",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support SK NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home MY SPACE My Dashboard My Profile My Payslips My Attendance My Leaves My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence",
+  "finalUrl": "/fluence",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/dashboard",
+  "finalUrl": "/fluence/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/wiki",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/wiki/new",
+  "finalUrl": "/fluence/wiki/new",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/blogs",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/blogs/new",
+  "finalUrl": "/fluence/blogs/new",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/articles",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/templates",
+  "finalUrl": "/fluence/templates",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/templates/new",
+  "finalUrl": "/fluence/templates/new",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/wall",
+  "finalUrl": "/fluence/wall",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/drive",
+  "finalUrl": "/fluence/drive",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "http": [
+   "403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/analytics",
+  "finalUrl": "/fluence/analytics",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/search",
+  "finalUrl": "/fluence/search",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/my-content",
+  "finalUrl": "/fluence/my-content",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/chat",
+  "finalUrl": "/fluence/chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/fluence/ai-chat",
+  "finalUrl": "/fluence/ai-chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/announcements",
+  "finalUrl": "/announcements",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/company-spotlight",
+  "finalUrl": "/company-spotlight",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/recognition",
+  "finalUrl": "/recognition",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Grow Performance NU All Modules Active Pro Plan NU-GROW Performance Hub Revolution OKR 360 Feedback 1-on-1 Meetings Training L"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/linkedin-posts",
+  "finalUrl": "/linkedin-posts",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/knowledge",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-Fluence Knowledge NU All Modules Active Pro Plan NU-FLUENCE Wall Wiki Articles My Content Templates Drive Search Analytics AI "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/nu-calendar",
+  "finalUrl": "/nu-calendar",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/nu-drive",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/nu-mail",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/helpdesk",
+  "finalUrl": "/helpdesk",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "http": [
+   "403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/helpdesk/tickets",
+  "finalUrl": "/helpdesk/tickets",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/helpdesk/knowledge-base",
+  "finalUrl": "/helpdesk/knowledge-base",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/helpdesk/sla",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/tasks",
+  "finalUrl": "/tasks",
+  "f": [
+   "console: 3",
+   "http: 403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "http": [
+   "403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "console": [
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-de00-0000-0000-000000000099 undefined canceled",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-de00-0000-0000-000000000099 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "desktop",
+  "route": "/projects",
+  "finalUrl": "/projects",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content N NU-HRMS NU-Hire NU-Grow NU-Fluence Help & support AN NU-HRMS Core HR NU All Modules Active Pro Plan HOME Home Dashboard MY SPACE My Dashboard My Profile My Payslips My Attendance My "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence",
+  "finalUrl": "/fluence",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN NU-FLUENCE The handbook the whole company actually opens. Wikis, blogs, templates, and the wall — structured, searchable, never a blank page. Search Open Wiki ACTIVE SPACES 0 "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/dashboard",
+  "finalUrl": "/fluence/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN NU-Fluence Knowledge Hub Discover, create, and share knowledge across your organization. Find answers, collaborate, and build collective intelligence. New Wiki Page Write Blog Pos"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/wiki",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Wiki Pages Create and manage knowledge base documentation New Page Spaces No spaces yet Create Space No pages in this space New Page Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/wiki/new",
+  "finalUrl": "/fluence/wiki/new",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content New Page AN Draft Organization Preview Save Draft Publish Type / for commands·Select text for formatting Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/blogs",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Blog & Articles Read and share insights with your team New Post All Posts No posts yet Start building your knowledge base by creating your first blog post Create First Post Home"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/blogs/new",
+  "finalUrl": "/fluence/blogs/new",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content New Article AN Create Blog Post Write and publish a new blog post Title Excerpt Category Tags Cover Image URL Optional. Image URL for the blog post cover Visibility Content Typ"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/articles",
+  "finalUrl": "/fluence/blogs",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Blog & Articles Read and share insights with your team New Post All Posts No posts yet Start building your knowledge base by creating your first blog post Create First Post Home"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/templates",
+  "finalUrl": "/fluence/templates",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Templates Reusable document templates for your team Create Template No templates Create your first template to get started Create Template Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/templates/new",
+  "finalUrl": "/fluence/templates/new",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content New Template AN New Template Settings Save Template Type / for commands·Select text for formatting Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/wall",
+  "finalUrl": "/fluence/wall",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Activity Wall Share updates, polls, and praise with your team Live Post Poll Praise Organization Department Team Post AT Arun T HR Executive - Recruitment about 2 hours ago NUAUR"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/drive",
+  "finalUrl": "/fluence/drive",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "http": [
+   "403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content Drive AN NU-Fluence Drive Upload, manage, and share files across your knowledge base All Files 0 Documents 0 Images 0 Spreadsheets 0 Other 0 No files Upload files to share them acro"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/analytics",
+  "finalUrl": "/fluence/analytics",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Content Analytics Track content performance across NU-Fluence Total Views 0 Total Likes 0 Total Comments 0 Active Content 0 Activity Trend Oct 18 Oct 24 Oct 30 Nov 4 Nov 9"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/search",
+  "finalUrl": "/fluence/search",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Search NU-Fluence Find wiki pages, blog posts, and templates with full-text search All Wiki Pages Blog Posts Templates Filters Start searching Type at least 2 characters to searc"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/my-content",
+  "finalUrl": "/fluence/my-content",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN My Content View and manage all your pages, posts, and favorites New Page New Post WIKI PAGES 0 BLOG POSTS 0 FAVORITES Wiki Pages 0 Blog Posts 0 Favorites No wiki pages yet Create"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/chat",
+  "finalUrl": "/fluence/chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content AN NU-Fluence AI Ask about company knowledge — answers cite the wiki pages they draw from. Start the conversation by asking a question below. Send Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/fluence/ai-chat",
+  "finalUrl": "/fluence/ai-chat",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Fluence AI Ask anything about your knowledge base Ask the knowledge base Ask questions about wiki pages, articles, and templates in your workspace. Summarize our onboarding proc"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/announcements",
+  "finalUrl": "/announcements",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Announcements Stay updated with company news and important updates New Announcement All Categories General Policy Update Event Holiday Achievement Urgent Benefits Training Social "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/company-spotlight",
+  "finalUrl": "/company-spotlight",
+  "f": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "h1": 0,
+  "bodyStart": "Skip to content AN Company Spotlight is not available yet This feature is not enabled in this environment. It will appear here once the spotlight service is rolled out. Home Team Leave Approvals Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/recognition",
+  "finalUrl": "/recognition",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content Recognition AN Employee Recognition Celebrate achievements and recognize your colleagues Give Recognition My Points 0 Received 0 Given 0 Total Activity 0 Public Feed Receive"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/linkedin-posts",
+  "finalUrl": "/linkedin-posts",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN LinkedIn Posts Curate and manage LinkedIn posts for your company feed Add Post No LinkedIn Posts No LinkedIn posts yet. Add one to get started. Home Team Leave Approvals Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/knowledge",
+  "finalUrl": "/fluence/wiki",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Wiki Pages Create and manage knowledge base documentation New Page Spaces No spaces yet Create Space No pages in this space New Page Home Wiki Blogs Wall Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/nu-calendar",
+  "finalUrl": "/nu-calendar",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content NU-Calendar AN NU-Calendar Your Google Calendar events Connect Google Calendar Connect to Google Calendar View and manage your Google Calendar events directly within NULogic. Schedu"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/nu-drive",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Good evening, Admin. Monday, November 16 · System Administrator. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE T"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/nu-mail",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Good evening, Admin. Monday, November 16 · System Administrator. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE T"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/helpdesk",
+  "finalUrl": "/helpdesk",
+  "f": [
+   "console: 2",
+   "http: 403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "http": [
+   "403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Helpdesk Manage SLA policies, escalations, and support metrics Tickets VIEW AND MANAGE SUPPORT TICKETS SLA Policies 0 ACTIVE POLICIES Escalations 0 PENDING SLA Dashboard VI"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/helpdesk/tickets",
+  "finalUrl": "/helpdesk/tickets",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Support Tickets View and manage helpdesk tickets Create Ticket Filters No tickets yet Create your first support ticket to get started Create Ticket Home Team Leave Approvals Me"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/helpdesk/knowledge-base",
+  "finalUrl": "/helpdesk/knowledge-base",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Knowledge Base Find answers to common questions Knowledge Base is not available yet This feature is not enabled in this environment. In the meantime, you can raise a ticket from "
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/helpdesk/sla",
+  "finalUrl": "/me/dashboard",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content AN Good evening, Admin. Monday, November 16 · System Administrator. Here's what's on your plate today. Inbox ATTENDANCE THIS MONTH 0% DAYS PRESENT 0 PENDING ACTIONS 0 TEAM ON LEAVE T"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/tasks",
+  "finalUrl": "/tasks",
+  "f": [
+   "console: 3",
+   "http: 403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "http": [
+   "403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "console": [
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-de00-0000-0000-000000000099 undefined canceled",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-de00-0000-0000-000000000099 403 Request failed with status code 403"
+  ],
+  "h1": 1,
+  "bodyStart": "Skip to content AN My Tasks Track tasks assigned to you. New Task All Backlog To Do In Progress In Review Blocked Done Cancelled No tasks assigned to you Create First Task Home Team Leave Approval"
+ },
+ {
+  "role": "p5_hradmin",
+  "vp": "mobile",
+  "route": "/projects",
+  "finalUrl": "/projects",
+  "f": [],
+  "http": [],
+  "console": [],
+  "h1": 1,
+  "bodyStart": "Skip to content Projects AN Projects & Allocations Track projects and manage team allocations. Export New Project Active All On Hold Completed Archived Search Status All statuses Planned In Progress"
+ }
+]

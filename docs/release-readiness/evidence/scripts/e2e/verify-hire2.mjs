@@ -1,0 +1,41 @@
+import {sess, BE} from './verify-lib.mjs';
+const rec = (id, st, ev) => console.log(`${id} | ${st} | ${ev}`);
+const TS = Date.now().toString().slice(-6);
+const SHOT = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-readiness/evidence/screenshots/';
+const s = await sess('verify_hr', {width: 390, height: 844}); const {p} = s;
+const toastTxt = () => p.evaluate(() => [...document.querySelectorAll('[role=alert],[role=status],[class*=Notification],[data-sonner-toast]')].map(e => e.innerText).filter(Boolean).join(' | ').replace(/\s+/g, ' ').slice(0, 200));
+const hit = (name) => p.evaluate((name) => { const b = [...document.querySelectorAll('button')].find(x => x.innerText.trim() === name && x.offsetParent); if (!b) return 'no-button'; b.scrollIntoView({block: 'center'}); const r = b.getBoundingClientRect(); const e = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); return b.contains(e) ? 'hit' : 'covered-by:' + (e?.tagName + '.' + String(e?.className).slice(0, 50)); }, name);
+// H-003
+await s.go('/recruitment/candidates', 1500);
+const h0 = await hit('Add Candidate');
+await p.getByRole('button', {name: 'Add Candidate'}).first().click(); await p.waitForTimeout(800);
+const d = '[role=dialog] ';
+await p.locator(d + 'select[name=jobOpeningId]').selectOption({index: 5}).catch(async () => p.locator(d + 'select[name=jobOpeningId]').selectOption({index: 1}));
+const jobSel = await p.locator(d + 'select[name=jobOpeningId] option:checked').innerText();
+await p.locator(d + 'input[name=candidateCode]').fill('NUAURA_V' + TS);
+await p.locator(d + 'input[name=firstName]').fill('NUAURA_TEST_VERIFY');
+await p.locator(d + 'input[name=lastName]').fill('Cand' + TS);
+await p.locator(d + 'input[name=email]').fill(`nuaura.test.verify.${TS}@example.com`);
+s.mut.length = 0;
+await p.locator(d + 'button[type=submit]').click(); await p.waitForTimeout(3500);
+let m = s.mut.filter(x => /candidates/.test(x));
+const ui = await p.evaluate(() => (document.querySelector('[role=dialog]')?.innerText || 'NO-DIALOG').replace(/\s+/g, ' ').match(/(required|invalid|must|already)[^.]{0,60}/gi)?.join(';'));
+rec('H-003', m.some(x => /^20\d /.test(x)) ? 'PASS' : 'FAIL', `job="${jobSel}" calls=${m.join(' ; ').slice(0, 300)} dialogErr=${ui} toast=${await toastTxt()}`);
+await p.screenshot({path: SHOT + 'verify-H003.png'});
+// H-002: with toast visible, are top buttons clickable at 390
+await p.keyboard.press('Escape').catch(() => {}); await p.waitForTimeout(600);
+const h1 = await hit('Add Candidate'); const tv = await toastTxt();
+await p.getByRole('button', {name: 'Add Candidate'}).first().click({timeout: 5000}).catch(e => console.log('click err', String(e).slice(0, 100)));
+await p.waitForTimeout(800); const open = await p.locator('[role=dialog]').count();
+rec('H-002', h0 === 'hit' && h1 === 'hit' && open ? 'PASS' : 'FAIL', `390px Add Candidate elementFromPoint before=${h0}, after-submit(toast="${tv.slice(0,60)}")=${h1}; click opened dialog=${open}`);
+await p.keyboard.press('Escape');
+// H-006
+await s.go('/recruitment/agencies', 1500);
+await p.getByRole('button', {name: 'Add Agency'}).first().click(); await p.waitForTimeout(800);
+await p.locator(d + 'input[name=name]').fill('NUAURA_TEST_VERIFY agency ' + TS);
+s.mut.length = 0;
+await p.locator(d + 'button[type=submit]').click(); await p.waitForTimeout(3500);
+m = s.mut.filter(x => /agenc/.test(x));
+rec('H-006', m.some(x => /^20\d /.test(x)) ? 'PASS' : 'FAIL', `calls=${m.join(' ; ').slice(0, 300)} toast=${await toastTxt()}`);
+await p.screenshot({path: SHOT + 'verify-H006.png'});
+await s.b.close();

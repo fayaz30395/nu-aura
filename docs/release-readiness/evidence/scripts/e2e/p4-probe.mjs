@@ -1,0 +1,20 @@
+// usage: node p4-probe.mjs <role> <route> [mobile] -> distinct console msgs (counted), http (counted), shot
+import {chromium, newContext, FE, EV, sleep} from './lib.mjs';
+const [role, route, vp] = process.argv.slice(2);
+const b = await chromium.launch();
+const ctx = await newContext(b, {role, viewport: vp ? {width: 390, height: 844} : {width: 1440, height: 900}});
+const p = await ctx.newPage();
+const con = {}, http = {}; let reqs = 0;
+p.on('console', m => { if (m.type() === 'error') { const k = m.text().slice(0, 160); con[k] = (con[k] || 0) + 1; } });
+p.on('pageerror', e => { const k = 'pageerror ' + String(e).slice(0, 160); con[k] = (con[k] || 0) + 1; });
+p.on('request', r => { if (/\/api\//.test(r.url())) reqs++; });
+p.on('response', r => { if (r.status() >= 400 && !/_next/.test(r.url())) { const k = `${r.status()} ${r.request().method()} ${r.url().replace(/^https?:\/\/[^/]+/, '').replace(/[0-9a-f-]{36}/g, ':id').slice(0, 90)}`; http[k] = (http[k] || 0) + 1; } });
+await p.goto(FE + route, {waitUntil: 'domcontentloaded', timeout: 90000}).catch(e => console.log('goto', String(e).slice(0, 80)));
+await sleep(Number(process.env.WAIT || 8000));
+console.log('final', p.url().replace(FE, ''), 'apiReqs', reqs);
+console.log('CON', JSON.stringify(con, null, 1).slice(0, 1200));
+console.log('HTTP', JSON.stringify(http, null, 1).slice(0, 900));
+console.log('TEXT', (await p.evaluate(() => document.querySelector('main')?.innerText || document.body.innerText).catch(() => '')).replace(/\s+/g, ' ').slice(0, Number(process.env.TXT || 400)));
+if (process.env.LIST) console.log('BTN', await p.evaluate((LN) => [...document.querySelectorAll('main button, main [role=tab], main a, main input, main select, main textarea')].filter(e=>e.getBoundingClientRect().width>0).map(e => (e.tagName[0]+':'+((e.innerText||e.getAttribute('aria-label')||e.getAttribute('placeholder')||e.name||'').trim().replace(/\s+/g,' ').slice(0,28)))).join(' | ').slice(0, LN), Number(process.env.LIST)));
+if (process.env.SHOT) await p.screenshot({path: `${EV}/screenshots/${process.env.SHOT}.png`});
+await b.close();

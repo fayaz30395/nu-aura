@@ -1,0 +1,16 @@
+import {chromium, newContext, FE, mkLog, watch} from './lib.mjs';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'hradmin'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('response', async r => { if (/\/api\/v1\//.test(r.url()) && r.request().method() !== 'GET' && !/auth|analytics/.test(r.url())) console.log('  API', r.status(), r.request().method(), r.url().replace(/^.*\/api/, ''), (await r.text().catch(()=>'')).slice(0, 200)); });
+await p.goto(FE + '/recruitment/interviews', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+console.log('stats', (await p.locator('main').innerText()).replace(/\s+/g,' ').slice(0,300));
+await p.getByRole('button',{name:'Provide feedback'}).first().click(); await p.waitForTimeout(1200);
+console.log('FB fields', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('[role=dialog] input,[role=dialog] select,[role=dialog] textarea,[role=dialog] button,[role=dialog] label')].filter(e=>e.offsetParent).map(e => `${e.tagName}:${e.type||''}:${e.name||e.getAttribute('aria-label')||e.innerText.trim().slice(0,25)}`))));
+const D='[role=dialog][aria-labelledby^=modal-title] ';
+await p.locator(D+'textarea[name=feedback]').fill('NUAURA_TEST_P3 synthetic feedback');
+await p.locator(D+'select[name=result]').selectOption({index:2});
+console.log('MSG', (await p.locator(D).first().innerText()).replace(/\s+/g,' ').slice(150,400)); await p.locator(D+'button[type=button]').nth(4).click(); await p.locator(D+'button[type=submit]').click(); await p.waitForTimeout(2500);
+console.log('dialogs', await p.locator('[role=dialog]').count(), 'http', log.http);
+await p.reload(); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+console.log('list', (await p.locator('main').innerText()).replace(/\s+/g,' ').slice(150,700));
+await b.close();

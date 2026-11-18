@@ -1,0 +1,18 @@
+import {chromium, newContext, FE, mkLog, watch} from './lib.mjs';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'employee'});
+const p = await ctx.newPage(); const log = mkLog(); watch(p, log);
+p.on('response', async r => { if (/\/api\/v1\/referrals/.test(r.url()) && r.request().method() !== 'GET') console.log('  API', r.status(), r.request().method(), r.url().replace(/^.*\/api/, ''), (await r.text().catch(()=>'')).slice(0, 220)); });
+await p.goto(FE + '/referrals', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2000);
+await p.getByRole('button', {name: 'Submit Referral'}).first().click(); await p.waitForTimeout(1200);
+const F='form ';
+const sub=()=>p.locator('form button[type=submit]').last();
+await sub().click(); await p.waitForTimeout(1000);
+console.log('empty:', (await p.locator('form').first().innerText()).replace(/\s+/g,' ').match(/[^.]{0,30}(required|valid)[^.]{0,30}/gi)?.slice(0,5));
+const T='NUAURA_TEST_P3_110279';
+await p.locator('[name=candidateName]').fill(T+' Referral'); await p.locator('[name=candidateEmail]').fill('p3.ref@example.test'); await p.locator('[name=jobTitle]').fill(T+' Backend Engineer');
+await p.locator('[name=relationship]').selectOption({index:1});
+await sub().click(); await p.waitForTimeout(2500);
+console.log('toast', await p.evaluate(()=>[...document.querySelectorAll('[role=status],[role=alert]')].map(e=>e.innerText).join('|')));
+console.log('after:', (await p.locator('main').innerText()).replace(/\s+/g,' ').slice(0,400));
+console.log(log.http);
+await b.close();

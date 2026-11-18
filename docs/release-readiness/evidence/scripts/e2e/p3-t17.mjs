@@ -1,0 +1,11 @@
+import {chromium, newContext, FE} from './lib.mjs';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'hradmin'});
+const p = await ctx.newPage();
+await p.goto(FE + '/recruitment/scorecards', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+console.log((await p.locator('main').innerText()).replace(/\s+/g,' ').slice(0,500));
+const api = u => p.evaluate(async u => { const r = await fetch('http://localhost:8080' + u, {credentials: 'include'}); return r.status + ' ' + (await r.text()).slice(0, 500); }, u);
+console.log(await api('/api/v1/recruitment/scorecards'));
+console.log(await api('/api/v1/onboarding/templates'));
+await p.goto(FE + '/onboarding/templates', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+console.log('OBT list:', (await p.locator('main').innerText()).replace(/\s+/g,' ').slice(0,500));
+await b.close();

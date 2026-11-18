@@ -1,0 +1,11 @@
+import {session, FE} from './p5-lib.mjs';
+const s=await session('hradmin'); const {p}=s;
+await s.go('/fluence/search');
+const inp=p.locator('main input').first(); console.log('input', await inp.getAttribute('placeholder'));
+await inp.click(); await p.keyboard.type('NUAURA_TEST_P5_R2',{delay:30}); await s.settle(3500);
+console.log('typed ->', await s.main(300));
+await p.keyboard.press('Enter'); await s.settle(3000); console.log('enter ->', await s.main(300));
+await inp.fill(''); await p.keyboard.type('wiki page EDITED',{delay:30}); await s.settle(3500); console.log('title kw ->', await s.main(300)); await s.shot('m-search');
+await inp.fill(''); await p.keyboard.type('<b>x</b>',{delay:30}); await s.settle(3000); console.log('markup ->', await s.main(250), await p.evaluate(()=>document.querySelectorAll('main b').length));
+console.log(JSON.stringify(s.errs()).slice(0,400));
+await s.b.close();

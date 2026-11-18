@@ -1,0 +1,994 @@
+[
+ {
+  "role": "hradmin",
+  "route": "/",
+  "finalUrl": "/auth/login",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Navigation and permissions adapt after login."
+  ],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-root.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/auth/login",
+  "finalUrl": "/auth/login",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Navigation and permissions adapt after login."
+  ],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_auth_login.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/me/documents",
+  "finalUrl": "/auth/login",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Navigation and permissions adapt after login."
+  ],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_me_documents.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/calendar",
+  "finalUrl": "/calendar",
+  "fail": [
+   "console: 1"
+  ],
+  "http": [],
+  "console": [
+   "%o %s TypeError: events.forEach is not a function at groupEventsByDate (http://localhost:3000/_next/static/chunks/_0h30ti7alw2kr._.js:130:16) at CalendarPage (h"
+  ],
+  "visible": [
+   "Something went wrong"
+  ],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_calendar.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/admin/benefit-plans",
+  "finalUrl": "/admin/benefit-plans",
+  "fail": [
+   "console: 2",
+   "http: 404 GET /api/v1/benefits/plans?page=0&size=100"
+  ],
+  "http": [
+   "404 GET /api/v1/benefits/plans?page=0&size=100"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 ()",
+   "[ApiClient] Error: GET /benefits/plans 404 Request failed with status code 404"
+  ],
+  "visible": [
+   "Request failed with status code 404"
+  ],
+  "empty": [
+   "No benefit plans configured"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_admin_benefit-plans.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/benefits",
+  "finalUrl": "/benefits",
+  "fail": [
+   "console: 4",
+   "http: 404 GET /api/v1/benefits/plans/active | 404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active"
+  ],
+  "http": [
+   "404 GET /api/v1/benefits/plans/active",
+   "404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 ()",
+   "[ApiClient] Error: GET /benefits/plans/active 404 Request failed with status code 404",
+   "Failed to load resource: the server responded with a status of 404 ()",
+   "[ApiClient] Error: GET /benefits-enhanced/flex/allocations/employee/48000000-de00-0000-0000-000000000099/active 404 Request failed with status code 404"
+  ],
+  "visible": [],
+  "empty": [
+   "No benefit plans available",
+   "There are currently no benefit plans open for enrollment. Check back when your o"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_benefits.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/recruitment/job-boards",
+  "finalUrl": "/recruitment/job-boards",
+  "fail": [
+   "console: 2",
+   "http: 404 GET /api/v1/recruitment/jobs?status=OPEN"
+  ],
+  "http": [
+   "404 GET /api/v1/recruitment/jobs?status=OPEN"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 ()",
+   "[ApiClient] Error: GET /recruitment/jobs?status=OPEN 404 Request failed with status code 404"
+  ],
+  "visible": [
+   "Failed Postings",
+   "FAILED"
+  ],
+  "empty": [
+   "No job board postings found. Post a job to get started!"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_recruitment_job-boards.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/resources/workload",
+  "finalUrl": "/me/dashboard",
+  "fail": [
+   "console: 2",
+   "http: 404 GET /api/v1/resource-management/allocation-requests/employee/?page=0&size=20"
+  ],
+  "http": [
+   "404 GET /api/v1/resource-management/allocation-requests/employee/?page=0&size=20"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 ()",
+   "[ApiClient] Error: GET /resource-management/allocation-requests/employee/ 404 Request failed with status code 404"
+  ],
+  "visible": [
+   "Access Denied",
+   "You do not have permission to access that page."
+  ],
+  "empty": [
+   "All caught up. No pending actions.",
+   "No balances for this year yet.",
+   "No upcoming holidays"
+  ],
+  "headings": 2,
+  "screenshot": "ui-p1-hradmin-_resources_workload.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/fluence/drive",
+  "finalUrl": "/fluence/drive",
+  "fail": [
+   "console: 2",
+   "http: 403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "http": [
+   "403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No files"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_fluence_drive.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/helpdesk",
+  "finalUrl": "/helpdesk",
+  "fail": [
+   "console: 4",
+   "http: 403 GET /api/v1/helpdesk/sla/dashboard | 403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "http": [
+   "403 GET /api/v1/helpdesk/sla/dashboard",
+   "403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_helpdesk.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/letters",
+  "finalUrl": "/letters",
+  "fail": [
+   "console: 4",
+   "http: 403 GET /api/v1/letters?page=0&size=20 | 403 GET /api/v1/letters/templates/active"
+  ],
+  "http": [
+   "403 GET /api/v1/letters?page=0&size=20",
+   "403 GET /api/v1/letters/templates/active"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /letters 403 Request failed with status code 403",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /letters/templates/active 403 Request failed with status code 403"
+  ],
+  "visible": [
+   "Request failed with status code 403"
+  ],
+  "empty": [
+   "No Letters Found"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_letters.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/letters/templates",
+  "finalUrl": "/letters/templates",
+  "fail": [
+   "console: 4",
+   "http: 403 GET /api/v1/letters/templates?page=0&size=20 | 403 GET /api/v1/letters/placeholders"
+  ],
+  "http": [
+   "403 GET /api/v1/letters/templates?page=0&size=20",
+   "403 GET /api/v1/letters/placeholders"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /letters/templates 403 Request failed with status code 403",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /letters/placeholders 403 Request failed with status code 403"
+  ],
+  "visible": [
+   "Request failed with status code 403"
+  ],
+  "empty": [
+   "No templates yet"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_letters_templates.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/reports/attrition",
+  "finalUrl": "/reports/attrition",
+  "fail": [
+   "console: 2",
+   "http: 403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50"
+  ],
+  "http": [
+   "403 GET /api/v1/predictive-analytics/attrition/high-risk?minScore=50"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /predictive-analytics/attrition/high-risk?minScore=50 403 Request failed with status code 403"
+  ],
+  "visible": [
+   "Failed to load attrition predictions. Predictive analytics may not be available."
+  ],
+  "empty": [
+   "No high-risk employees found"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_reports_attrition.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/tasks",
+  "finalUrl": "/tasks",
+  "fail": [
+   "console: 3",
+   "http: 403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "http": [
+   "403 GET /api/v1/pm/tasks/assignee/48000000-de00-0000-0000-000000000099?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "console": [
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-de00-0000-0000-000000000099 undefined canceled",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-de00-0000-0000-000000000099 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No tasks assigned to you"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_tasks.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/settings/sso",
+  "finalUrl": "/settings",
+  "fail": [
+   "console: 1",
+   "http: 403 GET /api/v1/auth/saml/config"
+  ],
+  "http": [
+   "403 GET /api/v1/auth/saml/config"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "visible": [],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_settings_sso.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/fluence/wall",
+  "finalUrl": "/fluence/wall",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [
+   "No trending content yet",
+   "No recent activity"
+  ],
+  "headings": 2,
+  "screenshot": "ui-p1-hradmin-_fluence_wall.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/me/leaves",
+  "finalUrl": "/me/leaves",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [
+   "No Leave Requests"
+  ],
+  "headings": 2,
+  "screenshot": "ui-p1-hradmin-_me_leaves.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/auth/forgot-password",
+  "finalUrl": "/auth/forgot-password",
+  "fail": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [],
+  "headings": 0,
+  "screenshot": "ui-p1-hradmin-_auth_forgot-password.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/company-spotlight",
+  "finalUrl": "/company-spotlight",
+  "fail": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [],
+  "headings": 0,
+  "screenshot": "ui-p1-hradmin-_company-spotlight.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/fluence/templates/new",
+  "finalUrl": "/fluence/templates/new",
+  "fail": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [],
+  "headings": 0,
+  "screenshot": "ui-p1-hradmin-_fluence_templates_new.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/fluence/wiki/new",
+  "finalUrl": "/fluence/wiki/new",
+  "fail": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [],
+  "headings": 0,
+  "screenshot": "ui-p1-hradmin-_fluence_wiki_new.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/reports/utilization",
+  "finalUrl": "/reports/utilization",
+  "fail": [
+   "no heading"
+  ],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [],
+  "headings": 0,
+  "screenshot": "ui-p1-hradmin-_reports_utilization.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/projects/psa",
+  "finalUrl": "/projects/psa",
+  "fail": [
+   "console: 1"
+  ],
+  "http": [],
+  "console": [
+   "[ApiClient] Error: GET /psa/projects undefined canceled"
+  ],
+  "visible": [],
+  "empty": [
+   "No PSA projects yet"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-hradmin-_projects_psa.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/shifts",
+  "finalUrl": "/me/dashboard",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Access Denied",
+   "You do not have permission to access that page."
+  ],
+  "empty": [
+   "All caught up. No pending actions.",
+   "No balances for this year yet.",
+   "No upcoming holidays"
+  ],
+  "headings": 2,
+  "screenshot": "ui-p1-hradmin-_shifts.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/employees/import",
+  "finalUrl": "/me/dashboard",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Access Denied",
+   "You do not have permission to access that page."
+  ],
+  "empty": [
+   "All caught up. No pending actions.",
+   "No balances for this year yet.",
+   "No upcoming holidays"
+  ],
+  "headings": 2,
+  "screenshot": "ui-p1-hradmin-_employees_import.png"
+ },
+ {
+  "role": "hradmin",
+  "route": "/documents",
+  "finalUrl": "/me/dashboard",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Access Denied",
+   "You do not have permission to access that page."
+  ],
+  "empty": [
+   "All caught up. No pending actions.",
+   "No balances for this year yet.",
+   "No upcoming holidays"
+  ],
+  "headings": 2,
+  "screenshot": "ui-p1-hradmin-_documents.png"
+ },
+ {
+  "role": "employee",
+  "route": "/me/documents",
+  "finalUrl": "/auth/login",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Navigation and permissions adapt after login."
+  ],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-employee-_me_documents.png"
+ },
+ {
+  "role": "employee",
+  "route": "/benefits",
+  "finalUrl": "/benefits",
+  "fail": [
+   "console: 6",
+   "http: 404 GET /api/v1/benefits/plans/active | 403 GET /api/v1/benefits-enhanced/dashboard | 404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000009/active"
+  ],
+  "http": [
+   "404 GET /api/v1/benefits/plans/active",
+   "403 GET /api/v1/benefits-enhanced/dashboard",
+   "404 GET /api/v1/benefits-enhanced/flex/allocations/employee/48000000-e001-0000-0000-000000000009/active"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 404 ()",
+   "[ApiClient] Error: GET /benefits/plans/active 404 Request failed with status code 404",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /benefits-enhanced/dashboard 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No benefit plans available",
+   "There are currently no benefit plans open for enrollment. Check back when your o"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-employee-_benefits.png"
+ },
+ {
+  "role": "employee",
+  "route": "/departments",
+  "finalUrl": "/departments",
+  "fail": [
+   "console: 2",
+   "http: 403 GET /api/v1/employees?page=0&size=500&sortBy=createdAt&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/employees?page=0&size=500&sortBy=createdAt&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /employees 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-employee-_departments.png"
+ },
+ {
+  "role": "employee",
+  "route": "/fluence/analytics",
+  "finalUrl": "/fluence/analytics",
+  "fail": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "visible": [],
+  "empty": [
+   "No content yet",
+   "No activity yet"
+  ],
+  "headings": 5,
+  "screenshot": "ui-p1-employee-_fluence_analytics.png"
+ },
+ {
+  "role": "employee",
+  "route": "/fluence/dashboard",
+  "finalUrl": "/fluence/dashboard",
+  "fail": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "visible": [],
+  "empty": [
+   "No content yet. Start by creating a wiki page or blog post!",
+   "No wiki pages yet",
+   "No blog posts yet"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-employee-_fluence_dashboard.png"
+ },
+ {
+  "role": "employee",
+  "route": "/fluence/drive",
+  "finalUrl": "/fluence/drive",
+  "fail": [
+   "console: 2",
+   "http: 403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "http": [
+   "403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No files"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-employee-_fluence_drive.png"
+ },
+ {
+  "role": "employee",
+  "route": "/helpdesk",
+  "finalUrl": "/helpdesk",
+  "fail": [
+   "console: 4",
+   "http: 403 GET /api/v1/helpdesk/sla/dashboard | 403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "http": [
+   "403 GET /api/v1/helpdesk/sla/dashboard",
+   "403 GET /api/v1/helpdesk/sla/dashboard"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /helpdesk/sla/dashboard 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-employee-_helpdesk.png"
+ },
+ {
+  "role": "employee",
+  "route": "/performance/competency-matrix",
+  "finalUrl": "/performance/competency-matrix",
+  "fail": [
+   "console: 6",
+   "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+  ],
+  "http": [
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps 403 Request failed with status code 403",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No skills recorded yet"
+  ],
+  "headings": 3,
+  "screenshot": "ui-p1-employee-_performance_competency-matrix.png"
+ },
+ {
+  "role": "employee",
+  "route": "/performance/revolution",
+  "finalUrl": "/performance/revolution",
+  "fail": [
+   "console: 4",
+   "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+  ],
+  "http": [
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps",
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps 403 Request failed with status code 403",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000009/skill-gaps 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No objectives to map yet",
+   "No competency data yet",
+   "No recognitions yet"
+  ],
+  "headings": 5,
+  "screenshot": "ui-p1-employee-_performance_revolution.png"
+ },
+ {
+  "role": "employee",
+  "route": "/tasks",
+  "finalUrl": "/tasks",
+  "fail": [
+   "console: 3",
+   "http: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "http": [
+   "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000009?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "console": [
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000009 undefined canceled",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000009 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No tasks assigned to you"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-employee-_tasks.png"
+ },
+ {
+  "role": "employee",
+  "route": "/travel",
+  "finalUrl": "/travel",
+  "fail": [
+   "console: 2",
+   "http: 403 GET /api/v1/travel/requests?page=0&size=10"
+  ],
+  "http": [
+   "403 GET /api/v1/travel/requests?page=0&size=10"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /travel/requests 403 Request failed with status code 403"
+  ],
+  "visible": [
+   "Insufficient permissions. Required any of: [TRAVEL:VIEW_ALL]"
+  ],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-employee-_travel.png"
+ },
+ {
+  "role": "employee",
+  "route": "/me/leaves",
+  "finalUrl": "/me/leaves",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [],
+  "headings": 2,
+  "screenshot": "ui-p1-employee-_me_leaves.png"
+ },
+ {
+  "role": "employee",
+  "route": "/fluence/wall",
+  "finalUrl": "/fluence/wall",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [],
+  "empty": [
+   "No trending content yet",
+   "No recent activity"
+  ],
+  "headings": 2,
+  "screenshot": "ui-p1-employee-_fluence_wall.png"
+ },
+ {
+  "role": "employee",
+  "route": "/projects/psa",
+  "finalUrl": "/projects/psa",
+  "fail": [
+   "console: 1",
+   "no heading"
+  ],
+  "http": [],
+  "console": [
+   "[ApiClient] Error: GET /psa/projects undefined canceled"
+  ],
+  "visible": [],
+  "empty": [],
+  "headings": 0,
+  "screenshot": "ui-p1-employee-_projects_psa.png"
+ },
+ {
+  "role": "manager",
+  "route": "/me/documents",
+  "finalUrl": "/auth/login",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Navigation and permissions adapt after login."
+  ],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-manager-_me_documents.png"
+ },
+ {
+  "role": "manager",
+  "route": "/fluence/analytics",
+  "finalUrl": "/fluence/analytics",
+  "fail": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=100&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "visible": [],
+  "empty": [
+   "No content yet",
+   "No activity yet"
+  ],
+  "headings": 5,
+  "screenshot": "ui-p1-manager-_fluence_analytics.png"
+ },
+ {
+  "role": "manager",
+  "route": "/fluence/dashboard",
+  "finalUrl": "/fluence/dashboard",
+  "fail": [
+   "console: 1",
+   "http: 403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "http": [
+   "403 GET /api/v1/knowledge/templates?page=0&size=3&sortBy=usageCount&sortDirection=DESC"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()"
+  ],
+  "visible": [],
+  "empty": [
+   "No content yet. Start by creating a wiki page or blog post!",
+   "No wiki pages yet",
+   "No blog posts yet"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-manager-_fluence_dashboard.png"
+ },
+ {
+  "role": "manager",
+  "route": "/fluence/drive",
+  "finalUrl": "/fluence/drive",
+  "fail": [
+   "console: 2",
+   "http: 403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "http": [
+   "403 GET /api/v1/fluence/attachments/recent"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /fluence/attachments/recent 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No files"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-manager-_fluence_drive.png"
+ },
+ {
+  "role": "manager",
+  "route": "/performance/competency-matrix",
+  "finalUrl": "/performance/competency-matrix",
+  "fail": [
+   "console: 6",
+   "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+  ],
+  "http": [
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps 403 Request failed with status code 403",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No skills recorded yet"
+  ],
+  "headings": 3,
+  "screenshot": "ui-p1-manager-_performance_competency-matrix.png"
+ },
+ {
+  "role": "manager",
+  "route": "/performance/revolution",
+  "finalUrl": "/performance/revolution",
+  "fail": [
+   "console: 4",
+   "http: 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps | 403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+  ],
+  "http": [
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps",
+   "403 GET /api/v1/lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps 403 Request failed with status code 403",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /lms/employees/48000000-e001-0000-0000-000000000001/skill-gaps 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No objectives to map yet",
+   "No competency data yet",
+   "No recognitions yet"
+  ],
+  "headings": 5,
+  "screenshot": "ui-p1-manager-_performance_revolution.png"
+ },
+ {
+  "role": "manager",
+  "route": "/tasks",
+  "finalUrl": "/tasks",
+  "fail": [
+   "console: 3",
+   "http: 403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000001?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "http": [
+   "403 GET /api/v1/pm/tasks/assignee/48000000-e001-0000-0000-000000000001?pageable%5Bpage%5D=0&pageable%5Bsize%5D=100"
+  ],
+  "console": [
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000001 undefined canceled",
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /pm/tasks/assignee/48000000-e001-0000-0000-000000000001 403 Request failed with status code 403"
+  ],
+  "visible": [],
+  "empty": [
+   "No tasks assigned to you"
+  ],
+  "headings": 1,
+  "screenshot": "ui-p1-manager-_tasks.png"
+ },
+ {
+  "role": "manager",
+  "route": "/travel",
+  "finalUrl": "/travel",
+  "fail": [
+   "console: 2",
+   "http: 403 GET /api/v1/travel/requests?page=0&size=10"
+  ],
+  "http": [
+   "403 GET /api/v1/travel/requests?page=0&size=10"
+  ],
+  "console": [
+   "Failed to load resource: the server responded with a status of 403 ()",
+   "[ApiClient] Error: GET /travel/requests 403 Request failed with status code 403"
+  ],
+  "visible": [
+   "Insufficient permissions. Required any of: [TRAVEL:VIEW_ALL]"
+  ],
+  "empty": [],
+  "headings": 1,
+  "screenshot": "ui-p1-manager-_travel.png"
+ },
+ {
+  "role": "manager",
+  "route": "/helpdesk",
+  "finalUrl": "/me/dashboard",
+  "fail": [],
+  "http": [],
+  "console": [],
+  "visible": [
+   "Access Denied",
+   "You do not have permission to access that page."
+  ],
+  "empty": [
+   "All caught up. No pending actions.",
+   "No upcoming holidays",
+   "No one is working remotely today."
+  ],
+  "headings": 2,
+  "screenshot": "ui-p1-manager-_helpdesk.png"
+ }
+]

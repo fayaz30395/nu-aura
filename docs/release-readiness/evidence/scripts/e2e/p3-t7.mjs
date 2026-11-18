@@ -1,0 +1,17 @@
+import {chromium, newContext, FE, mkLog, watch} from './lib.mjs';
+const TAG = 'NUAURA_TEST_P3_110279';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: 'hradmin'});
+const p = await ctx.newPage();
+p.on('response', async r => { if (/\/api\/v1\/recruitment/.test(r.url()) && r.request().method() !== 'GET') console.log('  API', r.status(), r.request().method(), r.url().replace(/^.*\/api/, ''), (await r.text().catch(()=>'')).slice(0, 200)); });
+await p.goto(FE + '/recruitment/candidates', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle').catch(()=>{}); await p.waitForTimeout(2500);
+const D = '[role=dialog] ';
+await p.getByRole('button', {name: /^Add Candidate$/}).click(); await p.waitForTimeout(600);
+await p.locator(D + '[name=candidateCode]').fill(TAG + '-C7'); await p.locator(D + 'select[name=jobOpeningId]').selectOption({label: TAG + ' Backend Engineer'});
+await p.locator(D + '[name=firstName]').fill('Test'); await p.locator(D + '[name=lastName]').fill(TAG + ' Carol'); await p.locator(D + '[name=email]').fill('p3.carol@example.test');
+const V = process.argv[2].split(',');
+const FILL={phone:'9876500003',totalExperience:'2',currentCtc:'100',expectedCtc:'200',noticePeriodDays:'10'};
+for (const k of V) if (FILL[k]) await p.locator(D+`[name=${k}]`).fill(FILL[k]);
+await p.locator(D + 'button[type=submit]').click(); await p.waitForTimeout(2500);
+console.log('ERR', JSON.stringify(await p.evaluate(() => [...document.querySelectorAll('[role=dialog] *')].filter(e=>!e.children.length && /requir|invalid|number|expect|must|valid|NaN/i.test(e.textContent)).map(e=>e.textContent.trim().slice(0,80)))));
+console.log('values', await p.evaluate(() => [...document.querySelectorAll('[role=dialog] input,[role=dialog] select')].map(e => e.name+'='+e.value).join(',')));
+await b.close();

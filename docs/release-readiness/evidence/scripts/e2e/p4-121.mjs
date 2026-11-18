@@ -1,0 +1,12 @@
+import {chromium, newContext, FE, sleep, SS} from './lib.mjs';
+const b = await chromium.launch(); const ctx = await newContext(b, {role: process.env.ROLE || 'p4emp'}); const p = await ctx.newPage();
+p.on('response', async r => { if (/\/api\//.test(r.url()) && (r.request().method() !== 'GET' || r.status() >= 400)) console.log('NET', r.status(), r.request().method(), r.url().replace(/^https?:\/\/[^/]+/, '').slice(0, 70), (r.request().postData()||'').slice(0,200), r.status() >= 400 ? (await r.text().catch(() => '')).slice(0, 140) : ''); });
+await p.goto(FE + '/one-on-one', {waitUntil: 'domcontentloaded'}); await p.waitForLoadState('networkidle', {timeout: 20000}).catch(() => {}); await sleep(1500);
+await p.getByRole('button', {name: 'Schedule Meeting'}).first().click(); await sleep(700);
+const sub = p.locator('form button[type=submit]:has-text("Schedule Meeting")').last();
+await sub.click(); await sleep(900);
+console.log('EMPTY->', (await p.evaluate(() => document.querySelector('main').innerText)).replace(/\s+/g, ' ').match(/(required|Please|Select)[^A-Z]{0,40}/gi));
+const ps = p.locator('input[placeholder="Search for a participant..."]'); await ps.fill('Sum'); await sleep(1500);
+console.log('SUGG->', (await p.evaluate(() => [...document.querySelectorAll('[role=option],[role=listbox] *,li')].map(e => e.innerText.trim()).filter(Boolean).slice(0, 8).join(' / '))));
+await p.screenshot({path: `${SS}/ui-p4-121-search.png`});
+await b.close();
