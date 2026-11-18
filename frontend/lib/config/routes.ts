@@ -694,7 +694,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
   {
     path: '/reports/attrition',
-    anyPermission: [Permissions.REPORT_VIEW, Permissions.ANALYTICS_VIEW],
+    permission: Permissions.PREDICTIVE_ANALYTICS_VIEW,
   },
   {
     path: '/reports/builder',
@@ -788,6 +788,10 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   {
     path: '/letters',
     anyPermission: [Permissions.SELF_SERVICE_VIEW_LETTERS, Permissions.LETTER_GENERATE],
+  },
+  {
+    path: '/letters/templates',
+    permission: Permissions.LETTER_TEMPLATE_VIEW,
   },
 
   // Calendar

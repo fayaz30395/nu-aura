@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {
   Badge,
@@ -46,7 +46,6 @@ import {BenefitClaim, BenefitEnrollment, ClaimRequest, CoverageLevel,} from '@/l
 import {
   useActiveBenefitPlans,
   useActiveEnrollments,
-  useActiveFlexAllocation,
   useApproveEnrollment,
   useBenefitsDashboard,
   useCompleteClaimPayment,
@@ -183,6 +182,7 @@ const coverageLevelLabels: Record<CoverageLevel, string> = {
 
 export default function BenefitsPage() {
   const {user, hasHydrated} = useAuth();
+  const {hasPermission} = usePermissions();
   const [activeTab, setActiveTab] = useState<TabType>('plans');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -208,9 +208,8 @@ export default function BenefitsPage() {
   const pendingEnrollmentsQuery = usePendingBenefitEnrollments();
   const employeeClaimsQuery = useEmployeeClaims(user?.employeeId || '');
   const pendingClaimsQuery = usePendingBenefitClaims();
-  const flexAllocationQuery = useActiveFlexAllocation(user?.employeeId || '');
   const employeeSummaryQuery = useEmployeeBenefitsSummary(user?.employeeId || '');
-  const dashboardQuery = useBenefitsDashboard();
+  const dashboardQuery = useBenefitsDashboard(hasPermission(Permissions.REPORT_VIEW));
   const enrollMutation = useEnrollEmployee();
   const terminateMutation = useTerminateEnrollment();
   const approveMutation = useApproveEnrollment();
@@ -309,7 +308,7 @@ export default function BenefitsPage() {
     monthlyPremium: benefits.filter((b) => b.isEnrolled).reduce((sum, b) => sum + b.monthlyPremium, 0),
     availablePlans: benefits.length,
     totalCoverage: benefits.filter((b) => b.isEnrolled).reduce((sum, b) => sum + b.coverage, 0),
-    flexCredits: flexAllocationQuery.data?.remainingAmount ?? 0,
+    flexCredits: employeeSummaryQuery.data?.flexCreditsAvailable ?? 0,
   };
 
   const handleOpenEnrollModal = (benefit: DisplayBenefit) => {

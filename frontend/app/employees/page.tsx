@@ -3,7 +3,7 @@
 import {useCallback, useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {useQueryClient} from '@tanstack/react-query';
-import {Button} from '@mantine/core';
+import {Button} from '@/components/ui/Button';
 import {FileUp, GitPullRequest, UserPlus} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {PageTransition} from '@/components/motion';
@@ -143,8 +143,8 @@ export default function EmployeesPage() {
           actions={
             <>
               <Button
-                variant="default"
-                leftSection={<GitPullRequest className="h-4 w-4" aria-hidden/>}
+                variant="outline"
+                leftIcon={<GitPullRequest className="h-4 w-4" aria-hidden/>}
                 onClick={() => router.push('/employees/change-requests')}
                 aria-label="Change Requests"
               >
@@ -152,14 +152,14 @@ export default function EmployeesPage() {
               </Button>
               <PermissionGate permission={Permissions.EMPLOYEE_CREATE}>
                 <Button
-                  variant="default"
-                  leftSection={<FileUp className="h-4 w-4" aria-hidden/>}
+                  variant="outline"
+                  leftIcon={<FileUp className="h-4 w-4" aria-hidden/>}
                   onClick={() => router.push('/employees/import')}
                   aria-label="Import"
                 >
                   <span className="hidden sm:inline">Import</span>
                 </Button>
-                <Button leftSection={<UserPlus className="h-4 w-4" aria-hidden/>} onClick={() => setShowAddModal(true)}>
+                <Button leftIcon={<UserPlus className="h-4 w-4" aria-hidden/>} onClick={() => setShowAddModal(true)}>
                   Add Employee
                 </Button>
               </PermissionGate>

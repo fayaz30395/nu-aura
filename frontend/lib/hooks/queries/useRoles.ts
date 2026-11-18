@@ -51,10 +51,11 @@ export function useRole(roleId: string, enabled: boolean = true) {
 /**
  * Fetch all permissions
  */
-export function usePermissions() {
+export function usePermissions(enabled = true) {
   return useQuery({
     queryKey: roleKeys.permissions(),
     queryFn: () => permissionsApi.getAllPermissions(),
+    enabled,
     staleTime: 30 * 60 * 1000, // 30 minutes — permission catalogue is static
   });
 }

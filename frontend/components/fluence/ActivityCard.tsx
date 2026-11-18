@@ -95,7 +95,7 @@ export default function ActivityCard({activity}: ActivityCardProps) {
 
         <Stack gap={4} className="min-w-0 flex-1">
           <Group gap="xs" wrap="wrap">
-            <Text size="sm">
+            <Text size="sm" component="div">
               <Text component="span" fw={600}>
                 {activity.actorName ?? 'Unknown user'}
               </Text>

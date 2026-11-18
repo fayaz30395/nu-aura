@@ -47,7 +47,12 @@ export function getQueryClient(): QueryClient {
             return failureCount < 1;
           },
           // Q-010: one retry after 500ms so a failing API surfaces its error in a few seconds.
-          retryDelay: 500,
+          // 429: wait for the server's Retry-After (capped) so the retry can succeed.
+          retryDelay: (_attempt: number, error: unknown) => {
+            const res = (error as {response?: {status?: number; headers?: Record<string, string>}})?.response;
+            const seconds = Number(res?.headers?.['retry-after']);
+            return res?.status === 429 && seconds > 0 ? Math.min(seconds, 10) * 1000 : 500;
+          },
           refetchOnWindowFocus: false,
         },
         mutations: {

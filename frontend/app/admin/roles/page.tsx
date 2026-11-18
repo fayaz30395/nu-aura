@@ -17,7 +17,7 @@ import {
 } from '@/lib/types/core/roles';
 import {ScopeSelector} from '@/components/admin/ScopeSelector';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {AdminPageContent} from '@/components/layout';
 import {PageTransition, Reveal} from '@/components/motion';
 import {ConfirmDialog} from '@/components/ui';
@@ -67,11 +67,12 @@ interface ParentRoleOption {
 export default function RolesPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyRole, isReady} = usePermissions();
+  const {hasAnyRole, hasPermission, isReady} = usePermissions();
+  const canViewCatalogue = hasPermission(Permissions.PERMISSION_MANAGE);
 
   // Query hooks
   const rolesQuery = useRoles();
-  const permissionsQuery = useQueryPermissions();
+  const permissionsQuery = useQueryPermissions(canViewCatalogue);
 
   const createModalTitleId = useId();
   const editModalTitleId = useId();
@@ -607,7 +608,9 @@ export default function RolesPage() {
                       <div
                         className="absolute z-20 w-full mt-1 bg-[var(--bg-card)] border border-[var(--border-main)] rounded-lg shadow-[var(--shadow-dropdown)] p-4">
                         <p className="text-body-muted text-center">
-                          No permissions available. Please check if you are logged in.
+                          {canViewCatalogue
+                            ? 'No permissions available. Please check if you are logged in.'
+                            : 'You do not have access to the permission list. Ask a system administrator.'}
                         </p>
                       </div>
                     )}

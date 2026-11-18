@@ -122,10 +122,11 @@ export function useActiveFlexAllocation(employeeId: string) {
 }
 
 // Org-wide benefits dashboard analytics
-export function useBenefitsDashboard() {
+export function useBenefitsDashboard(enabled = true) {
   return useQuery({
     queryKey: benefitKeys.dashboard(),
     queryFn: () => benefitsService.getBenefitsDashboard(),
+    enabled,
     staleTime: 5 * 60 * 1000,
   });
 }
