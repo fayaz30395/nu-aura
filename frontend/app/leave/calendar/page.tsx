@@ -120,7 +120,7 @@ export default function LeaveCalendarPage() {
           <Segmented
             aria-label="Calendar scope"
             value={viewMode}
-            onChange={setViewMode}
+            onChange={(v) => setViewMode(v === 'team' ? 'team' : 'my')}
             options={[
               {value: 'my', label: 'My Leaves'},
               ...(hasPermission(Permissions.LEAVE_VIEW_ALL) || hasPermission(Permissions.LEAVE_VIEW_TEAM)
