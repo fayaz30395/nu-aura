@@ -1,0 +1,10 @@
+import {chromium, newContext, BE} from './lib.mjs';
+const b = await chromium.launch();
+const c = await newContext(b, {role:'employee'});
+const A='/api/v1';
+const go = async (t,id,m,url) => { const x=(await c.storageState()).cookies.find(k=>k.name==='XSRF-TOKEN')?.value||''; const r=await c.request.fetch(BE+url,{method:m,headers:{'X-XSRF-TOKEN':x}}); console.log(t,id,m,r.status(),r.status()>=300?(await r.text()).slice(0,140):''); };
+for (const id of ['a602557d-14c3-4287-80a8-e9c2fce086b0','1988ed4b-9aa9-4cbd-a9ca-5776897c0374','e0c0ac32-7f40-4fd2-89e4-62bf5902b5d4','335b7cf2-af37-43fe-8e4a-fb6eef52814d','85ce366e-656f-4a6d-98dd-84b179b6f60d','30c759b4-45cc-4944-b337-409ea312e58b']) await go('social_posts',id,'DELETE',`${A}/wall/posts/${id}`);
+for (const id of ['4571a7cc-0dfd-4100-875f-67503857877d','d9434b1c-aff3-4b65-a6fe-f3bdb1a6f57c','d62f9401-23e5-4ce9-a254-8a3f64ce4ac1']) await go('work_requests',id,'POST',`${A}/attendance/work-requests/${id}/cancel`);
+for (const id of ['9b2a69cb-2cef-4c06-9731-394fe41371c0','f46db6e7-a7a8-4856-af59-31f629b9f5b9','300d5482-e0f0-4d1a-916d-2d5897756fef']) await go('leave_requests',id,'POST',`${A}/leave-requests/${id}/cancel?reason=NUAURA_TEST_cleanup`);
+await go('tickets','34c02a4b-85af-47c0-b77b-aafccda8f903','DELETE',`${A}/helpdesk/tickets/34c02a4b-85af-47c0-b77b-aafccda8f903`);
+await b.close();
