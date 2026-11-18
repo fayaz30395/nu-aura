@@ -34,6 +34,8 @@ import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
+import {apiClient} from '@/lib/api/client';
+import type {Employee} from '@/lib/types/hrms/employee';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {SkeletonStatCard} from '@/components/ui/Skeleton';
@@ -76,6 +78,15 @@ import {safeUrl} from '@/lib/utils/safeUrl';
 import {ActionItemsPanel} from '@/components/one-on-one/ActionItemsPanel';
 import {AgendaTemplatesPanel} from '@/components/one-on-one/AgendaTemplatesPanel';
 import {toAgendaRequests} from '@/lib/utils/agenda-template';
+
+// Low-exposure lookup (MEETING:CREATE) so non-HR roles can pick a participant.
+const searchMeetingParticipants = async (query: string): Promise<Employee[]> => {
+  if (query.trim().length < 2) return [];
+  const {data} = await apiClient.get<{ id: string; name: string }[]>('/meetings/participants/search', {
+    params: {query: query.trim()},
+  });
+  return data.map((p) => ({id: p.id, fullName: p.name}) as Employee);
+};
 
 // ─── Zod Schemas ────────────────────────────────────────────────────────────
 
@@ -880,6 +891,7 @@ export default function OneOnOnePage() {
                                     value={field.value ? {id: field.value, name: field.value} : null}
                                     onChange={(employee) => field.onChange(employee?.id || '')}
                                     placeholder="Search for an assignee..."
+                                    searchFn={searchMeetingParticipants}
                                   />
                                 )}
                               />
@@ -1393,6 +1405,7 @@ export default function OneOnOnePage() {
                       value={field.value ? {id: field.value, name: field.value} : null}
                       onChange={(employee) => field.onChange(employee?.id || '')}
                       placeholder="Search for a participant..."
+                      searchFn={searchMeetingParticipants}
                       required
                     />
                   )}

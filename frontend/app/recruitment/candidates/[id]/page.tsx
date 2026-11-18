@@ -129,13 +129,18 @@ export default function CandidateDetailPage() {
                 </h1>
                 <p className="text-[var(--text-muted)] font-mono text-sm mt-1">{candidate.candidateCode}</p>
                 <div className="flex flex-wrap gap-2 mt-4">
-                  <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(candidate.status)}`}>
-                    {candidate.status?.replace(/_/g, ' ') ?? '-'}
+                  <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                    Status
+                    <span className={`px-2.5 py-1 font-medium rounded-full ${getStatusColor(candidate.status)}`}>
+                      {candidate.status?.replace(/_/g, ' ') ?? '-'}
+                    </span>
                   </span>
                   {candidate.currentStage && (
-                    <span
-                      className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
-                      {candidate.currentStage.replace(/_/g, ' ')}
+                    <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                      Pipeline stage
+                      <span className={`px-2.5 py-1 font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
+                        {candidate.currentStage.replace(/_/g, ' ')}
+                      </span>
                     </span>
                   )}
                   {candidate.source && (

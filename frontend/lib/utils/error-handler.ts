@@ -308,7 +308,11 @@ export function getErrorMessage(error: unknown, fallback = 'An unexpected error 
   // Check for Axios error with response data
   const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
   if (axiosError?.response?.data?.message) {
-    return axiosError.response.data.message;
+    const raw = axiosError.response.data.message;
+    // H-029: backend JSON-parse text ("Invalid value 'x' for field") is not user-facing.
+    return /^Invalid value '.*' for field/.test(raw)
+      ? 'One of the values entered is not valid. Please check the form and try again.'
+      : raw;
   }
 
   // Plain 403s carry no JSON body — don't leak the raw axios status message.

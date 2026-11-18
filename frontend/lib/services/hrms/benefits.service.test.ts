@@ -78,13 +78,13 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.post.mockResolvedValueOnce({data: mockPlan});
+      mockApiClient.post.mockResolvedValueOnce({data: {...mockPlan, name: mockPlan.planName, code: 'HEALTH001', planType: 'HEALTH_INSURANCE'}});
 
       const result = await benefitsService.createPlan(planRequest);
 
       expect(mockApiClient.post).toHaveBeenCalledWith(
-        '/benefits/plans',
-        planRequest
+        '/benefits-enhanced/plans',
+        expect.objectContaining({name: 'Basic Health Plan', planType: 'HEALTH_INSURANCE', category: 'HEALTH'})
       );
       expect(result.planCode).toBe('HEALTH001');
     });
@@ -132,13 +132,13 @@ describe('benefitsService', () => {
         updatedAt: '2026-03-18T00:00:00Z',
       };
 
-      mockApiClient.put.mockResolvedValueOnce({data: mockPlan});
+      mockApiClient.put.mockResolvedValueOnce({data: {...mockPlan, name: mockPlan.planName, planType: 'HEALTH_INSURANCE'}});
 
       const result = await benefitsService.updatePlan('plan-1', planRequest);
 
       expect(mockApiClient.put).toHaveBeenCalledWith(
-        '/benefits/plans/plan-1',
-        planRequest
+        '/benefits-enhanced/plans/plan-1',
+        expect.objectContaining({name: 'Updated Health Plan', category: 'HEALTH'})
       );
       expect(result.planName).toBe('Updated Health Plan');
     });

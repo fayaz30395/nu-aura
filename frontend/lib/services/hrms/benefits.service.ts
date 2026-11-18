@@ -32,14 +32,47 @@ type EnhancedPlanResponse = Omit<BenefitPlanEnhanced, 'code' | 'isActive'> & {
 
 const BENEFIT_TYPE_BY_PLAN_TYPE: Record<string, BenefitType> = {
   HEALTH_INSURANCE: 'HEALTH',
-  DENTAL: 'DENTAL',
-  VISION: 'VISION',
+  DENTAL_INSURANCE: 'DENTAL',
+  VISION_INSURANCE: 'VISION',
   LIFE_INSURANCE: 'LIFE',
-  DISABILITY: 'DISABILITY',
-  RETIREMENT: 'RETIREMENT',
-  FSA: 'FSA',
-  HSA: 'HSA',
+  DISABILITY_INSURANCE: 'DISABILITY',
+  RETIREMENT_401K: 'RETIREMENT',
+  PENSION: 'RETIREMENT',
+  PROVIDENT_FUND: 'RETIREMENT',
+  FLEXIBLE_SPENDING_ACCOUNT: 'FSA',
+  HEALTH_SAVINGS_ACCOUNT: 'HSA',
 };
+
+// Reverse mapping for writes: BenefitType -> backend PlanType + required PlanCategory.
+// Default for anything unmapped is OTHER / INSURANCE (OTHER is a valid PlanType; INSURANCE a valid category).
+const ENHANCED_BY_BENEFIT_TYPE: Record<BenefitType, {planType: string; category: string}> = {
+  HEALTH: {planType: 'HEALTH_INSURANCE', category: 'HEALTH'},
+  DENTAL: {planType: 'DENTAL_INSURANCE', category: 'HEALTH'},
+  VISION: {planType: 'VISION_INSURANCE', category: 'HEALTH'},
+  LIFE: {planType: 'LIFE_INSURANCE', category: 'INSURANCE'},
+  DISABILITY: {planType: 'DISABILITY_INSURANCE', category: 'INSURANCE'},
+  RETIREMENT: {planType: 'PROVIDENT_FUND', category: 'RETIREMENT'},
+  FSA: {planType: 'FLEXIBLE_SPENDING_ACCOUNT', category: 'FINANCIAL'},
+  HSA: {planType: 'HEALTH_SAVINGS_ACCOUNT', category: 'FINANCIAL'},
+  OTHER: {planType: 'OTHER', category: 'INSURANCE'},
+};
+
+function toEnhancedRequest(d: BenefitPlanRequest) {
+  const mapped = ENHANCED_BY_BENEFIT_TYPE[d.benefitType] ?? ENHANCED_BY_BENEFIT_TYPE.OTHER;
+  return {
+    name: d.planName,
+    description: d.description,
+    planType: mapped.planType,
+    category: mapped.category,
+    providerCode: d.planCode,
+    coverageAmount: d.coverageAmount,
+    employeeContribution: d.employeeContribution,
+    employerContribution: d.employerContribution,
+    effectiveFrom: d.effectiveDate,
+    effectiveTo: d.expiryDate,
+    eligibleGrades: d.eligibilityCriteria,
+  };
+}
 
 function toBenefitPlan(p: EnhancedPlanResponse): BenefitPlan {
   return {
@@ -66,13 +99,13 @@ class BenefitsService {
   // ==================== BENEFIT PLANS (Basic API) ====================
 
   async createPlan(data: BenefitPlanRequest): Promise<BenefitPlan> {
-    const response = await apiClient.post<BenefitPlan>('/benefits/plans', data);
-    return response.data;
+    const response = await apiClient.post<EnhancedPlanResponse>('/benefits-enhanced/plans', toEnhancedRequest(data));
+    return toBenefitPlan(response.data);
   }
 
   async updatePlan(planId: string, data: BenefitPlanRequest): Promise<BenefitPlan> {
-    const response = await apiClient.put<BenefitPlan>(`/benefits/plans/${planId}`, data);
-    return response.data;
+    const response = await apiClient.put<EnhancedPlanResponse>(`/benefits-enhanced/plans/${planId}`, toEnhancedRequest(data));
+    return toBenefitPlan(response.data);
   }
 
   async activatePlan(planId: string): Promise<BenefitPlan> {
@@ -91,8 +124,8 @@ class BenefitsService {
   }
 
   // Reads go to /benefits-enhanced (there is no /api/v1/benefits controller) and are mapped to the BenefitPlan shape.
-  // Writes (create/update/activate/deactivate/delete) still target /benefits and need a product decision on the
-  // enhanced request (plan category is required there).
+  // create/update go to /benefits-enhanced. The backend has no activate/deactivate/delete/get-by-id plan endpoints;
+  // those methods still target /benefits and will 404 (no UI caller).
   async getAllPlans(page: number = 0, size: number = 20): Promise<Page<BenefitPlan>> {
     const response = await apiClient.get<Page<EnhancedPlanResponse>>('/benefits-enhanced/plans', {
       params: {page, size},

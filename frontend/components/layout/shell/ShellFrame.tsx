@@ -141,6 +141,25 @@ export function ShellFrame({config, children}: ShellFrameProps) {
     [pathname, config.activeMenuItem]
   );
 
+  // Q-028: unique per-route document title from the active nav item's label.
+  useEffect(() => {
+    const findLabel = (items: SidebarSection['items']): string | undefined => {
+      for (const item of items) {
+        if (item.id === activeId) return item.label;
+        const nested = item.children && findLabel(item.children);
+        if (nested) return nested;
+      }
+      return undefined;
+    };
+    for (const section of menuSections) {
+      const label = findLabel(section.items);
+      if (label) {
+        document.title = `${label} | NU-AURA`;
+        return;
+      }
+    }
+  }, [activeId, menuSections]);
+
   const mobileNavItems = useMemo(
     () => buildMobileNavItems(appCode, access, pendingApprovalCount),
     [appCode, access, pendingApprovalCount]

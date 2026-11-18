@@ -33,6 +33,13 @@ public class OneOnOneMeetingController {
 
     // ==================== Meeting CRUD ====================
 
+    @GetMapping("/participants/search")
+    @RequiresPermission(Permission.MEETING_CREATE)
+    public ResponseEntity<List<OneOnOneMeetingService.ParticipantLookup>> searchParticipants(
+            @RequestParam String query) {
+        return ResponseEntity.ok(meetingService.searchParticipants(query));
+    }
+
     @PostMapping
     @RequiresPermission(Permission.MEETING_CREATE)
     public ResponseEntity<OneOnOneMeetingResponse> createMeeting(

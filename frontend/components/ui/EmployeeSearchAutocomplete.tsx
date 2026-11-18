@@ -21,6 +21,8 @@ interface EmployeeSearchAutocompleteProps {
   disabled?: boolean;
   excludeIds?: string[];
   className?: string;
+  /** Optional lookup override (e.g. low-privilege picker); defaults to employee search. */
+  searchFn?: (query: string) => Promise<Employee[]>;
 }
 
 const getEmployeeName = (employee: Employee) => {
@@ -40,6 +42,7 @@ export function EmployeeSearchAutocomplete({
                                              disabled = false,
                                              excludeIds = [],
                                              className = '',
+                                             searchFn,
                                            }: EmployeeSearchAutocompleteProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Employee[]>([]);
@@ -62,8 +65,10 @@ export function EmployeeSearchAutocomplete({
 
     setLoading(true);
     try {
-      const response = await employeeService.searchEmployees(searchQuery, 0, 10);
-      const filteredResults = response.content.filter(
+      const found = searchFn
+        ? await searchFn(searchQuery)
+        : (await employeeService.searchEmployees(searchQuery, 0, 10)).content;
+      const filteredResults = found.filter(
         (emp) => !excludeIds.includes(emp.id)
       );
       setResults(filteredResults);
@@ -73,7 +78,7 @@ export function EmployeeSearchAutocomplete({
     } finally {
       setLoading(false);
     }
-  }, [excludeIds]);
+  }, [excludeIds, searchFn]);
 
   useEffect(() => {
     if (debounceRef.current) {
@@ -250,9 +255,11 @@ export function EmployeeSearchAutocomplete({
                           <p className="text-sm font-medium text-surface-900 dark:text-white truncate">
                             {name}
                           </p>
-                          <p className="text-xs text-surface-500 truncate">
-                            {employee.employeeCode} • {employee.designation || employee.departmentName || 'No department'}
-                          </p>
+                          {employee.employeeCode && (
+                            <p className="text-xs text-surface-500 truncate">
+                              {employee.employeeCode} • {employee.designation || employee.departmentName || 'No department'}
+                            </p>
+                          )}
                         </div>
                       </button>
                     </StaggerItem>

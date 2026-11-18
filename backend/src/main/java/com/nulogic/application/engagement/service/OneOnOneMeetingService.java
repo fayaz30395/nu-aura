@@ -5,6 +5,7 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
+import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.engagement.MeetingActionItem;
 import com.nulogic.domain.engagement.MeetingActionItem.ActionStatus;
 import com.nulogic.domain.engagement.MeetingAgendaItem;
@@ -13,13 +14,17 @@ import com.nulogic.domain.engagement.MeetingAgendaItem.AgendaCategory;
 import com.nulogic.domain.engagement.MeetingAgendaItem.Priority;
 import com.nulogic.domain.engagement.OneOnOneMeeting;
 import com.nulogic.domain.engagement.OneOnOneMeeting.MeetingStatus;
+import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.engagement.repository.MeetingActionItemRepository;
 import com.nulogic.infrastructure.engagement.repository.MeetingAgendaItemRepository;
 import com.nulogic.infrastructure.engagement.repository.OneOnOneMeetingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +42,34 @@ public class OneOnOneMeetingService {
     private final MeetingAgendaItemRepository agendaRepository;
     private final MeetingActionItemRepository actionRepository;
     private final TenantTimeService tenantTimeService;
+    private final EmployeeRepository employeeRepository;
+
+    private static final int PARTICIPANT_MIN_QUERY = 2;
+    private static final int PARTICIPANT_LIMIT = 20;
+
+    /** Minimal, tenant-scoped directory entry for the meeting participant picker (id + name only). */
+    public record ParticipantLookup(UUID id, String name) {
+    }
+
+    @Transactional(readOnly = true)
+    public List<ParticipantLookup> searchParticipants(String query) {
+        String q = query == null ? "" : query.trim().toLowerCase();
+        if (q.length() < PARTICIPANT_MIN_QUERY) {
+            return List.of();
+        }
+        UUID tenantId = TenantContext.requireCurrentTenant();
+        String pattern = "%" + q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
+        Specification<Employee> spec = (root, cq, cb) -> cb.and(
+                cb.equal(root.get("tenantId"), tenantId),
+                cb.equal(root.get("status"), Employee.EmployeeStatus.ACTIVE),
+                cb.or(
+                        cb.like(cb.lower(root.get("firstName")), pattern, '\\'),
+                        cb.like(cb.lower(root.get("lastName")), pattern, '\\')));
+        return employeeRepository.findAll(spec,
+                        PageRequest.of(0, PARTICIPANT_LIMIT, Sort.by("firstName", "lastName")))
+                .map(e -> new ParticipantLookup(e.getId(), e.getFullName()))
+                .getContent();
+    }
 
     // ==================== Meeting CRUD ====================
 
