@@ -142,7 +142,7 @@ For every check, record the expected policy/configuration source and the evidenc
 | Phase | Status | Bugs found | Notes |
 |---|---|---|---|
 | P0 | NOT RUN | | |
-| P1 | NOT RUN | | |
+| P1 | PASS with 8 open Low (rate-limit noise) | see `evidence/bug-register.md` | Full sweep @ `d7241e6e`: 249 routes x 3 roles x 2 viewports = 1494 loads, 8 FAIL (was 185 before fixes). All 8 are console 429s on `/settings/sso` (3 roles x 2) and `/settings/security` (employee x 2); manager also logs a 403 on `GET /auth/saml/config` for `/settings/sso`. 40 dynamic routes BLOCKED (need seeded ids). Evidence: `evidence/p1-full-hradmin.md` (covers all roles). A7 review NOT RUN. |
 | P2 | NOT RUN | | |
 | P3 | NOT RUN | | |
 | P4 | NOT RUN | | |

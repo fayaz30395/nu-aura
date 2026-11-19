@@ -7,7 +7,7 @@ export const EV = '/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/release-read
 export const SS = `${EV}/screenshots`;
 export const STATE = '/private/tmp/claude-504/-Users-fayaz-m-IdeaProjects-nulogic-nu-aura/31fd4514-1941-4084-b1c8-e1a40e6df684/scratchpad/e2e';
 fs.mkdirSync(STATE, {recursive: true});
-export const FE = 'http://localhost:3000', BE = 'http://localhost:8080';
+export const FE = process.env.FE_URL || 'http://localhost:3000', BE = 'http://localhost:8080';
 export const PW = fs.readFileSync('/Users/fayaz.m/IdeaProjects/nulogic/nu-aura/docs/qa/AUTONOMOUS-UI-E2E-RUNBOOK.md', 'utf8').match(/all `([^`]+)`/)[1];
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
 

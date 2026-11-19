@@ -125,3 +125,14 @@ Total listed entries: 117 (UI-006 and UI-007 each group several defects, so dist
 | UI-011 | Low | P0-P2 | Edit employee: HR gets 403 on custom-field definitions (console errors on every edit page) |
 | UI-012 | Low | P0-P2 | Screens without a page heading |
 | UI-013 | Low | P0-P2 | Signed-in user opening `/` or `/auth/login` is shown the login form instead of being sent to the dashboard |
+
+## Decisions logged 2026-11-19
+
+| ID | Decision | Reason |
+|---|---|---|
+| Letters 403 (HR admin) | Fixed in V351 (`d7241e6e`) | HR_ADMIN/HR_MANAGER held only LETTER:GENERATE; now also TEMPLATE_VIEW and ISSUE at ALL |
+| TASK:VIEW / `/tasks` | Deferred, page stays hidden | Backend has no Task API or TASK permission; granting would expose a broken page |
+| S-002 remainder | Accepted | `/hierarchy`, `/subordinates`, `/search` and list return full profiles only to EMPLOYEE:VIEW_ALL at ALL scope (HR). Detail endpoint is scoped |
+| Wiki page `ba12d612` | Accepted | One double-encoded row, cosmetic; no DB write |
+| 16 `NUAURA_TEST` rows | Deferred, owner: release manager | 3 approved work requests, referral `d9547b20`, ticket `34c02a4b`, 9 orphaned post comments; no API removes them. Clear at deploy time |
+| `/settings/sso`, `/settings/security` 429 | Accepted (Low) | Rate limiter fires under back-to-back sweep; manager 403 on `auth/saml/config` is expected for a role without SSO admin |
