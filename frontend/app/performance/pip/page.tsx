@@ -76,7 +76,7 @@ export default function PIPPage() {
         <div className="flex flex-col gap-4">
           <Tabs value={activeTab} onChange={(value) => value && setActiveTab(value as PIPTab)}>
             <Tabs.List>
-              {PIP_TABS.map(tab => <Tabs.Tab aria-controls={undefined} key={tab.value} value={tab.value}>{tab.label}</Tabs.Tab>)}
+              {PIP_TABS.map(tab => <Tabs.Tab aria-controls={null as unknown as undefined} key={tab.value} value={tab.value}>{tab.label}</Tabs.Tab>)}
             </Tabs.List>
           </Tabs>
           <TextInput

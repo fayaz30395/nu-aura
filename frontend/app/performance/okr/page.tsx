@@ -196,9 +196,10 @@ export default function OKRPage() {
         />
 
         <Tabs value={activeTab} onChange={(value) => value && setActiveTab(value as OkrTab)}>
+          {/* Mantine drops undefined props, so null is what removes aria-controls: these tabs have no Tabs.Panel to point at. */}
           <Tabs.List>
-            <Tabs.Tab aria-controls={undefined} value="my">My Objectives ({myCount})</Tabs.Tab>
-            <Tabs.Tab aria-controls={undefined} value="company">Company Objectives ({companyCount})</Tabs.Tab>
+            <Tabs.Tab aria-controls={null as unknown as undefined} value="my">My Objectives ({myCount})</Tabs.Tab>
+            <Tabs.Tab aria-controls={null as unknown as undefined} value="company">Company Objectives ({companyCount})</Tabs.Tab>
           </Tabs.List>
         </Tabs>
 
