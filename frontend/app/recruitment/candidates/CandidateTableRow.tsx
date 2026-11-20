@@ -22,7 +22,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {StatusBadge} from '@/components/ui/StatusBadge';
-import {getMatchScoreColor, getStageColor} from './utils';
+import {getMatchScoreColor, getStageColor, getStageLabel} from './utils';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
@@ -262,7 +262,7 @@ export function buildCandidateColumns(visibleColumns: Set<string>): Column<Candi
       align: 'center',
       accessor: (candidate) => candidate.currentStage && (
         <span className={`inline-block px-2.5 py-1 text-xs font-semibold rounded-full ${getStageColor(candidate.currentStage)}`}>
-          {candidate.currentStage.replace(/_/g, ' ')}
+          {getStageLabel(candidate.currentStage)}
         </span>
       ),
     },

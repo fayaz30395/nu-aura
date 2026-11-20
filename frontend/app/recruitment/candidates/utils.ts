@@ -42,6 +42,18 @@ export function getStageColor(stage?: RecruitmentStage): string {
 }
 
 /**
+ * Stage label; stages with a pipeline-board equivalent reuse the board wording.
+ */
+const STAGE_LABEL_OVERRIDES: Partial<Record<RecruitmentStage, string>> = {
+  RECRUITERS_PHONE_CALL: 'Phone Screen',
+  TECHNICAL_INTERVIEW_SCHEDULED: 'Technical',
+};
+
+export function getStageLabel(stage: RecruitmentStage): string {
+  return STAGE_LABEL_OVERRIDES[stage] ?? stage.replace(/_/g, ' ');
+}
+
+/**
  * Match score color mapping for AI-generated match percentages.
  */
 export function getMatchScoreColor(score: number): string {

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -135,6 +136,7 @@ public class ApplicantService {
             applicant.setStatus(newStatus);
             // Wave 13: tenant-local stage-entry timestamp — resolved via TenantTimeService.
             applicant.setCurrentStageEnteredAt(tenantTimeService.now(applicant.getTenantId()));
+            syncCandidate(applicant, newStatus);
         }
 
         if (request.getNotes() != null) {
@@ -151,6 +153,52 @@ public class ApplicantService {
 
         Applicant updatedApplicant = applicantRepository.save(applicant);
         return mapToApplicantResponse(updatedApplicant);
+    }
+
+    private record CandidateTarget(Candidate.CandidateStatus status, Candidate.RecruitmentStage stage) {
+    }
+
+    // No default branch: a new ApplicationStatus value must fail compilation here.
+    private static CandidateTarget candidateTargetFor(ApplicationStatus status) {
+        return switch (status) {
+            case APPLIED -> new CandidateTarget(Candidate.CandidateStatus.NEW, Candidate.RecruitmentStage.APPLICATION_RECEIVED);
+            case SCREENING -> new CandidateTarget(Candidate.CandidateStatus.SCREENING, Candidate.RecruitmentStage.SCREENING);
+            case PHONE_SCREEN -> new CandidateTarget(Candidate.CandidateStatus.SCREENING, Candidate.RecruitmentStage.RECRUITERS_PHONE_CALL);
+            case INTERVIEW, HR_ROUND -> new CandidateTarget(Candidate.CandidateStatus.INTERVIEW, Candidate.RecruitmentStage.INTERVIEW);
+            case TECHNICAL_ROUND -> new CandidateTarget(Candidate.CandidateStatus.INTERVIEW, Candidate.RecruitmentStage.TECHNICAL_INTERVIEW_SCHEDULED);
+            case OFFER_PENDING -> new CandidateTarget(Candidate.CandidateStatus.SELECTED, Candidate.RecruitmentStage.OFFER);
+            case OFFERED -> new CandidateTarget(Candidate.CandidateStatus.OFFER_EXTENDED, Candidate.RecruitmentStage.OFFER);
+            case ACCEPTED -> new CandidateTarget(Candidate.CandidateStatus.OFFER_ACCEPTED, Candidate.RecruitmentStage.OFFER);
+            case REJECTED -> new CandidateTarget(Candidate.CandidateStatus.REJECTED, Candidate.RecruitmentStage.CANDIDATE_REJECTED);
+            case WITHDRAWN -> new CandidateTarget(Candidate.CandidateStatus.WITHDRAWN, null);
+        };
+    }
+
+    // H-016: candidate follows the furthest-progressed live application (same tx, same tenant).
+    private void syncCandidate(Applicant applicant, ApplicationStatus newStatus) {
+        if (applicant.getCandidateId() == null) {
+            return;
+        }
+        UUID tenantId = applicant.getTenantId();
+        Candidate candidate = candidateRepository.findByIdAndTenantId(applicant.getCandidateId(), tenantId).orElse(null);
+        if (candidate == null) {
+            return;
+        }
+        Stream<ApplicationStatus> siblings = applicantRepository.findByCandidateIdAndTenantId(candidate.getId(), tenantId).stream()
+                .filter(other -> !Objects.equals(other.getId(), applicant.getId()))
+                .map(Applicant::getStatus);
+        ApplicationStatus effective = Stream.concat(Stream.of(newStatus), siblings)
+                .filter(st -> st != null && st != ApplicationStatus.REJECTED && st != ApplicationStatus.WITHDRAWN)
+                .max(Comparator.naturalOrder())
+                .orElse(newStatus);
+        CandidateTarget target = candidateTargetFor(effective);
+        Candidate.RecruitmentStage stage = target.stage() != null ? target.stage() : candidate.getCurrentStage();
+        if (candidate.getStatus() == target.status() && candidate.getCurrentStage() == stage) {
+            return;
+        }
+        candidate.setStatus(target.status());
+        candidate.setCurrentStage(stage);
+        candidateRepository.save(candidate);
     }
 
     @Transactional(readOnly = true)

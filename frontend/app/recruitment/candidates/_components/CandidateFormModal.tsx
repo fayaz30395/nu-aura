@@ -202,10 +202,10 @@ export function CandidateFormModal({
               </div>
               <div>
                 <Select id="candidate-current-stage" {...candidateForm.register('currentStage')} label="Current stage">
-                  <option value="RECRUITERS_PHONE_CALL">Phone call</option>
+                  <option value="RECRUITERS_PHONE_CALL">Phone Screen</option>
                   <option value="PANEL_REVIEW">Panel review</option>
                   <option value="PANEL_SHORTLISTED">Shortlisted</option>
-                  <option value="TECHNICAL_INTERVIEW_SCHEDULED">Tech interview scheduled</option>
+                  <option value="TECHNICAL_INTERVIEW_SCHEDULED">Technical (scheduled)</option>
                   <option value="TECHNICAL_INTERVIEW_COMPLETED">Tech interview done</option>
                   <option value="MANAGEMENT_INTERVIEW_SCHEDULED">Mgmt interview scheduled</option>
                   <option value="MANAGEMENT_INTERVIEW_COMPLETED">Mgmt interview done</option>

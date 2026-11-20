@@ -8,7 +8,7 @@ import {Button} from '@/components/ui/Button';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useCandidate} from '@/lib/hooks/queries/useRecruitment';
-import {getStageColor, getStatusColor} from '../utils';
+import {getStageColor, getStatusColor, getStageLabel} from '../utils';
 import {safeUrl} from '@/lib/utils/safeUrl';
 import {AlertCircle, ArrowLeft, Briefcase, Building, Calendar, Edit2, ExternalLink, Mail, MapPin, Phone, User,} from 'lucide-react';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -139,7 +139,7 @@ export default function CandidateDetailPage() {
                     <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
                       Pipeline stage
                       <span className={`px-2.5 py-1 font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
-                        {candidate.currentStage.replace(/_/g, ' ')}
+                        {getStageLabel(candidate.currentStage)}
                       </span>
                     </span>
                   )}

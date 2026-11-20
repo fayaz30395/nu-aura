@@ -5,7 +5,7 @@ import {Button} from '@/components/ui/Button';
 import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {Building, Mail, MapPin, Phone} from 'lucide-react';
 import {Candidate} from '@/lib/types/hire/recruitment';
-import {getStageColor, getStatusColor} from '../utils';
+import {getStageColor, getStatusColor, getStageLabel} from '../utils';
 
 interface ViewCandidateModalProps {
   open: boolean;
@@ -46,7 +46,7 @@ export function ViewCandidateModal({
                   {candidate.currentStage && (
                     <span
                       className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStageColor(candidate.currentStage)}`}>
-                      {candidate.currentStage.replace(/_/g, ' ')}
+                      {getStageLabel(candidate.currentStage)}
                     </span>
                   )}
                 </div>

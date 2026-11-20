@@ -14,6 +14,8 @@ import com.nulogic.infrastructure.recruitment.repository.JobOpeningRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -277,5 +279,180 @@ class ApplicantServiceTest {
 
             verify(applicantRepository, never()).save(any(Applicant.class));
         }
+    }
+
+    // ---- H-016: candidate sync ----
+
+    private Candidate runStatusChange(ApplicationStatus from, ApplicationStatus to, boolean hasCandidate,
+                                      List<Applicant> otherApplicants, Candidate candidate, UUID tenantId) {
+        UUID applicantId = UUID.randomUUID();
+        UUID candidateId = candidate.getId();
+        Applicant applicant = buildApplicant(tenantId, applicantId, hasCandidate ? candidateId : null, UUID.randomUUID(), from);
+        ApplicantStatusUpdateRequest request = new ApplicantStatusUpdateRequest();
+        request.setStatus(to);
+        try (MockedStatic<TenantContext> ctx = mockStatic(TenantContext.class)) {
+            ctx.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            when(applicantRepository.findOne(any(Specification.class))).thenReturn(Optional.of(applicant));
+            when(applicantRepository.save(any(Applicant.class))).thenAnswer(i -> i.getArgument(0));
+            lenient().when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
+            lenient().when(applicantRepository.findByCandidateIdAndTenantId(candidateId, tenantId))
+                    .thenReturn(otherApplicants);
+            applicantService.updateStatus(applicantId, request);
+        }
+        return candidate;
+    }
+
+    private Candidate newCandidate(UUID tenantId) {
+        Candidate c = buildCandidate(tenantId, UUID.randomUUID(), null);
+        c.setStatus(Candidate.CandidateStatus.NEW);
+        c.setCurrentStage(Candidate.RecruitmentStage.APPLICATION_RECEIVED);
+        return c;
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "APPLIED,SCREENING,SCREENING,SCREENING",
+            "SCREENING,PHONE_SCREEN,SCREENING,RECRUITERS_PHONE_CALL",
+            "SCREENING,INTERVIEW,INTERVIEW,INTERVIEW",
+            "SCREENING,TECHNICAL_ROUND,INTERVIEW,TECHNICAL_INTERVIEW_SCHEDULED",
+            "SCREENING,HR_ROUND,INTERVIEW,INTERVIEW",
+            "SCREENING,OFFER_PENDING,SELECTED,OFFER",
+            "INTERVIEW,OFFERED,OFFER_EXTENDED,OFFER",
+            "OFFERED,ACCEPTED,OFFER_ACCEPTED,OFFER",
+            "SCREENING,REJECTED,REJECTED,CANDIDATE_REJECTED"
+    })
+    @DisplayName("Applicant status change maps onto candidate status and stage")
+    void statusChangeSyncsCandidate(ApplicationStatus from, ApplicationStatus to,
+                                    Candidate.CandidateStatus expStatus, Candidate.RecruitmentStage expStage) {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        runStatusChange(from, to, true, List.of(), candidate, tenantId);
+        assertThat(candidate.getStatus()).isEqualTo(expStatus);
+        assertThat(candidate.getCurrentStage()).isEqualTo(expStage);
+        verify(candidateRepository).save(candidate);
+    }
+
+    @Test
+    @DisplayName("APPLIED maps to NEW / APPLICATION_RECEIVED")
+    void appliedMapsToNew() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        candidate.setStatus(Candidate.CandidateStatus.SCREENING);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.SCREENING);
+        // APPLIED is never a legal transition target, so call the mapping directly.
+        Applicant applicant = buildApplicant(tenantId, UUID.randomUUID(), candidate.getId(), UUID.randomUUID(), ApplicationStatus.APPLIED);
+        when(candidateRepository.findByIdAndTenantId(candidate.getId(), tenantId)).thenReturn(Optional.of(candidate));
+        org.springframework.test.util.ReflectionTestUtils.invokeMethod(applicantService, "syncCandidate", applicant, ApplicationStatus.APPLIED);
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.NEW);
+        assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.APPLICATION_RECEIVED);
+        verify(candidateRepository).save(candidate);
+    }
+
+    @Test
+    @DisplayName("WITHDRAWN keeps the stage and sets status when no other live application")
+    void withdrawnLeavesStage() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.SCREENING);
+        runStatusChange(ApplicationStatus.SCREENING, ApplicationStatus.WITHDRAWN, true, List.of(), candidate, tenantId);
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.WITHDRAWN);
+        assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.SCREENING);
+    }
+
+    @Test
+    @DisplayName("Applicant without candidate does not touch candidates")
+    void noCandidateNoSave() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        runStatusChange(ApplicationStatus.APPLIED, ApplicationStatus.SCREENING, false, List.of(), candidate, tenantId);
+        verify(candidateRepository, never()).save(any(Candidate.class));
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.NEW);
+    }
+
+    @Test
+    @DisplayName("REJECTED while a sibling is live: candidate reflects the sibling")
+    void rejectedWithOtherLiveApplicationReflectsSibling() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        Applicant other = buildApplicant(tenantId, UUID.randomUUID(), candidate.getId(), UUID.randomUUID(), ApplicationStatus.INTERVIEW);
+        runStatusChange(ApplicationStatus.SCREENING, ApplicationStatus.REJECTED, true, List.of(other), candidate, tenantId);
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.INTERVIEW);
+        assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.INTERVIEW);
+    }
+
+    @Test
+    @DisplayName("WITHDRAWN while a sibling is live: candidate keeps the sibling mapping, no save")
+    void withdrawnWithLiveSiblingUnchanged() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+        Applicant other = buildApplicant(tenantId, UUID.randomUUID(), candidate.getId(), UUID.randomUUID(), ApplicationStatus.OFFERED);
+        runStatusChange(ApplicationStatus.SCREENING, ApplicationStatus.WITHDRAWN, true, List.of(other), candidate, tenantId);
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.OFFER_EXTENDED);
+        assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.OFFER);
+        verify(candidateRepository, never()).save(any(Candidate.class));
+    }
+
+    @Test
+    @DisplayName("Moving a lagging application does not drag an ACCEPTED candidate backwards")
+    void laggingApplicationDoesNotDragBack() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER);
+        Applicant a = buildApplicant(tenantId, UUID.randomUUID(), candidate.getId(), UUID.randomUUID(), ApplicationStatus.ACCEPTED);
+        runStatusChange(ApplicationStatus.APPLIED, ApplicationStatus.SCREENING, true, List.of(a), candidate, tenantId);
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.OFFER_ACCEPTED);
+        assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.OFFER);
+        verify(candidateRepository, never()).save(any(Candidate.class));
+    }
+
+    @Test
+    @DisplayName("Moving ahead of a sibling advances the candidate")
+    void aheadOfSiblingAdvancesCandidate() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        candidate.setStatus(Candidate.CandidateStatus.INTERVIEW);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.INTERVIEW);
+        Applicant a = buildApplicant(tenantId, UUID.randomUUID(), candidate.getId(), UUID.randomUUID(), ApplicationStatus.INTERVIEW);
+        runStatusChange(ApplicationStatus.INTERVIEW, ApplicationStatus.OFFERED, true, List.of(a), candidate, tenantId);
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.OFFER_EXTENDED);
+        assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.OFFER);
+        verify(candidateRepository).save(candidate);
+    }
+
+    @Test
+    @DisplayName("All applications terminal, last one WITHDRAWN: candidate WITHDRAWN, stage unchanged")
+    void allTerminalLastWithdrawn() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.SCREENING);
+        Applicant a = buildApplicant(tenantId, UUID.randomUUID(), candidate.getId(), UUID.randomUUID(), ApplicationStatus.REJECTED);
+        runStatusChange(ApplicationStatus.SCREENING, ApplicationStatus.WITHDRAWN, true, List.of(a), candidate, tenantId);
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.WITHDRAWN);
+        assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.SCREENING);
+    }
+
+    @Test
+    @DisplayName("REJECTED when other applications are terminal marks candidate rejected")
+    void rejectedWithOnlyTerminalOthers() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        Applicant other = buildApplicant(tenantId, UUID.randomUUID(), candidate.getId(), UUID.randomUUID(), ApplicationStatus.WITHDRAWN);
+        runStatusChange(ApplicationStatus.SCREENING, ApplicationStatus.REJECTED, true, List.of(other), candidate, tenantId);
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.REJECTED);
+        assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.CANDIDATE_REJECTED);
+    }
+
+    @Test
+    @DisplayName("Unchanged status does not touch candidate")
+    void unchangedStatusNoSave() {
+        UUID tenantId = UUID.randomUUID();
+        Candidate candidate = newCandidate(tenantId);
+        candidate.setStatus(Candidate.CandidateStatus.INTERVIEW);
+        runStatusChange(ApplicationStatus.INTERVIEW, ApplicationStatus.INTERVIEW, true, List.of(), candidate, tenantId);
+        verify(candidateRepository, never()).save(any(Candidate.class));
+        assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.INTERVIEW);
     }
 }
