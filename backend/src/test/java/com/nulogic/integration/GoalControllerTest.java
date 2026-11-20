@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -54,9 +55,19 @@ class GoalControllerTest extends AbstractPostgresIntegrationTest {
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setUpSuperAdminContext() {
+        // GoalService now requires the goal's employee to exist in the caller's tenant (cross-tenant
+        // reference fix), so the employee these goals belong to must be real. Rolled back per test.
+        UUID userId = UUID.randomUUID();
+        jdbcTemplate.update("INSERT INTO users (id, tenant_id, email, first_name, password_hash, status) "
+                + "VALUES (?, ?, ?, 'Goal', 'x', 'ACTIVE')", userId, TENANT_ID, "goal-owner-" + userId + "@test.local");
+        jdbcTemplate.update("INSERT INTO employees (id, tenant_id, employee_code, user_id, first_name, joining_date, "
+                + "employment_type, status) VALUES (?, ?, 'GOAL-OWNER', ?, 'Goal', DATE '2024-01-01', 'FULL_TIME', 'ACTIVE') "
+                + "ON CONFLICT (id) DO NOTHING", EMPLOYEE_ID, TENANT_ID, userId);
         Map<String, RoleScope> permissions = new HashMap<>();
         permissions.put(Permission.SYSTEM_ADMIN, RoleScope.ALL);
         SecurityContext.setCurrentUser(USER_ID, EMPLOYEE_ID, Set.of("SUPER_ADMIN"), permissions);

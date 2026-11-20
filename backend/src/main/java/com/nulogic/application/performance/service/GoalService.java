@@ -60,6 +60,13 @@ public class GoalService {
     @Transactional
     public GoalResponse createGoal(GoalRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
+        // SEC: employee and parent goal must be the caller tenant's (FKs ignore RLS; a foreign
+        // employeeId produced a tenant-A goal for tenant B's employee). Pinned by TenantIsolationWriteApiTest.
+        if (request.getEmployeeId() != null
+                && employeeRepository.findByIdAndTenantId(request.getEmployeeId(), tenantId).isEmpty()) {
+            throw new EntityNotFoundException("Employee not found");
+        }
+        requireParentGoalInTenant(request.getParentGoalId(), tenantId);
 
         Goal goal = Goal.builder()
                 .employeeId(request.getEmployeeId())
@@ -84,6 +91,12 @@ public class GoalService {
         notifyGoal(goal.getEmployeeId(), tenantId, goal.getTitle(), true);
 
         return mapToResponse(goal);
+    }
+
+    private void requireParentGoalInTenant(UUID parentGoalId, UUID tenantId) {
+        if (parentGoalId != null && goalRepository.findByIdAndTenantId(parentGoalId, tenantId).isEmpty()) {
+            throw new EntityNotFoundException("Parent goal not found");
+        }
     }
 
     @Transactional
@@ -115,8 +128,10 @@ public class GoalService {
             goal.setStatus(request.getStatus());
         if (request.getProgressPercentage() != null)
             goal.setProgressPercentage(request.getProgressPercentage());
-        if (request.getParentGoalId() != null)
+        if (request.getParentGoalId() != null) {
+            requireParentGoalInTenant(request.getParentGoalId(), tenantId);
             goal.setParentGoalId(request.getParentGoalId());
+        }
         if (request.getWeight() != null)
             goal.setWeight(request.getWeight());
 

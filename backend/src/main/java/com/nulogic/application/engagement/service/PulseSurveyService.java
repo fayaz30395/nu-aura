@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.engagement.dto.PulseSurveyRequest;
 import com.nulogic.api.engagement.dto.SurveySubmissionRequest;
 import com.nulogic.common.exception.BusinessException;
+import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.engagement.PulseSurvey;
@@ -106,7 +107,7 @@ public class PulseSurveyService {
     public PulseSurvey updateSurvey(UUID surveyId, PulseSurveyRequest request) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PulseSurvey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Survey not found: " + surveyId));
+                .orElseThrow(() -> new ResourceNotFoundException("Survey not found: " + surveyId));
 
         if (survey.getStatus() != SurveyStatus.DRAFT) {
             throw new IllegalStateException("Can only edit surveys in DRAFT status");
@@ -152,7 +153,7 @@ public class PulseSurveyService {
     public void deleteSurvey(UUID surveyId) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PulseSurvey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Survey not found: " + surveyId));
+                .orElseThrow(() -> new ResourceNotFoundException("Survey not found: " + surveyId));
 
         if (survey.getStatus() == SurveyStatus.ACTIVE) {
             throw new IllegalStateException("Cannot delete active survey");
@@ -170,7 +171,7 @@ public class PulseSurveyService {
     public PulseSurvey publishSurvey(UUID surveyId, UUID publishedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PulseSurvey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Survey not found: " + surveyId));
+                .orElseThrow(() -> new ResourceNotFoundException("Survey not found: " + surveyId));
 
         if (survey.getStatus() != SurveyStatus.DRAFT) {
             throw new IllegalStateException("Can only publish surveys in DRAFT status");
@@ -225,7 +226,7 @@ public class PulseSurveyService {
     public PulseSurvey closeSurvey(UUID surveyId, UUID closedBy) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PulseSurvey survey = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Survey not found: " + surveyId));
+                .orElseThrow(() -> new ResourceNotFoundException("Survey not found: " + surveyId));
 
         survey.setStatus(SurveyStatus.COMPLETED);
         survey.setClosedAt(tenantTimeService.now(tenantId));
@@ -281,6 +282,10 @@ public class PulseSurveyService {
 
     @Transactional
     public PulseSurveyQuestion addQuestion(UUID surveyId, PulseSurveyRequest.QuestionRequest request) {
+        // SEC: the survey must be the caller's. createQuestion only stamps the caller's tenant, so a
+        // foreign surveyId produced a tenant-A question pointing at tenant B's survey (FKs ignore RLS).
+        surveyRepository.findByIdAndTenantId(surveyId, TenantContext.requireCurrentTenant())
+                .orElseThrow(() -> new ResourceNotFoundException("Survey not found: " + surveyId));
         PulseSurveyQuestion question = createQuestion(surveyId, request, null);
 
         // Update survey question count
@@ -467,7 +472,7 @@ public class PulseSurveyService {
     public PulseSurvey cloneSurvey(UUID surveyId, String newTitle) {
         UUID tenantId = TenantContext.getCurrentTenant();
         PulseSurvey source = surveyRepository.findByIdAndTenantId(surveyId, tenantId)
-                .orElseThrow(() -> new RuntimeException("Survey not found: " + surveyId));
+                .orElseThrow(() -> new ResourceNotFoundException("Survey not found: " + surveyId));
 
         PulseSurvey clone = PulseSurvey.builder()
                 .title(newTitle != null ? newTitle : source.getTitle() + " (Copy)")

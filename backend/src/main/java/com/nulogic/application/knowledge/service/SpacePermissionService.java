@@ -7,6 +7,8 @@ import com.nulogic.domain.knowledge.SpaceMember;
 import com.nulogic.domain.knowledge.WikiSpace;
 import com.nulogic.infrastructure.knowledge.repository.SpaceMemberRepository;
 import com.nulogic.infrastructure.knowledge.repository.WikiSpaceRepository;
+import com.nulogic.infrastructure.user.repository.UserRepository;
+import com.nulogic.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class SpacePermissionService {
     private final SpaceMemberRepository spaceMemberRepository;
     private final WikiSpaceRepository wikiSpaceRepository;
     private final TenantTimeService tenantTimeService;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     public boolean canAccessSpace(UUID userId, UUID spaceId) {
@@ -63,6 +66,12 @@ public class SpacePermissionService {
     @Transactional
     public SpaceMember addMember(UUID spaceId, UUID userId, SpaceMember.Role role) {
         UUID tenantId = TenantContext.requireCurrentTenant();
+        // SEC: space and user must both be the caller tenant's; the membership row was stamped with the
+        // caller's tenant but pointed at any space/user id (FKs ignore RLS). Pinned by TenantIsolationWriteApiTest.
+        wikiSpaceRepository.findByIdAndTenantId(spaceId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Wiki space not found"));
+        userRepository.findByIdAndTenantId(userId, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Optional<SpaceMember> existing = spaceMemberRepository
                 .findByTenantIdAndSpaceIdAndUserId(tenantId, spaceId, userId);
         if (existing.isPresent()) {

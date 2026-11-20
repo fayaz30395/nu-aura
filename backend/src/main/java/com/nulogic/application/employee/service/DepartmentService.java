@@ -46,6 +46,7 @@ public class DepartmentService {
         if (departmentRepository.existsByCodeAndTenantId(request.getCode(), tenantId)) {
             throw new DuplicateResourceException("Department code already exists");
         }
+        requireSameTenantReferences(request, tenantId);
 
         Department department = Department.builder()
                 .code(request.getCode())
@@ -72,6 +73,7 @@ public class DepartmentService {
 
         Department department = departmentRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
+        requireSameTenantReferences(request, tenantId);
 
         if (request.getCode() != null && !request.getCode().equals(department.getCode())) {
             if (departmentRepository.existsByCodeAndTenantId(request.getCode(), tenantId)) {
@@ -100,6 +102,22 @@ public class DepartmentService {
         department = departmentRepository.save(department);
 
         return enrichDepartmentResponse(department);
+    }
+
+    /**
+     * SEC: parent department and manager must belong to the caller's tenant. FKs check existence
+     * across tenants (RI triggers bypass RLS), so without this a tenant could link its rows to another
+     * tenant's ids — and probe whether a foreign UUID exists. Pinned by TenantIsolationWriteApiTest.
+     */
+    private void requireSameTenantReferences(DepartmentRequest request, UUID tenantId) {
+        if (request.getParentDepartmentId() != null
+                && departmentRepository.findByIdAndTenantId(request.getParentDepartmentId(), tenantId).isEmpty()) {
+            throw new ResourceNotFoundException("Parent department not found");
+        }
+        if (request.getManagerId() != null
+                && employeeRepository.findByIdAndTenantId(request.getManagerId(), tenantId).isEmpty()) {
+            throw new ResourceNotFoundException("Manager not found");
+        }
     }
 
     @Transactional(readOnly = true)

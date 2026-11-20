@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -122,6 +123,7 @@ class GoalServiceTest {
                 return saved;
             });
             when(employeeRepository.findAllById(anyIterable())).thenReturn(List.of(employee));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
             GoalResponse result = goalService.createGoal(request);
 
@@ -149,12 +151,27 @@ class GoalServiceTest {
                 saved.setId(UUID.randomUUID());
                 return saved;
             });
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.of(employee));
 
             GoalResponse result = goalService.createGoal(request);
 
             assertThat(result).isNotNull();
             assertThat(result.getStatus()).isEqualTo(Goal.GoalStatus.ACTIVE);
             assertThat(result.getProgressPercentage()).isEqualTo(25);
+        }
+
+        @Test
+        @DisplayName("Should reject an employee that is not in the current tenant")
+        void shouldRejectEmployeeOfAnotherTenant() {
+            GoalRequest request = new GoalRequest();
+            request.setEmployeeId(employeeId);
+            request.setTitle("Foreign");
+            request.setStartDate(LocalDate.now());
+            request.setDueDate(LocalDate.now().plusMonths(1));
+            when(employeeRepository.findByIdAndTenantId(employeeId, tenantId)).thenReturn(Optional.empty());
+
+            assertThatThrownBy(() -> goalService.createGoal(request)).isInstanceOf(EntityNotFoundException.class);
+            verify(goalRepository, never()).save(any(Goal.class));
         }
     }
 

@@ -173,7 +173,13 @@ public class JwtTokenProvider {
     }
 
     public UUID getTenantIdFromToken(String token) {
-        return UUID.fromString(getClaims(token).get("tenantId", String.class));
+        String tenantId = getClaims(token).get("tenantId", String.class);
+        if (tenantId == null) {
+            // SEC: a tenant-less token must be rejected as invalid (JwtException -> 401), not escape
+            // the auth filter as a NullPointerException (500). Pinned by TenantIsolationAuthTokenTest.
+            throw new io.jsonwebtoken.MalformedJwtException("Token has no tenantId claim");
+        }
+        return UUID.fromString(tenantId);
     }
 
     public UUID getUserIdFromToken(String token) {

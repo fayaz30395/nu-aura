@@ -235,6 +235,12 @@ public class FileUploadController {
         if (objectName == null || objectName.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "objectName is required");
         }
+        // SEC: "<ownTenant>/../<otherTenant>/..." passed the startsWith check below and skipped the
+        // employee-scope check (parts[1] == ".."). Only the exact-match Drive mapping stopped it.
+        if (objectName.contains("\\")
+                || java.util.Arrays.stream(objectName.split("/", -1)).anyMatch(s -> s.isEmpty() || ".".equals(s) || "..".equals(s))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid objectName");
+        }
         UUID tenantId = com.nulogic.common.security.TenantContext.getCurrentTenant();
         if (tenantId != null && !objectName.startsWith(tenantId.toString() + "/")) {
             throw new org.springframework.security.access.AccessDeniedException(

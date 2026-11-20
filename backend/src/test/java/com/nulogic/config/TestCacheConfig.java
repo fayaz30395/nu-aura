@@ -50,7 +50,9 @@ public class TestCacheConfig {
                 "upcomingBirthdays",
                 "upcomingAnniversaries",
                 "analytics",
-                "unreadCountByUser"
+                "unreadCountByUser",
+                // Read by JwtAuthenticationFilter on every authenticated request (TenantStatusCache).
+                "tenantStatus"
         );
     }
 

@@ -149,6 +149,22 @@ public class EmployeeService {
         return String.format("EMP-%s-%04d", ym, seq);
     }
 
+    /**
+     * SEC: department and managers must belong to the caller's tenant. FKs check existence across
+     * tenants (RI triggers bypass RLS), so without this a tenant could attach its employees to another
+     * tenant's department/manager ids and probe whether a foreign UUID exists.
+     */
+    private void requireSameTenantReferences(UUID tenantId, UUID departmentId, UUID... employeeIds) {
+        if (departmentId != null && departmentRepository.findByIdAndTenantId(departmentId, tenantId).isEmpty()) {
+            throw new ResourceNotFoundException("Department not found");
+        }
+        for (UUID id : employeeIds) {
+            if (id != null && employeeRepository.findByIdAndTenantId(id, tenantId).isEmpty()) {
+                throw new ResourceNotFoundException("Manager not found");
+            }
+        }
+    }
+
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = {CacheConfig.EMPLOYEES, CacheConfig.EMPLOYEE_WITH_DETAILS}, allEntries = true),
@@ -173,6 +189,8 @@ public class EmployeeService {
         if (userRepository.findByEmailAndTenantId(request.getWorkEmail(), tenantId).isPresent()) {
             throw new DuplicateResourceException("Email already exists");
         }
+        requireSameTenantReferences(tenantId, request.getDepartmentId(), request.getManagerId(),
+                request.getDottedLineManager1Id(), request.getDottedLineManager2Id());
 
         // Create user account for employee
         User user = User.builder()
@@ -366,6 +384,8 @@ public class EmployeeService {
 
         Employee employee = employeeRepository.findByIdAndTenantId(employeeId, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+        requireSameTenantReferences(tenantId, request.getDepartmentId(), request.getManagerId(),
+                request.getDottedLineManager1Id(), request.getDottedLineManager2Id());
 
         // Capture previous values for event tracking
         Employee.EmployeeStatus previousStatus = employee.getStatus();
@@ -578,7 +598,11 @@ public class EmployeeService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(value = CacheConfig.EMPLOYEE_WITH_DETAILS, key = "#employeeId", unless = "#result == null")
+    // SEC: tenant in the key. A bare #employeeId key served tenant A's cached profile to tenant B
+    // (cache hit skips findByIdAndTenantId and RLS). Pinned by TenantIsolationCacheAndAsyncTest.
+    @Cacheable(value = CacheConfig.EMPLOYEE_WITH_DETAILS,
+            key = "T(com.nulogic.common.security.TenantContext).requireCurrentTenant() + ':' + #employeeId",
+            unless = "#result == null")
     public EmployeeResponse getEmployee(UUID employeeId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
 

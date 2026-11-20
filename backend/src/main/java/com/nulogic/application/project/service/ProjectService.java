@@ -44,6 +44,7 @@ public class ProjectService {
         if (projectRepository.existsByProjectCodeAndTenantId(request.getProjectCode(), tenantId)) {
             throw new DuplicateResourceException("Project code already exists");
         }
+        requireManagerInTenant(request.getProjectManagerId(), tenantId);
 
         Project project = Project.builder()
                 .projectCode(request.getProjectCode())
@@ -69,6 +70,13 @@ public class ProjectService {
         return ProjectResponse.fromProject(project);
     }
 
+    /** SEC: FKs ignore RLS, so a foreign manager id would be stored and act as an existence oracle. */
+    private void requireManagerInTenant(UUID managerId, UUID tenantId) {
+        if (managerId != null && employeeRepository.findByIdAndTenantId(managerId, tenantId).isEmpty()) {
+            throw new ResourceNotFoundException("Project manager not found");
+        }
+    }
+
     @Transactional
     public ProjectResponse updateProject(UUID projectId, UpdateProjectRequest request) {
         UUID tenantId = TenantContext.requireCurrentTenant();
@@ -91,8 +99,10 @@ public class ProjectService {
             project.setStatus(request.getStatus());
         if (request.getPriority() != null)
             project.setPriority(request.getPriority());
-        if (request.getProjectManagerId() != null)
+        if (request.getProjectManagerId() != null) {
+            requireManagerInTenant(request.getProjectManagerId(), tenantId);
             project.setProjectManagerId(request.getProjectManagerId());
+        }
         if (request.getClientName() != null)
             project.setClientName(request.getClientName());
         if (request.getBudget() != null)
