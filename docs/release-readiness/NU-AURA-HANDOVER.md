@@ -1602,3 +1602,7 @@ Re-verified at `ee8cda31` (0 ahead/behind `fayaz-deen/main`): Flyway head V355; 
 Docker: Colima was stopped; `colima start` works. Colima socket is `~/.colima/default/docker.sock`, but `/var/run/docker.sock` points to a missing `~/.docker/run/docker.sock`. Owner step to unblock backend integration tests: `sudo ln -sf ~/.colima/default/docker.sock /var/run/docker.sock`. Integration suite has still never run.
 
 Next (no owner needed): run backend integration tests, two-tenant isolation test, clear eslint warnings. Needs owner approval: beta deploy, production DB/email/DNS changes, beta invitations. Verdict remains NO-GO until the owner re-issues it.
+
+### Addendum 2026-11-20 (later): backend Testcontainers suite now runs
+
+All 3 Testcontainers tests pass on Colima: `RlsNoBypassTest` 2/2 (real Postgres, NOBYPASSRLS role isolates tenants), `TenantTimeServiceIntegrationTest` 4/4, `OutboxEventProcessorTest` 18/18. No `sudo` symlink needed. Env used: `DOCKER_AVAILABLE=true DOCKER_HOST=unix://$HOME/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock TESTCONTAINERS_RYUK_DISABLED=true`. Without `DOCKER_AVAILABLE=true`, `RlsNoBypassTest` silently skips (looks green). Only 3 Testcontainers tests exist; no other integration suite. This closes the "backend integration never run" gap for those 3; live two-tenant API isolation is still untested. The 18 eslint warnings (mostly `window.location.href`) are left on purpose: full-page navigation in auth/error paths is intended.
