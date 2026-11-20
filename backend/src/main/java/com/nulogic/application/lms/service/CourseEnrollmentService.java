@@ -97,6 +97,12 @@ public class CourseEnrollmentService {
             throw new ResourceNotFoundException("Enrollment not found: " + enrollmentId);
         }
 
+        // a stale client must not lower progress or reopen a completed enrollment
+        if (enrollment.getStatus() == EnrollmentStatus.COMPLETED) {
+            log.debug("Ignoring progress {} for completed enrollment {}", progressPercent, enrollmentId);
+            return enrollment;
+        }
+
         enrollment.setProgressPercentage(BigDecimal.valueOf(progressPercent));
         enrollment.setLastAccessedAt(tenantTimeService.now(tenantId));
 

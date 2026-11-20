@@ -424,6 +424,7 @@ public class QuizAssessmentService {
 
         if (passed && enrollment.getStatus() != CourseEnrollment.EnrollmentStatus.COMPLETED) {
             enrollment.setStatus(CourseEnrollment.EnrollmentStatus.COMPLETED);
+            enrollment.setProgressPercentage(java.math.BigDecimal.valueOf(100));
             enrollment.setCompletedAt(tenantTimeService.now(tenantId));
         }
 
