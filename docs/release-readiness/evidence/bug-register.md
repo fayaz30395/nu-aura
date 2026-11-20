@@ -148,3 +148,6 @@ Total listed entries: 117 (UI-006 and UI-007 each group several defects, so dist
 | P2 re-run test data | Deferred, owner: release manager | Run `NUAURA_TEST_P2_182775`: 1 employee, leave, WFH, wall post, timesheet submit, announcement, holiday. Runs `_032360` and the H5 re-run: 1 announcement, 1 holiday each. Employee and announcement rows have no remove path from the UI flow used |
 | P4 re-run (goals, 1-on-1, review cycle, OKR) | PASS | G-002 goal create now 201 and persists after reload. G-004 participant search works. Review cycle `NUAURA_TEST_P4_cyc4` created again (201) and listed. `p4-kr` could not run: employee has 0 objectives after cleanup, API and page agree |
 | P4 re-run test data | Deferred, owner: release manager | 1 goal `NUAURA_TEST_P4_235018 goal2`, 1 review cycle `NUAURA_TEST_P4_cyc4` (duplicate name of the earlier one) |
+| H-024 HR cannot open Referrals | Fixed in V353 | HR_ADMIN/HR_MANAGER held no REFERRAL:*; now VIEW and MANAGE at ALL. HR `/referrals` loads (Referral Portal), no HTTP errors |
+| H-023, H-002 | Verified fixed | Employee `/referrals/my-referrals` 200. At 390px the Jobs action button receives clicks |
+| H-001 | Consistent, not proven | Public API returns 0 jobs and `/careers` shows 'No jobs found'. No open job exists to prove a live job renders |
