@@ -86,6 +86,8 @@ export default function DepartmentsPage() {
 
   // React Query hooks
   // GET /employees needs one of these; without it the headcount column is simply unavailable.
+  // Create/update/delete/toggle all need DEPARTMENT:MANAGE on the API; hide the controls otherwise.
+  const canManageDepartments = hasPermission(Permissions.DEPARTMENT_MANAGE);
   const canListEmployees = hasPermission(Permissions.EMPLOYEE_VIEW_ALL) || hasPermission(Permissions.EMPLOYEE_VIEW_DEPARTMENT) || hasPermission(Permissions.EMPLOYEE_VIEW_TEAM);
   const {data: deptData, isLoading, isError: isDeptError, refetch: refetchDepts, isFetching: deptFetching} = useAllDepartments(currentPage, pageSize);
   const {data: empData, isError: isEmployeesError} = useEmployees(0, 500, 'createdAt', 'DESC', undefined, undefined, canListEmployees);
@@ -258,17 +260,19 @@ export default function DepartmentsPage() {
               Manage your organization&apos;s departments and structure
             </p>
           </div>
-          <Button
-            variant="primary"
-            leftIcon={<Plus className="h-4 w-4"/>}
-            onClick={() => {
-              reset();
-              setEditingDepartment(null);
-              setShowAddModal(true);
-            }}
-          >
-            Add Department
-          </Button>
+          {canManageDepartments && (
+            <Button
+              variant="primary"
+              leftIcon={<Plus className="h-4 w-4"/>}
+              onClick={() => {
+                reset();
+                setEditingDepartment(null);
+                setShowAddModal(true);
+              }}
+            >
+              Add Department
+            </Button>
+          )}
         </div>
 
         {/* Stats Cards */}
@@ -380,7 +384,7 @@ export default function DepartmentsPage() {
                   </th>
                   <th
                     className="px-6 py-4 text-right text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
-                    Actions
+                    {canManageDepartments ? 'Actions' : <span className="sr-only">Actions</span>}
                   </th>
                 </tr>
                 </thead>
@@ -460,7 +464,7 @@ export default function DepartmentsPage() {
                           </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-2">
+                        {canManageDepartments && <div className="flex items-center justify-end gap-2">
                           <button
                             onClick={() => handleEdit(dept)}
                             className="p-2 rounded-lg text-[var(--text-muted)] hover:text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -485,7 +489,7 @@ export default function DepartmentsPage() {
                           >
                             <Trash2 className="h-4 w-4"/>
                           </button>
-                        </div>
+                        </div>}
                       </td>
                     </tr>
                   ))
