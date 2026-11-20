@@ -141,24 +141,36 @@ export function ShellFrame({config, children}: ShellFrameProps) {
     [pathname, config.activeMenuItem]
   );
 
-  // Q-028: unique per-route document title from the active nav item's label.
+  // Q-028: unique per-route document title from the active nav item's label, plus the
+  // sub-page segments when the route is deeper than the nav item (e.g. /reports/scheduled).
   useEffect(() => {
-    const findLabel = (items: SidebarSection['items']): string | undefined => {
+    type NavItem = SidebarSection['items'][number];
+    const findItem = (items: SidebarSection['items']): NavItem | undefined => {
       for (const item of items) {
-        if (item.id === activeId) return item.label;
-        const nested = item.children && findLabel(item.children);
+        if (item.id === activeId) return item;
+        const nested = item.children && findItem(item.children);
         if (nested) return nested;
       }
       return undefined;
     };
+    const humanize = (segment: string) => segment.replace(/[-_]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    const isIdSegment = (segment: string) => /^\d+$/.test(segment) || /^[0-9a-f-]{8,}$/i.test(segment);
     for (const section of menuSections) {
-      const label = findLabel(section.items);
-      if (label) {
-        document.title = `${label} | NU-AURA`;
+      const item = findItem(section.items);
+      if (item) {
+        const trim = (path: string) => path.replace(/\/$/, '');
+        const flatten = (node: NavItem): NavItem[] => [node, ...(node.children ?? []).flatMap(flatten)];
+        const exactChild = flatten(item).find((n) => n !== item && n.href && trim(n.href) === trim(pathname));
+        const base = trim(item.href ?? '');
+        const rest = base && pathname.startsWith(`${base}/`)
+          ? pathname.slice(base.length + 1).split('/').filter((s) => s && !isIdSegment(s))
+          : [];
+        const sub = exactChild ? exactChild.label : rest.map(humanize).join(' · ');
+        document.title = `${sub ? `${item.label} · ${sub}` : item.label} | NU-AURA`;
         return;
       }
     }
-  }, [activeId, menuSections]);
+  }, [activeId, menuSections, pathname]);
 
   const mobileNavItems = useMemo(
     () => buildMobileNavItems(appCode, access, pendingApprovalCount),
