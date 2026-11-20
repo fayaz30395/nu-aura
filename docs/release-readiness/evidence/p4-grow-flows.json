@@ -1,17 +1,23 @@
 {
- "TAG": "NUAURA_TEST_P4_636574",
+ "TAG": "NUAURA_TEST_P4_235018",
  "results": [
+  {
+   "id": "G1",
+   "scenario": "EMP goal: validation then create then persist",
+   "status": "PASS",
+   "detail": "badInput->dialog stays toast:No goals found Create your first goal to start tracking progress. Create Your First Goal | | | | | | | | Performance Hub | NU-AURA ; errs:must be >= 0 Current Value * Unit * Start Da,must be after start date Cancel Create | http: "
+  },
   {
    "id": "G2",
    "scenario": "EMP goal: valid create (current>target) then list after reload",
    "status": "PASS",
-   "detail": "POST 400 shownImmediately=false afterReload=false card=\"undefined\" | http: 400 POST /api/v1/goals"
+   "detail": "POST 201 shownImmediately=true afterReload=true card=\" Progress Completed Cancelled On Hold NUAURA_TEST_P4_235018 goal2 PERSONAL Draft Progress 100% 150 100 Start Nov 21, 2026 End N/A\" | http: "
   },
   {
    "id": "G3",
    "scenario": "EMP goal: progress update on created goal",
    "status": "PASS",
-   "detail": "card buttons: null | http: "
+   "detail": "card buttons: [] | http: "
   }
  ]
 }
