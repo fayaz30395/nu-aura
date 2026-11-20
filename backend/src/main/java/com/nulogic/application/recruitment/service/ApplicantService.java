@@ -96,7 +96,21 @@ public class ApplicantService {
         applicant.setCurrentStageEnteredAt(tenantTimeService.now(tenantId));
 
         Applicant savedApplicant = applicantRepository.save(applicant);
+        if (reopenReturningCandidate(candidate)) {
+            candidateRepository.save(candidate);
+        }
         return mapToApplicantResponse(savedApplicant, candidate, jobOpening);
+    }
+
+    /** A returning REJECTED/WITHDRAWN candidate with a new APPLIED applicant goes back to NEW. Returns true if changed. */
+    public static boolean reopenReturningCandidate(Candidate candidate) {
+        Candidate.CandidateStatus status = candidate.getStatus();
+        if (status != Candidate.CandidateStatus.REJECTED && status != Candidate.CandidateStatus.WITHDRAWN) {
+            return false;
+        }
+        candidate.setStatus(Candidate.CandidateStatus.NEW);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.APPLICATION_RECEIVED);
+        return true;
     }
 
     @Transactional(readOnly = true)

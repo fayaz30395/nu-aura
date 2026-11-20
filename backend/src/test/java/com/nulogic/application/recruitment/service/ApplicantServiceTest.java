@@ -130,6 +130,45 @@ class ApplicantServiceTest {
         }
     }
 
+    @ParameterizedTest
+    @org.junit.jupiter.params.provider.EnumSource(Candidate.CandidateStatus.class)
+    @DisplayName("Returning REJECTED/WITHDRAWN candidate is reopened as NEW; other statuses untouched")
+    void newApplicantReopensClosedCandidate(Candidate.CandidateStatus initial) {
+        UUID tenantId = UUID.randomUUID();
+        UUID candidateId = UUID.randomUUID();
+        UUID jobOpeningId = UUID.randomUUID();
+        ApplicantRequest request = new ApplicantRequest();
+        request.setCandidateId(candidateId);
+        request.setJobOpeningId(jobOpeningId);
+        Candidate candidate = buildCandidate(tenantId, candidateId, jobOpeningId);
+        candidate.setStatus(initial);
+        candidate.setCurrentStage(Candidate.RecruitmentStage.INTERVIEW);
+        boolean closed = initial == Candidate.CandidateStatus.REJECTED || initial == Candidate.CandidateStatus.WITHDRAWN;
+
+        try (MockedStatic<TenantContext> ctx = mockStatic(TenantContext.class)) {
+            ctx.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
+            when(applicantRepository.existsByCandidateIdAndJobOpeningIdAndTenantId(candidateId, jobOpeningId, tenantId))
+                    .thenReturn(false);
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
+            when(jobOpeningRepository.findByIdAndTenantId(jobOpeningId, tenantId))
+                    .thenReturn(Optional.of(buildJobOpening(tenantId, jobOpeningId)));
+            when(tenantTimeService.today(any())).thenReturn(LocalDate.now());
+            when(applicantRepository.save(any(Applicant.class))).thenAnswer(i -> i.getArgument(0));
+
+            applicantService.createApplicant(request);
+        }
+
+        if (closed) {
+            assertThat(candidate.getStatus()).isEqualTo(Candidate.CandidateStatus.NEW);
+            assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.APPLICATION_RECEIVED);
+            verify(candidateRepository).save(candidate);
+        } else {
+            assertThat(candidate.getStatus()).isEqualTo(initial);
+            assertThat(candidate.getCurrentStage()).isEqualTo(Candidate.RecruitmentStage.INTERVIEW);
+            verify(candidateRepository, never()).save(any(Candidate.class));
+        }
+    }
+
     @Test
     @DisplayName("Should throw exception when applicant already exists")
     void shouldThrowExceptionWhenDuplicateApplication() {

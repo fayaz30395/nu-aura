@@ -1,6 +1,7 @@
 package com.nulogic.application.publicapi.service;
 
 import com.nulogic.application.document.service.FileStorageService;
+import com.nulogic.application.recruitment.service.ApplicantService;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.recruitment.Applicant;
 import com.nulogic.domain.recruitment.ApplicationStatus;
@@ -189,6 +190,8 @@ public class PublicCareerService {
             }
         }
 
+        // Saved below with the resume URL; returning rejected/withdrawn candidates go back to NEW.
+        ApplicantService.reopenReturningCandidate(candidate);
         candidateRepository.save(candidate);
         applicantRepository.save(applicant);
 
