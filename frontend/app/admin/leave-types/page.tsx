@@ -382,7 +382,7 @@ export default function LeaveTypesManagementPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={() => handleEdit(leaveType)}
-                      className="text-accent-700 hover:text-accent-900 mr-4"
+                      className="text-accent-700 dark:text-accent-300 hover:text-accent-900 dark:hover:text-accent-200 mr-4"
                     >
                       Edit
                     </button>
@@ -394,7 +394,7 @@ export default function LeaveTypesManagementPage() {
                     </button>
                     <button
                       onClick={() => handleDelete(leaveType)}
-                      className="text-danger-600 hover:text-danger-900"
+                      className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300"
                     >
                       Delete
                     </button>

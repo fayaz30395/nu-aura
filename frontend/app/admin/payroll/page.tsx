@@ -187,7 +187,7 @@ export default function AdminPayrollPage() {
               <h2 className="text-sm font-semibold text-[var(--text-primary)]">Recent Payroll Runs</h2>
               <Link
                 href="/payroll/runs"
-                className="text-xs text-accent-700 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs text-accent-700 dark:text-accent-300 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 View all <ChevronRight className="h-3 w-3"/>
               </Link>
@@ -248,7 +248,7 @@ export default function AdminPayrollPage() {
               </h2>
               <Link
                 href="/payroll/salary-structures"
-                className="text-xs text-accent-700 hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs text-accent-700 dark:text-accent-300 hover:underline flex items-center gap-1 cursor-pointer"
               >
                 View all <ChevronRight className="h-3 w-3"/>
               </Link>
