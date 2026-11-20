@@ -151,3 +151,5 @@ Total listed entries: 117 (UI-006 and UI-007 each group several defects, so dist
 | H-024 HR cannot open Referrals | Fixed in V353 | HR_ADMIN/HR_MANAGER held no REFERRAL:*; now VIEW and MANAGE at ALL. HR `/referrals` loads (Referral Portal), no HTTP errors |
 | H-023, H-002 | Verified fixed | Employee `/referrals/my-referrals` 200. At 390px the Jobs action button receives clicks |
 | H-001 | Consistent, not proven | Public API returns 0 jobs and `/careers` shows 'No jobs found'. No open job exists to prove a live job renders |
+| P5 re-run (F-001, F-002, F-003, F-004, F-006) | Verified fixed | See plan 17 P5 row. F-005 unproven without Elasticsearch. Transient 409 on `GET /knowledge/wiki/pages/{id}` right after a save; 3 later reads 200. Low, watch |
+| P5 re-run test data | Deferred, owner: release manager | Blog `99c44cb2-...`, template `600e6498-...`, wiki space `40ab6a15-...`, wiki page `0ac8df83-...`, all `NUAURA_TEST_P5_R3` |
