@@ -26,4 +26,4 @@ No secrets, session state or PII in this packet. Demo credentials are in `docs/q
 | Grok | NOT RUN | | |
 
 ## Known open
-Backend integration tests need Docker (not run here). Unit test for the minimal employee view not run. S-002 remainder accepted (see register).
+Backend integration tests need Docker (not run here). Unit `com.nulogic.api.employee.controller.EmployeeControllerTest`: 20 tests pass, including the S-002 detail-view case. Frontend `tsc --noEmit` clean. `vitest` and `next build` not run this round. S-002 remainder accepted (see register).
