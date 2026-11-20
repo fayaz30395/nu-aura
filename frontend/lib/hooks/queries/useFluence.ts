@@ -340,6 +340,7 @@ export function useCreateWikiPage() {
     mutationFn: (data: CreateWikiPageRequest) => fluenceService.createWikiPage(data),
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiSpaces()});
     },
   });
 }
@@ -384,6 +385,7 @@ export function useDeleteWikiPage() {
     mutationFn: (id: string) => fluenceService.deleteWikiPage(id),
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
+      queryClient.invalidateQueries({queryKey: fluenceKeys.wikiSpaces()});
     },
   });
 }
@@ -391,6 +393,7 @@ export function useDeleteWikiPage() {
 function invalidateWikiPage(queryClient: ReturnType<typeof useQueryClient>, id: string) {
   queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPageDetail(id)});
   queryClient.invalidateQueries({queryKey: fluenceKeys.wikiPages()});
+  queryClient.invalidateQueries({queryKey: fluenceKeys.wikiSpaces()});
 }
 
 export function usePublishWikiPage() {
