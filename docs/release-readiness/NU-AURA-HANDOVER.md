@@ -1605,4 +1605,32 @@ Next (no owner needed): run backend integration tests, two-tenant isolation test
 
 ### Addendum 2026-11-20 (later): backend Testcontainers suite now runs
 
-All 3 Testcontainers tests pass on Colima: `RlsNoBypassTest` 2/2 (real Postgres, NOBYPASSRLS role isolates tenants), `TenantTimeServiceIntegrationTest` 4/4, `OutboxEventProcessorTest` 18/18. No `sudo` symlink needed. Env used: `DOCKER_AVAILABLE=true DOCKER_HOST=unix://$HOME/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock TESTCONTAINERS_RYUK_DISABLED=true`. Without `DOCKER_AVAILABLE=true`, `RlsNoBypassTest` silently skips (looks green). Only 3 Testcontainers tests exist; no other integration suite. This closes the "backend integration never run" gap for those 3; live two-tenant API isolation is still untested. The 18 eslint warnings (mostly `window.location.href`) are left on purpose: full-page navigation in auth/error paths is intended.
+All 3 Testcontainers tests pass on Colima: `RlsNoBypassTest` 2/2 (real Postgres, NOBYPASSRLS role isolates tenants), `TenantTimeServiceIntegrationTest` 4/4, `OutboxEventProcessorTest` 18/18. No `sudo` symlink needed. Env used: `DOCKER_AVAILABLE=true DOCKER_HOST=unix://$HOME/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock TESTCONTAINERS_RYUK_DISABLED=true`. Without `DOCKER_AVAILABLE=true`, `RlsNoBypassTest` silently skips (looks green). CORRECTION: 80 test classes extend `AbstractPostgresIntegrationTest` (singleton Postgres 16 + Flyway); the first grep missed them. Full run of those classes (84 classes incl. the 3 above): 922 tests, 0 failures, 0 errors, 0 skipped. Caveat: those tests connect as superuser `test`, which bypasses RLS, and most disable the security filters, so they do not prove tenant isolation; the two-tenant suite below targets that. The 18 eslint warnings (mostly `window.location.href`) are left on purpose: full-page navigation in auth/error paths is intended.
+
+### Addendum 2026-11-20 (two-tenant isolation suite), commit `4ac68619`
+
+**Suite:** `backend/src/test/java/com/nulogic/integration/isolation/` + `AbstractTenantIsolationIntegrationTest`. Own Postgres 16 container; role `nu_app_rls` (NOBYPASSRLS) created before Flyway; Flyway as superuser; app connects as `nu_app_rls`, so RLS is really enforced. Real filter chain and JWTs from `JwtTokenProvider` (`access_token` cookie + CSRF). Seeds two synthetic tenants (`seed-tenant.sql`). Fails (never skips) if Docker is missing; a guard test pins that. Every cross-tenant check has a positive control on the caller's own data.
+
+**Evidence (my own independent re-run, surefire XML):** 331 isolation tests + all 80 `AbstractPostgresIntegrationTest` classes + RLS guards: 91 classes, 1191 tests, 0 failures, 0 errors, 0 skipped. Changed-service unit tests: 0 failures. Isolation counts: ReadApi 214, WriteApi 79, AuthToken 10, RlsDatabase 10 (all 326 `tenant_id` tables), CacheAndAsync 7, EnvironmentGuard 6, Layer 5. 29 resource types across HRMS, Hire, Grow, Fluence, payroll, PSA.
+
+**Leaks found and fixed (each regression test failed before the fix, except the employee create/update FK case, written after):**
+1. Employee cache keyed by id only: tenant B got tenant A's profile. Key now includes tenant (`EmployeeService`).
+2. `contract_versions` allow-all RLS policy since V24: any tenant could read/write all contract versions. New forward migration `V356__restore_contract_versions_tenant_rls.sql`.
+3. FK ids pointing at another tenant's rows (also an id-existence oracle): department create/update, employee create/admin update, goal create/update, project create/update, pulse survey addQuestion, wiki space addMember. Now 404.
+4. Signed token without `tenantId`: 500, now 401 (`JwtTokenProvider`).
+5. File path `<A>/../<B>/..` passed ownership check: now 400 (`FileUploadController`).
+6. Survey not-found returned 500, now 404.
+
+**Found, NOT fixed (outside this task; owner/next-task decisions):**
+- Six schedulers query `tenants.is_active` (column does not exist) so they process zero tenants: leave accrual, contract lifecycle, auto-regularization, document expiry, hire reminder, policy acknowledgment. **Functional bug: these jobs do nothing.**
+- Jobs looping tenants inside one transaction never switch the tenant GUC: zero rows, no leak.
+- Notification GET/DELETE by id checks tenant but not user (same-tenant IDOR).
+- 12 child tables have neither `tenant_id` nor RLS (list pinned by a test).
+- Every tenant can read all rows of `tenants` (contact email/phone).
+- Project `clientId` not validated against tenant.
+
+**Not covered / not verified:** 152 of 183 controllers (admin/platform, public/webhook, Mobile duplicates, analytics, payroll-statutory, PSA, LMS; list in the agent scratchpad `uncovered.txt`); WebSocket delivery; actually running scheduled jobs (skipped to avoid email risk); production Redis cache (tests use in-memory cache with the same key logic); rate limiting is off in this suite only.
+
+**Deploy note:** V356 is not applied to the local dev DB or the :8080 jar yet (rebuild + restart needed). Applying V356 to production needs owner approval. Release verdict still NOT re-issued.
+
+**Run:** `cd backend && export DOCKER_AVAILABLE=true DOCKER_HOST=unix://$HOME/.colima/default/docker.sock TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock TESTCONTAINERS_RYUK_DISABLED=true && flock /tmp/nuaura-mvn.lock mvn -q test -Dtest='com.nulogic.integration.isolation.*Test' -Dsurefire.failIfNoSpecifiedTests=false`
