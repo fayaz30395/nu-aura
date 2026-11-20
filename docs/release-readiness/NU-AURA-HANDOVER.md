@@ -1592,3 +1592,13 @@ Push status, from the local remote-tracking refs (not fetched): `fayaz-deen/main
 - Whether the 2026-11-16 local clean-up removed every 2026-11-15 test row.
 - Line references for `RecruitmentManagementService` lines 369, 421, 481, 545 (taken from the register; only 186-190 was re-read).
 - Exact current permission count and the 13 versus 26 role-list difference.
+
+---
+
+## Addendum 2026-11-20: beta-mission baseline
+
+Re-verified at `ee8cda31` (0 ahead/behind `fayaz-deen/main`): Flyway head V355; `tsc` clean; eslint 0 errors, 18 warnings (`--max-warnings=0` fails; `window.location.href` rule); vitest 2690/2690 pass; backend health DOWN only on `mail`; frontend :3001 up.
+
+Docker: Colima was stopped; `colima start` works. Colima socket is `~/.colima/default/docker.sock`, but `/var/run/docker.sock` points to a missing `~/.docker/run/docker.sock`. Owner step to unblock backend integration tests: `sudo ln -sf ~/.colima/default/docker.sock /var/run/docker.sock`. Integration suite has still never run.
+
+Next (no owner needed): run backend integration tests, two-tenant isolation test, clear eslint warnings. Needs owner approval: beta deploy, production DB/email/DNS changes, beta invitations. Verdict remains NO-GO until the owner re-issues it.
