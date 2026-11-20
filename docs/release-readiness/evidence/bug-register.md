@@ -1,8 +1,8 @@
 # NU-AURA UI bug register (P0-P7)
 
-Merged from the per-phase files. All rows OPEN except UI-001/003/004/005/008/009/010 (fixed in `d10bc9b9`, need re-verification). Fix round done in commits `16d80143` and `e0840b21` (local, not pushed). Per-batch results: `fixes/*.md`. Live verification: `fixes/verify.md` (22 PASS incl. F-003/4/5 and G-003 after rebuild; UI-008/009 not verifiable, no PSA project).
+Merged from the per-phase files. STATUS AS OF 2026-11-20: the older status header and totals were removed because they no longer matched. Per-bug status now lives in `p3-static-status.md`, `p4-static-status.md`, `p5-static-status.md`, `p6p7-static-status.md` (static code reading unless marked LIVE) and in the dated decision rows at the bottom of this file (later rows supersede earlier ones). Plan: `../17-e2e-browser-test-plan.md` A4. Cross-document check: `doc-consistency-check.md`.
 
-Fix status over the 117 entries: FIXED 84, PARTIAL 7, SKIPPED 11, NEEDS-DECISION 15. Open items and their reasons are in the per-batch files. The `backend:8080` login problem in a real browser (`.env` API URL) is a local config issue, not in this register.
+Fix totals are not restated here; see the static status files.
 
 Total listed entries: 117 (UI-006 and UI-007 each group several defects, so distinct defects are higher). By severity: Critical 1, High 23, High/Medium 1, Medium 52, Low 40
 

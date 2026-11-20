@@ -2,6 +2,15 @@
 
 Verdict: **NO-GO today.** See `16-release-go-no-go.md`. Defects: `15-known-defects.md`. UI plan: `16-ui-upgrade-plan.md`.
 
+## Status update 2026-11-20 (verdict not re-issued)
+
+The verdict below was written on 2026-11-15 and has **not** been re-evaluated. Since then:
+- Fixes are committed and pushed to `fayaz-deen/main` (HEAD `3fcc79e3` at time of writing). Migrations now run to V353 (V350-V353 add HR/MANAGER grants: letters, documents, referrals, offer template).
+- UI tests: plan `17-e2e-browser-test-plan.md` (A4) and `evidence/bug-register.md`. P0 pass, P1 1494 route loads with 8 Low fails, P2 17/19 pass (2 blocked), P4-P6 re-run with fixes verified, P3 and P7 partial.
+- Unit tests: frontend vitest 137 files / 2690 pass; `EmployeeControllerTest` 20 pass; `next build` and `tsc` clean. Backend integration tests need Docker and have not run.
+- Not done and needs the owner: external Codex and Grok review (A7, NOT RUN), two-tenant isolation (not testable locally, second tenant has no users), Redis rate-limit mode check, `.env` `NEXT_PUBLIC_API_URL` for real-browser login, deploy-time removal of leftover `NUAURA_TEST_*` data (list in the register), product decisions: H-016 Applicant-to-Candidate status mapping, G-010/G-011 enrolment data, UI-002 PSA project seed, UI-013, `/tasks` Task API.
+- Statements below about test counts, "uncommitted" fixes, V342-V345, the 14-check browser run and tenant isolation are from 2026-11-15 and are superseded by this block.
+
 ## Dashboard
 | Area | Status | Note |
 |---|---|---|
