@@ -73,7 +73,7 @@ export default function SsoSettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // React Query hooks
-  const {data: samlConfig, isLoading, error: fetchError} = useSamlConfig(hasHydrated && isAuthenticated);
+  const {data: samlConfig, isLoading, error: fetchError} = useSamlConfig(hasHydrated && isAuthenticated && permReady && hasPermission(Permissions.SYSTEM_ADMIN));
   const createMutation = useCreateSamlConfig();
   const updateMutation = useUpdateSamlConfig();
   const deleteMutation = useDeleteSamlConfig();

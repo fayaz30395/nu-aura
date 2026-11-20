@@ -126,16 +126,20 @@ export function LeaveBalanceWidget({leaveBalances = null}: LeaveBalanceWidgetPro
 
         {/* Dots navigation */}
         {balances.length > 1 && (
-          <div className="flex justify-center gap-1.5 mb-4">
+          <div className="flex justify-center mb-3">
             {balances.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setSelectedIndex(idx)}
-                className={`h-1.5 rounded-full transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${
-                  idx === selectedIndex ? 'w-4 bg-[var(--text-2)]' : 'w-1.5 bg-[var(--border-soft)]'
-                }`}
+                className="group flex h-6 min-w-6 cursor-pointer items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                 aria-label={`Leave type ${idx + 1} of ${balances.length}`}
-              />
+              >
+                <span
+                  className={`h-1.5 rounded-full transition-all ${
+                    idx === selectedIndex ? 'w-4 bg-[var(--text-2)]' : 'w-1.5 bg-[var(--border-soft)]'
+                  }`}
+                />
+              </button>
             ))}
           </div>
         )}

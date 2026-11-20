@@ -9,7 +9,7 @@ import {AlertTriangle, Download, RefreshCw, Shield, TrendingDown, Zap} from 'luc
 import {format} from 'date-fns';
 import {Button} from '@/components/ui/Button';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {EmptyState} from '@/components/ui/EmptyState';
 
 interface AttritionPrediction {
@@ -37,6 +37,7 @@ const RISK_COLOR: Record<string, { bg: string; text: string; bar: string }> = {
 
 export default function AttritionReportPage() {
   const queryClient = useQueryClient();
+  const {hasPermission, isPermissionReady} = usePermissions();
   const [minScore, setMinScore] = useState(50);
   const [selectedRisk, setSelectedRisk] = useState<string>('ALL');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -50,6 +51,7 @@ export default function AttritionReportPage() {
       );
       return res.data ?? [];
     },
+    enabled: isPermissionReady && hasPermission(Permissions.PREDICTIVE_ANALYTICS_VIEW),
   });
 
   const error = queryError ? 'Failed to load attrition predictions. Predictive analytics may not be available.' : null;
