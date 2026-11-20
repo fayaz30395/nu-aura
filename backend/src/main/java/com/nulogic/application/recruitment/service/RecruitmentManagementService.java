@@ -59,6 +59,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
     private final DomainEventPublisher eventPublisher;
     private final GoogleMeetService googleMeetService;
     private final TenantTimeService tenantTimeService;
+    private final ApplicantOfferSync applicantOfferSync;
 
     // Focused sub-services (facade delegation)
     private final JobOpeningService jobOpeningService;
@@ -367,6 +368,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         Candidate.CandidateStatus oldStatus = candidate.getStatus();
         candidate.setStatus(Candidate.CandidateStatus.OFFER_ACCEPTED);
+        applicantOfferSync.sync(candidate.getId(), tenantId, Candidate.CandidateStatus.OFFER_ACCEPTED);
         // S12-B: tenant-local offer-accepted date — resolved via TenantTimeService.
         candidate.setOfferAcceptedDate(tenantTimeService.today(tenantId));
 
@@ -419,6 +421,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         Candidate.CandidateStatus oldStatus = candidate.getStatus();
         candidate.setStatus(Candidate.CandidateStatus.OFFER_DECLINED);
+        applicantOfferSync.sync(candidate.getId(), tenantId, Candidate.CandidateStatus.OFFER_DECLINED);
         // S12-B: tenant-local offer-declined date — resolved via TenantTimeService.
         candidate.setOfferDeclinedDate(tenantTimeService.today(tenantId));
         candidate.setOfferDeclineReason(declineReason);
@@ -487,6 +490,12 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         Candidate savedCandidate = candidateRepository.save(candidate);
 
+        // A stage move into the offer stages must reach the pipeline board too (H-016).
+        if (savedCandidate.getStatus() == Candidate.CandidateStatus.OFFER_EXTENDED
+                || savedCandidate.getStatus() == Candidate.CandidateStatus.OFFER_ACCEPTED) {
+            applicantOfferSync.sync(savedCandidate.getId(), savedCandidate.getTenantId(), savedCandidate.getStatus());
+        }
+
         if (oldStage != stage) {
             auditLogService.logAction(
                     "CANDIDATE",
@@ -544,6 +553,7 @@ public class RecruitmentManagementService implements ApprovalCallbackHandler {
 
         candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
         candidate.setCurrentStage(Candidate.RecruitmentStage.OFFER_NDA_TO_BE_RELEASED);
+        applicantOfferSync.sync(candidate.getId(), tenantId, Candidate.CandidateStatus.OFFER_EXTENDED);
         candidate.setOfferedCtc(request.getOfferedSalary());
         candidate.setOfferedDesignation(request.getPositionTitle());
         candidate.setProposedJoiningDate(request.getJoiningDate());

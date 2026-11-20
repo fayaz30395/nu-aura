@@ -7,7 +7,11 @@ import com.nulogic.common.security.Permission;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.employee.Employee;
+import com.nulogic.domain.recruitment.Applicant;
+import com.nulogic.domain.recruitment.ApplicationStatus;
 import com.nulogic.domain.recruitment.Candidate;
+import com.nulogic.infrastructure.recruitment.repository.ApplicantRepository;
+import org.springframework.test.util.ReflectionTestUtils;
 import com.nulogic.domain.recruitment.Interview;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.domain.user.RoleScope;
@@ -48,6 +52,8 @@ class RecruitmentManagementServiceTest {
 
     private static MockedStatic<TenantContext> tenantContextMock;
     private static MockedStatic<SecurityContext> securityContextMock;
+    @Mock
+    private ApplicantRepository applicantRepository;
     @Mock
     private JobOpeningRepository jobOpeningRepository;
     @Mock
@@ -110,6 +116,11 @@ class RecruitmentManagementServiceTest {
         hiringManagerId = UUID.randomUUID();
         recruiterId = UUID.randomUUID();
         interviewerId = UUID.randomUUID();
+
+        // Real helper over the mocked repository so the offer tests see applicant changes.
+        ReflectionTestUtils.setField(recruitmentManagementService, "applicantOfferSync",
+                new ApplicantOfferSync(applicantRepository, tenantTimeService));
+        when(tenantTimeService.now(any())).thenReturn(LocalDateTime.of(2026, 1, 1, 10, 0));
 
         tenantContextMock.when(TenantContext::getCurrentTenant).thenReturn(tenantId);
         tenantContextMock.when(TenantContext::requireCurrentTenant).thenReturn(tenantId);
@@ -596,6 +607,90 @@ class RecruitmentManagementServiceTest {
 
             verify(candidateRepository).save(any(Candidate.class));
             assertThat(candidate.isDeleted()).isTrue();
+        }
+
+        private Applicant applicant(ApplicationStatus status) {
+            Applicant a = new Applicant();
+            a.setId(UUID.randomUUID());
+            a.setTenantId(tenantId);
+            a.setCandidateId(candidateId);
+            a.setStatus(status);
+            return a;
+        }
+
+        private void stubOfferCandidate() {
+            candidate.setStatus(Candidate.CandidateStatus.OFFER_EXTENDED);
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
+            when(candidateRepository.save(any(Candidate.class))).thenAnswer(i -> i.getArgument(0));
+        }
+
+        @Test
+        @DisplayName("createOffer moves live applicants to OFFERED")
+        void createOfferMovesApplicantsToOffered() {
+            candidate.setStatus(Candidate.CandidateStatus.SELECTED);
+            when(candidateRepository.findByIdAndTenantId(candidateId, tenantId)).thenReturn(Optional.of(candidate));
+            when(candidateRepository.save(any(Candidate.class))).thenAnswer(i -> i.getArgument(0));
+            when(workflowService.hasApplicableWorkflow(any())).thenReturn(false);
+            Applicant live = applicant(ApplicationStatus.OFFER_PENDING);
+            when(applicantRepository.findByCandidateIdAndTenantId(candidateId, tenantId)).thenReturn(List.of(live));
+            CreateOfferRequest req = new CreateOfferRequest();
+            req.setOfferedSalary(new BigDecimal("1800000"));
+
+            recruitmentManagementService.createOffer(candidateId, req);
+
+            assertThat(live.getStatus()).isEqualTo(ApplicationStatus.OFFERED);
+            assertThat(live.getCurrentStageEnteredAt()).isNotNull();
+        }
+
+        @Test
+        @DisplayName("acceptOffer moves applicants to ACCEPTED")
+        void acceptOfferMovesApplicantsToAccepted() {
+            stubOfferCandidate();
+            Applicant live = applicant(ApplicationStatus.OFFERED);
+            when(applicantRepository.findByCandidateIdAndTenantId(candidateId, tenantId)).thenReturn(List.of(live));
+
+            recruitmentManagementService.acceptOffer(candidateId, LocalDate.now());
+
+            assertThat(live.getStatus()).isEqualTo(ApplicationStatus.ACCEPTED);
+        }
+
+        @Test
+        @DisplayName("declineOffer moves applicants to WITHDRAWN")
+        void declineOfferMovesApplicantsToWithdrawn() {
+            stubOfferCandidate();
+            Applicant live = applicant(ApplicationStatus.OFFERED);
+            when(applicantRepository.findByCandidateIdAndTenantId(candidateId, tenantId)).thenReturn(List.of(live));
+
+            recruitmentManagementService.declineOffer(candidateId, "Better offer");
+
+            assertThat(live.getStatus()).isEqualTo(ApplicationStatus.WITHDRAWN);
+        }
+
+        @Test
+        @DisplayName("acceptOffer leaves terminal applicants alone")
+        void acceptOfferSkipsTerminalApplicants() {
+            stubOfferCandidate();
+            Applicant rejected = applicant(ApplicationStatus.REJECTED);
+            Applicant withdrawn = applicant(ApplicationStatus.WITHDRAWN);
+            when(applicantRepository.findByCandidateIdAndTenantId(candidateId, tenantId))
+                    .thenReturn(List.of(rejected, withdrawn));
+
+            recruitmentManagementService.acceptOffer(candidateId, LocalDate.now());
+
+            assertThat(rejected.getStatus()).isEqualTo(ApplicationStatus.REJECTED);
+            assertThat(withdrawn.getStatus()).isEqualTo(ApplicationStatus.WITHDRAWN);
+            verify(applicantRepository, never()).saveAll(any());
+        }
+
+        @Test
+        @DisplayName("acceptOffer with no applicants is a no-op for applicants")
+        void acceptOfferWithNoApplicantsIsNoOp() {
+            stubOfferCandidate();
+            when(applicantRepository.findByCandidateIdAndTenantId(candidateId, tenantId)).thenReturn(List.of());
+
+            recruitmentManagementService.acceptOffer(candidateId, LocalDate.now());
+
+            verify(applicantRepository, never()).saveAll(any());
         }
     }
 

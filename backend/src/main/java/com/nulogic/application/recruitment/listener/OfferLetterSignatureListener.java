@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.application.esignature.event.SignatureCompletedEvent;
+import com.nulogic.application.recruitment.service.ApplicantOfferSync;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.esignature.SignatureRequest;
@@ -31,6 +32,7 @@ public class OfferLetterSignatureListener {
     private final CandidateRepository candidateRepository;
     private final ObjectMapper objectMapper;
     private final TenantTimeService tenantTimeService;
+    private final ApplicantOfferSync applicantOfferSync;
 
     @EventListener
     @Transactional
@@ -77,6 +79,7 @@ public class OfferLetterSignatureListener {
                     // S12-B: tenant-local offer-accepted date — resolved via TenantTimeService.
                     candidate.setOfferAcceptedDate(tenantTimeService.today(event.getTenantId()));
                     candidateRepository.save(candidate);
+                    applicantOfferSync.sync(candidateId, event.getTenantId(), Candidate.CandidateStatus.OFFER_ACCEPTED);
                     log.info("Candidate {} accepted offer via e-signature", candidateId);
                 }
                 case DECLINED -> {
@@ -86,6 +89,7 @@ public class OfferLetterSignatureListener {
                     candidate.setOfferDeclinedDate(tenantTimeService.today(event.getTenantId()));
                     candidate.setOfferDeclineReason("Declined via e-signature");
                     candidateRepository.save(candidate);
+                    applicantOfferSync.sync(candidateId, event.getTenantId(), Candidate.CandidateStatus.OFFER_DECLINED);
                     log.info("Candidate {} declined offer via e-signature", candidateId);
                 }
                 default -> log.debug("Ignoring signature status {} for candidate {}",
