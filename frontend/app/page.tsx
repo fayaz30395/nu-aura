@@ -11,7 +11,8 @@ export default function HomePage() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      router.replace('/auth/login');
+      // The proxy sends signed-out visitors on to /auth/login; signed-in users land on their dashboard.
+      router.replace('/me/dashboard');
     }, 180);
     return () => clearTimeout(timer);
   }, [router]);
