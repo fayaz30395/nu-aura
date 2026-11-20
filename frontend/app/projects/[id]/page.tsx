@@ -74,7 +74,9 @@ export default function ProjectDetailPage() {
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;
-  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
+  const {hasPermission, hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
+  // PUT /projects/{id} needs PROJECT:UPDATE; activate/close are state changes of the same kind.
+  const canUpdateProject = hasPermission(Permissions.PROJECT_UPDATE);
   const hasAccess = hasAnyPermission(Permissions.PROJECT_VIEW, Permissions.PROJECT_MANAGE);
 
   useEffect(() => {
@@ -237,15 +239,17 @@ export default function ProjectDetailPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button variant="outline" onClick={handleOpenEdit} leftIcon={<Edit2 className="h-4 w-4"/>}>
-              Edit
-            </Button>
-            {project?.status === 'PLANNED' && (
+            {canUpdateProject && (
+              <Button variant="outline" onClick={handleOpenEdit} leftIcon={<Edit2 className="h-4 w-4"/>}>
+                Edit
+              </Button>
+            )}
+            {canUpdateProject && project?.status === 'PLANNED' && (
               <Button onClick={() => setShowActivateDialog(true)}>
                 Start Project
               </Button>
             )}
-            {project?.status === 'IN_PROGRESS' && (
+            {canUpdateProject && project?.status === 'IN_PROGRESS' && (
               <Button variant="outline" onClick={() => setShowCloseDialog(true)}>
                 Complete Project
               </Button>

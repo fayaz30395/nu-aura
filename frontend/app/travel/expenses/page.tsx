@@ -11,6 +11,7 @@ import {Select} from '@/components/ui/Select';
 import {Textarea} from '@/components/ui/Textarea';
 import {SlidePanel} from '@/components/ui/SlidePanel';
 import {useAuth} from '@/lib/hooks/useAuth';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
   getGetByEmployeeQueryKey,
   useCreateExpense,
@@ -223,6 +224,9 @@ function ExpenseCard({expense}: {expense: TravelExpenseDto}) {
 
 export default function TravelExpensesPage() {
   const {isAuthenticated, hasHydrated, user} = useAuth();
+  const {hasPermission} = usePermissions();
+  // POST /travel/expenses needs TRAVEL:CREATE.
+  const canCreateExpense = hasPermission(Permissions.TRAVEL_CREATE);
   const [showPanel, setShowPanel] = useState(false);
   const [statusFilter, setStatusFilter] = useState('ALL');
 
@@ -258,7 +262,7 @@ export default function TravelExpensesPage() {
             <h1 className="page-title">Travel Expenses</h1>
             <p className="page-subtitle">Track and submit expenses for your approved travel requests.</p>
           </div>
-          {isAuthenticated && (
+          {isAuthenticated && canCreateExpense && (
             <Button size="sm" onClick={() => setShowPanel(true)} className="flex items-center gap-1.5">
               <Plus className="w-3.5 h-3.5"/>Add Expense
             </Button>
@@ -324,7 +328,7 @@ export default function TravelExpensesPage() {
               <p className="text-sm text-[var(--text-muted)]">
                 {statusFilter === 'ALL' ? 'No travel expenses yet' : `No ${STATUS_LABELS[statusFilter]?.toLowerCase()} expenses`}
               </p>
-              {statusFilter === 'ALL' && (
+              {statusFilter === 'ALL' && canCreateExpense && (
                 <Button size="sm" variant="outline" onClick={() => setShowPanel(true)} className="mt-4">
                   Add First Expense
                 </Button>

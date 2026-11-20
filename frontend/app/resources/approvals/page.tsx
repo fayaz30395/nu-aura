@@ -25,7 +25,8 @@ type TabKey = 'pending' | 'approved' | 'rejected';
 
 export default function ApprovalsPage() {
   const router = useRouter();
-  const {hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
+  const {hasPermission, hasAnyPermission, isPermissionReady: permissionsReady} = usePermissions();
+  const canApprove = hasPermission(Permissions.ALLOCATION_APPROVE);
   const hasAccess = hasAnyPermission(Permissions.ALLOCATION_APPROVE, Permissions.ALLOCATION_VIEW, Permissions.ALLOCATION_MANAGE);
 
   useEffect(() => {
@@ -189,14 +190,14 @@ export default function ApprovalsPage() {
                   request={request}
                   isSelected={selectedRequest?.id === request.id}
                   onClick={() => handleSelectRequest(request)}
-                  onApprove={() => {
+                  onApprove={canApprove ? () => {
                     setSelectedRequest(request);
                     setShowApproveModal(true);
-                  }}
-                  onReject={() => {
+                  } : undefined}
+                  onReject={canApprove ? () => {
                     setSelectedRequest(request);
                     setShowRejectModal(true);
-                  }}
+                  } : undefined}
                 />
               ))}
             </div>
@@ -266,7 +267,7 @@ export default function ApprovalsPage() {
                   </div>
 
                   {/* Actions */}
-                  {selectedRequest.status === 'PENDING' && (
+                  {selectedRequest.status === 'PENDING' && canApprove && (
                     <div className="flex gap-4">
                       <Button
                         variant="outline"

@@ -8,7 +8,7 @@ import {z} from 'zod';
 import {CreateShiftRequest, Shift} from '@/lib/types/hrms/shifts';
 import {Clock, Edit, Plus, ToggleLeft, ToggleRight, Trash2} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -45,7 +45,9 @@ type ShiftFormData = z.infer<typeof shiftFormSchema>;
 export default function ShiftsManagementPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyRole, isReady} = usePermissions();
+  const {hasAnyRole, hasPermission, isReady} = usePermissions();
+  // Shift CRUD endpoints require ATTENDANCE:APPROVE (ShiftManagementController)
+  const canManage = hasPermission(Permissions.ATTENDANCE_APPROVE);
   const [showModal, setShowModal] = useState(false);
   const [editingShift, setEditingShift] = useState<Shift | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -243,17 +245,19 @@ export default function ShiftsManagementPage() {
               Configure and manage work shifts for your organization
             </p>
           </div>
-          <button
-            onClick={() => {
-              resetForm();
-              setEditingShift(null);
-              setShowModal(true);
-            }}
-            className="btn-primary flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <Plus className="h-5 w-5"/>
-            Add Shift
-          </button>
+          {canManage && (
+            <button
+              onClick={() => {
+                resetForm();
+                setEditingShift(null);
+                setShowModal(true);
+              }}
+              className="btn-primary flex items-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              <Plus className="h-5 w-5"/>
+              Add Shift
+            </button>
+          )}
         </div>
 
         {/* Error Message */}
@@ -356,29 +360,31 @@ export default function ShiftsManagementPage() {
                     )}
                   </div>
 
-                  <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-main)]">
-                    <button
-                      onClick={() => handleEdit(shift)}
-                      className="p-2 text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 rounded-lg transition-colors"
-                      title="Edit"
-                    >
-                      <Edit className="h-4 w-4"/>
-                    </button>
-                    <button
-                      onClick={() => handleToggleActive(shift)}
-                      className="p-2 text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-900/30 rounded-lg transition-colors"
-                      title={shift.isActive ? 'Deactivate' : 'Activate'}
-                    >
-                      {shift.isActive ? <ToggleRight className="h-4 w-4"/> : <ToggleLeft className="h-4 w-4"/>}
-                    </button>
-                    <button
-                      onClick={() => handleDelete(shift)}
-                      className="p-2 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 rounded-lg transition-colors"
-                      title="Delete"
-                    >
-                      <Trash2 className="h-4 w-4"/>
-                    </button>
-                  </div>
+                  {canManage && (
+                    <div className="flex justify-end gap-2 pt-4 border-t border-[var(--border-main)]">
+                      <button
+                        onClick={() => handleEdit(shift)}
+                        className="p-2 text-accent-700 hover:bg-accent-50 dark:hover:bg-accent-950/30 rounded-lg transition-colors"
+                        title="Edit"
+                      >
+                        <Edit className="h-4 w-4"/>
+                      </button>
+                      <button
+                        onClick={() => handleToggleActive(shift)}
+                        className="p-2 text-warning-600 hover:bg-warning-50 dark:hover:bg-warning-900/30 rounded-lg transition-colors"
+                        title={shift.isActive ? 'Deactivate' : 'Activate'}
+                      >
+                        {shift.isActive ? <ToggleRight className="h-4 w-4"/> : <ToggleLeft className="h-4 w-4"/>}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(shift)}
+                        className="p-2 text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/30 rounded-lg transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4"/>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))

@@ -16,7 +16,7 @@ import {
   VISIBILITY_INFO,
 } from '@/lib/types/core/custom-fields';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -63,7 +63,10 @@ type CustomFieldFormData = z.infer<typeof customFieldSchema> & { optionsText: st
 export default function CustomFieldsPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyRole, isReady} = usePermissions();
+  const {hasAnyRole, hasPermission, isReady} = usePermissions();
+  const canCreate = hasPermission(Permissions.CUSTOM_FIELD_CREATE);
+  const canUpdate = hasPermission(Permissions.CUSTOM_FIELD_UPDATE);
+  const canDelete = hasPermission(Permissions.CUSTOM_FIELD_DELETE);
 
   // Query hook
   const definitionsQuery = useCustomFieldDefinitions(0, 100);
@@ -293,16 +296,18 @@ export default function CustomFieldsPage() {
               ))}
             </select>
           </div>
-          <button
-            onClick={() => {
-              reset();
-              setSelectedDefinition(null);
-              setShowCreateModal(true);
-            }}
-            className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            Create Custom Field
-          </button>
+          {canCreate && (
+            <button
+              onClick={() => {
+                reset();
+                setSelectedDefinition(null);
+                setShowCreateModal(true);
+              }}
+              className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              Create Custom Field
+            </button>
+          )}
         </div>
 
         <div className="skeuo-card overflow-hidden">
@@ -326,7 +331,7 @@ export default function CustomFieldsPage() {
               </th>
               <th
                 className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Actions
+                {canUpdate || canDelete ? 'Actions' : <span className="sr-only">Actions</span>}
               </th>
             </tr>
             </thead>
@@ -368,31 +373,47 @@ export default function CustomFieldsPage() {
                     {definition.fieldGroup || '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleToggleActive(definition)}
-                      className={`px-2 py-1 text-xs font-semibold rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
-                        definition.isActive
-                          ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300'
-                          : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
-                      }`}
-                      aria-label={`Toggle ${definition.fieldName} status`}
-                    >
-                      {definition.isActive ? 'Active' : 'Inactive'}
-                    </button>
+                    {canUpdate ? (
+                      <button
+                        onClick={() => handleToggleActive(definition)}
+                        className={`px-2 py-1 text-xs font-semibold rounded-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
+                          definition.isActive
+                            ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300'
+                            : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
+                        }`}
+                        aria-label={`Toggle ${definition.fieldName} status`}
+                      >
+                        {definition.isActive ? 'Active' : 'Inactive'}
+                      </button>
+                    ) : (
+                      <span
+                        className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          definition.isActive
+                            ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-300'
+                            : 'bg-[var(--bg-surface)] text-[var(--text-secondary)]'
+                        }`}
+                      >
+                        {definition.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => openEditModal(definition)}
-                      className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteField(definition)}
-                      className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      Delete
-                    </button>
+                    {canUpdate && (
+                      <button
+                        onClick={() => openEditModal(definition)}
+                        className="text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {canDelete && (
+                      <button
+                        onClick={() => handleDeleteField(definition)}
+                        className="text-danger-600 hover:text-danger-900 dark:text-danger-400 dark:hover:text-danger-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

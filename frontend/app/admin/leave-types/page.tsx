@@ -7,7 +7,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AccrualType, GenderSpecific, LeaveType, LeaveTypeRequest} from '@/lib/types/hrms/leave';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -49,7 +49,8 @@ type LeaveTypeFormData = z.infer<typeof leaveTypeFormSchema>;
 export default function LeaveTypesManagementPage() {
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyRole, isReady} = usePermissions();
+  const {hasAnyRole, hasPermission, isReady} = usePermissions();
+  const canManage = hasPermission(Permissions.LEAVE_TYPE_MANAGE);
   const [showModal, setShowModal] = useState(false);
   const [editingLeaveType, setEditingLeaveType] = useState<LeaveType | null>(null);
   const [uiError, setUiError] = useState<string | null>(null);
@@ -266,16 +267,18 @@ export default function LeaveTypesManagementPage() {
               Configure and manage leave types for your organization
             </p>
           </div>
-          <button
-            onClick={() => {
-              resetForm();
-              setEditingLeaveType(null);
-              setShowModal(true);
-            }}
-            className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            + Add Leave Type
-          </button>
+          {canManage && (
+            <button
+              onClick={() => {
+                resetForm();
+                setEditingLeaveType(null);
+                setShowModal(true);
+              }}
+              className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              + Add Leave Type
+            </button>
+          )}
         </div>
 
         {/* Error Message */}
@@ -313,7 +316,7 @@ export default function LeaveTypesManagementPage() {
               </th>
               <th
                 className="px-6 py-2 text-right text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
-                Actions
+                {canManage ? 'Actions' : <span className="sr-only">Actions</span>}
               </th>
             </tr>
             </thead>
@@ -380,24 +383,28 @@ export default function LeaveTypesManagementPage() {
                       </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => handleEdit(leaveType)}
-                      className="text-accent-700 dark:text-accent-300 hover:text-accent-900 dark:hover:text-accent-200 mr-4"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleToggleActive(leaveType)}
-                      className="text-warning-700 dark:text-warning-400 hover:text-warning-900 dark:hover:text-warning-300 mr-4"
-                    >
-                      {leaveType.isActive ? 'Deactivate' : 'Activate'}
-                    </button>
-                    <button
-                      onClick={() => handleDelete(leaveType)}
-                      className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300"
-                    >
-                      Delete
-                    </button>
+                    {canManage && (
+                      <>
+                        <button
+                          onClick={() => handleEdit(leaveType)}
+                          className="text-accent-700 dark:text-accent-300 hover:text-accent-900 dark:hover:text-accent-200 mr-4"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleToggleActive(leaveType)}
+                          className="text-warning-700 dark:text-warning-400 hover:text-warning-900 dark:hover:text-warning-300 mr-4"
+                        >
+                          {leaveType.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button
+                          onClick={() => handleDelete(leaveType)}
+                          className="text-danger-600 dark:text-danger-400 hover:text-danger-900 dark:hover:text-danger-300"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))

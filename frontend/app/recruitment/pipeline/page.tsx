@@ -28,7 +28,7 @@ import type {DropResult} from '@hello-pangea/dnd';
 import {DragDropContext, Draggable, Droppable} from '@hello-pangea/dnd';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Badge, Button, Card, Input, Modal, ModalBody, ModalFooter, ModalHeader, Select, Textarea,} from '@/components/ui';
 import {STAGE_TONE} from './_components/pipeline-config';
 import {PageHeader} from '@/components/ui/PageHeader';
@@ -248,9 +248,10 @@ interface CardMenuProps {
   onMoveToNextStage: () => void;
   onReject: () => void;
   onCreateOffer?: () => void;
+  canManage: boolean;
 }
 
-const CardMenu: React.FC<CardMenuProps> = ({applicant, onViewDetails, onMoveToNextStage, onReject, onCreateOffer}) => {
+const CardMenu: React.FC<CardMenuProps> = ({applicant, onViewDetails, onMoveToNextStage, onReject, onCreateOffer, canManage}) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -293,7 +294,7 @@ const CardMenu: React.FC<CardMenuProps> = ({applicant, onViewDetails, onMoveToNe
           >
             View Details
           </button>
-          {!isTerminal && nextStage && (
+          {canManage && !isTerminal && nextStage && (
             <button
               type="button"
               className="w-full text-left px-4 py-2 hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -317,7 +318,7 @@ const CardMenu: React.FC<CardMenuProps> = ({applicant, onViewDetails, onMoveToNe
               Create Offer Letter
             </button>
           )}
-          {applicant.status !== ApplicationStatus.REJECTED && (
+          {canManage && applicant.status !== ApplicationStatus.REJECTED && (
             <button
               type="button"
               className="w-full text-left px-4 py-2 hover:bg-danger-50 text-danger-600 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -508,6 +509,10 @@ export default function ApplicantPipelinePage() {
   // ── React Query Hooks ──────────────────────────────────────────────────────
   const router = useRouter();
   const queryClient = useQueryClient();
+  const {hasPermission} = usePermissions();
+  // PUT /applicants/{id}/status needs RECRUITMENT:MANAGE; POST /applicants needs RECRUITMENT:CREATE.
+  const canManageApplicants = hasPermission(Permissions.RECRUITMENT_MANAGE);
+  const canAddApplicant = hasPermission(Permissions.RECRUITMENT_CREATE);
   const jobOpeningsQuery = useJobOpenings(0, 200);
   const candidatesQuery = useCandidates(0, 200);
   const candidateOptions = candidatesQuery.data?.content ?? [];
@@ -751,6 +756,7 @@ export default function ApplicantPipelinePage() {
               </div>
 
               {/* Add Applicant Button */}
+              {canAddApplicant && (
               <Button
                 variant="primary"
                 leftIcon={<Plus size={16}/>}
@@ -759,6 +765,7 @@ export default function ApplicantPipelinePage() {
               >
                 Add Applicant
               </Button>
+              )}
             </div>
             }
           />
@@ -979,7 +986,8 @@ export default function ApplicantPipelinePage() {
                                     const isMoving = movingId === applicant.id;
 
                                     return (
-                                      <Draggable key={applicant.id} draggableId={applicant.id} index={index}>
+                                      <Draggable key={applicant.id} draggableId={applicant.id} index={index}
+                                  isDragDisabled={!canManageApplicants}>
                                         {(dragProvided, dragSnapshot) => (
                                           <Card
                                             ref={dragProvided.innerRef}
@@ -1033,6 +1041,7 @@ export default function ApplicantPipelinePage() {
                                                   onMoveToNextStage={() => handleMoveToNextStage(applicant)}
                                                   onReject={() => handleQuickReject(applicant)}
                                                   onCreateOffer={() => openOfferModal(applicant)}
+                                                  canManage={canManageApplicants}
                                                 />
                                               </div>
                                             </div>
@@ -1083,7 +1092,7 @@ export default function ApplicantPipelinePage() {
                                             )}
 
                                             {/* Quick Move Button */}
-                                            {nextForward && (
+                                            {canManageApplicants && nextForward && (
                                               <button
                                                 type="button"
                                                 disabled={isMoving}

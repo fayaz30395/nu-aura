@@ -53,7 +53,8 @@ const PAGE_SIZE = 20;
 export default function DepartmentsPage() {
   const toast = useToast();
   const queryClient = useQueryClient();
-  const {isReady: permReady} = usePermissions();
+  const {isReady: permReady, hasPermission} = usePermissions();
+  const canManage = hasPermission(Permissions.DEPARTMENT_MANAGE);
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -216,10 +217,12 @@ export default function DepartmentsPage() {
               {data?.totalElements ?? 0} departments
             </p>
           </div>
-          <Button variant="primary" onClick={openCreate} className="flex items-center gap-2">
-            <Plus className="h-4 w-4"/>
-            New department
-          </Button>
+          {canManage && (
+            <Button variant="primary" onClick={openCreate} className="flex items-center gap-2">
+              <Plus className="h-4 w-4"/>
+              New department
+            </Button>
+          )}
         </Reveal>
 
         {/* Search */}
@@ -281,7 +284,7 @@ export default function DepartmentsPage() {
                   className="text-left px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">Status
                 </th>
                 <th
-                  className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">Actions
+                  className="text-right px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-3)]">{canManage ? 'Actions' : <span className="sr-only">Actions</span>}
                 </th>
               </tr>
               </thead>
@@ -309,7 +312,7 @@ export default function DepartmentsPage() {
                       </span>
                   </td>
                   <td className="px-4 py-2.5">
-                    <div className="flex items-center justify-end gap-1">
+                    {canManage && <div className="flex items-center justify-end gap-1">
                       <button
                         aria-label={dept.isActive ? 'Deactivate department' : 'Activate department'}
                         onClick={() => toggleMutation.mutate({id: dept.id, active: dept.isActive})}
@@ -334,7 +337,7 @@ export default function DepartmentsPage() {
                       >
                         <Trash2 className="h-4 w-4"/>
                       </button>
-                    </div>
+                    </div>}
                   </td>
                 </tr>
               ))}

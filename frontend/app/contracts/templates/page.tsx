@@ -16,6 +16,8 @@ export default function ContractTemplatesPage() {
   const {hasPermission, isPermissionReady} = usePermissions();
 
   const hasAccess = hasPermission(Permissions.CONTRACT_VIEW);
+  // PUT/DELETE/POST /contract-templates need CONTRACT:TEMPLATE_MANAGE.
+  const canManageTemplates = hasPermission(Permissions.CONTRACT_TEMPLATE_MANAGE);
 
   useEffect(() => {
     if (isPermissionReady && !hasAccess) {
@@ -119,6 +121,7 @@ export default function ContractTemplatesPage() {
                 <p className="text-body-secondary mb-4">
                   {contractService.getTypeLabel(template.type)}
                 </p>
+                {canManageTemplates && (
                 <div className="flex gap-2">
                   <Button
                     variant="light"
@@ -144,6 +147,7 @@ export default function ContractTemplatesPage() {
                     Delete
                   </Button>
                 </div>
+                )}
               </Card>
             ))}
           </div>

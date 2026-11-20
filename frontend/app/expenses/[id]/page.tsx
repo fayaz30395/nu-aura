@@ -217,7 +217,8 @@ export default function ExpenseDetailPage() {
   const StatusIcon = statusConfig.icon;
   const isDraft = claim.status === 'DRAFT';
   const isOwner = user?.employeeId === claim.employeeId;
-  const canApprove = claim.status === 'SUBMITTED' || claim.status === 'PENDING_APPROVAL';
+  const canApprove = hasPermission(Permissions.EXPENSE_APPROVE)
+    && (claim.status === 'SUBMITTED' || claim.status === 'PENDING_APPROVAL');
 
   return (
     <AppLayout>

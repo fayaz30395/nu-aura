@@ -7,7 +7,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {OfficeLocation, OfficeLocationRequest} from '@/lib/services/hrms/office-location.service';
 import {useAuth} from '@/lib/hooks/useAuth';
-import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {Permissions, Roles, usePermissions} from '@/lib/hooks/usePermissions';
 import {useToast} from '@/components/notifications/ToastProvider';
 import {ConfirmDialog} from '@/components/ui';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -43,7 +43,10 @@ export default function OfficeLocationsPage() {
   const toast = useToast();
   const router = useRouter();
   const {isAuthenticated, hasHydrated} = useAuth();
-  const {hasAnyRole, isReady} = usePermissions();
+  const {hasAnyRole, hasPermission, isReady} = usePermissions();
+  const canCreate = hasPermission(Permissions.OFFICE_LOCATION_CREATE);
+  const canUpdate = hasPermission(Permissions.OFFICE_LOCATION_UPDATE);
+  const canDelete = hasPermission(Permissions.OFFICE_LOCATION_DELETE);
 
   // Form state
   const {
@@ -184,16 +187,18 @@ export default function OfficeLocationsPage() {
 
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-xl font-bold">Office Locations & Geofencing</h1>
-          <button
-            onClick={() => {
-              reset();
-              setEditingId(null);
-              setShowForm(true);
-            }}
-            className="px-4 py-2 bg-accent-600 dark:bg-accent-600 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            Add Location
-          </button>
+          {canCreate && (
+            <button
+              onClick={() => {
+                reset();
+                setEditingId(null);
+                setShowForm(true);
+              }}
+              className="px-4 py-2 bg-accent-600 dark:bg-accent-600 text-white rounded-lg hover:bg-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              Add Location
+            </button>
+          )}
         </div>
 
         {showForm && (
@@ -347,7 +352,8 @@ export default function OfficeLocationsPage() {
                 </th>
                 <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Status
                 </th>
-                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">Actions
+                <th className="px-6 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase">
+                  {canUpdate || canDelete ? 'Actions' : <span className="sr-only">Actions</span>}
                 </th>
               </tr>
               </thead>
@@ -380,18 +386,22 @@ export default function OfficeLocationsPage() {
                       </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleEdit(location)}
-                      className="text-accent-700 dark:text-accent-400 hover:text-accent-800 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(location)}
-                      className="text-danger-600 dark:text-danger-400 hover:text-danger-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    >
-                      Delete
-                    </button>
+                    {canUpdate && (
+                      <button
+                        onClick={() => handleEdit(location)}
+                        className="text-accent-700 dark:text-accent-400 hover:text-accent-800 mr-4 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {canDelete && (
+                      <button
+                        onClick={() => handleDelete(location)}
+                        className="text-danger-600 dark:text-danger-400 hover:text-danger-800 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

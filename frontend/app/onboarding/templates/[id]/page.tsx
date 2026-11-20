@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Callout} from '@/components/ui/Callout';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
@@ -49,6 +49,8 @@ export default function TemplateEditorPage() {
   const router = useRouter();
   const params = useParams();
   const templateId = params.id as string;
+  // PUT/POST/DELETE /onboarding/templates/** need ONBOARDING:MANAGE; VIEW holders get a read-only editor.
+  const canManage = usePermissions().hasPermission(Permissions.ONBOARDING_MANAGE);
 
   const {data: template, isLoading} = useOnboardingTemplate(templateId);
   const {data: tasksData = []} = useOnboardingTemplateTasks(templateId);
@@ -207,6 +209,7 @@ export default function TemplateEditorPage() {
               </div>
             </div>
 
+{canManage && (
             <Button
               variant="primary"
               className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-10"
@@ -216,6 +219,7 @@ export default function TemplateEditorPage() {
             >
               Save Blueprint
             </Button>
+)}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -272,6 +276,7 @@ export default function TemplateEditorPage() {
                     <ListChecks className="h-4 w-4"/>
                     Task Sequence ({tasks.length})
                   </CardTitle>
+{canManage && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -281,6 +286,7 @@ export default function TemplateEditorPage() {
                   >
                     Add Manual Task
                   </Button>
+)}
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="divide-y divide-[var(--border-subtle)]">
@@ -328,6 +334,7 @@ export default function TemplateEditorPage() {
                               </div>
                             </div>
 
+{canManage && (
                             <div className="flex items-center gap-2">
                               <Button
                                 variant="outline"
@@ -348,6 +355,7 @@ export default function TemplateEditorPage() {
                                 <Trash2 className="h-4 w-4"/>
                               </Button>
                             </div>
+)}
                           </div>
                         </motion.div>
                       ))}

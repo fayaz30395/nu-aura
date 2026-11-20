@@ -22,6 +22,7 @@ import {
 } from '@/components/ui';
 import {ProjectAllocation} from '@/lib/types/hrms/hrms-allocation';
 import {apiClient} from '@/lib/api/client';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
   useAssignToProject,
   useEndAllocation,
@@ -229,6 +230,9 @@ function EmployeeTypeahead({label, value, onChange, placeholder, disabled}: Empl
 }
 
 export function TeamTab({projectId}: TeamTabProps) {
+  // POST /projects/{id}/assign needs PROJECT:UPDATE.
+  const {hasPermission} = usePermissions();
+  const canAssignMembers = hasPermission(Permissions.PROJECT_UPDATE);
   const [allocationsPage, setAllocationsPage] = useState(0);
   const [allocationsSize, setAllocationsSize] = useState(20);
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -416,12 +420,14 @@ export function TeamTab({projectId}: TeamTabProps) {
               <p className="text-body-muted">Allocated employees and their allocation percent.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <Button
-                leftIcon={<Plus className="h-4 w-4"/>}
-                onClick={handleOpenAddMember}
-              >
-                Add Member
-              </Button>
+              {canAssignMembers && (
+                <Button
+                  leftIcon={<Plus className="h-4 w-4"/>}
+                  onClick={handleOpenAddMember}
+                >
+                  Add Member
+                </Button>
+              )}
               <Button
                 variant="outline"
                 leftIcon={<Download className="h-4 w-4"/>}

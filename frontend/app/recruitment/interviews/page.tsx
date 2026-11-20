@@ -3,7 +3,7 @@ import {PageHeader} from '@/components/ui/PageHeader';
 
 import React, {Suspense, useMemo, useRef, useState} from 'react';
 import {useSearchParams} from 'next/navigation';
-import {Permissions} from '@/lib/hooks/usePermissions';
+import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -211,6 +211,11 @@ export default function InterviewsPageWrapper() {
 function InterviewsPage() {
   const searchParams = useSearchParams();
   const candidateIdFilter = searchParams.get('candidateId');
+  const {hasPermission} = usePermissions();
+  // POST /interviews needs RECRUITMENT:CREATE, PUT :UPDATE, DELETE :DELETE.
+  const canScheduleInterview = hasPermission(Permissions.RECRUITMENT_CREATE);
+  const canEditInterview = hasPermission(Permissions.RECRUITMENT_UPDATE);
+  const canDeleteInterview = hasPermission(Permissions.RECRUITMENT_DELETE);
   // Permission gate handled by <PermissionGate> wrapper in InterviewsPageWrapper.
 
   // Query hooks
@@ -619,6 +624,7 @@ function InterviewsPage() {
           title="Interviews"
           description="Schedule and manage candidate interviews"
           actions={
+          canScheduleInterview ? (
           <Button onClick={() => {
             resetCreate();
             setEditingInterview(null);
@@ -627,6 +633,7 @@ function InterviewsPage() {
             <Plus className="h-4 w-4"/>
             Schedule Interview
           </Button>
+          ) : undefined
           }
         />
 
@@ -739,7 +746,7 @@ function InterviewsPage() {
                     ? 'Try clearing filters or searching by a different candidate or job.'
                     : 'Schedule your first interview to start tracking the loop.'
                 }
-                actionLabel={searchQuery || statusFilter ? undefined : 'Schedule first interview'}
+                actionLabel={searchQuery || statusFilter || !canScheduleInterview ? undefined : 'Schedule first interview'}
                 onAction={
                   searchQuery || statusFilter
                     ? undefined
@@ -860,6 +867,7 @@ function InterviewsPage() {
                               <CheckCircle className="h-4 w-4"/>
                             </button>
                           )}
+                          {canEditInterview && (
                           <button
                             onClick={() => handleEdit(interview)}
                             className="p-2 text-[var(--text-muted)] hover:text-accent-700 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
@@ -868,6 +876,8 @@ function InterviewsPage() {
                           >
                             <Edit2 className="h-4 w-4"/>
                           </button>
+                          )}
+                          {canDeleteInterview && (
                           <button
                             onClick={() => {
                               setInterviewToDelete(interview);
@@ -879,6 +889,7 @@ function InterviewsPage() {
                           >
                             <Trash2 className="h-4 w-4"/>
                           </button>
+                          )}
                         </div>
                       </td>
                     </tr>
