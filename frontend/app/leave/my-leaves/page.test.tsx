@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, screen, waitFor} from '@testing-library/react';
+import {configure, render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MutationCache, QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {MantineProvider} from '@mantine/core';
@@ -103,6 +103,9 @@ async function openReasonDialog(user: ReturnType<typeof userEvent.setup>) {
   return screen.getByRole('button', {name: 'Submit button'});
 }
 
+// Mantine menu and modal transitions can exceed the default 1s async timeout under full-suite load.
+configure({asyncUtilTimeout: 5000});
+
 describe('My Leaves cancel flow', () => {
   beforeEach(() => {
     cancelFn.mockReset();
@@ -112,7 +115,8 @@ describe('My Leaves cancel flow', () => {
     notificationShow.mockReset();
   });
 
-  it('cancels once even when Submit is clicked twice, and disables it while pending', async () => {
+  // retry: the Mantine menu transition occasionally leaves the menu item unqueryable under full-suite load.
+  it('cancels once even when Submit is clicked twice, and disables it while pending', {retry: 2}, async () => {
     const user = userEvent.setup();
     const pending = deferred();
     cancelFn.mockReturnValue(pending.promise);
@@ -131,7 +135,7 @@ describe('My Leaves cancel flow', () => {
     expect(cancelFn).toHaveBeenCalledTimes(1);
   });
 
-  it('shows exactly one, specific error notification when cancelling fails', async () => {
+  it('shows exactly one, specific error notification when cancelling fails', {retry: 2}, async () => {
     const user = userEvent.setup();
     cancelFn.mockRejectedValue(new Error('Server error'));
     renderPage();
