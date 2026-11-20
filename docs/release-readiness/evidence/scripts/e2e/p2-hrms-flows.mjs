@@ -348,7 +348,7 @@ await flow('H5', 'HR create holiday', hr, async p => {
   await dlg.getByRole('textbox', {name: /holiday name/i}).fill(`${TAG} holiday`);
   let r = null, day = '';
   for (let i = 0; i < 6 && !(r && r.status < 400); i++) { // one date per run; a date taken by an earlier run is test residue, not a defect
-    day = `2027-01-${String(4 + ((Math.floor(Date.now() / 60000) + i) % 24)).padStart(2, '0')}`;
+    day = `2026-12-${String(4 + ((Math.floor(Date.now() / 60000) + i) % 24)).padStart(2, '0')}`;
     await dlg.getByRole('textbox', {name: /^date/i}).fill(day);
     const api = waitApi(p, /holiday/i); await dlg.getByRole('button', {name: /create holiday/i}).click(); r = await api;
     if (r && r.status === 400 && /already exists/i.test(r.body)) continue;

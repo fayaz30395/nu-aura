@@ -141,14 +141,14 @@ For every check, record the expected policy/configuration source and the evidenc
 
 | Phase | Status | Bugs found | Notes |
 |---|---|---|---|
-| P0 | NOT RUN | | |
+| P0 | PASS | `evidence/p0-env-check.json` | Re-run on FE 3001 / BE 8080 after port 3000 conflict; `FE_URL` override in `lib.mjs` |
 | P1 | PASS with 8 open Low (rate-limit noise) | see `evidence/bug-register.md` | Full sweep @ `d7241e6e`: 249 routes x 3 roles x 2 viewports = 1494 loads, 8 FAIL (was 185 before fixes). All 8 are console 429s on `/settings/sso` (3 roles x 2) and `/settings/security` (employee x 2); manager also logs a 403 on `GET /auth/saml/config` for `/settings/sso`. 40 dynamic routes BLOCKED (need seeded ids). Evidence: `evidence/p1-full-hradmin.md` (covers all roles). A7 review NOT RUN. |
-| P2 | NOT RUN | | |
-| P3 | NOT RUN | | |
-| P4 | NOT RUN | | |
-| P5 | NOT RUN | | |
-| P6 | NOT RUN | | |
-| P7 | NOT RUN | | |
+| P2 | PASS with 2 BLOCKED | `evidence/ui-bugs.md`, `evidence/p2-hrms-flows.json` (first run), register | Re-run on `0b2a37e6` plus announcements fix: 19 steps, 17 PASS, 0 FAIL, 2 BLOCKED. Blocked: E5b (no PSA projects in tenant), E5c (Copy last week disabled, week already has entries). First-run JSON kept; re-run result is in the register |
+| P3 | RUN, fixes applied, not re-run | `evidence/ui-bugs-p3.md` | Run before the fixes (see file for commit). Not run: onboarding creation, offer send/e-sign, public application, joined transition (data or safety) |
+| P4 | RUN, fixes applied, not re-run | `evidence/ui-bugs-p4.md`, `evidence/p4-sweep.json` | Run at `d10bc9b9`. Not run: review submit, 360, PIP, training enrol |
+| P5 | RUN, fixes applied, not re-run | `evidence/ui-bugs-p5.md`, `evidence/p5-sweep.json` | Run at `d10bc9b9`. Wiki comments, NU-Mail, NU-Calendar and Drive upload not run |
+| P6 | RUN, fixes applied, not re-run | `evidence/ui-bugs-p6p7.md` | axe, API-failure and dark-mode sweeps at `d10bc9b9` |
+| P7 | PARTIAL | `evidence/ui-bugs-p6p7.md`, `evidence/bug-register.md` | UI-level security run at `d10bc9b9`. Since then PASS: upload validation, login rate limit, prod bundle secret scan. Not testable locally: two-tenant isolation. Not run: account lockout on a real account |
 
 ## A5. Exit criteria
 

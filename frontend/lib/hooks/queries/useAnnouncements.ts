@@ -66,7 +66,7 @@ export function useCreateAnnouncement() {
     mutationFn: (data: CreateAnnouncementRequest) => announcementService.createAnnouncement(data),
     onSuccess: () => {
       // Invalidate all announcement lists
-      queryClient.invalidateQueries({queryKey: announcementKeys.lists()});
+      queryClient.invalidateQueries({queryKey: announcementKeys.all});
       queryClient.invalidateQueries({queryKey: announcementKeys.pinned()});
     },
   });
@@ -105,7 +105,7 @@ export function useUpdateAnnouncement() {
     onSettled: (_, _error, {id}) => {
       // Always refetch after mutation settles
       queryClient.invalidateQueries({queryKey: announcementKeys.detail(id)});
-      queryClient.invalidateQueries({queryKey: announcementKeys.lists()});
+      queryClient.invalidateQueries({queryKey: announcementKeys.all});
       queryClient.invalidateQueries({queryKey: announcementKeys.pinned()});
     },
   });
@@ -118,7 +118,7 @@ export function useDeleteAnnouncement() {
   return useMutation({
     mutationFn: (id: string) => announcementService.deleteAnnouncement(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: announcementKeys.lists()});
+      queryClient.invalidateQueries({queryKey: announcementKeys.all});
       queryClient.invalidateQueries({queryKey: announcementKeys.pinned()});
     },
   });
@@ -133,7 +133,7 @@ export function useMarkAnnouncementRead() {
       announcementService.markAsRead(announcementId, employeeId),
     onSuccess: () => {
       // Invalidate all announcement queries to refresh read status
-      queryClient.invalidateQueries({queryKey: announcementKeys.lists()});
+      queryClient.invalidateQueries({queryKey: announcementKeys.all});
       queryClient.invalidateQueries({queryKey: announcementKeys.pinned()});
     },
   });
