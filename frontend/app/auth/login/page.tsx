@@ -1,6 +1,6 @@
 'use client';
 
-import {Suspense, useEffect, useState} from 'react';
+import {Suspense, useEffect, useRef, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -311,7 +311,7 @@ function DemoLoginPanel({
 function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const {login, googleLogin, user, isAuthenticated, hasHydrated, setUser} = useAuth();
+  const {login, googleLogin, user, isAuthenticated, hasHydrated, setUser, restoreSession} = useAuth();
 
   const [error, setError] = useState<string | null>(null);
   const [mfaRequired, setMfaRequired] = useState(false);
@@ -368,24 +368,44 @@ function LoginPage() {
     }
   }, []);
 
-  // Clear stale auth on mount — if Zustand rehydrates with isAuthenticated=true
-  // from a previous session but cookies are expired, we need to reset client state
-  // so the user can log in fresh.
+  // On mount (once, StrictMode-safe): a signed-in user without a `reason` param is
+  // sent onward, but only after the server confirms the session via /auth/me
+  // (restoreSession) — never on cookie or client-store state alone. Otherwise (reason
+  // present, restore false/throws) clear stale client auth (Zustand may rehydrate
+  // isAuthenticated=true from an expired session) and show the form. The clear must
+  // run AFTER the restore attempt so it cannot wipe a valid session.
+  const authCheckStarted = useRef(false);
   useEffect(() => {
-    if (!hasHydrated) return;
-    if (isAuthenticated && user && !didFreshLogin) {
-      if (typeof window !== 'undefined') {
-        safeSessionStorage.remove('auth-storage');
-        safeSessionStorage.remove('user');
-        safeStorage.remove('tenantId');
+    if (!hasHydrated || authCheckStarted.current) return;
+    authCheckStarted.current = true;
+
+    const clearStaleAuth = () => {
+      if (isAuthenticated && user && !didFreshLogin) {
+        if (typeof window !== 'undefined') {
+          safeSessionStorage.remove('auth-storage');
+          safeSessionStorage.remove('user');
+          safeStorage.remove('tenantId');
+        }
+        setUser(null);
       }
-      setUser(null);
+    };
+
+    if (didFreshLogin || searchParams.get('reason')) {
+      clearStaleAuth();
+      return;
     }
-    // Runs once, immediately after Zustand rehydration. We deliberately key only
-    // on `hasHydrated`: `isAuthenticated`/`user`/`didFreshLogin` are read as the
-    // post-hydration snapshot to decide whether to clear stale auth, and re-running
-    // when they change (e.g. right after a fresh login sets them) would wrongly
-    // wipe the session we just established. `setUser` is a stable Zustand action.
+    restoreSession()
+      .then((restored) => {
+        if (restored) {
+          router.replace(sanitizeReturnUrl(searchParams.get('returnUrl')));
+        } else {
+          clearStaleAuth();
+        }
+      })
+      .catch(clearStaleAuth);
+    // Runs once after Zustand rehydration; the values read here are the
+    // post-hydration snapshot, and re-running on change (e.g. right after a fresh
+    // login) would wrongly wipe the session just established.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasHydrated]);
 
