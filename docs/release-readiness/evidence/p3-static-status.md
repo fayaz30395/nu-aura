@@ -12,8 +12,8 @@ Base: main at c0e483a3. Fix commits: 16d80143 (Hire register fixes), c9ee9e54 (V
 | H-008 | FIXED | backend JobOpeningService.java departmentName() used in list and single mapper; 16d80143 | Department name resolved via DepartmentRepository |
 | H-009 | FIXED | lib/validations/recruitment.ts:49-52 | refine rejects min > max, error on maxSalary |
 | H-010 | FIXED | backend JobOpeningService.java:55-56 | Duplicate job code now throws "already exists" instead of suffixing |
-| H-011 | UNCLEAR | app/recruitment/jobs/page.tsx:129; lib/utils/error-handler.ts:344 | Catch is empty and relies on the global mutation toast; fix notes say root cause not reproduced |
-| H-012 | UNCLEAR | app/recruitment/candidates/page.tsx:294-295 | Same: relies on the global MutationCache toast showing the 400 message; not confirmed |
+| H-011 | FIXED-MECHANISM | app/recruitment/jobs/page.tsx:129; lib/utils/error-handler.ts:344 | Catch is empty and relies on the global mutation toast; fix notes say root cause not reproduced (global MutationCache toast proven live on a rejected wall post: 400 shows a visible error toast and creates nothing; the exact jobs/candidates dialogs were not driven) |
+| H-012 | FIXED-MECHANISM | app/recruitment/candidates/page.tsx:294-295 | Same: relies on the global MutationCache toast showing the 400 message; not confirmed (global MutationCache toast proven live on a rejected wall post: 400 shows a visible error toast and creates nothing; the exact jobs/candidates dialogs were not driven) |
 | H-013 | FIXED | backend RecruitmentManagementService.java:114-118; CandidateRepository existsBy...EmailIgnoreCase | Same email for the same job opening is rejected; same email on a different job is still allowed |
 | H-014 | FIXED | app/recruitment/pipeline/page.tsx:1139-1155 | Candidate ID text field replaced by a candidate select |
 | H-015 | FIXED | app/recruitment/pipeline/page.tsx:190-196 | getDaysSince clamped with Math.max(0, ...); average uses it. Referral "Nov 17" date shown in the bug is a separate timezone effect, not addressed |
