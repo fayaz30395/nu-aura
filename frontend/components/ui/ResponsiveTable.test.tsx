@@ -19,7 +19,7 @@ const columns: Column<Row>[] = [
 
 function renderTable(props: Partial<ResponsiveTableProps<Row>> = {}) {
   return render(
-    <MantineProvider>
+    <MantineProvider env="test">
       <ResponsiveTable<Row> columns={columns} data={rows} keyExtractor={(r) => r.id} {...props}/>
     </MantineProvider>
   );

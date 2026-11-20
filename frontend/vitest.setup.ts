@@ -1,7 +1,10 @@
 import React from 'react';
 import '@testing-library/jest-dom/vitest';
-import {cleanup} from '@testing-library/react';
+import {cleanup, configure} from '@testing-library/react';
 import {afterEach, vi} from 'vitest';
+
+// 15 parallel workers starve Mantine menu/modal transitions; the 1s default wait then fails intermittently.
+configure({asyncUtilTimeout: 5000});
 
 // Cleanup after each test
 afterEach(() => {

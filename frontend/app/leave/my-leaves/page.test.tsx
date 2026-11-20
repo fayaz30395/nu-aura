@@ -86,7 +86,7 @@ function renderPage() {
     defaultOptions: {queries: {retry: false}, mutations: {retry: false}},
   });
   return render(
-    <MantineProvider>
+    <MantineProvider env="test">
       <QueryClientProvider client={client}>
         <MyLeavesPage/>
       </QueryClientProvider>
@@ -115,8 +115,7 @@ describe('My Leaves cancel flow', () => {
     notificationShow.mockReset();
   });
 
-  // retry: the Mantine menu transition occasionally leaves the menu item unqueryable under full-suite load.
-  it('cancels once even when Submit is clicked twice, and disables it while pending', {retry: 2}, async () => {
+  it('cancels once even when Submit is clicked twice, and disables it while pending', async () => {
     const user = userEvent.setup();
     const pending = deferred();
     cancelFn.mockReturnValue(pending.promise);
@@ -135,7 +134,7 @@ describe('My Leaves cancel flow', () => {
     expect(cancelFn).toHaveBeenCalledTimes(1);
   });
 
-  it('shows exactly one, specific error notification when cancelling fails', {retry: 2}, async () => {
+  it('shows exactly one, specific error notification when cancelling fails', async () => {
     const user = userEvent.setup();
     cancelFn.mockRejectedValue(new Error('Server error'));
     renderPage();
