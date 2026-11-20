@@ -136,3 +136,8 @@ Total listed entries: 117 (UI-006 and UI-007 each group several defects, so dist
 | Wiki page `ba12d612` | Accepted | One double-encoded row, cosmetic; no DB write |
 | 16 `NUAURA_TEST` rows | Deferred, owner: release manager | 3 approved work requests, referral `d9547b20`, ticket `34c02a4b`, 9 orphaned post comments; no API removes them. Clear at deploy time |
 | `/settings/sso`, `/settings/security` 429 | Accepted (Low) | Rate limiter fires under back-to-back sweep; manager 403 on `auth/saml/config` is expected for a role without SSO admin |
+| Employee documents 403 (HR admin) | Fixed in V352 | HR_ADMIN/HR_MANAGER held no DOCUMENT:*; now VIEW, VIEW_ALL, UPLOAD at ALL. MANAGER still has none (SELF-only model, not changed). Re-tested: upload returns 200 for valid PDF |
+| Upload validation (`/files/upload/document/{id}`) | PASS | EXE bytes named .pdf: 400 content mismatch. .html and .exe: 400 type. 30 MB file: 413. Filename `../../etc/passwd.pdf`: 200 but stored as `<ts>_<hash>.pdf`, no traversal |
+| Login rate limit | PASS | 5 bad logins give 401, 6th gives 429 with `Retry-After: 60`. Header `X-Rate-Limit-Mode: local`: limiter ran in-memory, not Redis. Check Redis mode in prod |
+| Prod bundle secret scan | PASS | 994 client JS files, 0 sourcemaps. One regex hit was the `xoxb-...` input placeholder in the Slack settings form. `JWT_SECRET` value not found in bundle |
+| 2 test documents (hradmin) | Deferred, owner: release manager | Two valid-PDF uploads from the traversal-name test on employee `48000000-...`; clear with the other test rows at deploy time |

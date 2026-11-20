@@ -26,4 +26,4 @@ No secrets, session state or PII in this packet. Demo credentials are in `docs/q
 | Grok | NOT RUN | | |
 
 ## Known open
-Backend integration tests need Docker (not run here). Unit `com.nulogic.api.employee.controller.EmployeeControllerTest`: 20 tests pass, including the S-002 detail-view case. Frontend `tsc --noEmit` clean. `vitest run`: 135 files, 2681 tests pass. `next build` succeeds. S-002 remainder accepted (see register).
+V352 (HR document grants) added after the review range; review it with V350 and V351. Backend integration tests need Docker (not run here). Unit `com.nulogic.api.employee.controller.EmployeeControllerTest`: 20 tests pass, including the S-002 detail-view case. Frontend `tsc --noEmit` clean. `vitest run`: 135 files, 2681 tests pass. `next build` succeeds. S-002 remainder accepted (see register).
