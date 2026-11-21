@@ -112,20 +112,22 @@ export default function OrganizationHealthPage() {
     <AppLayout activeMenuItem="analytics">
       <div className="p-6 space-y-8 max-w-screen-2xl mx-auto">
         {/* Header */}
-        <PageHeader
-          title="Organization Health"
-          description="Executive summary of workforce vitality and performance"
-          actions={
-            <>
-              <Button variant="outline" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw className="h-4 w-4"/>}>
-                Refresh Data
-              </Button>
-              <Button variant="primary" size="sm" leftIcon={<Download className="h-4 w-4"/>}>
-                Export Report
-              </Button>
-            </>
-          }
-        />
+        <motion.div initial={{opacity: 0, x: -20}} animate={{opacity: 1, x: 0}}>
+          <PageHeader
+            title="Organization Health"
+            description="Executive summary of workforce vitality and performance"
+            actions={
+              <>
+                <Button variant="outline" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw className="h-4 w-4"/>}>
+                  Refresh Data
+                </Button>
+                <Button variant="primary" size="sm" leftIcon={<Download className="h-4 w-4"/>}>
+                  Export Report
+                </Button>
+              </>
+            }
+          />
+        </motion.div>
 
         {/* Global Health Hero */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

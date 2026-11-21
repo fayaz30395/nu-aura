@@ -266,68 +266,70 @@ export default function UtilizationReportsPage() {
     <AppLayout activeMenuItem="reports">
       <div className="p-6 space-y-6">
         {/* Header */}
-        <PageHeader
-          title="Utilization Dashboard"
-          description="Track employee productivity and resource utilization"
-          actions={
-            <>
-            {/* Date Range Selector */}
-            <div className="relative">
-              <select
-                aria-label="Date range"
-                value={selectedDateRange}
-                onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
-                className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
-              >
-                <option value="thisWeek">This Week</option>
-                <option value="lastWeek">Last Week</option>
-                <option value="thisMonth">This Month</option>
-                <option value="lastMonth">Last Month</option>
-                <option value="thisQuarter">This Quarter</option>
-                <option value="thisYear">This Year</option>
-                <option value="custom">Custom Range</option>
-              </select>
-              <ChevronDown
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none"/>
-            </div>
-
-            {selectedDateRange === 'custom' && (
+        <motion.div initial={{opacity: 0, y: -20}} animate={{opacity: 1, y: 0}}>
+          <PageHeader
+            title="Utilization Dashboard"
+            description="Track employee productivity and resource utilization"
+            actions={
               <>
-                <label htmlFor={customStartDateId} className="sr-only">Start date</label>
-                <input
-                  id={customStartDateId}
-                  type="date"
-                  value={customStartDate}
-                  onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
-                />
-                <span className="text-[var(--text-muted)]">to</span>
-                <label htmlFor={customEndDateId} className="sr-only">End date</label>
-                <input
-                  id={customEndDateId}
-                  type="date"
-                  value={customEndDate}
-                  onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
-                />
+              {/* Date Range Selector */}
+              <div className="relative">
+                <select
+                  aria-label="Date range"
+                  value={selectedDateRange}
+                  onChange={(e) => setSelectedDateRange(e.target.value as DateRangeKey)}
+                  className="appearance-none pl-4 pr-10 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                >
+                  <option value="thisWeek">This Week</option>
+                  <option value="lastWeek">Last Week</option>
+                  <option value="thisMonth">This Month</option>
+                  <option value="lastMonth">Last Month</option>
+                  <option value="thisQuarter">This Quarter</option>
+                  <option value="thisYear">This Year</option>
+                  <option value="custom">Custom Range</option>
+                </select>
+                <ChevronDown
+                  className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)] pointer-events-none"/>
+              </div>
+
+              {selectedDateRange === 'custom' && (
+                <>
+                  <label htmlFor={customStartDateId} className="sr-only">Start date</label>
+                  <input
+                    id={customStartDateId}
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  />
+                  <span className="text-[var(--text-muted)]">to</span>
+                  <label htmlFor={customEndDateId} className="sr-only">End date</label>
+                  <input
+                    id={customEndDateId}
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="px-4 py-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-accent-500"
+                  />
+                </>
+              )}
+
+              <button
+                onClick={() => refetch()}
+                disabled={loading}
+                aria-label="Refresh utilization report"
+                className="p-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}/>
+              </button>
+
+              <Button variant="primary" leftIcon={<Download className="h-4 w-4"/>}>
+                Export
+              </Button>
               </>
-            )}
-
-            <button
-              onClick={() => refetch()}
-              disabled={loading}
-              aria-label="Refresh utilization report"
-              className="p-2 bg-[var(--bg-input)] border border-[var(--border-main)] rounded-lg hover:bg-[var(--bg-secondary)] dark:hover:bg-[var(--bg-secondary)] transition-colors"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}/>
-            </button>
-
-            <Button variant="primary" leftIcon={<Download className="h-4 w-4"/>}>
-              Export
-            </Button>
-            </>
-          }
-        />
+            }
+          />
+        </motion.div>
 
         {/* Error Alert */}
         {error && (

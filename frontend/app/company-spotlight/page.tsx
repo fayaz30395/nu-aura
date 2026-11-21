@@ -1,6 +1,5 @@
 'use client';
 
-import {PageHeader} from '@/components/ui/PageHeader';
 import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -155,22 +154,27 @@ export default function CompanySpotlightPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <Reveal className="mb-8">
-            <PageHeader
-              title={<span className="inline-flex items-center gap-2"><Lightbulb className="w-8 h-8 text-warning-500"/>Company Spotlight</span>}
-              description="Create carousel slides to highlight company news and culture"
-              actions={<>
-                <button
-                  onClick={() => {
-                    setEditingSpotlight(null);
-                    setShowCreateModal(true);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-xl hover:bg-warning-600 transition-colors font-medium shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                >
-                  <Plus className="w-5 h-5"/>
-                  Add Slide
-                </button>
-              </>}
-            />
+            <div className="row-between">
+              <div>
+                <h1 className="text-xl font-bold">
+                  <Lightbulb className="w-8 h-8 text-warning-500"/>
+                  Company Spotlight
+                </h1>
+                <p className="text-[var(--text-secondary)] mt-2">
+                  Create carousel slides to highlight company news and culture
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setEditingSpotlight(null);
+                  setShowCreateModal(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2.5 bg-warning-500 text-white rounded-xl hover:bg-warning-600 transition-colors font-medium shadow-[var(--shadow-card)] cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              >
+                <Plus className="w-5 h-5"/>
+                Add Slide
+              </button>
+            </div>
           </Reveal>
 
           {/* Spotlights List */}

@@ -1,6 +1,5 @@
 'use client';
 
-import {PageHeader} from '@/components/ui/PageHeader';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Activity,
@@ -100,10 +99,17 @@ export default function BiometricDevicesPage() {
       <AppLayout>
         <div className="space-y-6 p-6">
           {/* Header */}
-          <PageHeader
-            title={<span className="inline-flex items-center gap-2"><Fingerprint className="h-7 w-7 text-accent-700"/>Biometric Devices</span>}
-            description="Manage biometric devices, monitor punch logs, and configure API keys"
-          />
+          <div className="row-between">
+            <div>
+              <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+                <Fingerprint className="h-7 w-7 text-accent-700"/>
+                Biometric Devices
+              </h1>
+              <p className="mt-1 text-body-muted">
+                Manage biometric devices, monitor punch logs, and configure API keys
+              </p>
+            </div>
+          </div>
 
           {/* Vendor adapter stub notice — ZKTeco/eSSL auto-sync adapters are not yet wired to
               hardware (return empty results, disabled by default); devices can be registered
