@@ -7,6 +7,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {Building2, Edit2, Plus, Search, ToggleLeft, ToggleRight, Trash2, Users, X} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Department, DepartmentRequest, DepartmentType} from '@/lib/types/hrms/employee';
@@ -253,14 +254,10 @@ export default function DepartmentsPage() {
     <AppLayout activeMenuItem="departments">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Departments</h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Manage your organization&apos;s departments and structure
-            </p>
-          </div>
-          {canManageDepartments && (
+        <PageHeader
+          title="Departments"
+          description="Manage your organization's departments and structure"
+          actions={canManageDepartments && (
             <Button
               variant="primary"
               leftIcon={<Plus className="h-4 w-4"/>}
@@ -273,7 +270,7 @@ export default function DepartmentsPage() {
               Add Department
             </Button>
           )}
-        </div>
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

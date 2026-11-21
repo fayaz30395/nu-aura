@@ -7,6 +7,7 @@ import {AlertCircle, CheckCircle, GraduationCap, Loader2, Plus} from 'lucide-rea
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {SkillGapAnalysis} from '@/components/training/SkillGapAnalysis';
 import {Button, ConfirmDialog, EmptyState} from '@/components/ui';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -330,14 +331,10 @@ export default function TrainingPage() {
         )}
 
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Training Programs</h1>
-            <p className="text-[var(--text-secondary)]">
-              Enroll in courses and track your learning progress
-            </p>
-          </div>
-          {activeTab === 'manage' && (
+        <PageHeader
+          title="Training Programs"
+          description="Enroll in courses and track your learning progress"
+          actions={activeTab === 'manage' && (
             <PermissionGate permission={Permissions.TRAINING_CREATE}>
               <Button onClick={handleCreateProgram}>
                 <Plus className="mr-2 h-4 w-4"/>
@@ -345,7 +342,7 @@ export default function TrainingPage() {
               </Button>
             </PermissionGate>
           )}
-        </div>
+        />
 
         {/* Stats Cards */}
         <TrainingStatsCards stats={stats}/>

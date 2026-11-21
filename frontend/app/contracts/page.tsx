@@ -3,6 +3,7 @@
 import React, {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   useActiveContracts,
   useContracts,
@@ -68,22 +69,21 @@ export default function ContractsPage() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold">Contracts</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Manage employment, vendor, and other
-              contracts</p>
-          </div>
-          <PermissionGate permission={Permissions.CONTRACT_CREATE}>
-            <Button
-              onClick={() => router.push('/contracts/new')}
-              leftSection={<Plus className="w-4 h-4"/>}
-              size="md"
-            >
-              New Contract
-            </Button>
-          </PermissionGate>
-        </div>
+        <PageHeader
+          title="Contracts"
+          description="Manage employment, vendor, and other contracts"
+          actions={
+            <PermissionGate permission={Permissions.CONTRACT_CREATE}>
+              <Button
+                onClick={() => router.push('/contracts/new')}
+                leftSection={<Plus className="w-4 h-4"/>}
+                size="md"
+              >
+                New Contract
+              </Button>
+            </PermissionGate>
+          }
+        />
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
