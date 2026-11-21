@@ -398,7 +398,7 @@ export default function NewOnboardingPage() {
                   onClick={handleFormSubmit(handleSubmit)}
                   isLoading={createProcessMutation.isPending}
                   size="lg"
-                  className="btn-primary px-10 rounded-lg font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20"
+                  className="btn-primary px-10 rounded-lg font-black tracking-widest uppercase text-xs bg-accent-700 hover:bg-accent-800 text-white border-0"
                   leftIcon={<Zap className="h-4 w-4"/>}
                 >
                   Launch Process

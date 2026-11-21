@@ -30,7 +30,7 @@ const STATUS_COLORS: Record<string, string> = {
   PLANNED: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
   ACTIVE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
   ON_HOLD: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-  COMPLETED: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+  COMPLETED: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
   CANCELLED: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400',
 };
 
@@ -216,7 +216,7 @@ function ProjectPanel({
               onClick={() => set('isBillable', !form.isBillable)}
               className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${form.isBillable ? 'bg-[var(--accent)]' : 'bg-[var(--border-main)]'}`}
             >
-              <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white dark:bg-gray-100 shadow transition-all ${form.isBillable ? 'translate-x-4' : 'translate-x-0.5'}`}/>
+              <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${form.isBillable ? 'translate-x-4' : 'translate-x-0.5'}`}/>
             </button>
             <span className="text-xs text-[var(--text-secondary)]">Billable project</span>
           </div>

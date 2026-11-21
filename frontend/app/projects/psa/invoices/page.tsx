@@ -38,12 +38,12 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  DRAFT: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+  DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
   SENT: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
   PARTIALLY_PAID: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
   PAID: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
   OVERDUE: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400',
-  CANCELLED: 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-500',
+  CANCELLED: 'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 
 const fmt = (n?: number) => n != null ? `$${Number(n).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : '—';

@@ -269,7 +269,7 @@ export default function CourseCatalogPage() {
                 >
                   {/* Thumbnail placeholder */}
                   <div
-                    className="h-36 bg-gradient-to-br from-accent-50 to-accent-100 rounded-t-lg flex items-center justify-center relative overflow-hidden">
+                    className="h-36 bg-accent-50 dark:bg-accent-950/30 rounded-t-lg flex items-center justify-center relative overflow-hidden">
                     {course.thumbnailUrl ? (
                       <Image
                         src={course.thumbnailUrl}

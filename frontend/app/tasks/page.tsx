@@ -34,16 +34,16 @@ const STATUS_LABELS: Record<string, string> = {
   IN_REVIEW: 'In Review', BLOCKED: 'Blocked', DONE: 'Done', CANCELLED: 'Cancelled',
 };
 const STATUS_COLORS: Record<string, string> = {
-  BACKLOG: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+  BACKLOG: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
   TODO: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
   IN_PROGRESS: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
   IN_REVIEW: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
   BLOCKED: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400',
   DONE: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-  CANCELLED: 'bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500',
+  CANCELLED: 'bg-[var(--bg-surface)] text-[var(--text-muted)]',
 };
 const PRIORITY_COLORS: Record<string, string> = {
-  LOW: 'text-slate-400 dark:text-slate-500', MEDIUM: 'text-blue-500 dark:text-blue-400',
+  LOW: 'text-[var(--text-muted)]', MEDIUM: 'text-blue-500 dark:text-blue-400',
   HIGH: 'text-amber-500 dark:text-amber-400', CRITICAL: 'text-red-500 dark:text-red-400',
 };
 const PRIORITY_LABELS: Record<string, string> = {

@@ -81,7 +81,7 @@ function NewKeyBanner({creation, onDismiss}: {creation: ApiKeyCreationResponse; 
           <p className="text-sm font-semibold text-warning-800 dark:text-warning-300 mb-1">
             Copy your new API key — it will not be shown again.
           </p>
-          <div className="flex items-center gap-2 bg-white dark:bg-black/20 rounded border border-warning-200 dark:border-warning-700 px-3 py-2">
+          <div className="flex items-center gap-2 bg-[var(--bg-card)] rounded border border-warning-200 dark:border-warning-700 px-3 py-2">
             <span className="font-mono text-xs text-[var(--text-primary)] flex-1 truncate">
               {visible ? creation.rawKey : '•'.repeat(48)}
             </span>

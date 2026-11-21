@@ -93,7 +93,7 @@ export default function BlogsPage() {
           title={
             <span className="inline-flex items-center gap-2">
               <span
-                className="w-10 h-10 rounded-xl bg-gradient-to-br from-warning-500 via-warning-500 to-warning-600 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
+                className="w-10 h-10 rounded-xl bg-warning-50 text-warning-700 dark:bg-warning-950/30 dark:text-warning-400 flex items-center justify-center">
                 <Pen className="w-5 h-5 text-white"/>
               </span>
               Blog & Articles
@@ -104,7 +104,7 @@ export default function BlogsPage() {
             <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
               <Button
                 onClick={handleNewPost}
-                className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all"
+                className="gap-2 bg-warning-700 hover:bg-warning-800 text-white transition-all"
               >
                 <Plus className="w-4 h-4"/>
                 New Post
@@ -152,7 +152,7 @@ export default function BlogsPage() {
                 onClick={() => setSelectedCategoryId(undefined)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                   selectedCategoryId === undefined
-                    ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-[var(--shadow-elevated)]'
+                    ? 'bg-warning-700 text-white'
                     : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                 }`}
                 whileHover={{scale: 1.05}}
@@ -174,7 +174,7 @@ export default function BlogsPage() {
                   onClick={() => setSelectedCategoryId(category.id)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-all relative overflow-hidden cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 ${
                     selectedCategoryId === category.id
-                      ? 'bg-gradient-to-r from-warning-600 to-warning-600 text-white shadow-[var(--shadow-elevated)]'
+                      ? 'bg-warning-700 text-white'
                       : 'bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
                   }`}
                   whileHover={{scale: 1.05}}
@@ -227,7 +227,7 @@ export default function BlogsPage() {
                   transition={{type: 'spring', stiffness: 200, damping: 20}}
                 >
                   <div
-                    className="w-16 h-16 rounded-full bg-gradient-to-br from-warning-100 to-warning-100 dark:from-warning-900/20 dark:to-warning-900/20 flex items-center justify-center mx-auto mb-4">
+                    className="w-16 h-16 rounded-full bg-warning-100 dark:bg-warning-900/20 flex items-center justify-center mx-auto mb-4">
                     <Pen className="w-8 h-8 text-warning-600 dark:text-warning-400"/>
                   </div>
                 </motion.div>
@@ -240,7 +240,7 @@ export default function BlogsPage() {
                 <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
                   <Button
                     onClick={handleNewPost}
-                    className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all"
+                    className="gap-2 bg-warning-700 hover:bg-warning-800 text-white transition-all"
                   >
                     <Plus className="w-4 h-4"/>
                     Create First Post
@@ -268,7 +268,7 @@ export default function BlogsPage() {
                       {/* Image Section */}
                       {featuredPost.coverImageUrl ? (
                         <div
-                          className="h-64 md:h-full min-h-96 bg-gradient-to-br from-warning-400 via-warning-400 to-danger-400 overflow-hidden relative group">
+                          className="h-64 md:h-full min-h-96 bg-warning-100 dark:bg-warning-900/20 overflow-hidden relative group">
                           <Image
                             src={featuredPost.coverImageUrl!}
                             alt={featuredPost.title}
@@ -281,8 +281,8 @@ export default function BlogsPage() {
                         </div>
                       ) : (
                         <div
-                          className="h-64 md:h-full min-h-96 bg-gradient-to-br from-warning-400 via-warning-400 to-danger-400 flex items-center justify-center relative">
-                          <Pen className="w-16 h-16 text-white/30"/>
+                          className="h-64 md:h-full min-h-96 bg-warning-100 dark:bg-warning-900/20 flex items-center justify-center relative">
+                          <Pen className="w-16 h-16 text-warning-600/40"/>
                           <div
                             className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"/>
                         </div>
@@ -293,7 +293,7 @@ export default function BlogsPage() {
                         <div>
                           <div className="flex items-center gap-4 mb-4">
                             <motion.div
-                              className="px-4 py-1 rounded-full bg-gradient-to-r from-warning-100 to-warning-100 dark:from-warning-900/30 dark:to-warning-900/30"
+                              className="px-4 py-1 rounded-full bg-warning-100 dark:bg-warning-900/30"
                               whileHover={{scale: 1.05}}
                             >
                               <span
@@ -337,7 +337,7 @@ export default function BlogsPage() {
                                 />
                               ) : null}
                               <div
-                                className={`w-10 h-10 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center text-white font-bold text-sm ${featuredPost.authorAvatarUrl ? 'hidden' : ''}`}>
+                                className={`w-10 h-10 rounded-full bg-warning-700 flex items-center justify-center text-white font-bold text-sm ${featuredPost.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {getAuthorInitial(featuredPost)}
                               </div>
                               <div>
@@ -440,7 +440,7 @@ export default function BlogsPage() {
                         {/* Cover Image */}
                         {post.coverImageUrl ? (
                           <div
-                            className="h-40 bg-gradient-to-br from-warning-300 via-warning-300 to-danger-300 overflow-hidden relative group">
+                            className="h-40 bg-warning-100 dark:bg-warning-900/20 overflow-hidden relative group">
                             <Image
                               src={post.coverImageUrl!}
                               alt={post.title}
@@ -452,8 +452,8 @@ export default function BlogsPage() {
                           </div>
                         ) : (
                           <div
-                            className="h-40 bg-gradient-to-br from-warning-300 via-warning-300 to-danger-300 flex items-center justify-center relative">
-                            <Pen className="w-12 h-12 text-white/25"/>
+                            className="h-40 bg-warning-100 dark:bg-warning-900/20 flex items-center justify-center relative">
+                            <Pen className="w-12 h-12 text-warning-600/40"/>
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"/>
                           </div>
                         )}
@@ -520,7 +520,7 @@ export default function BlogsPage() {
                                 />
                               ) : null}
                               <div
-                                className={`w-8 h-8 rounded-full bg-gradient-to-br from-warning-500 to-warning-600 flex items-center justify-center text-white font-bold text-xs ${post.authorAvatarUrl ? 'hidden' : ''}`}>
+                                className={`w-8 h-8 rounded-full bg-warning-700 flex items-center justify-center text-white font-bold text-xs ${post.authorAvatarUrl ? 'hidden' : ''}`}>
                                 {getAuthorInitial(post)}
                               </div>
                               <div className="flex-1 min-w-0">

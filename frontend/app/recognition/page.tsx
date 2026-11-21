@@ -355,7 +355,7 @@ export default function RecognitionPage() {
         <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StaggerItem>
             <Card
-              className="skeuo-card h-full bg-gradient-to-br from-warning-50 to-warning-100 dark:from-warning-900/30 dark:to-warning-900/30 border-warning-200 dark:border-warning-800">
+              className="skeuo-card h-full bg-warning-50 dark:bg-warning-900/30 border-warning-200 dark:border-warning-800">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
                   <div className="rounded-lg bg-warning-500 p-4">

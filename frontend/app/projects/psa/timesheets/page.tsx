@@ -31,7 +31,7 @@ const STATUS_LABELS: Record<string, string> = {
   APPROVED: 'Approved', REJECTED: 'Rejected',
 };
 const STATUS_COLORS: Record<string, string> = {
-  DRAFT: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400',
+  DRAFT: 'bg-[var(--bg-surface)] text-[var(--text-secondary)]',
   SUBMITTED: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
   UNDER_REVIEW: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
   APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',

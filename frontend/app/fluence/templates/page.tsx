@@ -71,7 +71,7 @@ export default function TemplatesPage() {
           title={
             <span className="inline-flex items-center gap-2">
               <span
-                className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-500)] to-[var(--accent-800)] flex items-center justify-center flex-shrink-0">
+                className="w-10 h-10 rounded-lg bg-[var(--accent-700)] flex items-center justify-center flex-shrink-0">
                 <FileText className={`${iconSize.pageHeader} text-white`}/>
               </span>
               Templates

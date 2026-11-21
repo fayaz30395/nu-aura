@@ -230,7 +230,7 @@ export default function BlogPostDetailPage() {
     <AppLayout>
       {/* Reading Progress Bar */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-[var(--accent-500)] to-[var(--accent-800)] origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-[var(--accent-600)] origin-left z-50"
         animate={{scaleX: readingProgress / 100}}
         initial={false}
       />
@@ -249,7 +249,7 @@ export default function BlogPostDetailPage() {
 
         {/* Hero Cover Image */}
         {post.coverImageUrl && (
-          <Reveal className="relative rounded-xl overflow-hidden h-96 bg-gradient-to-br from-[var(--accent-300)] to-[var(--accent-500)] group cursor-pointer">
+          <Reveal className="relative rounded-xl overflow-hidden h-96 bg-[var(--accent-400)] group cursor-pointer">
             <motion.img
               src={post.coverImageUrl}
               alt={post.title}

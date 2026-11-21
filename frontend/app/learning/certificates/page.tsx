@@ -316,7 +316,7 @@ export default function CertificateGalleryPage() {
 
                 {/* Footer */}
                 <div
-                  className="px-6 py-4 bg-gradient-to-r from-accent-500/10 to-accent-700/10 dark:from-accent-900/20 dark:to-accent-900/20 border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
+                  className="px-6 py-4 bg-[var(--bg-surface)] border-t border-[var(--border-main)] dark:border-[var(--border-main)]">
                   <a
                     href={`/learning/certificates/${cert.id}/verify`}
                     className="text-xs font-medium text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 flex items-center gap-1 w-fit"

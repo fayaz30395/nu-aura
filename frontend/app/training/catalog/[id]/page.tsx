@@ -534,7 +534,7 @@ export default function CourseDetailPage() {
             <div className="flex flex-col md:flex-row gap-6">
               {/* Thumbnail */}
               <div
-                className="h-40 w-full md:w-56 shrink-0 bg-gradient-to-br from-accent-50 to-accent-100 rounded-lg flex items-center justify-center overflow-hidden">
+                className="h-40 w-full md:w-56 shrink-0 bg-accent-50 dark:bg-accent-950/30 rounded-lg flex items-center justify-center overflow-hidden">
                 {course.thumbnailUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img

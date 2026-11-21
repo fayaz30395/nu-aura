@@ -106,14 +106,14 @@ function getInitials(name: string): string {
 }
 
 const AVATAR_COLORS = [
-  'from-accent-500 to-accent-600',
-  'from-success-500 to-success-600',
-  'from-warning-500 to-warning-600',
-  'from-danger-500 to-danger-600',
-  'from-accent-700 to-accent-800',
-  'from-accent-500 to-accent-600',
-  'from-warning-500 to-warning-600',
-  'from-success-500 to-success-600',
+  'bg-accent-700',
+  'bg-success-700',
+  'bg-warning-700',
+  'bg-danger-700',
+  'bg-accent-800',
+  'bg-accent-700',
+  'bg-warning-700',
+  'bg-success-700',
 ];
 
 function avatarColor(id: string): string {
@@ -214,7 +214,7 @@ function CommentThread({
       {/* Main comment */}
       <div className="flex gap-4">
         <div
-          className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
+          className={`flex-shrink-0 h-10 w-10 rounded-full ${avatarColor(
             comment.authorId
           )} flex items-center justify-center text-sm font-semibold text-white`}
         >
@@ -371,7 +371,7 @@ function ReplyItem({reply, userId, onDelete}: ReplyItemProps) {
       className="flex gap-4 group/reply"
     >
       <div
-        className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${avatarColor(
+        className={`flex-shrink-0 h-8 w-8 rounded-full ${avatarColor(
           reply.authorId
         )} flex items-center justify-center text-xs font-semibold text-white`}
       >
@@ -820,7 +820,7 @@ export default function WikiPageDetailPage() {
                 {/* Author */}
                 <div className="flex items-center gap-4">
                   <div
-                    className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
+                    className={`flex-shrink-0 h-10 w-10 rounded-full ${avatarColor(
                       page.authorId || 'default'
                     )} flex items-center justify-center text-sm font-semibold text-white`}
                   >
@@ -1218,7 +1218,7 @@ export default function WikiPageDetailPage() {
             {/* Comment Input */}
             <div className="flex gap-4 mb-8 pb-6 border-b border-[var(--border-main)]">
               <div
-                className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
+                className={`flex-shrink-0 h-10 w-10 rounded-full ${avatarColor(
                   user?.id || 'me'
                 )} flex items-center justify-center text-sm font-semibold text-white`}
               >
@@ -1324,7 +1324,7 @@ export default function WikiPageDetailPage() {
                 >
                   <div className="flex items-center gap-4">
                     <div
-                      className={`flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br ${avatarColor(
+                      className={`flex-shrink-0 h-8 w-8 rounded-full ${avatarColor(
                         v.id
                       )} flex items-center justify-center text-xs font-semibold text-white`}
                     >

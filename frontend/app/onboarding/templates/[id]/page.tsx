@@ -210,7 +210,7 @@ export default function TemplateEditorPage() {
                 actions={canManage ? (
                   <Button
                     variant="primary"
-                    className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-10"
+                    className="btn-primary font-black tracking-widest uppercase text-xs bg-accent-700 hover:bg-accent-800 text-white border-0 rounded-lg py-6 px-10"
                     leftIcon={<Save className="h-4 w-4"/>}
                     isLoading={updateTemplateMutation.isPending && !editingTask}
                     onClick={handleSaveTemplate}
@@ -497,7 +497,7 @@ export default function TemplateEditorPage() {
               Cancel
             </Button>
             <Button
-              className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg"
+              className="btn-primary font-black tracking-widest uppercase text-xs bg-accent-700 hover:bg-accent-800 text-white border-0 rounded-lg"
               leftIcon={<Save className="h-4 w-4"/>}
               isLoading={addTaskMutation.isPending || updateTaskMutation.isPending}
               onClick={handleSaveTask}

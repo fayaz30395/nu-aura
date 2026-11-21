@@ -45,27 +45,27 @@ type SpotlightFormData = z.infer<typeof spotlightFormSchema>;
 const GRADIENT_PRESETS: Record<string, { name: string; value: string }> = {
   'accent-purple': {
     name: 'Indigo Purple',
-    value: 'from-accent-600 to-accent-700',
+    value: 'bg-accent-700',
   },
   'success-teal': {
     name: 'Emerald Teal',
-    value: 'from-accent-700 to-accent-800',
+    value: 'bg-accent-800',
   },
   'accent-cyan': {
     name: 'Blue Cyan',
-    value: 'from-accent-600 to-accent-700',
+    value: 'bg-accent-700',
   },
   'warning-orange': {
     name: 'Amber Orange',
-    value: 'from-warning-600 to-warning-700',
+    value: 'bg-warning-700',
   },
   'rose-pink': {
     name: 'Rose Pink',
-    value: 'from-danger-600 to-accent-900',
+    value: 'bg-danger-700',
   },
   'surface-dark': {
     name: 'Slate Dark',
-    value: 'from-accent-700 to-accent-900',
+    value: 'bg-accent-900',
   },
 };
 
@@ -140,10 +140,14 @@ export default function CompanySpotlightPage() {
   const formatDate = (dateString: string) => formatDateCanonical(dateString);
 
   const getGradientClass = (gradient?: string) => {
-    if (!gradient) return 'from-surface-600 to-surface-700';
+    if (!gradient) return 'bg-surface-700';
     // Check if it's a preset key
     if (GRADIENT_PRESETS[gradient]) {
       return GRADIENT_PRESETS[gradient].value;
+    }
+    // Stored custom gradients (from-x to-y) still need the gradient utility, which the containers no longer add.
+    if (/\bfrom-/.test(gradient) && !/\bbg-gradient-/.test(gradient)) {
+      return `bg-gradient-to-br ${gradient}`;
     }
     // Return as-is if it's a full tailwind class
     return gradient;
@@ -210,7 +214,7 @@ export default function CompanySpotlightPage() {
                         {/* Preview */}
                         <div className="w-40 h-32 flex-shrink-0 rounded-lg overflow-hidden">
                           <div
-                            className={`w-full h-full bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 text-center`}
+                            className={`w-full h-full ${gradientClass} flex flex-col items-center justify-center p-4 text-center`}
                           >
                             <div className="text-white">
                               <h3 className="font-bold text-sm mb-1 line-clamp-2">
@@ -385,7 +389,7 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
   const selectedGradient = GRADIENT_PRESETS[bgGradient || 'accent-purple'];
   const gradientClass = selectedGradient
     ? selectedGradient.value
-    : 'from-accent-600 to-accent-700';
+    : 'bg-accent-700';
 
   const onSubmit = async (data: SpotlightFormData) => {
     setError('');
@@ -590,7 +594,7 @@ function CreateSpotlightModal({isOpen, spotlight, onClose, onSuccess}: CreateSpo
                 Live Preview
               </span>
               <div
-                className={`w-full aspect-video rounded-lg bg-gradient-to-br ${gradientClass} flex flex-col items-center justify-center p-4 text-center shadow-[var(--shadow-dropdown)] overflow-hidden`}
+                className={`w-full aspect-video rounded-lg ${gradientClass} flex flex-col items-center justify-center p-4 text-center shadow-[var(--shadow-dropdown)] overflow-hidden`}
               >
                 <div className="text-white max-w-full">
                   <h3 className="font-bold text-lg mb-2 line-clamp-2">
