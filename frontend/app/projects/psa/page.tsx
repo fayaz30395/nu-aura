@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import {Briefcase, DollarSign, Edit2, Plus, Trash2, X} from 'lucide-react';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -339,17 +340,17 @@ export default function PSAProjectsPage() {
   return (
     <AppLayout>
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">PSA Projects</h1>
-            <p className="page-subtitle">Professional services and billable client projects.</p>
-          </div>
+        <PageHeader
+          title="PSA Projects"
+          description="Professional services and billable client projects."
+          actions={<>
           {isAdmin && (
             <Button size="sm" onClick={() => setPanel('new')} className="flex items-center gap-1.5">
               <Plus className="w-3.5 h-3.5"/>New Project
             </Button>
           )}
-        </div>
+          </>}
+        />
 
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           {['ALL', ...Object.values(PSAProjectStatus)].map(s => (

@@ -5,6 +5,7 @@ import {Clock, Plus, X} from 'lucide-react';
 import {Checkbox} from '@mantine/core';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -312,17 +313,17 @@ export default function PSATimesheetsPage() {
       ]}
     >
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">PSA Timesheets</h1>
-            <p className="page-subtitle">Track weekly hours for professional services projects.</p>
-          </div>
+        <PageHeader
+          title="PSA Timesheets"
+          description="Track weekly hours for professional services projects."
+          actions={<>
           {isAuthenticated && (
             <Button size="sm" onClick={() => setShowCreate(true)} className="flex items-center gap-1.5">
               <Plus className="w-3.5 h-3.5"/>New Timesheet
             </Button>
           )}
-        </div>
+          </>}
+        />
 
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           {['ALL', ...Object.values(PSATimesheetStatus)].map(s => (

@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {AlertTriangle, CheckCircle, Percent, RefreshCw, Users} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -78,16 +79,16 @@ export default function ResourceConflictsPage() {
   return (
     <AppLayout>
       <div className="p-6 max-w-5xl mx-auto space-y-6">
-        <div className="row-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Resource Conflicts</h1>
-            <p className="text-[var(--text-muted)] mt-1">Detect and resolve over-allocated employees across projects</p>
-          </div>
+        <PageHeader
+          title="Resource Conflicts"
+          description="Detect and resolve over-allocated employees across projects"
+          actions={<>
           <Button onClick={() => scanMutation.mutate()} disabled={scanMutation.isPending}>
             <RefreshCw className={`w-4 h-4 mr-2 ${scanMutation.isPending ? 'animate-spin' : ''}`}/>
             {scanMutation.isPending ? 'Scanning...' : 'Run Conflict Scan'}
           </Button>
-        </div>
+          </>}
+        />
 
         {/* Scan results */}
         {scanResults !== null && (

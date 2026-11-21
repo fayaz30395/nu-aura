@@ -2,6 +2,7 @@
 
 import {useState} from 'react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PageTransition, Reveal} from '@/components/motion';
 import {Payslip} from '@/lib/types/hrms/payroll';
 import {PayslipCard} from '@/components/payroll/PayslipCard';
@@ -120,15 +121,10 @@ function PayslipsPageContent() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <div className="row-between">
-              <div>
-                <h1 className="text-xl font-bold">
-                  Payslips
-                </h1>
-                <p className="text-[var(--text-secondary)] mt-2">
-                  View and download employee payslips
-                </p>
-              </div>
+            <PageHeader
+              title="Payslips"
+              description="View and download employee payslips"
+              actions={<>
               <div className="flex gap-4">
                 <PermissionGate permission={Permissions.PAYROLL_VIEW_ALL}>
                   <Button
@@ -141,7 +137,8 @@ function PayslipsPageContent() {
                   </Button>
                 </PermissionGate>
               </div>
-            </div>
+              </>}
+            />
           </div>
 
           {/* Error Message */}

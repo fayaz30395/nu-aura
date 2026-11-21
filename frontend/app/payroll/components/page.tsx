@@ -2,6 +2,7 @@
 
 import {useState} from 'react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {
@@ -432,15 +433,10 @@ export default function PayrollComponentsPage() {
       >
         <div className="p-4 md:p-6 space-y-6">
           {/* Header */}
-          <div className="row-between">
-            <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                Payroll Components
-              </h1>
-              <p className="mt-1 text-body-secondary">
-                Configure earnings, deductions, and employer contributions used in salary formulas
-              </p>
-            </div>
+          <PageHeader
+            title="Payroll Components"
+            description="Configure earnings, deductions, and employer contributions used in salary formulas"
+            actions={<>
             <div className="flex items-center gap-2">
               <Tooltip label="Recompute evaluation order">
                 <ActionIcon
@@ -464,7 +460,8 @@ export default function PayrollComponentsPage() {
                 </Button>
               </PermissionGate>
             </div>
-          </div>
+            </>}
+          />
 
           {/* Summary badges */}
           <div className="flex flex-wrap gap-2">

@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AlertCircle, CheckCircle, Plus, RefreshCw, Send, TrendingUp, Wallet, X} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -187,13 +188,10 @@ export default function ExpenseAdvancesPage() {
     <AppLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="row-between">
-          <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Expense Advances</h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-              Request travel advances and settle them against approved claims
-            </p>
-          </div>
+        <PageHeader
+          title="Expense Advances"
+          description="Request travel advances and settle them against approved claims"
+          actions={<>
           <PermissionGate permission={Permissions.EXPENSE_CREATE}>
             <button
               onClick={() => setShowForm(true)}
@@ -203,7 +201,8 @@ export default function ExpenseAdvancesPage() {
               Request Advance
             </button>
           </PermissionGate>
-        </div>
+          </>}
+        />
 
         {/* Tabs */}
         <div className="border-b border-surface-200 dark:border-surface-700">

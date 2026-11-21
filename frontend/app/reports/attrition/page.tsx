@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import {Spinner} from '@/components/ui/Spinner';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {apiClient} from '@/lib/api/client';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {AlertTriangle, Download, RefreshCw, Shield, TrendingDown, Zap} from 'lucide-react';
@@ -107,11 +108,10 @@ export default function AttritionReportPage() {
     <AppLayout activeMenuItem="reports">
       <div className="p-6 max-w-6xl mx-auto">
         {/* Header */}
-        <div className="row-between mb-6">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Attrition Analysis</h1>
-            <p className="text-body-muted mt-1">AI-powered attrition risk predictions and retention recommendations</p>
-          </div>
+        <PageHeader
+          title="Attrition Analysis"
+          description="AI-powered attrition risk predictions and retention recommendations"
+          actions={<>
           <div className="flex items-center gap-2">
             <Button variant="secondary" size="sm" onClick={() => refetch()} disabled={loading}
                     leftIcon={<RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`}/>}>
@@ -124,7 +124,8 @@ export default function AttritionReportPage() {
               </Button>
             </PermissionGate>
           </div>
-        </div>
+          </>}
+        />
 
         {error && (
           <div

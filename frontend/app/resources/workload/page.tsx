@@ -3,6 +3,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AlertCircle, Download, RefreshCw, Search} from 'lucide-react';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Skeleton} from '@/components/ui/Skeleton';
@@ -287,15 +288,10 @@ export default function WorkloadDashboardPage() {
     <AppLayout>
       <div className="mx-auto max-w-7xl space-y-6 p-6">
         {/* Header */}
-        <div className="row-between">
-          <div>
-            <h1 className="text-lg font-semibold text-[var(--text-primary)]">
-              Resource Utilization
-            </h1>
-            <p className="text-body-muted">
-              {dateRangeOptions.find(o => o.key === selectedDateRange)?.label}
-            </p>
-          </div>
+        <PageHeader
+          title="Resource Utilization"
+          description={<>{dateRangeOptions.find(o => o.key === selectedDateRange)?.label}</>}
+          actions={<>
           <div className="flex items-center gap-2">
             <button
               onClick={() => refetchData()}
@@ -314,7 +310,8 @@ export default function WorkloadDashboardPage() {
               Export
             </button>
           </div>
-        </div>
+          </>}
+        />
 
         {/* Filters - clean horizontal bar */}
         <div className="flex items-center gap-4">

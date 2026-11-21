@@ -3,6 +3,7 @@
 import {Progress} from '@/components/ui';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   Award,
   BookOpen,
@@ -91,13 +92,10 @@ export default function MyLearningPage() {
     <AppLayout>
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
-        <div className="row-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">My Learning</h1>
-            <p className="text-[var(--text-muted)] mt-1 text-sm">
-              Track your enrolled courses and progress
-            </p>
-          </div>
+        <PageHeader
+          title="My Learning"
+          description="Track your enrolled courses and progress"
+          actions={<>
           <Button
             variant="outline"
             onClick={() => refetch()}
@@ -107,7 +105,8 @@ export default function MyLearningPage() {
             <RefreshCw className="h-4 w-4"/>
             Refresh
           </Button>
-        </div>
+          </>}
+        />
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

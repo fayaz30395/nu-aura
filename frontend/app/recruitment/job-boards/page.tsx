@@ -7,6 +7,7 @@ import {z} from 'zod';
 import {AlertCircle, CheckCircle, Clock, ExternalLink, Globe, Pause, Plus, XCircle} from 'lucide-react';
 import {notifications} from '@mantine/notifications';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {SkeletonCard} from '@/components/ui/Skeleton';
@@ -137,19 +138,18 @@ export default function JobBoardsPage() {
   return (
     <AppLayout>
       <div className="p-6 max-w-6xl mx-auto space-y-6">
-        <div className="row-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Job Board Management</h1>
-            <p className="text-[var(--text-muted)] mt-1">Post jobs to Naukri, Indeed, LinkedIn and track
-              applications</p>
-          </div>
+        <PageHeader
+          title="Job Board Management"
+          description="Post jobs to Naukri, Indeed, LinkedIn and track applications"
+          actions={<>
           <PermissionGate permission={Permissions.RECRUITMENT_CREATE}>
             <Button onClick={() => setShowPostModal(true)}>
               <Plus className="w-4 h-4 mr-2"/>
               Post to Job Boards
             </Button>
           </PermissionGate>
-        </div>
+          </>}
+        />
 
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -5,6 +5,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Car, CheckCircle, Filter, MapPin, Plus, Send,} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -180,15 +181,10 @@ export default function MileagePage() {
     <AppLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="row-between">
-          <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
-              Mileage Tracking
-            </h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-              Log travel distance and get auto-calculated reimbursement
-            </p>
-          </div>
+        <PageHeader
+          title="Mileage Tracking"
+          description="Log travel distance and get auto-calculated reimbursement"
+          actions={<>
           <PermissionGate permission={Permissions.EXPENSE_CREATE}>
             <button
               onClick={() => setShowForm(true)}
@@ -198,7 +194,8 @@ export default function MileagePage() {
               Log Mileage
             </button>
           </PermissionGate>
-        </div>
+          </>}
+        />
 
         {/* Summary Cards */}
         {summary && (

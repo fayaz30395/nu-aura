@@ -5,6 +5,7 @@ import {ClipboardList, Plus, X} from 'lucide-react';
 import {Checkbox} from '@mantine/core';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Badge} from '@/components/ui/Badge';
 import {Skeleton} from '@/components/ui/Skeleton';
@@ -252,17 +253,17 @@ export default function PulseSurveysPage() {
   return (
     <AppLayout>
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">Pulse Surveys</h1>
-            <p className="page-subtitle">Create and manage employee pulse surveys to measure engagement.</p>
-          </div>
+        <PageHeader
+          title="Pulse Surveys"
+          description="Create and manage employee pulse surveys to measure engagement."
+          actions={<>
           {isAdmin && (
             <Button size="sm" onClick={() => setShowCreate(true)} className="flex items-center gap-1.5">
               <Plus className="w-3.5 h-3.5"/>New Survey
             </Button>
           )}
-        </div>
+          </>}
+        />
 
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           {['ALL', ...Object.values(PulseSurveyResponseStatus)].map(s => (

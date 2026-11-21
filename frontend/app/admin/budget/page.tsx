@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -366,16 +367,16 @@ export default function BudgetPlanningPage() {
   return (
     <AppLayout>
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">Budget Planning</h1>
-            <p className="page-subtitle">Manage headcount budgets and approval workflows — FY{fiscalYear}.</p>
-          </div>
+        <PageHeader
+          title="Budget Planning"
+          description={<>Manage headcount budgets and approval workflows — FY{fiscalYear}.</>}
+          actions={<>
           <Button size="sm" onClick={() => setShowCreate(true)} className="flex items-center gap-1.5">
             <Plus className="w-3.5 h-3.5"/>
             New Budget
           </Button>
-        </div>
+          </>}
+        />
 
         <DashboardCards dashboard={dashboard as BudgetDashboard | undefined}/>
 

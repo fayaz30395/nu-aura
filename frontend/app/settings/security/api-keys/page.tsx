@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -476,11 +477,10 @@ export default function ApiKeysPage() {
       ]}
     >
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">API Keys</h1>
-            <p className="page-subtitle">Manage programmatic access to this tenant&apos;s data.</p>
-          </div>
+        <PageHeader
+          title="API Keys"
+          description="Manage programmatic access to this tenant's data."
+          actions={<>
           <Button
             size="sm"
             onClick={() => setShowCreate(true)}
@@ -489,7 +489,8 @@ export default function ApiKeysPage() {
             <Plus className="w-3.5 h-3.5"/>
             New Key
           </Button>
-        </div>
+          </>}
+        />
 
         {newKeyBanner && (
           <NewKeyBanner creation={newKeyBanner} onDismiss={() => setNewKeyBanner(null)}/>

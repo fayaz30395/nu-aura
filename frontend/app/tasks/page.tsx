@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import {CheckSquare, Plus, X} from 'lucide-react';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -257,19 +258,17 @@ export default function TasksPage() {
   return (
     <AppLayout>
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">My Tasks</h1>
-            <p className="page-subtitle">
-              {openCount > 0 ? `${openCount} open task${openCount === 1 ? '' : 's'} assigned to you` : 'Track tasks assigned to you.'}
-            </p>
-          </div>
+        <PageHeader
+          title="My Tasks"
+          description={<>{openCount > 0 ? `${openCount} open task${openCount === 1 ? '' : 's'} assigned to you` : 'Track tasks assigned to you.'}</>}
+          actions={<>
           {isAuthenticated && (
             <Button size="sm" onClick={() => setShowCreate(true)} className="flex items-center gap-1.5">
               <Plus className="w-3.5 h-3.5"/>New Task
             </Button>
           )}
-        </div>
+          </>}
+        />
 
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           {['ALL', ...Object.values(StatusUpdateRequestStatus)].map(s => (

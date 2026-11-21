@@ -1,6 +1,7 @@
 'use client';
 
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Spinner} from '@/components/ui/Spinner';
 import {apiClient} from '@/lib/api/client';
 import {useQuery} from '@tanstack/react-query';
@@ -114,11 +115,10 @@ export default function HeadcountReportPage() {
     <AppLayout activeMenuItem="reports">
       <div className="p-6 max-w-6xl mx-auto">
         {/* Header */}
-        <div className="row-between mb-6">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Headcount Report</h1>
-            <p className="text-body-muted mt-1">Organization headcount by department, type, and trend</p>
-          </div>
+        <PageHeader
+          title="Headcount Report"
+          description="Organization headcount by department, type, and trend"
+          actions={<>
           <div className="flex items-center gap-2">
             <button
               onClick={() => refetch()}
@@ -139,7 +139,8 @@ export default function HeadcountReportPage() {
               </button>
             </PermissionGate>
           </div>
-        </div>
+          </>}
+        />
 
         {error && (
           <div

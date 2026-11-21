@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import {Checkbox} from '@mantine/core';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -553,18 +554,16 @@ export default function WebhooksPage() {
       ]}
     >
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">Webhooks</h1>
-            <p className="page-subtitle">
-              Receive real-time event notifications at your endpoints. All payloads are signed with HMAC-SHA256.
-            </p>
-          </div>
+        <PageHeader
+          title="Webhooks"
+          description="Receive real-time event notifications at your endpoints. All payloads are signed with HMAC-SHA256."
+          actions={<>
           <Button onClick={() => setShowCreate(true)} className="gap-2">
             <Plus className="w-4 h-4"/>
             New Webhook
           </Button>
-        </div>
+          </>}
+        />
 
         {isLoading ? (
           <div className="space-y-3">

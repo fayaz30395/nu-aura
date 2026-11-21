@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import {DollarSign, Plus, Receipt, X} from 'lucide-react';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -257,17 +258,17 @@ export default function TravelExpensesPage() {
   return (
     <AppLayout>
       <div className="page-shell fade-slide-up">
-        <div className="page-header">
-          <div>
-            <h1 className="page-title">Travel Expenses</h1>
-            <p className="page-subtitle">Track and submit expenses for your approved travel requests.</p>
-          </div>
+        <PageHeader
+          title="Travel Expenses"
+          description="Track and submit expenses for your approved travel requests."
+          actions={<>
           {isAuthenticated && canCreateExpense && (
             <Button size="sm" onClick={() => setShowPanel(true)} className="flex items-center gap-1.5">
               <Plus className="w-3.5 h-3.5"/>Add Expense
             </Button>
           )}
-        </div>
+          </>}
+        />
 
         {(totalPending > 0 || totalApproved > 0) && (
           <div className="grid grid-cols-2 gap-3 mb-4">
