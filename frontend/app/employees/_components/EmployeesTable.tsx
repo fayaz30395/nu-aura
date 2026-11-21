@@ -55,7 +55,7 @@ const OPTIONAL_COLUMNS: Column<Employee>[] = [
     key: 'joined',
     header: 'Joined',
     mobilePriority: 'hidden',
-    accessor: (e) => <span className="whitespace-nowrap tabular-nums">{joinedShort(e.joiningDate)}</span>,
+    accessor: (e) => <span className="whitespace-nowrap font-mono text-xs tabular-nums text-text-2">{joinedShort(e.joiningDate)}</span>,
   },
 ];
 

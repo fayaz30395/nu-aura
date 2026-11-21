@@ -15,7 +15,7 @@ interface ProfileSectionProps {
 export function ProfileSection({icon, title, description, action, className, bodyClassName, children}: ProfileSectionProps) {
   return (
     <Card padding="sm" className={className}>
-      <div className="mb-4 flex items-start justify-between gap-4">
+      <div className="mb-4 flex items-start justify-between gap-4 border-b border-border pb-3">
         <div>
           <h2 className="flex items-center gap-2 text-base font-semibold text-text-1">
             <span className="text-accent" aria-hidden="true">{icon}</span>
@@ -39,8 +39,8 @@ interface ProfileValueProps {
 export function ProfileValue({label, value, mono}: ProfileValueProps) {
   return (
     <div>
-      <span className="block text-xs font-medium text-text-3">{label}</span>
-      <p className={cn('mt-1 text-sm text-text-1', mono && 'font-mono')}>{value}</p>
+      <span className="block text-xs font-medium uppercase tracking-wide text-text-3">{label}</span>
+      <p className={cn('mt-1 text-sm font-medium text-text-1', mono && 'font-mono')}>{value}</p>
     </div>
   );
 }
