@@ -199,7 +199,7 @@ export default function TicketListPage() {
         />
 
         {/* Search & Filters Bar */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] p-3">
           <div className="flex-1">
             <Input
               type="text"
@@ -311,31 +311,31 @@ export default function TicketListPage() {
                 <thead>
                 <tr className="border-b border-[var(--border-main)] bg-[var(--bg-surface)]">
                   <th
-                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Ticket
+                    className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Ticket
                   </th>
                   <th
-                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Subject
+                    className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Subject
                   </th>
                   <th
-                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Requester
+                    className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Requester
                   </th>
                   <th
-                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Category
+                    className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Category
                   </th>
                   <th
-                    className="px-4 py-2 text-center text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Priority
+                    className="px-4 py-3 text-center text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Priority
                   </th>
                   <th
-                    className="px-4 py-2 text-center text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Status
+                    className="px-4 py-3 text-center text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Status
                   </th>
                   <th
-                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Assignee
+                    className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Assignee
                   </th>
                   <th
-                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Created
+                    className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Created
                   </th>
                   <th
-                    className="px-4 py-2 text-left text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wider">Actions
+                    className="px-4 py-3 text-left text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">Actions
                   </th>
                 </tr>
                 </thead>
@@ -491,7 +491,7 @@ function TicketRow({ticket, onNavigate, onStatusChange, formatDate}: TicketRowPr
           className="text-sm font-mono text-accent-700 dark:text-accent-400">{ticket.ticketNumber || ticket.id.slice(0, 8)}</span>
       </td>
       <td className="px-4 py-4">
-        <span className="text-sm font-medium text-[var(--text-primary)] line-clamp-1">{ticket.subject}</span>
+        <span className="text-sm font-semibold text-[var(--text-primary)] line-clamp-1">{ticket.subject}</span>
       </td>
       <td className="px-4 py-4 whitespace-nowrap">
         <div className="flex items-center gap-2">

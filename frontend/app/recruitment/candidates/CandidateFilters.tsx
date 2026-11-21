@@ -60,7 +60,7 @@ export const CandidateFilters = memo(function CandidateFilters({
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               aria-label="Search candidates by name, email, or code"
-              className="w-full input-aura pl-10 pr-4 py-2.5 rounded-xl"
+              className="w-full input-aura pl-10 pr-4 py-2.5 rounded-lg"
             />
           </div>
           <label htmlFor="candidate-job-filter" className="sr-only">Filter by job opening</label>
@@ -69,7 +69,7 @@ export const CandidateFilters = memo(function CandidateFilters({
             value={jobFilter}
             onChange={(e) => onJobChange(e.target.value)}
             aria-label="Filter candidates by job opening"
-            className="input-aura px-4 py-2.5 rounded-xl"
+            className="input-aura px-4 py-2.5 rounded-lg"
           >
             <option value="">All Job Openings</option>
             {jobOpenings.map((job) => (
@@ -82,7 +82,7 @@ export const CandidateFilters = memo(function CandidateFilters({
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
             aria-label="Filter candidates by status"
-            className="input-aura px-4 py-2.5 rounded-xl"
+            className="input-aura px-4 py-2.5 rounded-lg"
           >
             {STATUS_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>

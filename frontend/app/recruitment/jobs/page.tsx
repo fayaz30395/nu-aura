@@ -251,7 +251,7 @@ export default function JobOpeningsPage() {
           <dl className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {stats.map((s) => (
               <div key={s.label} className="flex flex-col gap-1 rounded-lg border border-border bg-card p-4">
-                <dt className="text-xs font-medium text-text-2">{s.label}</dt>
+                <dt className="text-xs font-medium uppercase tracking-wider text-text-2">{s.label}</dt>
                 <dd className="text-2xl font-semibold tabular-nums text-text-1">{s.value}</dd>
               </div>
             ))}

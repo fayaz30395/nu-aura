@@ -147,21 +147,21 @@ export default function LeaveCalendarPage() {
           errorTitle="Couldn't load leave data"
         >
           {() => (
-            <div className="overflow-x-auto rounded-lg border border-border bg-card p-4">
-              <div className="grid min-w-160 grid-cols-7 gap-1">
+            <div className="overflow-x-auto rounded-lg border border-border bg-card">
+              <div className="grid min-w-160 grid-cols-7 gap-px bg-border">
                 {WEEK_DAYS.map(day => (
-                  <div key={day} className="py-2 text-center text-xs font-semibold text-text-2">{day}</div>
+                  <div key={day} className="bg-surface-aura-sunken py-2 text-center text-xs font-semibold uppercase tracking-wide text-text-2">{day}</div>
                 ))}
                 {calendarDays.map((day, index) => (
                   <div
                     key={index}
                     className={cn(
-                      'min-h-24 rounded-md border p-2',
+                      'min-h-24 p-2',
                       day.isToday
-                        ? 'border-accent bg-accent-subtle'
+                        ? 'bg-accent-subtle'
                         : day.isCurrentMonth
-                          ? 'border-border bg-card'
-                          : 'border-border-subtle bg-surface-aura-sunken',
+                          ? 'bg-card'
+                          : 'bg-surface-aura-sunken',
                     )}
                   >
                     <div

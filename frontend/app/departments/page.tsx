@@ -279,7 +279,7 @@ export default function DepartmentsPage() {
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Total Departments</p>
-                  <p className="text-xl font-bold">{departments.length}</p>
+                  <p className="mt-2 text-3xl font-bold">{departments.length}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
@@ -294,7 +294,7 @@ export default function DepartmentsPage() {
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Active Departments</p>
-                  <p className="text-xl font-bold">{activeDepartments}</p>
+                  <p className="mt-2 text-3xl font-bold">{activeDepartments}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
@@ -309,7 +309,7 @@ export default function DepartmentsPage() {
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Total Employees</p>
-                  <p className="text-xl font-bold">{totalEmployees}</p>
+                  <p className="mt-2 text-3xl font-bold">{totalEmployees}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
@@ -354,7 +354,7 @@ export default function DepartmentsPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                <tr className="border-b border-[var(--border-main)]">
+                <tr className="border-b border-[var(--border-main)] bg-[var(--bg-secondary)]">
                   <th
                     className="px-6 py-4 text-left text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">
                     Department
@@ -425,21 +425,18 @@ export default function DepartmentsPage() {
                           </div>
                           <div>
                             <p className="font-medium text-[var(--text-primary)]">{dept.name}</p>
-                            <p className="text-body-muted">{dept.code}</p>
+                            <p className="font-mono text-xs uppercase text-[var(--text-muted)]">{dept.code}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         {dept.type ? (
-                          <span
-                            className="px-2.5 py-1 text-xs font-medium rounded-full bg-accent-100 dark:bg-accent-950/30 text-accent-700 dark:text-accent-400">
-                              {dept.type}
-                            </span>
+                          <span className="text-[var(--text-primary)]">{dept.type}</span>
                         ) : (
                           <span className="text-[var(--text-muted)]">-</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-[var(--text-primary)]">
+                      <td className="px-6 py-4 text-accent-700 dark:text-accent-400">
                         {dept.parentDepartmentName || '-'}
                       </td>
                       <td className="px-6 py-4 text-[var(--text-primary)]">
@@ -455,7 +452,7 @@ export default function DepartmentsPage() {
                           <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
                             dept.isActive
                               ? 'bg-success-100 dark:bg-success-950/30 text-success-700 dark:text-success-400'
-                              : 'bg-danger-100 dark:bg-danger-950/30 text-danger-700 dark:text-danger-400'
+                              : 'bg-[var(--bg-secondary)] text-[var(--text-muted)]'
                           }`}>
                             {dept.isActive ? 'Active' : 'Inactive'}
                           </span>

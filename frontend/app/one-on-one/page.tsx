@@ -250,9 +250,9 @@ function StatCard({
       className="bg-[var(--bg-card)] rounded-lg border border-[var(--border-main)] p-4 shadow-[var(--shadow-card)] skeuo-card">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-[var(--text-muted)]">{title}</p>
+          <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">{title}</p>
           <p
-            className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-1">
+            className="text-2xl font-semibold tabular-nums text-[var(--text-primary)] dark:text-[var(--text-secondary)] mt-2">
             {value}
           </p>
           {subtitle && <p className="text-caption mt-1">{subtitle}</p>}

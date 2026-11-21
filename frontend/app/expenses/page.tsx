@@ -667,7 +667,7 @@ function StatsRow({
       animate="visible"
       variants={{visible: {transition: {staggerChildren: 0.06, delayChildren: 0.08}}}}
       aria-label="Expense summary"
-      className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]"
+      className="grid grid-cols-2 gap-4 sm:grid-cols-4"
     >
       {items.map((item) => (
         <motion.div
@@ -676,14 +676,14 @@ function StatsRow({
             hidden: {opacity: 0, y: 6},
             visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: EASE}},
           }}
-          className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0"
+          className="rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-card)] p-5"
         >
           <div className="flex items-center gap-2 text-[var(--text-muted)]">
             <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
             <span className="text-2xs font-medium uppercase tracking-wider">{item.label}</span>
           </div>
           <p
-            className={`mt-3 font-mono text-2xl sm:text-3xl tabular-nums tracking-tight ${
+            className={`mt-2 font-mono text-2xl sm:text-3xl font-bold tabular-nums tracking-tight ${
               item.tone === 'danger'
                 ? 'text-danger-700 dark:text-danger-300'
                 : item.tone === 'warning'

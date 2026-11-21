@@ -220,17 +220,17 @@ function StatsRow({activeSpaces, pagesThisWeek, contributions, blogsThisWeek}: {
     <section aria-label="Fluence at a glance">
       <Stagger
         delayChildren={0.08}
-        className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border)] divide-x divide-[var(--border)]"
+        className="grid grid-cols-2 gap-4 sm:grid-cols-4"
       >
         {items.map((item) => (
           <StaggerItem
             key={item.label}
-            className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0 transition-colors hover:bg-[var(--surface-hover)]"
+            className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--sh-sm)] transition-colors hover:bg-[var(--surface-hover)]"
           >
             <div className="flex items-center gap-2 text-[var(--text-3)]">
               <span className="text-aura-micro">{item.label}</span>
             </div>
-            <p className="mt-3 num text-3xl sm:text-4xl text-[var(--text-1)]">
+            <p className="mt-3 num text-3xl text-[var(--text-1)]">
               {item.value}
             </p>
           </StaggerItem>
@@ -242,9 +242,9 @@ function StatsRow({activeSpaces, pagesThisWeek, contributions, blogsThisWeek}: {
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 border-y border-[var(--border-subtle)] divide-x divide-[var(--border-subtle)]">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {Array.from({length: 4}).map((_, i) => (
-        <div key={i} className="px-5 py-6 sm:px-7 sm:py-8 first:pl-0 last:pr-0">
+        <div key={i} className="rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)] p-5">
           <Skeleton className="h-3 w-24 rounded" />
           <Skeleton className="mt-3 h-9 w-20 rounded" />
         </div>
@@ -396,14 +396,14 @@ function RecentActivity({items}: {items: ActivityItem[]}) {
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </Link>
       </div>
-      <ul className="divide-y divide-[var(--border)] border-y border-[var(--border)]">
+      <ul className="divide-y divide-[var(--border)] overflow-hidden rounded-[var(--r-lg)] border border-[var(--border)] bg-[var(--surface)]">
         {items.map((item) => {
           const Icon = item.kind === 'wiki' ? BookOpen : item.kind === 'blog' ? FileText : MessageSquare;
           return (
             <li key={item.id}>
               <Link
                 href={item.href}
-                className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-4 sm:gap-6 group hover:bg-[var(--surface-hover)] -mx-3 px-3 rounded-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
+                className="grid grid-cols-[auto_1fr_auto] items-center gap-4 px-4 py-4 sm:gap-6 group hover:bg-[var(--surface-hover)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2"
               >
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface-aura-2)] border border-[var(--border)] text-[var(--text-2)]">
                   <Icon className="h-4 w-4" aria-hidden="true" />
