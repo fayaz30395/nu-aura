@@ -3,6 +3,7 @@
 import {useCallback, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -185,23 +186,19 @@ export default function ReferralsPage() {
         transition={{duration: 0.25, ease: 'easeOut'}}
       >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Referral Portal
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Refer candidates and track your referral bonuses
-            </p>
-          </div>
-          <button
-            onClick={() => setActiveTab('submit')}
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            <Plus className="h-5 w-5"/>
-            Submit Referral
-          </button>
-        </div>
+        <PageHeader
+          title="Referral Portal"
+          description="Refer candidates and track your referral bonuses"
+          actions={
+            <button
+              onClick={() => setActiveTab('submit')}
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              <Plus className="h-5 w-5"/>
+              Submit Referral
+            </button>
+          }
+        />
 
         {/* Dashboard Stats */}
         {dashboard && (

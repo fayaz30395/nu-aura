@@ -3,6 +3,7 @@
 import {useCallback, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -454,14 +455,10 @@ export default function ProbationPage() {
         transition={{duration: 0.25, ease: 'easeOut'}}
       >
         {/* Header */}
-        <div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">
-            Probation Management
-          </h1>
-          <p className="text-[var(--text-secondary)] mt-1">
-            Track probation periods, reviews, and confirmations
-          </p>
-        </div>
+        <PageHeader
+          title="Probation Management"
+          description="Track probation periods, reviews, and confirmations"
+        />
 
         {/* Statistics Cards */}
         {statistics && (

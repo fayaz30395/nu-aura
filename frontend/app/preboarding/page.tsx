@@ -7,6 +7,7 @@ import {z} from 'zod';
 import {AlertCircle, Calendar, CheckCircle2, Clock, Mail, RefreshCw, Search, UserPlus, Users} from 'lucide-react';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
@@ -163,21 +164,21 @@ export default function PreboardingPage() {
     <AppLayout breadcrumbs={[{label: 'Pre-boarding', href: '/preboarding'}]}>
       <PageTransition className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Pre-boarding Portal</h1>
-            <p className="text-body-muted mt-1">Manage new hire paperwork before joining</p>
-          </div>
-          <PermissionGate permission={Permissions.PREBOARDING_CREATE}>
-            <Button
-              variant="primary"
-              leftIcon={<UserPlus className="h-4 w-4"/>}
-              onClick={() => setShowInviteModal(true)}
-            >
-              Invite Candidate
-            </Button>
-          </PermissionGate>
-        </div>
+        <PageHeader
+          title="Pre-boarding Portal"
+          description="Manage new hire paperwork before joining"
+          actions={
+            <PermissionGate permission={Permissions.PREBOARDING_CREATE}>
+              <Button
+                variant="primary"
+                leftIcon={<UserPlus className="h-4 w-4"/>}
+                onClick={() => setShowInviteModal(true)}
+              >
+                Invite Candidate
+              </Button>
+            </PermissionGate>
+          }
+        />
 
         {/* Error State */}
         {isError && (

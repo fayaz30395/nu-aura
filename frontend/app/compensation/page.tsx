@@ -20,6 +20,7 @@ import {
   Users,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   Badge,
   Button,
@@ -235,20 +236,16 @@ export default function CompensationPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="compensation">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Compensation Planning
-            </h1>
-            <p className="text-[var(--text-secondary)]">
-              Manage compensation review cycles and salary revisions
-            </p>
-          </div>
-          <Button onClick={() => setIsCreateCycleModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-2"/>
-            New Review Cycle
-          </Button>
-        </div>
+        <PageHeader
+          title="Compensation Planning"
+          description="Manage compensation review cycles and salary revisions"
+          actions={
+            <Button onClick={() => setIsCreateCycleModalOpen(true)}>
+              <Plus className="h-4 w-4 mr-2"/>
+              New Review Cycle
+            </Button>
+          }
+        />
 
         {/* Loading State */}
         {loading && (

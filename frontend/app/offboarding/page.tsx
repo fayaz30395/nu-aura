@@ -21,6 +21,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button, Card, CardContent, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -348,22 +349,18 @@ export default function OffboardingPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="offboarding">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Exit Management
-            </h1>
-            <p className="text-[var(--text-secondary)]">
-              Manage employee offboarding and exit processes
-            </p>
-          </div>
-          <PermissionGate anyOf={[Permissions.EXIT_INITIATE, Permissions.EXIT_MANAGE]}>
-            <Button onClick={handleOpenAddModal}>
-              <Plus className="h-4 w-4 mr-2"/>
-              Initiate Exit
-            </Button>
-          </PermissionGate>
-        </div>
+        <PageHeader
+          title="Exit Management"
+          description="Manage employee offboarding and exit processes"
+          actions={
+            <PermissionGate anyOf={[Permissions.EXIT_INITIATE, Permissions.EXIT_MANAGE]}>
+              <Button onClick={handleOpenAddModal}>
+                <Plus className="h-4 w-4 mr-2"/>
+                Initiate Exit
+              </Button>
+            </PermissionGate>
+          }
+        />
 
         {/* Error Alert */}
         {error && (
