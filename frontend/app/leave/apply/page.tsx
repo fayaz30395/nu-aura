@@ -198,8 +198,8 @@ export default function ApplyLeavePage() {
           )}
 
           <div className="flex items-center justify-between rounded-md border border-border bg-surface-aura-sunken px-4 py-2">
-            <span className="text-sm text-text-2">Total days requested</span>
-            <span className="text-lg font-semibold tabular-nums text-text-1">{totalDays} days</span>
+            <span className="text-xs font-medium uppercase tracking-wide text-text-3">Total days requested</span>
+            <span className="font-mono text-base font-semibold tabular-nums text-text-1">{totalDays} days</span>
           </div>
 
           <Textarea
