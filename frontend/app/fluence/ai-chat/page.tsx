@@ -3,6 +3,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {Bot, Send, Square, Trash2} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {useFluenceChat} from '@/lib/hooks/useFluenceChat';
@@ -54,10 +55,7 @@ function AiChatContent() {
             <div className="p-1.5 rounded-lg bg-[var(--accent-soft)]">
               <Bot className="h-4 w-4 text-[var(--accent)]"/>
             </div>
-            <div>
-              <h1 className="text-sm font-semibold text-[var(--text-1)]">Fluence AI</h1>
-              <p className="text-xs text-[var(--text-3)]">Ask anything about your knowledge base</p>
-            </div>
+            <PageHeader title="Fluence AI" description="Ask anything about your knowledge base"/>
           </div>
           {!isEmpty && (
             <button

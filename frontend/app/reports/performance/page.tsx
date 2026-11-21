@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {motion} from 'framer-motion';
 import {Reveal} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Download, Loader2, TrendingUp, X,} from 'lucide-react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {ReportRequest, reportService} from '@/lib/services/core/report.service';
@@ -57,12 +58,7 @@ export default function PerformanceReportsPage() {
           animate={{opacity: 1, y: 0}}
           className="row-between"
         >
-          <div>
-            <h1 className="text-xl font-bold">Performance Reports</h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Generate performance review reports with ratings and goal achievements
-            </p>
-          </div>
+          <PageHeader title="Performance Reports" description="Generate performance review reports with ratings and goal achievements"/>
         </motion.div>
 
         {/* Success Message */}

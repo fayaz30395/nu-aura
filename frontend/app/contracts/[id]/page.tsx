@@ -3,6 +3,7 @@
 import React, {useEffect} from 'react';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useContract, useMarkAsActive, useSignatures, useTerminateContract} from '@/lib/hooks/queries/useContracts';
 import {contractService} from '@/lib/services/hrms/contract.service';
 import {Badge, Button, Card, Table, Tabs} from '@mantine/core';
@@ -66,10 +67,7 @@ export default function ContractDetailPage() {
                     className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
               <ArrowLeft className="w-5 h-5"/>
             </button>
-            <div>
-              <h1 className="text-xl font-bold">{contract.title}</h1>
-              <p className="text-[var(--text-secondary)]">{contractService.getTypeLabel(contract.type)}</p>
-            </div>
+            <PageHeader title={<>{contract.title}</>} description={<>{contractService.getTypeLabel(contract.type)}</>}/>
           </div>
           <Badge size="lg" color={contract.status === 'ACTIVE' ? 'green' : 'gray'}>
             {contractService.getStatusLabel(contract.status)}

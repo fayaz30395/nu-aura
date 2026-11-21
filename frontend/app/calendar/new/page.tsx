@@ -6,6 +6,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {EventType, EventVisibility} from '@/lib/types/hrms/calendar';
@@ -185,10 +186,7 @@ export default function NewEventPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">New Event</h1>
-            <p className="text-[var(--text-muted)] mt-1">Schedule a new calendar event</p>
-          </div>
+          <PageHeader title="New Event" description="Schedule a new calendar event"/>
         </div>
 
         {createEventMutation.isError && (

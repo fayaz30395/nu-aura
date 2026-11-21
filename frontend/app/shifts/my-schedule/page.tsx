@@ -2,6 +2,7 @@
 
 import {useMemo, useState} from 'react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {useEmployeeSchedule} from '@/lib/hooks/queries/useShifts';
 import {SkeletonTable} from '@/components/ui/Skeleton';
@@ -88,12 +89,7 @@ export default function MySchedulePage() {
             >
               <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
             </button>
-            <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-white">My Schedule</h1>
-              <p className="text-sm text-surface-500 dark:text-surface-400">
-                Your personal shift calendar
-              </p>
-            </div>
+            <PageHeader title="My Schedule" description="Your personal shift calendar"/>
           </div>
           <button
             onClick={() => router.push('/shifts/swaps')}

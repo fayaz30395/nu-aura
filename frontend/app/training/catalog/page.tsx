@@ -4,6 +4,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import Image from 'next/image';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   AlertCircle,
   Award,
@@ -160,13 +161,10 @@ export default function CourseCatalogPage() {
     <AppLayout>
       <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
-        <div className="row-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Course Catalog</h1>
-            <p className="text-[var(--text-muted)] mt-1 text-sm">
-              Browse and enroll in available courses
-            </p>
-          </div>
+        <PageHeader
+          title="Course Catalog"
+          description="Browse and enroll in available courses"
+          actions={<>
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -188,7 +186,8 @@ export default function CourseCatalogPage() {
               Refresh
             </Button>
           </div>
-        </div>
+          </>}
+        />
 
         {/* Notifications */}
         {error && (

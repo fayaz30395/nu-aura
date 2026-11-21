@@ -4,6 +4,7 @@ import React from 'react';
 import {useRouter} from 'next/navigation';
 import {ArrowLeft, CheckCircle, Clock, LogOut, ShieldCheck, UserMinus} from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui';
 import {StatCard} from '@/components/ui/StatCard';
 import {PermissionGate} from '@/components/auth/PermissionGate';
@@ -23,10 +24,7 @@ export default function ExitDashboardPage() {
               <ArrowLeft className="h-4 w-4 mr-1"/>
               Back
             </Button>
-            <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">Exit Dashboard</h1>
-              <p className="text-sm text-[var(--text-secondary)]">Company-wide offboarding overview</p>
-            </div>
+            <PageHeader title="Exit Dashboard" description="Company-wide offboarding overview"/>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">

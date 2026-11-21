@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -458,10 +459,7 @@ function CalendarContent() {
             <div className="w-12 h-12 rounded-[var(--r-lg)] bg-[var(--accent-soft)] text-[var(--accent)] flex items-center justify-center hover-lift">
               <CalendarIcon className="h-6 w-6"/>
             </div>
-            <div>
-              <h1 className="text-aura-title text-[var(--text-1)]">NU-Calendar</h1>
-              <p className="text-sm text-[var(--text-3)]">Your Google Calendar events</p>
-            </div>
+            <PageHeader title="NU-Calendar" description="Your Google Calendar events"/>
           </div>
           {!accessToken ? (
             <Button

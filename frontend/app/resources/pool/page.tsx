@@ -3,6 +3,7 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AlertTriangle, Download, Info, RefreshCw, Search, Users} from 'lucide-react';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {ResourceManagementApiError,} from '@/lib/services/hrms/resource-management.service';
@@ -149,13 +150,10 @@ export default function ResourcePoolPage() {
     >
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Resource Pool</h1>
-            <p className="text-body-muted mt-0.5">
-              All employees with current project allocation status
-            </p>
-          </div>
+        <PageHeader
+          title="Resource Pool"
+          description="All employees with current project allocation status"
+          actions={<>
           <div className="flex gap-2">
             <button
               onClick={() => refetch()}
@@ -176,7 +174,8 @@ export default function ResourcePoolPage() {
               Export
             </button>
           </div>
-        </div>
+          </>}
+        />
 
         {error && (
           <div

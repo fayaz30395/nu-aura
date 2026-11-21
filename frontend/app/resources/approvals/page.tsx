@@ -3,6 +3,7 @@
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Briefcase, CheckCircle, Clock, RefreshCw, User, XCircle,} from 'lucide-react';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
@@ -113,19 +114,15 @@ export default function ApprovalsPage() {
     <AppLayout>
       <div className="space-y-6 p-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Allocation Approvals
-            </h1>
-            <p className="mt-1 text-body-muted">
-              Review and approve over-allocation requests
-            </p>
-          </div>
+        <PageHeader
+          title="Allocation Approvals"
+          description="Review and approve over-allocation requests"
+          actions={<>
           <Button variant="ghost" onClick={() => refetchRequests()} disabled={isLoading}>
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}/>
           </Button>
-        </div>
+          </>}
+        />
 
         {/* Tabs */}
         <div className="border-b border-[var(--border-main)]">

@@ -4,6 +4,7 @@ import React, {useState} from 'react';
 import {CheckCircle, Clock, Database, Download, FileText, Shield, Trash2, XCircle} from 'lucide-react';
 import {useQueryClient} from '@tanstack/react-query';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
@@ -352,10 +353,7 @@ export default function PrivacyPage() {
     <AppLayout>
       <div className="page-shell fade-slide-up">
         <div className="page-header">
-          <div>
-            <h1 className="page-title">Privacy & Data Rights</h1>
-            <p className="page-subtitle">Exercise your GDPR data subject rights.</p>
-          </div>
+          <PageHeader title="Privacy & Data Rights" description="Exercise your GDPR data subject rights."/>
         </div>
 
         {isAdmin && (

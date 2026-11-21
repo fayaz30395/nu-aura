@@ -3,6 +3,7 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Calendar, ChevronLeft, ChevronRight, Filter, RefreshCw, Users,} from 'lucide-react';
 import {Card, CardContent} from '@/components/ui/Card';
@@ -126,15 +127,10 @@ export default function AvailabilityCalendarPage() {
     <AppLayout>
       <div className="space-y-6 p-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Team Availability
-            </h1>
-            <p className="mt-1 text-body-muted">
-              View team availability, leaves, and project allocations
-            </p>
-          </div>
+        <PageHeader
+          title="Team Availability"
+          description="View team availability, leaves, and project allocations"
+          actions={<>
 
           <div className="flex items-center gap-4">
             <Button variant="ghost" disabled={isLoading} aria-label="Refresh data">
@@ -150,7 +146,8 @@ export default function AvailabilityCalendarPage() {
               Filters
             </Button>
           </div>
-        </div>
+          </>}
+        />
 
         {/* Filters */}
         {showFilters && (

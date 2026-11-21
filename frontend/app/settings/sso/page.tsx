@@ -24,6 +24,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PageTransition, Reveal} from '@/components/motion';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -319,12 +320,7 @@ export default function SsoSettingsPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">SAML SSO Configuration</h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Configure SAML 2.0 Single Sign-On with your corporate Identity Provider
-            </p>
-          </div>
+          <PageHeader title="SAML SSO Configuration" description="Configure SAML 2.0 Single Sign-On with your corporate Identity Provider"/>
         </Reveal>
 
         {/* Status Messages */}

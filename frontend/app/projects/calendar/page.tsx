@@ -16,6 +16,7 @@ import {
   Loader2
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button, Card, CardContent, Select} from '@/components/ui';
 import {TaskListItem} from '@/lib/types/core/task';
 import {CalendarEvent, GanttTask, PRIORITY_COLORS, STATUS_COLORS} from '@/lib/types/hrms/project-calendar';
@@ -462,14 +463,7 @@ export default function ProjectCalendarPage() {
             >
               <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
             </button>
-            <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                Project Calendar
-              </h1>
-              <p className="text-[var(--text-secondary)]">
-                Visualize projects and tasks
-              </p>
-            </div>
+            <PageHeader title="Project Calendar" description="Visualize projects and tasks"/>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex bg-[var(--bg-secondary)] rounded-lg p-1">

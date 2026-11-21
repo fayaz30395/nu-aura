@@ -5,6 +5,7 @@ import {apiConfig} from '@/lib/config';
 import {useParams, useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   ArrowLeft,
   Calendar,
@@ -232,12 +233,7 @@ export default function ExpenseDetailPage() {
           >
             <ArrowLeft className="w-5 h-5"/>
           </button>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">
-              {claim.claimNumber}
-            </h1>
-            <p className="text-surface-500">{claim.title || claim.description}</p>
-          </div>
+          <PageHeader title={<>{claim.claimNumber}</>} description={<>{claim.title || claim.description}</>}/>
           <span
             className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium ${statusConfig.color}`}>
             <StatusIcon className="w-4 h-4"/>

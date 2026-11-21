@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {motion} from 'framer-motion';
 import {Reveal} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Calendar, Download, FileText, Filter, Loader2, X,} from 'lucide-react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {ReportRequest, reportService} from '@/lib/services/core/report.service';
@@ -64,12 +65,7 @@ export default function LeaveReportsPage() {
           animate={{opacity: 1, y: 0}}
           className="row-between"
         >
-          <div>
-            <h1 className="text-xl font-bold">Leave Reports</h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Generate leave request reports with customizable filters
-            </p>
-          </div>
+          <PageHeader title="Leave Reports" description="Generate leave request reports with customizable filters"/>
         </motion.div>
 
         {/* Success Message */}

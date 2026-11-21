@@ -6,6 +6,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {EntryType} from '@/lib/types/hrms/time-tracking';
 import {useSubmitTimeEntry, useTimeEntry, useUpdateTimeEntry,} from '@/lib/hooks/queries/useTimeTracking';
@@ -210,14 +211,7 @@ export default function EditTimeEntryPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Edit Time Entry
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Update your work hours
-            </p>
-          </div>
+          <PageHeader title="Edit Time Entry" description="Update your work hours"/>
         </div>
 
         {(updateMutation.isError || submitMutation.isError) && (

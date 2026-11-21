@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {CheckCircle, Eye, XCircle} from 'lucide-react';
 import {formatCurrency} from '@/lib/utils';
 import {format} from 'date-fns';
@@ -75,12 +76,7 @@ export default function ExpenseApprovalsPage() {
                         expense approvals.</div>}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-6">
           <div className="row-between">
-            <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50">Expense Approvals</h1>
-              <p className="text-surface-500 mt-1">
-                {claims.length} pending claim{claims.length !== 1 ? 's' : ''} awaiting your approval
-              </p>
-            </div>
+            <PageHeader title="Expense Approvals" description={<>{claims.length} pending claim{claims.length !== 1 ? 's' : ''} awaiting your approval</>}/>
           </div>
 
           {isLoading ? (

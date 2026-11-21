@@ -8,6 +8,7 @@ import {z} from 'zod';
 import {useRouter} from 'next/navigation';
 import {ArrowLeft, Check, Copy, ExternalLink, Hash, Key, MessageSquare, RefreshCw, Shield, Zap,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Input} from '@/components/ui/Input';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useUnsavedChanges} from '@/lib/hooks';
@@ -177,14 +178,7 @@ export default function SlackIntegrationPage() {
             <div className="p-4 rounded-xl bg-gradient-to-br from-accent-700 to-danger-600">
               <Zap className="h-6 w-6 text-white"/>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                Slack Integration
-              </h1>
-              <p className="text-body-muted">
-                Connect NU-AURA with your Slack workspace
-              </p>
-            </div>
+            <PageHeader title="Slack Integration" description="Connect NU-AURA with your Slack workspace"/>
           </div>
           {configQuery.data && (
             <span className={`ml-auto px-2 py-1 rounded-full text-xs font-medium ${

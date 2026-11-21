@@ -27,6 +27,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button, Card, CardContent, EmptyState, Modal, ModalBody, ModalFooter, ModalHeader,} from '@/components/ui';
 import {StatusBadge} from '@/components/ui/StatusBadge';
 import {LETTER_STATUS} from '@/lib/status/vocabulary';
@@ -430,15 +431,10 @@ export default function LettersPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letters">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Letter Generation
-            </h1>
-            <p className="text-[var(--text-secondary)]">
-              Generate and manage employee letters
-            </p>
-          </div>
+        <PageHeader
+          title="Letter Generation"
+          description="Generate and manage employee letters"
+          actions={<>
           <div className="flex gap-2">
             <PermissionGate permission={Permissions.LETTER_GENERATE}>
               <Button variant="outline" onClick={handleOpenOfferLetterModal}>
@@ -453,7 +449,8 @@ export default function LettersPage() {
               </Button>
             </PermissionGate>
           </div>
-        </div>
+          </>}
+        />
 
         {/* Error Alert */}
         {lettersError && (

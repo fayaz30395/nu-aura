@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {Reveal} from '@/components/motion';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {DollarSign, Download, Loader2, X,} from 'lucide-react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {ReportRequest} from '@/lib/services/core/report.service';
@@ -78,12 +79,7 @@ export default function PayrollReportsPage() {
           animate={{opacity: 1, y: 0}}
           className="row-between"
         >
-          <div>
-            <h1 className="text-xl font-bold">Payroll Reports</h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Generate comprehensive payroll reports with salary breakdowns
-            </p>
-          </div>
+          <PageHeader title="Payroll Reports" description="Generate comprehensive payroll reports with salary breakdowns"/>
         </motion.div>
 
         {/* Success Message */}

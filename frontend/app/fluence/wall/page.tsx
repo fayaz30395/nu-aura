@@ -3,6 +3,7 @@
 import {useMemo, useState} from 'react';
 import {IconActivity, IconFlame, IconTrendingUp} from '@tabler/icons-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {Reveal} from '@/components/motion';
@@ -426,14 +427,7 @@ function WallPageContent() {
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6">
         <Reveal className="flex items-center gap-4 mb-6 flex-wrap sm:flex-nowrap">
           <IconActivity size={28} className="text-[var(--text-1)]" aria-hidden="true"/>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-[var(--text-1)]">
-              Activity Wall
-            </h1>
-            <p className="text-sm text-[var(--text-2)]">
-              Share updates, polls, and praise with your team
-            </p>
-          </div>
+          <PageHeader title="Activity Wall" description="Share updates, polls, and praise with your team"/>
           <span
             className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-[var(--accent-soft)] text-[var(--accent)]"
             aria-label="Live updates">

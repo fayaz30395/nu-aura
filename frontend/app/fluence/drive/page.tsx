@@ -4,6 +4,7 @@ import React, {useMemo, useState} from 'react';
 import {File, FileImage, FileSpreadsheet, FileText, HardDrive, Search, Upload,} from 'lucide-react';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {cn} from '@/lib/utils';
 import {FileUploader} from '@/components/fluence/FileUploader';
@@ -129,14 +130,7 @@ function FluenceDriveContent() {
             className="w-16 h-16 rounded-lg bg-gradient-to-br from-accent-700 to-accent-800 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
             <HardDrive className="h-8 w-8 text-white"/>
           </div>
-          <div>
-            <h1 className="text-xl font-bold">
-              NU-Fluence Drive
-            </h1>
-            <p className="text-[var(--text-muted)]">
-              Upload, manage, and share files across your knowledge base
-            </p>
-          </div>
+          <PageHeader title="NU-Fluence Drive" description="Upload, manage, and share files across your knowledge base"/>
         </div>
 
         {/* Upload Area — gated behind document permissions (DEF-54) */}

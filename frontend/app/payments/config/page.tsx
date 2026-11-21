@@ -6,6 +6,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AlertCircle, CheckCircle, Loader2, Settings} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -205,14 +206,7 @@ export default function PaymentConfigPage() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-6">
           <Settings className="w-8 h-8 text-accent-700"/>
-          <div>
-            <h1 className="text-2xl sm:text-xl font-bold text-[var(--text-primary)]">
-              Payment Configuration
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Configure and manage payment gateway providers
-            </p>
-          </div>
+          <PageHeader title="Payment Configuration" description="Configure and manage payment gateway providers"/>
         </div>
 
         {/* Notifications */}

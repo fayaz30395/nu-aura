@@ -22,6 +22,7 @@ import {
   Users,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Stat} from '@/components/ui/Stat';
@@ -629,15 +630,10 @@ export default function PredictiveAnalyticsPage() {
     <AppLayout activeMenuItem="predictive-analytics">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-xl font-bold text-[var(--text-primary)]">
-              Predictive Analytics
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              AI-powered workforce insights and predictions
-            </p>
-          </div>
+        <PageHeader
+          title="Predictive Analytics"
+          description="AI-powered workforce insights and predictions"
+          actions={<>
           <div className="flex items-center gap-4">
             {/* Export buttons wired up once backend PDF/Excel export endpoints are available */}
             <Button variant="outline" size="sm" disabled title="Export coming soon"
@@ -655,7 +651,8 @@ export default function PredictiveAnalyticsPage() {
               Refresh
             </Button>
           </div>
-        </div>
+          </>}
+        />
 
         {/* Tabs */}
         <div

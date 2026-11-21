@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useDeleteTemplate, useTemplates} from '@/lib/hooks/queries/useContracts';
 import {contractService} from '@/lib/services/hrms/contract.service';
 import {Badge, Button, Card, Input} from '@mantine/core';
@@ -63,11 +64,10 @@ export default function ContractTemplatesPage() {
     <AppLayout breadcrumbs={breadcrumbs}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold">Contract Templates</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Manage reusable contract templates</p>
-          </div>
+        <PageHeader
+          title="Contract Templates"
+          description="Manage reusable contract templates"
+          actions={<>
           <Button
             onClick={() => router.push('/contracts/templates/new')}
             leftSection={<Plus className="w-4 h-4"/>}
@@ -75,7 +75,8 @@ export default function ContractTemplatesPage() {
           >
             New Template
           </Button>
-        </div>
+          </>}
+        />
 
         {/* Search */}
         <Input

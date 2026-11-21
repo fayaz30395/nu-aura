@@ -2,6 +2,7 @@
 
 import {useCallback, useMemo, useState} from 'react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {
@@ -207,12 +208,7 @@ export default function ShiftPatternsPage() {
               >
                 <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
               </button>
-              <div>
-                <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Shift Patterns</h1>
-                <p className="text-sm text-surface-500 dark:text-surface-400">
-                  Define rotation cycles for shift scheduling
-                </p>
-              </div>
+              <PageHeader title="Shift Patterns" description="Define rotation cycles for shift scheduling"/>
             </div>
             <PermissionGate permission={Permissions.SHIFT_MANAGE}>
               <button

@@ -14,6 +14,7 @@ import {
   User,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Input} from '@/components/ui/Input';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -170,10 +171,7 @@ export default function AuditLogPage() {
     <AppLayout>
       <div className="page-shell fade-slide-up">
         <div className="page-header">
-          <div>
-            <h1 className="page-title">Audit Logs</h1>
-            <p className="page-subtitle">Track all actions and changes across the platform.</p>
-          </div>
+          <PageHeader title="Audit Logs" description="Track all actions and changes across the platform."/>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">

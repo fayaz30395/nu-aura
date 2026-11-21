@@ -8,6 +8,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {logger} from '@/lib/utils/logger';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {LoanType, RepaymentFrequency} from '@/lib/types/hrms/loan';
 import {useCreateLoan} from '@/lib/hooks/queries/useLoans';
 import {loanService} from '@/lib/services/hrms/loan.service';
@@ -145,12 +146,7 @@ export default function NewLoanPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Apply for Loan</h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Fill in the details for your loan application
-            </p>
-          </div>
+          <PageHeader title="Apply for Loan" description="Fill in the details for your loan application"/>
         </div>
 
         {createLoanMutation.isError && (

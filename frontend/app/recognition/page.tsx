@@ -24,6 +24,7 @@ import {
   Users,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   Badge,
   Button,
@@ -337,22 +338,18 @@ export default function RecognitionPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="recognition">
       <PageTransition className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Employee Recognition
-            </h1>
-            <p className="text-[var(--text-secondary)]">
-              Celebrate achievements and recognize your colleagues
-            </p>
-          </div>
+        <PageHeader
+          title="Employee Recognition"
+          description="Celebrate achievements and recognize your colleagues"
+          actions={<>
           <PermissionGate permission={Permissions.RECOGNITION_CREATE}>
             <Button onClick={handleGiveRecognition}>
               <Sparkles className="mr-2 h-4 w-4"/>
               Give Recognition
             </Button>
           </PermissionGate>
-        </div>
+          </>}
+        />
 
         {/* Stats Cards */}
         <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

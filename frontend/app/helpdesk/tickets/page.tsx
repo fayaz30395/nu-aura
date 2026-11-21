@@ -6,6 +6,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {Card} from '@/components/ui/Card';
@@ -183,15 +184,10 @@ export default function TicketListPage() {
     <AppLayout activeMenuItem="helpdesk">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Support Tickets
-            </h1>
-            <p className="text-body-muted mt-1">
-              View and manage helpdesk tickets
-            </p>
-          </div>
+        <PageHeader
+          title="Support Tickets"
+          description="View and manage helpdesk tickets"
+          actions={<>
           <Button
             variant="primary"
             onClick={() => setShowCreateModal(true)}
@@ -199,7 +195,8 @@ export default function TicketListPage() {
           >
             Create Ticket
           </Button>
-        </div>
+          </>}
+        />
 
         {/* Search & Filters Bar */}
         <div className="flex flex-col sm:flex-row gap-4">

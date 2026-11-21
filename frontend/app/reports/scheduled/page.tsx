@@ -6,6 +6,7 @@ import {useFieldArray, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useActiveDepartments} from '@/lib/hooks/queries/useDepartments';
 import {
@@ -260,13 +261,10 @@ export default function ScheduledReportsPage() {
   return (
     <AppLayout activeMenuItem="reports">
       <div className="max-w-7xl mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-xl font-bold">Scheduled Reports</h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Configure automated report delivery to your team
-            </p>
-          </div>
+        <PageHeader
+          title="Scheduled Reports"
+          description="Configure automated report delivery to your team"
+          actions={<>
           <button
             onClick={() => {
               reset();
@@ -278,7 +276,8 @@ export default function ScheduledReportsPage() {
             <Plus className="h-4 w-4"/>
             New Schedule
           </button>
-        </div>
+          </>}
+        />
 
         {/* Filters */}
         <div

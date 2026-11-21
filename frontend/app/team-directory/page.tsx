@@ -4,6 +4,7 @@ import {useCallback, useMemo, useState} from 'react';
 import {motion} from 'framer-motion';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent} from '@/components/ui/Card';
 import {Avatar} from '@/components/ui/Avatar';
 import {Button} from '@/components/ui/Button';
@@ -231,11 +232,10 @@ export default function TeamDirectoryPage() {
         transition={{duration: 0.3}}
       >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-xl font-bold text-[var(--text-primary)]">Team Directory</h1>
-            <p className="text-[var(--text-muted)] mt-1">Browse and connect with team members</p>
-          </div>
+        <PageHeader
+          title="Team Directory"
+          description="Browse and connect with team members"
+          actions={<>
           <div
             className="flex items-center gap-2 bg-[var(--bg-surface)] rounded-lg border border-[var(--border-main)] p-1">
             {VIEW_MODES.map(mode => (
@@ -254,7 +254,8 @@ export default function TeamDirectoryPage() {
               </button>
             ))}
           </div>
-        </div>
+          </>}
+        />
 
         {/* Search Bar */}
         <div className="relative" role="search">

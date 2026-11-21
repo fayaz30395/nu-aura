@@ -2,6 +2,7 @@
 
 import {useState} from 'react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -163,12 +164,7 @@ export default function ShiftSwapsPage() {
           >
             <ChevronLeft className="w-5 h-5 text-surface-600 dark:text-surface-300"/>
           </button>
-          <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">Shift Swaps</h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400">
-              Manage shift swap requests
-            </p>
-          </div>
+          <PageHeader title="Shift Swaps" description="Manage shift swap requests"/>
         </div>
 
         {/* Tabs */}

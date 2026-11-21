@@ -4,6 +4,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {
   AlertCircle,
@@ -233,14 +234,7 @@ export default function GanttChartPage() {
               className="p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-400">
               <Calendar className="h-6 w-6"/>
             </div>
-            <div>
-              <h1 className="text-xl font-bold">
-                Gantt Chart
-              </h1>
-              <p className="text-[var(--text-secondary)] mt-1">
-                Project timeline and task dependencies
-              </p>
-            </div>
+            <PageHeader title="Gantt Chart" description="Project timeline and task dependencies"/>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => setShowFilters(!showFilters)}>

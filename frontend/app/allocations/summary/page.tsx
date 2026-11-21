@@ -4,6 +4,7 @@ import React, {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {Download, Loader2, XCircle} from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Badge, Button, Card, CardContent, Input, ResponsiveTable, TablePagination,} from '@/components/ui';
 import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
@@ -244,15 +245,10 @@ export default function AllocationSummaryPage() {
   return (
     <AppLayout breadcrumbs={[{label: 'Allocations', href: '/allocations/summary'}, {label: 'Summary'}]}>
       <div className="space-y-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Allocation Summary
-            </h1>
-            <p className="text-body-muted">
-              Average allocation across the selected date range.
-            </p>
-          </div>
+        <PageHeader
+          title="Allocation Summary"
+          description="Average allocation across the selected date range."
+          actions={<>
           <Button
             variant="outline"
             leftIcon={<Download className="h-4 w-4"/>}
@@ -261,7 +257,8 @@ export default function AllocationSummaryPage() {
           >
             {exportMutation.isPending ? 'Exporting...' : 'Export'}
           </Button>
-        </div>
+          </>}
+        />
 
         <Card>
           <CardContent className="space-y-4">

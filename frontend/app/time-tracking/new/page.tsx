@@ -6,6 +6,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {EntryType} from '@/lib/types/hrms/time-tracking';
 import {useCreateTimeEntry, useSubmitTimeEntry} from '@/lib/hooks/queries/useTimeTracking';
@@ -134,14 +135,7 @@ export default function NewTimeEntryPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Log Time Entry
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Record your work hours
-            </p>
-          </div>
+          <PageHeader title="Log Time Entry" description="Record your work hours"/>
         </div>
 
         {(createMutation.isError || submitMutation.isError) && (

@@ -7,6 +7,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {TransportMode, TravelType} from '@/lib/types/hrms/travel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
@@ -286,10 +287,7 @@ export default function NewTravelRequestPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">New Travel Request</h1>
-            <p className="text-[var(--text-muted)] mt-1">Submit a new travel request for approval</p>
-          </div>
+          <PageHeader title="New Travel Request" description="Submit a new travel request for approval"/>
         </div>
 
         {(createMutation.isError || submitMutation.isError) && (

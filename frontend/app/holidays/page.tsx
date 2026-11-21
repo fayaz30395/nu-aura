@@ -19,6 +19,7 @@ import {Modal, ModalBody, ModalHeader} from '@/components/ui/Modal';
 import {Select} from '@/components/ui/Select';
 import {Textarea} from '@/components/ui/Textarea';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   useCreateHoliday,
   useDeleteHoliday,
@@ -255,13 +256,10 @@ export default function HolidaysPage() {
     <AppLayout activeMenuItem="holidays">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-page-title text-[var(--text-primary)]">Holiday Calendar</h1>
-            <p className="mt-1 text-body-secondary">
-              {selectedYear} organizational holidays and events
-            </p>
-          </div>
+        <PageHeader
+          title="Holiday Calendar"
+          description={<>{selectedYear} organizational holidays and events</>}
+          actions={<>
           <div className="flex items-center gap-4">
             {/* Year Selector */}
             <div className="flex items-center gap-2">
@@ -302,7 +300,8 @@ export default function HolidaysPage() {
               </Button>
             </PermissionGate>
           </div>
-        </div>
+          </>}
+        />
 
         {/* Error Message */}
         {(uiError || queryError) && (

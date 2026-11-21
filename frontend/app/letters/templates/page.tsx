@@ -20,6 +20,7 @@ import {
   Variable,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   Badge,
   Button,
@@ -449,22 +450,18 @@ export default function LetterTemplatesPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="letter-templates">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Letter Templates
-            </h1>
-            <p className="text-[var(--text-secondary)]">
-              Manage reusable templates for employee letters and certificates
-            </p>
-          </div>
+        <PageHeader
+          title="Letter Templates"
+          description="Manage reusable templates for employee letters and certificates"
+          actions={<>
           <PermissionGate permission={Permissions.LETTER_TEMPLATE_CREATE}>
             <Button onClick={handleCreateNew}>
               <Plus className="h-4 w-4 mr-2"/>
               New Template
             </Button>
           </PermissionGate>
-        </div>
+          </>}
+        />
 
         {/* Error Alert */}
         {error && (
