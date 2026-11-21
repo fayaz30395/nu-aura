@@ -8,11 +8,12 @@ import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.compliance.PolicyAcknowledgmentReminder;
 import com.nulogic.domain.notification.Notification;
 import com.nulogic.infrastructure.compliance.repository.PolicyAcknowledgmentReminderRepository;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ import java.util.UUID;
 
 /**
  * Daily job that reminds employees who haven't acknowledged a published policy past its
- * acknowledgment window (see {@link ComplianceService#findPendingAcknowledgmentGaps}).
+ * acknowledgment window (see {@link ComplianceService#findAllPendingAcknowledgmentGaps}).
  *
  * <p>Idempotency (no spam): a reminder is only sent again after {@link #REMINDER_COOLDOWN_DAYS}
  * since the last reminder for that (policy, employee) pair, tracked in
@@ -42,18 +43,21 @@ public class PolicyAcknowledgmentReminderScheduler {
     private final PolicyAcknowledgmentReminderRepository reminderRepository;
     private final NotificationService notificationService;
     private final TenantTimeService tenantTimeService;
-    private final JdbcTemplate jdbcTemplate;
+    private final TenantRepository tenantRepository;
+    // Proxy self-reference (as in AutoRegularizationScheduler) so remindTenant runs in its own
+    // per-tenant transaction opened after TenantContext is set (RLS GUC = that tenant).
+    private final ObjectProvider<PolicyAcknowledgmentReminderScheduler> selfProvider;
 
     @Scheduled(cron = "${app.compliance.reminders.cron:0 0 6 * * *}", zone = "UTC")
     @SchedulerLock(name = "sendPolicyAcknowledgmentReminders", lockAtLeastFor = "PT1M", lockAtMostFor = "PT30M")
     public void sendReminders() {
-        List<UUID> tenants = fetchActiveTenants();
+        List<UUID> tenants = tenantRepository.findActiveTenantIds();
         int totalReminded = 0;
 
         for (UUID tenantId : tenants) {
             try {
                 TenantContext.setCurrentTenant(tenantId);
-                totalReminded += remindTenant(tenantId);
+                totalReminded += selfProvider.getObject().remindTenant(tenantId);
             } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("PolicyAcknowledgmentReminderScheduler: failed for tenant {}: {}",
                         tenantId, e.getMessage(), e);
@@ -67,10 +71,10 @@ public class PolicyAcknowledgmentReminderScheduler {
     }
 
     @Transactional
-    int remindTenant(UUID tenantId) {
+    public int remindTenant(UUID tenantId) {
         LocalDate today = tenantTimeService.today(tenantId);
         LocalDateTime now = tenantTimeService.now(tenantId);
-        List<PendingAcknowledgmentGap> gaps = complianceService.findPendingAcknowledgmentGaps(tenantId, today);
+        List<PendingAcknowledgmentGap> gaps = complianceService.findAllPendingAcknowledgmentGaps(tenantId, today);
 
         int sent = 0;
         for (PendingAcknowledgmentGap gap : gaps) {
@@ -132,14 +136,5 @@ public class PolicyAcknowledgmentReminderScheduler {
                 });
         record.setLastRemindedAt(now);
         reminderRepository.save(record);
-    }
-
-    private List<UUID> fetchActiveTenants() {
-        try {
-            return jdbcTemplate.queryForList("SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
-            log.warn("Could not fetch active tenants: {}", e.getMessage());
-            return List.of();
-        }
     }
 }

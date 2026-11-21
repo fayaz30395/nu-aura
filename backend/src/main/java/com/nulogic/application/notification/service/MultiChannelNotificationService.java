@@ -3,6 +3,7 @@ package com.nulogic.application.notification.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nulogic.api.notification.dto.*;
+import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
@@ -398,7 +399,7 @@ public class MultiChannelNotificationService {
 
         MultiChannelNotification notification = notificationRepository.findByIdAndTenantId(notificationId, tenantId)
                 .filter(n -> n.getRecipientId().equals(userId))
-                .orElseThrow(() -> new IllegalArgumentException("Notification not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Notification not found"));
 
         notification.setStatus(NotificationStatus.READ);
         notification.setReadAt(tenantTimeService.now(tenantId));

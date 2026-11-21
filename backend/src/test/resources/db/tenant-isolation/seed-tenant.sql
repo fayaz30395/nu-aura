@@ -166,3 +166,38 @@ VALUES ('{{P}}-001f-4000-8000-000000000001', '{{T}}', 'ISO-{{N}} Experience Temp
 INSERT INTO generated_letters (id, tenant_id, reference_number, template_id, category, letter_title, generated_content, status, employee_id)
 VALUES ('{{P}}-0020-4000-8000-000000000001', '{{T}}', 'ISO-{{N}}-LTR-001', '{{P}}-001f-4000-8000-000000000001', 'EXPERIENCE',
         'ISO-{{N}} Experience Letter', 'ISO-{{N}} confidential letter body', 'DRAFT', '{{P}}-0003-4000-8000-000000000002');
+
+-- ── Phase 3: high-risk modules (payroll/statutory, platform-ish config, OKR, recognition) ──
+INSERT INTO webhooks (id, tenant_id, name, url, secret, status, consecutive_failures, max_retries, timeout_seconds)
+VALUES ('{{P}}-0022-4000-8000-000000000001', '{{T}}', 'ISO-{{N}} hook', 'https://iso-{{n}}.example.test/hook',
+        'iso-{{n}}-synthetic-webhook-secret', 'ACTIVE', 0, 3, 10);
+INSERT INTO webhook_events (webhook_id, event_type) VALUES ('{{P}}-0022-4000-8000-000000000001', 'EMPLOYEE_CREATED');
+
+INSERT INTO salary_structures (id, tenant_id, employee_id, effective_date, basic_salary, is_active)
+VALUES ('{{P}}-0024-4000-8000-000000000001', '{{T}}', '{{P}}-0003-4000-8000-000000000002', DATE '2024-01-01', 5555{{D}}, true);
+
+INSERT INTO tax_declarations (id, tenant_id, employee_id, financial_year, tax_regime, status)
+VALUES ('{{P}}-0025-4000-8000-000000000001', '{{T}}', '{{P}}-0003-4000-8000-000000000002', '2030-31', 'OLD_REGIME', 'DRAFT');
+
+INSERT INTO office_locations (id, tenant_id, location_name, location_code, latitude, longitude, geofence_radius_meters, is_active)
+VALUES ('{{P}}-0026-4000-8000-000000000001', '{{T}}', 'ISO-{{N}} HQ', 'ISO{{N}}HQ', 12.97, 77.59, 100, true);
+
+INSERT INTO objectives (id, tenant_id, owner_id, title, description, objective_level, status, start_date, end_date)
+VALUES ('{{P}}-0027-4000-8000-000000000001', '{{T}}', '{{P}}-0003-4000-8000-000000000002', 'ISO-{{N}} objective',
+        'ISO-{{N}} okr', 'INDIVIDUAL', 'ACTIVE', DATE '2030-01-01', DATE '2030-12-31');
+
+INSERT INTO recognitions (id, tenant_id, giver_id, receiver_id, type, title, message, is_public, is_anonymous, is_approved,
+                          likes_count, comments_count, points_awarded)
+VALUES ('{{P}}-0028-4000-8000-000000000001', '{{T}}', '{{P}}-0003-4000-8000-000000000001', '{{P}}-0003-4000-8000-000000000002',
+        'KUDOS', 'ISO-{{N}} kudos', 'ISO-{{N}} great work', true, false, true, 0, 0, 0);
+
+INSERT INTO expense_items (id, tenant_id, expense_claim_id, description, amount, expense_date, receipt_storage_path, receipt_file_name)
+VALUES ('{{P}}-0029-4000-8000-000000000001', '{{T}}', '{{P}}-0007-4000-8000-000000000001', 'ISO-{{N}} taxi receipt', 10,
+        DATE '2030-01-10', '{{T}}/receipts/iso-{{n}}-receipt.pdf', 'iso-{{n}}-receipt.pdf');
+
+-- Child tables without tenant_id / RLS (Phase 3 #1) and the platform DLQ (no tenant_id by design).
+INSERT INTO announcement_target_departments (announcement_id, department_id)
+VALUES ('{{P}}-0008-4000-8000-000000000001', '{{P}}-0004-4000-8000-000000000001');
+INSERT INTO failed_kafka_events (id, topic, partition, "offset", payload, payload_truncated, error_message, status, replay_count)
+VALUES ('{{P}}-002a-4000-8000-000000000001', 'nu-aura.notifications.dlt', 0, 1{{D}},
+        '{"tenantId":"{{T}}","subject":"ISO-{{N}} dlq payload"}', false, 'ISO-{{N}} failure', 'PENDING_REPLAY', 0);

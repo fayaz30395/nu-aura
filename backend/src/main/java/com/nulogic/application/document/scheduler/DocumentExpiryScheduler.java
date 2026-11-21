@@ -8,10 +8,11 @@ import com.nulogic.domain.document.DocumentAccessRepository;
 import com.nulogic.domain.document.DocumentExpiryTracking;
 import com.nulogic.domain.document.DocumentExpiryTrackingRepository;
 import com.nulogic.domain.notification.Notification;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,21 +40,24 @@ public class DocumentExpiryScheduler {
     private final DocumentExpiryTrackingRepository expiryTrackingRepository;
     private final DocumentAccessRepository documentAccessRepository;
     private final NotificationService notificationService;
-    private final JdbcTemplate jdbcTemplate;
     private final TenantTimeService tenantTimeService;
+    private final TenantRepository tenantRepository;
+    // Proxy self-reference (as in AutoRegularizationScheduler) so dispatchDueReminders runs in
+    // its own per-tenant transaction opened after TenantContext is set (RLS GUC = that tenant).
+    private final ObjectProvider<DocumentExpiryScheduler> selfProvider;
 
     @Scheduled(cron = "${app.document.expiry.cron:0 0 3 * * *}", zone = "UTC")
     @SchedulerLock(name = "processDocumentExpiryReminders", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     public void processDocumentExpiryReminders() {
         log.info("DocumentExpiryScheduler: starting daily expiry reminder run");
 
-        List<UUID> tenants = fetchActiveTenants();
+        List<UUID> tenants = tenantRepository.findActiveTenantIds();
         int totalNotified = 0;
 
         for (UUID tenantId : tenants) {
             try {
                 TenantContext.setCurrentTenant(tenantId);
-                totalNotified += dispatchDueReminders(tenantId);
+                totalNotified += selfProvider.getObject().dispatchDueReminders(tenantId);
             } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 log.error("DocumentExpiryScheduler: failed for tenant {}: {}", tenantId, e.getMessage(), e);
             } finally {
@@ -109,14 +113,5 @@ public class DocumentExpiryScheduler {
             log.debug("Dispatched {} document expiry notifications for tenant {}", notified, tenantId);
         }
         return notified;
-    }
-
-    private List<UUID> fetchActiveTenants() {
-        try {
-            return jdbcTemplate.queryForList("SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
-            log.warn("Could not fetch active tenants: {}", e.getMessage());
-            return List.of();
-        }
     }
 }

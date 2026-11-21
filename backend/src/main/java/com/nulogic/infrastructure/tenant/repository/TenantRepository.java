@@ -23,6 +23,16 @@ public interface TenantRepository extends JpaRepository<Tenant, UUID> {
     List<Tenant> findByStatus(Tenant.TenantStatus status);
 
     /**
+     * Tenants every per-tenant scheduled job must process: status ACTIVE and not soft-deleted
+     * (entity {@code @SQLRestriction}) — the same rule JwtAuthenticationFilter applies per request.
+     * SUSPENDED, INACTIVE and PENDING_ACTIVATION are skipped. The tenants table has no
+     * {@code is_active} column and is not under RLS (V38), so no tenant context is needed.
+     */
+    default List<UUID> findActiveTenantIds() {
+        return findByStatus(Tenant.TenantStatus.ACTIVE).stream().map(Tenant::getId).toList();
+    }
+
+    /**
      * Count tenants by status — used by SuperAdmin overview to report accurate active tenant count.
      * Spring Data JPA derives the query automatically.
      */

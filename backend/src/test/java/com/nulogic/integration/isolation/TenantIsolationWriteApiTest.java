@@ -34,8 +34,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class TenantIsolationWriteApiTest extends AbstractTenantIsolationIntegrationTest {
 
     private static final Actor ATTACKER = Actor.admin(Tenant.A);
-    /** DELETE answers 204 for any id it cannot see (deleteByIdAndTenantId); reported as an API inconsistency. */
-    private static final Set<String> IDEMPOTENT_DELETE = Set.of("notification");
+    /** DELETE answers 204 for any id it cannot see (tenant-scoped no-op); reported as an API inconsistency. */
+    private static final Set<String> IDEMPOTENT_DELETE = Set.of("notification", "okr-objective");
 
     static Stream<ApiResource> deletable() {
         return TenantResourceCatalog.RESOURCES.stream().filter(r -> r.deletePath() != null);

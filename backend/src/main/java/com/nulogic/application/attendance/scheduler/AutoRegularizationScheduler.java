@@ -5,6 +5,7 @@ import com.nulogic.common.security.TenantContext;
 import com.nulogic.common.util.TenantTimeService;
 import com.nulogic.domain.attendance.AttendanceRecord;
 import com.nulogic.infrastructure.attendance.repository.AttendanceRecordRepository;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -54,6 +55,7 @@ public class AutoRegularizationScheduler {
     private final CompOffService compOffService;
     private final JdbcTemplate jdbcTemplate;
     private final TenantTimeService tenantTimeService;
+    private final TenantRepository tenantRepository;
 
     /**
      * Self-reference resolved through the Spring proxy so that the {@link Transactional}
@@ -75,7 +77,7 @@ public class AutoRegularizationScheduler {
     public void autoRegularizeAttendance() {
         log.info("AutoRegularizationScheduler: starting attendance regularization run");
 
-        List<UUID> tenants = fetchActiveTenants();
+        List<UUID> tenants = tenantRepository.findActiveTenantIds();
         int totalFixed = 0;
 
         // Set TenantContext BEFORE the @Transactional boundary opens and invoke
@@ -106,7 +108,7 @@ public class AutoRegularizationScheduler {
     public void autoApproveCompOff() {
         log.info("AutoRegularizationScheduler: starting comp-off auto-approval run");
 
-        List<UUID> tenants = fetchActiveTenants();
+        List<UUID> tenants = tenantRepository.findActiveTenantIds();
         int totalApproved = 0;
 
         for (UUID tenantId : tenants) {
@@ -177,19 +179,6 @@ public class AutoRegularizationScheduler {
             log.warn("AutoRegularizationScheduler: could not read regularization config for tenant {} — " +
                     "falling back to {} days: {}", tenantId, DEFAULT_REGULARIZE_AFTER_DAYS, e.getMessage());
             return DEFAULT_REGULARIZE_AFTER_DAYS;
-        }
-    }
-
-    private List<UUID> fetchActiveTenants() {
-        try {
-            return jdbcTemplate.queryForList(
-                    "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) {
-            // Rethrow so ShedLock records a FAILED execution. A silent List.of() would
-            // mark the job as successful with 0 tenants processed with no alertable signal.
-            log.error("AutoRegularizationScheduler: cannot fetch active tenants — aborting run: {}",
-                    e.getMessage(), e);
-            throw new RuntimeException("AutoRegularizationScheduler: tenant fetch failed", e);
         }
     }
 }

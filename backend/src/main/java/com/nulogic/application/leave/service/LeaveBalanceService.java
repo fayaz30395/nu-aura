@@ -258,8 +258,9 @@ public class LeaveBalanceService {
         // here (rolling back this tx) rather than after mutating the balance in memory.
         leaveAccrualLedgerRepository.saveAndFlush(ledgerEntry);
 
-        LeaveBalance balance = getOrCreateBalanceForUpdate(
-                employeeId, leaveTypeId, tenantTimeService.today(tenantId).getYear());
+        // Year of the accrual period, not tenant-local today: the 02:00 UTC run on the 1st is
+        // still Dec 31 locally for tenants west of UTC, which would credit January to last year.
+        LeaveBalance balance = getOrCreateBalanceForUpdate(employeeId, leaveTypeId, accrualPeriod.getYear());
         balance.accrueLeave(days, tenantTimeService.today(tenantId));
         leaveBalanceRepository.save(balance);
         return true;

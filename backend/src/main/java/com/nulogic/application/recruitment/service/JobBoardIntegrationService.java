@@ -7,6 +7,7 @@ import com.nulogic.domain.recruitment.JobBoardPosting;
 import com.nulogic.domain.recruitment.JobOpening;
 import com.nulogic.infrastructure.recruitment.repository.JobBoardPostingRepository;
 import com.nulogic.infrastructure.recruitment.repository.JobOpeningRepository;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +45,7 @@ public class JobBoardIntegrationService {
     private final JobBoardPostingRepository jobBoardPostingRepository;
     private final JobOpeningRepository jobOpeningRepository;
     private final RestTemplate restTemplate;
-    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    private final TenantRepository tenantRepository;
     private final TenantTimeService tenantTimeService;
     private final TenantRlsSessionSync tenantRlsSessionSync;
     // ---- Naukri config ----
@@ -151,7 +152,7 @@ public class JobBoardIntegrationService {
     @Transactional
     public void syncApplicationCounts() {
         log.info("Syncing job board application counts");
-        List<UUID> tenantIds = fetchActiveTenantIds();
+        List<UUID> tenantIds = tenantRepository.findActiveTenantIds();
         for (UUID tenantId : tenantIds) {
             TenantContext.setCurrentTenant(tenantId);
             // The enclosing @Transactional already opened the connection with RESET tenant
@@ -186,7 +187,7 @@ public class JobBoardIntegrationService {
     @SchedulerLock(name = "expireOldPostings", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     @Transactional
     public void expireOldPostings() {
-        List<UUID> tenantIds = fetchActiveTenantIds();
+        List<UUID> tenantIds = tenantRepository.findActiveTenantIds();
         int totalExpired = 0;
         for (UUID tenantId : tenantIds) {
             TenantContext.setCurrentTenant(tenantId);
@@ -209,16 +210,6 @@ public class JobBoardIntegrationService {
         }
         if (totalExpired > 0) {
             log.info("Expired {} job board postings across {} tenants", totalExpired, tenantIds.size());
-        }
-    }
-
-    private List<UUID> fetchActiveTenantIds() {
-        try {
-            return jdbcTemplate.queryForList(
-                    "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) { // Intentional broad catch — external job board API integration
-            log.warn("Could not fetch active tenants for job board sync: {}", e.getMessage());
-            return List.of();
         }
     }
 

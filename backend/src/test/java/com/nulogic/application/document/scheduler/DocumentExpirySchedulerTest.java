@@ -7,12 +7,12 @@ import com.nulogic.domain.document.DocumentAccessRepository;
 import com.nulogic.domain.document.DocumentExpiryTracking;
 import com.nulogic.domain.document.DocumentExpiryTrackingRepository;
 import com.nulogic.domain.notification.Notification;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ class DocumentExpirySchedulerTest {
     @Mock
     private NotificationService notificationService;
     @Mock
-    private JdbcTemplate jdbcTemplate;
+    private TenantRepository tenantRepository;
     @Mock
     private TenantTimeService tenantTimeService;
     @InjectMocks

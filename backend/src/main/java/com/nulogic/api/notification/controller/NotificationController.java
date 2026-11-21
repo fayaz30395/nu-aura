@@ -78,7 +78,7 @@ public class NotificationController {
     @GetMapping("/{id}")
     @RequiresPermission(NOTIFICATIONS_VIEW)
     public ResponseEntity<NotificationResponse> getNotificationById(@PathVariable UUID id) {
-        Notification notification = notificationService.getNotificationById(id);
+        Notification notification = notificationService.getNotificationById(id, SecurityContext.getCurrentUserId());
         return ResponseEntity.ok(NotificationResponse.fromEntity(notification));
     }
 
@@ -112,7 +112,7 @@ public class NotificationController {
     @DeleteMapping("/{id}")
     @RequiresPermission(NOTIFICATIONS_VIEW)
     public ResponseEntity<Void> deleteNotification(@PathVariable UUID id) {
-        notificationService.deleteNotification(id);
+        notificationService.deleteNotification(id, SecurityContext.getCurrentUserId());
         return ResponseEntity.noContent().build();
     }
 }

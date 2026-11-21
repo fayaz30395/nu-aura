@@ -54,6 +54,14 @@ public final class TwoTenantFixture {
     public static final int LETTER_TEMPLATE = 0x1f;
     public static final int GENERATED_LETTER = 0x20;
     public static final int CONTRACT_VERSION = 0x21;
+    public static final int WEBHOOK = 0x22;
+    public static final int SALARY_STRUCTURE = 0x24;
+    public static final int TAX_DECLARATION = 0x25;
+    public static final int OFFICE_LOCATION = 0x26;
+    public static final int OBJECTIVE = 0x27;
+    public static final int RECOGNITION = 0x28;
+    public static final int EXPENSE_ITEM = 0x29;
+    public static final int FAILED_KAFKA_EVENT = 0x2a;
 
     private static final String SEED_SCRIPT = "db/tenant-isolation/seed-tenant.sql";
     private static volatile boolean seeded;

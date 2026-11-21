@@ -10,13 +10,14 @@ import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.notification.Notification;
 import com.nulogic.domain.user.User;
 import com.nulogic.infrastructure.compliance.repository.PolicyAcknowledgmentReminderRepository;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,7 +44,9 @@ class PolicyAcknowledgmentReminderSchedulerTest {
     @Mock
     private TenantTimeService tenantTimeService;
     @Mock
-    private JdbcTemplate jdbcTemplate;
+    private TenantRepository tenantRepository;
+    @Mock
+    private ObjectProvider<PolicyAcknowledgmentReminderScheduler> selfProvider;
 
     private PolicyAcknowledgmentReminderScheduler scheduler;
     private final UUID tenantId = UUID.randomUUID();
@@ -51,7 +54,7 @@ class PolicyAcknowledgmentReminderSchedulerTest {
     @BeforeEach
     void setUp() {
         scheduler = new PolicyAcknowledgmentReminderScheduler(
-                complianceService, reminderRepository, notificationService, tenantTimeService, jdbcTemplate);
+                complianceService, reminderRepository, notificationService, tenantTimeService, tenantRepository, selfProvider);
         when(tenantTimeService.today(tenantId)).thenReturn(LocalDate.of(2026, 6, 1));
         when(tenantTimeService.now(tenantId)).thenReturn(LocalDateTime.of(2026, 6, 1, 6, 0));
     }
@@ -74,7 +77,7 @@ class PolicyAcknowledgmentReminderSchedulerTest {
     @DisplayName("sends a reminder and records it when no prior reminder exists")
     void sendsReminderWhenNoPriorRecord() {
         PendingAcknowledgmentGap gap = gap();
-        when(complianceService.findPendingAcknowledgmentGaps(tenantId, LocalDate.of(2026, 6, 1)))
+        when(complianceService.findAllPendingAcknowledgmentGaps(tenantId, LocalDate.of(2026, 6, 1)))
                 .thenReturn(List.of(gap));
         when(reminderRepository.findByTenantIdAndPolicyIdAndEmployeeId(tenantId, gap.policy().getId(), gap.employee().getId()))
                 .thenReturn(Optional.empty());
@@ -94,7 +97,7 @@ class PolicyAcknowledgmentReminderSchedulerTest {
     @DisplayName("does not re-send within the cooldown window (idempotent)")
     void doesNotSpamWithinCooldown() {
         PendingAcknowledgmentGap gap = gap();
-        when(complianceService.findPendingAcknowledgmentGaps(tenantId, LocalDate.of(2026, 6, 1)))
+        when(complianceService.findAllPendingAcknowledgmentGaps(tenantId, LocalDate.of(2026, 6, 1)))
                 .thenReturn(List.of(gap));
 
         PolicyAcknowledgmentReminder existing = PolicyAcknowledgmentReminder.builder()
@@ -115,7 +118,7 @@ class PolicyAcknowledgmentReminderSchedulerTest {
     @DisplayName("re-sends after the cooldown window has elapsed")
     void resendsAfterCooldownElapsed() {
         PendingAcknowledgmentGap gap = gap();
-        when(complianceService.findPendingAcknowledgmentGaps(tenantId, LocalDate.of(2026, 6, 1)))
+        when(complianceService.findAllPendingAcknowledgmentGaps(tenantId, LocalDate.of(2026, 6, 1)))
                 .thenReturn(List.of(gap));
 
         PolicyAcknowledgmentReminder existing = PolicyAcknowledgmentReminder.builder()
@@ -142,7 +145,7 @@ class PolicyAcknowledgmentReminderSchedulerTest {
         employeeNoUser.setId(UUID.randomUUID());
         PendingAcknowledgmentGap gap = new PendingAcknowledgmentGap(policy, employeeNoUser);
 
-        when(complianceService.findPendingAcknowledgmentGaps(tenantId, LocalDate.of(2026, 6, 1)))
+        when(complianceService.findAllPendingAcknowledgmentGaps(tenantId, LocalDate.of(2026, 6, 1)))
                 .thenReturn(List.of(gap));
         when(reminderRepository.findByTenantIdAndPolicyIdAndEmployeeId(tenantId, policy.getId(), employeeNoUser.getId()))
                 .thenReturn(Optional.empty());

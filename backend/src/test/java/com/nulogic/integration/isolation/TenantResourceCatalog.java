@@ -8,7 +8,7 @@ import java.util.UUID;
 import static com.nulogic.integration.isolation.TwoTenantFixture.*;
 
 /**
- * The tenant-owned resource types the HTTP-level isolation tests iterate over: 29 types across
+ * The tenant-owned resource types the HTTP-level isolation tests iterate over: 34 types across
  * NU-HRMS, NU-Hire, NU-Grow, NU-Fluence, payroll and PSA. Each row is seeded for both tenants by
  * {@code seed-tenant.sql} under {@link TwoTenantFixture#id(int)}.
  *
@@ -78,6 +78,8 @@ final class TenantResourceCatalog {
             new ApiResource("generated-letter", "HRMS", "generated_letters", GENERATED_LETTER,
                     "/api/v1/letters/{id}", "/api/v1/letters", null,
                     "POST /api/v1/letters/{id}/submit|"),
+            new ApiResource("office-location", "HRMS", "office_locations", OFFICE_LOCATION,
+                    "/api/v1/office-locations/{id}", "/api/v1/office-locations", "/api/v1/office-locations/{id}", null),
             new ApiResource("notification", "HRMS", "notifications", NOTIFICATION,
                     "/api/v1/notifications/{id}", "/api/v1/notifications", "/api/v1/notifications/{id}", null),
             // ── Payroll ──────────────────────────────────────────────────────────────────
@@ -86,6 +88,12 @@ final class TenantResourceCatalog {
                     "POST /api/v1/payroll/runs/{id}/approve|"),
             new ApiResource("payslip", "PAYROLL", "payslips", PAYSLIP,
                     "/api/v1/payroll/payslips/{id}", "/api/v1/payroll/payslips", "/api/v1/payroll/payslips/{id}", null),
+            new ApiResource("salary-structure", "PAYROLL", "salary_structures", SALARY_STRUCTURE,
+                    "/api/v1/payroll/salary-structures/{id}", "/api/v1/payroll/salary-structures",
+                    "/api/v1/payroll/salary-structures/{id}", "POST /api/v1/payroll/salary-structures/{id}/deactivate|"),
+            new ApiResource("tax-declaration", "PAYROLL", "tax_declarations", TAX_DECLARATION,
+                    "/api/v1/tax-declarations/{id}", "/api/v1/tax-declarations", "/api/v1/tax-declarations/{id}",
+                    "PATCH /api/v1/tax-declarations/{id}/submit|"),
             new ApiResource("loan", "PAYROLL", "employee_loans", LOAN,
                     "/api/v1/loans/{id}", "/api/v1/loans", null,
                     "POST /api/v1/loans/{id}/approve|"),
@@ -112,6 +120,11 @@ final class TenantResourceCatalog {
                     "PUT /api/v1/review-cycles/{id}/complete|"),
             new ApiResource("training-program", "GROW", "training_programs", TRAINING_PROGRAM,
                     "/api/v1/training/programs/{id}", "/api/v1/training/programs", "/api/v1/training/programs/{id}", null),
+            new ApiResource("okr-objective", "GROW", "objectives", OBJECTIVE,
+                    "/api/v1/okr/objectives/{id}", "/api/v1/okr/objectives", "/api/v1/okr/objectives/{id}",
+                    "POST /api/v1/okr/objectives/{id}/approve|"),
+            new ApiResource("recognition", "GROW", "recognitions", RECOGNITION,
+                    "/api/v1/recognition/{id}", "/api/v1/recognition/feed", null, null),
             new ApiResource("pulse-survey", "GROW", "pulse_surveys", PULSE_SURVEY,
                     "/api/v1/surveys/{id}", "/api/v1/surveys", "/api/v1/surveys/{id}",
                     "POST /api/v1/surveys/{id}/publish|"),

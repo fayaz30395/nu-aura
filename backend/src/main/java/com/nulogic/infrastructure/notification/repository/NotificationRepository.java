@@ -34,6 +34,18 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     @Query("SELECT n FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId")
     Optional<Notification> findByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
 
+    /** Owner-scoped lookup: a notification is visible only to its recipient, never to other users of the tenant. */
+    @Query("SELECT n FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId AND n.userId = :userId")
+    Optional<Notification> findByIdAndTenantIdAndUserId(@Param("id") UUID id, @Param("tenantId") UUID tenantId,
+                                                        @Param("userId") UUID userId);
+
+    /** Owner-scoped delete; returns the number of rows removed (0 = not found or not owned). */
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId AND n.userId = :userId")
+    int deleteByIdAndTenantIdAndUserId(@Param("id") UUID id, @Param("tenantId") UUID tenantId,
+                                       @Param("userId") UUID userId);
+
     /**
      * Find all notifications for a tenant with pagination.
      * Use this instead of the inherited findAll().
@@ -47,15 +59,6 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
      */
     @Query("SELECT n FROM Notification n WHERE n.tenantId = :tenantId ORDER BY n.createdAt DESC")
     List<Notification> findByTenantId(@Param("tenantId") UUID tenantId);
-
-    /**
-     * Delete notification by ID with mandatory tenant isolation.
-     * Use this instead of the inherited deleteById().
-     */
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM Notification n WHERE n.id = :id AND n.tenantId = :tenantId")
-    void deleteByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
 
     /**
      * Check if notification exists with mandatory tenant isolation.
@@ -127,10 +130,12 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
 
     @Modifying
     @Transactional
-    @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt WHERE n.tenantId = :tenantId AND n.id = :notificationId")
-    void markAsRead(
+    @Query("UPDATE Notification n SET n.isRead = true, n.readAt = :readAt "
+            + "WHERE n.tenantId = :tenantId AND n.id = :notificationId AND n.userId = :userId")
+    int markAsRead(
             @Param("tenantId") UUID tenantId,
             @Param("notificationId") UUID notificationId,
+            @Param("userId") UUID userId,
             @Param("readAt") LocalDateTime readAt
     );
 
@@ -171,7 +176,7 @@ public interface NotificationRepository extends JpaRepository<Notification, UUID
     List<Notification> findAll();
 
     /**
-     * @deprecated Use {@link #deleteByIdAndTenantId(UUID, UUID)} instead.
+     * @deprecated Use {@link #deleteByIdAndTenantIdAndUserId(UUID, UUID, UUID)} instead.
      * This method is unsafe for multi-tenant environments.
      */
     @Override

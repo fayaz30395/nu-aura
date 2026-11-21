@@ -272,10 +272,22 @@ public class ComplianceService {
 
     /**
      * Every (employee, policy) pair where the employee is in-scope/active and hasn't
-     * acknowledged a published policy past its acknowledgment window. Used by the
-     * dashboard count and by {@code PolicyAcknowledgmentReminderScheduler}.
+     * acknowledged a published policy past its acknowledgment window, limited to the caller's
+     * COMPLIANCE_VIEW data scope. Used by the dashboard count.
      */
     public List<PendingAcknowledgmentGap> findPendingAcknowledgmentGaps(UUID tenantId, LocalDate today) {
+        return findGaps(tenantId, today, dataScopeService.getScopeSpecification(Permission.COMPLIANCE_VIEW));
+    }
+
+    /**
+     * Same gaps for every active employee of the tenant, for {@code PolicyAcknowledgmentReminderScheduler}:
+     * a scheduled job has no user, so the caller data scope would match nobody.
+     */
+    public List<PendingAcknowledgmentGap> findAllPendingAcknowledgmentGaps(UUID tenantId, LocalDate today) {
+        return findGaps(tenantId, today, (root, query, cb) -> cb.conjunction());
+    }
+
+    private List<PendingAcknowledgmentGap> findGaps(UUID tenantId, LocalDate today, Specification<Employee> scopeSpec) {
         List<CompliancePolicy> policiesPastWindow = policyRepository.findPoliciesRequiringAcknowledgment(tenantId).stream()
                 .filter(p -> p.getEffectiveDate() != null)
                 .filter(p -> !today.isBefore(p.getEffectiveDate().plusDays(p.getAcknowledgmentFrequencyDays())))
@@ -284,7 +296,6 @@ public class ComplianceService {
             return List.of();
         }
 
-        Specification<Employee> scopeSpec = dataScopeService.getScopeSpecification(Permission.COMPLIANCE_VIEW);
         Specification<Employee> tenantSpec = (root, query, cb) -> cb.equal(root.get("tenantId"), tenantId);
         Specification<Employee> activeSpec = (root, query, cb) -> cb.equal(root.get("status"), Employee.EmployeeStatus.ACTIVE);
         List<Employee> inScopeEmployees = employeeRepository.findAll(tenantSpec.and(activeSpec).and(scopeSpec));

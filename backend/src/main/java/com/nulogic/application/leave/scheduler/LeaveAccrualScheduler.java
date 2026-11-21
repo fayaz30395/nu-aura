@@ -6,16 +6,17 @@ import com.nulogic.domain.employee.Employee;
 import com.nulogic.domain.leave.LeaveType;
 import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.leave.repository.LeaveTypeRepository;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -45,7 +46,7 @@ public class LeaveAccrualScheduler {
     private final LeaveBalanceService leaveBalanceService;
     private final LeaveTypeRepository leaveTypeRepository;
     private final EmployeeRepository employeeRepository;
-    private final JdbcTemplate jdbcTemplate;
+    private final TenantRepository tenantRepository;
 
     /**
      * Main monthly accrual job.
@@ -56,9 +57,23 @@ public class LeaveAccrualScheduler {
     @Scheduled(cron = "${app.leave.accrual.cron:0 0 2 1 * *}", zone = "UTC")
     @SchedulerLock(name = "accrueMonthlyLeave", lockAtLeastFor = "PT5M", lockAtMostFor = "PT4H")
     public void accrueMonthlyLeave() {
-        log.info("LeaveAccrualScheduler: starting monthly leave accrual run");
+        // Cron fires at 2:00 AM UTC — month math must use UTC too, otherwise a JVM in a
+        // non-UTC zone could read the previous day's month at boundary conditions and
+        // misclassify a quarter-start month.
+        accrueForDate(LocalDate.now(ZoneOffset.UTC));
+    }
 
-        List<UUID> tenants = fetchActiveTenants();
+    /**
+     * One accrual run for the UTC date {@code today}. No per-tenant transaction on purpose:
+     * each employee accrual is its own transaction (idempotency ledger + V277 unique key roll
+     * back one employee, not the tenant), opened after TenantContext is set so
+     * TenantRlsTransactionManager applies that tenant's RLS GUC.
+     */
+    void accrueForDate(LocalDate today) {
+        log.info("LeaveAccrualScheduler: starting monthly leave accrual run for {}", today);
+
+        // Throws on DB failure so ShedLock records a FAILED run instead of a silent 0-tenant success.
+        List<UUID> tenants = tenantRepository.findActiveTenantIds();
         int totalAccruals = 0;
         int tenantsProcessed = 0;
         int tenantsWithErrors = 0;
@@ -67,7 +82,7 @@ public class LeaveAccrualScheduler {
             try {
                 TenantContext.setCurrentTenant(tenantId);
 
-                int accruals = processAccrualsForTenant(tenantId);
+                int accruals = processAccrualsForTenant(tenantId, today);
                 totalAccruals += accruals;
                 tenantsProcessed++;
 
@@ -88,13 +103,11 @@ public class LeaveAccrualScheduler {
      * Process leave accruals for a single tenant.
      *
      * @param tenantId the tenant to process
+     * @param today    UTC run date; its month is the accrual period
      * @return total number of individual balance accruals applied
      */
-    private int processAccrualsForTenant(UUID tenantId) {
-        // Cron fires at 2:00 AM UTC — month math must use UTC too, otherwise a JVM in a
-        // non-UTC zone could read the previous day's month at boundary conditions and
-        // misclassify a quarter-start month.
-        int currentMonth = LocalDate.now(java.time.ZoneOffset.UTC).getMonthValue();
+    private int processAccrualsForTenant(UUID tenantId, LocalDate today) {
+        int currentMonth = today.getMonthValue();
         boolean isQuarterStart = QUARTER_START_MONTHS.contains(currentMonth);
 
         // Fetch active leave types for this tenant
@@ -128,7 +141,6 @@ public class LeaveAccrualScheduler {
             // - Employee joined before this month         → credit full monthlyAccrual
             // - Employee joined this month                → credit (daysFromJoiningToMonthEnd / daysInMonth) * monthlyAccrual
             // - Employee joined AFTER today               → skip entirely
-            LocalDate today = LocalDate.now(java.time.ZoneOffset.UTC);
             LocalDate firstOfMonth = today.withDayOfMonth(1);
             int daysInMonth = today.lengthOfMonth();
             // Wave-10 P0-4: period key for the idempotency ledger — at most one accrual
@@ -208,23 +220,5 @@ public class LeaveAccrualScheduler {
                     : null;
             default -> null;
         };
-    }
-
-    /**
-     * Fetch all active tenant IDs from the database.
-     * Uses raw JDBC to avoid requiring TenantContext to be set.
-     */
-    private List<UUID> fetchActiveTenants() {
-        try {
-            return jdbcTemplate.queryForList(
-                    "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) {
-            // Rethrow so ShedLock records a FAILED execution and the job is NOT marked
-            // as completed. A silent List.of() return would cause the job to succeed with
-            // 0 tenants processed — leave accrual would silently skip an entire month.
-            log.error("LeaveAccrualScheduler: cannot fetch active tenants — aborting accrual run: {}",
-                    e.getMessage(), e);
-            throw new RuntimeException("LeaveAccrualScheduler: tenant fetch failed", e);
-        }
     }
 }

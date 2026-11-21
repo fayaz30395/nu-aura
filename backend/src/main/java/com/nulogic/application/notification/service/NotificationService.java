@@ -104,16 +104,17 @@ public class NotificationService {
         return notificationRepository.findRecentNotifications(tenantId, userId, since);
     }
 
-    /**
-     * Marks a single notification as read. Evicts the entire unreadCountByUser
-     * cache for the current tenant because the API does not give us the userId
-     * the notification belongs to — coarse but correct (wave-3 H5).
-     */
+    /** Marks the caller's own notification as read; 404 if it is not theirs (no existence oracle). */
     @Transactional
-    @CacheEvict(value = "unreadCountByUser", allEntries = true)
-    public void markAsRead(UUID notificationId) {
+    @CacheEvict(
+            value = "unreadCountByUser",
+            key = "T(com.nulogic.common.security.TenantContext).getCurrentTenant() + ':' + #userId"
+    )
+    public void markAsRead(UUID notificationId, UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        notificationRepository.markAsRead(tenantId, notificationId, tenantTimeService.now(tenantId));
+        if (notificationRepository.markAsRead(tenantId, notificationId, userId, tenantTimeService.now(tenantId)) == 0) {
+            throw notFound(notificationId);
+        }
     }
 
     @Transactional
@@ -126,10 +127,17 @@ public class NotificationService {
         notificationRepository.markAllAsReadForUser(tenantId, userId, tenantTimeService.now(tenantId));
     }
 
+    /** Deletes the caller's own notification; 404 if it is not theirs (no existence oracle). */
     @Transactional
-    public void deleteNotification(UUID notificationId) {
+    @CacheEvict(
+            value = "unreadCountByUser",
+            key = "T(com.nulogic.common.security.TenantContext).getCurrentTenant() + ':' + #userId"
+    )
+    public void deleteNotification(UUID notificationId, UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        notificationRepository.deleteByIdAndTenantId(notificationId, tenantId);
+        if (notificationRepository.deleteByIdAndTenantIdAndUserId(notificationId, tenantId, userId) == 0) {
+            throw notFound(notificationId);
+        }
     }
 
     @Transactional
@@ -140,9 +148,13 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
-    public Notification getNotificationById(UUID notificationId) {
+    public Notification getNotificationById(UUID notificationId, UUID userId) {
         UUID tenantId = TenantContext.requireCurrentTenant();
-        return notificationRepository.findByIdAndTenantId(notificationId, tenantId)
-                .orElseThrow(() -> new ResourceNotFoundException("Notification not found: " + notificationId));
+        return notificationRepository.findByIdAndTenantIdAndUserId(notificationId, tenantId, userId)
+                .orElseThrow(() -> notFound(notificationId));
+    }
+
+    private static ResourceNotFoundException notFound(UUID notificationId) {
+        return new ResourceNotFoundException("Notification not found: " + notificationId);
     }
 }

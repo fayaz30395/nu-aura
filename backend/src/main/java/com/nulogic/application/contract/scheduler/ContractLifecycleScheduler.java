@@ -11,9 +11,11 @@ import com.nulogic.domain.contract.ReminderType;
 import com.nulogic.domain.notification.Notification;
 import com.nulogic.infrastructure.contract.repository.ContractReminderRepository;
 import com.nulogic.infrastructure.contract.repository.ContractRepository;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -57,7 +59,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ContractLifecycleScheduler {
 
-    /** Default reminder windows in days before expiry */
     /**
      * Default reminder windows in days before expiry (ascending order)
      */
@@ -69,6 +70,10 @@ public class ContractLifecycleScheduler {
     private final MetricsService metricsService;
     private final JdbcTemplate jdbcTemplate;
     private final TenantTimeService tenantTimeService;
+    private final TenantRepository tenantRepository;
+    // Proxy self-reference (as in AutoRegularizationScheduler) so each step's @Transactional
+    // really opens a per-tenant transaction after TenantContext is set (RLS GUC = that tenant).
+    private final ObjectProvider<ContractLifecycleScheduler> selfProvider;
 
     /**
      * Main daily lifecycle job.
@@ -79,7 +84,7 @@ public class ContractLifecycleScheduler {
     public void processContractLifecycle() {
         log.info("ContractLifecycleScheduler: starting daily contract lifecycle run");
 
-        List<UUID> tenants = fetchActiveTenants();
+        List<UUID> tenants = tenantRepository.findActiveTenantIds();
         int totalExpired = 0;
         int totalRenewed = 0;
         int totalRemindersCreated = 0;
@@ -89,11 +94,12 @@ public class ContractLifecycleScheduler {
         for (UUID tenantId : tenants) {
             try {
                 TenantContext.setCurrentTenant(tenantId);
+                ContractLifecycleScheduler self = selfProvider.getObject();
 
-                int expired = autoExpireContracts(tenantId);
-                int renewed = autoRenewContracts(tenantId);
-                int reminders = createExpiryReminders(tenantId);
-                int notifications = dispatchDueReminders(tenantId);
+                int expired = self.autoExpireContracts(tenantId);
+                int renewed = self.autoRenewContracts(tenantId);
+                int reminders = self.createExpiryReminders(tenantId);
+                int notifications = self.dispatchDueReminders(tenantId);
 
                 totalExpired += expired;
                 totalRenewed += renewed;
@@ -477,16 +483,6 @@ public class ContractLifecycleScheduler {
             log.warn("Could not resolve user_id for employee {} (tenant {}): {}",
                     employeeId, tenantId, e.getMessage());
             return null;
-        }
-    }
-
-    private List<UUID> fetchActiveTenants() {
-        try {
-            return jdbcTemplate.queryForList(
-                    "SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
-            log.warn("Could not fetch active tenants: {}", e.getMessage());
-            return List.of();
         }
     }
 

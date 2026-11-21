@@ -10,11 +10,12 @@ import com.nulogic.infrastructure.employee.repository.EmployeeRepository;
 import com.nulogic.infrastructure.notification.repository.NotificationRepository;
 import com.nulogic.infrastructure.onboarding.repository.OnboardingTaskRepository;
 import com.nulogic.infrastructure.recruitment.repository.InterviewRepository;
+import com.nulogic.infrastructure.tenant.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,14 +70,17 @@ public class HireReminderScheduler {
     private final NotificationService notificationService;
     private final NotificationRepository notificationRepository;
     private final TenantTimeService tenantTimeService;
-    private final JdbcTemplate jdbcTemplate;
+    private final TenantRepository tenantRepository;
+    // Proxy self-reference (as in AutoRegularizationScheduler) so each step runs in its own
+    // per-tenant transaction opened after TenantContext is set (RLS GUC = that tenant).
+    private final ObjectProvider<HireReminderScheduler> selfProvider;
 
     @Scheduled(cron = "${app.hire.reminders.cron:0 0 7 * * *}", zone = "UTC")
     @SchedulerLock(name = "processHireReminders", lockAtLeastFor = "PT5M", lockAtMostFor = "PT30M")
     public void processHireReminders() {
         log.info("HireReminderScheduler: starting daily run");
 
-        List<UUID> tenants = fetchActiveTenants();
+        List<UUID> tenants = tenantRepository.findActiveTenantIds();
         int totalOnboardingReminders = 0;
         int totalInterviewReminders = 0;
         int tenantsWithErrors = 0;
@@ -84,8 +88,9 @@ public class HireReminderScheduler {
         for (UUID tenantId : tenants) {
             try {
                 TenantContext.setCurrentTenant(tenantId);
-                totalOnboardingReminders += sendOnboardingTaskReminders(tenantId);
-                totalInterviewReminders += sendInterviewReminders(tenantId);
+                HireReminderScheduler self = selfProvider.getObject();
+                totalOnboardingReminders += self.sendOnboardingTaskReminders(tenantId);
+                totalInterviewReminders += self.sendInterviewReminders(tenantId);
             } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
                 tenantsWithErrors++;
                 log.error("HireReminderScheduler: failed for tenant {}: {}", tenantId, e.getMessage(), e);
@@ -215,14 +220,5 @@ public class HireReminderScheduler {
             map.put((UUID) row[0], (UUID) row[1]);
         }
         return map;
-    }
-
-    private List<UUID> fetchActiveTenants() {
-        try {
-            return jdbcTemplate.queryForList("SELECT id FROM tenants WHERE is_active = true", UUID.class);
-        } catch (Exception e) { // Intentional broad catch — scheduled job error boundary
-            log.warn("Could not fetch active tenants: {}", e.getMessage());
-            return List.of();
-        }
     }
 }

@@ -261,14 +261,14 @@ class NotificationControllerTest {
         @Test
         @DisplayName("Should return notification by ID")
         void shouldReturnNotificationById() throws Exception {
-            when(notificationService.getNotificationById(notificationId)).thenReturn(notification);
+            when(notificationService.getNotificationById(notificationId, userId)).thenReturn(notification);
 
             mockMvc.perform(get(BASE_URL + "/{id}", notificationId))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(notificationId.toString()))
                     .andExpect(jsonPath("$.title").value("Leave Approved"));
 
-            verify(notificationService).getNotificationById(notificationId);
+            verify(notificationService).getNotificationById(notificationId, userId);
         }
     }
 
@@ -385,12 +385,12 @@ class NotificationControllerTest {
         @Test
         @DisplayName("Should delete notification successfully")
         void shouldDeleteNotificationSuccessfully() throws Exception {
-            doNothing().when(notificationService).deleteNotification(notificationId);
+            doNothing().when(notificationService).deleteNotification(notificationId, userId);
 
             mockMvc.perform(delete(BASE_URL + "/{id}", notificationId))
                     .andExpect(status().isNoContent());
 
-            verify(notificationService).deleteNotification(notificationId);
+            verify(notificationService).deleteNotification(notificationId, userId);
         }
     }
 

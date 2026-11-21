@@ -1,5 +1,6 @@
 package com.nulogic.application.notification.service;
 
+import com.nulogic.common.exception.ResourceNotFoundException;
 import com.nulogic.common.security.SecurityContext;
 import com.nulogic.common.security.TenantContext;
 import com.nulogic.domain.notification.Notification;
@@ -308,11 +309,24 @@ class NotificationServiceTest {
         @DisplayName("Should mark notification as read")
         void shouldMarkNotificationAsRead() {
             UUID notificationId = notification.getId();
-            doNothing().when(notificationRepository).markAsRead(eq(tenantId), eq(notificationId), any(LocalDateTime.class));
+            when(notificationRepository.markAsRead(eq(tenantId), eq(notificationId), eq(userId), any(LocalDateTime.class)))
+                    .thenReturn(1);
 
-            notificationService.markAsRead(notificationId);
+            notificationService.markAsRead(notificationId, userId);
 
-            verify(notificationRepository).markAsRead(eq(tenantId), eq(notificationId), any(LocalDateTime.class));
+            verify(notificationRepository).markAsRead(eq(tenantId), eq(notificationId), eq(userId), any(LocalDateTime.class));
+        }
+
+        @Test
+        @DisplayName("Should throw not found when the notification is not the caller's")
+        void shouldThrowWhenNotOwned() {
+            UUID notificationId = notification.getId();
+            UUID otherUser = UUID.randomUUID();
+            when(notificationRepository.markAsRead(eq(tenantId), eq(notificationId), eq(otherUser), any(LocalDateTime.class)))
+                    .thenReturn(0);
+
+            assertThatThrownBy(() -> notificationService.markAsRead(notificationId, otherUser))
+                    .isInstanceOf(ResourceNotFoundException.class);
         }
     }
 
@@ -339,11 +353,22 @@ class NotificationServiceTest {
         @DisplayName("Should delete notification by ID")
         void shouldDeleteNotificationById() {
             UUID notificationId = notification.getId();
-            doNothing().when(notificationRepository).deleteByIdAndTenantId(notificationId, tenantId);
+            when(notificationRepository.deleteByIdAndTenantIdAndUserId(notificationId, tenantId, userId)).thenReturn(1);
 
-            notificationService.deleteNotification(notificationId);
+            notificationService.deleteNotification(notificationId, userId);
 
-            verify(notificationRepository).deleteByIdAndTenantId(notificationId, tenantId);
+            verify(notificationRepository).deleteByIdAndTenantIdAndUserId(notificationId, tenantId, userId);
+        }
+
+        @Test
+        @DisplayName("Should throw not found when the notification is not the caller's")
+        void shouldThrowWhenNotOwned() {
+            UUID notificationId = notification.getId();
+            UUID otherUser = UUID.randomUUID();
+            when(notificationRepository.deleteByIdAndTenantIdAndUserId(notificationId, tenantId, otherUser)).thenReturn(0);
+
+            assertThatThrownBy(() -> notificationService.deleteNotification(notificationId, otherUser))
+                    .isInstanceOf(ResourceNotFoundException.class);
         }
     }
 
@@ -382,10 +407,10 @@ class NotificationServiceTest {
         @DisplayName("Should get notification by ID")
         void shouldGetNotificationById() {
             UUID notificationId = notification.getId();
-            when(notificationRepository.findByIdAndTenantId(notificationId, tenantId))
+            when(notificationRepository.findByIdAndTenantIdAndUserId(notificationId, tenantId, userId))
                     .thenReturn(Optional.of(notification));
 
-            Notification result = notificationService.getNotificationById(notificationId);
+            Notification result = notificationService.getNotificationById(notificationId, userId);
 
             assertThat(result).isNotNull();
             assertThat(result.getId()).isEqualTo(notificationId);
@@ -395,10 +420,10 @@ class NotificationServiceTest {
         @DisplayName("Should throw exception when notification not found")
         void shouldThrowExceptionWhenNotFound() {
             UUID notificationId = UUID.randomUUID();
-            when(notificationRepository.findByIdAndTenantId(notificationId, tenantId))
+            when(notificationRepository.findByIdAndTenantIdAndUserId(notificationId, tenantId, userId))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> notificationService.getNotificationById(notificationId))
+            assertThatThrownBy(() -> notificationService.getNotificationById(notificationId, userId))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessageContaining("not found");
         }

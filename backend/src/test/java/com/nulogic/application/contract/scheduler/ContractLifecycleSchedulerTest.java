@@ -57,6 +57,8 @@ class ContractLifecycleSchedulerTest {
     private JdbcTemplate jdbcTemplate;
     @Mock
     private com.nulogic.common.util.TenantTimeService tenantTimeService;
+    @Mock
+    private com.nulogic.infrastructure.tenant.repository.TenantRepository tenantRepository;
     @InjectMocks
     private ContractLifecycleScheduler scheduler;
     @Captor
@@ -563,8 +565,7 @@ class ContractLifecycleSchedulerTest {
         @Test
         @DisplayName("Should handle empty tenant list gracefully")
         void shouldHandleEmptyTenantList() {
-            when(jdbcTemplate.queryForList("SELECT id FROM tenants WHERE is_active = true", UUID.class))
-                    .thenReturn(List.of());
+            when(tenantRepository.findActiveTenantIds()).thenReturn(List.of());
 
             // Should not throw
             scheduler.processContractLifecycle();

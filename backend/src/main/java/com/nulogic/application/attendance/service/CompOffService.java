@@ -208,6 +208,9 @@ public class CompOffService {
         LocalDate lookbackStart = today.minusMonths(6);
         List<CompOffRequest> pending = compOffRequestRepository
                 .findPendingInDateRange(tenantId, lookbackStart, cutoff);
+        if (pending.isEmpty()) {
+            return 0; // tenants without a comp-off leave type must not fail the nightly run
+        }
 
         // Pre-fetch leave type and year once for the batch — same for every request in this tenant/run
         String compOffLeaveCode = config.getCompOff().getLeaveCode();
