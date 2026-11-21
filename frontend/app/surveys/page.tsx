@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -226,24 +227,22 @@ export default function SurveysPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="surveys">
       <PageTransition className="space-y-6">
         {/* Header */}
-        <Reveal className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-2 max-w-2xl">
-            <p className="text-aura-micro text-[var(--text-3)]">
-              Employee Engagement
-            </p>
-            <h1 className="text-aura-title text-[var(--text-1)]">
-              Employee Surveys
-            </h1>
-            <p className="text-body-secondary text-[var(--text-2)] max-w-[55ch]">
-              Create and manage employee surveys and feedback collection
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-            <Button variant="primary" onClick={handleCreateSurvey}>
-              <Plus className="mr-2 h-4 w-4"/>
-              Create Survey
-            </Button>
-          </PermissionGate>
+        <Reveal className="flex flex-col gap-2">
+          <p className="text-aura-micro text-[var(--text-3)]">
+            Employee Engagement
+          </p>
+          <PageHeader
+            title="Employee Surveys"
+            description="Create and manage employee surveys and feedback collection"
+            actions={
+              <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                <Button variant="primary" onClick={handleCreateSurvey}>
+                  <Plus className="mr-2 h-4 w-4"/>
+                  Create Survey
+                </Button>
+              </PermissionGate>
+            }
+          />
         </Reveal>
 
         {/* Stats Cards */}

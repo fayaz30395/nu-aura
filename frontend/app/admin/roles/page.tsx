@@ -34,6 +34,7 @@ import {
   useUpdateRole,
 } from '@/lib/hooks/queries/useRoles';
 import {createLogger} from '@/lib/utils/logger';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const log = createLogger('RolesPage');
 
@@ -347,8 +348,7 @@ export default function RolesPage() {
 
       <div className="max-w-7xl mx-auto">
         <Reveal className="mb-6">
-          <h1 className="text-xl font-bold">Role Management</h1>
-          <p className="text-[var(--text-secondary)] mt-1">Manage user roles and permissions</p>
+          <PageHeader title="Role Management" description="Manage user roles and permissions"/>
         </Reveal>
 
         <div className="mb-6 flex justify-between items-center" role="search">

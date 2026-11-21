@@ -7,6 +7,7 @@ import {useFieldArray, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {Checkbox as MantineCheckbox} from '@mantine/core';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
@@ -391,8 +392,7 @@ export default function WorkflowDetailPage() {
         >
           {/* Header */}
           <Reveal>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex items-start gap-4">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -402,16 +402,12 @@ export default function WorkflowDetailPage() {
                 >
                   <ArrowLeft className="h-4 w-4"/>
                 </Button>
-                <div>
-                  <h1 className="text-aura-title text-[var(--text-1)]">
-                    {isNew ? 'Create Workflow' : isEditing ? 'Edit Workflow' : workflow?.name}
-                  </h1>
-                  {!isNew && !isEditing && workflow?.description && (
-                    <p className="mt-1 text-[var(--text-2)]">{workflow.description}</p>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
+                <PageHeader
+                  className="flex-1 min-w-0"
+                  title={isNew ? 'Create Workflow' : isEditing ? 'Edit Workflow' : workflow?.name}
+                  description={!isNew && !isEditing && workflow?.description ? workflow.description : undefined}
+                  actions={
+                    <>
                 {!isNew && !isEditing && canManage && (
                   <Button variant="outline" onClick={() => setIsEditing(true)} className="focus-visible">
                     <Edit className="mr-2 h-4 w-4"/>
@@ -423,7 +419,9 @@ export default function WorkflowDetailPage() {
                     Cancel
                   </Button>
                 )}
-              </div>
+                    </>
+                  }
+                />
             </div>
           </Reveal>
 

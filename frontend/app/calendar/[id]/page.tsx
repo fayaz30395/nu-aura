@@ -5,6 +5,7 @@ import {notFound, useParams, useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {EVENT_STATUS} from '@/lib/status/vocabulary';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -128,22 +129,25 @@ export default function EventDetailPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div className="flex-1">
-            <div className="flex items-center gap-4">
-              <div
-                className={`w-3 h-3 rounded-full ${calendarService.getEventColor(
-                  event.eventType
-                )}`}
-              />
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
+          <PageHeader
+            className="flex-1"
+            title={
+              <span className="inline-flex items-center gap-3">
+                <span
+                  className={`w-3 h-3 rounded-full ${calendarService.getEventColor(
+                    event.eventType
+                  )}`}
+                />
                 {event.title}
-              </h1>
-              <StatusBadge status={event.status} domain={EVENT_STATUS}/>
-            </div>
-            <p className="text-[var(--text-muted)] mt-1">
-              {calendarService.getEventTypeLabel(event.eventType)}
-            </p>
-          </div>
+              </span>
+            }
+            description={
+              <span className="inline-flex flex-wrap items-center gap-2">
+                <StatusBadge status={event.status} domain={EVENT_STATUS}/>
+                {calendarService.getEventTypeLabel(event.eventType)}
+              </span>
+            }
+          />
         </div>
 
         {/* Time Card */}

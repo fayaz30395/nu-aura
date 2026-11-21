@@ -20,6 +20,7 @@ import {
   useOfficeLocations,
   useUpdateOfficeLocation,
 } from '@/lib/hooks/queries/useOfficeLocations';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -185,9 +186,10 @@ export default function OfficeLocationsPage() {
           type="danger"
         />
 
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold">Office Locations & Geofencing</h1>
-          {canCreate && (
+        <PageHeader
+          className="mb-8"
+          title="Office Locations & Geofencing"
+          actions={canCreate && (
             <button
               onClick={() => {
                 reset();
@@ -199,7 +201,7 @@ export default function OfficeLocationsPage() {
               Add Location
             </button>
           )}
-        </div>
+        />
 
         {showForm && (
           <div className="bg-[var(--bg-card)] rounded-lg shadow-[var(--shadow-elevated)] p-6 mb-6">

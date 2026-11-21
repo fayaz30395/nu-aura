@@ -6,10 +6,10 @@ import {useRouter} from 'next/navigation';
 import {AnimatePresence, motion} from 'framer-motion';
 import {Clock, Eye, Heart, MessageCircle, Pen, Plus, Search, Tag,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PageTransition} from '@/components/motion';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
-import {typography} from '@/lib/theme/design-system';
 import {useBlogCategories, useBlogPosts} from '@/lib/hooks/queries/useFluence';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -89,31 +89,29 @@ export default function BlogsPage() {
     <AppLayout>
       <PageTransition className="space-y-8">
         {/* Page Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-4 mb-2">
-              <div
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-warning-500 via-warning-500 to-warning-600 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
-                <Pen className="w-6 h-6 text-white"/>
-              </div>
-              <h1 className={`${typography.pageTitle} text-[var(--text-primary)]`}>
-                Blog & Articles
-              </h1>
-            </div>
-            <p className="text-[var(--text-secondary)] text-sm">
-              Read and share insights with your team
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
-            <Button
-              onClick={handleNewPost}
-              className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all"
-            >
-              <Plus className="w-4 h-4"/>
-              New Post
-            </Button>
-          </PermissionGate>
-        </div>
+        <PageHeader
+          title={
+            <span className="inline-flex items-center gap-2">
+              <span
+                className="w-10 h-10 rounded-xl bg-gradient-to-br from-warning-500 via-warning-500 to-warning-600 flex items-center justify-center shadow-[var(--shadow-dropdown)]">
+                <Pen className="w-5 h-5 text-white"/>
+              </span>
+              Blog & Articles
+            </span>
+          }
+          description="Read and share insights with your team"
+          actions={
+            <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE} showWhileLoading>
+              <Button
+                onClick={handleNewPost}
+                className="gap-2 bg-gradient-to-r from-warning-600 to-warning-600 hover:from-warning-700 hover:to-warning-700 text-white shadow-[var(--shadow-elevated)] hover:shadow-[var(--shadow-dropdown)] transition-all"
+              >
+                <Plus className="w-4 h-4"/>
+                New Post
+              </Button>
+            </PermissionGate>
+          }
+        />
 
         {/* Search and Filter Section */}
         <motion.div

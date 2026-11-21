@@ -22,6 +22,7 @@ import {
   useHolidaysByYear,
   useUpdateHoliday
 } from '@/lib/hooks/queries/useAttendance';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -231,39 +232,39 @@ export default function HolidayCalendarManagementPage() {
       <div className="page-shell-centered motion-rise p-6">
         <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <Reveal className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-xl font-bold">Holiday Calendar Management</h1>
-            <p className="mt-1 text-body-secondary">
-              Manage organizational holidays and events
-            </p>
-          </div>
-          <div className="flex items-center space-x-4">
-            {/* Year Selector */}
-            <select
-              aria-label="Year"
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="input-aura"
-            >
-              {[currentYear - 1, currentYear, currentYear + 1, currentYear + 2].map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={() => {
-                resetForm();
-                form.reset({...form.getValues(), holidayDate: `${selectedYear}-01-01`});
-                setEditingHoliday(null);
-                setShowModal(true);
-              }}
-              className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              + Add Holiday
-            </button>
-          </div>
+        <Reveal className="mb-6">
+          <PageHeader
+            title="Holiday Calendar Management"
+            description="Manage organizational holidays and events"
+            actions={
+              <div className="flex items-center space-x-4">
+                {/* Year Selector */}
+                <select
+                  aria-label="Year"
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                  className="input-aura"
+                >
+                  {[currentYear - 1, currentYear, currentYear + 1, currentYear + 2].map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={() => {
+                    resetForm();
+                    form.reset({...form.getValues(), holidayDate: `${selectedYear}-01-01`});
+                    setEditingHoliday(null);
+                    setShowModal(true);
+                  }}
+                  className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                >
+                  + Add Holiday
+                </button>
+              </div>
+            }
+          />
         </Reveal>
 
         {/* Error Message */}

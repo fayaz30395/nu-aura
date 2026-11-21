@@ -21,6 +21,7 @@ import {
   useUpdateLeaveType,
 } from '@/lib/hooks/queries/useLeaves';
 import {categoricalBgClass, CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -260,14 +261,11 @@ export default function LeaveTypesManagementPage() {
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-xl font-bold">Leave Types Management</h1>
-            <p className="mt-1 text-body-secondary">
-              Configure and manage leave types for your organization
-            </p>
-          </div>
-          {canManage && (
+        <PageHeader
+          className="mb-6"
+          title="Leave Types Management"
+          description="Configure and manage leave types for your organization"
+          actions={canManage && (
             <button
               onClick={() => {
                 resetForm();
@@ -279,7 +277,7 @@ export default function LeaveTypesManagementPage() {
               + Add Leave Type
             </button>
           )}
-        </div>
+        />
 
         {/* Error Message */}
         {(uiError || queryError) && (

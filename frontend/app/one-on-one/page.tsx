@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useEffect, useMemo, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -1604,24 +1605,21 @@ export default function OneOnOnePage() {
     <AppLayout activeMenuItem="one-on-one">
       <PageTransition className="p-6 max-w-7xl mx-auto">
         {/* Header */}
-        <Reveal className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-          <div>
-            <h1
-              className="text-xl font-bold text-[var(--text-primary)] dark:text-[var(--text-secondary)]">
-              1-on-1 Meetings
-            </h1>
-            <p className="text-body-muted mt-1">
-              Schedule, manage, and track your 1-on-1 conversations
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.MEETING_CREATE}>
-            <button
-              onClick={() => setView('schedule')}
-              className="press-scale flex items-center gap-2 px-4 py-2.5 bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium rounded-lg transition-colors"
-            >
-              <Plus className="h-4 w-4"/> Schedule Meeting
-            </button>
-          </PermissionGate>
+        <Reveal className="mb-8">
+          <PageHeader
+            title="1-on-1 Meetings"
+            description="Schedule, manage, and track your 1-on-1 conversations"
+            actions={
+              <PermissionGate permission={Permissions.MEETING_CREATE}>
+                <button
+                  onClick={() => setView('schedule')}
+                  className="press-scale flex items-center gap-2 px-4 py-2.5 bg-accent-700 hover:bg-accent-800 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  <Plus className="h-4 w-4"/> Schedule Meeting
+                </button>
+              </PermissionGate>
+            }
+          />
         </Reveal>
 
         {/* Dashboard Stats */}

@@ -32,6 +32,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {departmentKeys, useAllDepartments} from '@/lib/hooks/queries/useDepartments';
 import {departmentService} from '@/lib/services/hrms/department.service';
 import {Department, DepartmentRequest, DepartmentType} from '@/lib/types/hrms/employee';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const DEPT_TYPES: DepartmentType[] = [
   'ENGINEERING', 'PRODUCT', 'DESIGN', 'MARKETING', 'SALES',
@@ -210,19 +211,17 @@ export default function DepartmentsPage() {
       >
         <PageTransition>
         {/* Header */}
-        <Reveal className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-xl font-bold">Department management</h1>
-            <p className="text-sm text-[var(--text-secondary)] mt-0.5">
-              {data?.totalElements ?? 0} departments
-            </p>
-          </div>
-          {canManage && (
-            <Button variant="primary" onClick={openCreate} className="flex items-center gap-2">
-              <Plus className="h-4 w-4"/>
-              New department
-            </Button>
-          )}
+        <Reveal className="mb-6">
+          <PageHeader
+            title="Department management"
+            description={`${data?.totalElements ?? 0} departments`}
+            actions={canManage && (
+              <Button variant="primary" onClick={openCreate} className="flex items-center gap-2">
+                <Plus className="h-4 w-4"/>
+                New department
+              </Button>
+            )}
+          />
         </Reveal>
 
         {/* Search */}

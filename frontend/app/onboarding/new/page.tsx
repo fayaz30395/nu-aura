@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {EmployeeSearchAutocomplete} from '@/components/ui/EmployeeSearchAutocomplete';
@@ -149,13 +150,10 @@ export default function NewOnboardingPage() {
       <div className="max-w-4xl mx-auto space-y-12 py-8">
         {/* Header & Progress */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-          <div className="space-y-2">
-            <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)]">
-              Initiate <span className="text-accent-700">Onboarding</span>
-            </h1>
-            <p className="text-[var(--text-muted)] font-medium">Step {currentStep} of
-              3: {steps[currentStep - 1].name}</p>
-          </div>
+          <PageHeader
+            title={<>Initiate <span className="text-accent-700">Onboarding</span></>}
+            description={<>Step {currentStep} of 3: {steps[currentStep - 1].name}</>}
+          />
 
           <div className="flex items-center gap-4">
             {steps.map((step, idx) => (

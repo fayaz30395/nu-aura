@@ -27,6 +27,7 @@ import dynamic from 'next/dynamic';
 import {Modal, Skeleton} from '@mantine/core';
 import {notifications} from '@mantine/notifications';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 
@@ -261,128 +262,126 @@ export default function BlogPostDetailPage() {
 
         {/* Article Header */}
         <Reveal className="space-y-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-4">
-                <h1 className="text-2xl md:text-5xl font-bold text-[var(--text-primary)] leading-tight">
-                  {post.title}
-                </h1>
+          <PageHeader
+            title={
+              <span className="inline-flex flex-wrap items-center gap-3">
+                {post.title}
                 {post.status !== 'PUBLISHED' && (
                   <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--bg-secondary)] text-[var(--text-secondary)] uppercase tracking-wide">
                     {post.status.replace('_', ' ')}
                   </span>
                 )}
-              </div>
-
-              {/* Meta Information */}
-              <div className="meta-row">
-                {/* Author */}
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold ${getAvatarColor(getInitial(post.authorName))}`}>
-                    {getInitial(post.authorName)}
-                  </div>
-                  <span className="font-medium text-[var(--text-primary)]">
-                    {post.authorName || 'Unknown Author'}
-                  </span>
-                </div>
-
-                {/* Published Date */}
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 flex-shrink-0"/>
-                  <time dateTime={post.publishedAt || post.updatedAt}>
-                    {formatDate(post.publishedAt || post.updatedAt)}
-                  </time>
-                </div>
-
-                {/* Category Badge */}
-                {post.categoryName && (
-                  <motion.span
-                    whileHover={{scale: 1.05}}
-                    className="inline-flex items-center gap-1 bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 text-[var(--accent-800)] dark:text-[var(--accent-300)] px-4 py-1 rounded-full text-xs font-medium"
-                  >
-                    {post.categoryName}
-                  </motion.span>
+              </span>
+            }
+            actions={
+              <>
+                {canEdit && (
+                  <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_UPDATE}>
+                    <motion.button
+                      whileHover={{scale: 1.05}}
+                      whileTap={{scale: 0.95}}
+                      onClick={() => router.push(`/fluence/blogs/${post.id}/edit`)}
+                      className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      title="Edit post"
+                      aria-label="Edit post"
+                    >
+                      <Edit className="w-5 h-5"/>
+                    </motion.button>
+                  </PermissionGate>
                 )}
-
-                {/* Views */}
+                {canEdit && post.status === 'DRAFT' && (
+                  <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_PUBLISH}>
+                    <motion.button
+                      whileHover={{scale: 1.05}}
+                      whileTap={{scale: 0.95}}
+                      onClick={handlePublish}
+                      disabled={publishPost.isPending}
+                      className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      title="Publish post"
+                      aria-label="Publish post"
+                    >
+                      <Send className="w-5 h-5"/>
+                    </motion.button>
+                  </PermissionGate>
+                )}
+                {canEdit && post.status === 'PUBLISHED' && (
+                  <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_PUBLISH}>
+                    <motion.button
+                      whileHover={{scale: 1.05}}
+                      whileTap={{scale: 0.95}}
+                      onClick={handleArchive}
+                      disabled={archivePost.isPending}
+                      className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                      title="Archive post"
+                      aria-label="Archive post"
+                    >
+                      <Archive className="w-5 h-5"/>
+                    </motion.button>
+                  </PermissionGate>
+                )}
                 <motion.button
                   whileHover={{scale: 1.05}}
-                  onClick={() => setShowViewers(true)}
-                  className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-700)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
-                  aria-label={`${post.viewCount || 0} views`}
+                  whileTap={{scale: 0.95}}
+                  onClick={handleCopyLink}
+                  className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                  title="Copy link"
+                  aria-label="Copy link"
                 >
-                  <Eye className="w-4 h-4 flex-shrink-0"/>
-                  <span>{post.viewCount || 0} views</span>
+                  <Share className="w-5 h-5"/>
                 </motion.button>
+              </>
+            }
+          />
+
+            {/* Meta Information */}
+            <div className="meta-row">
+              {/* Author */}
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold ${getAvatarColor(getInitial(post.authorName))}`}>
+                  {getInitial(post.authorName)}
+                </div>
+                <span className="font-medium text-[var(--text-primary)]">
+                  {post.authorName || 'Unknown Author'}
+                </span>
               </div>
 
-              {/* Excerpt */}
-              {post.excerpt && (
-                <p className="text-lg text-[var(--text-secondary)] mt-4 italic leading-relaxed">
-                  {post.excerpt}
-                </p>
-              )}
-            </div>
+              {/* Published Date */}
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 flex-shrink-0"/>
+                <time dateTime={post.publishedAt || post.updatedAt}>
+                  {formatDate(post.publishedAt || post.updatedAt)}
+                </time>
+              </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-2 flex-shrink-0">
-              {canEdit && (
-                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_UPDATE}>
-                  <motion.button
-                    whileHover={{scale: 1.05}}
-                    whileTap={{scale: 0.95}}
-                    onClick={() => router.push(`/fluence/blogs/${post.id}/edit`)}
-                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    title="Edit post"
-                    aria-label="Edit post"
-                  >
-                    <Edit className="w-5 h-5"/>
-                  </motion.button>
-                </PermissionGate>
+              {/* Category Badge */}
+              {post.categoryName && (
+                <motion.span
+                  whileHover={{scale: 1.05}}
+                  className="inline-flex items-center gap-1 bg-[var(--accent-100)] dark:bg-[var(--accent-950)]/30 text-[var(--accent-800)] dark:text-[var(--accent-300)] px-4 py-1 rounded-full text-xs font-medium"
+                >
+                  {post.categoryName}
+                </motion.span>
               )}
-              {canEdit && post.status === 'DRAFT' && (
-                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_PUBLISH}>
-                  <motion.button
-                    whileHover={{scale: 1.05}}
-                    whileTap={{scale: 0.95}}
-                    onClick={handlePublish}
-                    disabled={publishPost.isPending}
-                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    title="Publish post"
-                    aria-label="Publish post"
-                  >
-                    <Send className="w-5 h-5"/>
-                  </motion.button>
-                </PermissionGate>
-              )}
-              {canEdit && post.status === 'PUBLISHED' && (
-                <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_PUBLISH}>
-                  <motion.button
-                    whileHover={{scale: 1.05}}
-                    whileTap={{scale: 0.95}}
-                    onClick={handleArchive}
-                    disabled={archivePost.isPending}
-                    className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                    title="Archive post"
-                    aria-label="Archive post"
-                  >
-                    <Archive className="w-5 h-5"/>
-                  </motion.button>
-                </PermissionGate>
-              )}
+
+              {/* Views */}
               <motion.button
                 whileHover={{scale: 1.05}}
-                whileTap={{scale: 0.95}}
-                onClick={handleCopyLink}
-                className="p-2 rounded-lg bg-[var(--bg-secondary)] hover:bg-[var(--accent-100)] dark:hover:bg-[var(--accent-950)]/30 text-[var(--accent-700)] dark:text-[var(--accent-300)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-                title="Copy link"
-                aria-label="Copy link"
+                onClick={() => setShowViewers(true)}
+                className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-700)] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2 rounded"
+                aria-label={`${post.viewCount || 0} views`}
               >
-                <Share className="w-5 h-5"/>
+                <Eye className="w-4 h-4 flex-shrink-0"/>
+                <span>{post.viewCount || 0} views</span>
               </motion.button>
             </div>
-          </div>
+
+            {/* Excerpt */}
+            {post.excerpt && (
+              <p className="text-lg text-[var(--text-secondary)] mt-4 italic leading-relaxed">
+                {post.excerpt}
+              </p>
+            )}
         </Reveal>
 
         {/* Breadcrumbs */}

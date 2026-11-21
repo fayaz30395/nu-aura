@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useMemo, useState} from 'react';
 import {AppLayout} from '@/components/layout';
 import {AlertCircle, CheckCircle, ChevronDown, Clock, CreditCard, Filter, Search, XCircle,} from 'lucide-react';
@@ -119,18 +120,16 @@ function PaymentsPageContent() {
     <AppLayout activeMenuItem="payments">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1
-              className="text-2xl sm:text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+        <PageHeader
+          className="mb-6"
+          title={
+            <span className="inline-flex items-center gap-2">
               <CreditCard className="w-7 h-7 sm:w-8 sm:h-8"/>
               Payment Gateway
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Monitor and manage payment transactions
-            </p>
-          </div>
-        </div>
+            </span>
+          }
+          description="Monitor and manage payment transactions"
+        />
 
         {/* Statistics */}
         {statsData && (

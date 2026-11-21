@@ -25,6 +25,7 @@ import {Tooltip} from '@mantine/core';
 import {notifications} from '@mantine/notifications';
 import {categoricalBgClass} from '@/lib/utils/categoricalPalette';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {
   useCreateWikiSpace,
@@ -246,31 +247,31 @@ export default function WikiPage() {
       <PageTransition>
         <div className={layout.sectionGap}>
           {/* Page Header */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-4 mb-2">
-                <div
+          <PageHeader
+            title={
+              <span className="inline-flex items-center gap-2">
+                <span
                   className="flex items-center justify-center rounded-lg bg-accent-100 dark:bg-accent-900/30 p-2">
                   <BookOpen className={`${iconSize.pageHeader} text-accent-700 dark:text-accent-400`}/>
-                </div>
-                <h1 className={typography.pageTitle}>Wiki Pages</h1>
-              </div>
-              <p className={typography.bodySecondary}>
-                Create and manage knowledge base documentation
-              </p>
-            </div>
-            <PermissionGate permission={Permissions.KNOWLEDGE_WIKI_CREATE}>
-              <Button
-                data-testid="wiki-new-page"
-                onClick={() => router.push('/fluence/wiki/new')}
-                variant="primary"
-                className="gap-2"
-              >
-                <Plus className={iconSize.button}/>
-                New Page
-              </Button>
-            </PermissionGate>
-          </div>
+                </span>
+                Wiki Pages
+              </span>
+            }
+            description="Create and manage knowledge base documentation"
+            actions={
+              <PermissionGate permission={Permissions.KNOWLEDGE_WIKI_CREATE}>
+                <Button
+                  data-testid="wiki-new-page"
+                  onClick={() => router.push('/fluence/wiki/new')}
+                  variant="primary"
+                  className="gap-2"
+                >
+                  <Plus className={iconSize.button}/>
+                  New Page
+                </Button>
+              </PermissionGate>
+            }
+          />
 
           {/* Content Grid: Sidebar + Main */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

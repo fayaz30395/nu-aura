@@ -31,6 +31,7 @@ import {
   useUpdateCustomFieldDefinition,
 } from '@/lib/hooks/queries/useCustomFields';
 import {createLogger} from '@/lib/utils/logger';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const log = createLogger('CustomFieldsPage');
 
@@ -253,12 +254,11 @@ export default function CustomFieldsPage() {
   return (
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-xl font-bold">Custom Fields</h1>
-          <p className="text-[var(--text-secondary)] mt-1">
-            Define custom fields to extend entity data with your own attributes
-          </p>
-        </div>
+        <PageHeader
+          className="mb-6"
+          title="Custom Fields"
+          description="Define custom fields to extend entity data with your own attributes"
+        />
 
         {error && (
           <div

@@ -18,6 +18,7 @@ import {
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {Roles, usePermissions} from '@/lib/hooks/usePermissions';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -131,20 +132,15 @@ export default function AdminSettingsPage() {
   return (
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <div
-          className="p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30">
-          <Settings className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
-        </div>
-        <div>
-          <h1 className="text-xl font-bold">
+      <PageHeader
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Settings className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
             Admin Settings
-          </h1>
-          <p className="text-[var(--text-secondary)] mt-1">
-            Configure system settings and manage organization preferences
-          </p>
-        </div>
-      </div>
+          </span>
+        }
+        description="Configure system settings and manage organization preferences"
+      />
 
       {/* Settings Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

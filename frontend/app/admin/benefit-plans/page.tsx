@@ -16,6 +16,7 @@ import {Textarea} from '@/components/ui/Textarea';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
 import {useAllBenefitPlans, useCreateBenefitPlan, useUpdateBenefitPlan} from '@/lib/hooks/queries';
 import {getLocalDateString} from '@/lib/utils/dateUtils';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -140,22 +141,23 @@ export default function BenefitPlansManagementPage() {
   return (
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-xl font-bold">Benefit Plans Management</h1>
-            <p className="mt-1 text-body-secondary">Configure and manage benefit plans for your organization</p>
-          </div>
-          <button
-            onClick={() => {
-              form.reset(defaultFormValues);
-              setEditingPlan(null);
-              setShowModal(true);
-            }}
-            className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-          >
-            + Add Benefit Plan
-          </button>
-        </div>
+        <PageHeader
+          className="mb-6"
+          title="Benefit Plans Management"
+          description="Configure and manage benefit plans for your organization"
+          actions={
+            <button
+              onClick={() => {
+                form.reset(defaultFormValues);
+                setEditingPlan(null);
+                setShowModal(true);
+              }}
+              className="btn-primary !h-auto cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+            >
+              + Add Benefit Plan
+            </button>
+          }
+        />
 
         {(uiError || queryError) && (
           <div className="mb-4 bg-danger-50 border border-danger-200 text-danger-700 px-4 py-4 rounded relative">

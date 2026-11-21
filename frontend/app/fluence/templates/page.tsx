@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {Copy, Download, FileText, Plus, Search, Zap,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -66,29 +67,29 @@ export default function TemplatesPage() {
     <AppLayout>
       <PageTransition className={layout.sectionGap}>
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <h1 className={`${typography.pageTitle} flex items-center gap-4`}>
-              <div
+        <PageHeader
+          title={
+            <span className="inline-flex items-center gap-2">
+              <span
                 className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--accent-500)] to-[var(--accent-800)] flex items-center justify-center flex-shrink-0">
                 <FileText className={`${iconSize.pageHeader} text-white`}/>
-              </div>
+              </span>
               Templates
-            </h1>
-            <p className={`${typography.bodySecondary} mt-2`}>
-              Reusable document templates for your team
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
-            <Button
-              onClick={handleCreateTemplate}
-              className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150 flex-shrink-0"
-            >
-              <Plus className={iconSize.button}/>
-              Create Template
-            </Button>
-          </PermissionGate>
-        </div>
+            </span>
+          }
+          description="Reusable document templates for your team"
+          actions={
+            <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_CREATE}>
+              <Button
+                onClick={handleCreateTemplate}
+                className="gap-2 bg-[var(--accent-700)] hover:bg-[var(--accent-800)] text-white shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] transition-shadow duration-150 flex-shrink-0"
+              >
+                <Plus className={iconSize.button}/>
+                Create Template
+              </Button>
+            </PermissionGate>
+          }
+        />
 
         {/* Search Bar */}
         <div className="relative">

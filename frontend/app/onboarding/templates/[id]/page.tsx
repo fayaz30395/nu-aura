@@ -23,6 +23,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Callout} from '@/components/ui/Callout';
 import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
@@ -184,8 +185,7 @@ export default function TemplateEditorPage() {
       >
         <div className="max-w-7xl mx-auto py-6 space-y-10">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="flex items-center gap-6">
+          <div className="flex items-start gap-6">
               <Button
                 variant="outline"
                 size="sm"
@@ -195,31 +195,30 @@ export default function TemplateEditorPage() {
               >
                 <ArrowLeft className="h-5 w-5 text-[var(--text-muted)] group-hover:text-accent-700 transition-colors"/>
               </Button>
-              <div>
-                <h1
-                  className="text-2xl font-black tracking-tight text-[var(--text-primary)] flex items-center gap-4">
-                  Blueprint <span className="text-accent-700">Editor</span>
-                  <Badge variant="outline"
-                         className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
-                    V1.0
-                  </Badge>
-                </h1>
-                <p className="text-[var(--text-muted)] font-bold">Orchestrate tasks and customize the onboarding
-                  journey.</p>
-              </div>
-            </div>
-
-{canManage && (
-            <Button
-              variant="primary"
-              className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-10"
-              leftIcon={<Save className="h-4 w-4"/>}
-              isLoading={updateTemplateMutation.isPending && !editingTask}
-              onClick={handleSaveTemplate}
-            >
-              Save Blueprint
-            </Button>
-)}
+              <PageHeader
+                className="flex-1 min-w-0"
+                title={
+                  <span className="inline-flex items-center gap-4">
+                    <span>Blueprint <span className="text-accent-700">Editor</span></span>
+                    <Badge variant="outline"
+                           className="rounded-xl px-4 py-1 font-black text-xs uppercase tracking-widest border-accent-500/20 text-accent-600">
+                      V1.0
+                    </Badge>
+                  </span>
+                }
+                description="Orchestrate tasks and customize the onboarding journey."
+                actions={canManage ? (
+                  <Button
+                    variant="primary"
+                    className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-10"
+                    leftIcon={<Save className="h-4 w-4"/>}
+                    isLoading={updateTemplateMutation.isPending && !editingTask}
+                    onClick={handleSaveTemplate}
+                  >
+                    Save Blueprint
+                  </Button>
+                ) : undefined}
+              />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">

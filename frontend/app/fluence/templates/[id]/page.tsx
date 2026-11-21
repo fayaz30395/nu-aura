@@ -14,6 +14,7 @@ import {instantiateTemplateSchema} from '@/lib/validations/fluence';
 import {z} from 'zod';
 
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
@@ -212,65 +213,67 @@ export default function TemplateDetailPage() {
     >
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <button
-              onClick={() => router.back()}
-              aria-label="Go back"
-              className="mb-4 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-            >
-              <ArrowLeft className="w-4 h-4"/>
-              Back to Templates
-            </button>
-            <h1 className="text-xl font-bold flex items-center gap-4 mb-2">
-              {template.icon && <span className="text-2xl">{template.icon}</span>}
-              {template.name}
-            </h1>
-            {template.description && (
-              <p className="text-[var(--text-secondary)]">{template.description}</p>
-            )}
-            <div className="flex items-center gap-4 text-body-muted mt-2">
-              <div className="flex items-center gap-1">
-                <User className="w-4 h-4"/>
-                {template.authorName || 'Unknown'}
-              </div>
-              <div className="flex items-center gap-1">
-                <Calendar className="w-4 h-4"/>
-                {formatDate(template.updatedAt)}
-              </div>
-              <div className="flex items-center gap-1">
-                <Copy className="w-4 h-4"/>
-                {template.usageCount} uses
-              </div>
+        <div>
+          <button
+            onClick={() => router.back()}
+            aria-label="Go back"
+            className="mb-4 flex items-center gap-2 text-accent-600 dark:text-accent-400 hover:text-accent-700 dark:hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+          >
+            <ArrowLeft className="w-4 h-4"/>
+            Back to Templates
+          </button>
+          <PageHeader
+            title={
+              <span className="inline-flex items-center gap-2">
+                {template.icon && <span className="text-2xl">{template.icon}</span>}
+                {template.name}
+              </span>
+            }
+            description={template.description || undefined}
+            actions={
+              <>
+                <Button
+                  onClick={() => setShowInstantiateModal(true)}
+                  className="gap-2 bg-accent-600 hover:bg-accent-700"
+                >
+                  <Copy className="w-4 h-4"/>
+                  Use Template
+                </Button>
+                <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_UPDATE}>
+                  <Button
+                    variant="secondary"
+                    className="gap-2"
+                    onClick={handleOpenEdit}
+                    aria-label="Edit template"
+                  >
+                    <Edit className="w-4 h-4"/>
+                  </Button>
+                </PermissionGate>
+                <Button
+                  variant="secondary"
+                  className="gap-2"
+                  onClick={() => setDeleteConfirmOpen(true)}
+                  disabled={deleteTemplate.isPending}
+                  aria-label="Delete template"
+                >
+                  <Trash2 className="w-4 h-4"/>
+                </Button>
+              </>
+            }
+          />
+          <div className="flex items-center gap-4 text-body-muted mt-2">
+            <div className="flex items-center gap-1">
+              <User className="w-4 h-4"/>
+              {template.authorName || 'Unknown'}
             </div>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => setShowInstantiateModal(true)}
-              className="gap-2 bg-accent-600 hover:bg-accent-700"
-            >
+            <div className="flex items-center gap-1">
+              <Calendar className="w-4 h-4"/>
+              {formatDate(template.updatedAt)}
+            </div>
+            <div className="flex items-center gap-1">
               <Copy className="w-4 h-4"/>
-              Use Template
-            </Button>
-            <PermissionGate permission={Permissions.KNOWLEDGE_TEMPLATE_UPDATE}>
-              <Button
-                variant="secondary"
-                className="gap-2"
-                onClick={handleOpenEdit}
-                aria-label="Edit template"
-              >
-                <Edit className="w-4 h-4"/>
-              </Button>
-            </PermissionGate>
-            <Button
-              variant="secondary"
-              className="gap-2"
-              onClick={() => setDeleteConfirmOpen(true)}
-              disabled={deleteTemplate.isPending}
-              aria-label="Delete template"
-            >
-              <Trash2 className="w-4 h-4"/>
-            </Button>
+              {template.usageCount} uses
+            </div>
           </div>
         </div>
 

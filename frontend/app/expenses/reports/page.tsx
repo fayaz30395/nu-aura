@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useMemo, useState} from 'react';
 import dynamic from 'next/dynamic';
 import {AppLayout} from '@/components/layout';
@@ -76,14 +77,15 @@ export default function ExpenseReportsPage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
           {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
+          <PageHeader
+            title={
+              <span className="inline-flex items-center gap-2">
                 <BarChart3 className="w-6 h-6"/>
                 Expense Reports
-              </h1>
-              <p className="text-surface-500 mt-1">Organization-wide expense analytics</p>
-            </div>
+              </span>
+            }
+            description="Organization-wide expense analytics"
+            actions={
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-surface-500"/>
@@ -106,7 +108,8 @@ export default function ExpenseReportsPage() {
                 />
               </div>
             </div>
-          </div>
+            }
+          />
 
           {isLoading ? (
             <div className="flex items-center justify-center py-20">

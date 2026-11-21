@@ -21,6 +21,7 @@ import {
 import Link from 'next/link';
 import type {PayrollRunStatus} from '@/lib/types/hrms/payroll';
 import {Stat, type StatTone} from '@/components/ui/Stat';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 // ─── Quick-link cards ─────────────────────────────────────────────────────────
 
@@ -143,14 +144,11 @@ export default function AdminPayrollPage() {
   return (
     <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-xl font-bold text-[var(--text-primary)]">
-          Payroll Administration
-        </h1>
-        <p className="mt-1 text-body-secondary">
-          Manage payroll runs, salary structures, and statutory configurations
-        </p>
-      </div>
+      <PageHeader
+        className="mb-8"
+        title="Payroll Administration"
+        description="Manage payroll runs, salary structures, and statutory configurations"
+      />
 
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

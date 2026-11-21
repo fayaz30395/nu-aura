@@ -10,6 +10,7 @@ import {useQuery} from '@tanstack/react-query';
 import {employeeService} from '@/lib/services/hrms/employee.service';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Users} from 'lucide-react';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 interface EmployeeNode extends Employee {
   subordinates?: EmployeeNode[];
@@ -344,20 +345,21 @@ export default function OrgHierarchyPage() {
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
       <div className="max-w-full mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-xl font-bold flex items-center space-x-4">
-            <svg
-              className="h-8 w-8 text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-              fill="currentColor" viewBox="0 0 20 20">
-              <path
-                d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
-            </svg>
-            <span>Organization Chart</span>
-          </h1>
-          <p className="mt-1 text-body-secondary">
-            Employee reporting structure and team hierarchy
-          </p>
-        </div>
+        <PageHeader
+          className="mb-6"
+          title={
+            <span className="inline-flex items-center gap-2">
+              <svg
+                className="h-8 w-8 text-accent-700 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+                fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+              </svg>
+              <span>Organization Chart</span>
+            </span>
+          }
+          description="Employee reporting structure and team hierarchy"
+        />
 
         {/* Controls */}
         <div

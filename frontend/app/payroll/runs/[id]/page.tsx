@@ -9,6 +9,7 @@ import {AppLayout} from '@/components/layout';
 import {PageTransition} from '@/components/motion';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {ConfirmDialog} from '@/components/ui/ConfirmDialog';
 import {EmptyState} from '@/components/ui';
@@ -199,30 +200,30 @@ export default function PayrollRunDetailPage() {
             ) : (
               <>
                 {/* Header */}
-                <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
-                  <div>
-                    <div className="flex items-center gap-4">
-                      <h1 className="text-xl font-bold">{run.runName}</h1>
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(run.status)}`}>
-                        {run.status}
+                <PageHeader
+                  className="mb-6"
+                  title={run.runName}
+                  description={
+                    <>
+                      <span className="block">
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(run.status)}`}>
+                          {run.status}
+                        </span>
+                        {' '}Period{' '}
+                        <span className="font-medium tabular-nums">
+                          {formatDate(run.payrollPeriodStart)} – {formatDate(run.payrollPeriodEnd)}
+                        </span>
+                        {' · '}pay date{' '}
+                        <span className="font-medium tabular-nums">{formatDate(run.paymentDate)}</span>
                       </span>
-                    </div>
-                    <p className="text-[var(--text-secondary)] mt-2 text-sm">
-                      Period{' '}
-                      <span className="font-medium tabular-nums">
-                        {formatDate(run.payrollPeriodStart)} – {formatDate(run.payrollPeriodEnd)}
-                      </span>
-                      {' · '}pay date{' '}
-                      <span className="font-medium tabular-nums">{formatDate(run.paymentDate)}</span>
-                    </p>
-                    {run.notes && (
-                      <p className="text-[var(--text-secondary)] mt-1 text-sm">{run.notes}</p>
-                    )}
-                  </div>
-
-                  {/* Lifecycle actions */}
-                  <div className="flex gap-2">
+                      {run.notes && (
+                        <span className="mt-1 block">{run.notes}</span>
+                      )}
+                    </>
+                  }
+                  actions={
+                    <>
                     {run.status === 'DRAFT' && (
                       <PermissionGate permission={Permissions.PAYROLL_PROCESS}>
                         <Button
@@ -269,8 +270,9 @@ export default function PayrollRunDetailPage() {
                         </Button>
                       </PermissionGate>
                     )}
-                  </div>
-                </div>
+                    </>
+                  }
+                />
 
                 {/* Summary cards */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

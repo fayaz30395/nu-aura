@@ -4,6 +4,7 @@ import {notFound, useParams, useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
 import {PageTransition, Reveal, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent} from '@/components/ui/Card';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -123,12 +124,13 @@ export default function CandidateDetailPage() {
                   {candidate.firstName.charAt(0)}{candidate.lastName.charAt(0)}
                 </span>
               </div>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                  {candidate.fullName}
-                </h1>
-                <p className="text-[var(--text-muted)] font-mono text-sm mt-1">{candidate.candidateCode}</p>
-                <div className="flex flex-wrap gap-2 mt-4">
+              <PageHeader
+                className="flex-1 min-w-0"
+                title={candidate.fullName}
+                description={
+                  <span className="flex flex-col gap-3">
+                  <span className="font-mono text-sm text-[var(--text-muted)]">{candidate.candidateCode}</span>
+                  <span className="flex flex-wrap gap-2">
                   <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
                     Status
                     <span className={`px-2.5 py-1 font-medium rounded-full ${getStatusColor(candidate.status)}`}>
@@ -148,8 +150,10 @@ export default function CandidateDetailPage() {
                       {candidate.source.replace(/_/g, ' ')}
                     </span>
                   )}
-                </div>
-              </div>
+                  </span>
+                  </span>
+                }
+              />
             </div>
           </CardContent>
         </Card>

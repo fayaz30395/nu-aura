@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React from 'react';
 import dynamic from 'next/dynamic';
 import {useParams, useRouter} from 'next/navigation';
@@ -72,25 +73,19 @@ export default function SurveyAnalyticsPage() {
       >
         <motion.div className="space-y-6" {...dsMotion.pageEnter}>
           {/* Header */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => router.push(`/surveys/${surveyId}`)}
-               aria-label="Back">
-                <ArrowLeft className={iconSize.button}/>
-              </Button>
-              <div>
-                <h1 className={typography.pageTitle}>
-                  {surveyLoading ?
-                    <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : `${survey?.title}: Analytics`}
-                </h1>
-                <p className={typography.bodySecondary}>
-                  Response data and question-level insights
-                </p>
-              </div>
-            </div>
+          <div className="space-y-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push(`/surveys/${surveyId}`)}
+             aria-label="Back">
+              <ArrowLeft className={iconSize.button}/>
+            </Button>
+            <PageHeader
+              title={surveyLoading ?
+                <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : `${survey?.title}: Analytics`}
+              description="Response data and question-level insights"
+            />
           </div>
 
           {/* Summary Cards */}

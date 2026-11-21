@@ -5,6 +5,7 @@ import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -136,27 +137,30 @@ export default function AgencyDetailPage() {
               Back to Agencies
             </button>
             <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                    {agency.name}
-                  </h1>
-                  <Badge variant={getStatusVariant(agency.status)} size="sm">
-                    {agency.status?.replace(/_/g, ' ') ?? '-'}
-                  </Badge>
-                </div>
-                {agency.specializations && (
-                  <p className="text-xs text-[var(--text-muted)] mt-1">{agency.specializations}</p>
-                )}
-              </div>
-              <PermissionGate permission={Permissions.AGENCY_UPDATE}>
-                <Button
-                  variant="outline"
-                  onClick={() => router.push(`/recruitment/agencies?edit=${agency.id}`)}
-                >
-                  Edit Agency
-                </Button>
-              </PermissionGate>
+              <PageHeader
+                className="flex-1"
+                title={agency.name}
+                description={
+                  <span className="inline-flex flex-wrap items-center gap-2">
+                    <Badge variant={getStatusVariant(agency.status)} size="sm">
+                      {agency.status?.replace(/_/g, ' ') ?? '-'}
+                    </Badge>
+                    {agency.specializations && (
+                      <span className="text-xs text-[var(--text-muted)]">{agency.specializations}</span>
+                    )}
+                  </span>
+                }
+                actions={
+                  <PermissionGate permission={Permissions.AGENCY_UPDATE}>
+                    <Button
+                      variant="outline"
+                      onClick={() => router.push(`/recruitment/agencies?edit=${agency.id}`)}
+                    >
+                      Edit Agency
+                    </Button>
+                  </PermissionGate>
+                }
+              />
             </div>
           </motion.div>
 

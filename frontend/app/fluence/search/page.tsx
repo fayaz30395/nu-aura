@@ -25,6 +25,7 @@ import {
   Zap,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PageTransition, Stagger, StaggerItem} from '@/components/motion';
 import {Card, CardContent} from '@/components/ui/Card';
 import {card as dsCard, iconSize, input as dsInput, layout, typography,} from '@/lib/theme/design-system';
@@ -233,18 +234,18 @@ export default function SearchPage() {
       <PageTransition className={layout.sectionGap}>
 
         {/* ── Header ─────────────────────────────────────────────────────────── */}
-        <div>
-          <h1 className={`${typography.pageTitle} flex items-center gap-4`}>
-            <div
-              className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center flex-shrink-0">
-              <Search className={iconSize.pageHeader}/>
-            </div>
-            Search NU-Fluence
-          </h1>
-          <p className={`${typography.bodySecondary} mt-2`}>
-            Find wiki pages, blog posts, and templates with full-text search
-          </p>
-        </div>
+        <PageHeader
+          title={
+            <span className="inline-flex items-center gap-2">
+              <span
+                className="w-10 h-10 rounded-lg bg-accent-100 dark:bg-accent-500/10 text-accent-600 dark:text-accent-400 flex items-center justify-center flex-shrink-0">
+                <Search className={iconSize.pageHeader}/>
+              </span>
+              Search NU-Fluence
+            </span>
+          }
+          description="Find wiki pages, blog posts, and templates with full-text search"
+        />
 
         {/* ── Search input ────────────────────────────────────────────────────── */}
         <div className="space-y-2">

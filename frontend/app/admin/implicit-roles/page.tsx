@@ -33,6 +33,7 @@ import {
 import {useRoles} from '@/lib/hooks/queries/useRoles';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate} from '@/lib/utils/format/date';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const log = createLogger('ImplicitRolesPage');
 
@@ -314,12 +315,11 @@ export default function ImplicitRolesPage() {
       />
 
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-xl font-bold">Implicit Roles</h1>
-          <p className="text-[var(--text-secondary)] mt-1">
-            Manage rules that automatically assign roles to users based on their organizational context
-          </p>
-        </div>
+        <PageHeader
+          className="mb-6"
+          title="Implicit Roles"
+          description="Manage rules that automatically assign roles to users based on their organizational context"
+        />
 
         <div className="mb-6 flex justify-between items-center gap-4">
           <div className="flex-1">

@@ -9,6 +9,7 @@ import {z} from 'zod';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card} from '@/components/ui/Card';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {StatusBadge} from '@/components/ui/StatusBadge';
@@ -253,20 +254,19 @@ export default function TicketDetailPage() {
         </div>
 
         {/* Ticket Header */}
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-4 mb-2">
+        <PageHeader
+          title={ticket.subject}
+          description={
+            <span className="inline-flex flex-wrap items-center gap-2">
               <span className="text-sm font-mono text-accent-700 dark:text-accent-400">
                 {ticket.ticketNumber || ticket.id.slice(0, 8)}
               </span>
               <StatusBadge status={ticket.status} domain={TICKET_STATUS}/>
               <Badge variant={priorityCfg.variant} size="sm">{priorityCfg.label}</Badge>
-            </div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">{ticket.subject}</h1>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+            </span>
+          }
+          actions={
+            <>
             <PermissionGate permission={Permissions.HELPDESK_TICKET_ASSIGN}>
               <Button variant="outline" size="sm" onClick={handleAssignToMe}>
                 Assign to Me
@@ -289,8 +289,9 @@ export default function TicketDetailPage() {
                 Delete
               </Button>
             </PermissionGate>
-          </div>
-        </div>
+            </>
+          }
+        />
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -30,6 +30,7 @@ import type {ReportType} from '@/lib/types/core/analytics';
 import {REPORT_TYPE_LABELS} from '@/lib/types/core/analytics';
 import type {ReportRequest} from '@/lib/services/core/report.service';
 import {formatDate} from '@/lib/utils/format/date';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 // ─── Report download definitions ─────────────────────────────────────────────
 
@@ -156,14 +157,11 @@ export default function AdminReportsPage() {
   return (
     <AdminPageContent className="page-shell p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-xl font-bold text-[var(--text-primary)]">
-          Admin Reports
-        </h1>
-        <p className="mt-1 text-body-secondary">
-          Platform-wide reporting, analytics, and data exports
-        </p>
-      </div>
+      <PageHeader
+        className="mb-8"
+        title="Admin Reports"
+        description="Platform-wide reporting, analytics, and data exports"
+      />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Download reports grid */}

@@ -3,6 +3,7 @@
 import {useEffect, useState} from 'react';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {TravelStatus} from '@/lib/types/hrms/travel';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -245,8 +246,7 @@ export default function TravelRequestDetailsPage() {
     <AppLayout activeMenuItem="travel">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className="flex items-start gap-4">
             <button
               onClick={() => router.push('/travel')}
               aria-label="Back to travel requests"
@@ -254,26 +254,22 @@ export default function TravelRequestDetailsPage() {
             >
               <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
             </button>
-            <div>
-              <div className="flex items-center gap-4">
-                <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                  {travelRequest.requestNumber}
-                </h1>
+          <PageHeader
+            className="flex-1 min-w-0"
+            title={travelRequest.requestNumber}
+            description={
+              <span className="inline-flex flex-wrap items-center gap-2">
                 <span
                   className={`inline-flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
                 >
                   <StatusIcon className="h-4 w-4"/>
                   {travelRequest.status.replace(/_/g, ' ')}
                 </span>
-              </div>
-              <p className="text-[var(--text-muted)] mt-1">
                 {travelRequest.travelType.replace(/_/g, ' ')}
-              </p>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2">
+              </span>
+            }
+            actions={
+              <>
             {canEdit && (
               <button
                 onClick={() => router.push(`/travel/${travelRequest.id}/edit`)}
@@ -303,7 +299,9 @@ export default function TravelRequestDetailsPage() {
                 Mark Completed
               </button>
             )}
-          </div>
+              </>
+            }
+          />
         </div>
 
         {/* Main Content */}

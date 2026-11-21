@@ -43,6 +43,7 @@ import {ConnectorCard} from '@/components/integrations/ConnectorCard';
 import {ConnectorConfigPanel} from '@/components/integrations/ConnectorConfigPanel';
 import {IntegrationActivityLog} from '@/components/integrations/IntegrationActivityLog';
 import {Skeleton, SkeletonCard} from '@/components/ui/Skeleton';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -255,20 +256,15 @@ export default function AdminIntegrationsPage() {
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       {/* Header */}
       <div className="row-between">
-        <div className="flex items-center gap-4">
-          <div
-            className="p-4 rounded-xl bg-accent-100 dark:bg-accent-900/30">
-            <Settings className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
-          </div>
-          <div>
-            <h1 className="text-2xl  font-bold text-[var(--text-primary)]">
+        <PageHeader
+          title={
+            <span className="inline-flex items-center gap-2">
+              <Settings className="h-6 w-6 text-accent-700 dark:text-accent-400"/>
               Integrations
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Manage third-party integrations and external services
-            </p>
-          </div>
-        </div>
+            </span>
+          }
+          description="Manage third-party integrations and external services"
+        />
         {/* Refresh disabled - data is automatically refetched by React Query */}
       </div>
 

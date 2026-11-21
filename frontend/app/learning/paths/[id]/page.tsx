@@ -11,6 +11,7 @@ import {apiClient} from '@/lib/api/client';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
 import {Card} from '@/components/ui/Card';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 interface LearningPath {
   id: string;
@@ -84,12 +85,7 @@ export default function LearningPathDetailPage() {
           />
         ) : (
           <Card padding="md" className="space-y-6">
-            <div>
-              <h1 className="text-2xl font-bold text-[var(--text-primary)]">{path.title}</h1>
-              {path.description && (
-                <p className="text-body-secondary mt-2">{path.description}</p>
-              )}
-            </div>
+            <PageHeader title={path.title} description={path.description || undefined}/>
 
             <div className="flex flex-wrap gap-6 text-sm text-[var(--text-secondary)]">
               <div className="flex items-center gap-2">

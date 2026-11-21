@@ -6,6 +6,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {ClipboardList, Edit3, Layout, Plus, Search, Trash2,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Card} from '@/components/ui/Card';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {Input} from '@/components/ui/Input';
 import {Badge} from '@/components/ui/Badge';
@@ -48,32 +49,29 @@ export default function TemplatesPage() {
     >
       <div className="max-w-7xl mx-auto space-y-10 py-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-accent-500/10 rounded-xl">
+        <PageHeader
+          title={
+            <span className="inline-flex items-center gap-4">
+              <span className="p-2 bg-accent-500/10 rounded-xl">
                 <Layout className="h-6 w-6 text-accent-700"/>
-              </div>
-              <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
-                Checklist <span className="text-accent-700">Templates</span>
-              </h1>
-            </div>
-            <p className="text-[var(--text-muted)] font-bold max-w-md">
-              Standardize your onboarding experience with reusable blueprints for different roles and departments.
-            </p>
-          </div>
-
-          <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
-            <Button
-              variant="primary"
-              className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-8"
-              leftIcon={<Plus className="h-4 w-4"/>}
-              onClick={() => router.push('/onboarding/templates/new')}
-            >
-              Create Template
-            </Button>
-          </PermissionGate>
-        </div>
+              </span>
+              <span>Checklist <span className="text-accent-700">Templates</span></span>
+            </span>
+          }
+          description="Standardize your onboarding experience with reusable blueprints for different roles and departments."
+          actions={
+            <PermissionGate permission={Permissions.ONBOARDING_MANAGE}>
+              <Button
+                variant="primary"
+                className="btn-primary font-black tracking-widest uppercase text-xs bg-gradient-to-r from-accent-700 to-accent-600 border-0 shadow-[var(--shadow-dropdown)] shadow-accent-500/20 rounded-lg py-6 px-8"
+                leftIcon={<Plus className="h-4 w-4"/>}
+                onClick={() => router.push('/onboarding/templates/new')}
+              >
+                Create Template
+              </Button>
+            </PermissionGate>
+          }
+        />
 
         {/* Templates Grid */}
         <div className="space-y-6">

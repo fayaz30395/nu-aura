@@ -19,6 +19,7 @@ import {
   useLeaveRequestsByStatus,
   useRejectLeaveRequest,
 } from '@/lib/hooks/queries/useLeaves';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -140,10 +141,11 @@ export default function AdminLeaveRequestsPage() {
   return (
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-xl font-bold">Leave Request Management</h1>
-          <p className="mt-2 text-[var(--text-secondary)]">Review and process employee leave requests</p>
-        </div>
+        <PageHeader
+          className="mb-8"
+          title="Leave Request Management"
+          description="Review and process employee leave requests"
+        />
 
         {error && (
           <div

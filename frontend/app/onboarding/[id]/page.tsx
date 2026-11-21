@@ -25,6 +25,7 @@ import {AppLayout} from '@/components/layout';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {Badge} from '@/components/ui/Badge';
 import {Input} from '@/components/ui/Input';
@@ -177,62 +178,60 @@ export default function OnboardingDetailPage() {
       >
         <div className="max-w-7xl mx-auto space-y-8 pb-20">
           {/* Header Section */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-            <div className="space-y-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.back()}
-                leftIcon={<ArrowLeft className="h-4 w-4"/>}
-                className="hover:bg-accent-500/10 text-accent-700 font-bold"
-              >
-                Back to List
-              </Button>
-              <div className="flex items-center gap-6">
-                <div
-                  className="h-24 w-24 rounded-3xl bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-4xl shadow-[var(--shadow-elevated)] shadow-accent-500/30 ring-4 ring-white dark:ring-surface-900">
-                  {process.employeeName?.charAt(0)}
-                </div>
-                <div>
-                  <h1 className="text-2xl font-black tracking-tight text-[var(--text-primary)]">
-                    {process.employeeName}
-                  </h1>
-                  <div className="flex flex-wrap items-center gap-4 mt-2 font-bold text-[var(--text-muted)]">
-                                    <span
-                                      className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-4 py-1 rounded-full text-xs">
-                                        <User className="h-3.5 w-3.5"/>
-                                        ID: {process.employeeId}
-                                    </span>
+          <div className="space-y-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.back()}
+              leftIcon={<ArrowLeft className="h-4 w-4"/>}
+              className="hover:bg-accent-500/10 text-accent-700 font-bold"
+            >
+              Back to List
+            </Button>
+            <div className="flex items-center gap-6">
+              <div
+                className="h-24 w-24 shrink-0 rounded-3xl bg-gradient-to-br from-accent-500 to-accent-600 text-white flex items-center justify-center font-black text-4xl shadow-[var(--shadow-elevated)] shadow-accent-500/30 ring-4 ring-white dark:ring-surface-900">
+                {process.employeeName?.charAt(0)}
+              </div>
+              <PageHeader
+                className="flex-1 min-w-0"
+                title={process.employeeName}
+                description={
+                  <span className="inline-flex flex-wrap items-center gap-4 font-bold text-[var(--text-muted)]">
+                    <span
+                      className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-4 py-1 rounded-full text-xs">
+                      <User className="h-3.5 w-3.5"/>
+                      ID: {process.employeeId}
+                    </span>
                     <span className="flex items-center gap-1.5 bg-[var(--bg-secondary)] px-4 py-1 rounded-full text-xs">
-                                        <Calendar className="h-3.5 w-3.5"/>
-                                        Started {formatDate(process.startDate)}
-                                    </span>
+                      <Calendar className="h-3.5 w-3.5"/>
+                      Started {formatDate(process.startDate)}
+                    </span>
                     <Badge variant={process.status === 'COMPLETED' ? 'success' : 'warning'}
                            className="rounded-full px-4">
                       {process.status ? process.status.replace('_', ' ') : '-'}
                     </Badge>
+                  </span>
+                }
+                actions={
+                  <div className="text-right sr-only md:not-sr-only">
+                    <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1">Overall
+                      Progress</p>
+                    <div className="flex items-center gap-4">
+                      <div
+                        className="w-48 h-3 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden shadow-inner">
+                        <motion.div
+                          initial={{width: 0}}
+                          animate={{width: `${process.completionPercentage}%`}}
+                          className="h-full bg-gradient-to-r from-accent-500 to-accent-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+                        />
+                      </div>
+                      <span
+                        className="text-2xl font-black text-accent-700 dark:text-accent-400">{process.completionPercentage}%</span>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="text-right sr-only md:not-sr-only">
-                <p className="text-xs font-black uppercase tracking-widest text-[var(--text-muted)] mb-1">Overall
-                  Progress</p>
-                <div className="flex items-center gap-4">
-                  <div
-                    className="w-48 h-3 bg-[var(--bg-secondary)] dark:bg-[var(--bg-secondary)] rounded-full overflow-hidden shadow-inner">
-                    <motion.div
-                      initial={{width: 0}}
-                      animate={{width: `${process.completionPercentage}%`}}
-                      className="h-full bg-gradient-to-r from-accent-500 to-accent-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
-                    />
-                  </div>
-                  <span
-                    className="text-2xl font-black text-accent-700 dark:text-accent-400">{process.completionPercentage}%</span>
-                </div>
-              </div>
+                }
+              />
             </div>
           </div>
 

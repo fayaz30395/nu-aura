@@ -9,6 +9,7 @@ import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {PageDeniedFallback, PermissionGate} from '@/components/auth/PermissionGate';
 import {BookOpen, Eye, FileText, Heart, MessageCircle, TrendingUp,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader} from '@/components/ui/Card';
 import {useActivityFeed, useBlogPosts, useFluenceTemplates, useWikiPages,} from '@/lib/hooks/queries/useFluence';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -154,17 +155,17 @@ function FluenceAnalyticsPageContent() {
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.3}}
         >
-          <div className="flex items-start gap-4 mb-2">
-            <div className="p-4 bg-gradient-to-br from-[var(--accent-700)] to-[var(--accent-500)] rounded-lg">
-              <TrendingUp className={`${iconSize.pageHeader} text-white`}/>
-            </div>
-            <div className="flex-1">
-              <h1 className={typography.pageTitle}>Content Analytics</h1>
-              <p className={typography.bodySecondary}>
-                Track content performance across NU-Fluence
-              </p>
-            </div>
-          </div>
+          <PageHeader
+            title={
+              <span className="inline-flex items-center gap-2">
+                <span className="p-2 bg-gradient-to-br from-[var(--accent-700)] to-[var(--accent-500)] rounded-lg">
+                  <TrendingUp className={`${iconSize.pageHeader} text-white`}/>
+                </span>
+                Content Analytics
+              </span>
+            }
+            description="Track content performance across NU-Fluence"
+          />
         </motion.div>
 
         {(!canReadTemplates || is403Error(templatesError)) && (

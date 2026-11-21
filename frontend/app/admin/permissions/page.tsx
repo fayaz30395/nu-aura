@@ -38,6 +38,7 @@ import {
 } from '@/lib/hooks/queries/useRoles';
 import type {User} from '@/lib/api/users';
 import {createLogger} from '@/lib/utils/logger';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const log = createLogger('PermissionsPage');
 
@@ -208,16 +209,10 @@ export default function PermissionsPage() {
 
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Permission Management
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Manage roles and user access for NU-HRMS
-            </p>
-          </div>
-          {activeTab === 'roles' && (
+        <PageHeader
+          title="Permission Management"
+          description="Manage roles and user access for NU-HRMS"
+          actions={activeTab === 'roles' && (
             <Button
               onClick={() => setIsCreateRoleModalOpen(true)}
               variant="primary"
@@ -227,7 +222,7 @@ export default function PermissionsPage() {
               Create Role
             </Button>
           )}
-        </div>
+        />
 
         {/* Tabs */}
         <div className="flex gap-2 border-b border-[var(--border-main)]">

@@ -37,6 +37,7 @@ import dynamic from 'next/dynamic';
 import {ActionIcon, Badge, Modal, Skeleton, Tooltip} from '@mantine/core';
 import {notifications} from '@mantine/notifications';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {
   useAddFavorite,
   useApproveWikiPage,
@@ -713,225 +714,226 @@ export default function WikiPageDetailPage() {
           className={card.base}
         >
           <div className={card.paddingLarge}>
-            <div className="flex items-start justify-between gap-6 mb-4">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-3 mb-4">
-                  <h1 className="text-xl font-bold text-[var(--text-primary)] leading-tight">
+            <div className="mb-4">
+              <PageHeader
+                title={
+                  <span className="inline-flex flex-wrap items-center gap-3">
                     {page.title}
-                  </h1>
-                  <Badge
-                    size="sm"
-                    variant="light"
-                    color={
-                      page.status === 'PUBLISHED'
-                        ? 'var(--status-success)'
-                        : page.status === 'PENDING_APPROVAL'
-                          ? 'var(--status-warning)'
-                          : page.status === 'ARCHIVED'
-                            ? 'gray'
-                            : 'var(--status-info)'
-                    }
-                  >
-                    {page.status.replace('_', ' ')}
-                  </Badge>
-                </div>
-                <div className="flex flex-wrap items-center gap-6 mb-6">
-                  {/* Author */}
-                  <div className="flex items-center gap-4">
-                    <div
-                      className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
-                        page.authorId || 'default'
-                      )} flex items-center justify-center text-sm font-semibold text-white`}
+                    <Badge
+                      size="sm"
+                      variant="light"
+                      color={
+                        page.status === 'PUBLISHED'
+                          ? 'var(--status-success)'
+                          : page.status === 'PENDING_APPROVAL'
+                            ? 'var(--status-warning)'
+                            : page.status === 'ARCHIVED'
+                              ? 'gray'
+                              : 'var(--status-info)'
+                      }
                     >
-                      {getInitials(page.authorName || 'A')}
-                    </div>
-                    <div>
-                      <p className={typography.bodySecondary}>
-                        {page.authorName || 'Unknown Author'}
-                      </p>
-                      <p className={typography.caption}>Author</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-[var(--text-muted)]">
-                    <Calendar className={`${iconSize.cardInline} flex-shrink-0`}/>
-                    <span className="text-sm">
-                      {formatDate(page.updatedAt)}
-                    </span>
-                  </div>
-
-                  <Tooltip label="Click to see who viewed this page" withArrow>
-                    <button
-                      onClick={() => setShowViewers(true)}
-                      aria-label="Show viewers"
-                      className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200 cursor-pointer group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                    >
-                      <Eye
-                        className={`${iconSize.cardInline} flex-shrink-0 group-hover:scale-110 transition-transform`}
-                      />
-                      <span className="text-sm font-medium">{page.viewCount || 0} {page.viewCount === 1 ? 'view' : 'views'}</span>
-                    </button>
-                  </Tooltip>
-
-                  {page.spaceName && (
-                    <Badge variant="light" size="lg" color="var(--accent-700)">
-                      {page.spaceName}
+                      {page.status.replace('_', ' ')}
                     </Badge>
+                  </span>
+                }
+                actions={
+                  <>
+                  {canEdit && (
+                    <Tooltip label="Edit page" withArrow>
+                      <ActionIcon
+                        size="lg"
+                        variant="subtle"
+                        aria-label="Edit page"
+                        onClick={() => router.push(`/fluence/wiki/${page.id}/edit`)}
+                        className="hover:bg-[var(--bg-secondary)] transition-colors"
+                      >
+                        <Edit className={iconSize.cardInline}/>
+                      </ActionIcon>
+                    </Tooltip>
                   )}
-                </div>
-
-                {/* ═══ Engagement Bar ═══ */}
-                <div className="flex items-center gap-2 pt-4 border-t border-[var(--border-main)]">
-                  {/* Like Button */}
-                  <motion.button
-                    whileTap={{scale: 0.92}}
-                    onClick={handleToggleLike}
-                    disabled={likeMutation.isPending || unlikeMutation.isPending}
-                    aria-label={isLiked ? 'Unlike' : 'Like'}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
-                      isLiked
-                        ? 'bg-danger-50 dark:bg-danger-950/30 border-danger-200 dark:border-danger-800 text-danger-600 dark:text-danger-400'
-                        : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--border-main)]'
-                    } disabled:opacity-50`}
-                  >
-                    <Heart
-                      className={`h-4 w-4 transition-transform duration-200 ${
-                        isLiked ? 'fill-current scale-110' : ''
-                      }`}
-                    />
-                    <span>{page.likeCount || 0}</span>
-                  </motion.button>
-
-                  {/* Favorite Button */}
-                  <motion.button
-                    whileTap={{scale: 0.92}}
-                    onClick={handleToggleFavorite}
-                    disabled={addFavorite.isPending || removeFavorite.isPending}
-                    aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
-                      isFavorited
-                        ? 'bg-warning-50 dark:bg-warning-950/30 border-warning-200 dark:border-warning-800 text-warning-600 dark:text-warning-400'
-                        : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
-                    } disabled:opacity-50`}
-                  >
-                    <Star
-                      className={`h-4 w-4 transition-transform duration-200 ${
-                        isFavorited ? 'fill-current scale-110' : ''
-                      }`}
-                    />
-                    <span>{isFavorited ? 'Saved' : 'Save'}</span>
-                  </motion.button>
-
-                  {/* Comment count chip */}
-                  <button
-                    onClick={() => {
-                      document
-                        .getElementById('comments-section')
-                        ?.scrollIntoView({behavior: 'smooth'});
-                    }}
-                    aria-label="Jump to comments"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                  >
-                    <MessageCircle className="h-4 w-4"/>
-                    <span>{totalCommentCount}</span>
-                  </button>
-
-                  {/* Share */}
-                  <motion.button
-                    whileTap={{scale: 0.92}}
-                    onClick={handleCopyLink}
-                    aria-label="Share link"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
-                  >
-                    {linkCopied ? (
-                      <Check className="h-4 w-4 text-[var(--status-success-text)]"/>
-                    ) : (
-                      <Share2 className="h-4 w-4"/>
-                    )}
-                    <span>{linkCopied ? 'Copied' : 'Share'}</span>
-                  </motion.button>
-
-                  {/* Watch / Subscribe */}
-                  <WatchButton pageId={page.id} size="sm"/>
-                </div>
-              </div>
-
-              {/* Action Icons */}
-              <div className="flex-shrink-0 flex items-center gap-2">
-                {canEdit && (
-                  <Tooltip label="Edit page" withArrow>
+                  <Tooltip label="View history" withArrow>
                     <ActionIcon
                       size="lg"
                       variant="subtle"
-                      aria-label="Edit page"
-                      onClick={() => router.push(`/fluence/wiki/${page.id}/edit`)}
+                      aria-label="View page history"
+                      onClick={() => setShowHistory(true)}
                       className="hover:bg-[var(--bg-secondary)] transition-colors"
                     >
-                      <Edit className={iconSize.cardInline}/>
+                      <History className={iconSize.cardInline}/>
                     </ActionIcon>
                   </Tooltip>
-                )}
-                <Tooltip label="View history" withArrow>
-                  <ActionIcon
-                    size="lg"
-                    variant="subtle"
-                    aria-label="View page history"
-                    onClick={() => setShowHistory(true)}
-                    className="hover:bg-[var(--bg-secondary)] transition-colors"
+
+                  {/* Export dropdown */}
+                  <div className="relative">
+                    <Tooltip label="Export page" withArrow>
+                      <ActionIcon
+                        size="lg"
+                        variant="subtle"
+                        aria-label="Export page"
+                        onClick={() => setExportMenuOpen((prev) => !prev)}
+                        loading={exporting}
+                        className="hover:bg-[var(--bg-secondary)] transition-colors"
+                      >
+                        <Download className={iconSize.cardInline}/>
+                      </ActionIcon>
+                    </Tooltip>
+
+                    <AnimatePresence>
+                      {exportMenuOpen && (
+                        <>
+                          {/* Backdrop to close menu */}
+                          <div
+                            className="fixed inset-0 z-40"
+                            onClick={() => setExportMenuOpen(false)}
+                          />
+                          <motion.div
+                            initial={{opacity: 0, y: -4, scale: 0.95}}
+                            animate={{opacity: 1, y: 0, scale: 1}}
+                            exit={{opacity: 0, y: -4, scale: 0.95}}
+                            transition={{duration: 0.15}}
+                            className="absolute right-0 top-full mt-1 z-50 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] overflow-hidden"
+                          >
+                            <button
+                              onClick={() => handleExport('pdf')}
+                              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
+                            >
+                              <FileText className={iconSize.button}/>
+                              Export as PDF
+                            </button>
+                            <button
+                              onClick={() => handleExport('docx')}
+                              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
+                            >
+                              <FileType className={iconSize.button}/>
+                              Export as DOCX
+                            </button>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                  </>
+                }
+                className="mb-4"
+              />
+              <div className="flex flex-wrap items-center gap-6 mb-6">
+                {/* Author */}
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br ${avatarColor(
+                      page.authorId || 'default'
+                    )} flex items-center justify-center text-sm font-semibold text-white`}
                   >
-                    <History className={iconSize.cardInline}/>
-                  </ActionIcon>
+                    {getInitials(page.authorName || 'A')}
+                  </div>
+                  <div>
+                    <p className={typography.bodySecondary}>
+                      {page.authorName || 'Unknown Author'}
+                    </p>
+                    <p className={typography.caption}>Author</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-[var(--text-muted)]">
+                  <Calendar className={`${iconSize.cardInline} flex-shrink-0`}/>
+                  <span className="text-sm">
+                    {formatDate(page.updatedAt)}
+                  </span>
+                </div>
+
+                <Tooltip label="Click to see who viewed this page" withArrow>
+                  <button
+                    onClick={() => setShowViewers(true)}
+                    aria-label="Show viewers"
+                    className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200 cursor-pointer group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                  >
+                    <Eye
+                      className={`${iconSize.cardInline} flex-shrink-0 group-hover:scale-110 transition-transform`}
+                    />
+                    <span className="text-sm font-medium">{page.viewCount || 0} {page.viewCount === 1 ? 'view' : 'views'}</span>
+                  </button>
                 </Tooltip>
 
-                {/* Export dropdown */}
-                <div className="relative">
-                  <Tooltip label="Export page" withArrow>
-                    <ActionIcon
-                      size="lg"
-                      variant="subtle"
-                      aria-label="Export page"
-                      onClick={() => setExportMenuOpen((prev) => !prev)}
-                      loading={exporting}
-                      className="hover:bg-[var(--bg-secondary)] transition-colors"
-                    >
-                      <Download className={iconSize.cardInline}/>
-                    </ActionIcon>
-                  </Tooltip>
+                {page.spaceName && (
+                  <Badge variant="light" size="lg" color="var(--accent-700)">
+                    {page.spaceName}
+                  </Badge>
+                )}
+              </div>
 
-                  <AnimatePresence>
-                    {exportMenuOpen && (
-                      <>
-                        {/* Backdrop to close menu */}
-                        <div
-                          className="fixed inset-0 z-40"
-                          onClick={() => setExportMenuOpen(false)}
-                        />
-                        <motion.div
-                          initial={{opacity: 0, y: -4, scale: 0.95}}
-                          animate={{opacity: 1, y: 0, scale: 1}}
-                          exit={{opacity: 0, y: -4, scale: 0.95}}
-                          transition={{duration: 0.15}}
-                          className="absolute right-0 top-full mt-1 z-50 w-44 rounded-lg border border-[var(--border-main)] bg-[var(--bg-card)] shadow-[var(--shadow-dropdown)] overflow-hidden"
-                        >
-                          <button
-                            onClick={() => handleExport('pdf')}
-                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
-                          >
-                            <FileText className={iconSize.button}/>
-                            Export as PDF
-                          </button>
-                          <button
-                            onClick={() => handleExport('docx')}
-                            className="flex items-center gap-2 w-full px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors cursor-pointer"
-                          >
-                            <FileType className={iconSize.button}/>
-                            Export as DOCX
-                          </button>
-                        </motion.div>
-                      </>
-                    )}
-                  </AnimatePresence>
-                </div>
+              {/* ═══ Engagement Bar ═══ */}
+              <div className="flex items-center gap-2 pt-4 border-t border-[var(--border-main)]">
+                {/* Like Button */}
+                <motion.button
+                  whileTap={{scale: 0.92}}
+                  onClick={handleToggleLike}
+                  disabled={likeMutation.isPending || unlikeMutation.isPending}
+                  aria-label={isLiked ? 'Unlike' : 'Like'}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
+                    isLiked
+                      ? 'bg-danger-50 dark:bg-danger-950/30 border-danger-200 dark:border-danger-800 text-danger-600 dark:text-danger-400'
+                      : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--border-main)]'
+                  } disabled:opacity-50`}
+                >
+                  <Heart
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isLiked ? 'fill-current scale-110' : ''
+                    }`}
+                  />
+                  <span>{page.likeCount || 0}</span>
+                </motion.button>
+
+                {/* Favorite Button */}
+                <motion.button
+                  whileTap={{scale: 0.92}}
+                  onClick={handleToggleFavorite}
+                  disabled={addFavorite.isPending || removeFavorite.isPending}
+                  aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)] ${
+                    isFavorited
+                      ? 'bg-warning-50 dark:bg-warning-950/30 border-warning-200 dark:border-warning-800 text-warning-600 dark:text-warning-400'
+                      : 'bg-[var(--bg-secondary)] border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]'
+                  } disabled:opacity-50`}
+                >
+                  <Star
+                    className={`h-4 w-4 transition-transform duration-200 ${
+                      isFavorited ? 'fill-current scale-110' : ''
+                    }`}
+                  />
+                  <span>{isFavorited ? 'Saved' : 'Save'}</span>
+                </motion.button>
+
+                {/* Comment count chip */}
+                <button
+                  onClick={() => {
+                    document
+                      .getElementById('comments-section')
+                      ?.scrollIntoView({behavior: 'smooth'});
+                  }}
+                  aria-label="Jump to comments"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                >
+                  <MessageCircle className="h-4 w-4"/>
+                  <span>{totalCommentCount}</span>
+                </button>
+
+                {/* Share */}
+                <motion.button
+                  whileTap={{scale: 0.92}}
+                  onClick={handleCopyLink}
+                  aria-label="Share link"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-[var(--bg-secondary)] border border-[var(--border-main)] text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]"
+                >
+                  {linkCopied ? (
+                    <Check className="h-4 w-4 text-[var(--status-success-text)]"/>
+                  ) : (
+                    <Share2 className="h-4 w-4"/>
+                  )}
+                  <span>{linkCopied ? 'Copied' : 'Share'}</span>
+                </motion.button>
+
+                {/* Watch / Subscribe */}
+                <WatchButton pageId={page.id} size="sm"/>
               </div>
             </div>
           </div>

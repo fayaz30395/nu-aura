@@ -15,6 +15,7 @@ import {Modal, ModalBody, ModalFooter, ModalHeader} from '@/components/ui/Modal'
 import {useCreateNewShift, useRemoveShift, useShiftsList, useUpdateShiftDetails,} from '@/lib/hooks/queries/useShifts';
 import {createLogger} from '@/lib/utils/logger';
 import {CATEGORICAL_DEFAULT} from '@/lib/utils/categoricalPalette';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const log = createLogger('ShiftsPage');
 
@@ -235,17 +236,16 @@ export default function ShiftsManagementPage() {
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-xl font-bold">
+        <PageHeader
+          className="mb-6"
+          title={
+            <span className="inline-flex items-center gap-2">
               <Clock className="h-8 w-8 text-accent-700"/>
               Shift Management
-            </h1>
-            <p className="mt-1 text-body-secondary">
-              Configure and manage work shifts for your organization
-            </p>
-          </div>
-          {canManage && (
+            </span>
+          }
+          description="Configure and manage work shifts for your organization"
+          actions={canManage && (
             <button
               onClick={() => {
                 resetForm();
@@ -258,7 +258,7 @@ export default function ShiftsManagementPage() {
               Add Shift
             </button>
           )}
-        </div>
+        />
 
         {/* Error Message */}
         {error && (

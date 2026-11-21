@@ -33,6 +33,7 @@ import {
   useKekaFileUpload,
   useKekaImportPreview,
 } from '@/lib/hooks/queries/useKekaImport';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const ADMIN_ACCESS_ROLES = [Roles.SUPER_ADMIN, Roles.TENANT_ADMIN, Roles.HR_ADMIN, Roles.HR_MANAGER];
 
@@ -342,12 +343,10 @@ export default function KekaImportPage() {
               <ArrowLeft className="w-4 h-4 mr-2"/>
               Back to Admin
             </button>
-            <h1 className="text-xl font-bold">
-              KEKA Data Import
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-2">
-              Migrate employees and related data from KEKA HRMS into NU-AURA
-            </p>
+            <PageHeader
+              title="KEKA Data Import"
+              description="Migrate employees and related data from KEKA HRMS into NU-AURA"
+            />
           </div>
 
           {/* Progress Stepper */}

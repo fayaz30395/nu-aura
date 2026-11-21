@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {timeTrackingService} from '@/lib/services/hrms/time-tracking.service';
@@ -144,22 +145,21 @@ export default function TimeEntryDetailPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div className="flex-1">
-            <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                Time Entry
-              </h1>
-              <span
-                className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
-              >
-                <StatusIcon className="h-4 w-4"/>
-                {entry.status}
+          <PageHeader
+            className="flex-1"
+            title="Time Entry"
+            description={
+              <span className="inline-flex flex-wrap items-center gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
+                >
+                  <StatusIcon className="h-4 w-4"/>
+                  {entry.status}
+                </span>
+                {format(new Date(entry.entryDate), 'EEEE, dd MMMM yyyy')}
               </span>
-            </div>
-            <p className="text-[var(--text-muted)] mt-1">
-              {format(new Date(entry.entryDate), 'EEEE, dd MMMM yyyy')}
-            </p>
-          </div>
+            }
+          />
         </div>
 
         {/* Summary Cards */}

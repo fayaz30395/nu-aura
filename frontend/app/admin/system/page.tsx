@@ -18,6 +18,7 @@ import {
 import {MonthlyGrowth, TenantListItem} from '@/lib/types/core/admin-system';
 import {createLogger} from '@/lib/utils/logger';
 import {formatDate} from '@/lib/utils/format/date';
+import {PageHeader} from '@/components/ui/PageHeader';
 
 const GrowthChart = dynamic(
   () => import('./GrowthChart'),
@@ -111,35 +112,30 @@ export default function SystemDashboard() {
   return (
     <div className="page-shell-centered fade-slide-up auth-delay-20 p-6 space-y-6">
       {/* Header */}
-      <div className="row-between">
-        <div className="flex items-center gap-4">
-          <div
-            className="p-4 rounded-xl bg-gradient-to-br from-accent-500 to-accent-600 shadow-[var(--shadow-dropdown)] shadow-accent-500/25">
-            <Server className="h-6 w-6 text-white"/>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold">
-              System Dashboard
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Mission control center for cross-tenant management
-            </p>
-          </div>
-        </div>
-        <ActionIcon
-          variant="light"
-          size="lg"
-          aria-label="Refresh dashboard data"
-          onClick={() => {
-            overviewQuery.refetch();
-            tenantListQuery.refetch();
-            growthMetricsQuery.refetch();
-          }}
-          loading={overviewQuery.isRefetching || tenantListQuery.isRefetching || growthMetricsQuery.isRefetching}
-        >
-          <RefreshCw className="h-5 w-5"/>
-        </ActionIcon>
-      </div>
+      <PageHeader
+        title={
+          <span className="inline-flex items-center gap-2">
+            <Server className="h-6 w-6 text-accent-600"/>
+            System Dashboard
+          </span>
+        }
+        description="Mission control center for cross-tenant management"
+        actions={
+          <ActionIcon
+            variant="light"
+            size="lg"
+            aria-label="Refresh dashboard data"
+            onClick={() => {
+              overviewQuery.refetch();
+              tenantListQuery.refetch();
+              growthMetricsQuery.refetch();
+            }}
+            loading={overviewQuery.isRefetching || tenantListQuery.isRefetching || growthMetricsQuery.isRefetching}
+          >
+            <RefreshCw className="h-5 w-5"/>
+          </ActionIcon>
+        }
+      />
 
       {/* Overview Stats Cards */}
       <SimpleGrid cols={{base: 1, sm: 2, lg: 4}} spacing="lg">

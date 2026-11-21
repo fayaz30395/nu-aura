@@ -3,6 +3,7 @@
 import {Progress} from '@/components/ui';
 import {useEffect, useRef, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AppLayout} from '@/components/layout/AppLayout';
 import {
   AlertCircle,
@@ -563,9 +564,7 @@ export default function CourseDetailPage() {
                   )}
                 </div>
 
-                <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                  {course.title}
-                </h1>
+                <PageHeader title={course.title}/>
 
                 {course.description && (
                   <p className="text-body-muted leading-relaxed">

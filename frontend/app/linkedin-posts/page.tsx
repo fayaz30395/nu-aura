@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useEffect, useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {Controller, useForm} from 'react-hook-form';
@@ -101,17 +102,15 @@ export default function LinkedInPostsPage() {
             animate={{opacity: 1, y: 0}}
             className="mb-8"
           >
-            <div className="row-between">
-              <div>
-                <h1 className="text-xl font-bold">
+            <PageHeader
+              title={
+                <span className="inline-flex items-center gap-2">
                   <Linkedin className="w-8 h-8 text-accent-600"/>
                   LinkedIn Posts
-                </h1>
-                <p className="text-[var(--text-secondary)] mt-2">
-                  Curate and manage LinkedIn posts for your company feed
-                </p>
-              </div>
-              {canManagePosts && (
+                </span>
+              }
+              description="Curate and manage LinkedIn posts for your company feed"
+              actions={canManagePosts && (
                 <button
                   onClick={() => {
                     setEditingPost(null);
@@ -123,7 +122,7 @@ export default function LinkedInPostsPage() {
                   Add Post
                 </button>
               )}
-            </div>
+            />
           </motion.div>
 
           {/* Search */}

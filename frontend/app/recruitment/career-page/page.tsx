@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -441,17 +442,16 @@ export default function CareerPageCMS() {
     <AppLayout>
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+        <PageHeader
+          title={
+            <span className="inline-flex items-center gap-2">
               <Globe className="h-6 w-6 text-accent-500"/>
               Career Page CMS
-            </h1>
-            <p className="text-body-muted mt-1">
-              Manage your public career page: job visibility and company content.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+            </span>
+          }
+          description="Manage your public career page: job visibility and company content."
+          actions={
+          <>
             {careerUrl ? (
               <a
                 href={safeUrl(careerUrl)}
@@ -473,8 +473,9 @@ export default function CareerPageCMS() {
                 Preview (/careers)
               </a>
             )}
-          </div>
-        </div>
+          </>
+          }
+        />
 
         {/* Tabs */}
         <div className="flex rounded-xl border border-[var(--border-main)] overflow-hidden w-fit">

@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {Controller, useForm} from 'react-hook-form';
@@ -173,49 +174,48 @@ export default function SurveyDetailPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="surveys">
       <PageTransition className="space-y-6">
         {/* Back + Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => router.push('/surveys')} aria-label="Back">
-              <ArrowLeft className={iconSize.button}/>
-            </Button>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className={typography.pageTitle}>
-                  {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : survey?.title}
-                </h1>
+        <div className="space-y-4">
+          <Button variant="outline" size="sm" onClick={() => router.push('/surveys')} aria-label="Back">
+            <ArrowLeft className={iconSize.button}/>
+          </Button>
+          <PageHeader
+            title={
+              <span className="inline-flex items-center gap-2">
+                {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : survey?.title}
                 {survey && (
                   <Badge variant={toBadgeVariant(survey.status)}>{survey.status}</Badge>
                 )}
-              </div>
-              {survey && (
-                <p className={typography.bodySecondary}>
-                  {survey.surveyCode}
-                  {survey.startDate &&
-                    ` | ${formatDate(survey.startDate)}`}
-                  {survey.endDate &&
-                    ` - ${formatDate(survey.endDate)}`}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <PermissionGate permission={Permissions.SURVEY_MANAGE}>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={() => router.push(`/surveys/${surveyId}/analytics`)}
-              >
-                <BarChart3 className={`${iconSize.button} mr-2`}/>
-                Analytics
-              </Button>
-              {isDraft && (
-                <Button onClick={handlePublish} disabled={launchMutation.isPending} aria-label="Launch">
-                  <Send className={`${iconSize.button} mr-2`}/>
-                  Publish
-                </Button>
-              )}
-            </div>
-          </PermissionGate>
+              </span>
+            }
+            description={survey ? (
+              <>
+                {survey.surveyCode}
+                {survey.startDate &&
+                  ` | ${formatDate(survey.startDate)}`}
+                {survey.endDate &&
+                  ` - ${formatDate(survey.endDate)}`}
+              </>
+            ) : undefined}
+            actions={
+              <PermissionGate permission={Permissions.SURVEY_MANAGE}>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push(`/surveys/${surveyId}/analytics`)}
+                  >
+                    <BarChart3 className={`${iconSize.button} mr-2`}/>
+                    Analytics
+                  </Button>
+                  {isDraft && (
+                    <Button onClick={handlePublish} disabled={launchMutation.isPending} aria-label="Launch">
+                      <Send className={`${iconSize.button} mr-2`}/>
+                      Publish
+                    </Button>
+                  )}
+                </div>
+              </PermissionGate>
+            }
+          />
         </div>
 
         {/* Survey info cards */}

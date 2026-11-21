@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useMemo, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
@@ -383,18 +384,14 @@ export default function SurveyRespondPage() {
       >
         <motion.div className="mx-auto max-w-3xl space-y-6" {...dsMotion.pageEnter}>
           {/* Survey header */}
-          <div className="flex items-center gap-4">
+          <div className="space-y-4">
             <Button variant="outline" size="sm" onClick={() => router.push('/surveys')} aria-label="Back">
               <ArrowLeft className={iconSize.button}/>
             </Button>
-            <div>
-              <h1 className={typography.pageTitle}>
-                {surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : survey?.title}
-              </h1>
-              {survey?.description && (
-                <p className={typography.bodySecondary}>{survey.description}</p>
-              )}
-            </div>
+            <PageHeader
+              title={surveyLoading ? <span className="skeleton-aura inline-block h-6 w-48 rounded"/> : survey?.title}
+              description={survey?.description || undefined}
+            />
           </div>
 
           {survey?.isAnonymous && (

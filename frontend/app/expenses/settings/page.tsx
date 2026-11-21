@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useState} from 'react';
 import {AppLayout} from '@/components/layout';
 import {useUnsavedChanges} from '@/lib/hooks/useUnsavedChanges';
@@ -195,13 +196,15 @@ export default function ExpenseSettingsPage() {
           settings.</div>}
       >
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-          <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-50 flex items-center gap-2">
-              <Settings className="w-6 h-6"/>
-              Expense Settings
-            </h1>
-            <p className="text-surface-500 mt-1">Manage expense categories and policies</p>
-          </div>
+          <PageHeader
+            title={
+              <span className="inline-flex items-center gap-2">
+                <Settings className="w-6 h-6"/>
+                Expense Settings
+              </span>
+            }
+            description="Manage expense categories and policies"
+          />
 
           {/* Tabs */}
           <div className="flex gap-1 bg-surface-100 dark:bg-surface-800 p-1 rounded-lg w-fit">

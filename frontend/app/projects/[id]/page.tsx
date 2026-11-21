@@ -24,6 +24,7 @@ import {
   Textarea,
 } from '@/components/ui';
 import {StatusBadge} from '@/components/ui/StatusBadge';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PROJECT_STATUS} from '@/lib/status/vocabulary';
 import {ProjectPriority, ProjectType, ProjectUpdateRequest,} from '@/lib/types/hrms/hrms-project';
 import {
@@ -215,27 +216,25 @@ export default function ProjectDetailPage() {
                     leftIcon={<ArrowLeft className="h-4 w-4"/>}>
               Back
             </Button>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                  {project?.name || 'Project'}
-                </h1>
-                {project && (() => {
-                  const typeBadge = getTypeBadge(project.type);
-                  return (
-                    <>
-                      <StatusBadge status={project.status} domain={PROJECT_STATUS}/>
-                      <Badge variant={typeBadge.variant} size="sm">
-                        {typeBadge.label}
-                      </Badge>
-                    </>
-                  );
-                })()}
-              </div>
-              <p className="text-body-muted">
-                {project?.projectCode || '—'}
-              </p>
-            </div>
+            <PageHeader
+              title={project?.name || 'Project'}
+              description={
+                <span className="inline-flex flex-wrap items-center gap-2">
+                  {project && (() => {
+                    const typeBadge = getTypeBadge(project.type);
+                    return (
+                      <>
+                        <StatusBadge status={project.status} domain={PROJECT_STATUS}/>
+                        <Badge variant={typeBadge.variant} size="sm">
+                          {typeBadge.label}
+                        </Badge>
+                      </>
+                    );
+                  })()}
+                  {project?.projectCode || '—'}
+                </span>
+              }
+            />
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

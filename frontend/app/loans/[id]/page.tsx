@@ -4,6 +4,7 @@ import {useEffect} from 'react';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {LoanStatus} from '@/lib/types/hrms/loan';
 import {useLoan} from '@/lib/hooks/queries/useLoans';
 import {loanService} from '@/lib/services/hrms/loan.service';
@@ -142,22 +143,21 @@ export default function LoanDetailPage() {
           >
             <ArrowLeft className="h-5 w-5 text-[var(--text-secondary)]"/>
           </button>
-          <div className="flex-1">
-            <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                Loan #{loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}
-              </h1>
-              <span
-                className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
-              >
-                <StatusIcon className="h-4 w-4"/>
-                {loan.status ? loan.status.replace('_', ' ') : '-'}
+          <PageHeader
+            className="flex-1"
+            title={<>Loan #{loan.loanNumber || loan.id.slice(0, 8).toUpperCase()}</>}
+            description={
+              <span className="inline-flex flex-wrap items-center gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 px-4 py-1 text-sm font-medium rounded-lg ${statusConfig.bg} ${statusConfig.text}`}
+                >
+                  <StatusIcon className="h-4 w-4"/>
+                  {loan.status ? loan.status.replace('_', ' ') : '-'}
+                </span>
+                {loanService.getLoanTypeLabel(loan.loanType)}
               </span>
-            </div>
-            <p className="text-[var(--text-muted)] mt-1">
-              {loanService.getLoanTypeLabel(loan.loanType)}
-            </p>
-          </div>
+            }
+          />
         </div>
 
         {/* Amount Cards */}
