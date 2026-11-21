@@ -275,11 +275,11 @@ export default function DepartmentsPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Total Departments</p>
-                  <p className="mt-2 text-3xl font-bold">{departments.length}</p>
+                  <p className="mt-1 text-2xl font-bold sm:mt-2 sm:text-3xl">{departments.length}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">
@@ -290,11 +290,11 @@ export default function DepartmentsPage() {
           </Card>
 
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Active Departments</p>
-                  <p className="mt-2 text-3xl font-bold">{activeDepartments}</p>
+                  <p className="mt-1 text-2xl font-bold sm:mt-2 sm:text-3xl">{activeDepartments}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-success-50 dark:bg-success-950/30 flex items-center justify-center">
@@ -305,11 +305,11 @@ export default function DepartmentsPage() {
           </Card>
 
           <Card className="bg-[var(--bg-card)] skeuo-card">
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="row-between">
                 <div>
                   <p className="text-sm font-medium text-[var(--text-muted)]">Total Employees</p>
-                  <p className="mt-2 text-3xl font-bold">{totalEmployees}</p>
+                  <p className="mt-1 text-2xl font-bold sm:mt-2 sm:text-3xl">{totalEmployees}</p>
                 </div>
                 <div
                   className="w-12 h-12 rounded-xl bg-accent-50 dark:bg-accent-950/30 flex items-center justify-center">

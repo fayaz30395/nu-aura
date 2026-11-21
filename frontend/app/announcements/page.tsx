@@ -346,9 +346,9 @@ export default function AnnouncementsPage() {
 
           {/* Search and Filters */}
           <Reveal inView className="card-aura p-4 mb-6" delay={0.04}>
-            <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
               {/* Line 1: Search */}
-              <div className="relative md:flex-1">
+              <div className="relative lg:flex-1">
                 <Search
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] w-4 h-4" aria-hidden="true"/>
                 <input
@@ -361,12 +361,12 @@ export default function AnnouncementsPage() {
                 />
               </div>
               {/* Line 2: Filters */}
-              <div className="flex gap-3 md:w-auto">
+              <div className="flex gap-3 lg:w-auto">
                 <select
                   aria-label="Filter by category"
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
-                  className="input-aura flex-1 cursor-pointer md:w-48 md:flex-none"
+                  className="input-aura flex-1 cursor-pointer lg:w-48 lg:flex-none"
                 >
                   <option value="">All Categories</option>
                   {Object.keys(categoryIcons).map((cat) => (
@@ -379,7 +379,7 @@ export default function AnnouncementsPage() {
                   aria-label="Filter by priority"
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="input-aura flex-1 cursor-pointer md:w-48 md:flex-none"
+                  className="input-aura flex-1 cursor-pointer lg:w-48 lg:flex-none"
                 >
                   <option value="">All Priorities</option>
                   {Object.entries(priorityLabels).map(([key, label]) => (
