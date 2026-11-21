@@ -30,7 +30,7 @@ describe('ResponsiveTable', () => {
     renderTable({columns: [columns[0]]});
     const header = screen.getByRole('columnheader', {name: 'Name'});
     expect(header).toHaveAttribute('scope', 'col');
-    expect(header).toHaveClass('px-4', 'py-2.5', 'text-left', 'text-xs', 'font-medium');
+    expect(header).toHaveClass('px-4', 'py-2.5', 'text-left', 'text-xs', 'font-semibold');
     const cell = screen.getAllByRole('cell', {name: 'Alice'})[0];
     expect(cell).toHaveClass('px-4', 'py-3', 'text-sm');
     expect(document.querySelector('thead')).not.toHaveAttribute('class');

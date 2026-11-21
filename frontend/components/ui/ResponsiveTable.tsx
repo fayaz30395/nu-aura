@@ -223,7 +223,7 @@ function ResponsiveTable<T>({
                   className={cn(
                     'px-4 py-2.5',
                     ALIGN_CLASS[align],
-                    'text-xs font-medium text-[var(--text-secondary)] whitespace-nowrap transition-colors',
+                    'text-xs font-semibold text-[var(--text-primary)] whitespace-nowrap transition-colors',
                     column.sortable && 'cursor-pointer select-none hover:bg-[var(--surface-hover)]',
                     column.width
                   )}
@@ -237,7 +237,7 @@ function ResponsiveTable<T>({
               );
             })}
             {hasRowActions && (
-              <th scope="col" className="w-16 px-4 py-2.5 text-right text-xs font-medium text-[var(--text-secondary)]">
+              <th scope="col" className="w-16 px-4 py-2.5 text-right text-xs font-semibold text-[var(--text-primary)]">
                 Actions
               </th>
             )}

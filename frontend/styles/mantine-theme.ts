@@ -157,7 +157,7 @@ export const mantineTheme = createTheme({
     },
     InputWrapper: {
       styles: {
-        label: {fontSize: 13, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 4},
+        label: {fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4},
         description: {fontSize: 12, color: 'var(--text-muted)', marginTop: 4, marginBottom: 0},
         error: {fontSize: 12, color: 'var(--err-fg)', marginTop: 4},
       },
