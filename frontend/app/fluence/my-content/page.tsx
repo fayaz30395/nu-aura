@@ -6,6 +6,7 @@ import {AnimatePresence, motion} from 'framer-motion';
 import {BarChart3, Calendar, Eye, FileText, Heart, MessageCircle, Pen, Plus, RefreshCw, Star,} from 'lucide-react';
 import {AppLayout} from '@/components/layout';
 import {Button} from '@/components/ui/Button';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Stat} from '@/components/ui/Stat';
 import {useFluenceFavorites, useMyBlogPosts, useMyWikiPages,} from '@/lib/hooks/queries/useFluence';
@@ -48,39 +49,36 @@ export default function MyContentPage() {
   return (
     <AppLayout>
       <motion.div className={layout.sectionGap} {...dsMotion.pageEnter}>
-        {/* Header with title and actions */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1 className={typography.pageTitle}>My Content</h1>
-            <p className={`${typography.bodySecondary} mt-2`}>
-              View and manage all your pages, posts, and favorites
-            </p>
-          </div>
-          <div className="flex gap-2 flex-shrink-0">
-            <PermissionGate permission={Permissions.KNOWLEDGE_WIKI_CREATE}>
-              <Button
-                variant="primary"
-                size="sm"
-                className="gap-2"
-                onClick={() => router.push('/fluence/wiki/new')}
-              >
-                <Plus className={iconSize.button}/>
-                New Page
-              </Button>
-            </PermissionGate>
-            <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE}>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="gap-2"
-                onClick={() => router.push('/fluence/blogs/new')}
-              >
-                <Plus className={iconSize.button}/>
-                New Post
-              </Button>
-            </PermissionGate>
-          </div>
-        </div>
+        <PageHeader
+          title="My Content"
+          description="View and manage all your pages, posts, and favorites"
+          actions={
+            <>
+              <PermissionGate permission={Permissions.KNOWLEDGE_WIKI_CREATE}>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => router.push('/fluence/wiki/new')}
+                >
+                  <Plus className={iconSize.button}/>
+                  New Page
+                </Button>
+              </PermissionGate>
+              <PermissionGate permission={Permissions.KNOWLEDGE_BLOG_CREATE}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => router.push('/fluence/blogs/new')}
+                >
+                  <Plus className={iconSize.button}/>
+                  New Post
+                </Button>
+              </PermissionGate>
+            </>
+          }
+        />
 
         {/* Stat cards summary row */}
         <motion.div

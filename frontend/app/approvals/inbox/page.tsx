@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {motion} from 'framer-motion';
 import {useForm} from 'react-hook-form';
@@ -371,24 +372,20 @@ export default function ApprovalInboxPage() {
         className="space-y-5 p-6"
       >
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-aura-title text-[var(--text-1)]">
-              Approvals
-            </h1>
-            <p className="mt-1 text-sm text-[var(--text-3)]">
-              <span className="tnum">{pendingTotal}</span> request{pendingTotal === 1 ? '' : 's'} awaiting your
-              decision
-              {activeDelegationsCount > 0 && (
-                <>
-                  {' · '}
-                  <span className="tnum">{activeDelegationsCount}</span> active{' '}
-                  {activeDelegationsCount === 1 ? 'delegation' : 'delegations'}
-                </>
-              )}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+        <PageHeader
+          title="Approvals"
+          description={<>
+            <span className="tnum">{pendingTotal}</span> request{pendingTotal === 1 ? '' : 's'} awaiting your
+            decision
+            {activeDelegationsCount > 0 && (
+              <>
+                {' · '}
+                <span className="tnum">{activeDelegationsCount}</span> active{' '}
+                {activeDelegationsCount === 1 ? 'delegation' : 'delegations'}
+              </>
+            )}
+          </>}
+          actions={<>
             <Button variant="ghost" size="md" leftIcon={<CheckCheck className="h-4 w-4"/>}
                     onClick={handleApproveAllLeave}>
               Approve all leave
@@ -401,8 +398,8 @@ export default function ApprovalInboxPage() {
                     disabled={isLoading}>
               <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}/>
             </Button>
-          </div>
-        </div>
+          </>}
+        />
 
         {/* Tabs + secondary filters */}
         <div className="space-y-4">

@@ -19,6 +19,7 @@ import {
   Users,
 } from 'lucide-react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
@@ -184,35 +185,35 @@ export default function EmployeeDashboardPage() {
     <AppLayout activeMenuItem="dashboard" showBreadcrumbs={false}>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Welcome, {data.employeeName}!
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
+        <PageHeader
+          title={`Welcome, ${data.employeeName}!`}
+          description={
+            <>
               {data.designation && `${data.designation}`}
               {data.department && ` • ${data.department}`}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => router.push('/me/attendance')}
-              leftIcon={<Clock className="h-4 w-4"/>}
-            >
-              Mark Attendance
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => router.push('/leave/apply')}
-              leftIcon={<Palmtree className="h-4 w-4"/>}
-            >
-              Apply Leave
-            </Button>
-          </div>
-        </div>
+            </>
+          }
+          actions={
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/me/attendance')}
+                leftIcon={<Clock className="h-4 w-4"/>}
+              >
+                Mark Attendance
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => router.push('/leave/apply')}
+                leftIcon={<Palmtree className="h-4 w-4"/>}
+              >
+                Apply Leave
+              </Button>
+            </>
+          }
+        />
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

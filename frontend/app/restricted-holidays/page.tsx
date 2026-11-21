@@ -3,6 +3,7 @@
 import {useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -185,38 +186,34 @@ export default function RestrictedHolidaysPage() {
     <AppLayout>
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* ─── Header ─────────────────────────────────────────── */}
-        <div className="row-between">
-          <div>
-            <h1 className="text-2xl font-bold text-surface-900 dark:text-white">
-              Restricted Holidays
-            </h1>
-            <p className="text-sm text-surface-500 dark:text-surface-400 mt-1">
-              Choose from optional holidays within your annual quota
-            </p>
-          </div>
-          {summary && (
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-xs text-surface-500 dark:text-surface-400 uppercase tracking-wider">
-                  Quota {year}
-                </p>
-                <p className="text-lg font-semibold text-surface-900 dark:text-white">
-                  <span className="text-accent-700">{summary.usedSelections}</span>
-                  <span className="text-surface-400 mx-1">/</span>
-                  {summary.maxSelections}
-                </p>
+        <PageHeader
+          title="Restricted Holidays"
+          description="Choose from optional holidays within your annual quota"
+          actions={
+            summary && (
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-xs text-surface-500 dark:text-surface-400 uppercase tracking-wider">
+                    Quota {year}
+                  </p>
+                  <p className="text-lg font-semibold text-surface-900 dark:text-white">
+                    <span className="text-accent-700">{summary.usedSelections}</span>
+                    <span className="text-surface-400 mx-1">/</span>
+                    {summary.maxSelections}
+                  </p>
+                </div>
+                <div className="w-20 h-2 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-accent-600 rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(100, (summary.usedSelections / summary.maxSelections) * 100)}%`,
+                    }}
+                  />
+                </div>
               </div>
-              <div className="w-20 h-2 bg-surface-200 dark:bg-surface-700 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-accent-600 rounded-full transition-all"
-                  style={{
-                    width: `${Math.min(100, (summary.usedSelections / summary.maxSelections) * 100)}%`,
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
+            )
+          }
+        />
 
         {/* ─── Tabs ───────────────────────────────────────────── */}
         <div className="border-b border-surface-200 dark:border-surface-700">

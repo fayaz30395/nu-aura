@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useMemo, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -558,21 +559,21 @@ export default function BenefitsPage() {
         )}
 
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-aura-title text-[var(--text-1)]">Benefits</h1>
-            <p className="mt-1 text-sm text-[var(--text-2)]">
-              <span className="tnum">{stats.totalEnrolled}</span> of{' '}
-              <span className="tnum">{stats.availablePlans}</span> plans enrolled ·{' '}
-              <span className="tnum">{formatINR(stats.monthlyPremium)}</span>/mo your share
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.BENEFIT_CLAIM_SUBMIT}>
-            <Button onClick={handleOpenClaimModal} leftIcon={<Plus className="h-4 w-4"/>}>
-              Submit claim
-            </Button>
-          </PermissionGate>
-        </div>
+        <PageHeader
+          title="Benefits"
+          description={<>
+            <span className="tnum">{stats.totalEnrolled}</span> of{' '}
+            <span className="tnum">{stats.availablePlans}</span> plans enrolled ·{' '}
+            <span className="tnum">{formatINR(stats.monthlyPremium)}</span>/mo your share
+          </>}
+          actions={<>
+            <PermissionGate permission={Permissions.BENEFIT_CLAIM_SUBMIT}>
+              <Button onClick={handleOpenClaimModal} leftIcon={<Plus className="h-4 w-4"/>}>
+                Submit claim
+              </Button>
+            </PermissionGate>
+          </>}
+        />
 
         {/* KPI Stats — Aura icon-tile + value + footnote */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">

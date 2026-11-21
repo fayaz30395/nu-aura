@@ -6,6 +6,7 @@ import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useCreateContract} from '@/lib/hooks/queries/useContracts';
 import {Button, Card, Input, Select, Textarea} from '@mantine/core';
 import {DateInput} from '@mantine/dates';
@@ -87,7 +88,7 @@ export default function CreateContractPage() {
                   className="p-2 hover:bg-[var(--bg-surface)] rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-700)]">
             <ArrowLeft className="w-5 h-5"/>
           </button>
-          <h1 className="text-xl font-bold">Create Contract</h1>
+          <PageHeader title="Create Contract"/>
         </div>
 
         <Card>

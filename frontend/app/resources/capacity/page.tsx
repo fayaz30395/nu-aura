@@ -3,6 +3,7 @@
 import {useEffect, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AlertTriangle, Info, RefreshCw} from 'lucide-react';
 import {Input} from '@/components/ui/Input';
 import {Select} from '@/components/ui/Select';
@@ -224,17 +225,18 @@ export default function CapacityTimelinePage() {
     >
       <div className="p-6 space-y-6">
         {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">Capacity Timeline</h1>
-            <p className="text-body-muted mt-0.5">
+        <PageHeader
+          title="Capacity Timeline"
+          description={
+            <>
               Current allocation per employee across active projects
-            </p>
-            <p className="text-caption mt-1">
-              Showing: {viewMode === 'week' ? 'Current week' : 'Current month'} allocations
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+              <span className="block text-caption mt-1">
+                Showing: {viewMode === 'week' ? 'Current week' : 'Current month'} allocations
+              </span>
+            </>
+          }
+          actions={
+            <>
             <div className="flex rounded-lg border border-[var(--border-main)] overflow-hidden">
               <button
                 onClick={() => setViewMode('week')}
@@ -265,8 +267,9 @@ export default function CapacityTimelinePage() {
               <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''}/>
               Refresh
             </button>
-          </div>
-        </div>
+            </>
+          }
+        />
 
         {error && (
           <div

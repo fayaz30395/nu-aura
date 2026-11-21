@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Suspense, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {motion} from 'framer-motion';
@@ -111,30 +112,27 @@ function LoansPage() {
     <AppLayout activeMenuItem="loans">
       <PageTransition className="mx-auto w-full max-w-7xl px-6 py-8 space-y-8">
         {/* Header */}
-        <motion.header
+        <motion.div
           initial={{opacity: 0, y: 4}}
           animate={{opacity: 1, y: 0}}
           transition={{duration: 0.4, ease: MOTION_EASE.outExpo}}
-          className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-start"
         >
-          <div className="space-y-1.5 max-w-2xl">
-            <h1 className="text-aura-title text-[var(--text-1)]">
-              Employee Loans
-            </h1>
-            <p className="text-sm text-[var(--text-3)]">
-              Manage your loan applications and repayments
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.LOAN_CREATE}>
-            <Button
-              onClick={() => router.push('/loans/new')}
-              variant="primary"
-              leftIcon={<Plus className="h-4 w-4" aria-hidden="true" />}
-            >
-              Apply for Loan
-            </Button>
-          </PermissionGate>
-        </motion.header>
+          <PageHeader
+            title="Employee Loans"
+            description="Manage your loan applications and repayments"
+            actions={
+              <PermissionGate permission={Permissions.LOAN_CREATE}>
+                <Button
+                  onClick={() => router.push('/loans/new')}
+                  variant="primary"
+                  leftIcon={<Plus className="h-4 w-4" aria-hidden="true" />}
+                >
+                  Apply for Loan
+                </Button>
+              </PermissionGate>
+            }
+          />
+        </motion.div>
 
         {/* Summary Cards */}
         <motion.div

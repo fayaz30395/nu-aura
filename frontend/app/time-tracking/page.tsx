@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useEffect, useId, useMemo, useState} from 'react';
 import {useQueryClient} from '@tanstack/react-query';
 import {useRouter} from 'next/navigation';
@@ -137,25 +138,21 @@ export default function TimeTrackingPage() {
     <AppLayout activeMenuItem="time-tracking">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Time Tracking
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Log and manage your time entries
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div/>}>
-            <button
-              onClick={() => router.push('/time-tracking/new')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200"
-            >
-              <Plus className="h-5 w-5"/>
-              Log Time
-            </button>
-          </PermissionGate>
-        </div>
+        <PageHeader
+          title="Time Tracking"
+          description="Log and manage your time entries"
+          actions={
+            <PermissionGate permission={Permissions.TIME_TRACKING_CREATE} fallback={<div/>}>
+              <button
+                onClick={() => router.push('/time-tracking/new')}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200"
+              >
+                <Plus className="h-5 w-5"/>
+                Log Time
+              </button>
+            </PermissionGate>
+          }
+        />
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

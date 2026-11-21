@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useEffect, useRef, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {logger} from '@/lib/utils/logger';
@@ -189,10 +190,10 @@ export default function SettingsPage() {
       <PageTransition className="space-y-6">
         {/* Page head */}
         <Reveal>
-          <h1 className="text-aura-title">Settings</h1>
-          <p className="mt-1 text-sm text-[var(--text-3)]">
-            Workspace configuration and personal preferences
-          </p>
+          <PageHeader
+            title="Settings"
+            description="Workspace configuration and personal preferences"
+          />
         </Reveal>
 
         {/* Success Message */}

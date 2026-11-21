@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -200,23 +201,26 @@ export default function HelpdeskSLAPage() {
       />
 
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-xl font-bold">SLA Management</h1>
-          {activeTab === 'slas' && (
-            <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
-              <button
-                onClick={() => {
-                  setShowForm(true);
-                  setEditingId(null);
-                  resetFormHandler();
-                }}
-                className="btn-primary !h-auto"
-              >
-                Create SLA Policy
-              </button>
-            </PermissionGate>
-          )}
-        </div>
+        <PageHeader
+          title="SLA Management"
+          className="mb-8"
+          actions={<>
+            {activeTab === 'slas' && (
+              <PermissionGate permission={Permissions.HELPDESK_SLA_MANAGE}>
+                <button
+                  onClick={() => {
+                    setShowForm(true);
+                    setEditingId(null);
+                    resetFormHandler();
+                  }}
+                  className="btn-primary !h-auto"
+                >
+                  Create SLA Policy
+                </button>
+              </PermissionGate>
+            )}
+          </>}
+        />
 
         {/* Dashboard Cards */}
         {dashboardData && (

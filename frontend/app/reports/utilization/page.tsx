@@ -4,6 +4,7 @@ import React, {useEffect, useId, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {
   AlertCircle,
@@ -265,21 +266,11 @@ export default function UtilizationReportsPage() {
     <AppLayout activeMenuItem="reports">
       <div className="p-6 space-y-6">
         {/* Header */}
-        <motion.div
-          initial={{opacity: 0, y: -20}}
-          animate={{opacity: 1, y: 0}}
-          className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
-        >
-          <div>
-            <h1 className="text-xl font-bold">
-              Utilization Dashboard
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Track employee productivity and resource utilization
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4">
+        <PageHeader
+          title="Utilization Dashboard"
+          description="Track employee productivity and resource utilization"
+          actions={
+            <>
             {/* Date Range Selector */}
             <div className="relative">
               <select
@@ -334,8 +325,9 @@ export default function UtilizationReportsPage() {
             <Button variant="primary" leftIcon={<Download className="h-4 w-4"/>}>
               Export
             </Button>
-          </div>
-        </motion.div>
+            </>
+          }
+        />
 
         {/* Error Alert */}
         {error && (

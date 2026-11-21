@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {QueryErrorCard} from '@/components/ui/QueryState';
@@ -475,20 +476,16 @@ export default function AssetManagementPage() {
     <AppLayout breadcrumbs={breadcrumbs} activeMenuItem="assets">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-aura-title text-[var(--text-1)]">
-              Assets
-            </h1>
-            <p className="mt-1 text-sm text-[var(--text-2)]">
-              <span className="tnum">{stats.total.toLocaleString()}</span> tracked assets
-              {' · '}
-              <span className="tnum">{assignedPct}%</span> assigned
-              {' · '}
-              <span className="tnum">{formatCurrency(bookValue, 'INR', {maximumFractionDigits: 0})}</span> book value
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+        <PageHeader
+          title="Assets"
+          description={<>
+            <span className="tnum">{stats.total.toLocaleString()}</span> tracked assets
+            {' · '}
+            <span className="tnum">{assignedPct}%</span> assigned
+            {' · '}
+            <span className="tnum">{formatCurrency(bookValue, 'INR', {maximumFractionDigits: 0})}</span> book value
+          </>}
+          actions={<>
             <Button variant="ghost" leftIcon={<Download className="h-4 w-4"/>}>
               Export
             </Button>
@@ -497,8 +494,8 @@ export default function AssetManagementPage() {
                 Assign Asset
               </Button>
             </PermissionGate>
-          </div>
-        </div>
+          </>}
+        />
 
         {/* Error Alert */}
         {error && (

@@ -27,6 +27,7 @@ import {
 import dynamic from 'next/dynamic';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui';
@@ -228,30 +229,28 @@ export default function ExecutiveDashboardPage() {
     <AppLayout activeMenuItem="executive-dashboard">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold">Executive Dashboard</h1>
-            <p className="text-[var(--text-secondary)] mt-1">
-              Comprehensive C-suite insights and analytics
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-body-muted">
-              Last updated: {lastUpdated.toLocaleTimeString()}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                refetch();
-                setLastUpdated(new Date());
-              }}
-              leftIcon={<RefreshCw className="h-4 w-4"/>}
-            >
-              Refresh
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Executive Dashboard"
+          description="Comprehensive C-suite insights and analytics"
+          actions={
+            <>
+              <div className="text-body-muted">
+                Last updated: {lastUpdated.toLocaleTimeString()}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  refetch();
+                  setLastUpdated(new Date());
+                }}
+                leftIcon={<RefreshCw className="h-4 w-4"/>}
+              >
+                Refresh
+              </Button>
+            </>
+          }
+        />
 
         {/* Key Metrics */}
         {data.keyMetrics && data.keyMetrics.length > 0 && (

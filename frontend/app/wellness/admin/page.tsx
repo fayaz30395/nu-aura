@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -633,16 +634,10 @@ export default function WellnessAdminPage() {
       >
         <div className="space-y-6">
           {/* Header */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                Wellness Admin
-              </h1>
-              <p className="text-[var(--text-secondary)] text-sm mt-1">
-                Create and manage wellness programs and challenges
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
+          <PageHeader
+            title="Wellness Admin"
+            description="Create and manage wellness programs and challenges"
+            actions={<>
               <Button
                 variant="outline"
                 size="sm"
@@ -667,8 +662,8 @@ export default function WellnessAdminPage() {
                   New Challenge
                 </Button>
               )}
-            </div>
-          </div>
+            </>}
+          />
 
           {/* Stats */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

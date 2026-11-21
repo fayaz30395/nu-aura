@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
@@ -78,10 +79,10 @@ export default function HelpdeskPage() {
       <AppLayout>
         <div className="space-y-6">
           <Reveal>
-            <div>
-              <h1 className="text-aura-title text-[--text-1]">Helpdesk</h1>
-              <p className="text-[--text-2] mt-2">Manage SLA policies, escalations, and support metrics</p>
-            </div>
+            <PageHeader
+              title="Helpdesk"
+              description="Manage SLA policies, escalations, and support metrics"
+            />
           </Reveal>
 
           {/* Stat Cards — admin-only SLA metrics (DEF-56) */}

@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useEffect, useState} from 'react';
 import {AnimatePresence, motion} from 'framer-motion';
 import {Controller, useForm} from 'react-hook-form';
@@ -101,29 +102,24 @@ export default function LinkedInPostsPage() {
             animate={{opacity: 1, y: 0}}
             className="mb-8"
           >
-            <div className="row-between">
-              <div>
-                <h1 className="text-xl font-bold">
-                  <Linkedin className="w-8 h-8 text-accent-600"/>
-                  LinkedIn Posts
-                </h1>
-                <p className="text-[var(--text-secondary)] mt-2">
-                  Curate and manage LinkedIn posts for your company feed
-                </p>
-              </div>
-              {canManagePosts && (
-                <button
-                  onClick={() => {
-                    setEditingPost(null);
-                    setShowCreateModal(true);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-colors font-medium shadow-[var(--shadow-card)]"
-                >
-                  <Plus className="w-5 h-5"/>
-                  Add Post
-                </button>
-              )}
-            </div>
+            <PageHeader
+              title={<span className="inline-flex items-center gap-2"><Linkedin className="w-8 h-8 text-accent-600"/>LinkedIn Posts</span>}
+              description="Curate and manage LinkedIn posts for your company feed"
+              actions={<>
+                {canManagePosts && (
+                  <button
+                    onClick={() => {
+                      setEditingPost(null);
+                      setShowCreateModal(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-colors font-medium shadow-[var(--shadow-card)]"
+                  >
+                    <Plus className="w-5 h-5"/>
+                    Add Post
+                  </button>
+                )}
+              </>}
+            />
           </motion.div>
 
           {/* Search */}

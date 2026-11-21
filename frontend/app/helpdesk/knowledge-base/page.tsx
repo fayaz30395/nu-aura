@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -438,27 +439,23 @@ export default function KnowledgeBasePage() {
     <AppLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl  font-bold text-[var(--text-primary)]">
-              Knowledge Base
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-2">
-              Find answers to common questions
-            </p>
-          </div>
-          {isAdmin && (
-            <PermissionGate permission={Permissions.HELPDESK_CATEGORY_MANAGE}>
-              <Button
-                onClick={() => setShowCreateModal(true)}
-                variant="primary"
-                leftIcon={<Plus className="h-4 w-4"/>}
-              >
-                New Article
-              </Button>
-            </PermissionGate>
-          )}
-        </div>
+        <PageHeader
+          title="Knowledge Base"
+          description="Find answers to common questions"
+          actions={<>
+            {isAdmin && (
+              <PermissionGate permission={Permissions.HELPDESK_CATEGORY_MANAGE}>
+                <Button
+                  onClick={() => setShowCreateModal(true)}
+                  variant="primary"
+                  leftIcon={<Plus className="h-4 w-4"/>}
+                >
+                  New Article
+                </Button>
+              </PermissionGate>
+            )}
+          </>}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}

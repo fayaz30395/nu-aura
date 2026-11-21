@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useEffect, useRef, useState} from 'react';
 import {Spinner} from '@/components/ui/Spinner';
 import {useRouter} from 'next/navigation';
@@ -140,8 +141,10 @@ export default function CertificateGalleryPage() {
                 className="flex items-center gap-1 text-accent-600 hover:text-accent-700 mb-4 w-fit text-sm">
             <ArrowLeft className="h-4 w-4"/> Back to Learning
           </Link>
-          <h1 className="text-xl font-bold text-[var(--text-primary)] mb-2">My Certificates</h1>
-          <p className="text-[var(--text-secondary)]">Collection of all earned certificates and credentials</p>
+          <PageHeader
+            title="My Certificates"
+            description="Collection of all earned certificates and credentials"
+          />
         </div>
 
         {/* Summary Stats */}

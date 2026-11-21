@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -252,26 +253,21 @@ export default function AnnouncementsPage() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <Reveal className="mb-8" delay={0.01}>
-            <div className="row-between">
-              <div>
-                <h1 className="text-xl font-bold flex items-center gap-2">
-                  <Megaphone className="w-8 h-8 text-accent-700" aria-hidden="true"/>
-                  Announcements
-                </h1>
-                <p className="text-[var(--text-secondary)] mt-2">
-                  Stay updated with company news and important updates
-                </p>
-              </div>
-              <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 text-white rounded-xl hover:bg-accent-800 transition-colors font-medium shadow-[var(--shadow-card)]"
-                >
-                  <Plus className="w-5 h-5"/>
-                  New Announcement
-                </button>
-              </PermissionGate>
-            </div>
+            <PageHeader
+              title={<span className="inline-flex items-center gap-2"><Megaphone className="w-8 h-8 text-accent-700" aria-hidden="true"/>Announcements</span>}
+              description="Stay updated with company news and important updates"
+              actions={<>
+                <PermissionGate permission={Permissions.ANNOUNCEMENT_MANAGE}>
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-accent-700 text-white rounded-xl hover:bg-accent-800 transition-colors font-medium shadow-[var(--shadow-card)]"
+                  >
+                    <Plus className="w-5 h-5"/>
+                    New Announcement
+                  </button>
+                </PermissionGate>
+              </>}
+            />
           </Reveal>
 
           {/* Pinned Announcements */}

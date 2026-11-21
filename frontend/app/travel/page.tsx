@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {TransportMode, TravelStatus, TravelType} from '@/lib/types/hrms/travel';
 import {useAuth} from '@/lib/hooks/useAuth';
 import {formatCurrency} from '@/lib/utils';
@@ -150,25 +151,21 @@ export default function TravelPage() {
     <AppLayout activeMenuItem="travel">
       <div className="space-y-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Travel Management
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Manage travel requests and expenses
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div/>}>
-            <button
-              onClick={() => router.push('/travel/new')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl text-sm font-medium transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              <Plus className="h-5 w-5"/>
-              New Travel Request
-            </button>
-          </PermissionGate>
-        </div>
+        <PageHeader
+          title="Travel Management"
+          description="Manage travel requests and expenses"
+          actions={
+            <PermissionGate permission={Permissions.TRAVEL_CREATE} fallback={<div/>}>
+              <button
+                onClick={() => router.push('/travel/new')}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl text-sm font-medium transition-colors duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              >
+                <Plus className="h-5 w-5"/>
+                New Travel Request
+              </button>
+            </PermissionGate>
+          }
+        />
 
         {/* Filters */}
         <div className="card-aura p-4">

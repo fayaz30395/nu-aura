@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import React, {useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -95,10 +96,10 @@ export default function SecuritySettingsPage() {
       <PageTransition className="space-y-6">
         {/* Header */}
         <Reveal>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">Security Settings</h1>
-          <p className="text-[var(--text-secondary)] mt-1">
-            Manage your account security and authentication
-          </p>
+          <PageHeader
+            title="Security Settings"
+            description="Manage your account security and authentication"
+          />
         </Reveal>
 
         {/* Success Message */}

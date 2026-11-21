@@ -17,6 +17,7 @@ import {
 import dynamic from 'next/dynamic';
 import {ChartLoadingFallback} from '@/lib/utils/lazy-components';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {useOrganizationHealth} from '@/lib/hooks/queries/useAnalytics';
@@ -111,23 +112,20 @@ export default function OrganizationHealthPage() {
     <AppLayout activeMenuItem="analytics">
       <div className="p-6 space-y-8 max-w-screen-2xl mx-auto">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <motion.div
-            initial={{opacity: 0, x: -20}}
-            animate={{opacity: 1, x: 0}}
-          >
-            <h1 className="text-xl font-bold">Organization Health</h1>
-            <p className="text-[var(--text-secondary)] mt-1">Executive summary of workforce vitality and performance</p>
-          </motion.div>
-          <div className="flex flex-wrap items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw className="h-4 w-4"/>}>
-              Refresh Data
-            </Button>
-            <Button variant="primary" size="sm" leftIcon={<Download className="h-4 w-4"/>}>
-              Export Report
-            </Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Organization Health"
+          description="Executive summary of workforce vitality and performance"
+          actions={
+            <>
+              <Button variant="outline" size="sm" onClick={() => refetch()} leftIcon={<RefreshCw className="h-4 w-4"/>}>
+                Refresh Data
+              </Button>
+              <Button variant="primary" size="sm" leftIcon={<Download className="h-4 w-4"/>}>
+                Export Report
+              </Button>
+            </>
+          }
+        />
 
         {/* Global Health Hero */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

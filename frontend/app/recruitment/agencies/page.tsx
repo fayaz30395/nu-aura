@@ -1,5 +1,6 @@
 'use client';
 
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Suspense, useEffect, useMemo, useState} from 'react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import {Stagger, StaggerItem} from '@/components/motion';
@@ -213,23 +214,21 @@ function AgenciesPage() {
         <Stagger className="space-y-6">
           {/* Header */}
           <StaggerItem className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-[var(--text-primary)]">
-                Recruitment Agencies
-              </h1>
-              <p className="text-xs text-[var(--text-muted)] mt-1">
-                Manage external recruitment partners and track submissions
-              </p>
-            </div>
-            <PermissionGate permission={Permissions.AGENCY_CREATE}>
-              <Button
-                onClick={openCreateForm}
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4"/>
-                Add Agency
-              </Button>
-            </PermissionGate>
+            <PageHeader
+              title="Recruitment Agencies"
+              description="Manage external recruitment partners and track submissions"
+              actions={<>
+                <PermissionGate permission={Permissions.AGENCY_CREATE}>
+                  <Button
+                    onClick={openCreateForm}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4"/>
+                    Add Agency
+                  </Button>
+                </PermissionGate>
+              </>}
+            />
           </StaggerItem>
 
           {/* Stat Cards */}
