@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PageTransition} from '@/components/motion';
 import {Skeleton} from '@mantine/core';
 import dynamic from 'next/dynamic';
@@ -175,11 +176,7 @@ export default function PayrollRunsPage() {
         <PageTransition className="p-6">
           <div className="max-w-7xl mx-auto">
             {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-xl font-bold">Payroll Runs</h1>
-              <p className="text-[var(--text-secondary)] mt-2">Create and manage payroll processing
-                runs</p>
-            </div>
+            <PageHeader title="Payroll Runs" description="Create and manage payroll processing runs"/>
 
             {/* Error Message */}
             {error && (

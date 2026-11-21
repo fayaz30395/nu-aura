@@ -3,6 +3,7 @@
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {BulkProcessingWizard} from '@/components/payroll/BulkProcessingWizard';
 import {Permissions, usePermissions} from '@/lib/hooks/usePermissions';
 
@@ -27,14 +28,7 @@ export default function BulkProcessingPage() {
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-xl font-bold">
-              Bulk Payroll Processing
-            </h1>
-            <p className="text-[var(--text-secondary)] mt-2">
-              Process payroll for multiple employees at once
-            </p>
-          </div>
+          <PageHeader title="Bulk Payroll Processing" description="Process payroll for multiple employees at once"/>
 
           {/* Wizard Component */}
           <BulkProcessingWizard/>

@@ -2,6 +2,7 @@
 
 import {DragEvent, useCallback, useMemo, useRef, useState} from 'react';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {AdminGate, PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {SkeletonTable} from '@/components/ui/Skeleton';
@@ -1212,12 +1213,7 @@ export default function ImportExportPage() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
           {/* Page header */}
-          <div>
-            <h1 className="text-2xl font-bold text-[var(--text-primary)]">Import / Export Hub</h1>
-            <p className="text-body-muted mt-1">
-              Bulk import data, export reports, and manage KEKA migrations
-            </p>
-          </div>
+          <PageHeader title="Import / Export Hub" description="Bulk import data, export reports, and manage KEKA migrations"/>
 
           {/* Tab navigation */}
           <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--bg-secondary)] w-fit">

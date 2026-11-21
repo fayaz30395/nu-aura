@@ -4,6 +4,7 @@ import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {logger} from '@/lib/utils/logger';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Bell, Loader2, Mail, MessageSquare} from 'lucide-react';
 import {useAuth} from '@/lib/hooks/useAuth';
@@ -133,12 +134,7 @@ export default function NotificationSettingsPage() {
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-xl font-bold text-foreground">Notification Settings</h1>
-          <p className="text-muted-foreground mt-1">
-            Choose how and when you want to be notified
-          </p>
-        </div>
+        <PageHeader title="Notification Settings" description="Choose how and when you want to be notified"/>
 
         <Card className="skeuo-card">
           <CardHeader>

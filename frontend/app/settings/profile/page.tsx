@@ -3,6 +3,7 @@
 import React from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/Card';
 import {Button} from '@/components/ui/Button';
 import {ArrowRight, User} from 'lucide-react';
@@ -15,12 +16,7 @@ export default function SettingsProfilePage() {
   return (
     <AppLayout>
       <div className="max-w-4xl mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-xl font-bold text-foreground">Profile Settings</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your personal profile and account preferences
-          </p>
-        </div>
+        <PageHeader title="Profile Settings" description="Manage your personal profile and account preferences"/>
 
         <Card className="skeuo-card">
           <CardHeader>
