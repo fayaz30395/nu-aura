@@ -24,7 +24,7 @@ export function PageHeader({title, description, breadcrumbs, actions, className}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-1">
           <h1 className="text-2xl font-semibold tracking-tight text-text-1">{title}</h1>
-          {description && <p className="truncate text-sm text-text-2">{description}</p>}
+          {description && <p className="line-clamp-2 max-w-3xl text-sm text-text-2">{description}</p>}
         </div>
         {actions && <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">{actions}</div>}
       </div>
