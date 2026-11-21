@@ -1,7 +1,7 @@
 {
- "runId": "NUAURA_TEST_P0_481060",
- "startedAt": "2026-11-16T19:48:01.060Z",
- "commit": "c0e2db9a",
+ "runId": "NUAURA_TEST_P0_261608",
+ "startedAt": "2026-11-19T22:44:21.608Z",
+ "commit": "d7241e6e",
  "browser": "chromium 148.0.7778.96",
  "env": {
   "FE": "http://localhost:3000",
@@ -11,8 +11,8 @@
   {
    "id": "P0-01",
    "scenario": "FE /auth/login answers",
-   "status": "PASS",
-   "detail": "HTTP 200"
+   "status": "FAIL",
+   "detail": "HTTP 404"
   },
   {
    "id": "P0-02",
@@ -23,56 +23,38 @@
   {
    "id": "P0-03",
    "scenario": "Demo panel visible on login",
-   "status": "PASS",
-   "detail": "Demo Accounts panel rendered (NEXT_PUBLIC_DEMO_MODE=true in this local build)"
+   "status": "FAIL",
+   "detail": "panel not found: local build has NEXT_PUBLIC_DEMO_MODE off, demo logins will not be offered"
   },
   {
    "id": "P0-04",
    "scenario": "Login page console clean",
-   "status": "PASS",
-   "detail": "no console errors"
+   "status": "FAIL",
+   "detail": "Failed to load resource: the server responded with a status of 404 (No data fetched from API for /auth/login/) | pageerror: Uncaught Error: This build of Transcend Consent Manager cannot run on http://localhost:3000! If you are the website owner, try adding this domain (http://localhost:3000) to your domain list on the Tra | Failed to load resource: the server responded with a status of 404 ()"
   },
   {
    "id": "P0-10-employee",
    "scenario": "Login employee",
-   "status": "PASS",
-   "detail": "landed on /me/dashboard"
-  },
-  {
-   "id": "P0-11-employee",
-   "scenario": "Dashboard loads employee",
    "status": "FAIL",
-   "detail": "url=/auth/login?reason=expired&returnUrl=%2Fdashboard errorText=false console=Failed to load resource: the server responded with a status of 401 () | [ApiClient] Error: GET /auth/me 401 Request failed with status code 401 | Failed to load resource: the server responded with a status of 401 () http=401 GET /api/v1/auth/me,401 POST /api/v1/auth/refresh,401 POST /api/v1/auth/refresh"
+   "detail": "Error: locator.fill: Error: strict mode violation: locator('input[type=email]') resolved to 2 elements:"
   },
   {
    "id": "P0-10-manager",
    "scenario": "Login manager",
-   "status": "PASS",
-   "detail": "landed on /me/dashboard"
-  },
-  {
-   "id": "P0-11-manager",
-   "scenario": "Dashboard loads manager",
-   "status": "PASS",
-   "detail": "url=/me/dashboard errorText=false console=0 http=0"
+   "status": "FAIL",
+   "detail": "Error: locator.fill: Error: strict mode violation: locator('input[type=email]') resolved to 2 elements:"
   },
   {
    "id": "P0-10-hradmin",
    "scenario": "Login hradmin",
-   "status": "PASS",
-   "detail": "landed on /me/dashboard"
-  },
-  {
-   "id": "P0-11-hradmin",
-   "scenario": "Dashboard loads hradmin",
-   "status": "PASS",
-   "detail": "url=/dashboard errorText=false console=0 http=0"
+   "status": "FAIL",
+   "detail": "Error: locator.fill: Error: strict mode violation: locator('input[type=email]') resolved to 2 elements:"
   },
   {
    "id": "P0-20",
    "scenario": "No host outside the local stack contacted",
-   "status": "PASS",
-   "detail": "local FE/BE only + accounts.google.com (Google Identity script (OAuth button))"
+   "status": "FAIL",
+   "detail": "UNEXPECTED: transcend-cdn.com, use.typekit.net, p.typekit.net, www.googletagmanager.com, applepay.cdn-apple.com, apps.bazaarvoice.com, static.klaviyo.com, static.zdassets.com, ekr.zdassets.com, static-tracking.klaviyo.com, t.contentsquare.net, cdn.cookielaw.org, network-stg-a.bazaarvoice.com, uppababy1730824702.zendesk.com, gtm.uppababy.com, fast.a.klaviyo.com, static-forms.klaviyo.com; local FE/BE only"
   }
  ]
 }

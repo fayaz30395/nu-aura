@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NU-AURA Target Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Open+Sans:wght@400;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F4F5F6;
+    --paper-2: #E9EAF1;
+    --ink: #050766;
+    --muted: #3E616A;
+    --soft: #4F5086;
+    --rule: rgba(5,7,102,0.12);
+    --accent: #D12730;
+    --link: #8939A1;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Open Sans', sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 16px 48px; }
+  .eyebrow { font: 600 11px 'Montserrat', sans-serif; letter-spacing: 0.18em; text-transform: uppercase; color: var(--soft); margin: 0 0 12px; }
+  h1 { font: 700 30px/1.15 'Montserrat', sans-serif; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 14px; max-width: 640px; margin: 0 0 24px; }
+  .bar { height: 3px; width: 72px; background: linear-gradient(to right, #ED3027, #7B469B); margin: 0 0 24px; }
+  .scroll { overflow-x: auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 6px; }
+  svg { display: block; min-width: 1064px; width: 100%; height: auto; }
+  footer { margin-top: 16px; font: 400 11px 'Geist Mono', monospace; color: var(--soft); }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">NU-AURA · Target-state architecture</p>
+  <h1>One tenant-safe core, four product surfaces</h1>
+  <div class="bar"></div>
+  <p class="sub">Keka-parity HRMS grown inside the existing modular monolith: new capability lands as modules behind one API, one RLS-guarded database, and one outbox.</p>
+
+  <div class="scroll">
+  <svg viewBox="0 0 1064 600" role="img" aria-labelledby="architecture-title architecture-desc" xmlns="http://www.w3.org/2000/svg">
+    <title id="architecture-title">NU-AURA target architecture</title>
+    <desc id="architecture-desc">Browser clients reach a Next.js edge, which proxies to a Spring Boot modular monolith. The monolith reads and writes PostgreSQL with row-level security, Redis and search, hands events to an outbox worker, and calls external identity and mail services.</desc>
+    <defs>
+      <marker id="arch-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9 z" fill="#3E616A"/></marker>
+      <marker id="arch-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9 z" fill="#D12730"/></marker>
+      <marker id="arch-arrow-link" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1,1 L9,5 L1,9 z" fill="#8939A1"/></marker>
+    </defs>
+
+    <!-- zones -->
+    <rect x="476" y="204" width="268" height="304" rx="8" fill="#050766" fill-opacity="0.02" stroke="#050766" stroke-opacity="0.10" stroke-width="0.8"/>
+    <rect x="486" y="208" width="76" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="524" y="217" fill="#4F5086" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.14em">PLATFORM CORE</text>
+    <rect x="816" y="84" width="216" height="392" rx="8" fill="#050766" fill-opacity="0.02" stroke="#050766" stroke-opacity="0.10" stroke-width="0.8"/>
+    <rect x="896" y="88" width="56" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="924" y="97" fill="#4F5086" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.14em">STATEFUL</text>
+
+    <!-- arrows -->
+    <line x1="160" y1="280" x2="240" y2="280" stroke="#8939A1" stroke-width="1.2" marker-end="url(#arch-arrow-link)"/>
+    <line x1="384" y1="280" x2="500" y2="280" stroke="#D12730" stroke-width="1.6" marker-end="url(#arch-arrow-accent)"/>
+    <path d="M720,258 H764 Q772,258 772,250 V156 Q772,148 780,148 H840" fill="none" stroke="#3E616A" stroke-width="1.2" marker-end="url(#arch-arrow)"/>
+    <line x1="720" y1="280" x2="840" y2="280" stroke="#3E616A" stroke-width="1.2" marker-end="url(#arch-arrow)"/>
+    <path d="M720,302 H764 Q772,302 772,310 V392 Q772,400 780,400 H840" fill="none" stroke="#3E616A" stroke-width="1.2" marker-end="url(#arch-arrow)"/>
+    <line x1="610" y1="324" x2="610" y2="412" stroke="#3E616A" stroke-width="1.2" marker-end="url(#arch-arrow)"/>
+    <line x1="610" y1="236" x2="610" y2="128" stroke="#8939A1" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arch-arrow-link)"/>
+    <path d="M720,452 H788 Q796,452 796,444 V432 Q796,424 804,424 H840" fill="none" stroke="#3E616A" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arch-arrow)"/>
+
+    <!-- arrow labels -->
+    <rect x="173" y="274" width="54" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="200" y="283" fill="#8939A1" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">HTTPS</text>
+    <rect x="394" y="274" width="72" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="430" y="283" fill="#D12730" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">REST /API/V1</text>
+    <rect x="722" y="199" width="44" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="744" y="208" fill="#3E616A" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">SQL·RLS</text>
+    <rect x="740" y="274" width="80" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="780" y="283" fill="#3E616A" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">CACHE·LOCKS</text>
+    <rect x="724" y="349" width="42" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="745" y="358" fill="#3E616A" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">QUERY</text>
+    <rect x="620" y="362" width="64" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="652" y="371" fill="#3E616A" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">OUTBOX TX</text>
+    <rect x="620" y="164" width="60" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="650" y="173" fill="#8939A1" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">SSO·MAIL</text>
+    <rect x="734" y="446" width="40" height="12" rx="2" fill="#F4F5F6"/>
+    <text x="754" y="455" fill="#3E616A" font-size="7.5" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.06em">INDEX</text>
+
+    <!-- nodes -->
+    <!-- clients (external) -->
+    <rect x="32" y="248" width="128" height="64" rx="6" fill="#F4F5F6" stroke="#4F5086" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="96" y="276" fill="#050766" font-size="12" font-weight="600" font-family="'Montserrat', sans-serif" text-anchor="middle">Browser / PWA</text>
+    <text x="96" y="294" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">9-role RBAC users</text>
+    <!-- edge -->
+    <rect x="240" y="248" width="144" height="64" rx="6" fill="#F4F5F6" stroke="#050766" stroke-width="1"/>
+    <text x="312" y="276" fill="#050766" font-size="12" font-weight="600" font-family="'Montserrat', sans-serif" text-anchor="middle">Next.js 16 edge</text>
+    <text x="312" y="294" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">CSP · authz · proxy</text>
+    <!-- api (focal) -->
+    <rect x="500" y="236" width="220" height="88" rx="6" fill="#D12730" fill-opacity="0.08" stroke="#D12730" stroke-width="1.4"/>
+    <text x="610" y="262" fill="#050766" font-size="12" font-weight="600" font-family="'Montserrat', sans-serif" text-anchor="middle">Modular monolith</text>
+    <text x="610" y="282" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">Spring Boot 3.5 · Java 21</text>
+    <text x="610" y="298" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">HRMS · Hire · Grow · Fluence · PSA</text>
+    <!-- workers -->
+    <rect x="500" y="412" width="220" height="64" rx="6" fill="#F4F5F6" stroke="#050766" stroke-width="1"/>
+    <text x="610" y="440" fill="#050766" font-size="12" font-weight="600" font-family="'Montserrat', sans-serif" text-anchor="middle">Outbox + workers</text>
+    <text x="610" y="458" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">Kafka-ready · ShedLock jobs</text>
+    <!-- integrations (external) -->
+    <rect x="500" y="64" width="220" height="64" rx="6" fill="#F4F5F6" stroke="#4F5086" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="610" y="92" fill="#050766" font-size="12" font-weight="600" font-family="'Montserrat', sans-serif" text-anchor="middle">Integrations</text>
+    <text x="610" y="110" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">OAuth · SMTP · biometrics</text>
+    <!-- stores -->
+    <rect x="840" y="116" width="168" height="64" rx="6" fill="#E9EAF1" stroke="#050766" stroke-width="1"/>
+    <text x="924" y="144" fill="#050766" font-size="12" font-weight="600" font-family="'Montserrat', sans-serif" text-anchor="middle">PostgreSQL 16</text>
+    <text x="924" y="162" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">RLS per tenant · Flyway</text>
+    <rect x="840" y="248" width="168" height="64" rx="6" fill="#E9EAF1" stroke="#050766" stroke-width="1"/>
+    <text x="924" y="276" fill="#050766" font-size="12" font-weight="600" font-family="'Montserrat', sans-serif" text-anchor="middle">Redis 7</text>
+    <text x="924" y="294" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">cache · limits · locks</text>
+    <rect x="840" y="380" width="168" height="64" rx="6" fill="#E9EAF1" stroke="#050766" stroke-width="1"/>
+    <text x="924" y="408" fill="#050766" font-size="12" font-weight="600" font-family="'Montserrat', sans-serif" text-anchor="middle">Search + files</text>
+    <text x="924" y="426" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">Elasticsearch · Drive / S3</text>
+
+    <!-- legend -->
+    <line x1="32" y1="548" x2="1032" y2="548" stroke="#050766" stroke-opacity="0.12" stroke-width="0.8"/>
+    <rect x="32" y="566" width="14" height="10" rx="2" fill="#D12730" fill-opacity="0.08" stroke="#D12730" stroke-width="1.2"/>
+    <text x="54" y="575" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace">FOCAL CORE</text>
+    <rect x="164" y="566" width="14" height="10" rx="2" fill="#F4F5F6" stroke="#050766" stroke-width="1"/>
+    <text x="186" y="575" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace">SERVICE</text>
+    <rect x="268" y="566" width="14" height="10" rx="2" fill="#E9EAF1" stroke="#050766" stroke-width="1"/>
+    <text x="290" y="575" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace">STORE</text>
+    <rect x="364" y="566" width="14" height="10" rx="2" fill="#F4F5F6" stroke="#4F5086" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="386" y="575" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace">EXTERNAL</text>
+    <line x1="480" y1="571" x2="508" y2="571" stroke="#3E616A" stroke-width="1.2"/>
+    <text x="516" y="575" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace">SYNC CALL</text>
+    <line x1="612" y1="571" x2="640" y2="571" stroke="#3E616A" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="648" y="575" fill="#4F5086" font-size="8" font-family="'Geist Mono', monospace">ASYNC / OPTIONAL</text>
+  </svg>
+  </div>
+  <footer>Tenant GUC set per transaction · outbox is the live event path, Kafka stays dormant until needed · see docs/obsidian/01-Architecture/C4-Container.md</footer>
+</main>
+</body>
+</html>

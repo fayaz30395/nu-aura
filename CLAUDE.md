@@ -50,7 +50,7 @@ a security-sensitive path, read `docs/obsidian/08-Security/` and the RLS flow in
 
 For **locating code/data across the codebase** ("where is X defined", "what calls Y", "how does
 A reach B"), query the local graphify knowledge graph BEFORE falling back to broad grep/glob
-sweeps. It is a code-only corpus of **58,753 nodes / 140,991 edges** built from this repo.
+sweeps. It is a code-only corpus of **62,770 nodes / 146,933 edges** built from this repo.
 
 - **Location:** `graphify-out/` — **gitignored, local-only** (not committed; `graph.json` is ~85MB).
   If the directory is missing, rebuild with `/graphify .` (the `graphify` skill).
@@ -67,8 +67,8 @@ sweeps. It is a code-only corpus of **58,753 nodes / 140,991 edges** built from 
 
 Answer using **only** what the graph contains and cite `source_location` when quoting a fact;
 if the graph lacks the edge, say so rather than inventing it. The graph is a point-in-time
-snapshot (`built_at_commit` in `graph.json`, currently `7c9d0dd3`) — after large code changes
-re-run `/graphify .` to refresh it.
+snapshot (`built_at_commit` in `graph.json`, currently `568b6aa3`) — after large code changes
+run `/graphify . --update` (AST only, no LLM, ~2 min) to refresh it.
 
 ## Agent Comms (SendMessage-First Coordination)
 

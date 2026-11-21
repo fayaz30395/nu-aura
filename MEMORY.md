@@ -1021,3 +1021,8 @@ migrations (V67–V91), 3 new feature pages, P0 security fixes, code quality imp
 - [[docs/reference/database|Database Reference]] — schema details
 - [[docs/reference/migrations|Migrations Reference]] — Flyway state
 - [[AGENTS|Agent Config]] — orchestration config reading this memory
+
+## Understand-Anything knowledge graph (2026-11-06)
+- `/understand --full` finished at commit `568b6aa3`: 6,642 files, 15,708 nodes, 31,132 edges, 18 layers, 14-step tour. Files in `.ua/` (local, untracked, not gitignored): `knowledge-graph.json`, `fingerprints.json`, `meta.json`.
+- Complements graphify (`graphify-out/`, code RAG). View with `/understand-dashboard`. Refresh incrementally with `/understand`.
+- Caveats: batches 1-5 have templated function summaries and no `calls` edges; layers built by path rules; 977 edges to non-extracted const symbols dropped. Merge script needs Python 3.10+ (`/opt/homebrew/bin/python3.13`).
