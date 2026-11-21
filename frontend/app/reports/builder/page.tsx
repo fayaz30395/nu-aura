@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {apiClient} from '@/lib/api/client';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
@@ -217,12 +218,10 @@ export default function ReportBuilderPage() {
       ]}
     >
       <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-xl font-bold text-[var(--text-primary)]">Custom Report Builder</h1>
-          <p className="text-body-muted mt-1">
-            Select a data source, pick columns, add filters, then preview or export.
-          </p>
-        </div>
+        <PageHeader
+          title="Custom Report Builder"
+          description="Select a data source, pick columns, add filters, then preview or export."
+        />
 
         {error && (
           <div className="rounded-md bg-danger-50 border border-danger-200 p-4 text-sm text-danger-700">

@@ -4,6 +4,7 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {motion} from 'framer-motion';
 import {AppLayout} from '@/components/layout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {Button} from '@/components/ui/Button';
 import {Skeleton} from '@/components/ui/Skeleton';
 import {EmptyState} from '@/components/ui/EmptyState';
@@ -226,16 +227,10 @@ export default function WorkflowListPage() {
         <div className="space-y-6 p-4 sm:p-6">
           {/* Header */}
           <Reveal>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h1 className="text-aura-title text-[var(--text-1)]">
-                  Workflow Builder
-                </h1>
-                <p className="mt-1 text-[var(--text-2)]">
-                  Create and manage approval workflow definitions.
-                </p>
-              </div>
-              {canManage && (
+            <PageHeader
+              title="Workflow Builder"
+              description="Create and manage approval workflow definitions."
+              actions={canManage && (
                 <Button
                   variant="primary"
                   onClick={() => router.push('/workflows/new')}
@@ -245,7 +240,7 @@ export default function WorkflowListPage() {
                   Create Workflow
                 </Button>
               )}
-            </div>
+            />
           </Reveal>
 
         {/* Filters */}

@@ -3,6 +3,7 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {AppLayout} from '@/components/layout/AppLayout';
+import {PageHeader} from '@/components/ui/PageHeader';
 import {PermissionGate} from '@/components/auth/PermissionGate';
 import {Permissions} from '@/lib/hooks/usePermissions';
 import {Skeleton, SkeletonCard} from '@/components/ui/Skeleton';
@@ -167,25 +168,21 @@ export default function CalendarPage() {
     <AppLayout activeMenuItem="calendar">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-[var(--text-primary)]">
-              Calendar
-            </h1>
-            <p className="text-[var(--text-muted)] mt-1">
-              Manage your events and schedule
-            </p>
-          </div>
-          <PermissionGate permission={Permissions.CALENDAR_CREATE}>
-            <button
-              onClick={() => router.push('/calendar/new')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
-            >
-              <Plus className="h-5 w-5"/>
-              New Event
-            </button>
-          </PermissionGate>
-        </div>
+        <PageHeader
+          title="Calendar"
+          description="Manage your events and schedule"
+          actions={
+            <PermissionGate permission={Permissions.CALENDAR_CREATE}>
+              <button
+                onClick={() => router.push('/calendar/new')}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-xl font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring-primary)] focus-visible:ring-offset-2"
+              >
+                <Plus className="h-5 w-5"/>
+                New Event
+              </button>
+            </PermissionGate>
+          }
+        />
 
         {/* Navigation */}
         <div className="row-between card-aura p-4">
